@@ -1,0 +1,5 @@
+io.github.microsphere.spring.redis.context.RedisModuleInitializer=\
+io.github.microsphere.spring.redis.replicator.RedisReplicatorInitializer
+
+io.github.microsphere.spring.redis.replicator.RedisReplicatorModuleInitializer=\
+io.github.microsphere.spring.redis.replicator.kafka.KafkaRedisReplicatorModuleInitializer

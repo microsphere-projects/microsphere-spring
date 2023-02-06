@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>io.github.microsphere-projects</groupId>
+        <artifactId>microsphere-build</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.microsphere-projects</groupId>
+    <artifactId>microsphere-spring</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <name>Microsphere Projects :: Spring</name>
+    <description>Microsphere Projects for Spring Framework</description>
+
+    <scm>
+        <url>https://github.com/microsphere-projects/microsphere-spring</url>
+        <connection>scm:git:git://github.com/microsphere-projects/microsphere-spring.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/microsphere-projects/microsphere-spring.git
+        </developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>mercyblitz</id>
+            <name>Mercy Ma</name>
+            <email>mercyblitz@gmail.com</email>
+            <organization>Microsphere</organization>
+            <roles>
+                <role>lead</role>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>microsphere-spring-parent</module>
+        <module>microsphere-spring-dependencies</module>
+        <module>microsphere-spring-test</module>
+        <module>microsphere-spring-context</module>
+        <module>microsphere-spring-webmvc</module>
+        <module>microsphere-spring-redis</module>
+        <module>microsphere-spring-redis-replicator</module>
+    </modules>
+
+    <properties>
+        <revision>0.0.1-SNAPSHOT</revision>
+        <spring-boot.version>2.7.7</spring-boot.version>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>spring-boot-2.6</id>
+            <properties>
+                <spring-boot.version>2.6.16</spring-boot.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>spring-boot-2.5</id>
+            <properties>
+                <spring-boot.version>2.5.14</spring-boot.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>spring-boot-2.4</id>
+            <properties>
+                <spring-boot.version>2.4.13</spring-boot.version>
+            </properties>
+        </profile>
+    </profiles>
+</project>

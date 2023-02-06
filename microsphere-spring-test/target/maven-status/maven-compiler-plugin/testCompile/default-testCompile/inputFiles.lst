@@ -1,0 +1,6 @@
+/Users/mercyblitz/Tech/workspace/github/microsphere-projects/microsphere-spring/microsphere-spring-test/src/test/java/io/github/microsphere/spring/test/jdbc/embedded/EnableEmbeddedDatabaseTest.java
+/Users/mercyblitz/Tech/workspace/github/microsphere-projects/microsphere-spring/microsphere-spring-test/src/test/java/io/github/microsphere/spring/test/kafka/KafkaTemplateTests.java
+/Users/mercyblitz/Tech/workspace/github/microsphere-projects/microsphere-spring/microsphere-spring-test/src/test/java/io/github/microsphere/spring/test/kafka/EmbeddedKafkaTest.java
+/Users/mercyblitz/Tech/workspace/github/microsphere-projects/microsphere-spring/microsphere-spring-test/src/test/java/io/github/microsphere/spring/test/redis/RedisTestConfigurationTest.java
+/Users/mercyblitz/Tech/workspace/github/microsphere-projects/microsphere-spring/microsphere-spring-test/src/test/java/io/github/microsphere/spring/test/kafka/EnableKafkaTestCase.java
+/Users/mercyblitz/Tech/workspace/github/microsphere-projects/microsphere-spring/microsphere-spring-test/src/test/java/io/github/microsphere/spring/test/redis/embedded/EnableEmbeddedRedisServerTest.java
