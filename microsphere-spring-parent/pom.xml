@@ -19,6 +19,7 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
+        <spring-boot.version>2.7.7</spring-boot.version>
         <microsphere.version>${revision}</microsphere.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <embedded-redis.version>0.6</embedded-redis.version>
@@ -57,4 +58,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 </project>
