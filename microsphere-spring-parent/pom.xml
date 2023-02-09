@@ -36,7 +36,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Microshpere Commons Dependencies -->
+            <!-- Microsphere Dependencies -->
             <dependency>
                 <groupId>io.github.microsphere-projects</groupId>
                 <artifactId>microsphere-dependencies</artifactId>
