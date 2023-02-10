@@ -185,6 +185,16 @@ public class RedisMethodContext<T> {
     }
 
     /**
+     * Has the attribute or not
+     *
+     * @param name the attribute name
+     * @return If the attribute is present, return <code>true</code>, or <code>false</code>
+     */
+    public boolean hasAttribute(String name) {
+        return getAttribute(name) != null;
+    }
+
+    /**
      * Remove the attribute from the current {@link RedisMethodContext context}
      *
      * @param name the attribute name
