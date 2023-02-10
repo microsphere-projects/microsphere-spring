@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static io.github.microsphere.spring.redis.metadata.RedisMetadataRepository.isWriteCommandMethod;
 import static java.util.Collections.emptyMap;
@@ -78,6 +79,8 @@ public class RedisMethodContext<T> {
     private long startTimeNanos = -1;
 
     private long durationNanos = -1;
+
+    private Map<String, Object> attributes;
 
     public RedisMethodContext(T target, Method method, Object[] args, RedisContext redisContext) {
         this(target, method, args, redisContext, null);
@@ -152,6 +155,75 @@ public class RedisMethodContext<T> {
             throw new IllegalStateException("'stop()' method must not be invoked before the execution of 'start()' method");
         }
         this.durationNanos = System.nanoTime() - startTimeNanos;
+    }
+
+    /**
+     * Set the attribute into the current {@link RedisMethodContext context}
+     *
+     * @param name  the attribute name
+     * @param value the attribute value
+     * @param <T>   the type of attribute value
+     */
+    public <T> void setAttribute(String name, T value) {
+        Map<String, Object> attributes = getAttributes(true);
+        if (attributes == null) {
+            attributes = new HashMap<>();
+            this.attributes = attributes;
+        }
+        attributes.put(name, value);
+    }
+
+    /**
+     * Get the attribute from the current {@link RedisMethodContext context}
+     *
+     * @param name the attribute name
+     * @param <T>  the type of attribute value
+     * @return the attribute value
+     */
+    public <T> T getAttribute(String name) {
+        return doInAttributes(attributes -> attributes.get(name));
+    }
+
+    /**
+     * Remove the attribute from the current {@link RedisMethodContext context}
+     *
+     * @param name the attribute name
+     * @param <T>  the type of attribute value
+     * @return the attribute value
+     */
+    public <T> T removeAttribute(String name) {
+        return doInAttributes(attributes -> attributes.remove(name));
+    }
+
+    /**
+     * Get the attributes from the current {@link RedisMethodContext context}
+     *
+     * @return non-null and read-only {@link Map}
+     */
+    public Map<String, Object> getAttributes() {
+        Map<String, Object> attributes = getAttributes(false);
+        return attributes == null ? emptyMap() : unmodifiableMap(attributes);
+    }
+
+    private <T> T doInAttributes(Function<Map<String, Object>, Object> function) {
+        return doInAttributes(false, function);
+    }
+
+    private <T> T doInAttributes(boolean created, Function<Map<String, Object>, Object> function) {
+        Map<String, Object> attributes = getAttributes(created);
+        if (attributes != null) {
+            return (T) function.apply(attributes);
+        }
+        return null;
+    }
+
+    private Map<String, Object> getAttributes(boolean created) {
+        Map<String, Object> attributes = this.attributes;
+        if (attributes == null && created) {
+            attributes = new HashMap<>();
+            this.attributes = attributes;
+        }
+        return attributes;
     }
 
     /**
