@@ -18,7 +18,7 @@ package io.github.microsphere.spring.context.event;
 
 import io.github.microsphere.util.StopWatch;
 import org.springframework.beans.PropertyValues;
-import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.util.StringJoiner;
 
@@ -33,21 +33,17 @@ public class BeanTimeStatistics implements BeanEventListener {
     private final StopWatch stopWatch = new StopWatch("spring.context.beans");
 
     @Override
-    public void onBeanDefinitionReady(String beanName, BeanDefinition beanDefinition) {
+    public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
         stopWatch.start("ready." + beanName);
     }
 
     @Override
-    public void onBeforeBeanInstantiate(String beanName, Class<?> beanClass) {
+    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
         stopWatch.start("instantiation." + beanName);
     }
 
     @Override
-    public void onBeanInstantiating(String beanName, Object bean) {
-    }
-
-    @Override
-    public void onAfterBeanInstantiated(String beanName, Object bean) {
+    public void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
         stopWatch.stop();
     }
 

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
@@ -51,12 +52,6 @@ class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProces
     public BeanAfterEventPublishingProcessor(ConfigurableApplicationContext context) {
         this.context = context;
         this.beanEventListeners = BeanEventListeners.getBean(context);
-    }
-
-    @Override
-    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
-        this.beanEventListeners.onAfterBeanInstantiated(beanName, bean);
-        return true;
     }
 
     @Override
@@ -147,7 +142,9 @@ class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProces
             String[] beanNames = beanFactory.getBeanDefinitionNames();
             for (String beanName : beanNames) {
                 BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);
-                beanEventListeners.onBeanDefinitionReady(beanName, beanDefinition);
+                if (beanDefinition instanceof RootBeanDefinition) {
+                    beanEventListeners.onBeanDefinitionReady(beanName, (RootBeanDefinition) beanDefinition);
+                }
             }
         }
     }

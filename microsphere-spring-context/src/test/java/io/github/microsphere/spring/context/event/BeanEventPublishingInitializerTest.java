@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyValues;
-import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -31,13 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-        BeanEventPublishingInitializerTest.class,
-        BeanEventPublishingInitializerTest.LoggingBeanEventListener.class
-},
-        initializers = {
-                BeanEventPublishingInitializer.class
-        })
+@ContextConfiguration(classes = {BeanEventPublishingInitializerTest.class, BeanEventPublishingInitializerTest.LoggingBeanEventListener.class}, initializers = {BeanEventPublishingInitializer.class})
 public class BeanEventPublishingInitializerTest {
 
     @org.junit.Test
@@ -50,23 +44,18 @@ public class BeanEventPublishingInitializerTest {
         private static final Logger logger = LoggerFactory.getLogger(LoggingBeanEventListener.class);
 
         @Override
-        public void onBeanDefinitionReady(String beanName, BeanDefinition beanDefinition) {
-            logger.info("onBeanDefinitionReady - bean name : {} , definition : {}", beanName, beanDefinition);
+        public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
+            logger.info("onBeanDefinitionReady - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
         }
 
         @Override
-        public void onBeforeBeanInstantiate(String beanName, Class<?> beanClass) {
-            logger.info("onBeforeBeanInstantiate - bean name : {} , class : {}", beanName, beanClass);
+        public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
+            logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
         }
 
         @Override
-        public void onBeanInstantiating(String beanName, Object bean) {
-            logger.info("onBeanInstantiating - bean name : {} , instance : {}", beanName, bean);
-        }
-
-        @Override
-        public void onAfterBeanInstantiated(String beanName, Object bean) {
-            logger.info("onAfterBeanInstantiated - bean name : {} , instance : {}", beanName, bean);
+        public void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
+            logger.info("onAfterBeanInstantiated - bean name : {} , definition : {} , instance : {}", beanName, mergedBeanDefinition, bean);
         }
 
         @Override
