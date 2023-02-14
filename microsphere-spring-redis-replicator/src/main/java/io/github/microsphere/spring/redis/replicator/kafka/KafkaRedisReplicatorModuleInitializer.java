@@ -11,8 +11,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.util.ClassUtils;
 
-import static io.github.microsphere.spring.redis.replicator.kafka.KafkaRedisReplicatorConfiguration.SPRING_KAFKA_BOOTSTRAP_SERVERS_PROPERTY_NAME;
 import static io.github.microsphere.spring.redis.replicator.kafka.KafkaRedisReplicatorConfiguration.KAFKA_BOOTSTRAP_SERVERS_PROPERTY_NAME;
+import static io.github.microsphere.spring.redis.replicator.kafka.KafkaRedisReplicatorConfiguration.SPRING_KAFKA_BOOTSTRAP_SERVERS_PROPERTY_NAME;
 import static io.github.microsphere.spring.redis.replicator.kafka.consumer.KafkaConsumerRedisReplicatorConfiguration.KAFKA_CONSUMER_ENABLED_PROPERTY_NAME;
 import static io.github.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 import static io.github.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;

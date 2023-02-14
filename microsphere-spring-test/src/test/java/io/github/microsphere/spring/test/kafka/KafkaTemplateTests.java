@@ -20,7 +20,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.springframework.kafka.test.hamcrest.KafkaMatchers.*;
+import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasKey;
+import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasPartition;
+import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasValue;
 
 /**
  * TODO Comment
