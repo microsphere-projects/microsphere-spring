@@ -39,7 +39,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.github.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.initBeanMetadataAttributes;
-import static io.github.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.*;
+import static io.github.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
+import static io.github.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_UNKNOWN_FIELDS;
+import static io.github.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_MULTIPLE;
 import static io.github.microsphere.spring.util.AnnotationUtils.getAttribute;
 import static io.github.microsphere.spring.util.AnnotationUtils.getRequiredAttribute;
 import static io.github.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
