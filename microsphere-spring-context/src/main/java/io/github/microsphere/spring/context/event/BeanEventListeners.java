@@ -27,6 +27,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +76,16 @@ class BeanEventListeners implements BeanEventListener {
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
         iterate(listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition), "onBeforeBeanInstantiate");
+    }
+
+    @Override
+    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Constructor<?> constructor, Object[] args) {
+        iterate(listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition, constructor, args), "onBeforeBeanInstantiate");
+    }
+
+    @Override
+    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Object factoryBean, Method factoryMethod, Object[] args) {
+        iterate(listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition, factoryBean, factoryMethod, args), "onBeforeBeanInstantiate");
     }
 
     @Override

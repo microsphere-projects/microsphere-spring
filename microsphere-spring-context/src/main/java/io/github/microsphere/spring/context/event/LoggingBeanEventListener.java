@@ -16,86 +16,77 @@
  */
 package io.github.microsphere.spring.context.event;
 
-import io.github.microsphere.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.StringJoiner;
+import java.util.Arrays;
 
 /**
- * Bean Time Statistics
+ * Logging {@link BeanEventListener} implementation
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class BeanTimeStatistics implements BeanEventListener {
+public class LoggingBeanEventListener implements BeanEventListener {
 
-    private final StopWatch stopWatch = new StopWatch("spring.context.beans");
+    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanEventListener.class);
 
     @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
-        stopWatch.start("ready." + beanName);
+        logger.info("onBeanDefinitionReady - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
-        stopWatch.start("instantiation." + beanName);
+        logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Constructor<?> constructor, Object[] args) {
-        stopWatch.start("instantiation." + beanName);
+        logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {} , constructor : {} , args : {}", beanName, mergedBeanDefinition, constructor, Arrays.toString(args));
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Object factoryBean, Method factoryMethod, Object[] args) {
-        stopWatch.start("instantiation." + beanName);
+        logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {} , factoryBean : {} , factoryMethod : {} , args : {}", beanName, mergedBeanDefinition, factoryBean, factoryMethod, Arrays.toString(args));
     }
 
     @Override
     public void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
-        stopWatch.stop();
+        logger.info("onAfterBeanInstantiated - bean name : {} , definition : {} , instance : {}", beanName, mergedBeanDefinition, bean);
     }
 
     @Override
     public void onBeanPropertyValuesReady(String beanName, Object bean, PropertyValues pvs) {
+        logger.info("onBeanPropertyValuesReady - bean name : {} , instance : {} , PropertyValues : {}", beanName, bean, pvs);
     }
 
     @Override
     public void onBeforeBeanInitialize(String beanName, Object bean) {
-        stopWatch.start("initialization." + beanName);
+        logger.info("onBeforeBeanInitialize - bean name : {} , instance : {}", beanName, bean);
     }
 
     @Override
     public void onAfterBeanInitialized(String beanName, Object bean) {
-        stopWatch.stop();
+        logger.info("onAfterBeanInitialized - bean name : {} , instance : {}", beanName, bean);
     }
 
     @Override
     public void onBeanReady(String beanName, Object bean) {
-        stopWatch.stop();
+        logger.info("onBeanReady - bean name : {} , instance : {}", beanName, bean);
     }
 
     @Override
     public void onBeforeBeanDestroy(String beanName, Object bean) {
-        stopWatch.start("destroy." + beanName);
+        logger.info("onBeforeBeanDestroy - bean name : {} , instance : {}", beanName, bean);
     }
 
     @Override
     public void onAfterBeanDestroy(String beanName, Object bean) {
-        stopWatch.stop();
-    }
-
-    public StopWatch getStopWatch() {
-        return stopWatch;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", BeanTimeStatistics.class.getSimpleName() + "[", "]")
-                .add(stopWatch.toString())
-                .toString();
+        logger.info("onAfterBeanDestroy - bean name : {} , instance : {}", beanName, bean);
     }
 }

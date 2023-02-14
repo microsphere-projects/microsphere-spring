@@ -19,6 +19,9 @@ package io.github.microsphere.spring.context.event;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
 /**
  * {@link BeanEventListener} Adapter
  *
@@ -33,6 +36,14 @@ public class BeanEventListenerAdapter implements BeanEventListener {
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
+    }
+
+    @Override
+    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Constructor<?> constructor, Object[] args) {
+    }
+
+    @Override
+    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Object factoryBean, Method factoryMethod, Object[] args) {
     }
 
     @Override

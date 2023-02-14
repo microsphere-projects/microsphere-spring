@@ -17,10 +17,6 @@
 package io.github.microsphere.spring.context.event;
 
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.PropertyValues;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -31,61 +27,10 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {BeanEventPublishingInitializerTest.class, BeanEventPublishingInitializerTest.LoggingBeanEventListener.class}, initializers = {BeanEventPublishingInitializer.class})
+@ContextConfiguration(classes = {BeanEventPublishingInitializerTest.class, LoggingBeanEventListener.class}, initializers = {BeanEventPublishingInitializer.class})
 public class BeanEventPublishingInitializerTest {
 
     @org.junit.Test
     public void test() {
-
-    }
-
-    static class LoggingBeanEventListener implements BeanEventListener {
-
-        private static final Logger logger = LoggerFactory.getLogger(LoggingBeanEventListener.class);
-
-        @Override
-        public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
-            logger.info("onBeanDefinitionReady - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
-        }
-
-        @Override
-        public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
-            logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
-        }
-
-        @Override
-        public void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
-            logger.info("onAfterBeanInstantiated - bean name : {} , definition : {} , instance : {}", beanName, mergedBeanDefinition, bean);
-        }
-
-        @Override
-        public void onBeanPropertyValuesReady(String beanName, Object bean, PropertyValues pvs) {
-            logger.info("onBeanPropertyValuesReady - bean name : {} , instance : {} , PropertyValues : {}", beanName, bean, pvs);
-        }
-
-        @Override
-        public void onBeforeBeanInitialize(String beanName, Object bean) {
-            logger.info("onBeforeBeanInitialize - bean name : {} , instance : {}", beanName, bean);
-        }
-
-        @Override
-        public void onAfterBeanInitialized(String beanName, Object bean) {
-            logger.info("onAfterBeanInitialized - bean name : {} , instance : {}", beanName, bean);
-        }
-
-        @Override
-        public void onBeanReady(String beanName, Object bean) {
-            logger.info("onBeanReady - bean name : {} , instance : {}", beanName, bean);
-        }
-
-        @Override
-        public void onBeforeBeanDestroy(String beanName, Object bean) {
-            logger.info("onBeforeBeanDestroy - bean name : {} , instance : {}", beanName, bean);
-        }
-
-        @Override
-        public void onAfterBeanDestroy(String beanName, Object bean) {
-            logger.info("onAfterBeanDestroy - bean name : {} , instance : {}", beanName, bean);
-        }
     }
 }
