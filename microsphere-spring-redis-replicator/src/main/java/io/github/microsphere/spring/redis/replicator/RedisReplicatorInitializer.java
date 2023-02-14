@@ -2,7 +2,6 @@ package io.github.microsphere.spring.redis.replicator;
 
 import io.github.microsphere.spring.redis.context.RedisModuleInitializer;
 import io.github.microsphere.spring.redis.replicator.config.RedisReplicatorConfiguration;
-import io.github.microsphere.spring.util.BeanRegistrar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

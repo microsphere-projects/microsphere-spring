@@ -16,7 +16,6 @@
  */
 package io.github.microsphere.spring.webmvc.interceptor.bootstrap;
 
-import io.github.microsphere.spring.webmvc.advice.StoringHandlerMethodArgumentRequestBodyAdvice;
 import io.github.microsphere.spring.webmvc.annotation.Idempotent;
 import io.github.microsphere.spring.webmvc.config.CommonWebMvcConfigurer;
 import io.github.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
