@@ -24,8 +24,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import static io.github.microsphere.spring.redis.serializer.RedisCommandEventSerializer.VERSION_V1;
 import static io.github.microsphere.spring.redis.serializer.RedisCommandEventSerializer.VERSION_DEFAULT;
+import static io.github.microsphere.spring.redis.serializer.RedisCommandEventSerializer.VERSION_V1;
 
 
 /**
