@@ -51,7 +51,7 @@ class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProce
 
     private InstantiationStrategy instantiationStrategyDelegate;
 
-    private BeanEventListeners beanEventListeners;
+    private BeanListeners beanEventListeners;
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
@@ -89,7 +89,7 @@ class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProce
     }
 
     private void registerBeanEventListeners(ConfigurableListableBeanFactory context) {
-        BeanEventListeners beanEventListeners = new BeanEventListeners(context);
+        BeanListeners beanEventListeners = new BeanListeners(context);
         beanEventListeners.registerBean(registry);
         this.beanEventListeners = beanEventListeners;
     }

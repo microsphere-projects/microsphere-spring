@@ -37,31 +37,31 @@ import java.util.function.Consumer;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 
 /**
- * The composite {@link BeanEventListener}
+ * The composite {@link BeanListener}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class BeanEventListeners implements BeanEventListener {
+class BeanListeners implements BeanListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeanEventListeners.class);
+    private static final Logger logger = LoggerFactory.getLogger(BeanListeners.class);
 
     private static final String BEAN_NAME = "beanEventListeners";
 
-    private final List<NamedBeanHolder<BeanEventListener>> namedListeners;
+    private final List<NamedBeanHolder<BeanListener>> namedListeners;
 
     private final int listenerCount;
 
-    public BeanEventListeners(ConfigurableListableBeanFactory beanFactory) {
+    public BeanListeners(ConfigurableListableBeanFactory beanFactory) {
         this.namedListeners = getBeanListeners(beanFactory);
         this.listenerCount = namedListeners.size();
     }
 
-    private List<NamedBeanHolder<BeanEventListener>> getBeanListeners(ConfigurableListableBeanFactory beanFactory) {
-        Map<String, BeanEventListener> beanEventListenersMap = beanFactory.getBeansOfType(BeanEventListener.class);
-        List<NamedBeanHolder<BeanEventListener>> namedListeners = new ArrayList<>(beanEventListenersMap.size());
-        for (Map.Entry<String, BeanEventListener> entry : beanEventListenersMap.entrySet()) {
-            NamedBeanHolder<BeanEventListener> namedListener = new NamedBeanHolder<>(entry.getKey(), entry.getValue());
+    private List<NamedBeanHolder<BeanListener>> getBeanListeners(ConfigurableListableBeanFactory beanFactory) {
+        Map<String, BeanListener> beanEventListenersMap = beanFactory.getBeansOfType(BeanListener.class);
+        List<NamedBeanHolder<BeanListener>> namedListeners = new ArrayList<>(beanEventListenersMap.size());
+        for (Map.Entry<String, BeanListener> entry : beanEventListenersMap.entrySet()) {
+            NamedBeanHolder<BeanListener> namedListener = new NamedBeanHolder<>(entry.getKey(), entry.getValue());
             namedListeners.add(namedListener);
         }
         namedListeners.sort(NamedBeanHolderComparator.INSTANCE);
@@ -123,11 +123,11 @@ class BeanEventListeners implements BeanEventListener {
         iterate(listener -> listener.onAfterBeanDestroy(beanName, bean), "onAfterBeanDestroy");
     }
 
-    private void iterate(Consumer<BeanEventListener> listenerConsumer, String action) {
+    private void iterate(Consumer<BeanListener> listenerConsumer, String action) {
         for (int i = 0; i < listenerCount; i++) {
-            NamedBeanHolder<BeanEventListener> namedListener = namedListeners.get(i);
+            NamedBeanHolder<BeanListener> namedListener = namedListeners.get(i);
             String beanName = namedListener.getBeanName();
-            BeanEventListener listener = namedListener.getBeanInstance();
+            BeanListener listener = namedListener.getBeanInstance();
             try {
                 listenerConsumer.accept(listener);
                 logger.trace("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution '{}'", beanName, listener, i, action);
@@ -138,12 +138,12 @@ class BeanEventListeners implements BeanEventListener {
     }
 
     public void registerBean(BeanDefinitionRegistry registry) {
-        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanEventListeners.class, () -> this);
+        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanListeners.class, () -> this);
         beanDefinitionBuilder.setPrimary(true);
         registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
     }
 
-    public static BeanEventListeners getBean(BeanFactory beanFactory) {
-        return beanFactory.getBean(BEAN_NAME, BeanEventListeners.class);
+    public static BeanListeners getBean(BeanFactory beanFactory) {
+        return beanFactory.getBean(BEAN_NAME, BeanListeners.class);
     }
 }

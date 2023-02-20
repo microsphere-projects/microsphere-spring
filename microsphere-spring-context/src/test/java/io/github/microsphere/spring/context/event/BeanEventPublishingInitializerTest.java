@@ -21,13 +21,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * {@link BeanEventListener} Test
+ * {@link BeanListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {BeanEventPublishingInitializerTest.class, LoggingBeanEventListener.class}, initializers = {BeanEventPublishingInitializer.class})
+@ContextConfiguration(classes = {BeanEventPublishingInitializerTest.class, LoggingBeanListener.class}, initializers = {BeanEventPublishingInitializer.class})
 public class BeanEventPublishingInitializerTest {
 
     @org.junit.Test

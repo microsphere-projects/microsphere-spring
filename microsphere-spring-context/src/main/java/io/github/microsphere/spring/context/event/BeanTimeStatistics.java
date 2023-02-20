@@ -30,7 +30,7 @@ import java.util.StringJoiner;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class BeanTimeStatistics implements BeanEventListener {
+public class BeanTimeStatistics implements BeanListener {
 
     private final StopWatch stopWatch = new StopWatch("spring.context.beans");
 
