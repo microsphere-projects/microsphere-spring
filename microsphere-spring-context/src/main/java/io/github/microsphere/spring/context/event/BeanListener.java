@@ -32,6 +32,16 @@ import java.util.EventListener;
 public interface BeanListener extends EventListener {
 
     /**
+     * Supports the bean to be listened or not
+     *
+     * @param beanName the name of bean
+     * @return If <code>false</code>, any method of bean lifecycle will not be called
+     */
+    default boolean supports(String beanName) {
+        return true;
+    }
+
+    /**
      * Handle the event when the {@link RootBeanDefinition BeanDefinition} is ready(merged)
      *
      * @param beanName             the bean name

@@ -18,10 +18,12 @@ package io.github.microsphere.spring.context.event;
 
 import io.github.microsphere.util.StopWatch;
 import org.springframework.beans.PropertyValues;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -30,12 +32,22 @@ import java.util.StringJoiner;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class BeanTimeStatistics implements BeanListener {
+public class BeanTimeStatistics implements BeanListener, BeanNameAware {
 
     private final StopWatch stopWatch = new StopWatch("spring.context.beans");
 
+    private String beanName;
+
+    @Override
+    public boolean supports(String beanName) {
+        return !isIgnoredBean(beanName);
+    }
+
     @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
+        if (isIgnoredBean(beanName)) {
+            return;
+        }
         stopWatch.start("ready." + beanName);
     }
 
@@ -75,6 +87,9 @@ public class BeanTimeStatistics implements BeanListener {
 
     @Override
     public void onBeanReady(String beanName, Object bean) {
+        if (isIgnoredBean(beanName)) {
+            return;
+        }
         stopWatch.stop();
     }
 
@@ -97,5 +112,14 @@ public class BeanTimeStatistics implements BeanListener {
         return new StringJoiner(", ", BeanTimeStatistics.class.getSimpleName() + "[", "]")
                 .add(stopWatch.toString())
                 .toString();
+    }
+
+    private boolean isIgnoredBean(String beanName) {
+        return Objects.equals(this.beanName, beanName);
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 }

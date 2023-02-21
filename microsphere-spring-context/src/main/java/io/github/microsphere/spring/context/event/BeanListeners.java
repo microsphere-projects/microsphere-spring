@@ -52,7 +52,10 @@ class BeanListeners implements BeanListener {
 
     private final int listenerCount;
 
+    private ConfigurableListableBeanFactory beanFactory;
+
     public BeanListeners(ConfigurableListableBeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
         this.namedListeners = getBeanListeners(beanFactory);
         this.listenerCount = namedListeners.size();
     }
@@ -70,74 +73,89 @@ class BeanListeners implements BeanListener {
 
     @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
-        iterate(listener -> listener.onBeanDefinitionReady(beanName, mergedBeanDefinition), "onBeanDefinitionReady");
+        iterate(beanName, listener -> listener.onBeanDefinitionReady(beanName, mergedBeanDefinition), "onBeanDefinitionReady");
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
-        iterate(listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition), "onBeforeBeanInstantiate");
+        iterate(beanName, listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition), "onBeforeBeanInstantiate");
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Constructor<?> constructor, Object[] args) {
-        iterate(listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition, constructor, args), "onBeforeBeanInstantiate");
+        iterate(beanName, listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition, constructor, args), "onBeforeBeanInstantiate");
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Object factoryBean, Method factoryMethod, Object[] args) {
-        iterate(listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition, factoryBean, factoryMethod, args), "onBeforeBeanInstantiate");
+        iterate(beanName, listener -> listener.onBeforeBeanInstantiate(beanName, mergedBeanDefinition, factoryBean, factoryMethod, args), "onBeforeBeanInstantiate");
     }
 
     @Override
     public void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
-        iterate(listener -> listener.onAfterBeanInstantiated(beanName, mergedBeanDefinition, bean), "onAfterBeanInstantiated");
+        iterate(beanName, listener -> listener.onAfterBeanInstantiated(beanName, mergedBeanDefinition, bean), "onAfterBeanInstantiated");
     }
 
     @Override
     public void onBeanPropertyValuesReady(String beanName, Object bean, PropertyValues pvs) {
-        iterate(listener -> listener.onBeanPropertyValuesReady(beanName, bean, pvs), "onBeanPropertyValuesReady");
+        iterate(beanName, listener -> listener.onBeanPropertyValuesReady(beanName, bean, pvs), "onBeanPropertyValuesReady");
     }
 
     @Override
     public void onBeforeBeanInitialize(String beanName, Object bean) {
-        iterate(listener -> listener.onBeforeBeanInitialize(beanName, bean), "onBeforeBeanInitialize");
+        iterate(beanName, listener -> listener.onBeforeBeanInitialize(beanName, bean), "onBeforeBeanInitialize");
     }
 
     @Override
     public void onAfterBeanInitialized(String beanName, Object bean) {
-        iterate(listener -> listener.onAfterBeanInitialized(beanName, bean), "onAfterBeanInitialized");
+        iterate(beanName, listener -> listener.onAfterBeanInitialized(beanName, bean), "onAfterBeanInitialized");
     }
 
     @Override
     public void onBeanReady(String beanName, Object bean) {
-        iterate(listener -> listener.onBeanReady(beanName, bean), "onBeanReady");
+        iterate(beanName, listener -> listener.onBeanReady(beanName, bean), "onBeanReady");
     }
 
     @Override
     public void onBeforeBeanDestroy(String beanName, Object bean) {
-        iterate(listener -> listener.onBeforeBeanDestroy(beanName, bean), "onBeforeBeanDestroy");
+        iterate(beanName, listener -> listener.onBeforeBeanDestroy(beanName, bean), "onBeforeBeanDestroy");
     }
 
     @Override
     public void onAfterBeanDestroy(String beanName, Object bean) {
-        iterate(listener -> listener.onAfterBeanDestroy(beanName, bean), "onAfterBeanDestroy");
+        iterate(beanName, listener -> listener.onAfterBeanDestroy(beanName, bean), "onAfterBeanDestroy");
     }
 
-    private void iterate(Consumer<BeanListener> listenerConsumer, String action) {
+    private void iterate(String beanName, Consumer<BeanListener> listenerConsumer, String action) {
+        if (isIgnored(beanName)) {
+            return;
+        }
         for (int i = 0; i < listenerCount; i++) {
             NamedBeanHolder<BeanListener> namedListener = namedListeners.get(i);
-            String beanName = namedListener.getBeanName();
             BeanListener listener = namedListener.getBeanInstance();
+            String listenerBeanName = namedListener.getBeanName();
             try {
-                listenerConsumer.accept(listener);
-                logger.trace("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution '{}'", beanName, listener, i, action);
+                if (listener.supports(beanName)) {
+                    listenerConsumer.accept(listener);
+                    logger.trace("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution {} -> '{}'", listenerBeanName, listener, i, beanName, action);
+                }
             } catch (Throwable e) {
-                logger.error("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution '{}' failed", beanName, listener, i, action, e);
+                logger.error("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution {} -> '{}' failed", listenerBeanName, listener, i, beanName, action, e);
             }
         }
     }
 
-    public void registerBean(BeanDefinitionRegistry registry) {
+    private boolean isIgnored(String beanName) {
+        return isBeanReady(beanName);
+    }
+
+    private boolean isBeanReady(String beanName) {
+        boolean ready = beanFactory.getSingleton(beanName) != null;
+        logger.trace("The bean[name : '{}'] is ready? -> {}", beanName, ready);
+        return ready;
+    }
+
+    void registerBean(BeanDefinitionRegistry registry) {
         BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanListeners.class, () -> this);
         beanDefinitionBuilder.setPrimary(true);
         registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
