@@ -30,8 +30,11 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
@@ -52,12 +55,24 @@ class BeanListeners implements BeanListener {
 
     private final int listenerCount;
 
-    private ConfigurableListableBeanFactory beanFactory;
+    private final Set<String> readyBeanNames;
 
     public BeanListeners(ConfigurableListableBeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
         this.namedListeners = getBeanListeners(beanFactory);
         this.listenerCount = namedListeners.size();
+        this.readyBeanNames = getReadyBeanNames(beanFactory);
+    }
+
+    static Set<String> getReadyBeanNames(ConfigurableListableBeanFactory beanFactory) {
+        Set<String> readyBeanNames = new LinkedHashSet<>();
+        String[] singletonNames = beanFactory.getSingletonNames();
+        readyBeanNames.addAll(Arrays.asList(singletonNames));
+        return readyBeanNames;
+    }
+
+    void setReadyBeanNames(Set<String> readyBeanNames) {
+        this.readyBeanNames.clear();
+        this.readyBeanNames.addAll(readyBeanNames);
     }
 
     private List<NamedBeanHolder<BeanListener>> getBeanListeners(ConfigurableListableBeanFactory beanFactory) {
@@ -70,6 +85,7 @@ class BeanListeners implements BeanListener {
         namedListeners.sort(NamedBeanHolderComparator.INSTANCE);
         return namedListeners;
     }
+
 
     @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
@@ -146,13 +162,7 @@ class BeanListeners implements BeanListener {
     }
 
     private boolean isIgnored(String beanName) {
-        return isBeanReady(beanName);
-    }
-
-    private boolean isBeanReady(String beanName) {
-        boolean ready = beanFactory.getSingleton(beanName) != null;
-        logger.trace("The bean[name : '{}'] is ready? -> {}", beanName, ready);
-        return ready;
+        return this.readyBeanNames.contains(beanName) || BEAN_NAME.equals(beanName);
     }
 
     void registerBean(BeanDefinitionRegistry registry) {
