@@ -31,13 +31,12 @@ import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import static io.github.microsphere.spring.context.event.BeanListeners.getBean;
 import static io.github.microsphere.spring.context.event.BeanListeners.getReadyBeanNames;
 
 /**
@@ -56,7 +55,7 @@ class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProces
 
     public BeanAfterEventPublishingProcessor(ConfigurableApplicationContext context) {
         this.context = context;
-        this.beanEventListeners = BeanListeners.getBean(context);
+        this.beanEventListeners = getBean(context);
     }
 
     @Override
@@ -143,7 +142,7 @@ class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProces
         }
 
         private void fireBeanDefinitionReadyEvent(ConfigurableListableBeanFactory beanFactory) {
-            BeanListeners beanEventListeners = BeanListeners.getBean(beanFactory);
+            BeanListeners beanEventListeners = getBean(beanFactory);
             String[] beanNames = beanFactory.getBeanDefinitionNames();
             Set<String> readyBeanNames = getReadyBeanNames(beanFactory);
             beanEventListeners.setReadyBeanNames(readyBeanNames);

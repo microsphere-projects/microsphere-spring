@@ -171,7 +171,7 @@ class BeanListeners implements BeanListener {
         registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
     }
 
-    public static BeanListeners getBean(BeanFactory beanFactory) {
+    static BeanListeners getBean(BeanFactory beanFactory) {
         return beanFactory.getBean(BEAN_NAME, BeanListeners.class);
     }
 }
