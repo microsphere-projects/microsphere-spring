@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
  * {@link OnceApplicationContextEventListener} Test
  *
  * @see OnceApplicationContextEventListener
- * @since 1.0.6
+ * @since 1.0.0
  */
 public class OnceApplicationContextEventListenerTest {
 

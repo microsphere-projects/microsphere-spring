@@ -35,7 +35,7 @@ import static org.springframework.context.ConfigurableApplicationContext.CONVERS
  * @see ConversionService
  * @see ConfigurableApplicationContext#CONVERSION_SERVICE_BEAN_NAME
  * @see SingletonBeanRegistry#registerSingleton(String, Object)
- * @since 1.0.6
+ * @since 1.0.0
  */
 public class ConversionServiceResolver {
 

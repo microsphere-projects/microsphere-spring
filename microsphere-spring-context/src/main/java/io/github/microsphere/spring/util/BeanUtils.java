@@ -118,7 +118,7 @@ public abstract class BeanUtils {
      * @param beanName    The bean name
      * @param beanClass   The bean class
      * @return If present , return <code>true</code> , or <code>false</code>
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public static boolean isBeanPresent(BeanFactory beanFactory, String beanName, Class<?> beanClass)
             throws NullPointerException {
@@ -279,7 +279,7 @@ public abstract class BeanUtils {
      * @param <T>         the bean type
      * @return the bean if available, or <code>null</code>
      * @throws BeansException in case of creation errors
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public static <T> T getBeanIfAvailable(BeanFactory beanFactory, String beanName, Class<T> beanType)
             throws BeansException {

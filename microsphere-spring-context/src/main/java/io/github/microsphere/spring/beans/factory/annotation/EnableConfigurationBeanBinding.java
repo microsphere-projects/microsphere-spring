@@ -44,21 +44,21 @@ public @interface EnableConfigurationBeanBinding {
     /**
      * The default value for {@link #multiple()}
      *
-     * @since 1.0.6
+     * @since 1.0.0
      */
     boolean DEFAULT_MULTIPLE = false;
 
     /**
      * The default value for {@link #ignoreUnknownFields()}
      *
-     * @since 1.0.6
+     * @since 1.0.0
      */
     boolean DEFAULT_IGNORE_UNKNOWN_FIELDS = true;
 
     /**
      * The default value for {@link #ignoreInvalidFields()}
      *
-     * @since 1.0.6
+     * @since 1.0.0
      */
     boolean DEFAULT_IGNORE_INVALID_FIELDS = true;
 

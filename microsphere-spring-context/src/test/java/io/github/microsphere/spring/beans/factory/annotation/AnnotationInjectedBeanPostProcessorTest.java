@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  * {@link AnnotationInjectedBeanPostProcessor} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.1
+ * @since 1.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {

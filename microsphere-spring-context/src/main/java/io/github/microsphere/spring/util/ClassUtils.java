@@ -31,7 +31,7 @@ public class ClassUtils {
     /**
      * The empty array for {@link Class}
      *
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];
 

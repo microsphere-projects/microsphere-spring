@@ -115,7 +115,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
      * Get the {@link List} of {@link ConfigurationBeanCustomizer ConfigurationBeanCustomizers}
      *
      * @return non-null
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public List<ConfigurationBeanCustomizer> getConfigurationBeanCustomizers() {
         if (configurationBeanCustomizers == null) {

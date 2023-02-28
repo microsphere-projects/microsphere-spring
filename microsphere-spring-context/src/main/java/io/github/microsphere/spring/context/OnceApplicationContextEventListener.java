@@ -31,7 +31,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
 /**
  * The abstract class {@link ApplicationListener} for {@link ApplicationEvent} guarantees just one-time execution
  * and prevents the event propagation in the hierarchical {@link ApplicationContext ApplicationContexts}
- * @since 1.0.6
+ * @since 1.0.0
  */
 public abstract class OnceApplicationContextEventListener implements ApplicationListener, ApplicationContextAware {
 

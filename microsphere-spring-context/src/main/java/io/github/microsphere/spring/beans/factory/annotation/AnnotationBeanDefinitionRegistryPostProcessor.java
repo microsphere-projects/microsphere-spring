@@ -73,7 +73,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * </ol>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.6
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,

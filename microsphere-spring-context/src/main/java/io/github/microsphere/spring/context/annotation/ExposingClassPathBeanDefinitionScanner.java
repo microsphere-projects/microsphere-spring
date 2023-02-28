@@ -42,7 +42,7 @@ import static org.springframework.context.annotation.AnnotationConfigUtils.regis
  * @see ClassPathBeanDefinitionScanner
  * @see BeanDefinitionRegistry
  * @see SingletonBeanRegistry
- * @since 1.0.6
+ * @since 1.0.0
  */
 public class ExposingClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
 

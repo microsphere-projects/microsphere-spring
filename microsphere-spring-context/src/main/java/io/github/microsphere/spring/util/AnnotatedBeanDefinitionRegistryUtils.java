@@ -168,7 +168,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils {
      * @see SingletonBeanRegistry
      * @see AnnotationConfigUtils#CONFIGURATION_BEAN_NAME_GENERATOR
      * @see ConfigurationClassPostProcessor#processConfigBeanDefinitions
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public static BeanNameGenerator resolveAnnotatedBeanNameGenerator(BeanDefinitionRegistry registry) {
         BeanNameGenerator beanNameGenerator = null;

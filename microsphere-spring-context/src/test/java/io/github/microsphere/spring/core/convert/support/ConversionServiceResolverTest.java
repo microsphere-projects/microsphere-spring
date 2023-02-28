@@ -29,7 +29,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
 /**
  * {@link ConversionServiceResolver} Test
  *
- * @since 1.0.6
+ * @since 1.0.0
  */
 public class ConversionServiceResolverTest {
 

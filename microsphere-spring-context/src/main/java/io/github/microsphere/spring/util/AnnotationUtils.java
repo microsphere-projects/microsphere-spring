@@ -317,7 +317,7 @@ public abstract class AnnotationUtils {
      * @param <T>           the type of attribute value
      * @return the attribute value if found
      * @throws IllegalStateException if attribute value can't be found
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public static <T> T getAttribute(Map<String, Object> attributes, String attributeName, boolean required) {
         T value = getAttribute(attributes, attributeName, null);
@@ -335,7 +335,7 @@ public abstract class AnnotationUtils {
      * @param defaultValue  the default value of attribute
      * @param <T>           the type of attribute value
      * @return the attribute value if found
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public static <T> T getAttribute(Map<String, Object> attributes, String attributeName, T defaultValue) {
         T value = (T) attributes.get(attributeName);
@@ -350,7 +350,7 @@ public abstract class AnnotationUtils {
      * @param <T>           the type of attribute value
      * @return the attribute value if found
      * @throws IllegalStateException if attribute value can't be found
-     * @since 1.0.6
+     * @since 1.0.0
      */
     public static <T> T getRequiredAttribute(Map<String, Object> attributes, String attributeName) {
         return getAttribute(attributes, attributeName, true);

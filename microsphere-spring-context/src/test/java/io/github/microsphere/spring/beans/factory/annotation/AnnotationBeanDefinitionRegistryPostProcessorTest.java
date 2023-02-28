@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
  * {@link AnnotationBeanDefinitionRegistryPostProcessor} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.6
+ * @since 1.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {
