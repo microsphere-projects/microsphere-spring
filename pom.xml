@@ -41,11 +41,12 @@
     <modules>
         <module>microsphere-spring-parent</module>
         <module>microsphere-spring-dependencies</module>
-        <module>microsphere-spring-test</module>
         <module>microsphere-spring-context</module>
+        <module>microsphere-spring-jdbc</module>
         <module>microsphere-spring-webmvc</module>
         <module>microsphere-spring-redis</module>
         <module>microsphere-spring-redis-replicator</module>
+        <module>microsphere-spring-test</module>
     </modules>
 
     <properties>
