@@ -16,7 +16,8 @@
  */
 package io.github.microsphere.spring.jdbc.p6spy.beans.factory.config;
 
-import com.p6spy.engine.logging.ErrorLoggingEventListener;
+import com.p6spy.engine.common.ConnectionInformation;
+import com.p6spy.engine.logging.LoggingEventListener;
 import io.github.microsphere.spring.jdbc.p6spy.annotation.EnableP6DataSource;
 import io.github.microsphere.spring.test.jdbc.embedded.EnableEmbeddedDatabase;
 import org.junit.Test;
@@ -28,8 +29,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 /**
  * {@link EnableP6DataSource} Test
@@ -39,12 +42,11 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        EnableP6DataSourceTest.class,
-        ErrorLoggingEventListener.class
+        EnableP6DataSourceTest.class
 })
 @EnableP6DataSource
 @EnableEmbeddedDatabase(dataSource = "testDataSource")
-public class EnableP6DataSourceTest {
+public class EnableP6DataSourceTest extends LoggingEventListener {
 
     @Autowired
     @Qualifier("testDataSource")
@@ -54,5 +56,14 @@ public class EnableP6DataSourceTest {
     public void test() throws Exception {
         Connection connection = dataSource.getConnection();
         assertNotNull(connection);
+    }
+
+    @Override
+    public void onBeforeGetConnection(ConnectionInformation connectionInformation) {
+        try {
+            assertSame(dataSource.unwrap(DataSource.class), connectionInformation.getDataSource());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

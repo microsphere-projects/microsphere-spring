@@ -42,11 +42,8 @@ public class CompoundJdbcEventListenerFactory implements P6Factory {
 
     private final ConfigurableListableBeanFactory beanFactory;
 
-    private final ConfigurableEnvironment environment;
-
-    public CompoundJdbcEventListenerFactory(ConfigurableListableBeanFactory beanFactory, ConfigurableEnvironment environment) {
+    public CompoundJdbcEventListenerFactory(ConfigurableListableBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
-        this.environment = environment;
     }
 
     @Override

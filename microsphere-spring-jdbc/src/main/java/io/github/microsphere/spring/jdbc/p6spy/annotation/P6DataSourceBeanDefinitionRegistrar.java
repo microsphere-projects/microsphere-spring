@@ -28,10 +28,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
@@ -44,42 +41,32 @@ import static io.github.microsphere.spring.util.BeanUtils.getSortedBeans;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class P6DataSourceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware, BeanFactoryAware {
-
-    private ConfigurableListableBeanFactory beanFactory;
-
-    private ConfigurableEnvironment environment;
+class P6DataSourceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         BeanRegistrar.registerBeanDefinition(registry, P6DataSourceBeanPostProcessor.class);
-        initP6ModuleManager();
-    }
-
-    private void initP6ModuleManager() {
-        P6ModuleManager p6ModuleManager = P6ModuleManager.getInstance();
-        addP6Factory(p6ModuleManager);
-        registerP6OptionChangedListenerBeans(p6ModuleManager);
-    }
-
-    private void addP6Factory(P6ModuleManager p6ModuleManager) {
-        P6Factory p6Factory = new CompoundJdbcEventListenerFactory(beanFactory, environment);
-        List<P6Factory> factories = p6ModuleManager.getFactories();
-        factories.add(p6Factory);
-    }
-
-    private void registerP6OptionChangedListenerBeans(P6ModuleManager p6ModuleManager) {
-        List<P6OptionChangedListener> listeners = getSortedBeans(beanFactory, P6OptionChangedListener.class);
-        listeners.forEach(p6ModuleManager::registerOptionChangedListener);
     }
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+        initP6ModuleManager((ConfigurableListableBeanFactory) beanFactory);
     }
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = (ConfigurableEnvironment) environment;
+    private void initP6ModuleManager(ConfigurableListableBeanFactory beanFactory) {
+        P6ModuleManager p6ModuleManager = P6ModuleManager.getInstance();
+        addP6Factory(p6ModuleManager, beanFactory);
+        registerP6OptionChangedListenerBeans(p6ModuleManager, beanFactory);
+    }
+
+    private void addP6Factory(P6ModuleManager p6ModuleManager, ConfigurableListableBeanFactory beanFactory) {
+        P6Factory p6Factory = new CompoundJdbcEventListenerFactory(beanFactory);
+        List<P6Factory> factories = p6ModuleManager.getFactories();
+        factories.add(p6Factory);
+    }
+
+    private void registerP6OptionChangedListenerBeans(P6ModuleManager p6ModuleManager, ConfigurableListableBeanFactory beanFactory) {
+        List<P6OptionChangedListener> listeners = getSortedBeans(beanFactory, P6OptionChangedListener.class);
+        listeners.forEach(p6ModuleManager::registerOptionChangedListener);
     }
 }
