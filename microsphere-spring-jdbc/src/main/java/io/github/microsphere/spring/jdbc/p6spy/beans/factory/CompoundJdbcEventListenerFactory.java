@@ -53,12 +53,7 @@ public class CompoundJdbcEventListenerFactory implements P6Factory {
     public P6LoadableOptions getOptions(P6OptionsRepository optionsRepository) {
         return new NoOpP6LoadableOptions();
     }
-
-    private void registerP6OptionChangedListenerBeans(P6OptionsRepository optionsRepository) {
-        List<P6OptionChangedListener> listeners = getSortedBeans(beanFactory, P6OptionChangedListener.class);
-        listeners.forEach(optionsRepository::registerOptionChangedListener);
-    }
-
+    
     @Override
     public JdbcEventListener getJdbcEventListener() {
         List<JdbcEventListener> listeners = getSortedBeans(beanFactory, JdbcEventListener.class);
