@@ -53,7 +53,7 @@ public class CompoundJdbcEventListenerFactory implements P6Factory {
     public P6LoadableOptions getOptions(P6OptionsRepository optionsRepository) {
         return new NoOpP6LoadableOptions();
     }
-    
+
     @Override
     public JdbcEventListener getJdbcEventListener() {
         List<JdbcEventListener> listeners = getSortedBeans(beanFactory, JdbcEventListener.class);
