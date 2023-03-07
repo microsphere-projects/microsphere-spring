@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.jdbc.p6spy.beans.factory.config;
+package io.github.microsphere.spring.jdbc.p6spy.annotation;
 
 import com.p6spy.engine.common.ConnectionInformation;
 import com.p6spy.engine.logging.LoggingEventListener;
-import io.github.microsphere.spring.jdbc.p6spy.annotation.EnableP6DataSource;
 import io.github.microsphere.spring.test.jdbc.embedded.EnableEmbeddedDatabase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
