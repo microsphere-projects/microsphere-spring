@@ -17,38 +17,36 @@
 package io.github.microsphere.spring.net;
 
 import io.github.microsphere.net.ExtendableProtocolURLStreamHandler;
+import io.github.microsphere.net.SubProtocolURLConnectionFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.List;
 
-import static io.github.microsphere.constants.PathConstants.SLASH;
-import static io.github.microsphere.constants.SymbolConstants.COLON_CHAR;
 import static io.github.microsphere.net.URLUtils.registerURLStreamHandler;
 
 /**
- * The Spring {@link URLStreamHandler} supports
- * the sub-protocols like "spring:{sub-protocol}:{type}:/{resource-path}", for example,
- * "spring:resource:classpath://abc.properties"
- *
- *
+ * The Spring {@link URLStreamHandler} component supports supports the "spring" sub-protocols,
+ * like "spring:{sub-protocol}:{ext-1}: ... :{ext-n}://...",
+ * {sub-protocol} is required, each between {ext-1} to {ext-n} is the optional extension part.
+ * for instance, "spring:resource:classpath://abc.properties",
  * <ul>
- *     <li>{sub-protocol}: {@link Resource resource}</li>
- *     <li>{type} is "classpath"</li>
- *     <li>{resource-path} : "abc.properties"</li>
+ *     <li>{sub-protocol} : "resource"</li>
+ *     <li>{ext-1} : "classpath"</li>
  * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamHandler implements ResourceLoaderAware {
+public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamHandler implements InitializingBean, ResourceLoaderAware {
 
     public static final String PROTOCOL = "spring";
 
@@ -59,38 +57,23 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
     }
 
     @Override
-    protected URLConnection openConnection(URL rawURL) throws IOException {
-        List<String> subProtocols = resolveSubProtocols(rawURL);
+    public void afterPropertiesSet() throws Exception {
+        super.init();
+    }
+
+    @Override
+    protected void initSubProtocolURLConnectionFactories(List<SubProtocolURLConnectionFactory> factories) {
+        factories.add(new SpringResourceURLConnectionFactory(getResourceLoader()));
+    }
+
+    @Override
+    protected URLConnection openConnection(URL url, Proxy proxy) throws IOException {
+        List<String> subProtocols = resolveSubProtocols(url);
         int size = subProtocols.size();
         if (size < 1) {
             throw new MalformedURLException("The Spring Protocol URLStreamHandler must contain the sub-protocol part , like 'spring:{sub-protocol}:...'");
         }
-
-        String subProtocol = subProtocols.get(0);
-        if ("resource".equals(subProtocol) && size > 1) {
-            Resource resource = findResource(rawURL, subProtocols);
-            return new SpringResourceURLConnection(rawURL, resource);
-        }
-        // TODO support the more type
-
-        return null;
-    }
-
-    protected Resource findResource(URL rawURL, List<String> subProtocols) throws IOException {
-        String location = buildLocation(rawURL, subProtocols);
-        ResourceLoader resourceLoader = getResourceLoader();
-        Resource resource = resourceLoader.getResource(location);
-        if (resource == null) {
-            throw new IOException("The Spring resource can't be found from the URL : " + rawURL);
-        }
-        return resource;
-    }
-
-    private String buildLocation(URL rawURL, List<String> subProtocols) {
-        String prefix = subProtocols.get(1);
-        String authority = resolveAuthority(rawURL);
-        String path = resolvePath(rawURL);
-        return prefix + COLON_CHAR + SLASH + authority + path;
+        return super.openConnection(url, proxy);
     }
 
     public ResourceLoader getResourceLoader() {
