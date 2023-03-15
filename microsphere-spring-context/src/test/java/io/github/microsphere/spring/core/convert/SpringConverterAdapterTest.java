@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.convert;
+package io.github.microsphere.spring.core.convert;
 
+import io.github.microsphere.spring.core.convert.SpringConverterAdapter;
 import org.junit.Test;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
@@ -25,7 +26,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
-import static io.github.microsphere.spring.convert.SpringConverterAdapter.buildConvertiblePair;
+import static io.github.microsphere.spring.core.convert.SpringConverterAdapter.buildConvertiblePair;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

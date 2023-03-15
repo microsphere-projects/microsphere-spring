@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.convert;
+package io.github.microsphere.spring.core.convert;
 
 import io.github.microsphere.convert.Converter;
 import org.springframework.core.convert.TypeDescriptor;
