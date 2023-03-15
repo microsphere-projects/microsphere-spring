@@ -37,23 +37,15 @@ import static io.github.microsphere.net.URLUtils.resolvePath;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SpringResourceURLConnectionFactory implements SubProtocolURLConnectionFactory {
+public class SpringResourceURLConnectionFactory extends SpringSubProtocolURLConnectionFactory {
 
-    private static final int SUB_PROTOCOL_INDEX = 0;
-
+    private static final String RESOURCE_SUB_PROTOCOL = "resource";
     private static final int RESOURCE_SCHEME_INDEX = 1;
-
 
     private final ResourceLoader resourceLoader;
 
     public SpringResourceURLConnectionFactory(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-    }
-
-    @Override
-    public boolean supports(URL url, List<String> subProtocols) {
-        String subProtocol = getSubProtocol(subProtocols);
-        return "resource".equals(subProtocol);
     }
 
     @Override
@@ -72,15 +64,16 @@ public class SpringResourceURLConnectionFactory implements SubProtocolURLConnect
         return resource;
     }
 
+    @Override
+    protected String getSubProtocol() {
+        return RESOURCE_SUB_PROTOCOL;
+    }
+
     private String buildLocation(URL url, List<String> subProtocols) {
         String scheme = getResourceScheme(subProtocols);
         String authority = resolveAuthority(url);
         String path = resolvePath(url);
         return scheme + COLON_CHAR + SLASH + authority + path;
-    }
-
-    private String getSubProtocol(List<String> subProtocols) {
-        return subProtocols.get(SUB_PROTOCOL_INDEX);
     }
 
     private String getResourceScheme(List<String> subProtocols) {
