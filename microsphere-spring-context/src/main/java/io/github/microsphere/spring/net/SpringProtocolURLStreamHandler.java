@@ -87,7 +87,5 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-        // register self
-        registerURLStreamHandler(this);
     }
 }
