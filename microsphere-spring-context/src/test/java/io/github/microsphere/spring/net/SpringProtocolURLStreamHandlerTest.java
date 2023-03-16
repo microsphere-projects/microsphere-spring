@@ -19,6 +19,7 @@ package io.github.microsphere.spring.net;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StreamUtils;
 
@@ -38,11 +39,26 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration(classes = {
         SpringProtocolURLStreamHandler.class
 })
+@TestPropertySource(properties = {
+        "microsphere.net.a=1",
+        "microsphere.net.b=2",
+        "microsphere.net.c=3",
+})
 public class SpringProtocolURLStreamHandlerTest {
 
     @Test
-    public void test() throws Throwable {
+    public void testSpringResourceURLConnectionFactory() throws Throwable {
         URL url = new URL("spring:resource:classpath://enable-configuration-bean-binding.properties");
+        String content = null;
+        try (InputStream inputStream = url.openStream()) {
+            content = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
+        }
+        assertNotNull(content);
+    }
+
+    @Test
+    public void testSpringEnvironmentURLConnectionFactory() throws Throwable {
+        URL url = new URL("spring:env:property-sources://microsphere.net/text/properties");
         String content = null;
         try (InputStream inputStream = url.openStream()) {
             content = StreamUtils.copyToString(inputStream, Charset.defaultCharset());

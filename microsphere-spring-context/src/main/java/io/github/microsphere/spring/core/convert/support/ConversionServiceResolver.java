@@ -21,12 +21,14 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
 import static io.github.microsphere.spring.util.BeanUtils.getBeanIfAvailable;
 import static io.github.microsphere.spring.util.BeanUtils.isBeanPresent;
 import static java.lang.String.format;
 import static org.springframework.context.ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME;
+import static org.springframework.context.ConfigurableApplicationContext.ENVIRONMENT_BEAN_NAME;
 
 /**
  * The class to resolve a singleton instance of {@link ConversionService} that may be retrieved from Spring
@@ -66,6 +68,11 @@ public class ConversionServiceResolver {
 
         if (conversionService == null) { // If not found, try to get the bean from BeanFactory
             debug("The conversionService instance can't be found in Spring ConfigurableBeanFactory.getConversionService()");
+            conversionService = getFromEnvironment();
+        }
+
+        if (conversionService == null) {  // If not found, try to get the bean from ConfigurableEnvironment
+            debug("The conversionService instance can't be found in Spring ConfigurableEnvironment.getConversionService()");
             conversionService = getIfAvailable();
         }
         if (conversionService == null) { // If not found, will create an instance of ConversionService as default
@@ -78,6 +85,14 @@ public class ConversionServiceResolver {
         }
 
         return conversionService;
+    }
+
+    private ConversionService getFromEnvironment() {
+        if (beanFactory.containsBean(ENVIRONMENT_BEAN_NAME)) {
+            ConfigurableEnvironment environment = beanFactory.getBean(ENVIRONMENT_BEAN_NAME, ConfigurableEnvironment.class);
+            return environment.getConversionService();
+        }
+        return null;
     }
 
     private ConversionService getResolvedBeanIfAvailable() {
@@ -104,7 +119,7 @@ public class ConversionServiceResolver {
 
     private void debug(String message, Object... args) {
         if (logger.isDebugEnabled()) {
-            logger.debug(format(message, args));
+            logger.debug(args.length < 1 ? message : format(message, args));
         }
     }
 }

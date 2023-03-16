@@ -18,10 +18,21 @@ package io.github.microsphere.spring.net;
 
 import io.github.microsphere.net.ExtendableProtocolURLStreamHandler;
 import io.github.microsphere.net.SubProtocolURLConnectionFactory;
+import io.github.microsphere.spring.core.convert.SpringConverterAdapter;
+import io.github.microsphere.spring.core.convert.support.ConversionServiceResolver;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.convert.support.ConfigurableConversionService;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -30,8 +41,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.List;
-
-import static io.github.microsphere.net.URLUtils.registerURLStreamHandler;
 
 /**
  * The Spring {@link URLStreamHandler} component supports supports the "spring" sub-protocols,
@@ -46,11 +55,17 @@ import static io.github.microsphere.net.URLUtils.registerURLStreamHandler;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamHandler implements InitializingBean, ResourceLoaderAware {
+public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamHandler implements InitializingBean, ResourceLoaderAware, BeanFactoryAware, EnvironmentAware {
 
     public static final String PROTOCOL = "spring";
 
-    private volatile ResourceLoader resourceLoader;
+    private ResourceLoader resourceLoader;
+
+    private ConfigurableListableBeanFactory beanFactory;
+
+    private ConfigurableEnvironment environment;
+
+    private ConfigurableConversionService conversionService;
 
     public SpringProtocolURLStreamHandler() {
         super(PROTOCOL);
@@ -58,12 +73,20 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        initConversionService();
         super.init();
+    }
+
+    private void initConversionService() {
+        ConfigurableConversionService conversionService = (ConfigurableConversionService) new ConversionServiceResolver(this.beanFactory).resolve();
+        conversionService.addConverter(new SpringConverterAdapter());
+        this.conversionService = conversionService;
     }
 
     @Override
     protected void initSubProtocolURLConnectionFactories(List<SubProtocolURLConnectionFactory> factories) {
         factories.add(new SpringResourceURLConnectionFactory(getResourceLoader()));
+        factories.add(new SpringEnvironmentURLConnectionFactory(environment, conversionService));
     }
 
     @Override
@@ -87,5 +110,17 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "The 'beanFactory' argument must be an instance of " + ConfigurableListableBeanFactory.class.getName());
+        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        Assert.isInstanceOf(ConfigurableEnvironment.class, environment, "The 'environment' argument must be an instance of " + ConfigurableEnvironment.class.getName());
+        this.environment = (ConfigurableEnvironment) environment;
     }
 }

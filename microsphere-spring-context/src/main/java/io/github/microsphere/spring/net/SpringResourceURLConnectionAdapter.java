@@ -37,7 +37,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * The internal class of {@link URLConnection} adapter is based on the Spring {@link Resource}
+ * The {@link URLConnection} adapter class is based on the Spring {@link Resource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -52,8 +52,8 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
 
     private MultiValueMap<String, String> headers;
 
-    protected SpringResourceURLConnectionAdapter(URL rawURL, Resource resource) {
-        super(rawURL);
+    protected SpringResourceURLConnectionAdapter(URL url, Resource resource) {
+        super(url);
         this.resource = resource;
         this.writableResource = resource instanceof WritableResource ? (WritableResource) resource : null;
     }
