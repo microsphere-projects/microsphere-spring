@@ -69,7 +69,6 @@ public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        SpringConverterAdapter converter = SpringConverterAdapter.INSTANCE;
         URL url = getURL();
         String prefix = getPropertyNamePrefix(url);
         Map<String, Object> properties = getSubProperties(propertySources, prefix);
