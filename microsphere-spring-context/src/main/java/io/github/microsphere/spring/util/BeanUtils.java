@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
+import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
  * Bean Utilities Class
@@ -304,12 +306,10 @@ public abstract class BeanUtils {
      * @return all sorted Beans
      */
     public static <T> List<T> getSortedBeans(ListableBeanFactory beanFactory, Class<T> type) {
-
-        Map<String, T> beansOfType = BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, type);
+        Map<String, T> beansOfType = beansOfTypeIncludingAncestors(beanFactory, type);
         List<T> beansList = new ArrayList<T>(beansOfType.values());
         AnnotationAwareOrderComparator.sort(beansList);
-        return Collections.unmodifiableList(beansList);
-
+        return unmodifiableList(beansList);
     }
 
 
