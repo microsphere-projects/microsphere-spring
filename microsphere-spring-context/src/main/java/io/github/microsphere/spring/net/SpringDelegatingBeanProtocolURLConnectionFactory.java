@@ -47,15 +47,15 @@ public class SpringDelegatingBeanProtocolURLConnectionFactory implements SubProt
 
     @Override
     public URLConnection create(URL url, List<String> subProtocols, Proxy proxy) throws IOException {
-        List<SubProtocolURLConnectionFactory> delegates = getDelegates();
-        int index = selectDelegateIndex(url, subProtocols, delegates);
-        SubProtocolURLConnectionFactory delegate = delegates.get(index);
-        return delegate.create(url, subProtocols, proxy);
+        List<SubProtocolURLConnectionFactory> delegatingBeans = getDelegatingBeans();
+        int index = selectDelegateIndex(url, subProtocols, delegatingBeans);
+        SubProtocolURLConnectionFactory delegatingBean = delegatingBeans.get(index);
+        return delegatingBean.create(url, subProtocols, proxy);
     }
 
     private int selectDelegateIndex(URL url, List<String> subProtocols) {
-        List<SubProtocolURLConnectionFactory> delegates = getDelegates();
-        return selectDelegateIndex(url, subProtocols, delegates);
+        List<SubProtocolURLConnectionFactory> delegatingBeans = getDelegatingBeans();
+        return selectDelegateIndex(url, subProtocols, delegatingBeans);
     }
 
     private int selectDelegateIndex(URL url, List<String> subProtocols, List<SubProtocolURLConnectionFactory> factories) {
@@ -71,7 +71,7 @@ public class SpringDelegatingBeanProtocolURLConnectionFactory implements SubProt
         return index;
     }
 
-    private List<SubProtocolURLConnectionFactory> getDelegates() {
+    private List<SubProtocolURLConnectionFactory> getDelegatingBeans() {
         return BeanUtils.getSortedBeans(beanFactory, SubProtocolURLConnectionFactory.class);
     }
 }
