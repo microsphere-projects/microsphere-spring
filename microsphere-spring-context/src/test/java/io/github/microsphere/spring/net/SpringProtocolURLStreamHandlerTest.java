@@ -23,9 +23,13 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.Proxy;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -33,36 +37,50 @@ import static org.junit.Assert.assertNotNull;
  * {@link SpringProtocolURLStreamHandler} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see SpringResourceURLConnectionFactory
+ * @see SpringEnvironmentURLConnectionFactory
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-        SpringProtocolURLStreamHandler.class
-})
-@TestPropertySource(properties = {
-        "microsphere.net.a=1",
-        "microsphere.net.b=2",
-        "microsphere.net.c=3",
-})
+@ContextConfiguration(classes = {SpringProtocolURLStreamHandler.class, SpringTestURLConnectionFactory.class})
+@TestPropertySource(properties = {"microsphere.net.a=1", "microsphere.net.b=2", "microsphere.net.c=3",})
 public class SpringProtocolURLStreamHandlerTest {
 
     @Test
     public void testSpringResourceURLConnectionFactory() throws Throwable {
-        URL url = new URL("spring:resource:classpath://enable-configuration-bean-binding.properties");
+        assertContent(new URL("spring:resource:classpath://enable-configuration-bean-binding.properties"));
+    }
+
+    @Test
+    public void testSpringEnvironmentURLConnectionFactory() throws Throwable {
+        assertContent(new URL("spring:env:property-sources://microsphere.net/text/properties"));
+    }
+
+    @Test
+    public void testSpringDelegatingBeanURLConnectionFactory() throws Throwable {
+        assertContent(new URL("spring:test://test"));
+    }
+
+    private void assertContent(URL url) throws Throwable {
         String content = null;
         try (InputStream inputStream = url.openStream()) {
             content = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
         }
         assertNotNull(content);
     }
+}
 
-    @Test
-    public void testSpringEnvironmentURLConnectionFactory() throws Throwable {
-        URL url = new URL("spring:env:property-sources://microsphere.net/text/properties");
-        String content = null;
-        try (InputStream inputStream = url.openStream()) {
-            content = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
-        }
-        assertNotNull(content);
+class SpringTestURLConnectionFactory extends SpringSubProtocolURLConnectionFactory {
+
+    @Override
+    protected String getSubProtocol() {
+        return "test";
+    }
+
+    @Override
+    public URLConnection create(URL url, List<String> subProtocols, Proxy proxy) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource("enable-configuration-bean-binding.properties");
+        return resource.openConnection();
     }
 }
