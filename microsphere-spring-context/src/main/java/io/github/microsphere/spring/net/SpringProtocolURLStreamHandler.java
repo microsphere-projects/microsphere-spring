@@ -87,6 +87,7 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
     protected void initSubProtocolURLConnectionFactories(List<SubProtocolURLConnectionFactory> factories) {
         factories.add(new SpringResourceURLConnectionFactory(getResourceLoader()));
         factories.add(new SpringEnvironmentURLConnectionFactory(environment, conversionService));
+        factories.add(new SpringDelegatingBeanProtocolURLConnectionFactory(beanFactory));
     }
 
     @Override

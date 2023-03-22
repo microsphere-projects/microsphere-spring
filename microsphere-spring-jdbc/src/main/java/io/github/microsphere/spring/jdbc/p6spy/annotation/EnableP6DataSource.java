@@ -17,6 +17,7 @@
 package io.github.microsphere.spring.jdbc.p6spy.annotation;
 
 import com.p6spy.engine.spy.P6DataSource;
+import io.github.microsphere.spring.net.SpringProtocolURLStreamHandler;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -35,6 +36,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(P6DataSourceBeanDefinitionRegistrar.class)
+@Import(value = {
+        P6DataSourceBeanDefinitionRegistrar.class,
+        SpringProtocolURLStreamHandler.class
+})
 public @interface EnableP6DataSource {
 }
