@@ -28,8 +28,8 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
         this(Boolean.FALSE);
     }
 
-    public MethodHandlerInterceptor(boolean delegated) {
-        this.delegate = delegated;
+    public MethodHandlerInterceptor(boolean delegate) {
+        this.delegate = delegate;
     }
 
     @Override
