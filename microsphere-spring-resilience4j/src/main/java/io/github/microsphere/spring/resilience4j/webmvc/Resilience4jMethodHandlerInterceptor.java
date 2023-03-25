@@ -56,5 +56,8 @@ public class Resilience4jMethodHandlerInterceptor extends MethodHandlerIntercept
 
     }
 
+    protected String getResource(HttpServletRequest request, HandlerMethod handlerMethod) {
+        return null;
+    }
 
 }
