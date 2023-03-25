@@ -1,11 +1,13 @@
 package io.github.microsphere.spring.webmvc.interceptor;
 
+import io.github.microsphere.spring.webmvc.config.CommonWebMvcConfigurer;
 import io.github.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +35,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             if (supports(request, response, handlerMethod)) {
@@ -44,12 +45,10 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    protected abstract boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-                                         HandlerMethod handlerMethod) throws Exception;
+    protected abstract boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception;
 
     @Override
-    public final void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                 @Nullable ModelAndView modelAndView) throws Exception {
+    public final void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             if (supports(request, response, handlerMethod)) {
@@ -58,12 +57,10 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
         }
     }
 
-    protected abstract void postHandle(HttpServletRequest request, HttpServletResponse response,
-                                       HandlerMethod handlerMethod, ModelAndView modelAndView) throws Exception;
+    protected abstract void postHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Exception;
 
     @Override
-    public final void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                      @Nullable Exception ex) throws Exception {
+    public final void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             if (supports(request, response, handlerMethod)) {
@@ -72,17 +69,18 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
         }
     }
 
-    protected abstract void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-                                            HandlerMethod handlerMethod, Exception ex) throws Exception;
+    protected abstract void afterCompletion(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Exception;
 
     protected boolean supports(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         return true;
     }
 
     /**
-     * Whether the current {@link HandlerInterceptor} is a delegate instance
+     * Whether the current {@link HandlerInterceptor} is a Spring Bean as the delegate
      *
-     * @return If yes, <code>true<code>, otherwise <code>false<code>
+     * @return If <code>true<code>, current instance will be looked up by {@link DelegatingMethodHandlerInterceptor} as a delegate
+     * for intercepting, otherwise, current instance will be registered into {@link InterceptorRegistry} when
+     * the {@link CommonWebMvcConfigurer#addInterceptors(InterceptorRegistry)} method will be called.
      */
     public boolean isDelegate() {
         return delegate;
