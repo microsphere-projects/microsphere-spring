@@ -18,6 +18,11 @@
     <name>Microsphere Projects :: Spring Config</name>
     <description>Microsphere Spring Config</description>
 
+    <properties>
+        <curator.version>5.4.0</curator.version>
+
+    </properties>
+
     <dependencies>
 
         <!-- Spring Framework -->
@@ -38,6 +43,14 @@
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-context</artifactId>
             <version>${revision}</version>
+        </dependency>
+
+        <!-- Apache Curator -->
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>${curator.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- SLF4j API -->
