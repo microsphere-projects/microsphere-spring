@@ -17,6 +17,7 @@
 package io.github.microsphere.spring.resilience4j.circuitbreaker.annotation;
 
 import io.github.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
@@ -28,8 +29,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Enable Resilience4j {@link CircuitBreaker}
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since
+ * @since 1.0.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
