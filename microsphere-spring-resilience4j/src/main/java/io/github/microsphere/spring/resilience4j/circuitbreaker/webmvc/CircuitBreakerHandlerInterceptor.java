@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.webmvc;
+package io.github.microsphere.spring.resilience4j.circuitbreaker.webmvc;
 
 import io.github.microsphere.spring.resilience4j.Resilience4jContext;
+import io.github.microsphere.spring.resilience4j.webmvc.Resilience4jMethodHandlerInterceptor;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.Registry;
@@ -43,21 +44,17 @@ public class CircuitBreakerHandlerInterceptor extends Resilience4jMethodHandlerI
     }
 
     @Override
-    protected void preHandle(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-        context.start(CircuitBreaker::acquirePermission, failure -> {
-
-        });
+    protected void preHandle(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Throwable {
+        context.start(CircuitBreaker::acquirePermission);
     }
 
     @Override
-    protected void postHandle(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Exception {
-        context.end((circuitBreaker, duration) -> {
-            circuitBreaker.onResult(duration, TimeUnit.NANOSECONDS, modelAndView);
-        });
+    protected void postHandle(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Throwable {
+        context.end((circuitBreaker, duration) -> circuitBreaker.onResult(duration, TimeUnit.NANOSECONDS, modelAndView));
     }
 
     @Override
-    protected void afterCompletion(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Exception {
+    protected void afterCompletion(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Throwable {
         context.end((circuitBreaker, duration) -> {
             if (ex != null) {
                 circuitBreaker.onError(duration, TimeUnit.NANOSECONDS, ex);

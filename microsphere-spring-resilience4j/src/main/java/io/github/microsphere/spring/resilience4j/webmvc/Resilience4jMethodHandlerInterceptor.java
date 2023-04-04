@@ -23,6 +23,7 @@ import io.github.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.Registry;
+import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -39,6 +40,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import static io.github.microsphere.reflect.MethodUtils.getSignature;
 import static io.github.microsphere.spring.resilience4j.Resilience4jModule.valueOf;
@@ -59,6 +61,8 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
     protected final static int ENTRY_CLASS_GENERIC_INDEX = 0;
 
     protected final static int CONFIGURATION_CLASS_GENERIC_INDEX = 1;
+
+    protected final static Function<? super Throwable, Exception> EXCEPTION_PROVIDER = t -> t instanceof Exception ? (Exception) t : new Exception(t.getCause());
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -91,27 +95,28 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
     @Override
     protected final boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         Resilience4jContext<E> context = getContext(request, handlerMethod);
-        preHandle(context, request, response, handlerMethod);
+        Try.run(() -> preHandle(context, request, response, handlerMethod)).getOrElseThrow(EXCEPTION_PROVIDER);
         return true;
     }
+
 
     @Override
     protected final void postHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Exception {
         Resilience4jContext<E> context = getContext(request, handlerMethod);
-        postHandle(context, request, response, handlerMethod, modelAndView);
+        Try.run(() -> postHandle(context, request, response, handlerMethod, modelAndView)).getOrElseThrow(EXCEPTION_PROVIDER);
     }
 
     @Override
     protected final void afterCompletion(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Exception {
         Resilience4jContext<E> context = getContext(request, handlerMethod);
-        afterCompletion(context, request, response, handlerMethod, ex);
+        Try.run(() -> afterCompletion(context, request, response, handlerMethod, ex)).getOrElseThrow(EXCEPTION_PROVIDER);
     }
 
-    protected abstract void preHandle(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception;
+    protected abstract void preHandle(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Throwable;
 
-    protected abstract void postHandle(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Exception;
+    protected abstract void postHandle(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Throwable;
 
-    protected abstract void afterCompletion(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Exception;
+    protected abstract void afterCompletion(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Throwable;
 
     @Override
     public void onApplicationEvent(HandlerMethodsInitializedEvent event) {
@@ -205,7 +210,7 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
      *
      * @return non-null
      */
-    protected final C getDefaultConfiguration() {
+    public final C getDefaultConfiguration() {
         return registry.getDefaultConfig();
     }
 
@@ -214,7 +219,7 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
      *
      * @return non-null
      */
-    protected final Class<E> getEntryClass() {
+    public final Class<E> getEntryClass() {
         return this.entryClass;
     }
 
@@ -223,7 +228,7 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
      *
      * @return non-null
      */
-    protected final Class<C> getConfigurationClass() {
+    public final Class<C> getConfigurationClass() {
         return this.configurationClass;
     }
 
@@ -232,7 +237,7 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
      *
      * @return non-null
      */
-    protected final Resilience4jModule getModule() {
+    public final Resilience4jModule getModule() {
         return module;
     }
 

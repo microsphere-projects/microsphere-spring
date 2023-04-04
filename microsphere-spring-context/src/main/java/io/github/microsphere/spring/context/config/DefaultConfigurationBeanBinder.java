@@ -17,6 +17,7 @@
 package io.github.microsphere.spring.context.config;
 
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.DataBinder;
 
 import java.util.Map;
@@ -30,6 +31,13 @@ import java.util.Map;
  */
 public class DefaultConfigurationBeanBinder implements ConfigurationBeanBinder {
 
+    private ConversionService conversionService;
+
+    @Override
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
     @Override
     public void bind(Map<String, Object> configurationProperties, boolean ignoreUnknownFields,
                      boolean ignoreInvalidFields, Object configurationBean) {
@@ -40,6 +48,8 @@ public class DefaultConfigurationBeanBinder implements ConfigurationBeanBinder {
         // Get properties under specified prefix from PropertySources
         // Convert Map to MutablePropertyValues
         MutablePropertyValues propertyValues = new MutablePropertyValues(configurationProperties);
+        dataBinder.initDirectFieldAccess();
+        dataBinder.setConversionService(conversionService);
         // Bind
         dataBinder.bind(propertyValues);
     }

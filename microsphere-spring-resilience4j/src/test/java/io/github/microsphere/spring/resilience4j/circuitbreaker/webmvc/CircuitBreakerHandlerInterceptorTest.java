@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.webmvc;
+package io.github.microsphere.spring.resilience4j.circuitbreaker.webmvc;
 
 import io.github.microsphere.spring.resilience4j.Resilience4jModule;
+import io.github.microsphere.spring.resilience4j.circuitbreaker.webmvc.CircuitBreakerHandlerInterceptor;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;

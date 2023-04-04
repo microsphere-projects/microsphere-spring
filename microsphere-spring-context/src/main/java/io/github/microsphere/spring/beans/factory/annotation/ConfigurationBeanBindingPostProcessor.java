@@ -19,6 +19,8 @@ package io.github.microsphere.spring.beans.factory.annotation;
 import io.github.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.github.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.github.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
+import io.github.microsphere.spring.core.convert.SpringConverterAdapter;
+import io.github.microsphere.spring.core.convert.support.ConversionServiceResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -29,6 +31,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.ConverterRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -125,8 +129,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     }
 
     public void setConfigurationBeanCustomizers(Collection<ConfigurationBeanCustomizer> configurationBeanCustomizers) {
-        List<ConfigurationBeanCustomizer> customizers =
-                new ArrayList<ConfigurationBeanCustomizer>(configurationBeanCustomizers);
+        List<ConfigurationBeanCustomizer> customizers = new ArrayList<ConfigurationBeanCustomizer>(configurationBeanCustomizers);
         sort(customizers);
         this.configurationBeanCustomizers = Collections.unmodifiableList(customizers);
     }
@@ -136,9 +139,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     }
 
     private boolean isConfigurationBean(Object bean, BeanDefinition beanDefinition) {
-        return beanDefinition != null &&
-                ENABLE_CONFIGURATION_BINDING_CLASS.equals(beanDefinition.getSource())
-                && nullSafeEquals(getBeanClassName(bean), beanDefinition.getBeanClassName());
+        return beanDefinition != null && ENABLE_CONFIGURATION_BINDING_CLASS.equals(beanDefinition.getSource()) && nullSafeEquals(getBeanClassName(bean), beanDefinition.getBeanClassName());
     }
 
     private String getBeanClassName(Object bean) {
@@ -156,12 +157,12 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
         getConfigurationBeanBinder().bind(configurationProperties, ignoreUnknownFields, ignoreInvalidFields, configurationBean);
 
         if (log.isInfoEnabled()) {
-            log.info("The configuration bean [" + configurationBean + "] have been binding by the " +
-                    "configuration properties [" + configurationProperties + "]");
+            log.info("The configuration bean [" + configurationBean + "] have been binding by the " + "configuration properties [" + configurationProperties + "]");
         }
     }
 
     private void initConfigurationBeanBinder() {
+        ConfigurationBeanBinder configurationBeanBinder = this.configurationBeanBinder;
         if (configurationBeanBinder == null) {
             try {
                 configurationBeanBinder = beanFactory.getBean(ConfigurationBeanBinder.class);
@@ -173,11 +174,15 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
                 configurationBeanBinder = defaultConfigurationBeanBinder();
             }
         }
+
+        ConversionService conversionService = new ConversionServiceResolver(beanFactory).resolve();
+        configurationBeanBinder.setConversionService(conversionService);
+
+        this.configurationBeanBinder = configurationBeanBinder;
     }
 
     private void initBindConfigurationBeanCustomizers() {
-        Collection<ConfigurationBeanCustomizer> customizers =
-                beansOfTypeIncludingAncestors(beanFactory, ConfigurationBeanCustomizer.class).values();
+        Collection<ConfigurationBeanCustomizer> customizers = beansOfTypeIncludingAncestors(beanFactory, ConfigurationBeanCustomizer.class).values();
         setConfigurationBeanCustomizers(customizers);
     }
 
@@ -196,9 +201,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
         return new DefaultConfigurationBeanBinder();
     }
 
-    static void initBeanMetadataAttributes(AbstractBeanDefinition beanDefinition,
-                                           Map<String, Object> configurationProperties,
-                                           boolean ignoreUnknownFields, boolean ignoreInvalidFields) {
+    static void initBeanMetadataAttributes(AbstractBeanDefinition beanDefinition, Map<String, Object> configurationProperties, boolean ignoreUnknownFields, boolean ignoreInvalidFields) {
         beanDefinition.setAttribute(CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME, configurationProperties);
         beanDefinition.setAttribute(IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME, ignoreUnknownFields);
         beanDefinition.setAttribute(IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME, ignoreInvalidFields);

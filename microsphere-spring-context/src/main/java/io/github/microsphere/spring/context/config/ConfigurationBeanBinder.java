@@ -17,7 +17,9 @@
 package io.github.microsphere.spring.context.config;
 
 import io.github.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.Nullable;
 
 import java.util.Map;
 
@@ -39,6 +41,14 @@ public interface ConfigurationBeanBinder {
      *                                from the attribute of {@link EnableConfigurationBeanBinding#ignoreInvalidFields()}
      * @param configurationBean       the bean of configuration
      */
-    void bind(Map<String, Object> configurationProperties, boolean ignoreUnknownFields, boolean ignoreInvalidFields,
-              Object configurationBean);
+    void bind(Map<String, Object> configurationProperties, boolean ignoreUnknownFields, boolean ignoreInvalidFields, Object configurationBean);
+
+    /**
+     * Set the {@link ConversionService}
+     *
+     * @param conversionService {@link ConversionService}
+     */
+    default void setConversionService(@Nullable ConversionService conversionService) {
+    }
+
 }

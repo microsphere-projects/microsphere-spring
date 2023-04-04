@@ -53,12 +53,15 @@ public class Resilience4jContext<E> {
     }
 
     public void start(CheckedConsumer<E> entryStart) throws Throwable {
-        entryStart.accept(this.entry);
+        start(e -> {
+            entryStart.accept(e);
+            return null;
+        });
     }
 
     public void start(CheckedConsumer<E> entryStart, Consumer<Throwable> failureHandle) {
         start(e -> {
-            entryStart.accept(this.entry);
+            entryStart.accept(e);
             return null;
         }, failureHandle);
     }
