@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 
 /**
- * {@link CircuitBreakerEventConsumerRegistrar} Test
+ * {@link CircuitBreakerEventConsumerBeanRegistrar} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -45,11 +45,11 @@ import static org.junit.Assert.assertEquals;
         classes = {
                 CircuitBreakerConfigurationProperties.class,
                 CircuitBreakerConfiguration.class,
-                CircuitBreakerEventConsumerRegistrar.class,
-                CircuitBreakerEventConsumerRegistrarTest.class
+                CircuitBreakerEventConsumerBeanRegistrar.class,
+                CircuitBreakerEventConsumerBeanRegistrarTest.class
         }
 )
-public class CircuitBreakerEventConsumerRegistrarTest {
+public class CircuitBreakerEventConsumerBeanRegistrarTest {
 
     @Autowired
     private CircuitBreakerRegistry registry;

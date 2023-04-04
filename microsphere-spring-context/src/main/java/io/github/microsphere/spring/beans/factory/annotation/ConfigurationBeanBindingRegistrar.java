@@ -31,7 +31,6 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashSet;
@@ -98,14 +97,6 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
                                             BeanDefinitionRegistry registry) {
 
         Map<String, Object> configurationProperties = PropertySourcesUtils.getSubProperties(environment.getPropertySources(), environment, prefix);
-
-        if (CollectionUtils.isEmpty(configurationProperties)) {
-            if (log.isDebugEnabled()) {
-                log.debug("There is no property for binding to configuration class [" + configClass.getName()
-                        + "] within prefix [" + prefix + "]");
-            }
-            return;
-        }
 
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(configurationProperties) :
                 singleton(resolveSingleBeanName(configurationProperties, configClass, registry));

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.circuitbreaker.annotation;
+package io.github.microsphere.spring.resilience4j.bulkhead.annotation;
 
-import io.github.microsphere.spring.resilience4j.circuitbreaker.event.CircuitBreakerApplicationEventPublisher;
-import io.github.microsphere.spring.resilience4j.circuitbreaker.event.CircuitBreakerEventConsumerBeanRegistrar;
-import io.github.microsphere.spring.resilience4j.circuitbreaker.webmvc.CircuitBreakerHandlerInterceptor;
-import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfiguration;
+import io.github.microsphere.spring.resilience4j.bulkhead.event.BulkheadApplicationEventPublisher;
+import io.github.microsphere.spring.resilience4j.bulkhead.event.BulkheadEventConsumerBeanRegistrar;
+import io.github.microsphere.spring.resilience4j.bulkhead.webmvc.BulkheadHandlerInterceptor;
+import io.github.resilience4j.bulkhead.configure.BulkheadConfiguration;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -29,22 +29,22 @@ import static io.github.microsphere.spring.util.BeanRegistrar.registerBeanDefini
 import static io.github.microsphere.util.ClassLoaderUtils.isPresent;
 
 /**
- * The {@link EnableCircuitBreaker} {@link ImportBeanDefinitionRegistrar} class
+ * The {@link EnableBulkhead} {@link ImportBeanDefinitionRegistrar} class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class EnableCircuitBreakerRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
+class EnableBulkheadRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
 
     private ClassLoader classLoader;
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        registerBeanDefinition(registry, CircuitBreakerConfiguration.class);
-        registerBeanDefinition(registry, CircuitBreakerApplicationEventPublisher.class);
-        registerBeanDefinition(registry, CircuitBreakerEventConsumerBeanRegistrar.class);
+        registerBeanDefinition(registry, BulkheadConfiguration.class);
+        registerBeanDefinition(registry, BulkheadApplicationEventPublisher.class);
+        registerBeanDefinition(registry, BulkheadEventConsumerBeanRegistrar.class);
         if (isPresent("org.springframework.web.servlet.HandlerInterceptor", classLoader)) {
-            registerBeanDefinition(registry, CircuitBreakerHandlerInterceptor.class);
+            registerBeanDefinition(registry, BulkheadHandlerInterceptor.class);
         }
     }
 

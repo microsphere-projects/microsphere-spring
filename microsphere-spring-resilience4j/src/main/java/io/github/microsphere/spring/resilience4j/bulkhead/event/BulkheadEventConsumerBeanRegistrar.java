@@ -14,19 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.circuitbreaker.event;
+package io.github.microsphere.spring.resilience4j.bulkhead.event;
 
-import io.github.microsphere.spring.resilience4j.event.Resilience4jEventApplicationEventPublisher;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.event.CircuitBreakerEvent;
+import io.github.microsphere.spring.resilience4j.event.Resilience4jEventConsumerBeanRegistrar;
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.bulkhead.event.BulkheadEvent;
 import io.github.resilience4j.core.EventConsumer;
-import org.springframework.context.ApplicationEvent;
 
 /**
- * An {@link EventConsumer} for {@link CircuitBreakerEvent} to publish the Spring {@link ApplicationEvent}
+ * The {@link BulkheadEvent BulkheadEvents'} {@link EventConsumer Event consumer beans} register
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class CircuitBreakerApplicationEventPublisher extends Resilience4jEventApplicationEventPublisher<CircuitBreaker, CircuitBreakerEvent> {
+public class BulkheadEventConsumerBeanRegistrar extends Resilience4jEventConsumerBeanRegistrar<Bulkhead> {
 }
