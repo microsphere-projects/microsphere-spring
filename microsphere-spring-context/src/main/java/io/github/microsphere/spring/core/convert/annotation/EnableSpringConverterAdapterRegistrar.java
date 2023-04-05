@@ -18,11 +18,15 @@ package io.github.microsphere.spring.core.convert.annotation;
 
 import io.github.microsphere.spring.core.convert.SpringConverterAdapter;
 import io.github.microsphere.spring.core.convert.support.ConversionServiceResolver;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.ConverterRegistry;
+import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * {@link EnableSpringConverterAdapter} {@link Configuration} class
@@ -32,10 +36,20 @@ import org.springframework.core.convert.converter.ConverterRegistry;
  * @see SpringConverterAdapter
  * @since 1.0.0
  */
-class EnableSpringConverterAdapterConfiguration {
+class EnableSpringConverterAdapterRegistrar implements ImportSelector, BeanFactoryAware {
 
-    @Autowired
-    public void addSpringConverterAdapter(ConfigurableBeanFactory beanFactory) {
+    @Override
+    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+        return new String[0];
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+        addSpringConverterAdapter(configurableBeanFactory);
+    }
+
+    private void addSpringConverterAdapter(ConfigurableBeanFactory beanFactory) {
         ConversionServiceResolver conversionServiceResolver = new ConversionServiceResolver(beanFactory);
         ConversionService conversionService = conversionServiceResolver.resolve();
         if (conversionService instanceof ConverterRegistry) {

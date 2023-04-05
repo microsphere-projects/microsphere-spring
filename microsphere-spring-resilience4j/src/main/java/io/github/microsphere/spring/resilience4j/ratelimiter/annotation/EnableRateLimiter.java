@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.core.convert.annotation;
+package io.github.microsphere.spring.resilience4j.ratelimiter.annotation;
 
-import io.github.microsphere.spring.core.convert.SpringConverterAdapter;
+import io.github.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.configure.RateLimiterConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -27,16 +29,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Enable {@link SpringConverterAdapter}
+ * Enable Resilience4j {@link RateLimiter}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see SpringConverterAdapter
  * @since 1.0.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import(EnableSpringConverterAdapterRegistrar.class)
-public @interface EnableSpringConverterAdapter {
+@Import(EnableRateLimiterRegistrar.class)
+@EnableConfigurationBeanBinding(prefix = "microsphere.resilience4j.ratelimiter", type = RateLimiterConfigurationProperties.class)
+public @interface EnableRateLimiter {
 }

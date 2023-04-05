@@ -14,29 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.core.convert.annotation;
+package io.github.microsphere.spring.resilience4j.ratelimiter.event;
 
-import io.github.microsphere.spring.core.convert.SpringConverterAdapter;
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.github.microsphere.spring.resilience4j.event.Resilience4jEventApplicationEventPublisher;
+import io.github.resilience4j.core.EventConsumer;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.event.RateLimiterEvent;
+import org.springframework.context.ApplicationEvent;
 
 /**
- * Enable {@link SpringConverterAdapter}
+ * An {@link EventConsumer} for {@link RateLimiterEvent} to publish the Spring {@link ApplicationEvent}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see SpringConverterAdapter
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Inherited
-@Import(EnableSpringConverterAdapterRegistrar.class)
-public @interface EnableSpringConverterAdapter {
+public class RateLimiterApplicationEventPublisher extends Resilience4jEventApplicationEventPublisher<RateLimiter, RateLimiterEvent> {
 }
