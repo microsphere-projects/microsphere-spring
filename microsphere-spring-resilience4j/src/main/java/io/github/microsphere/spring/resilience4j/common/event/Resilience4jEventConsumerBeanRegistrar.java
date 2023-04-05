@@ -14,40 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.event;
+package io.github.microsphere.spring.resilience4j.common.event;
 
 import io.github.resilience4j.core.EventConsumer;
-import io.github.resilience4j.core.EventPublisher;
 import io.github.resilience4j.core.registry.EntryAddedEvent;
 import io.github.resilience4j.core.registry.EntryRemovedEvent;
 import io.github.resilience4j.core.registry.EntryReplacedEvent;
 import io.github.resilience4j.core.registry.RegistryEventConsumer;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
+import static org.springframework.util.ReflectionUtils.doWithLocalMethods;
 import static org.springframework.util.ReflectionUtils.findMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
 
 /**
- * Propagating Resilience4j's event to the Spring {@link ApplicationEvent}
+ * Resilience4j {@link EventConsumer Event consumer beans} register
  *
- * @param <E>  the type of Resilience4j entry
- * @param <ET> the type o Resilience4j entries' event
+ * @param <E> The Resilience4j entry
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class Resilience4jEventApplicationEventPublisher<E, ET> implements EventConsumer<ET>, RegistryEventConsumer<E>, ApplicationEventPublisherAware {
+public abstract class Resilience4jEventConsumerBeanRegistrar<E> implements RegistryEventConsumer<E>, BeanFactoryAware {
 
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Override
-    public void consumeEvent(ET event) {
-        applicationEventPublisher.publishEvent(event);
-    }
+    private BeanFactory beanFactory;
 
     @Override
     public void onEntryAddedEvent(EntryAddedEvent<E> entryAddedEvent) {
@@ -63,16 +59,23 @@ public abstract class Resilience4jEventApplicationEventPublisher<E, ET> implemen
         register(entryReplacedEvent::getNewEntry);
     }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
     private void register(Supplier<E> entrySupplier) {
         E entry = entrySupplier.get();
         Class<?> entryClass = entry.getClass();
         Method eventPublisherMethod = findMethod(entryClass, "getEventPublisher");
-        EventPublisher<ET> eventPublisher = (EventPublisher) invokeMethod(eventPublisherMethod, entry);
-        eventPublisher.onEvent(this::consumeEvent);
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+        Class<?> eventPublisherClass = eventPublisherMethod.getReturnType();
+        Object eventPublisher = invokeMethod(eventPublisherMethod, entry);
+        doWithLocalMethods(eventPublisherClass, method -> {
+            if (method.getParameterCount() == 1 && EventConsumer.class.equals(method.getParameterTypes()[0])) {
+                ResolvableType type = ResolvableType.forMethodParameter(method, 0);
+                ObjectProvider objectProvider = beanFactory.getBeanProvider(type);
+                objectProvider.forEach(eventConsumerBean -> invokeMethod(method, eventPublisher, eventConsumerBean));
+            }
+        });
     }
 }

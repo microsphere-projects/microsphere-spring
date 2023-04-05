@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.resilience4j.circuitbreaker.event;
 
-import io.github.microsphere.spring.resilience4j.event.Resilience4jEventApplicationEventPublisher;
+import io.github.microsphere.spring.resilience4j.common.event.Resilience4jEventApplicationEventPublisher;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.event.CircuitBreakerEvent;
 import io.github.resilience4j.core.EventConsumer;

@@ -65,18 +65,21 @@
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-jdbc</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-webmvc</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-redis</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
 
         <!--  Resilience4j -->

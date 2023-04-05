@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.resilience4j.retry.event;
 
-import io.github.microsphere.spring.resilience4j.event.Resilience4jEventApplicationEventPublisher;
+import io.github.microsphere.spring.resilience4j.common.event.Resilience4jEventApplicationEventPublisher;
 import io.github.resilience4j.core.EventConsumer;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.event.RetryEvent;

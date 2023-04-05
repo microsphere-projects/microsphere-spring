@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.resilience4j.ratelimiter.event;
 
-import io.github.microsphere.spring.resilience4j.event.Resilience4jEventConsumerBeanRegistrar;
+import io.github.microsphere.spring.resilience4j.common.event.Resilience4jEventConsumerBeanRegistrar;
 import io.github.resilience4j.core.EventConsumer;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.event.RateLimiterEvent;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j;
+package io.github.microsphere.spring.resilience4j.common;
 
 import io.vavr.CheckedConsumer;
 import io.vavr.CheckedFunction0;

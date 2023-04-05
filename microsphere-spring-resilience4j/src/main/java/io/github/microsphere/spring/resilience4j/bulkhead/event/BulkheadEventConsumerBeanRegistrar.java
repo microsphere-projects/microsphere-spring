@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.resilience4j.bulkhead.event;
 
-import io.github.microsphere.spring.resilience4j.event.Resilience4jEventConsumerBeanRegistrar;
+import io.github.microsphere.spring.resilience4j.common.event.Resilience4jEventConsumerBeanRegistrar;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.event.BulkheadEvent;
 import io.github.resilience4j.core.EventConsumer;

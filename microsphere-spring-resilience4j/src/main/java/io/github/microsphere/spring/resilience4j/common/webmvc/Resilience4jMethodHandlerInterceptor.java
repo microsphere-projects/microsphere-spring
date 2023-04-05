@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.webmvc;
+package io.github.microsphere.spring.resilience4j.common.webmvc;
 
-import io.github.microsphere.spring.resilience4j.Resilience4jContext;
-import io.github.microsphere.spring.resilience4j.Resilience4jModule;
+import io.github.microsphere.spring.resilience4j.common.Resilience4jContext;
+import io.github.microsphere.spring.resilience4j.common.Resilience4jModule;
 import io.github.microsphere.spring.webmvc.interceptor.MethodHandlerInterceptor;
 import io.github.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static io.github.microsphere.reflect.MethodUtils.getSignature;
-import static io.github.microsphere.spring.resilience4j.Resilience4jModule.valueOf;
+import static io.github.microsphere.spring.resilience4j.common.Resilience4jModule.valueOf;
 import static org.springframework.core.ResolvableType.forType;
 
 /**

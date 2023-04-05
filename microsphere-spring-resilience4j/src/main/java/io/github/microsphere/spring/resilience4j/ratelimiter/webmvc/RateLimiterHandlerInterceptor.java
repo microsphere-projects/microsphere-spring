@@ -16,8 +16,8 @@
  */
 package io.github.microsphere.spring.resilience4j.ratelimiter.webmvc;
 
-import io.github.microsphere.spring.resilience4j.Resilience4jContext;
-import io.github.microsphere.spring.resilience4j.webmvc.Resilience4jMethodHandlerInterceptor;
+import io.github.microsphere.spring.resilience4j.common.Resilience4jContext;
+import io.github.microsphere.spring.resilience4j.common.webmvc.Resilience4jMethodHandlerInterceptor;
 import io.github.resilience4j.core.Registry;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;

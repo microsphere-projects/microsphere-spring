@@ -16,8 +16,7 @@
  */
 package io.github.microsphere.spring.resilience4j.circuitbreaker.webmvc;
 
-import io.github.microsphere.spring.resilience4j.Resilience4jModule;
-import io.github.microsphere.spring.resilience4j.circuitbreaker.webmvc.CircuitBreakerHandlerInterceptor;
+import io.github.microsphere.spring.resilience4j.common.Resilience4jModule;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;

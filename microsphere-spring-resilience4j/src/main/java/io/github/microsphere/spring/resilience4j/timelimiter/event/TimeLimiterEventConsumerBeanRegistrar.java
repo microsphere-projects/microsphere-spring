@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.resilience4j.timelimiter.event;
 
-import io.github.microsphere.spring.resilience4j.event.Resilience4jEventConsumerBeanRegistrar;
+import io.github.microsphere.spring.resilience4j.common.event.Resilience4jEventConsumerBeanRegistrar;
 import io.github.resilience4j.core.EventConsumer;
 import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.event.TimeLimiterEvent;
