@@ -33,9 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Zookeeper 配置
- * 1. 根据 @EnableZookeeperConfig 元信息，连接字符串以及根路径创建 CuratorFramework 客户端
- * 2. 根据根路径 rootPath 遍历所有的 PropertySource 子节点
+ * Zookeeper Configuration
+ * 1. Create a CuratorFramework client based on the @EnableZookeeperConfig meta information, connection string, and root path
+ * 2. Traverse all PropertySource child nodes according to the root path rootPath
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableZookeeperConfig
