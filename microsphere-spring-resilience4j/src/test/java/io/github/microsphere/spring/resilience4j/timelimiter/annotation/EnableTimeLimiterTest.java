@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.ratelimiter.annotation;
+package io.github.microsphere.spring.resilience4j.timelimiter.annotation;
 
 import io.github.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
-import io.github.resilience4j.ratelimiter.RateLimiter;
-import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
-import io.github.resilience4j.ratelimiter.configure.RateLimiterConfigurationProperties;
-import io.github.resilience4j.ratelimiter.event.RateLimiterOnSuccessEvent;
+import io.github.resilience4j.timelimiter.TimeLimiter;
+import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
+import io.github.resilience4j.timelimiter.configure.TimeLimiterConfigurationProperties;
+import io.github.resilience4j.timelimiter.event.TimeLimiterOnSuccessEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,50 +32,47 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Duration;
 
-import static io.github.resilience4j.ratelimiter.event.RateLimiterEvent.Type.SUCCESSFUL_ACQUIRE;
 import static org.junit.Assert.assertEquals;
 
 /**
- * {@link EnableRateLimiter} Test
+ * {@link EnableTimeLimiter} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {EnableRateLimiterTest.class})
+@ContextConfiguration(classes = {EnableTimeLimiterTest.class})
 @TestPropertySource(properties = {
-        "microsphere.resilience4j.ratelimiter.instances[test].timeoutDuration=PT10S",
-        "microsphere.resilience4j.ratelimiter.instances[test].limitRefreshPeriod=PT0.000001S",
-        "microsphere.resilience4j.ratelimiter.instances[test].limitForPeriod=20"})
-@EnableRateLimiter
+        "microsphere.resilience4j.timelimiter.instances[test].timeoutDuration=PT10S",
+        "microsphere.resilience4j.timelimiter.instances[test].cancelRunningFuture=true",
+        "microsphere.resilience4j.timelimiter.instances[test].eventConsumerBufferSize=200"})
+@EnableTimeLimiter
 @EnableSpringConverterAdapter
-public class EnableRateLimiterTest {
+public class EnableTimeLimiterTest {
 
     @Autowired
-    private RateLimiterRegistry registry;
+    private TimeLimiterRegistry registry;
 
     @Autowired
-    private RateLimiterConfigurationProperties properties;
+    private TimeLimiterConfigurationProperties properties;
 
     @Autowired
     private ConfigurableBeanFactory beanFactory;
 
     @Test
     public void test() {
-        RateLimiter rateLimiter = registry.rateLimiter("test");
-        rateLimiter.acquirePermission();
+        TimeLimiter timeLimiter = registry.timeLimiter("test");
 
-        RateLimiterConfigurationProperties.InstanceProperties instanceProperties = properties.getInstances().get("test");
+        TimeLimiterConfigurationProperties.InstanceProperties instanceProperties = properties.getInstances().get("test");
         assertEquals(Duration.ofSeconds(10), instanceProperties.getTimeoutDuration());
-        assertEquals(Integer.valueOf(20), instanceProperties.getLimitForPeriod());
-        assertEquals(Duration.ofNanos(1000), instanceProperties.getLimitRefreshPeriod());
+        assertEquals(Boolean.TRUE, instanceProperties.getCancelRunningFuture());
+        assertEquals(Integer.valueOf(200), instanceProperties.getEventConsumerBufferSize());
 
-        rateLimiter.onSuccess();
+        timeLimiter.onSuccess();
     }
 
-    @EventListener(RateLimiterOnSuccessEvent.class)
-    public void onRateLimiterOnSuccessEvent(RateLimiterOnSuccessEvent event) {
-        assertEquals("test", event.getRateLimiterName());
-        assertEquals(SUCCESSFUL_ACQUIRE, event.getEventType());
+    @EventListener(TimeLimiterOnSuccessEvent.class)
+    public void onTimeLimiterOnSuccessEvent(TimeLimiterOnSuccessEvent event) {
+        assertEquals("test", event.getTimeLimiterName());
     }
 }
