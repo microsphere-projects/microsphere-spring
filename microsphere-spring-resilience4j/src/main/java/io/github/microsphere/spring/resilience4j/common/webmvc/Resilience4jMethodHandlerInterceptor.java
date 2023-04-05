@@ -191,7 +191,7 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
         String moduleName = getModule().name();
         Method method = handlerMethod.getMethod();
         String signature = getSignature(method);
-        return moduleName + "@" + signature;
+        return "spring:webmvc:" + moduleName + "@" + signature;
     }
 
     /**
