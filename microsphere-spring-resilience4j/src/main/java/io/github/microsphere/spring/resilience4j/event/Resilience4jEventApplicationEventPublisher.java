@@ -40,7 +40,7 @@ import static org.springframework.util.ReflectionUtils.invokeMethod;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class Resilience4jEventApplicationEventPublisher<E, ET> implements EventConsumer<ET>, RegistryEventConsumer<E>, ApplicationEventPublisherAware {
+public abstract class Resilience4jEventApplicationEventPublisher<E, ET> implements EventConsumer<ET>, RegistryEventConsumer<E>, ApplicationEventPublisherAware {
 
     private ApplicationEventPublisher applicationEventPublisher;
 
