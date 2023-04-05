@@ -47,8 +47,8 @@ import static org.junit.Assert.assertEquals;
         "microsphere.resilience4j.ratelimiter.instances[test].timeoutDuration=PT10S",
         "microsphere.resilience4j.ratelimiter.instances[test].limitRefreshPeriod=PT0.000001S",
         "microsphere.resilience4j.ratelimiter.instances[test].limitForPeriod=20"})
-@EnableSpringConverterAdapter
 @EnableRateLimiter
+@EnableSpringConverterAdapter
 public class EnableRateLimiterTest {
 
     @Autowired

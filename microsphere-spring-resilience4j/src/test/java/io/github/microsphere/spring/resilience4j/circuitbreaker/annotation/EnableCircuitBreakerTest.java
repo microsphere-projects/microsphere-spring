@@ -16,20 +16,15 @@
  */
 package io.github.microsphere.spring.resilience4j.circuitbreaker.annotation;
 
-import io.github.microsphere.spring.core.convert.SpringConverterAdapter;
-import io.github.microsphere.spring.core.convert.support.ConversionServiceResolver;
+import io.github.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfigurationProperties;
 import io.github.resilience4j.circuitbreaker.event.CircuitBreakerOnSuccessEvent;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
+
 /**
  * {@link EnableCircuitBreaker} Test
  *
@@ -47,30 +43,18 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {EnableCircuitBreakerTest.class})
-@TestPropertySource(properties = {"microsphere.resilience4j.circuitbreaker.instances[test].waitDurationInOpenState=PT30S", "microsphere.resilience4j.circuitbreaker.instances[test].slidingWindowSize=100", "microsphere.resilience4j.circuitbreaker.instances[test].slowCallRateThreshold=0.7"})
+@TestPropertySource(properties = {
+        "microsphere.resilience4j.circuitbreaker.instances[test].waitDurationInOpenState=PT30S",
+        "microsphere.resilience4j.circuitbreaker.instances[test].slidingWindowSize=100",
+        "microsphere.resilience4j.circuitbreaker.instances[test].slowCallRateThreshold=0.7"})
 @EnableCircuitBreaker
+@EnableSpringConverterAdapter
 public class EnableCircuitBreakerTest {
     @Autowired
     private CircuitBreakerRegistry registry;
 
     @Autowired
     private CircuitBreakerConfigurationProperties properties;
-
-    @Autowired
-    private ConfigurableBeanFactory beanFactory;
-
-    @Before
-    public void before() {
-        ConversionService conversionService = new ConversionServiceResolver(beanFactory).resolve();
-        registerSpringConverterAdapter(conversionService);
-    }
-
-    private void registerSpringConverterAdapter(ConversionService conversionService) {
-        if (conversionService instanceof ConverterRegistry) {
-            ConverterRegistry registry = (ConverterRegistry) conversionService;
-            registry.addConverter(SpringConverterAdapter.INSTANCE);
-        }
-    }
 
     @Test
     public void test() {

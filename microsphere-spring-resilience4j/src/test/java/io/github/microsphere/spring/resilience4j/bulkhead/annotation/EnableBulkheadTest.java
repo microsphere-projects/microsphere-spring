@@ -16,6 +16,7 @@
  */
 package io.github.microsphere.spring.resilience4j.bulkhead.annotation;
 
+import io.github.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.bulkhead.configure.BulkheadConfigurationProperties;
@@ -28,6 +29,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.time.Duration;
 
 import static io.github.resilience4j.bulkhead.event.BulkheadEvent.Type.CALL_PERMITTED;
 import static org.junit.Assert.assertEquals;
@@ -43,8 +46,9 @@ import static org.junit.Assert.assertEquals;
 @TestPropertySource(properties = {
         "microsphere.resilience4j.bulkhead.instances[test].maxConcurrentCalls=10",
         "microsphere.resilience4j.bulkhead.instances[test].eventConsumerBufferSize=100",
-        "microsphere.resilience4j.bulkhead.instances[test].maxWaitDuration=PT30s"})
+        "microsphere.resilience4j.bulkhead.instances[test].maxWaitDuration=PT30S"})
 @EnableBulkhead
+@EnableSpringConverterAdapter
 public class EnableBulkheadTest {
 
     @Autowired
@@ -64,6 +68,7 @@ public class EnableBulkheadTest {
         io.github.resilience4j.common.bulkhead.configuration.BulkheadConfigurationProperties.InstanceProperties instanceProperties = properties.getInstances().get("test");
         assertEquals(Integer.valueOf(10), instanceProperties.getMaxConcurrentCalls());
         assertEquals(Integer.valueOf(100), instanceProperties.getEventConsumerBufferSize());
+        assertEquals(Duration.ofSeconds(30), instanceProperties.getMaxWaitDuration());
     }
 
     @EventListener(BulkheadOnCallPermittedEvent.class)
