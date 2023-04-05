@@ -57,9 +57,6 @@ public class EnableRateLimiterTest {
     @Autowired
     private RateLimiterConfigurationProperties properties;
 
-    @Autowired
-    private ConfigurableBeanFactory beanFactory;
-
     @Test
     public void test() {
         RateLimiter rateLimiter = registry.rateLimiter("test");

@@ -24,7 +24,6 @@ import io.github.resilience4j.bulkhead.event.BulkheadOnCallPermittedEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -56,9 +55,6 @@ public class EnableBulkheadTest {
 
     @Autowired
     private BulkheadConfigurationProperties properties;
-
-    @Autowired
-    private ConfigurableBeanFactory beanFactory;
 
     @Test
     public void test() {

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.resilience4j.timelimiter.annotation;
+package io.github.microsphere.spring.resilience4j.retry.annotation;
 
-import io.github.microsphere.spring.resilience4j.timelimiter.event.TimeLimiterApplicationEventPublisher;
-import io.github.microsphere.spring.resilience4j.timelimiter.event.TimeLimiterEventConsumerBeanRegistrar;
-import io.github.resilience4j.timelimiter.configure.TimeLimiterConfiguration;
+import io.github.microsphere.spring.resilience4j.retry.event.RetryApplicationEventPublisher;
+import io.github.microsphere.spring.resilience4j.retry.event.RetryEventConsumerBeanRegistrar;
+import io.github.resilience4j.retry.configure.RetryConfiguration;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
@@ -26,17 +26,17 @@ import org.springframework.core.type.AnnotationMetadata;
 import static io.github.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 
 /**
- * The {@link EnableTimeLimiter} {@link ImportBeanDefinitionRegistrar} class
+ * The {@link EnableRetry} {@link ImportBeanDefinitionRegistrar} class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class EnableTimeLimiterRegistrar implements ImportBeanDefinitionRegistrar {
+class EnableRetryRegistrar implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        registerBeanDefinition(registry, TimeLimiterConfiguration.class);
-        registerBeanDefinition(registry, TimeLimiterApplicationEventPublisher.class);
-        registerBeanDefinition(registry, TimeLimiterEventConsumerBeanRegistrar.class);
+        registerBeanDefinition(registry, RetryConfiguration.class);
+        registerBeanDefinition(registry, RetryApplicationEventPublisher.class);
+        registerBeanDefinition(registry, RetryEventConsumerBeanRegistrar.class);
     }
 }
