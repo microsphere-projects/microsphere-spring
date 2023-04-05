@@ -61,6 +61,7 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- Microsphere Spring JDBC -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-jdbc</artifactId>
@@ -69,12 +70,20 @@
         </dependency>
 
         <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Microsphere Spring WebMVC -->
+        <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-webmvc</artifactId>
             <version>${revision}</version>
             <optional>true</optional>
         </dependency>
 
+        <!-- Microsphere Spring Redis -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-redis</artifactId>
