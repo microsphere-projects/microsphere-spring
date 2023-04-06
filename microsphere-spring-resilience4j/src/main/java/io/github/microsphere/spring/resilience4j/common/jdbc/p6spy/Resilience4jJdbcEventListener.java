@@ -26,7 +26,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
 
 import java.sql.SQLException;
@@ -34,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.github.microsphere.spring.resilience4j.common.Resilience4jModule.valueOf;
-import static org.springframework.core.ResolvableType.forType;
 
 /**
  * The abstract class based on P6Spy {@link JdbcEventListener} class for Resilience4j features.
@@ -45,10 +43,6 @@ import static org.springframework.core.ResolvableType.forType;
  * @since 1.0.0
  */
 public abstract class Resilience4jJdbcEventListener<E, C> extends SimpleJdbcEventListener {
-
-    protected final static int ENTRY_CLASS_GENERIC_INDEX = 0;
-
-    protected final static int CONFIGURATION_CLASS_GENERIC_INDEX = 1;
 
     protected final static ThreadLocal<Map<Class<?>, Resilience4jContext<?>>> contextHolder = ThreadLocal.withInitial(HashMap::new);
 
@@ -70,12 +64,11 @@ public abstract class Resilience4jJdbcEventListener<E, C> extends SimpleJdbcEven
     public Resilience4jJdbcEventListener(Registry<E, C> registry) {
         Assert.notNull(registry, "The 'registry' argument can't be null");
         this.registry = registry;
+        Class<? extends Registry> registryClass = registry.getClass();
         this.entryCaches = new HashMap<>();
-        ResolvableType currentType = forType(getClass());
-        ResolvableType superType = currentType.as(getClass());
-        this.entryClass = (Class<E>) superType.getGeneric(ENTRY_CLASS_GENERIC_INDEX).resolve();
-        this.configurationClass = (Class<C>) superType.getGeneric(CONFIGURATION_CLASS_GENERIC_INDEX).resolve();
-        this.module = valueOf(this.entryClass);
+        this.module = valueOf(registryClass);
+        this.entryClass = (Class<E>) module.getEntryClass();
+        this.configurationClass = (Class<C>) module.getConfigurationClass();
     }
 
     @Override

@@ -19,17 +19,17 @@ package io.github.microsphere.spring.resilience4j.common;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.Registry;
+import io.vavr.CheckedFunction1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.github.microsphere.spring.resilience4j.common.Resilience4jModule.valueOf;
-import static org.springframework.core.ResolvableType.forType;
 
 /**
  * Resilience4j Template Class
@@ -39,11 +39,7 @@ import static org.springframework.core.ResolvableType.forType;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class Resilience4jTemplate<E, C> {
-
-    protected final static int ENTRY_CLASS_GENERIC_INDEX = 0;
-
-    protected final static int CONFIGURATION_CLASS_GENERIC_INDEX = 1;
+public class Resilience4jTemplate<E, C> {
 
     protected final static ThreadLocal<Map<Class<?>, Resilience4jContext<?>>> contextHolder = ThreadLocal.withInitial(HashMap::new);
 
@@ -66,29 +62,43 @@ public abstract class Resilience4jTemplate<E, C> {
         Assert.notNull(registry, "The 'registry' argument can't be null");
         this.registry = registry;
         this.entryCaches = new HashMap<>();
-        ResolvableType currentType = forType(getClass());
-        ResolvableType superType = currentType.as(getClass());
-        this.entryClass = (Class<E>) superType.getGeneric(ENTRY_CLASS_GENERIC_INDEX).resolve();
-        this.configurationClass = (Class<C>) superType.getGeneric(CONFIGURATION_CLASS_GENERIC_INDEX).resolve();
-        this.module = valueOf(this.entryClass);
+        this.module = valueOf(registry.getClass());
+        this.entryClass = (Class<E>) module.getEntryClass();
+        this.configurationClass = (Class<C>) module.getConfigurationClass();
     }
 
-    protected final Resilience4jContext<E> getContext(Supplier<String> entryNameSupplier) {
+    public <R> R execute(String name, Function<E, R> entryFunction) {
+        Resilience4jContext<E> context = getContext(name);
+        return entryFunction.apply(context.getEntry());
+    }
+
+    public <R> R execute(String name, CheckedFunction1<Resilience4jContext<E>, R> contextFunction) throws Throwable {
+        Resilience4jContext<E> context = getContext(name);
+        return contextFunction.apply(context);
+    }
+
+    public final Resilience4jContext<E> getContext(Supplier<String> nameSupplier) {
+        return getContext(nameSupplier.get());
+    }
+
+    public final Resilience4jContext<E> getContext(String name) {
         Class<E> entryClass = this.entryClass;
         Map<Class<?>, Resilience4jContext<?>> contextMap = contextHolder.get();
         Resilience4jContext<E> context = (Resilience4jContext<E>) contextMap.get(entryClass);
         if (context == null) {
-            String name = entryNameSupplier.get();
             E entry = getEntry(name);
             context = new Resilience4jContext<>(name, entry, module);
             contextMap.put(entryClass, context);
+            logger.debug("The Resilience4jContext[name : '{}' , module: '{}'] was cached", name, module.name());
         }
         return context;
     }
 
-    protected abstract E getEntry(String name);
+    protected E getEntry(String name) {
+        return this.module.getEntry(this.registry, name);
+    }
 
-    public Registry<E, C> getRegistry() {
+    public final Registry<E, C> getRegistry() {
         return registry;
     }
 

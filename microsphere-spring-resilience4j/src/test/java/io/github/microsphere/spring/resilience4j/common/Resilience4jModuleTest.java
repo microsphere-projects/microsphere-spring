@@ -72,7 +72,7 @@ public class Resilience4jModuleTest {
                               Class<? extends Serializable> configClass, int defaultAspectOrder) {
         assertEquals(entryClass, module.getEntryClass());
         assertEquals(registryClass, module.getRegistryClass());
-        assertEquals(configClass, module.getConfigClass());
+        assertEquals(configClass, module.getConfigurationClass());
         assertEquals(defaultAspectOrder, module.getDefaultAspectOrder());
     }
 }

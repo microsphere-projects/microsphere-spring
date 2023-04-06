@@ -83,7 +83,7 @@ public enum Resilience4jModule {
 
     private final Class<? extends Registry> registryClass;
 
-    private final Class<?> configClass;
+    private final Class<?> configurationClass;
 
     private final MethodHandle entryMethodHandle;
 
@@ -97,24 +97,24 @@ public enum Resilience4jModule {
         this(getEntryClass(registryClass), registryClass, getConfigurationClass(registryClass), defaultAspectOrder);
     }
 
-    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass, Class<?> configClass, int defaultAspectOrder) {
-        this(entryClass, registryClass, configClass, Arrays.asList(String.class, configClass), defaultAspectOrder);
+    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass, Class<?> configurationClass, int defaultAspectOrder) {
+        this(entryClass, registryClass, configurationClass, Arrays.asList(String.class, configurationClass), defaultAspectOrder);
     }
 
-    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass, Class<?> configClass, List<Class<?>> entryMethodParameterTypes, int defaultAspectOrder) {
+    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass, Class<?> configurationClass, List<Class<?>> entryMethodParameterTypes, int defaultAspectOrder) {
         this.entryClass = entryClass;
         this.registryClass = registryClass;
-        this.configClass = configClass;
+        this.configurationClass = configurationClass;
         this.entryMethodHandle = findEntryMethodHandle(entryClass, registryClass, entryMethodParameterTypes);
         this.defaultAspectOrder = defaultAspectOrder;
     }
 
-    private static Class<?> getEntryClass(Class<? extends Registry> registryClass) {
-        return getActualTypeArgument(registryClass, ENTRY_CLASS_GENERIC_INDEX);
+    public static <R extends Registry<E, C>, E, C> Class<E> getEntryClass(Class<R> registryClass) {
+        return (Class<E>) getActualTypeArgument(registryClass, ENTRY_CLASS_GENERIC_INDEX);
     }
 
-    private static Class<?> getConfigurationClass(Class<? extends Registry> registryClass) {
-        return getActualTypeArgument(registryClass, CONFIGURATION_CLASS_GENERIC_INDEX);
+    public static <R extends Registry<E, C>, E, C> Class<C> getConfigurationClass(Class<R> registryClass) {
+        return (Class<C>) getActualTypeArgument(registryClass, CONFIGURATION_CLASS_GENERIC_INDEX);
     }
 
     private static Class<?> getActualTypeArgument(Class<? extends Registry> registryClass, int genericIndex) {
@@ -178,8 +178,8 @@ public enum Resilience4jModule {
      *
      * @return non-null
      */
-    public Class<?> getConfigClass() {
-        return configClass;
+    public Class<?> getConfigurationClass() {
+        return configurationClass;
     }
 
     /**
@@ -197,7 +197,7 @@ public enum Resilience4jModule {
         final StringBuilder sb = new StringBuilder("Resilience4jModule{");
         sb.append("entryClass=").append(entryClass);
         sb.append(", registryClass=").append(registryClass);
-        sb.append(", configClass=").append(configClass);
+        sb.append(", configClass=").append(configurationClass);
         sb.append(", defaultAspectOrder=").append(defaultAspectOrder);
         sb.append('}');
         return sb.toString();
@@ -210,14 +210,14 @@ public enum Resilience4jModule {
      *             <ul>
      *                 <li>{@link #getEntryClass() the entry class}</li>
      *                 <li>{@link #getRegistryClass() the entry registry class}</li>
-     *                 <li>{@link #getConfigClass() the configuration class}</li>
+     *                 <li>{@link #getConfigurationClass() the configuration class}</li>
      *             </ul>
      * @return the {@link Resilience4jModule} member if found
      */
     public static Resilience4jModule valueOf(Class<?> type) {
         Resilience4jModule module = null;
         for (Resilience4jModule m : values()) {
-            if (Objects.equals(type, m.getEntryClass()) || Objects.equals(type, m.getRegistryClass()) || Objects.equals(type, m.getConfigClass())) {
+            if (Objects.equals(type, m.getEntryClass()) || Objects.equals(type, m.getRegistryClass()) || Objects.equals(type, m.getConfigurationClass())) {
                 module = m;
                 break;
             }
