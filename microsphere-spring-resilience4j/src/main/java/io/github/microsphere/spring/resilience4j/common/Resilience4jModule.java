@@ -17,25 +17,20 @@
 package io.github.microsphere.spring.resilience4j.common;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
-import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.core.Registry;
 import io.github.resilience4j.ratelimiter.RateLimiter;
-import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.retry.Retry;
-import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 import io.github.resilience4j.timelimiter.TimeLimiter;
-import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
 import io.vavr.control.Try;
+import org.springframework.core.ResolvableType;
 
 import java.beans.Introspector;
-import java.io.Serializable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -56,33 +51,39 @@ public enum Resilience4jModule {
     /**
      * {@link CircuitBreaker} module
      */
-    CIRCUIT_BREAKER(CircuitBreaker.class, CircuitBreakerRegistry.class, CircuitBreakerConfig.class, 1),
+    CIRCUIT_BREAKER(CircuitBreakerRegistry.class, 1),
 
     /**
      * {@link Bulkhead} module
      */
-    BULKHEAD(Bulkhead.class, BulkheadRegistry.class, BulkheadConfig.class, 4),
+    BULKHEAD(BulkheadRegistry.class, 4),
 
     /**
      * {@link RateLimiter} module
      */
-    RATE_LIMITER(RateLimiter.class, RateLimiterRegistry.class, RateLimiterConfig.class, 3),
+    RATE_LIMITER(RateLimiterRegistry.class, 3),
 
     /**
      * {@link Retry} module
      */
-    RETRY(Retry.class, RetryRegistry.class, RetryConfig.class, 0),
+    RETRY(RetryRegistry.class, 0),
 
     /**
      * {@link TimeLimiter} module
      */
-    TIME_LIMITER(TimeLimiter.class, TimeLimiterRegistry.class, TimeLimiterConfig.class, 3);
+    TIME_LIMITER(TimeLimiterRegistry.class, 3);
+
+    private final static int ENTRY_CLASS_GENERIC_INDEX = 0;
+
+    private final static int CONFIGURATION_CLASS_GENERIC_INDEX = 1;
+
+    private static MethodHandles.Lookup lookup;
 
     private final Class<?> entryClass;
 
     private final Class<? extends Registry> registryClass;
 
-    private final Class<? extends Serializable> configClass;
+    private final Class<?> configClass;
 
     private final MethodHandle entryMethodHandle;
 
@@ -91,15 +92,16 @@ public enum Resilience4jModule {
      */
     private final int defaultAspectOrder;
 
-    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass,
-                       Class<? extends Serializable> configClass,
-                       int defaultAspectOrder) {
+
+    Resilience4jModule(Class<? extends Registry> registryClass, int defaultAspectOrder) {
+        this(getEntryClass(registryClass), registryClass, getConfigurationClass(registryClass), defaultAspectOrder);
+    }
+
+    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass, Class<?> configClass, int defaultAspectOrder) {
         this(entryClass, registryClass, configClass, Arrays.asList(String.class, configClass), defaultAspectOrder);
     }
 
-    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass,
-                       Class<? extends Serializable> configClass,
-                       List<Class<?>> entryMethodParameterTypes, int defaultAspectOrder) {
+    Resilience4jModule(Class<?> entryClass, Class<? extends Registry> registryClass, Class<?> configClass, List<Class<?>> entryMethodParameterTypes, int defaultAspectOrder) {
         this.entryClass = entryClass;
         this.registryClass = registryClass;
         this.configClass = configClass;
@@ -107,8 +109,22 @@ public enum Resilience4jModule {
         this.defaultAspectOrder = defaultAspectOrder;
     }
 
-    protected static MethodHandle findEntryMethodHandle(Class<?> entryClass, Class<? extends Registry> registryClass, List<Class<?>> entryMethodParameterTypes) {
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
+    private static Class<?> getEntryClass(Class<? extends Registry> registryClass) {
+        return getActualTypeArgument(registryClass, ENTRY_CLASS_GENERIC_INDEX);
+    }
+
+    private static Class<?> getConfigurationClass(Class<? extends Registry> registryClass) {
+        return getActualTypeArgument(registryClass, CONFIGURATION_CLASS_GENERIC_INDEX);
+    }
+
+    private static Class<?> getActualTypeArgument(Class<? extends Registry> registryClass, int genericIndex) {
+        ResolvableType type = ResolvableType.forClass(registryClass);
+        type = type.as(Registry.class);
+        return type.getGenerics()[genericIndex].resolve();
+    }
+
+    private static MethodHandle findEntryMethodHandle(Class<?> entryClass, Class<? extends Registry> registryClass, List<Class<?>> entryMethodParameterTypes) {
+        MethodHandles.Lookup lookup = getLookup();
         MethodType methodType = MethodType.methodType(entryClass, entryMethodParameterTypes);
         Method method = null;
         String methodName = Introspector.decapitalize(entryClass.getSimpleName());
@@ -119,6 +135,13 @@ public enum Resilience4jModule {
             throw new RuntimeException(e);
         }
         return methodHandle;
+    }
+
+    private static MethodHandles.Lookup getLookup() {
+        if (lookup == null) {
+            lookup = MethodHandles.lookup();
+        }
+        return lookup;
     }
 
     public <R extends Registry<E, C>, E, C> E getEntry(R registry, String name) {
@@ -155,7 +178,7 @@ public enum Resilience4jModule {
      *
      * @return non-null
      */
-    public Class<? extends Serializable> getConfigClass() {
+    public Class<?> getConfigClass() {
         return configClass;
     }
 
@@ -180,16 +203,27 @@ public enum Resilience4jModule {
         return sb.toString();
     }
 
-    public static Resilience4jModule valueOf(Class<?> entryClass) {
+    /**
+     * Search the {@link Resilience4jModule} by the specified type
+     *
+     * @param type the type to search, may be one of the following:
+     *             <ul>
+     *                 <li>{@link #getEntryClass() the entry class}</li>
+     *                 <li>{@link #getRegistryClass() the entry registry class}</li>
+     *                 <li>{@link #getConfigClass() the configuration class}</li>
+     *             </ul>
+     * @return the {@link Resilience4jModule} member if found
+     */
+    public static Resilience4jModule valueOf(Class<?> type) {
         Resilience4jModule module = null;
         for (Resilience4jModule m : values()) {
-            if (Objects.equals(entryClass, m.getEntryClass())) {
+            if (Objects.equals(type, m.getEntryClass()) || Objects.equals(type, m.getRegistryClass()) || Objects.equals(type, m.getConfigClass())) {
                 module = m;
                 break;
             }
         }
         if (module == null) {
-            throw new IllegalArgumentException("The 'entryClass' can't be found in Resilience4jModule : " + entryClass.getName());
+            throw new IllegalArgumentException("The 'type' can't be found in Resilience4jModule : " + type.getName());
         }
         return module;
     }
