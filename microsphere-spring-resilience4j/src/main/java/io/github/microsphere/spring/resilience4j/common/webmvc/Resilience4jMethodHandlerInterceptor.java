@@ -141,11 +141,11 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
     /**
      * Get the order of current interceptor bean
      *
-     * @return {@link #getModule() current module}'s {@link Resilience4jModule#getAspectOrder() aspect order} as default
+     * @return {@link #getModule() current module}'s {@link Resilience4jModule#getDefaultAspectOrder() aspect order} as default
      * @see <a href="https://resilience4j.readme.io/docs/getting-started-3#aspect-order">Resilience4j Aspect order</a>
      */
     public int getOrder() {
-        return this.module.getAspectOrder();
+        return this.module.getDefaultAspectOrder();
     }
 
     protected void initEntryCache(Set<HandlerMethod> handlerMethods) {
