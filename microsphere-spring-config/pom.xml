@@ -20,7 +20,6 @@
 
     <properties>
         <curator.version>5.4.0</curator.version>
-
     </properties>
 
     <dependencies>
@@ -38,7 +37,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Microsphere Spring -->
+        <!-- Microsphere Spring Context -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-context</artifactId>

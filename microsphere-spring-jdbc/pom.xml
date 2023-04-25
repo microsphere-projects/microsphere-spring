@@ -33,7 +33,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Microsphere Spring -->
+        <!-- Microsphere Spring Context -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-context</artifactId>

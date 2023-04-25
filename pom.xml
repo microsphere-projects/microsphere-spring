@@ -49,6 +49,7 @@
         <module>microsphere-spring-redis-replicator</module>
         <module>microsphere-spring-test</module>
         <module>microsphere-spring-resilience4j</module>
+        <module>microsphere-spring-guice</module>
     </modules>
 
     <properties>

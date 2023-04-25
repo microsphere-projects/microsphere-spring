@@ -31,12 +31,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Microsphere -->
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-core</artifactId>
-        </dependency>
-
+        <!-- Microsphere Spring Context -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-context</artifactId>
