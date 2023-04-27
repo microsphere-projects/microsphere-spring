@@ -30,18 +30,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * {@link AbstractAnnotationBeanPostProcessor} Test
+ * {@link AnnotatedInjectionBeanPostProcessor} Test
  *
  * @since 1.0.3
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {
         AnnotationInjectedBeanPostProcessorTest.TestConfiguration.class,
-        AbstractAnnotationBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
-        AbstractAnnotationBeanPostProcessorTest.GenericConfiguration.class,
+        AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
+        AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
-public class AbstractAnnotationBeanPostProcessorTest {
+public class AnnotatedInjectionBeanPostProcessorTest {
 
     @Autowired
     @Qualifier("parent")
@@ -55,7 +55,7 @@ public class AbstractAnnotationBeanPostProcessorTest {
     private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.UserHolder userHolder;
 
     @Autowired
-    private AbstractAnnotationBeanPostProcessor processor;
+    private AnnotatedInjectionBeanPostProcessor processor;
 
     @Autowired
     private Environment environment;
@@ -89,7 +89,7 @@ public class AbstractAnnotationBeanPostProcessorTest {
         Assert.assertEquals(parent.user, genericChild.s2);
     }
 
-    public static class ReferencedInjectedBeanPostProcessor extends AbstractAnnotationBeanPostProcessor {
+    public static class ReferencedInjectedBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
 
         public ReferencedInjectedBeanPostProcessor() {
             super(Referenced.class);

@@ -75,14 +75,14 @@ import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 
 /**
- * The common {@link BeanPostProcessor} implementation for the customized annotations that inject the resources
+ * The generic {@link BeanPostProcessor} implementation to support the dependency injection for the customized annotations.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AutowiredAnnotationBeanPostProcessor
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-public class AbstractAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
+public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
@@ -142,7 +142,7 @@ public class AbstractAnnotationBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * @param annotationTypes the multiple types of {@link Annotation annotations}
      */
-    public AbstractAnnotationBeanPostProcessor(Class<? extends Annotation>... annotationTypes) {
+    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation>... annotationTypes) {
         Assert.notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
     }
