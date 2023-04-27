@@ -21,23 +21,31 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
+import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
@@ -47,52 +55,54 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
-import static java.util.Collections.unmodifiableMap;
-import static org.springframework.aop.support.AopUtils.getTargetClass;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
-import static org.springframework.core.GenericTypeResolver.resolveTypeArgument;
 
 /**
- * Abstract common {@link BeanPostProcessor} implementation for customized annotation that annotated injected-object.
+ * The common {@link BeanPostProcessor} implementation for the customized annotations that inject the resources
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.3
+ * @see AutowiredAnnotationBeanPostProcessor
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractAnnotationBeanPostProcessor extends
-        InstantiationAwareBeanPostProcessorAdapter implements MergedBeanDefinitionPostProcessor, PriorityOrdered,
-        BeanFactoryAware, BeanClassLoaderAware, EnvironmentAware, DisposableBean {
+public class AbstractAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
+        implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
+        EnvironmentAware, InitializingBean, DisposableBean {
 
-    private final static int CACHE_SIZE = Integer.getInteger("", 32);
+    private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
 
     private final Log logger = LogFactory.getLog(getClass());
 
     private final Class<? extends Annotation>[] annotationTypes;
 
-    private final ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache =
-            new ConcurrentHashMap<String, AnnotatedInjectionMetadata>(CACHE_SIZE);
-
-    private final ConcurrentMap<String, Object> injectedObjectsCache = new ConcurrentHashMap<String, Object>(CACHE_SIZE);
+    private ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache;
 
     private ConfigurableListableBeanFactory beanFactory;
 
     private Environment environment;
 
     private ClassLoader classLoader;
+
+    private String requiredParameterName = "required";
+
+    private boolean requiredParameterValue = true;
 
     /**
      * make sure higher priority than {@link AutowiredAnnotationBeanPostProcessor}
@@ -103,8 +113,6 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
      * whether to turn Class references into Strings (for
      * compatibility with {@link org.springframework.core.type.AnnotationMetadata} or to
      * preserve them as Class references
-     *
-     * @since 1.0.11
      */
     private boolean classValuesAsString;
 
@@ -113,24 +121,23 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
      * {@link AnnotationAttributes} maps (for compatibility with
      * {@link org.springframework.core.type.AnnotationMetadata} or to preserve them as
      * Annotation instances
-     *
-     * @since 1.0.11
      */
     private boolean nestedAnnotationsAsMap;
 
     /**
      * whether ignore default value or not
-     *
-     * @since 1.0.11
      */
     private boolean ignoreDefaultValue = true;
 
     /**
      * whether try merged annotation or not
-     *
-     * @since 1.0.11
      */
     private boolean tryMergedAnnotation = true;
+
+    /**
+     * The size of cache
+     */
+    private int cacheSize = CACHE_SIZE;
 
     /**
      * @param annotationTypes the multiple types of {@link Annotation annotations}
@@ -164,27 +171,25 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
-                "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
+        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
     }
 
-    @Override
-    public PropertyValues postProcessPropertyValues(
-            PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
+    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
+        return postProcessProperties(pvs, bean, beanName);
+    }
 
+    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
         InjectionMetadata metadata = findInjectionMetadata(beanName, bean.getClass(), pvs);
         try {
             metadata.inject(bean, beanName, pvs);
         } catch (BeanCreationException ex) {
             throw ex;
         } catch (Throwable ex) {
-            throw new BeanCreationException(beanName, "Injection of @" + getAnnotationType().getSimpleName()
-                    + " dependencies is failed", ex);
+            throw new BeanCreationException(beanName, "Injection of @" + getAnnotationType().getSimpleName() + " dependencies is failed", ex);
         }
         return pvs;
     }
-
 
     /**
      * Finds {@link InjectionMetadata.InjectedElement} Metadata from annotated fields
@@ -213,7 +218,9 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
                             return;
                         }
 
-                        elements.add(new AnnotatedFieldElement(field, attributes));
+                        boolean required = determineRequiredStatus(attributes);
+
+                        elements.add(new AnnotatedFieldElement(field, attributes, required));
                     }
                 }
             }
@@ -221,6 +228,20 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
 
         return elements;
 
+    }
+
+    /**
+     * Determine if the annotated field or method requires its dependency.
+     * <p>A 'required' dependency means that injection should fail when no beans
+     * are found. Otherwise, the injection process will simply bypass the field
+     * or method when no beans are found.
+     *
+     * @param attributes the injected annotation attributes
+     * @return whether the annotation indicates that a dependency is required
+     */
+    protected boolean determineRequiredStatus(AnnotationAttributes attributes) {
+        return (!attributes.containsKey(this.requiredParameterName) ||
+                this.requiredParameterValue == attributes.getBoolean(this.requiredParameterName));
     }
 
     /**
@@ -257,12 +278,12 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
                         }
                         if (method.getParameterTypes().length == 0) {
                             if (logger.isWarnEnabled()) {
-                                logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " +
-                                        method);
+                                logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
                             }
                         }
                         PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
-                        elements.add(new AnnotatedMethodElement(method, pd, attributes));
+                        boolean required = determineRequiredStatus(attributes);
+                        elements.add(new AnnotatedMethodElement(method, pd, attributes, required));
                     }
                 }
             }
@@ -277,12 +298,9 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
      * @param annotatedElement {@link AnnotatedElement the annotated element}
      * @param annotationType   the {@link Class tyoe} pf {@link Annotation annotation}
      * @return if <code>annotatedElement</code> can't be found in <code>annotatedElement</code>, return <code>null</code>
-     * @since 1.0.11
      */
-    protected AnnotationAttributes doGetAnnotationAttributes(AnnotatedElement annotatedElement,
-                                                             Class<? extends Annotation> annotationType) {
-        return getAnnotationAttributes(annotatedElement, annotationType, getEnvironment(),
-                classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, tryMergedAnnotation);
+    protected AnnotationAttributes doGetAnnotationAttributes(AnnotatedElement annotatedElement, Class<? extends Annotation> annotationType) {
+        return getAnnotationAttributes(annotatedElement, annotationType, getEnvironment(), classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, tryMergedAnnotation);
     }
 
     private AnnotatedInjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
@@ -307,8 +325,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
                         metadata = buildAnnotatedMetadata(clazz);
                         this.injectionMetadataCache.put(cacheKey, metadata);
                     } catch (NoClassDefFoundError err) {
-                        throw new IllegalStateException("Failed to introspect object class [" + clazz.getName() +
-                                "] for annotation metadata: could not find class that it depends on", err);
+                        throw new IllegalStateException("Failed to introspect object class [" + clazz.getName() + "] for annotation metadata: could not find class that it depends on", err);
                     }
                 }
             }
@@ -324,35 +341,70 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
         }
     }
 
-    @Override
-    public int getOrder() {
-        return order;
+    /**
+     * Set the name of an attribute of the annotation that specifies whether it is required.
+     *
+     * @see #setRequiredParameterValue(boolean)
+     */
+    public void setRequiredParameterName(String requiredParameterName) {
+        this.requiredParameterName = requiredParameterName;
+    }
+
+    /**
+     * Set the boolean value that marks a dependency as required.
+     * <p>For example if using 'required=true' (the default), this value should be
+     * {@code true}; but if using 'optional=false', this value should be {@code false}.
+     *
+     * @see #setRequiredParameterName(String)
+     */
+    public void setRequiredParameterValue(boolean requiredParameterValue) {
+        this.requiredParameterValue = requiredParameterValue;
+    }
+
+    /**
+     * @param classValuesAsString whether to turn Class references into Strings (for
+     *                            compatibility with {@link org.springframework.core.type.AnnotationMetadata} or to
+     *                            preserve them as Class references
+     */
+    public void setClassValuesAsString(boolean classValuesAsString) {
+        this.classValuesAsString = classValuesAsString;
+    }
+
+    /**
+     * @param nestedAnnotationsAsMap whether to turn nested Annotation instances into
+     *                               {@link AnnotationAttributes} maps (for compatibility with
+     *                               {@link org.springframework.core.type.AnnotationMetadata} or to preserve them as
+     *                               Annotation instances
+     */
+    public void setNestedAnnotationsAsMap(boolean nestedAnnotationsAsMap) {
+        this.nestedAnnotationsAsMap = nestedAnnotationsAsMap;
+    }
+
+    /**
+     * @param ignoreDefaultValue whether ignore default value or not
+     */
+    public void setIgnoreDefaultValue(boolean ignoreDefaultValue) {
+        this.ignoreDefaultValue = ignoreDefaultValue;
+    }
+
+    /**
+     * @param tryMergedAnnotation whether try merged annotation or not
+     */
+    public void setTryMergedAnnotation(boolean tryMergedAnnotation) {
+        this.tryMergedAnnotation = tryMergedAnnotation;
+    }
+
+    /**
+     * Set the size of cache
+     *
+     * @param cacheSize the size of cache
+     */
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
     }
 
     public void setOrder(int order) {
         this.order = order;
-    }
-
-    @Override
-    public void destroy() throws Exception {
-
-        for (Object object : injectedObjectsCache.values()) {
-            if (logger.isInfoEnabled()) {
-                logger.info(object + " was destroying!");
-            }
-
-            if (object instanceof DisposableBean) {
-                ((DisposableBean) object).destroy();
-            }
-        }
-
-        injectionMetadataCache.clear();
-        injectedObjectsCache.clear();
-
-        if (logger.isInfoEnabled()) {
-            logger.info(getClass() + " was destroying!");
-        }
-
     }
 
     @Override
@@ -365,182 +417,107 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
         this.environment = environment;
     }
 
-    protected Environment getEnvironment() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.injectionMetadataCache = new ConcurrentHashMap<String, AnnotatedInjectionMetadata>(cacheSize);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        injectionMetadataCache.clear();
+        if (logger.isInfoEnabled()) {
+            logger.info(getClass() + " was destroying!");
+        }
+    }
+
+    /**
+     * Resolve the injected-object as the value of the annotated {@link Method Field}
+     *
+     * @param bean         The bean that will be injected
+     * @param beanName     The name of requesting bean that will be injected
+     * @param pvs          {@link PropertyValues}
+     * @param fieldElement {@link AnnotationInjectedElement the field element} was annotated
+     * @return An injected object
+     * @throws Throwable If resolving is failed
+     */
+    protected Object resolveInjectedFieldValue(Object bean, String beanName, PropertyValues pvs,
+                                               AnnotationInjectedElement<Field> fieldElement) throws Throwable {
+        return null;
+    }
+
+    /**
+     * Resolve the injected-objects as the arguments of the annotated {@link Method method}
+     *
+     * @param bean          The bean that will be injected
+     * @param beanName      The name of the bean that will be injected
+     * @param pvs           {@link PropertyValues}
+     * @param methodElement {@link AnnotationInjectedElement the method element} was annotated
+     * @return The array of the injected objects as the arguments of the annotated {@link Method method}
+     * @throws Throwable If resolving is failed
+     */
+    protected Object[] resolveInjectedMethodArguments(Object bean, String beanName, PropertyValues pvs,
+                                                      AnnotationInjectedElement<Method> methodElement) throws Throwable {
+        return null;
+    }
+
+    protected final Object resolveDependency(DependencyDescriptor desc, String beanName, Set<String> injectedBeanNames) {
+        TypeConverter typeConverter = beanFactory.getTypeConverter();
+        Object value = null;
+        try {
+            value = beanFactory.resolveDependency(desc, beanName, injectedBeanNames, typeConverter);
+        } catch (BeansException ex) {
+            throw new UnsatisfiedDependencyException(null, beanName, desc, ex);
+        }
+        return value;
+    }
+
+    /**
+     * Register the specified bean as dependent on the autowired beans.
+     */
+    private void registerDependentBeans(String beanName, Set<String> injectedBeanNames) {
+        if (beanName != null) {
+            for (String injectedBeanName : injectedBeanNames) {
+                if (this.beanFactory.containsBean(injectedBeanName)) {
+                    this.beanFactory.registerDependentBean(injectedBeanName, beanName);
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Injected by type from bean name '" + beanName +
+                            "' to bean named '" + injectedBeanName + "'");
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve the specified cached method argument or field value.
+     */
+    private Object resolvedCachedArgument(String beanName, Object cachedArgument) {
+        if (cachedArgument instanceof DependencyDescriptor) {
+            DependencyDescriptor descriptor = (DependencyDescriptor) cachedArgument;
+            TypeConverter typeConverter = this.beanFactory.getTypeConverter();
+            return this.beanFactory.resolveDependency(descriptor, beanName, null, typeConverter);
+        } else if (cachedArgument instanceof RuntimeBeanReference) {
+            return this.beanFactory.getBean(((RuntimeBeanReference) cachedArgument).getBeanName());
+        } else {
+            return cachedArgument;
+        }
+    }
+
+    @Override
+    public final int getOrder() {
+        return order;
+    }
+
+    public final Environment getEnvironment() {
         return environment;
     }
 
-    protected ClassLoader getClassLoader() {
+    public final ClassLoader getClassLoader() {
         return classLoader;
     }
 
-    protected ConfigurableListableBeanFactory getBeanFactory() {
+    public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
-    }
-
-    /**
-     * Gets all injected-objects.
-     *
-     * @return non-null {@link Collection}
-     */
-    protected Collection<Object> getInjectedObjects() {
-        return this.injectedObjectsCache.values();
-    }
-
-    /**
-     * Get injected-object from specified {@link AnnotationAttributes annotation attributes} and Bean Class
-     *
-     * @param attributes      {@link AnnotationAttributes the annotation attributes}
-     * @param bean            Current bean that will be injected
-     * @param beanName        Current bean name that will be injected
-     * @param injectedType    the type of injected-object
-     * @param injectedElement {@link InjectionMetadata.InjectedElement}
-     * @return An injected object
-     * @throws Exception If getting is failed
-     */
-    protected Object getInjectedObject(AnnotationAttributes attributes, Object bean, String beanName, Class<?> injectedType,
-                                       InjectionMetadata.InjectedElement injectedElement) throws Exception {
-
-        String cacheKey = buildInjectedObjectCacheKey(attributes, bean, beanName, injectedType, injectedElement);
-
-        Object injectedObject = injectedObjectsCache.get(cacheKey);
-
-        if (injectedObject == null) {
-            injectedObject = doGetInjectedBean(attributes, bean, beanName, injectedType, injectedElement);
-            // Customized inject-object if necessary
-            injectedObjectsCache.putIfAbsent(cacheKey, injectedObject);
-        }
-
-        return injectedObject;
-
-    }
-
-    /**
-     * Subclass must implement this method to get injected-object. The context objects could help this method if
-     * necessary :
-     * <ul>
-     * <li>{@link #getBeanFactory() BeanFactory}</li>
-     * <li>{@link #getClassLoader() ClassLoader}</li>
-     * <li>{@link #getEnvironment() Environment}</li>
-     * </ul>
-     *
-     * @param attributes      {@link AnnotationAttributes the annotation attributes}
-     * @param bean            Current bean that will be injected
-     * @param beanName        Current bean name that will be injected
-     * @param injectedType    the type of injected-object
-     * @param injectedElement {@link InjectionMetadata.InjectedElement}
-     * @return The injected object
-     * @throws Exception If resolving an injected object is failed.
-     */
-    protected abstract Object doGetInjectedBean(AnnotationAttributes attributes, Object bean, String beanName, Class<?> injectedType,
-                                                InjectionMetadata.InjectedElement injectedElement) throws Exception;
-
-    /**
-     * Build a cache key for injected-object. The context objects could help this method if
-     * necessary :
-     * <ul>
-     * <li>{@link #getBeanFactory() BeanFactory}</li>
-     * <li>{@link #getClassLoader() ClassLoader}</li>
-     * <li>{@link #getEnvironment() Environment}</li>
-     * </ul>
-     *
-     * @param attributes      {@link AnnotationAttributes the annotation attributes}
-     * @param bean            Current bean that will be injected
-     * @param beanName        Current bean name that will be injected
-     * @param injectedType    the type of injected-object
-     * @param injectedElement {@link InjectionMetadata.InjectedElement}
-     * @return Bean cache key
-     */
-    protected abstract String buildInjectedObjectCacheKey(AnnotationAttributes attributes, Object bean, String beanName,
-                                                          Class<?> injectedType,
-                                                          InjectionMetadata.InjectedElement injectedElement);
-
-    /**
-     * Get {@link Map} in injected field.
-     *
-     * @return non-null ready-only {@link Map}
-     */
-    protected Map<InjectionMetadata.InjectedElement, Object> getInjectedFieldObjectsMap() {
-
-        Map<InjectionMetadata.InjectedElement, Object> injectedElementBeanMap =
-                new LinkedHashMap<InjectionMetadata.InjectedElement, Object>();
-
-        for (AnnotatedInjectionMetadata metadata : injectionMetadataCache.values()) {
-
-            Collection<AnnotatedFieldElement> fieldElements = metadata.getFieldElements();
-
-            for (AnnotatedFieldElement fieldElement : fieldElements) {
-
-                injectedElementBeanMap.put(fieldElement, fieldElement.bean);
-
-            }
-
-        }
-
-        return unmodifiableMap(injectedElementBeanMap);
-
-    }
-
-    /**
-     * Get {@link Map} in injected method.
-     *
-     * @return non-null {@link Map}
-     */
-    protected Map<InjectionMetadata.InjectedElement, Object> getInjectedMethodObjectsMap() {
-
-        Map<InjectionMetadata.InjectedElement, Object> injectedElementBeanMap =
-                new LinkedHashMap<InjectionMetadata.InjectedElement, Object>();
-
-        for (AnnotatedInjectionMetadata metadata : injectionMetadataCache.values()) {
-
-            Collection<AnnotatedMethodElement> methodElements = metadata.getMethodElements();
-
-            for (AnnotatedMethodElement methodElement : methodElements) {
-
-                injectedElementBeanMap.put(methodElement, methodElement.object);
-
-            }
-
-        }
-
-        return unmodifiableMap(injectedElementBeanMap);
-
-    }
-
-    /**
-     * @param classValuesAsString whether to turn Class references into Strings (for
-     *                            compatibility with {@link org.springframework.core.type.AnnotationMetadata} or to
-     *                            preserve them as Class references
-     * @since 1.0.11
-     */
-    public void setClassValuesAsString(boolean classValuesAsString) {
-        this.classValuesAsString = classValuesAsString;
-    }
-
-    /**
-     * @param nestedAnnotationsAsMap whether to turn nested Annotation instances into
-     *                               {@link AnnotationAttributes} maps (for compatibility with
-     *                               {@link org.springframework.core.type.AnnotationMetadata} or to preserve them as
-     *                               Annotation instances
-     * @since 1.0.11
-     */
-    public void setNestedAnnotationsAsMap(boolean nestedAnnotationsAsMap) {
-        this.nestedAnnotationsAsMap = nestedAnnotationsAsMap;
-    }
-
-    /**
-     * @param ignoreDefaultValue whether ignore default value or not
-     * @since 1.0.11
-     */
-    public void setIgnoreDefaultValue(boolean ignoreDefaultValue) {
-        this.ignoreDefaultValue = ignoreDefaultValue;
-    }
-
-    /**
-     * @param tryMergedAnnotation whether try merged annotation or not
-     * @since 1.0.11
-     */
-    public void setTryMergedAnnotation(boolean tryMergedAnnotation) {
-        this.tryMergedAnnotation = tryMergedAnnotation;
     }
 
     /**
@@ -552,8 +529,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
 
         private final Collection<AnnotatedMethodElement> methodElements;
 
-        public AnnotatedInjectionMetadata(Class<?> targetClass, Collection<AnnotatedFieldElement> fieldElements,
-                                          Collection<AnnotatedMethodElement> methodElements) {
+        public AnnotatedInjectionMetadata(Class<?> targetClass, Collection<AnnotatedFieldElement> fieldElements, Collection<AnnotatedMethodElement> methodElements) {
             super(targetClass, combine(fieldElements, methodElements));
             this.fieldElements = fieldElements;
             this.methodElements = methodElements;
@@ -568,75 +544,229 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
         }
     }
 
-    /**
-     * {@link Annotation Annotated} {@link Method} {@link InjectionMetadata.InjectedElement}
-     */
-    private class AnnotatedMethodElement extends InjectionMetadata.InjectedElement {
 
-        private final Method method;
+    /**
+     * Annotation {@link InjectionMetadata.InjectedElement}
+     *
+     * @param <M> {@link Field} or {@link Method}
+     */
+    public abstract static class AnnotationInjectedElement<M extends Member> extends InjectionMetadata.InjectedElement {
 
         private final AnnotationAttributes attributes;
 
-        private volatile Object object;
+        private final boolean required;
 
-        protected AnnotatedMethodElement(Method method, PropertyDescriptor pd, AnnotationAttributes attributes) {
-            super(method, pd);
-            this.method = method;
+        protected AnnotationInjectedElement(M member, PropertyDescriptor pd, AnnotationAttributes attributes, boolean required) {
+            super(member, pd);
             this.attributes = attributes;
+            this.required = required;
         }
 
-        @Override
-        protected void inject(Object bean, String beanName, PropertyValues pvs) throws Throwable {
-
-            Class<?> injectedType = pd.getPropertyType();
-
-            Object injectedObject = getInjectedObject(attributes, bean, beanName, injectedType, this);
-
-            ReflectionUtils.makeAccessible(method);
-
-            method.invoke(bean, injectedObject);
-
+        public final AnnotationAttributes getAttributes() {
+            return attributes;
         }
 
+        public final boolean isRequired() {
+            return required;
+        }
+
+        public final M getInjectionPoint() {
+            return (M) getMember();
+        }
     }
 
     /**
      * {@link Annotation Annotated} {@link Field} {@link InjectionMetadata.InjectedElement}
      */
-    public class AnnotatedFieldElement extends InjectionMetadata.InjectedElement {
+    public class AnnotatedFieldElement extends AnnotationInjectedElement<Field> {
 
-        private final Field field;
+        private volatile boolean cached = false;
 
-        private final AnnotationAttributes attributes;
+        private volatile Object cachedFieldValue;
 
-        private volatile Object bean;
-
-        protected AnnotatedFieldElement(Field field, AnnotationAttributes attributes) {
-            super(field, null);
-            this.field = field;
-            this.attributes = attributes;
+        protected AnnotatedFieldElement(Field field, AnnotationAttributes attributes, boolean required) {
+            super(field, null, attributes, required);
         }
 
         @Override
-        protected void inject(Object bean, String beanName, PropertyValues pvs) throws Throwable {
-
-            Class<?> injectedType = resolveInjectedType(bean, field);
-
-            Object injectedObject = getInjectedObject(attributes, bean, beanName, injectedType, this);
-
-            ReflectionUtils.makeAccessible(field);
-
-            field.set(bean, injectedObject);
-
+        protected void inject(Object bean, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
+            Field field = getInjectionPoint();
+            Object value;
+            if (this.cached) {
+                try {
+                    value = resolvedCachedArgument(beanName, this.cachedFieldValue);
+                } catch (NoSuchBeanDefinitionException ex) {
+                    // Unexpected removal of target bean for cached argument -> re-resolve
+                    value = resolveFieldValue(field, bean, beanName, pvs);
+                }
+            } else {
+                value = resolveFieldValue(field, bean, beanName, pvs);
+            }
+            if (value != null) {
+                ReflectionUtils.makeAccessible(field);
+                field.set(bean, value);
+            }
         }
 
-        private Class<?> resolveInjectedType(Object bean, Field field) {
-            Type genericType = field.getGenericType();
-            if (genericType instanceof Class) { // Just a normal Class
-                return field.getType();
-            } else { // GenericType
-                return resolveTypeArgument(getTargetClass(bean), field.getDeclaringClass());
+        @Nullable
+        private Object resolveFieldValue(Field field, Object bean, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
+            Object value = resolveInjectedFieldValue(bean, beanName, pvs, this);
+            if (value == null) {
+                boolean required = isRequired();
+                DependencyDescriptor desc = new DependencyDescriptor(field, required);
+                desc.setContainingClass(bean.getClass());
+                Set<String> injectedBeanNames = new LinkedHashSet<>(1);
+                value = resolveDependency(desc, beanName, injectedBeanNames);
+                cacheFieldValue(field, desc, beanName, injectedBeanNames, value, required);
             }
+            return value;
+        }
+
+        private void cacheFieldValue(Field field, DependencyDescriptor desc, String beanName, Set<String> injectedBeanNames, Object value, boolean required) {
+            synchronized (this) {
+                if (!this.cached) {
+                    Object cachedFieldValue = null;
+                    if (value != null || required) {
+                        cachedFieldValue = desc;
+                        registerDependentBeans(beanName, injectedBeanNames);
+                        if (injectedBeanNames.size() == 1) {
+                            String autowiredBeanName = injectedBeanNames.iterator().next();
+                            if (beanFactory.containsBean(autowiredBeanName) &&
+                                    beanFactory.isTypeMatch(autowiredBeanName, field.getType())) {
+                                cachedFieldValue = new ShortcutDependencyDescriptor(
+                                        desc, autowiredBeanName, field.getType());
+                            }
+                        }
+                    }
+                    this.cachedFieldValue = cachedFieldValue;
+                    this.cached = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * {@link Annotation Annotated} {@link Method} {@link InjectionMetadata.InjectedElement}
+     */
+    public class AnnotatedMethodElement extends AnnotationInjectedElement<Method> {
+
+        private volatile boolean cached = false;
+
+        private volatile Object[] cachedMethodArguments;
+
+        protected AnnotatedMethodElement(Method method, PropertyDescriptor pd, AnnotationAttributes attributes, boolean required) {
+            super(method, pd, attributes, required);
+        }
+
+        @Override
+        protected void inject(Object bean, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
+            if (checkPropertySkipping(pvs)) {
+                return;
+            }
+            Method method = getInjectionPoint();
+            Object[] arguments;
+            if (this.cached) {
+                try {
+                    arguments = resolveCachedArguments(beanName);
+                } catch (NoSuchBeanDefinitionException ex) {
+                    // Unexpected removal of target bean for cached argument -> re-resolve
+                    arguments = resolveMethodArguments(method, bean, beanName, pvs);
+                }
+            } else {
+                arguments = resolveMethodArguments(method, bean, beanName, pvs);
+            }
+            if (arguments != null) {
+                try {
+                    ReflectionUtils.makeAccessible(method);
+                    method.invoke(bean, arguments);
+                } catch (InvocationTargetException ex) {
+                    throw ex.getTargetException();
+                }
+            }
+        }
+
+        @Nullable
+        private Object[] resolveCachedArguments(@Nullable String beanName) {
+            Object[] cachedMethodArguments = this.cachedMethodArguments;
+            if (cachedMethodArguments == null) {
+                return null;
+            }
+            Object[] arguments = new Object[cachedMethodArguments.length];
+            for (int i = 0; i < arguments.length; i++) {
+                arguments[i] = resolvedCachedArgument(beanName, cachedMethodArguments[i]);
+            }
+            return arguments;
+        }
+
+        @Nullable
+        private Object[] resolveMethodArguments(Method method, Object bean, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
+            Object[] arguments = resolveInjectedMethodArguments(bean, beanName, pvs, this);
+            if (arguments == null) {
+                boolean required = isRequired();
+                int argumentCount = method.getParameterCount();
+                arguments = new Object[argumentCount];
+                DependencyDescriptor[] descriptors = new DependencyDescriptor[argumentCount];
+                Set<String> injectedBeanNames = new LinkedHashSet<>(argumentCount);
+                for (int i = 0; i < arguments.length; i++) {
+                    MethodParameter methodParam = new MethodParameter(method, i);
+                    DependencyDescriptor currDesc = new DependencyDescriptor(methodParam, required);
+                    currDesc.setContainingClass(bean.getClass());
+                    descriptors[i] = currDesc;
+                    Object arg = resolveDependency(currDesc, beanName, injectedBeanNames);
+                    if (arg == null && !required) {
+                        arguments = null;
+                        break;
+                    }
+                    arguments[i] = arg;
+                }
+                synchronized (this) {
+                    if (!this.cached) {
+                        if (arguments != null) {
+                            DependencyDescriptor[] cachedMethodArguments = Arrays.copyOf(descriptors, arguments.length);
+                            registerDependentBeans(beanName, injectedBeanNames);
+                            if (injectedBeanNames.size() == argumentCount) {
+                                Iterator<String> it = injectedBeanNames.iterator();
+                                Class<?>[] paramTypes = method.getParameterTypes();
+                                for (int i = 0; i < paramTypes.length; i++) {
+                                    String autowiredBeanName = it.next();
+                                    if (beanFactory.containsBean(autowiredBeanName) &&
+                                            beanFactory.isTypeMatch(autowiredBeanName, paramTypes[i])) {
+                                        cachedMethodArguments[i] = new ShortcutDependencyDescriptor(
+                                                descriptors[i], autowiredBeanName, paramTypes[i]);
+                                    }
+                                }
+                            }
+                            this.cachedMethodArguments = cachedMethodArguments;
+                        } else {
+                            this.cachedMethodArguments = null;
+                        }
+                        this.cached = true;
+                    }
+                }
+            }
+            return arguments;
+        }
+    }
+
+    /**
+     * DependencyDescriptor variant with a pre-resolved target bean name.
+     */
+    @SuppressWarnings("serial")
+    private static class ShortcutDependencyDescriptor extends DependencyDescriptor {
+
+        private final String shortcut;
+
+        private final Class<?> requiredType;
+
+        public ShortcutDependencyDescriptor(DependencyDescriptor original, String shortcut, Class<?> requiredType) {
+            super(original);
+            this.shortcut = shortcut;
+            this.requiredType = requiredType;
+        }
+
+        @Override
+        public Object resolveShortcut(BeanFactory beanFactory) {
+            return beanFactory.getBean(this.shortcut, this.requiredType);
         }
     }
 }

@@ -14,7 +14,9 @@
   <name>Microsphere Projects :: Spring Parent</name>
   <description>Microsphere Spring Parent</description>
   <properties>
+    <spring-boot.version>2.7.9</spring-boot.version>
     <embedded-redis.version>0.6</embedded-redis.version>
+    <resilience4j.version>1.7.0</resilience4j.version>
     <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
     <microsphere.version>${revision}</microsphere.version>
   </properties>
@@ -24,6 +26,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-bom</artifactId>
+        <version>${resilience4j.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

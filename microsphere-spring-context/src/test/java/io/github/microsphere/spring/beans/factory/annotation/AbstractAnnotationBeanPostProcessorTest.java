@@ -21,12 +21,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -39,7 +37,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {
         AnnotationInjectedBeanPostProcessorTest.TestConfiguration.class,
-        AbstractAnnotationBeanPostProcessorTest.ReferencedAnnotationInjectedBeanPostProcessor.class,
+        AbstractAnnotationBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
         AbstractAnnotationBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
@@ -75,11 +73,7 @@ public class AbstractAnnotationBeanPostProcessorTest {
         Assert.assertEquals(beanFactory.getBeanClassLoader(), processor.getClassLoader());
         Assert.assertEquals(beanFactory, processor.getBeanFactory());
 
-        Assert.assertEquals(AnnotationInjectedBeanPostProcessorTest.Referenced.class, processor.getAnnotationType());
-        Assert.assertEquals(1, processor.getInjectedObjects().size());
-        Assert.assertTrue(processor.getInjectedObjects().contains(parent.parentUser));
-        Assert.assertEquals(3, processor.getInjectedFieldObjectsMap().size());
-        Assert.assertEquals(1, processor.getInjectedMethodObjectsMap().size());
+        Assert.assertEquals(Referenced.class, processor.getAnnotationType());
         Assert.assertEquals(Ordered.LOWEST_PRECEDENCE - 3, processor.getOrder());
     }
 
@@ -90,26 +84,17 @@ public class AbstractAnnotationBeanPostProcessorTest {
         Assert.assertEquals(parent.user, parent.parentUser);
         Assert.assertEquals(parent.user, child.childUser);
         Assert.assertEquals(parent.user, userHolder.user);
-        Assert.assertEquals(parent.user, genericChild.getS());
+        Assert.assertEquals(parent.user, genericChild.s);
+        Assert.assertEquals(parent.user, genericChild.s1);
+        Assert.assertEquals(parent.user, genericChild.s2);
     }
 
-    public static class ReferencedAnnotationInjectedBeanPostProcessor extends AbstractAnnotationBeanPostProcessor {
+    public static class ReferencedInjectedBeanPostProcessor extends AbstractAnnotationBeanPostProcessor {
 
-        public ReferencedAnnotationInjectedBeanPostProcessor() {
-            super(AnnotationInjectedBeanPostProcessorTest.Referenced.class);
+        public ReferencedInjectedBeanPostProcessor() {
+            super(Referenced.class);
         }
 
-        @Override
-        protected Object doGetInjectedBean(AnnotationAttributes attributes, Object bean, String beanName,
-                                           Class<?> injectedType, InjectionMetadata.InjectedElement injectedElement) throws Exception {
-            return getBeanFactory().getBean(injectedType);
-        }
-
-        @Override
-        protected String buildInjectedObjectCacheKey(AnnotationAttributes attributes, Object bean, String beanName,
-                                                     Class<?> injectedType, InjectionMetadata.InjectedElement injectedElement) {
-            return injectedType.getName();
-        }
     }
 
     public static class GenericConfiguration {
@@ -117,11 +102,17 @@ public class AbstractAnnotationBeanPostProcessorTest {
 
         static abstract class GenericParent<S> {
 
-            @AnnotationInjectedBeanPostProcessorTest.Referenced
+            @Referenced
             S s;
 
-            public S getS() {
-                return s;
+            S s1;
+
+            S s2;
+
+            @Referenced
+            public void init(S s1, S s2) {
+                this.s1 = s1;
+                this.s2 = s2;
             }
         }
 

@@ -40,13 +40,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Google Guice IoC Framework -->
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
