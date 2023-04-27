@@ -62,6 +62,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -71,11 +72,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 
 /**
  * The generic {@link BeanPostProcessor} implementation to support the dependency injection for the customized annotations.
+ * <p>
+ * As a substitution, besides the core features of {@link AutowiredAnnotationBeanPostProcessor}, {@link AnnotatedInjectionBeanPostProcessor}
+ * also supports:
+ * <ul>
+ *     <li>{@link #getAnnotationTypes() The dependency injection with multiple types of annotations}</li>
+ *     <li>{@link #setIgnoreDefaultValue(boolean) To ignore the default value of annotation}</li>
+ *     <li>{@link #setTryMergedAnnotation(boolean) The attempt to merge the annotation}</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AutowiredAnnotationBeanPostProcessor
@@ -90,7 +101,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private final Class<? extends Annotation>[] annotationTypes;
+    private final Collection<Class<? extends Annotation>> annotationTypes;
 
     private ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache;
 
@@ -142,14 +153,14 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * @param annotationType the single type of {@link Annotation annotation}
      */
-    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation> annotationType) {
-        this(new Class[]{annotationType});
+    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation> annotationType, Class<? extends Annotation>... otherAnnotationTypes) {
+        this(combine(singleton(annotationType), Arrays.asList(otherAnnotationTypes)));
     }
 
     /**
      * @param annotationTypes the multiple types of {@link Annotation annotations}
      */
-    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation>... annotationTypes) {
+    public AnnotatedInjectionBeanPostProcessor(Collection<Class<? extends Annotation>> annotationTypes) {
         Assert.notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
     }
@@ -162,38 +173,28 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return allElements;
     }
 
-    /**
-     * Annotation type
-     *
-     * @return non-null
-     */
-    @Deprecated
-    public final Class<? extends Annotation> getAnnotationType() {
-        return annotationTypes[0];
-    }
-
-    protected final Class<? extends Annotation>[] getAnnotationTypes() {
-        return annotationTypes;
+    public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
+        return unmodifiableCollection(annotationTypes);
     }
 
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
     }
 
-    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
+    public final PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
         return postProcessProperties(pvs, bean, beanName);
     }
 
-    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
+    public final PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
         InjectionMetadata metadata = findInjectionMetadata(beanName, bean.getClass(), pvs);
         try {
             metadata.inject(bean, beanName, pvs);
         } catch (BeanCreationException ex) {
             throw ex;
         } catch (Throwable ex) {
-            throw new BeanCreationException(beanName, "Injection of @" + getAnnotationType().getSimpleName() + " dependencies is failed", ex);
+            throw new BeanCreationException(beanName, "Injection of @" + getAnnotationTypes() + " dependencies is failed", ex);
         }
         return pvs;
     }
@@ -341,7 +342,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     @Override
-    public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+    public final void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
         if (beanType != null) {
             InjectionMetadata metadata = findInjectionMetadata(beanName, beanType, null);
             metadata.checkConfigMembers(beanDefinition);
@@ -353,7 +354,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      *
      * @see #setRequiredParameterValue(boolean)
      */
-    public void setRequiredParameterName(String requiredParameterName) {
+    public final void setRequiredParameterName(String requiredParameterName) {
         this.requiredParameterName = requiredParameterName;
     }
 
@@ -364,7 +365,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      *
      * @see #setRequiredParameterName(String)
      */
-    public void setRequiredParameterValue(boolean requiredParameterValue) {
+    public final void setRequiredParameterValue(boolean requiredParameterValue) {
         this.requiredParameterValue = requiredParameterValue;
     }
 
@@ -373,7 +374,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      *                            compatibility with {@link org.springframework.core.type.AnnotationMetadata} or to
      *                            preserve them as Class references
      */
-    public void setClassValuesAsString(boolean classValuesAsString) {
+    public final void setClassValuesAsString(boolean classValuesAsString) {
         this.classValuesAsString = classValuesAsString;
     }
 
@@ -383,21 +384,21 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      *                               {@link org.springframework.core.type.AnnotationMetadata} or to preserve them as
      *                               Annotation instances
      */
-    public void setNestedAnnotationsAsMap(boolean nestedAnnotationsAsMap) {
+    public final void setNestedAnnotationsAsMap(boolean nestedAnnotationsAsMap) {
         this.nestedAnnotationsAsMap = nestedAnnotationsAsMap;
     }
 
     /**
      * @param ignoreDefaultValue whether ignore default value or not
      */
-    public void setIgnoreDefaultValue(boolean ignoreDefaultValue) {
+    public final void setIgnoreDefaultValue(boolean ignoreDefaultValue) {
         this.ignoreDefaultValue = ignoreDefaultValue;
     }
 
     /**
      * @param tryMergedAnnotation whether try merged annotation or not
      */
-    public void setTryMergedAnnotation(boolean tryMergedAnnotation) {
+    public final void setTryMergedAnnotation(boolean tryMergedAnnotation) {
         this.tryMergedAnnotation = tryMergedAnnotation;
     }
 
@@ -406,21 +407,21 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      *
      * @param cacheSize the size of cache
      */
-    public void setCacheSize(int cacheSize) {
+    public final void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
     }
 
-    public void setOrder(int order) {
+    public final void setOrder(int order) {
         this.order = order;
     }
 
     @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
+    public final void setBeanClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
+    public final void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
@@ -530,7 +531,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * {@link Annotation Annotated} {@link InjectionMetadata} implementation
      */
-    private class AnnotatedInjectionMetadata extends InjectionMetadata {
+    private static class AnnotatedInjectionMetadata extends InjectionMetadata {
 
         private final Collection<AnnotatedFieldElement> fieldElements;
 
@@ -585,7 +586,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * {@link Annotation Annotated} {@link Field} {@link InjectionMetadata.InjectedElement}
      */
-    public class AnnotatedFieldElement extends AnnotationInjectedElement<Field> {
+    private class AnnotatedFieldElement extends AnnotationInjectedElement<Field> {
 
         private volatile boolean cached = false;
 
@@ -655,7 +656,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * {@link Annotation Annotated} {@link Method} {@link InjectionMetadata.InjectedElement}
      */
-    public class AnnotatedMethodElement extends AnnotationInjectedElement<Method> {
+    private class AnnotatedMethodElement extends AnnotationInjectedElement<Method> {
 
         private volatile boolean cached = false;
 
