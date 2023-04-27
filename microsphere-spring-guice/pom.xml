@@ -38,5 +38,13 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- Google Guice IoC Framework -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 </project>
