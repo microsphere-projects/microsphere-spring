@@ -76,7 +76,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
         InstantiationAwareBeanPostProcessorAdapter implements MergedBeanDefinitionPostProcessor, PriorityOrdered,
         BeanFactoryAware, BeanClassLoaderAware, EnvironmentAware, DisposableBean {
 
-    private final static int CACHE_SIZE = Integer.getInteger("", 32);
+    private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
 
     private final Log logger = LogFactory.getLog(getClass());
 
