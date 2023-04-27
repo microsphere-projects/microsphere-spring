@@ -140,9 +140,16 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     private int cacheSize = CACHE_SIZE;
 
     /**
+     * @param annotationType the single type of {@link Annotation annotation}
+     */
+    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation> annotationType) {
+        this(new Class[]{annotationType});
+    }
+
+    /**
      * @param annotationTypes the multiple types of {@link Annotation annotations}
      */
-    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation>... annotationTypes) {
+    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation>[] annotationTypes) {
         Assert.notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
     }
