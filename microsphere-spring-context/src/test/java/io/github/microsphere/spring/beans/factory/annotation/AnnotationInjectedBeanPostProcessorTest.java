@@ -150,13 +150,6 @@ public class AnnotationInjectedBeanPostProcessorTest {
 
     }
 
-
-    @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    public @interface Referenced {
-    }
-
     static class ReferencedAnnotationInjectedBeanPostProcessor extends AnnotationInjectedBeanPostProcessor<Referenced> {
 
         public ReferencedAnnotationInjectedBeanPostProcessor() {
