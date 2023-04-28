@@ -19,7 +19,7 @@
     <description>Microsphere Spring Bridge Guice</description>
 
     <properties>
-        <guice.version>4.2.3</guice.version>
+        <guice.version>5.1.0</guice.version>
     </properties>
 
     <dependencies>
@@ -44,6 +44,25 @@
             <artifactId>guice</artifactId>
             <version>${guice.version}</version>
             <optional>true</optional>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

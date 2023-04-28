@@ -40,7 +40,9 @@ class GuiceInjectAnnotationBeanPostProcessor extends InjectedAnnotationBeanPostP
 
     @Override
     protected boolean determineRequiredStatus(AnnotationAttributes attributes) {
-        boolean optional = attributes.getBoolean(OPTIONAL_ATTRIBUTE_NAME);
-        return !optional;
+        if (!attributes.containsKey(OPTIONAL_ATTRIBUTE_NAME)) {
+            return false;
+        }
+        return Boolean.FALSE.equals(attributes.getBoolean(OPTIONAL_ATTRIBUTE_NAME));
     }
 }
