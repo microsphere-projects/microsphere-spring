@@ -92,7 +92,6 @@ import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMe
  * @see AutowiredAnnotationBeanPostProcessor
  * @since 1.0.0
  */
-@SuppressWarnings("unchecked")
 public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {

@@ -73,7 +73,8 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         Assert.assertEquals(beanFactory.getBeanClassLoader(), processor.getClassLoader());
         Assert.assertEquals(beanFactory, processor.getBeanFactory());
 
-        Assert.assertEquals(Referenced.class, processor.getAnnotationType());
+        Assert.assertEquals(1, processor.getAnnotationTypes().size());
+        Assert.assertTrue(processor.getAnnotationTypes().contains(Referenced.class));
         Assert.assertEquals(Ordered.LOWEST_PRECEDENCE - 3, processor.getOrder());
     }
 
