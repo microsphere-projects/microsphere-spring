@@ -45,6 +45,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -54,6 +55,7 @@ import org.springframework.util.StringUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
@@ -62,7 +64,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -84,8 +85,16 @@ import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMe
  * also supports:
  * <ul>
  *     <li>{@link #getAnnotationTypes() The dependency injection with multiple types of annotations}</li>
- *     <li>{@link #setIgnoreDefaultValue(boolean) To ignore the default value of annotation}</li>
- *     <li>{@link #setTryMergedAnnotation(boolean) The attempt to merge the annotation}</li>
+ *     <li>
+ *         Annotation Features Enhancement:
+ *         <ul>
+ *             <li>{@link #setClassValuesAsString(boolean)} : whether to turn Class references into Strings (for compatibility with  or to preserve them as Class references</li>
+ *             <li>{@link #setNestedAnnotationsAsMap(boolean)} : whether to turn nested Annotation instances into AnnotationAttributes maps (for compatibility with {@link AnnotationMetadata} or to preserve them as Annotation instances</li>
+ *             <li>{@link #setIgnoreDefaultValue(boolean)} : whether ignore default value or not</li>
+ *             <li>{@link #setTryMergedAnnotation(boolean) : whether try merged annotation or not</li>
+ *         </ul>
+ *     </li>
+ *     <li>{@link #setCacheSize(int) The size of the metadata cache}</li>
  * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -103,6 +112,8 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private final Collection<Class<? extends Annotation>> annotationTypes;
 
+    private ConcurrentMap<Class<?>, Constructor<?>[]> candidateConstructorsCache;
+
     private ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache;
 
     private ConfigurableListableBeanFactory beanFactory;
@@ -111,27 +122,20 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private ClassLoader classLoader;
 
-    private String requiredParameterName = "required";
-
-    private boolean requiredParameterValue = true;
-
     /**
      * make sure higher priority than {@link AutowiredAnnotationBeanPostProcessor}
      */
     private int order = Ordered.LOWEST_PRECEDENCE - 3;
 
     /**
-     * whether to turn Class references into Strings (for
-     * compatibility with {@link org.springframework.core.type.AnnotationMetadata} or to
+     * whether to turn Class references into Strings (for compatibility with {@link AnnotationMetadata} or to
      * preserve them as Class references
      */
     private boolean classValuesAsString;
 
     /**
-     * whether to turn nested Annotation instances into
-     * {@link AnnotationAttributes} maps (for compatibility with
-     * {@link org.springframework.core.type.AnnotationMetadata} or to preserve them as
-     * Annotation instances
+     * whether to turn nested Annotation instances into {@link AnnotationAttributes} maps (for compatibility with
+     * {@link AnnotationMetadata} or to preserve them as Annotation instances
      */
     private boolean nestedAnnotationsAsMap;
 
@@ -181,6 +185,97 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+    }
+
+    @Override
+    public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
+        Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
+        if (candidateConstructors == null) {
+            // Fully synchronized resolution now...
+            synchronized (this.candidateConstructorsCache) {
+                candidateConstructors = this.candidateConstructorsCache.get(beanClass);
+                if (candidateConstructors == null) {
+                    Constructor<?>[] rawCandidates;
+                    try {
+                        rawCandidates = beanClass.getDeclaredConstructors();
+                    } catch (Throwable ex) {
+                        throw new BeanCreationException(beanName,
+                                "Resolution of declared constructors on bean Class [" + beanClass.getName() +
+                                        "] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
+                    }
+                    List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
+                    Constructor<?> requiredConstructor = null;
+                    Constructor<?> defaultConstructor = null;
+                    Constructor<?> primaryConstructor = BeanUtils.findPrimaryConstructor(beanClass);
+                    int nonSyntheticConstructors = 0;
+                    for (Constructor<?> candidate : rawCandidates) {
+                        if (!candidate.isSynthetic()) {
+                            nonSyntheticConstructors++;
+                        } else if (primaryConstructor != null) {
+                            continue;
+                        }
+                        AnnotationAttributes ann = findInjectionAnnotationAttributes(candidate);
+                        if (ann == null) {
+                            Class<?> userClass = ClassUtils.getUserClass(beanClass);
+                            if (userClass != beanClass) {
+                                try {
+                                    Constructor<?> superCtor = userClass.getDeclaredConstructor(candidate.getParameterTypes());
+                                    ann = findInjectionAnnotationAttributes(superCtor);
+                                } catch (NoSuchMethodException ex) {
+                                    // Simply proceed, no equivalent superclass constructor found...
+                                }
+                            }
+                        }
+                        if (ann != null) {
+                            if (requiredConstructor != null) {
+                                throw new BeanCreationException(beanName,
+                                        "Invalid injection constructor: " + candidate +
+                                                ". Found constructor with 'required' Autowired annotation already: " +
+                                                requiredConstructor);
+                            }
+                            boolean required = determineRequiredStatus(ann);
+                            if (required) {
+                                if (!candidates.isEmpty()) {
+                                    throw new BeanCreationException(beanName,
+                                            "Invalid injection constructors: " + candidates +
+                                                    ". Found constructor with 'required' Autowired annotation: " +
+                                                    candidate);
+                                }
+                                requiredConstructor = candidate;
+                            }
+                            candidates.add(candidate);
+                        } else if (candidate.getParameterCount() == 0) {
+                            defaultConstructor = candidate;
+                        }
+                    }
+                    if (!candidates.isEmpty()) {
+                        // Add default constructor to list of optional constructors, as fallback.
+                        if (requiredConstructor == null) {
+                            if (defaultConstructor != null) {
+                                candidates.add(defaultConstructor);
+                            } else if (candidates.size() == 1 && logger.isInfoEnabled()) {
+                                logger.info("Inconsistent constructor declaration on bean with name '" + beanName +
+                                        "': single injection constructor flagged as optional - " +
+                                        "this constructor is effectively required since there is no " +
+                                        "default constructor to fall back to: " + candidates.get(0));
+                            }
+                        }
+                        candidateConstructors = candidates.toArray(new Constructor<?>[0]);
+                    } else if (rawCandidates.length == 1 && rawCandidates[0].getParameterCount() > 0) {
+                        candidateConstructors = new Constructor<?>[]{rawCandidates[0]};
+                    } else if (nonSyntheticConstructors == 2 && primaryConstructor != null &&
+                            defaultConstructor != null && !primaryConstructor.equals(defaultConstructor)) {
+                        candidateConstructors = new Constructor<?>[]{primaryConstructor, defaultConstructor};
+                    } else if (nonSyntheticConstructors == 1 && primaryConstructor != null) {
+                        candidateConstructors = new Constructor<?>[]{primaryConstructor};
+                    } else {
+                        candidateConstructors = new Constructor<?>[0];
+                    }
+                    this.candidateConstructorsCache.put(beanClass, candidateConstructors);
+                }
+            }
+        }
+        return (candidateConstructors.length > 0 ? candidateConstructors : null);
     }
 
     public final PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
@@ -240,16 +335,12 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     /**
      * Determine if the annotated field or method requires its dependency.
-     * <p>A 'required' dependency means that injection should fail when no beans
-     * are found. Otherwise, the injection process will simply bypass the field
-     * or method when no beans are found.
      *
      * @param attributes the injected annotation attributes
      * @return whether the annotation indicates that a dependency is required
      */
     protected boolean determineRequiredStatus(AnnotationAttributes attributes) {
-        return (!attributes.containsKey(this.requiredParameterName) ||
-                this.requiredParameterValue == attributes.getBoolean(this.requiredParameterName));
+        return true;
     }
 
     /**
@@ -271,7 +362,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
                     return;
                 }
-
 
                 for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
 
@@ -300,6 +390,17 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return elements;
     }
 
+    protected final AnnotationAttributes findInjectionAnnotationAttributes(AnnotatedElement annotatedElement) {
+        AnnotationAttributes annotationAttributes = null;
+        for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
+            annotationAttributes = doGetAnnotationAttributes(annotatedElement, annotationType);
+            if (annotationAttributes != null) {
+                break;
+            }
+        }
+        return annotationAttributes;
+    }
+
     /**
      * Get {@link AnnotationAttributes}
      *
@@ -307,7 +408,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * @param annotationType   the {@link Class tyoe} pf {@link Annotation annotation}
      * @return if <code>annotatedElement</code> can't be found in <code>annotatedElement</code>, return <code>null</code>
      */
-    protected AnnotationAttributes doGetAnnotationAttributes(AnnotatedElement annotatedElement, Class<? extends Annotation> annotationType) {
+    protected final AnnotationAttributes doGetAnnotationAttributes(AnnotatedElement annotatedElement, Class<? extends Annotation> annotationType) {
         return getAnnotationAttributes(annotatedElement, annotationType, getEnvironment(), classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, tryMergedAnnotation);
     }
 
@@ -347,26 +448,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             InjectionMetadata metadata = findInjectionMetadata(beanName, beanType, null);
             metadata.checkConfigMembers(beanDefinition);
         }
-    }
-
-    /**
-     * Set the name of an attribute of the annotation that specifies whether it is required.
-     *
-     * @see #setRequiredParameterValue(boolean)
-     */
-    public final void setRequiredParameterName(String requiredParameterName) {
-        this.requiredParameterName = requiredParameterName;
-    }
-
-    /**
-     * Set the boolean value that marks a dependency as required.
-     * <p>For example if using 'required=true' (the default), this value should be
-     * {@code true}; but if using 'optional=false', this value should be {@code false}.
-     *
-     * @see #setRequiredParameterName(String)
-     */
-    public final void setRequiredParameterValue(boolean requiredParameterValue) {
-        this.requiredParameterValue = requiredParameterValue;
     }
 
     /**
@@ -427,11 +508,13 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        this.candidateConstructorsCache = new ConcurrentHashMap<Class<?>, Constructor<?>[]>(cacheSize);
         this.injectionMetadataCache = new ConcurrentHashMap<String, AnnotatedInjectionMetadata>(cacheSize);
     }
 
     @Override
     public void destroy() throws Exception {
+        candidateConstructorsCache.clear();
         injectionMetadataCache.clear();
         if (logger.isInfoEnabled()) {
             logger.info(getClass() + " was destroying!");

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,7 +65,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
     private ConfigurableListableBeanFactory beanFactory;
 
     @Autowired
-    private GenericConfiguration.GenericChild genericChild;
+    private GenericChild genericChild;
 
     @Test
     public void testCustomizedAnnotationBeanPostProcessor() {
@@ -73,7 +74,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         Assert.assertEquals(beanFactory.getBeanClassLoader(), processor.getClassLoader());
         Assert.assertEquals(beanFactory, processor.getBeanFactory());
 
-        Assert.assertEquals(Referenced.class, processor.getAnnotationType());
+        Assert.assertTrue(processor.getAnnotationTypes().contains(Referenced.class));
         Assert.assertEquals(Ordered.LOWEST_PRECEDENCE - 3, processor.getOrder());
     }
 
@@ -87,6 +88,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         Assert.assertEquals(parent.user, genericChild.s);
         Assert.assertEquals(parent.user, genericChild.s1);
         Assert.assertEquals(parent.user, genericChild.s2);
+        Assert.assertEquals(parent.user, child.user);
     }
 
     public static class ReferencedInjectedBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
@@ -97,33 +99,36 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
     }
 
+    @Import(GenericChild.class)
     public static class GenericConfiguration {
-
-
-        static abstract class GenericParent<S> {
-
-            @Referenced
-            S s;
-
-            S s1;
-
-            S s2;
-
-            @Referenced
-            public void init(S s1, S s2) {
-                this.s1 = s1;
-                this.s2 = s2;
-            }
-        }
-
-        static class GenericChild extends GenericParent<User> {
-        }
-
-        @Bean
-        public GenericChild genericChild() {
-            return new GenericChild();
-        }
 
     }
 
+
+    static abstract class GenericParent<S> {
+
+        @Referenced
+        S s;
+
+        S s1;
+
+        S s2;
+
+        @Referenced
+        public void init(S s1, S s2) {
+            this.s1 = s1;
+            this.s2 = s2;
+        }
+    }
+
+    static class GenericChild extends GenericParent<User> {
+
+        private final User user;
+
+        @Referenced
+        public GenericChild(@Referenced User user) {
+            this.user = user;
+        }
+
+    }
 }
