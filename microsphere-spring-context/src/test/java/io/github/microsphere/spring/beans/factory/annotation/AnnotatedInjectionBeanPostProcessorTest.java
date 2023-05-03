@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
@@ -31,18 +30,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * {@link InjectedAnnotationBeanPostProcessor} Test
+ * {@link AnnotatedInjectionBeanPostProcessor} Test
  *
  * @since 1.0.3
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {
         AnnotationInjectedBeanPostProcessorTest.TestConfiguration.class,
-        InjectedAnnotationBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
-        InjectedAnnotationBeanPostProcessorTest.GenericConfiguration.class,
+        AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
+        AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
-public class InjectedAnnotationBeanPostProcessorTest {
+public class AnnotatedInjectionBeanPostProcessorTest {
 
     @Autowired
     @Qualifier("parent")
@@ -56,7 +55,7 @@ public class InjectedAnnotationBeanPostProcessorTest {
     private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.UserHolder userHolder;
 
     @Autowired
-    private InjectedAnnotationBeanPostProcessor processor;
+    private AnnotatedInjectionBeanPostProcessor processor;
 
     @Autowired
     private Environment environment;
@@ -92,7 +91,7 @@ public class InjectedAnnotationBeanPostProcessorTest {
         Assert.assertEquals(parent.user, child.user);
     }
 
-    public static class ReferencedInjectedBeanPostProcessor extends InjectedAnnotationBeanPostProcessor {
+    public static class ReferencedInjectedBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
 
         public ReferencedInjectedBeanPostProcessor() {
             super(Referenced.class);

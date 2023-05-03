@@ -17,7 +17,7 @@
 package io.github.microsphere.spring.guice.annotation;
 
 import com.google.inject.Inject;
-import io.github.microsphere.spring.beans.factory.annotation.InjectedAnnotationBeanPostProcessor;
+import io.github.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessor;
 import org.springframework.core.annotation.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
@@ -28,7 +28,7 @@ import java.lang.annotation.Annotation;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class GuiceInjectAnnotationBeanPostProcessor extends InjectedAnnotationBeanPostProcessor {
+class GuiceInjectAnnotationBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
 
     private static final Class<? extends Annotation> ANNOTATION_TYPE = Inject.class;
 

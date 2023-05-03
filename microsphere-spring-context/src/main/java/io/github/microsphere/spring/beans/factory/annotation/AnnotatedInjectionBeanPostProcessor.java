@@ -81,7 +81,7 @@ import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMe
 /**
  * The generic {@link BeanPostProcessor} implementation to support the dependency injection for the customized annotations.
  * <p>
- * As a substitution, besides the core features of {@link AutowiredAnnotationBeanPostProcessor}, {@link InjectedAnnotationBeanPostProcessor}
+ * As a substitution, besides the core features of {@link AutowiredAnnotationBeanPostProcessor}, {@link AnnotatedInjectionBeanPostProcessor}
  * also supports:
  * <ul>
  *     <li>{@link #getAnnotationTypes() The dependency injection with multiple types of annotations}</li>
@@ -101,7 +101,7 @@ import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMe
  * @see AutowiredAnnotationBeanPostProcessor
  * @since 1.0.0
  */
-public class InjectedAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
+public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
@@ -156,14 +156,14 @@ public class InjectedAnnotationBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * @param annotationType the single type of {@link Annotation annotation}
      */
-    public InjectedAnnotationBeanPostProcessor(Class<? extends Annotation> annotationType, Class<? extends Annotation>... otherAnnotationTypes) {
+    public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation> annotationType, Class<? extends Annotation>... otherAnnotationTypes) {
         this(combine(singleton(annotationType), Arrays.asList(otherAnnotationTypes)));
     }
 
     /**
      * @param annotationTypes the multiple types of {@link Annotation annotations}
      */
-    public InjectedAnnotationBeanPostProcessor(Collection<Class<? extends Annotation>> annotationTypes) {
+    public AnnotatedInjectionBeanPostProcessor(Collection<Class<? extends Annotation>> annotationTypes) {
         Assert.notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
     }
