@@ -17,7 +17,7 @@
 package io.github.microsphere.spring.guice.annotation;
 
 import com.google.inject.Inject;
-import io.github.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessor;
+import io.github.microsphere.spring.beans.factory.annotation.InjectedAnnotationBeanPostProcessor;
 import org.springframework.core.annotation.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
@@ -28,7 +28,7 @@ import java.lang.annotation.Annotation;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class GuiceInjectAnnotationBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
+class GuiceInjectAnnotationBeanPostProcessor extends InjectedAnnotationBeanPostProcessor {
 
     private static final Class<? extends Annotation> ANNOTATION_TYPE = Inject.class;
 
@@ -40,7 +40,9 @@ class GuiceInjectAnnotationBeanPostProcessor extends AnnotatedInjectionBeanPostP
 
     @Override
     protected boolean determineRequiredStatus(AnnotationAttributes attributes) {
-        boolean optional = attributes.getBoolean(OPTIONAL_ATTRIBUTE_NAME);
-        return !optional;
+        if (!attributes.containsKey(OPTIONAL_ATTRIBUTE_NAME)) {
+            return false;
+        }
+        return Boolean.FALSE.equals(attributes.getBoolean(OPTIONAL_ATTRIBUTE_NAME));
     }
 }

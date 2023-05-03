@@ -31,18 +31,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * {@link AnnotatedInjectionBeanPostProcessor} Test
+ * {@link InjectedAnnotationBeanPostProcessor} Test
  *
  * @since 1.0.3
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {
         AnnotationInjectedBeanPostProcessorTest.TestConfiguration.class,
-        AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
-        AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
+        InjectedAnnotationBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
+        InjectedAnnotationBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
-public class AnnotatedInjectionBeanPostProcessorTest {
+public class InjectedAnnotationBeanPostProcessorTest {
 
     @Autowired
     @Qualifier("parent")
@@ -56,7 +56,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
     private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.UserHolder userHolder;
 
     @Autowired
-    private AnnotatedInjectionBeanPostProcessor processor;
+    private InjectedAnnotationBeanPostProcessor processor;
 
     @Autowired
     private Environment environment;
@@ -74,6 +74,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         Assert.assertEquals(beanFactory.getBeanClassLoader(), processor.getClassLoader());
         Assert.assertEquals(beanFactory, processor.getBeanFactory());
 
+        Assert.assertEquals(1, processor.getAnnotationTypes().size());
         Assert.assertTrue(processor.getAnnotationTypes().contains(Referenced.class));
         Assert.assertEquals(Ordered.LOWEST_PRECEDENCE - 3, processor.getOrder());
     }
@@ -91,7 +92,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         Assert.assertEquals(parent.user, child.user);
     }
 
-    public static class ReferencedInjectedBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
+    public static class ReferencedInjectedBeanPostProcessor extends InjectedAnnotationBeanPostProcessor {
 
         public ReferencedInjectedBeanPostProcessor() {
             super(Referenced.class);

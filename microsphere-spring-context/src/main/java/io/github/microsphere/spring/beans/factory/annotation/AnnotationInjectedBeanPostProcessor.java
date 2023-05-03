@@ -68,7 +68,7 @@ import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
  * @param <A> The type of {@link Annotation customized annotation}
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
- * @deprecated Please use {@link AnnotatedInjectionBeanPostProcessor} as the substitution
+ * @deprecated Please use {@link InjectedAnnotationBeanPostProcessor} as the substitution
  */
 @Deprecated
 @SuppressWarnings("unchecked")
