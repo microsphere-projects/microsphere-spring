@@ -41,7 +41,10 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringRunner.class)
 @EnableZookeeperConfig
-@ContextConfiguration(classes = EnableZookeeperConfigTest.class)
+@ContextConfiguration(classes = {
+        EnableZookeeperConfigTest.class,
+        EnableZookeeperConfigTest.Config.class
+})
 public class EnableZookeeperConfigTest {
 
     @BeforeClass
@@ -97,9 +100,14 @@ public class EnableZookeeperConfigTest {
     @Autowired
     private Environment environment;
 
-
     @Test
     public void test() {
         assertEquals("mercyblitz", environment.getProperty("my.name.json"));
     }
+
+    @EnableZookeeperConfig
+    static class Config {
+
+    }
+
 }

@@ -19,15 +19,23 @@ package io.github.microsphere.spring.config.zookeeper.annotation;
 import io.github.microsphere.spring.config.annotation.EnableConfigAttributes;
 import io.github.microsphere.spring.config.annotation.EnableConfigPropertySourceLoader;
 import io.github.microsphere.spring.config.zookeeper.env.ZookeeperPropertySource;
+import io.github.microsphere.util.ShutdownHookUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.RetryForever;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.github.microsphere.constants.PathConstants.SLASH_CHAR;
 
@@ -43,21 +51,32 @@ import static io.github.microsphere.constants.PathConstants.SLASH_CHAR;
  */
 public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPropertySourceLoader<EnableZookeeperConfig> {
 
+    private static final Map<String, CuratorFramework> clientsCache;
+
+    static {
+        clientsCache = new HashMap<>();
+        ShutdownHookUtils.addShutdownHookCallback(new Runnable() {
+            @Override
+            public void run() {
+                // Close clients
+                close(clientsCache.values());
+                // Clear clients cache when JVM is shutdown
+                clientsCache.clear();
+            }
+        });
+    }
+
     @Override
     protected PropertySource<?> loadPropertySource(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes,
                                                    String propertySourceName, AnnotationMetadata metadata) {
-        String connectString = enableConfigAttributes.getString("connectString");
-        String rootPath = enableConfigAttributes.getString("rootPath");
 
-        CuratorFramework client = CuratorFrameworkFactory.builder()
-                .connectString(connectString)
-                .retryPolicy(new RetryForever(300))
-                .build();
-
-        client.start();
+        CuratorFramework client = getClient(enableConfigAttributes);
 
         CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
         try {
+
+            String rootPath = enableConfigAttributes.getString("rootPath");
+
             if (client.checkExists().forPath(rootPath) == null) {
                 client.create().forPath(rootPath);
             }
@@ -70,7 +89,34 @@ public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPrope
         } catch (Exception e) {
             throw new BeanCreationException("@EnableZookeeperConfig bean can't load the PropertySource[name :" + propertySourceName + "]", e);
         }
-
         return compositePropertySource;
+    }
+
+    private CuratorFramework getClient(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes) {
+        String connectString = enableConfigAttributes.getString("connectString");
+        return clientsCache.computeIfAbsent(connectString, c -> {
+            CuratorFramework client = CuratorFrameworkFactory.builder()
+                    .connectString(connectString)
+                    .retryPolicy(new RetryForever(300))
+                    .build();
+            // Start
+            client.start();
+            return client;
+        });
+    }
+
+    private static void close(Collection<CuratorFramework> clients) {
+        for (CuratorFramework client : clients) {
+            close(client);
+        }
+    }
+
+    private static void close(CuratorFramework client) {
+        if (client != null) {
+            CuratorFrameworkState state = client.getState();
+            if (CuratorFrameworkState.STARTED.equals(state)) {
+                client.close();
+            }
+        }
     }
 }

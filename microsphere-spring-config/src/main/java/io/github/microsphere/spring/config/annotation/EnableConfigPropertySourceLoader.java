@@ -150,7 +150,7 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
     }
 
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         Class<ConfigurableListableBeanFactory> targetType = ConfigurableListableBeanFactory.class;
         Assert.isInstanceOf(targetType, beanFactory, "The 'beanFactory' argument must be an instance of class " + targetType.getName());
         Assert.isInstanceOf(BeanDefinitionRegistry.class, beanFactory, "The 'beanFactory' argument must be an instance of class " + BeanDefinitionRegistry.class.getName());
@@ -167,17 +167,17 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
      * @return
      */
     @NonNull
-    public Class<A> getAnnotationType() {
+    public final Class<A> getAnnotationType() {
         return annotationType;
     }
 
     @NonNull
-    public ConfigurableEnvironment getEnvironment() {
+    public final ConfigurableEnvironment getEnvironment() {
         return environment;
     }
 
     @NonNull
-    public ConfigurableListableBeanFactory getBeanFactory() {
+    public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
     }
 }
