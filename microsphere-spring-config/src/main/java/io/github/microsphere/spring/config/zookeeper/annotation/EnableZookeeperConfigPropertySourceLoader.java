@@ -16,44 +16,38 @@
  */
 package io.github.microsphere.spring.config.zookeeper.annotation;
 
+import io.github.microsphere.spring.config.annotation.EnableConfigAttributes;
+import io.github.microsphere.spring.config.annotation.EnableConfigPropertySourceLoader;
 import io.github.microsphere.spring.config.zookeeper.env.ZookeeperPropertySource;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryForever;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
-import java.util.Map;
+
+import static io.github.microsphere.constants.PathConstants.SLASH_CHAR;
 
 /**
- * Zookeeper Configuration
- * 1. Create a CuratorFramework client based on the @EnableZookeeperConfig meta information, connection string, and root path
- * 2. Traverse all PropertySource child nodes according to the root path rootPath
+ * {@link EnableZookeeperConfig} {@link PropertySource} Loader to load the Zookeeper Configuration:
+ * <ul>
+ *     <li>Create a CuratorFramework client based on the @EnableZookeeperConfig meta information, connection string, and root path</li>
+ *     <li>Traverse all PropertySource child nodes according to the root path rootPath</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see EnableZookeeperConfig
- * @see CuratorFramework
- * @see PropertySource
- * @see ImportBeanDefinitionRegistrar
  * @since 1.0.0
  */
-@Deprecated
-public class ZookeeperConfiguration implements ImportBeanDefinitionRegistrar, EnvironmentAware {
-
-    private MutablePropertySources propertySources;
+public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPropertySourceLoader<EnableZookeeperConfig> {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        Map<String, Object> attributes = importingClassMetadata.getAnnotationAttributes(EnableZookeeperConfig.class.getName());
-        String connectString = (String) attributes.get("connectString");
-        String rootPath = (String) attributes.get("rootPath");
+    protected PropertySource<?> loadPropertySource(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes,
+                                                   String propertySourceName, AnnotationMetadata metadata) {
+        String connectString = enableConfigAttributes.getString("connectString");
+        String rootPath = enableConfigAttributes.getString("rootPath");
 
         CuratorFramework client = CuratorFrameworkFactory.builder()
                 .connectString(connectString)
@@ -62,26 +56,21 @@ public class ZookeeperConfiguration implements ImportBeanDefinitionRegistrar, En
 
         client.start();
 
+        CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
         try {
             if (client.checkExists().forPath(rootPath) == null) {
                 client.create().forPath(rootPath);
             }
-
             List<String> configBasePaths = client.getChildren().forPath(rootPath);
             for (String configBasePath : configBasePaths) {
-                configBasePath = rootPath + "/" + configBasePath;
+                configBasePath = rootPath + SLASH_CHAR + configBasePath;
                 ZookeeperPropertySource zookeeperPropertySource = new ZookeeperPropertySource(configBasePath, client);
-                propertySources.addLast(zookeeperPropertySource);
+                compositePropertySource.addPropertySource(zookeeperPropertySource);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new BeanCreationException("@EnableZookeeperConfig bean can't load the PropertySource[name :" + propertySourceName + "]", e);
         }
-    }
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        if (environment instanceof ConfigurableEnvironment) {
-            this.propertySources = ((ConfigurableEnvironment) environment).getPropertySources();
-        }
+        return compositePropertySource;
     }
 }

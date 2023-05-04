@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.config.zookeeper.annotation;
+package io.github.microsphere.spring.config.annotation;
 
-import io.github.microsphere.spring.config.annotation.EnableConfig;
+import io.github.microsphere.spring.config.zookeeper.annotation.ZookeeperConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.env.PropertySource;
 
 import java.lang.annotation.Documented;
@@ -27,35 +26,35 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Map;
 
 /**
- * Enable Zookeeper Configuration
+ * A meta-annotation enables Spring Configuration
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@EnableConfig
-@Import(EnableZookeeperConfigPropertySourceLoader.class)
-public @interface EnableZookeeperConfig {
+public @interface EnableConfig {
 
     /**
-     * The name of Zookeeper {@link PropertySource}
+     * The name of {@link PropertySource} If absent
+     *
+     * @return the name of {@link PropertySource}, the default value means the name of {@link PropertySource}
+     * will be auto-generated
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "name")
     String name() default "";
 
     /**
      * It indicates the property source is auto-refreshed when the configuration is
      * changed.
      *
-     * @return default value is <code>true</code>
+     * @return default value is <code>false</code>
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "autoRefreshed")
-    boolean autoRefreshed() default true;
+    boolean autoRefreshed() default false;
 
     /**
      * Indicates current {@link PropertySource} is first order or not If specified ,
@@ -63,7 +62,6 @@ public @interface EnableZookeeperConfig {
      *
      * @return default value is <code>false</code>
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "first")
     boolean first() default false;
 
     /**
@@ -75,7 +73,6 @@ public @interface EnableZookeeperConfig {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "before")
     String before() default "";
 
     /**
@@ -87,20 +84,5 @@ public @interface EnableZookeeperConfig {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "after")
     String after() default "";
-
-    /**
-     * The string presenting connection to Zookeeper
-     *
-     * @return non-null
-     */
-    String connectString() default "127.0.0.1:2181";
-
-    /**
-     * The root path of all configurations
-     *
-     * @return non-null
-     */
-    String rootPath() default "/configs";
 }
