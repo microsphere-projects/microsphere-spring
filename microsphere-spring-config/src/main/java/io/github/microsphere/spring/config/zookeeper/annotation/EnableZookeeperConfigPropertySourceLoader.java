@@ -70,12 +70,12 @@ public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPrope
     @Override
     protected PropertySource<?> loadPropertySource(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes, String propertySourceName, AnnotationMetadata metadata) {
 
-        CuratorFramework client = getClient(enableConfigAttributes);
+        String rootPath = enableConfigAttributes.getString("rootPath");
+
+        CuratorFramework client = getClient(enableConfigAttributes, rootPath);
 
         CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
         try {
-
-            String rootPath = enableConfigAttributes.getString("rootPath");
 
             boolean rootPathNotExisted = client.checkExists().forPath(rootPath) == null;
 
@@ -108,9 +108,10 @@ public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPrope
         return new ZookeeperPropertySource(configPath, client, autoRefreshed);
     }
 
-    private CuratorFramework getClient(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes) {
+    private CuratorFramework getClient(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes, String rootPath) {
         String connectString = enableConfigAttributes.getString("connectString");
-        return clientsCache.computeIfAbsent(connectString, c -> {
+        String key = connectString + rootPath;
+        return clientsCache.computeIfAbsent(key, k -> {
             CuratorFramework client = CuratorFrameworkFactory.builder()
                     .connectString(connectString)
                     .retryPolicy(new RetryForever(300))

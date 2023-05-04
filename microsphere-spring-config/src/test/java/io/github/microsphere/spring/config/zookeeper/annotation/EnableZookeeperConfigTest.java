@@ -53,6 +53,9 @@ public class EnableZookeeperConfigTest {
 
     private static CuratorFramework client;
 
+    @Autowired
+    private Environment environment;
+
     @BeforeClass
     public static void init() throws Exception {
         EnableZookeeperConfig annotation =
@@ -126,9 +129,6 @@ public class EnableZookeeperConfigTest {
         client.delete().forPath(path);
     }
 
-    @Autowired
-    private Environment environment;
-
     @Test
     public void test() throws Exception {
         assertEquals("mercyblitz", environment.getProperty("my.name"));
@@ -140,9 +140,8 @@ public class EnableZookeeperConfigTest {
         configEntity.setBody("my.name: Mercy Ma");
 
         writeConfig("/configs/test.json", configEntity);
-        Thread.sleep(10 * 1000);
+        Thread.sleep(1 * 100);
         assertEquals("Mercy Ma", environment.getProperty("my.name"));
-
     }
 
     @EnableZookeeperConfig
