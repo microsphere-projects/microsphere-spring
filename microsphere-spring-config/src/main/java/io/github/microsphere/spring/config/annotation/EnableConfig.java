@@ -16,8 +16,6 @@
  */
 package io.github.microsphere.spring.config.annotation;
 
-import io.github.microsphere.spring.config.zookeeper.annotation.ZookeeperConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.env.PropertySource;
 
 import java.lang.annotation.Documented;
@@ -26,7 +24,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Map;
 
 /**
  * A meta-annotation enables Spring Configuration

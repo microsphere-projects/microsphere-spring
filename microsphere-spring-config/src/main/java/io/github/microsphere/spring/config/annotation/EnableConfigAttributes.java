@@ -19,6 +19,7 @@ package io.github.microsphere.spring.config.annotation;
 import org.springframework.core.annotation.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * {@link AnnotationAttributes} for the annotation meta-annotated {@link EnableConfig}
@@ -62,5 +63,37 @@ public class EnableConfigAttributes<A extends Annotation> extends AnnotationAttr
 
     public Class<A> annotationType() {
         return getAnnotationType();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("@")
+                .append(getAnnotationType().getName())
+                .append("(");
+
+        for (Map.Entry<String, Object> entry : entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            boolean isStringValue = value instanceof String;
+
+            stringBuilder.append(name).append('=');
+
+            if (isStringValue) {
+                stringBuilder.append('"');
+            }
+
+            stringBuilder.append(value);
+
+            if (isStringValue) {
+                stringBuilder.append('"');
+            }
+
+            stringBuilder.append(',');
+
+        }
+
+        stringBuilder.setCharAt(stringBuilder.length() - 1, ')');
+
+        return stringBuilder.toString();
     }
 }

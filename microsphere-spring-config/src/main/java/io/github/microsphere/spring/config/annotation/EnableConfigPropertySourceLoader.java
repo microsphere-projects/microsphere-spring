@@ -16,6 +16,8 @@
  */
 package io.github.microsphere.spring.config.annotation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -33,6 +35,7 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -56,6 +59,8 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
 
     private static final String[] NO_CLASS_TO_IMPORT = new String[0];
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final Class<A> annotationType;
 
     protected ConfigurableEnvironment environment;
@@ -78,24 +83,29 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
 
     @Override
     public final String[] selectImports(AnnotationMetadata metadata) {
-        AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationType.getName()));
+        String annotationClassName = annotationType.getName();
+        AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
         EnableConfigAttributes<A> enableConfigAttributes = new EnableConfigAttributes(annotationType, annotationAttributes);
         MutablePropertySources propertySources = environment.getPropertySources();
         String propertySourceName = resolvePropertySourceName(enableConfigAttributes, metadata);
         PropertySource<?> propertySource = loadPropertySource(enableConfigAttributes, propertySourceName, metadata);
-        if (enableConfigAttributes.isFirstPropertySource()) {
-            propertySources.addFirst(propertySource);
+        if (propertySource == null) {
+            logger.warn("The PropertySource[annotationType : '{}' , configuration : '{}'] can't be loaded", annotationClassName, metadata.getClassName());
         } else {
-            String relativePropertySourceName = enableConfigAttributes.getAfterPropertySourceName();
-            if (StringUtils.hasText(relativePropertySourceName)) {
-                propertySources.addAfter(relativePropertySourceName, propertySource);
+            if (enableConfigAttributes.isFirstPropertySource()) {
+                propertySources.addFirst(propertySource);
             } else {
-                relativePropertySourceName = enableConfigAttributes.getBeforePropertySourceName();
-            }
-            if (StringUtils.hasText(relativePropertySourceName)) {
-                propertySources.addBefore(relativePropertySourceName, propertySource);
-            } else {
-                propertySources.addLast(propertySource);
+                String relativePropertySourceName = enableConfigAttributes.getAfterPropertySourceName();
+                if (StringUtils.hasText(relativePropertySourceName)) {
+                    propertySources.addAfter(relativePropertySourceName, propertySource);
+                } else {
+                    relativePropertySourceName = enableConfigAttributes.getBeforePropertySourceName();
+                }
+                if (StringUtils.hasText(relativePropertySourceName)) {
+                    propertySources.addBefore(relativePropertySourceName, propertySource);
+                } else {
+                    propertySources.addLast(propertySource);
+                }
             }
         }
         return NO_CLASS_TO_IMPORT;
@@ -137,9 +147,9 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
      * @param enableConfigAttributes {@link EnableConfigAttributes}
      * @param propertySourceName     the name of {@link PropertySource}
      * @param metadata               {@link AnnotationMetadata}
-     * @return non-null
+     * @return <code>null</code> if can't be loaded
      */
-    @NonNull
+    @Nullable
     protected abstract PropertySource<?> loadPropertySource(EnableConfigAttributes<A> enableConfigAttributes, String propertySourceName, AnnotationMetadata metadata);
 
     @Override

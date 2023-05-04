@@ -16,9 +16,13 @@
  */
 package io.github.microsphere.spring.config.zookeeper.annotation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.microsphere.net.URLUtils;
+import io.github.microsphere.spring.config.zookeeper.metadata.ConfigEntity;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryForever;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +51,13 @@ import static org.junit.Assert.assertEquals;
 })
 public class EnableZookeeperConfigTest {
 
+    private static CuratorFramework client;
+
     @BeforeClass
     public static void init() throws Exception {
         EnableZookeeperConfig annotation =
                 EnableZookeeperConfigTest.class.getAnnotation(EnableZookeeperConfig.class);
-        CuratorFramework client = CuratorFrameworkFactory.builder()
+        client = CuratorFrameworkFactory.builder()
                 .connectString(annotation.connectString())
                 .retryPolicy(new RetryForever(300))
                 .build();
@@ -61,48 +67,82 @@ public class EnableZookeeperConfigTest {
         String rootPath = annotation.rootPath();
 
         // 创建根路径，如果不存在
-        markDir(client, rootPath);
+        resolveDir(rootPath);
 
         // 添加模拟数据
-        mockConfigEntity(client, rootPath, "config1");
+        mockConfig(rootPath);
 
     }
 
-    private static void mockConfigEntity(CuratorFramework client, String rootPath, String configBasePath) throws Exception {
-        String propertySourcePath = rootPath + "/" + configBasePath;
+    @AfterClass
+    public static void destroy() {
+        client.close();
+    }
+
+    private static void mockConfig(String rootPath) throws Exception {
 
         ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
 
         Resource[] resources = patternResolver.getResources("classpath:/META-INF/zookeeper/*.json");
 
         // 创建 PropertySource 路径，如果不存在
-        markDir(client, propertySourcePath);
+        resolveDir(rootPath);
 
         for (Resource resource : resources) {
-            // my.name.json
-            String propertyName = resource.getFilename();
-            String propertyPath = propertySourcePath + "/" + propertyName;
+            // test.json
+            String fileName = resource.getFilename();
+            String configPath = rootPath + "/" + fileName;
             byte[] data = StreamUtils.copyToByteArray(resource.getInputStream());
-            if (client.checkExists().forPath(propertyPath) != null) {
-                client.delete().forPath(propertyPath);
-            }
-            client.create().forPath(propertyPath, data);
+            writeConfig(configPath, data);
         }
-
     }
 
-    private static void markDir(CuratorFramework client, String path) throws Exception {
+    private static void writeConfig(String path, ConfigEntity configEntity) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        byte[] data = objectMapper.writeValueAsBytes(configEntity);
+        writeConfig(path, data);
+    }
+
+    private static void writeConfig(String path, byte[] data) throws Exception {
+        if (client.checkExists().forPath(path) == null) {
+            client.create().forPath(path, data);
+        } else {
+            client.setData().forPath(path, data);
+        }
+    }
+
+    private static void resolveDir(String path) throws Exception {
         if (client.checkExists().forPath(path) == null) {
             client.create().forPath(path);
+        } else {
+            deleteNode(path);
         }
+    }
+
+    private static void deleteNode(String path) throws Exception {
+        for (String childPath : client.getChildren().forPath(path)) {
+            deleteNode(URLUtils.buildURI(path, childPath));
+        }
+        client.delete().forPath(path);
     }
 
     @Autowired
     private Environment environment;
 
     @Test
-    public void test() {
-        assertEquals("mercyblitz", environment.getProperty("my.name.json"));
+    public void test() throws Exception {
+        assertEquals("mercyblitz", environment.getProperty("my.name"));
+
+        ConfigEntity configEntity = new ConfigEntity();
+        ConfigEntity.Header header = new ConfigEntity.Header();
+        header.setContentType("text/properties");
+        configEntity.setHeader(header);
+        configEntity.setBody("my.name: Mercy Ma");
+
+        writeConfig("/configs/test.json", configEntity);
+        Thread.sleep(10 * 1000);
+        assertEquals("Mercy Ma", environment.getProperty("my.name"));
+
     }
 
     @EnableZookeeperConfig

@@ -19,15 +19,18 @@ package io.github.microsphere.spring.config.zookeeper.env;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.microsphere.spring.config.zookeeper.metadata.ConfigEntity;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.api.CuratorWatcher;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
 import org.springframework.core.env.EnumerablePropertySource;
 
-import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Zookeeper PropertySource
@@ -35,59 +38,85 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ZookeeperPropertySource extends EnumerablePropertySource<Map<String, Object>> {
+public class ZookeeperPropertySource extends EnumerablePropertySource<Map<String, Object>> implements CuratorWatcher {
 
-    private final String configBasePath;
+    private final String configPath;
 
     private final CuratorFramework client;
 
-    private Map<String, Object> cache;
+    private final boolean reloadable;
 
-    public ZookeeperPropertySource(String configBasePath, CuratorFramework client) {
-        super("zookeeper://" + configBasePath);
-        this.configBasePath = configBasePath;
+    private volatile Map<String, Object> cache;
+
+    public ZookeeperPropertySource(String configPath, CuratorFramework client, boolean reloadable) {
+        super("zookeeper://" + configPath);
+        this.configPath = configPath;
         this.client = client;
-        initCache();
+        this.reloadable = reloadable;
+        load();
+        if (reloadable) {
+            watch();
+        }
     }
 
-    private void initCache() {
-        // TODO Async
-        // list the children under the config base path
+    protected void load() {
+        if (!reloadable && cache != null) {
+            return;
+        }
         Map<String, Object> localCache = new HashMap<>();
         try {
-            List<String> propertyNamePaths = client.getChildren().forPath(this.configBasePath);
-            for (String propertyNamePath : propertyNamePaths) {
+            ConfigEntity configEntity = getConfigEntity(configPath);
+            String contentType = configEntity.getHeader().getContentType();
+            String body = configEntity.getBody();
 
-                String configEntityPath = configBasePath + "/" + propertyNamePath;
-                ConfigEntity configEntity = getConfigEntity(configEntityPath);
-                String contentType = configEntity.getHeader().getContentType();
-                String body = configEntity.getBody();
-
-                switch (contentType) {
-                    case "text/plain":
-                        localCache.put(propertyNamePath, body);
-                        break;
-                    case "text/properties":
-                        Properties properties = new Properties();
-                        try {
-                            properties.load(new StringReader(body));
-                            localCache.putAll((Map) properties);
-                        } catch (IOException e) {
-                            // TODO
-                        }
-                        break;
-                    case "text/json":
-                        // TODO
-                        break;
-                    case "text/xml":
-                        // TODO
-                        break;
-                }
+            switch (contentType) {
+                case "text/properties":
+                    Properties properties = new Properties();
+                    properties.load(new StringReader(body));
+                    localCache.putAll((Map) properties);
+                    break;
+                case "text/json":
+                    // TODO
+                    break;
+                case "text/xml":
+                    // TODO
+                    break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
+            throw new IllegalStateException("Can't load Zookeeper Config Entry!", e);
         }
         this.cache = localCache;
+    }
+
+    private void watch() {
+        try {
+            this.client.getData().usingWatcher(this).forPath(configPath);
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't watch the config path : " + configPath, e);
+        }
+    }
+
+    private void clear() {
+        Map<String, Object> cache = this.cache;
+        if (cache != null) {
+            cache.clear();
+            synchronized (cache) {
+                this.cache = emptyMap();
+            }
+        }
+    }
+
+    @Override
+    public void process(WatchedEvent event) throws Exception {
+        Watcher.Event.EventType eventType = event.getType();
+        switch (eventType) {
+            case NodeCreated:
+            case NodeDataChanged:
+                load();
+                break;
+            case NodeDeleted:
+                clear();
+        }
     }
 
     @Override
