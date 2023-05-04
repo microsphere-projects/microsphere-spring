@@ -21,12 +21,9 @@ import io.github.microsphere.spring.config.annotation.EnableConfigPropertySource
 import io.github.microsphere.spring.config.zookeeper.env.ZookeeperPropertySource;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.RetryForever;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertySource;

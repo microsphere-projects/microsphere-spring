@@ -25,7 +25,6 @@ import org.apache.zookeeper.Watcher;
 import org.springframework.core.env.EnumerablePropertySource;
 
 import java.io.StringReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
