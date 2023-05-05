@@ -16,14 +16,21 @@
  */
 package io.github.microsphere.spring.config.env.annotation;
 
-import io.github.microsphere.spring.config.context.annotation.PropertySourceExtension;
 import io.github.microsphere.spring.config.context.annotation.ResourcePropertySource;
+import io.github.microsphere.spring.config.context.annotation.ResourcePropertySourceLoader;
 import io.github.microsphere.spring.config.env.support.DefaultResourceComparator;
 import io.github.microsphere.spring.config.env.support.YamlPropertySourceFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.io.Resource;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Comparator;
 
 /**
@@ -36,6 +43,10 @@ import java.util.Comparator;
  * @see io.github.microsphere.spring.config.env.YamlPropertySource
  * @since 1.0.0
  */
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Documented
 @ResourcePropertySource(factory = YamlPropertySourceFactory.class)
 public @interface YamlPropertySource {
 

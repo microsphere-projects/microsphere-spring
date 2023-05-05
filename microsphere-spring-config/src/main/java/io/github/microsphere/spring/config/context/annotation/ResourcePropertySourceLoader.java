@@ -44,7 +44,7 @@ import java.util.Comparator;
  * @see YamlPropertySourceFactory
  * @since 1.0.0
  */
-class ResourcePropertySourceLoader extends ExtendablePropertySourceLoader<ResourcePropertySource> implements
+public class ResourcePropertySourceLoader extends ExtendablePropertySourceLoader<ResourcePropertySource> implements
         ResourceLoaderAware, BeanClassLoaderAware {
 
     private ResourcePatternResolver resourcePatternResolver;

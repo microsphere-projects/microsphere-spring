@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.config.zookeeper.annotation;
+package io.github.microsphere.spring.config.context.annotation;
 
-import io.github.microsphere.spring.config.context.annotation.ResourcePropertySource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +47,6 @@ public class ResourcePropertySourceTest {
     @Test
     public void test() {
         assertEquals("1", environment.getProperty("a"));
-        assertEquals("2", environment.getProperty("b"));
+        assertEquals("3", environment.getProperty("b"));
     }
 }
