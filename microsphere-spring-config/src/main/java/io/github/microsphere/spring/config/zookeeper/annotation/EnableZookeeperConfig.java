@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.config.zookeeper.annotation;
 
-import io.github.microsphere.spring.config.annotation.EnableConfig;
+import io.github.microsphere.spring.config.context.annotation.PropertySourceExtension;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.env.PropertySource;
@@ -38,14 +38,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@EnableConfig
+@PropertySourceExtension
 @Import(EnableZookeeperConfigPropertySourceLoader.class)
 public @interface EnableZookeeperConfig {
 
     /**
      * The name of Zookeeper {@link PropertySource}
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "name")
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "name")
     String name() default "";
 
     /**
@@ -54,7 +54,7 @@ public @interface EnableZookeeperConfig {
      *
      * @return default value is <code>true</code>
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "autoRefreshed")
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "autoRefreshed")
     boolean autoRefreshed() default true;
 
     /**
@@ -63,7 +63,7 @@ public @interface EnableZookeeperConfig {
      *
      * @return default value is <code>false</code>
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "first")
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "first")
     boolean first() default false;
 
     /**
@@ -75,7 +75,7 @@ public @interface EnableZookeeperConfig {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "before")
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "before")
     String before() default "";
 
     /**
@@ -87,7 +87,7 @@ public @interface EnableZookeeperConfig {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = EnableConfig.class, attribute = "after")
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "after")
     String after() default "";
 
     /**

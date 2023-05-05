@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.config.annotation;
+package io.github.microsphere.spring.config.context.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
 
@@ -22,17 +22,17 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**
- * {@link AnnotationAttributes} for the annotation meta-annotated {@link EnableConfig}
+ * {@link AnnotationAttributes} for the annotation meta-annotated {@link PropertySourceExtension}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see EnableConfig
+ * @see PropertySourceExtension
  * @since 1.0.0
  */
-public class EnableConfigAttributes<A extends Annotation> extends AnnotationAttributes {
+public class PropertySourceExtensionAttributes<A extends Annotation> extends AnnotationAttributes {
 
     private final Class<A> annotationType;
 
-    public EnableConfigAttributes(Class<A> annotationType, AnnotationAttributes source) {
+    public PropertySourceExtensionAttributes(Class<A> annotationType, AnnotationAttributes source) {
         super(source);
         this.annotationType = annotationType;
     }

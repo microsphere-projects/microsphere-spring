@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.config.annotation;
+package io.github.microsphere.spring.config.context.annotation;
 
 import org.springframework.core.env.PropertySource;
 
@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A meta-annotation enables Spring Configuration
+ * A meta-annotation for the Spring {@link PropertySource} extension
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface EnableConfig {
+public @interface PropertySourceExtension {
 
     /**
      * The name of {@link PropertySource} If absent

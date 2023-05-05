@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.microsphere.spring.config.annotation;
+package io.github.microsphere.spring.config.context.annotation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
@@ -37,47 +36,44 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 
-import static io.github.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Abstract {@link ImportSelector} class to load the {@link PropertySource PropertySource}
- * when the {@link Configuration configuration} annotated the Enable annotation that meta-annotates {@link EnableConfig @EnableConfig}
+ * when the {@link Configuration configuration} annotated the specified annotation
  *
- * @param <A> The type of {@link Annotation} must meta-annotate {@link EnableConfig}
+ * @param <A> The type of {@link Annotation}
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see EnableConfig
- * @see EnableConfigAttributes
+ * @see ResourcePropertySourceLoader
+ * @see ExtendablePropertySourceLoader
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class EnableConfigPropertySourceLoader<A extends Annotation> implements ImportSelector, EnvironmentAware, BeanFactoryAware {
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implements ImportSelector, EnvironmentAware, BeanFactoryAware {
 
     private static final String[] NO_CLASS_TO_IMPORT = new String[0];
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected static final String NAME_ATTRIBUTE_NAME = "name";
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Class<A> annotationType;
 
-    protected ConfigurableEnvironment environment;
+    private ConfigurableEnvironment environment;
 
-    protected ConfigurableListableBeanFactory beanFactory;
+    private ConfigurableListableBeanFactory beanFactory;
 
-    protected BeanDefinitionRegistry registry;
-
-    protected BeanNameGenerator beanNameGenerator;
-
-    public EnableConfigPropertySourceLoader() {
+    public AnnotatedPropertySourceLoader() {
         this.annotationType = resolveAnnotationType();
     }
 
     private Class<A> resolveAnnotationType() {
         ResolvableType type = ResolvableType.forType(this.getClass());
-        ResolvableType superType = type.as(EnableConfigPropertySourceLoader.class);
+        ResolvableType superType = type.as(AnnotatedPropertySourceLoader.class);
         return (Class<A>) superType.resolveGeneric(0);
     }
 
@@ -85,28 +81,14 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
     public final String[] selectImports(AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
         AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
-        EnableConfigAttributes<A> enableConfigAttributes = new EnableConfigAttributes(annotationType, annotationAttributes);
+        String propertySourceName = resolvePropertySourceName(annotationAttributes, metadata);
         MutablePropertySources propertySources = environment.getPropertySources();
-        String propertySourceName = resolvePropertySourceName(enableConfigAttributes, metadata);
-        PropertySource<?> propertySource = loadPropertySource(enableConfigAttributes, propertySourceName, metadata);
-        if (propertySource == null) {
-            logger.warn("The PropertySource[annotationType : '{}' , configuration : '{}'] can't be loaded", annotationClassName, metadata.getClassName());
-        } else {
-            if (enableConfigAttributes.isFirstPropertySource()) {
-                propertySources.addFirst(propertySource);
-            } else {
-                String relativePropertySourceName = enableConfigAttributes.getAfterPropertySourceName();
-                if (StringUtils.hasText(relativePropertySourceName)) {
-                    propertySources.addAfter(relativePropertySourceName, propertySource);
-                } else {
-                    relativePropertySourceName = enableConfigAttributes.getBeforePropertySourceName();
-                }
-                if (StringUtils.hasText(relativePropertySourceName)) {
-                    propertySources.addBefore(relativePropertySourceName, propertySource);
-                } else {
-                    propertySources.addLast(propertySource);
-                }
-            }
+        try {
+            loadPropertySource(annotationAttributes, metadata, propertySourceName, propertySources);
+        } catch (Throwable e) {
+            String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationClassName + "] can't load the PropertySource[name : '" + propertySourceName + "']";
+            logger.error(errorMessage, e);
+            throw new BeanCreationException(errorMessage, e);
         }
         return NO_CLASS_TO_IMPORT;
     }
@@ -114,28 +96,44 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
     /**
      * Resolve the name of {@link PropertySource}
      *
-     * @param enableConfigAttributes {@link EnableConfigAttributes}
-     * @param metadata               {@link AnnotationMetadata}
+     * @param attributes {@link AnnotationAttributes}
+     * @param metadata             {@link AnnotationMetadata}
      * @return non-null
      */
     @NonNull
-    protected String resolvePropertySourceName(EnableConfigAttributes<A> enableConfigAttributes, AnnotationMetadata metadata) {
-        String name = enableConfigAttributes.getName();
-        if (!StringUtils.hasText(name)) {
-            name = buildDefaultPropertySourceName(metadata);
+    protected final String resolvePropertySourceName(AnnotationAttributes attributes, AnnotationMetadata metadata) {
+        String name = buildPropertySourceName(attributes, metadata);
+        if (!hasText(name)) {
+            name = buildDefaultPropertySourceName(attributes, metadata);
         }
         return name;
+    }
+
+    /**
+     * Build the name of {@link PropertySource}
+     *
+     * @param attributes {@link AnnotationAttributes}
+     * @param metadata             {@link AnnotationMetadata}
+     * @return the attribute value of annotation if the {@link #NAME_ATTRIBUTE_NAME "name"} attribute present, or <code>null</code>
+     */
+    @Nullable
+    protected String buildPropertySourceName(AnnotationAttributes attributes, AnnotationMetadata metadata) {
+        if (attributes.containsKey(NAME_ATTRIBUTE_NAME)) {
+            return attributes.getString(NAME_ATTRIBUTE_NAME);
+        }
+        return null;
     }
 
 
     /**
      * Build the default name of {@link PropertySource}
      *
-     * @param metadata {@link AnnotationMetadata}
+     * @param attributes {@link AnnotationAttributes}
+     * @param metadata             {@link AnnotationMetadata}
      * @return non-null
      */
     @NonNull
-    protected String buildDefaultPropertySourceName(AnnotationMetadata metadata) {
+    protected String buildDefaultPropertySourceName(AnnotationAttributes attributes, AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
         String introspectedClassName = metadata.getClassName();
         return introspectedClassName + "@" + annotationClassName;
@@ -144,13 +142,15 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
     /**
      * Load the {@link PropertySource}
      *
-     * @param enableConfigAttributes {@link EnableConfigAttributes}
-     * @param propertySourceName     the name of {@link PropertySource}
-     * @param metadata               {@link AnnotationMetadata}
-     * @return <code>null</code> if can't be loaded
+     * @param attributes {@link AnnotationAttributes}
+     * @param metadata             {@link AnnotationMetadata}
+     * @param propertySourceName   the name of {@link PropertySource}
+     * @param propertySources      {@link MutablePropertySources} to be added
+     * @throws Throwable the failure of the loading
      */
     @Nullable
-    protected abstract PropertySource<?> loadPropertySource(EnableConfigAttributes<A> enableConfigAttributes, String propertySourceName, AnnotationMetadata metadata);
+    protected abstract void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata,
+                                               String propertySourceName, MutablePropertySources propertySources) throws Throwable;
 
     @Override
     public final void setEnvironment(Environment environment) {
@@ -163,29 +163,34 @@ public abstract class EnableConfigPropertySourceLoader<A extends Annotation> imp
     public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         Class<ConfigurableListableBeanFactory> targetType = ConfigurableListableBeanFactory.class;
         Assert.isInstanceOf(targetType, beanFactory, "The 'beanFactory' argument must be an instance of class " + targetType.getName());
-        Assert.isInstanceOf(BeanDefinitionRegistry.class, beanFactory, "The 'beanFactory' argument must be an instance of class " + BeanDefinitionRegistry.class.getName());
         this.beanFactory = targetType.cast(beanFactory);
-
-        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
-        this.beanNameGenerator = resolveAnnotatedBeanNameGenerator(registry);
-        this.registry = registry;
     }
 
     /**
      * The annotation type
      *
-     * @return
+     * @return non-null
      */
     @NonNull
     public final Class<A> getAnnotationType() {
         return annotationType;
     }
 
+    /**
+     * The {@link ConfigurableEnvironment} instance
+     *
+     * @return non-null
+     */
     @NonNull
     public final ConfigurableEnvironment getEnvironment() {
         return environment;
     }
 
+    /**
+     * The {@link ConfigurableListableBeanFactory} instance
+     *
+     * @return non-null
+     */
     @NonNull
     public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;

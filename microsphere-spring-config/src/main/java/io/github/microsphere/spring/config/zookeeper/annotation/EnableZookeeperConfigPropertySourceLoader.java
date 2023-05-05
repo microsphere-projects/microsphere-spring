@@ -16,15 +16,14 @@
  */
 package io.github.microsphere.spring.config.zookeeper.annotation;
 
-import io.github.microsphere.spring.config.annotation.EnableConfigAttributes;
-import io.github.microsphere.spring.config.annotation.EnableConfigPropertySourceLoader;
+import io.github.microsphere.spring.config.context.annotation.ExtendablePropertySourceLoader;
+import io.github.microsphere.spring.config.context.annotation.PropertySourceExtensionAttributes;
 import io.github.microsphere.spring.config.zookeeper.env.ZookeeperPropertySource;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.RetryForever;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
@@ -47,7 +46,7 @@ import static io.github.microsphere.util.ShutdownHookUtils.addShutdownHookCallba
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPropertySourceLoader<EnableZookeeperConfig> {
+public class EnableZookeeperConfigPropertySourceLoader extends ExtendablePropertySourceLoader<EnableZookeeperConfig> {
 
     private static final Map<String, CuratorFramework> clientsCache;
 
@@ -65,38 +64,34 @@ public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPrope
     }
 
     @Override
-    protected PropertySource<?> loadPropertySource(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes, String propertySourceName, AnnotationMetadata metadata) {
+    protected PropertySource<?> loadPropertySource(PropertySourceExtensionAttributes<EnableZookeeperConfig> attributes,
+                                                   String propertySourceName, AnnotationMetadata metadata) throws Throwable {
 
-        String rootPath = enableConfigAttributes.getString("rootPath");
+        String rootPath = attributes.getString("rootPath");
 
-        CuratorFramework client = getClient(enableConfigAttributes, rootPath);
+        CuratorFramework client = getClient(attributes, rootPath);
 
         CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
-        try {
+        boolean rootPathNotExisted = client.checkExists().forPath(rootPath) == null;
 
-            boolean rootPathNotExisted = client.checkExists().forPath(rootPath) == null;
+        boolean autoRefreshed = attributes.isAutoRefreshed();
 
-            boolean autoRefreshed = enableConfigAttributes.isAutoRefreshed();
-
-            if (rootPathNotExisted) { // Not Existed
-                if (!autoRefreshed) {
-                    return null;
-                }
-                // Create Root Path
-                client.create().forPath(rootPath);
+        if (rootPathNotExisted) { // Not Existed
+            if (!autoRefreshed) {
+                return null;
             }
+            // Create Root Path
+            client.create().forPath(rootPath);
+        }
 
-            GetChildrenBuilder childrenBuilder = client.getChildren();
+        GetChildrenBuilder childrenBuilder = client.getChildren();
 
-            List<String> configBasePaths = childrenBuilder.forPath(rootPath);
+        List<String> configBasePaths = childrenBuilder.forPath(rootPath);
 
-            for (String configBasePath : configBasePaths) {
-                String configPath = buildURI(rootPath, configBasePath);
-                ZookeeperPropertySource zookeeperPropertySource = createPropertySource(configPath, client, autoRefreshed);
-                compositePropertySource.addPropertySource(zookeeperPropertySource);
-            }
-        } catch (Exception e) {
-            throw new BeanCreationException("@EnableZookeeperConfig bean can't load the PropertySource[name :" + propertySourceName + "]", e);
+        for (String configBasePath : configBasePaths) {
+            String configPath = buildURI(rootPath, configBasePath);
+            ZookeeperPropertySource zookeeperPropertySource = createPropertySource(configPath, client, autoRefreshed);
+            compositePropertySource.addPropertySource(zookeeperPropertySource);
         }
         return compositePropertySource;
     }
@@ -105,8 +100,8 @@ public class EnableZookeeperConfigPropertySourceLoader extends EnableConfigPrope
         return new ZookeeperPropertySource(configPath, client, autoRefreshed);
     }
 
-    private CuratorFramework getClient(EnableConfigAttributes<EnableZookeeperConfig> enableConfigAttributes, String rootPath) {
-        String connectString = enableConfigAttributes.getString("connectString");
+    private CuratorFramework getClient(PropertySourceExtensionAttributes<EnableZookeeperConfig> propertySourceExtensionAttributes, String rootPath) {
+        String connectString = propertySourceExtensionAttributes.getString("connectString");
         String key = connectString + rootPath;
         return clientsCache.computeIfAbsent(key, k -> {
             CuratorFramework client = CuratorFrameworkFactory.builder()
