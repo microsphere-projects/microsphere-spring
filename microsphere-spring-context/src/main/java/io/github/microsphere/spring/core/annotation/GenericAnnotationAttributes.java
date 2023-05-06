@@ -81,7 +81,6 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
                 } else {
                     h += 31 * attributeValue.hashCode();
                 }
-
             }
         }
         return h;

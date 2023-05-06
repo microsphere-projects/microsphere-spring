@@ -645,6 +645,7 @@ public abstract class AnnotationUtils {
 
     public static Set<AnnotationAttributes> toAnnotationAttributesSet(AnnotationAttributes... annotationAttributesArray) {
         int length = annotationAttributesArray == null ? 0 : annotationAttributesArray.length;
+        
         if (length < 1) {
             return emptySet();
         }
