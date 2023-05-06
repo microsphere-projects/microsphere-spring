@@ -27,6 +27,8 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Set;
 
+import static io.github.microsphere.spring.util.AnnotationUtils.toAnnotationAttributesSet;
+
 /**
  * The loader of {@link PropertySource} for {@link ResourcePropertySources}
  *
@@ -48,9 +50,9 @@ class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<Resour
     protected void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata, String propertySourceName,
                                       MutablePropertySources propertySources) throws Throwable {
 
-        AnnotationAttributes[] attributesArray = attributes.getAnnotationArray("value");
+        AnnotationAttributes[] annotationAttributesArray = attributes.getAnnotationArray("value");
 
-        Set<AnnotationAttributes> attributesSet = CollectionUtils.ofSet(attributesArray);
+        Set<AnnotationAttributes> attributesSet = toAnnotationAttributesSet(annotationAttributesArray);
 
         ResourcePropertySourceLoader delegate = getDelegate();
 

@@ -1,5 +1,6 @@
 package io.github.microsphere.spring.util;
 
+import io.github.microsphere.spring.core.annotation.GenericAnnotationAttributes;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.Set;
 
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
@@ -638,6 +641,21 @@ public abstract class AnnotationUtils {
     public static AnnotationAttributes getAnnotationAttributes(AnnotationMetadata metadata, String annotationClassName) {
         AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
         return annotationAttributes;
+    }
+
+    public static Set<AnnotationAttributes> toAnnotationAttributesSet(AnnotationAttributes... annotationAttributesArray) {
+        int length = annotationAttributesArray == null ? 0 : annotationAttributesArray.length;
+        if (length < 1) {
+            return emptySet();
+        }
+
+        Set<AnnotationAttributes> annotationAttributesSet = new LinkedHashSet<>();
+        for (int i = 0; i < length; i++) {
+            AnnotationAttributes annotationAttributes = annotationAttributesArray[i];
+            annotationAttributesSet.add(new GenericAnnotationAttributes<>(annotationAttributes));
+        }
+
+        return annotationAttributesSet;
     }
 
 }
