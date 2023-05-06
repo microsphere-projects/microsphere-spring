@@ -39,6 +39,7 @@ import org.springframework.util.Assert;
 
 import java.lang.annotation.Annotation;
 
+import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -80,7 +81,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
     @Override
     public final String[] selectImports(AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
-        AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
+        AnnotationAttributes annotationAttributes = getAnnotationAttributes(metadata, annotationClassName);
         String propertySourceName = resolvePropertySourceName(annotationAttributes, metadata);
         MutablePropertySources propertySources = environment.getPropertySources();
         try {
@@ -97,7 +98,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
      * Resolve the name of {@link PropertySource}
      *
      * @param attributes {@link AnnotationAttributes}
-     * @param metadata             {@link AnnotationMetadata}
+     * @param metadata   {@link AnnotationMetadata}
      * @return non-null
      */
     @NonNull
@@ -113,7 +114,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
      * Build the name of {@link PropertySource}
      *
      * @param attributes {@link AnnotationAttributes}
-     * @param metadata             {@link AnnotationMetadata}
+     * @param metadata   {@link AnnotationMetadata}
      * @return the attribute value of annotation if the {@link #NAME_ATTRIBUTE_NAME "name"} attribute present, or <code>null</code>
      */
     @Nullable
@@ -129,7 +130,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
      * Build the default name of {@link PropertySource}
      *
      * @param attributes {@link AnnotationAttributes}
-     * @param metadata             {@link AnnotationMetadata}
+     * @param metadata   {@link AnnotationMetadata}
      * @return non-null
      */
     @NonNull
@@ -142,10 +143,10 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
     /**
      * Load the {@link PropertySource}
      *
-     * @param attributes {@link AnnotationAttributes}
-     * @param metadata             {@link AnnotationMetadata}
-     * @param propertySourceName   the name of {@link PropertySource}
-     * @param propertySources      {@link MutablePropertySources} to be added
+     * @param attributes         {@link AnnotationAttributes}
+     * @param metadata           {@link AnnotationMetadata}
+     * @param propertySourceName the name of {@link PropertySource}
+     * @param propertySources    {@link MutablePropertySources} to be added
      * @throws Throwable the failure of the loading
      */
     @Nullable

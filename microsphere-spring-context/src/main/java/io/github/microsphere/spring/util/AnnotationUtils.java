@@ -3,6 +3,7 @@ package io.github.microsphere.spring.util;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
@@ -612,6 +613,31 @@ public abstract class AnnotationUtils {
         Annotation annotation = tryGetMergedAnnotation(annotatedElement, annotationType, classValuesAsString, nestedAnnotationsAsMap);
         return annotation == null ? null : getAnnotationAttributes(annotation, propertyResolver,
                 classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, ignoreAttributeNames);
+    }
+
+    /**
+     * Get an instance of {@link AnnotationAttributes} from {@link AnnotationMetadata} with the specified class name of
+     * {@link Annotation annotation}.
+     *
+     * @param metadata       {@link AnnotationMetadata}
+     * @param annotationType The {@link Class class}  of {@link Annotation annotation}
+     * @return non-null
+     */
+    public static AnnotationAttributes getAnnotationAttributes(AnnotationMetadata metadata, Class<? extends Annotation> annotationType) {
+        return getAnnotationAttributes(metadata, annotationType.getName());
+    }
+
+    /**
+     * Get an instance of {@link AnnotationAttributes} from {@link AnnotationMetadata} with the specified class name of
+     * {@link Annotation annotation}.
+     *
+     * @param metadata            {@link AnnotationMetadata}
+     * @param annotationClassName The class name of {@link Annotation annotation}
+     * @return non-null
+     */
+    public static AnnotationAttributes getAnnotationAttributes(AnnotationMetadata metadata, String annotationClassName) {
+        AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
+        return annotationAttributes;
     }
 
 }

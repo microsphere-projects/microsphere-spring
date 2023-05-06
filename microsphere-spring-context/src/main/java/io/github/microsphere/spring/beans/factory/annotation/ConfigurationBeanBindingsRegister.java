@@ -25,6 +25,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
 
+import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+
 /**
  * The {@link ImportBeanDefinitionRegistrar Registrar class} for {@link EnableConfigurationBeanBindings}
  *
@@ -35,10 +37,9 @@ public class ConfigurationBeanBindingsRegister implements ImportBeanDefinitionRe
     private ConfigurableEnvironment environment;
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 
-        AnnotationAttributes attributes = AnnotationAttributes.fromMap(
-                importingClassMetadata.getAnnotationAttributes(EnableConfigurationBeanBindings.class.getName()));
+        AnnotationAttributes attributes = getAnnotationAttributes(metadata, EnableConfigurationBeanBindings.class);
 
         AnnotationAttributes[] annotationAttributes = attributes.getAnnotationArray("value");
 
