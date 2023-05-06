@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@Import(MultipleResourcePropertySourceLoader.class)
+@Import(ResourcePropertySourcesLoader.class)
 public @interface ResourcePropertySources {
 
     /**

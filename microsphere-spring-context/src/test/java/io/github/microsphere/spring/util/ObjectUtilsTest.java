@@ -28,7 +28,7 @@ import static junit.framework.TestCase.assertEquals;
  * {@link ObjectUtils} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.2
+ * @since 1.0.0
  */
 public class ObjectUtilsTest {
 

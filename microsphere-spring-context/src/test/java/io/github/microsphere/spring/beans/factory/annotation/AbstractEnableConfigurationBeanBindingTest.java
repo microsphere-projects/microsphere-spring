@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * Abstract Test cases for {@link EnableConfigurationBeanBinding}
  *
- * @since 1.0.4
+ * @since 1.0.0
  */
 public abstract class AbstractEnableConfigurationBeanBindingTest {
 

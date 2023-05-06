@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 /**
  * {@link AnnotatedInjectionBeanPostProcessor} Test
  *
- * @since 1.0.3
+ * @since 1.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {

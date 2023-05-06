@@ -49,7 +49,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils {
      * @param registry       {@link BeanDefinitionRegistry}
      * @param annotatedClass the {@link Annotation annotated} {@link Class class}
      * @return if present, return <code>true</code>, or <code>false</code>
-     * @since 1.0.3
+     * @since 1.0.0
      */
     public static boolean isPresentBean(BeanDefinitionRegistry registry, Class<?> annotatedClass) {
 

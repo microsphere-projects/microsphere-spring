@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
  * {@link DeferredApplicationEventPublisher} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.4
+ * @since 1.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(

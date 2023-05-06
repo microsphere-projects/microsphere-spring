@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * {@link BeanFactoryUtils} Test
  *
- * @since 1.0.2
+ * @since 1.0.0
  */
 public class BeanFactoryUtilsTest {
 

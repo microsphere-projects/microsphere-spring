@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 /**
  * The annotation composes the multiple {@link EnableConfigurationBeanBinding EnableConfigurationBeanBindings}
  *
- * @since 1.0.4
+ * @since 1.0.0
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

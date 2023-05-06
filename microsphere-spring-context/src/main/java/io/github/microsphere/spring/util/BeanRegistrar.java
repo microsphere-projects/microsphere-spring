@@ -42,7 +42,7 @@ import static org.springframework.util.StringUtils.hasText;
 /**
  * Bean Registrar
  *
- * @since 1.0.3
+ * @since 1.0.0
  */
 public abstract class BeanRegistrar {
 
@@ -144,7 +144,7 @@ public abstract class BeanRegistrar {
      * @param registry       {@link BeanDefinitionRegistry}
      * @param factoryClasses The factory classes to register
      * @return the count of beans that are succeeded to be registered
-     * @since 1.0.7
+     * @since 1.0.0
      */
     public static int registerSpringFactoriesBeans(BeanDefinitionRegistry registry, Class<?>... factoryClasses) {
         int count = 0;

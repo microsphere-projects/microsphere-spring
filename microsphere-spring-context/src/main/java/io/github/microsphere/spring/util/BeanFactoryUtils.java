@@ -35,7 +35,7 @@ import static org.springframework.util.StringUtils.hasText;
  * {@link BeanFactory} Utilities class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.2
+ * @since 1.0.0
  */
 public abstract class BeanFactoryUtils {
 

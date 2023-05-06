@@ -51,7 +51,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  * The {@link BeanPostProcessor} class to bind the configuration bean
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.3
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered {

@@ -22,7 +22,7 @@ import java.lang.reflect.Array;
  * Object Utilities
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.2
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public abstract class ObjectUtils {
@@ -30,7 +30,7 @@ public abstract class ObjectUtils {
     /**
      * Empty String array
      *
-     * @since 1.0.10
+     * @since 1.0.0
      */
     public static final String[] EMPTY_STRING_ARRAY = {};
 

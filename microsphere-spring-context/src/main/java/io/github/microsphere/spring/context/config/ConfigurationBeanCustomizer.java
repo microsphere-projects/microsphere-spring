@@ -29,7 +29,7 @@ import org.springframework.core.Ordered;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ConfigurationBeanBinder
  * @see ConfigurationBeanBindingPostProcessor
- * @since 1.0.3
+ * @since 1.0.0
  */
 public interface ConfigurationBeanCustomizer extends Ordered {
 

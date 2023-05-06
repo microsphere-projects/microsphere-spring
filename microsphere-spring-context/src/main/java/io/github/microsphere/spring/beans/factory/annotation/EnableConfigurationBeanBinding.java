@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * @see ConfigurationBeanBindingRegistrar
  * @see ConfigurationBeanBindingPostProcessor
  * @see ConfigurationBeanCustomizer
- * @since 1.0.3
+ * @since 1.0.0
  */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

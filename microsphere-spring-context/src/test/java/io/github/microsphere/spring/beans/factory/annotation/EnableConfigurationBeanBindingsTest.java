@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * {@link EnableConfigurationBeanBindings} Test cases
  *
- * @since 1.0.4
+ * @since 1.0.0
  */
 @EnableConfigurationBeanBindings(
         @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)

@@ -16,6 +16,7 @@
  */
 package io.github.microsphere.spring.config.context.annotation;
 
+import io.github.microsphere.util.CollectionUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -23,6 +24,8 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
+
+import java.util.Set;
 
 /**
  * The loader of {@link PropertySource} for {@link ResourcePropertySources}
@@ -34,7 +37,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * @see AnnotatedPropertySourceLoader
  * @since 1.0.0
  */
-class MultipleResourcePropertySourceLoader extends AnnotatedPropertySourceLoader<ResourcePropertySources> implements
+class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<ResourcePropertySources> implements
         ResourceLoaderAware, BeanClassLoaderAware {
 
     private ResourceLoader resourceLoader;
@@ -44,11 +47,14 @@ class MultipleResourcePropertySourceLoader extends AnnotatedPropertySourceLoader
     @Override
     protected void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata, String propertySourceName,
                                       MutablePropertySources propertySources) throws Throwable {
+
         AnnotationAttributes[] attributesArray = attributes.getAnnotationArray("value");
+
+        Set<AnnotationAttributes> attributesSet = CollectionUtils.ofSet(attributesArray);
 
         ResourcePropertySourceLoader delegate = getDelegate();
 
-        for (AnnotationAttributes elementAttributes : attributesArray) {
+        for (AnnotationAttributes elementAttributes : attributesSet) {
             String name = resolvePropertySourceName(elementAttributes, metadata);
             delegate.loadPropertySource(elementAttributes, metadata, name, propertySources);
         }

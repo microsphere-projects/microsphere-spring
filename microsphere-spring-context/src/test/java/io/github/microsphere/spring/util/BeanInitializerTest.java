@@ -28,7 +28,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
 /**
  * {@link BeanRegistrar} Test
  *
- * @since 1.0.3
+ * @since 1.0.0
  */
 public class BeanInitializerTest {
 

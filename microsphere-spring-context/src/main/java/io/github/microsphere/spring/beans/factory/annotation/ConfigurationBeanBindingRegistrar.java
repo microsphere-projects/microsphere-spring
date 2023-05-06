@@ -54,7 +54,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * The {@link ImportBeanDefinitionRegistrar} implementation for {@link EnableConfigurationBeanBinding @EnableConfigurationBinding}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.3
+ * @since 1.0.0
  */
 public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 

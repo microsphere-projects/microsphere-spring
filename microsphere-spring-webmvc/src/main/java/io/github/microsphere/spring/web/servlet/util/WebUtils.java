@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebUtils
- * @since 1.0.1 2016-10-20
+ * @since 1.0.0
  */
 public abstract class WebUtils {
 

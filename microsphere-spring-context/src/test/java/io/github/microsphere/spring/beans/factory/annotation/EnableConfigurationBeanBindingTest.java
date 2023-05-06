@@ -20,7 +20,7 @@ package io.github.microsphere.spring.beans.factory.annotation;
  * {@link EnableConfigurationBeanBinding} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.3
+ * @since 1.0.0
  */
 
 import io.github.microsphere.spring.context.config.ConfigurationBeanBinder;
