@@ -44,7 +44,7 @@ public abstract class ExtendablePropertySourceLoader<A extends Annotation> exten
     protected final void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata,
                                             String propertySourceName, MutablePropertySources propertySources) throws Throwable {
         Class<A> annotationType = getAnnotationType();
-        PropertySourceExtensionAttributes<A> propertySourceExtensionAttributes = new PropertySourceExtensionAttributes(annotationType, attributes);
+        PropertySourceExtensionAttributes<A> propertySourceExtensionAttributes = new PropertySourceExtensionAttributes(attributes, getEnvironment());
         PropertySource<?> propertySource = loadPropertySource(propertySourceExtensionAttributes, propertySourceName, metadata);
         if (propertySource == null) {
             logger.warn("The PropertySource[annotationType : '{}' , configuration : '{}'] can't be loaded", annotationType.getName(), metadata.getClassName());

@@ -17,6 +17,7 @@
 package io.github.microsphere.spring.core.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.env.PropertyResolver;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
@@ -24,12 +25,14 @@ import org.springframework.util.ObjectUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import static io.github.microsphere.spring.util.AnnotationUtils.findAnnotationType;
 import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static java.util.Collections.emptySet;
 
 /**
  * Generic {@link AnnotationAttributes}
@@ -52,7 +55,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
         this(another, findAnnotationType(another));
     }
 
-    public GenericAnnotationAttributes(AnnotationAttributes another, Class<A> annotationType) {
+    public GenericAnnotationAttributes(Map<String, Object> another, Class<A> annotationType) {
         super(another);
         this.annotationType = annotationType;
     }
@@ -132,5 +135,28 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
     @NonNull
     public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes) {
         return new GenericAnnotationAttributes(attributes);
+    }
+
+    /**
+     * Create a {@link Set set} of {@link GenericAnnotationAttributes}
+     *
+     * @param attributesArray
+     * @return non-null
+     */
+    @NonNull
+    public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes... attributesArray) {
+        int length = attributesArray == null ? 0 : attributesArray.length;
+
+        if (length < 1) {
+            return emptySet();
+        }
+
+        Set<AnnotationAttributes> annotationAttributesSet = new LinkedHashSet<>();
+        for (int i = 0; i < length; i++) {
+            AnnotationAttributes annotationAttributes = attributesArray[i];
+            annotationAttributesSet.add(of(annotationAttributes));
+        }
+
+        return annotationAttributesSet;
     }
 }

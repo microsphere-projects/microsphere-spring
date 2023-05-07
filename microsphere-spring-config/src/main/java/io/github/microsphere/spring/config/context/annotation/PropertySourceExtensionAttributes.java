@@ -16,7 +16,10 @@
  */
 package io.github.microsphere.spring.config.context.annotation;
 
+import io.github.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.env.PropertyResolver;
+import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -28,13 +31,18 @@ import java.util.Map;
  * @see PropertySourceExtension
  * @since 1.0.0
  */
-public class PropertySourceExtensionAttributes<A extends Annotation> extends AnnotationAttributes {
+public class PropertySourceExtensionAttributes<A extends Annotation> extends ResolvablePlaceholderAnnotationAttributes<A> {
 
-    private final Class<A> annotationType;
+    public PropertySourceExtensionAttributes(A annotation, @Nullable PropertyResolver propertyResolver) {
+        super(annotation, propertyResolver);
+    }
 
-    public PropertySourceExtensionAttributes(Class<A> annotationType, AnnotationAttributes source) {
-        super(source);
-        this.annotationType = annotationType;
+    public PropertySourceExtensionAttributes(AnnotationAttributes another, @Nullable PropertyResolver propertyResolver) {
+        super(another, propertyResolver);
+    }
+
+    public PropertySourceExtensionAttributes(Map<String, Object> another, Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
+        super(another, annotationType, propertyResolver);
     }
 
     public String getName() {
@@ -58,11 +66,7 @@ public class PropertySourceExtensionAttributes<A extends Annotation> extends Ann
     }
 
     public Class<A> getAnnotationType() {
-        return annotationType;
-    }
-
-    public Class<A> annotationType() {
-        return getAnnotationType();
+        return annotationType();
     }
 
     @Override

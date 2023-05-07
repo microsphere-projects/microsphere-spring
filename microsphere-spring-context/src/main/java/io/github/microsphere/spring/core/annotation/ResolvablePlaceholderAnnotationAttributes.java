@@ -23,9 +23,12 @@ import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
+import static io.github.microsphere.spring.util.AnnotationUtils.findAnnotationType;
 import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.github.microsphere.util.CollectionUtils.shallowCloneMap;
 import static java.util.Collections.emptySet;
 
 /**
@@ -38,34 +41,40 @@ import static java.util.Collections.emptySet;
  */
 public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> extends GenericAnnotationAttributes<A> {
 
-    private final PropertyResolver propertyResolver;
-
     public ResolvablePlaceholderAnnotationAttributes(A annotation, @Nullable PropertyResolver propertyResolver) {
-        super(annotation);
-        this.propertyResolver = propertyResolver;
+        this(getAnnotationAttributes(annotation, false), (Class<A>) annotation.annotationType(), propertyResolver);
     }
 
     public ResolvablePlaceholderAnnotationAttributes(AnnotationAttributes another, @Nullable PropertyResolver propertyResolver) {
-        super(another);
-        this.propertyResolver = propertyResolver;
+        this(another, findAnnotationType(another), propertyResolver);
     }
 
-    @Override
-    public String getString(String attributeName) {
-        return super.getString(attributeName);
+    public ResolvablePlaceholderAnnotationAttributes(Map<String, Object> another, Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
+        super(resolvePlaceholders(another, propertyResolver), annotationType);
     }
 
-    @Override
-    public String[] getStringArray(String attributeName) {
-        String[] values = super.getStringArray(attributeName);
+    private static Map<String, Object> resolvePlaceholders(Map<String, Object> source, @Nullable PropertyResolver propertyResolver) {
+        Map<String, Object> copy = shallowCloneMap(source);
+        for (Map.Entry<String, Object> entry : copy.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                entry.setValue(resolvePlaceholder((String) value, propertyResolver));
+            } else if (value instanceof String[]) {
+                entry.setValue(resolvePlaceholders((String[]) value, propertyResolver));
+            }
+        }
+        return copy;
+    }
+
+    private static String[] resolvePlaceholders(String[] values, @Nullable PropertyResolver propertyResolver) {
         for (int i = 0; i < values.length; i++) {
-            values[i] = resolvePlaceholders(values[i]);
+            values[i] = resolvePlaceholder(values[i], propertyResolver);
         }
         return values;
     }
 
-    private String resolvePlaceholders(String text) {
-        return propertyResolver == null ? text : propertyResolver.resolvePlaceholders(text);
+    private static String resolvePlaceholder(String value, @Nullable PropertyResolver propertyResolver) {
+        return propertyResolver == null ? value : propertyResolver.resolvePlaceholders(value);
     }
 
     /**
@@ -77,6 +86,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      * @return non-null
      */
     @NonNull
+
     public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes,
                                                                                          @Nullable PropertyResolver propertyResolver) {
         return new ResolvablePlaceholderAnnotationAttributes(attributes, propertyResolver);

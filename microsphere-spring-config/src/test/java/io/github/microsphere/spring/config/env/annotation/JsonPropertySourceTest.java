@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -36,8 +37,9 @@ import static org.junit.Assert.assertEquals;
         JsonPropertySourceTest.class
 })
 @JsonPropertySource(value = {
-        "classpath*:/META-INF/test/json/*.json"
+        "${value}"
 })
+@TestPropertySource(properties = "value=classpath*:/META-INF/test/json/*.json")
 public class JsonPropertySourceTest {
 
     @Value("${my.name}")

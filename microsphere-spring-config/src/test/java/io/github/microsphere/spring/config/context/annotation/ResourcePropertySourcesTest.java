@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -36,9 +37,10 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = {
         ResourcePropertySourcesTest.class
 })
+@TestPropertySource(properties = "value=classpath*:/META-INF/test/*.properties")
 @ResourcePropertySources({
-        @ResourcePropertySource(value = {"classpath*:/META-INF/test/*.properties"}),
-        @ResourcePropertySource(value = {"classpath*:/META-INF/test/*.properties"})
+        @ResourcePropertySource(value = {"${value}"}),
+        @ResourcePropertySource(value = {"${value}"})
 })
 public class ResourcePropertySourcesTest {
 

@@ -27,7 +27,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Set;
 
-import static io.github.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.ofSet;
+import static io.github.microsphere.spring.core.annotation.GenericAnnotationAttributes.ofSet;
 
 /**
  * The loader of {@link PropertySource} for {@link ResourcePropertySources}
@@ -52,7 +52,7 @@ class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<Resour
 
         AnnotationAttributes[] annotationAttributesArray = attributes.getAnnotationArray("value");
 
-        Set<AnnotationAttributes> attributesSet = ofSet(annotationAttributesArray,getEnvironment());
+        Set<AnnotationAttributes> attributesSet = ofSet(annotationAttributesArray);
 
         ResourcePropertySourceLoader delegate = getDelegate();
 
