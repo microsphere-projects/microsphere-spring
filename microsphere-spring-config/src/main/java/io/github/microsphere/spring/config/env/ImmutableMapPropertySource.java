@@ -19,26 +19,53 @@ package io.github.microsphere.spring.config.env;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
- * Yaml {@link PropertySource}
+ * Immutable {@link MapPropertySource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see MapPropertySource
  * @since 1.0.0
  */
-public class YamlPropertySource extends MapPropertySource {
+public class ImmutableMapPropertySource extends MapPropertySource {
 
     /**
-     * Create a new {@code MapPropertySource} with the given name and {@code Map}.
+     * Create a new immutable {@code MapPropertySource} with the given name and {@code Map}.
      *
      * @param name   the associated name
      * @param source the Map source (without {@code null} values in order to get
      *               consistent {@link #getProperty} and {@link #containsProperty} behavior)
      */
-    public YamlPropertySource(String name, Map source) {
-        super(name, new HashMap<>(source));
+    public ImmutableMapPropertySource(String name, Map source) {
+        super(name, immutableMap(source));
+    }
+
+    private static Map immutableMap(Map source) {
+        Map result = null;
+        synchronized (ImmutableMapPropertySource.class) {
+            result = newMap(source);
+        }
+        return unmodifiableMap(result);
+    }
+
+    private static Map newMap(Map source) {
+        if (source instanceof SortedMap) {
+            return new TreeMap(source);
+        } else if (source instanceof LinkedHashMap) {
+            return new LinkedHashMap(source);
+        } else if (source instanceof IdentityHashMap) {
+            return new IdentityHashMap(source);
+        } else {
+            return new HashMap(source);
+        }
     }
 }

@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.config.env.support;
 
-import io.github.microsphere.spring.config.env.YamlPropertySource;
+import io.github.microsphere.spring.config.env.ImmutableMapPropertySource;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.EncodedResource;
@@ -31,7 +31,7 @@ import java.util.Properties;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySourceFactory
  * @see PropertySource
- * @since 2017.01.22
+ * @since 1.0.0
  */
 public class YamlPropertySourceFactory implements PropertySourceFactory {
 
@@ -40,6 +40,6 @@ public class YamlPropertySourceFactory implements PropertySourceFactory {
         YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
         yamlPropertiesFactoryBean.setResources(resource.getResource());
         Properties yamlProperties = yamlPropertiesFactoryBean.getObject();
-        return new YamlPropertySource(name, yamlProperties);
+        return new ImmutableMapPropertySource(name, yamlProperties);
     }
 }

@@ -17,11 +17,10 @@
 package io.github.microsphere.spring.config.env.annotation;
 
 import io.github.microsphere.spring.config.context.annotation.ResourcePropertySource;
-import io.github.microsphere.spring.config.context.annotation.ResourcePropertySourceLoader;
+import io.github.microsphere.spring.config.env.ImmutableMapPropertySource;
 import io.github.microsphere.spring.config.env.support.DefaultResourceComparator;
 import io.github.microsphere.spring.config.env.support.YamlPropertySourceFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.io.Resource;
 
@@ -35,12 +34,13 @@ import java.util.Comparator;
 
 /**
  * The extension annotation of {ResourcePropertySource @ResourcePropertySource} providing a convenient and declarative
- * mechanism for adding a {@link io.github.microsphere.spring.config.env.YamlPropertySource YamlPropertySource} to
- * Spring's Environment. To be used in conjunction with {@link Configuration @Configuration} classes.
+ * mechanism for adding a YAML {@link ImmutableMapPropertySource} to Spring's Environment.
+ * To be used in conjunction with {@link Configuration @Configuration} classes.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource
- * @see io.github.microsphere.spring.config.env.YamlPropertySource
+ * @see ImmutableMapPropertySource
+ * @see YamlPropertySourceFactory
  * @since 1.0.0
  */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
@@ -93,11 +93,10 @@ public @interface YamlPropertySource {
     String after() default "";
 
     /**
-     * Indicate the resource location(s) of the properties file to be loaded.
-     * <p>Both traditional and XML-based properties file formats are supported
-     * &mdash; for example, {@code "classpath:/com/myco/app.properties"}
-     * or {@code "file:/path/to/file.xml"}.
-     * <p>Resource location wildcards (e.g. *&#42;/*.properties) also are permitted;
+     * Indicate the resource location(s) of the YAML file to be loaded.
+     * <p>For example, {@code "classpath:/com/myco/app.yaml"} or {@code "classpath:/com/myco/app.yml"}
+     * or {@code "file:/path/to/file.yaml"}.
+     * <p>Resource location wildcards (e.g. *&#42;/*.yaml) also are permitted;
      * <p>${...} placeholders will be resolved against any/all property sources already
      * registered with the {@code Environment}.
      * <p>Each location will be added to the enclosing {@code Environment} as its own
@@ -108,8 +107,8 @@ public @interface YamlPropertySource {
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards
-     * <p>For example, {@code "classpath:/com/myco/*.properties"}, suppose there are two resources named
-     * "a.properties" and "b.properties" where two instances of {@link Resource} will be resolved, they are
+     * <p>For example, {@code "classpath:/com/myco/*.yaml"}, suppose there are two resources named
+     * "a.yaml" and "b.yaml" where two instances of {@link Resource} will be resolved, they are
      * the sources of {@link org.springframework.core.env.PropertySource}, thus it has to sort
      * them to indicate the order of {@link org.springframework.core.env.PropertySource} that will be added to
      * the enclosing {@code Environment}.
@@ -124,7 +123,7 @@ public @interface YamlPropertySource {
     /**
      * Indicate if a failure to find a {@link #value property resource} should be
      * ignored.
-     * <p>{@code true} is appropriate if the properties file is completely optional.
+     * <p>{@code true} is appropriate if the YAML file is completely optional.
      * <p>Default is {@code false}.
      */
     @AliasFor(annotation = ResourcePropertySource.class, attribute = "ignoreResourceNotFound")
