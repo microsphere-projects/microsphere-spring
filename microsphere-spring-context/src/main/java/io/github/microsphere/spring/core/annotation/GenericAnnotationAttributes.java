@@ -17,6 +17,7 @@
 package io.github.microsphere.spring.core.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static io.github.microsphere.spring.util.AnnotationUtils.findAnnotationType;
 import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 
 /**
@@ -38,12 +40,32 @@ import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAtt
  */
 public class GenericAnnotationAttributes<A extends Annotation> extends AnnotationAttributes {
 
+    @Nullable
+    private final Class<A> annotationType;
+
     public GenericAnnotationAttributes(A annotation) {
-        this(getAnnotationAttributes(annotation, false));
+        this(getAnnotationAttributes(annotation, false), (Class<A>) annotation.annotationType());
     }
 
     public GenericAnnotationAttributes(AnnotationAttributes another) {
+        this(another, findAnnotationType(another));
+    }
+
+    public GenericAnnotationAttributes(AnnotationAttributes another, Class<A> annotationType) {
         super(another);
+        this.annotationType = annotationType;
+    }
+
+    /**
+     * Get The {@link Class class} of {@link Annotation}.
+     * <p>
+     * Current method will override the super classes' method since Spring Framework 4.2
+     *
+     * @return <code>null</code> if not found
+     */
+    @Nullable
+    public Class<A> annotationType() {
+        return annotationType;
     }
 
     @Override
