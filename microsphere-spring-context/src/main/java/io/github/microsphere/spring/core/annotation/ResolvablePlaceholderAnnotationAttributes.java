@@ -54,6 +54,10 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
     }
 
     private static Map<String, Object> resolvePlaceholders(Map<String, Object> source, @Nullable PropertyResolver propertyResolver) {
+        if (source instanceof ResolvablePlaceholderAnnotationAttributes) {
+            // source has been resolved
+            return source;
+        }
         Map<String, Object> copy = shallowCloneMap(source);
         for (Map.Entry<String, Object> entry : copy.entrySet()) {
             Object value = entry.getValue();
@@ -86,9 +90,11 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      * @return non-null
      */
     @NonNull
-
     public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes,
                                                                                          @Nullable PropertyResolver propertyResolver) {
+        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes) {
+            return (ResolvablePlaceholderAnnotationAttributes) attributes;
+        }
         return new ResolvablePlaceholderAnnotationAttributes(attributes, propertyResolver);
     }
 
@@ -104,6 +110,21 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
     public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@NonNull A annotation,
                                                                                          @Nullable PropertyResolver propertyResolver) {
         return new ResolvablePlaceholderAnnotationAttributes(annotation, propertyResolver);
+    }
+
+    /**
+     * Create an instance of {@link ResolvablePlaceholderAnnotationAttributes} from the specified {@link Annotation annotation}
+     *
+     * @param attributes       The {@link Map} for the attributes of annotation
+     * @param propertyResolver {@link PropertyResolver}
+     * @param <A>              the {@link Class class} of {@link Annotation annotation}
+     * @return non-null
+     */
+    @NonNull
+    public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(Map<String, Object> attributes,
+                                                                                         Class<A> annotationType,
+                                                                                         @Nullable PropertyResolver propertyResolver) {
+        return new ResolvablePlaceholderAnnotationAttributes(attributes, annotationType, propertyResolver);
     }
 
     /**

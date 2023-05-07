@@ -134,6 +134,9 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      */
     @NonNull
     public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes) {
+        if (attributes instanceof GenericAnnotationAttributes) {
+            return (GenericAnnotationAttributes) attributes;
+        }
         return new GenericAnnotationAttributes(attributes);
     }
 

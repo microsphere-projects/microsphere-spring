@@ -29,6 +29,7 @@ import java.util.Map;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySourceExtension
+ * @see ResolvablePlaceholderAnnotationAttributes
  * @since 1.0.0
  */
 public class PropertySourceExtensionAttributes<A extends Annotation> extends ResolvablePlaceholderAnnotationAttributes<A> {

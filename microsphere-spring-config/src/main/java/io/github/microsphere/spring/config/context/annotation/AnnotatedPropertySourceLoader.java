@@ -16,6 +16,7 @@
  */
 package io.github.microsphere.spring.config.context.annotation;
 
+import io.github.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -38,6 +39,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
 
 import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
@@ -81,11 +83,12 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
     @Override
     public final String[] selectImports(AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
-        AnnotationAttributes annotationAttributes = getAnnotationAttributes(metadata, annotationClassName);
-        String propertySourceName = resolvePropertySourceName(annotationAttributes, metadata);
+        Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
+        ResolvablePlaceholderAnnotationAttributes attributes = ResolvablePlaceholderAnnotationAttributes.of(annotationAttributes, annotationType, getEnvironment());
+        String propertySourceName = resolvePropertySourceName(attributes, metadata);
         MutablePropertySources propertySources = environment.getPropertySources();
         try {
-            loadPropertySource(annotationAttributes, metadata, propertySourceName, propertySources);
+            loadPropertySource(attributes, metadata, propertySourceName, propertySources);
         } catch (Throwable e) {
             String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationClassName + "] can't load the PropertySource[name : '" + propertySourceName + "']";
             logger.error(errorMessage, e);
