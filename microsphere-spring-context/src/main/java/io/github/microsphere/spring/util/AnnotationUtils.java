@@ -1,11 +1,13 @@
 package io.github.microsphere.spring.util;
 
 import io.github.microsphere.spring.core.annotation.GenericAnnotationAttributes;
+import io.github.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.github.microsphere.util.ClassLoaderUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
@@ -651,22 +653,6 @@ public abstract class AnnotationUtils {
     public static AnnotationAttributes getAnnotationAttributes(AnnotationMetadata metadata, String annotationClassName) {
         AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
         return annotationAttributes;
-    }
-
-    public static Set<AnnotationAttributes> toAnnotationAttributesSet(AnnotationAttributes... annotationAttributesArray) {
-        int length = annotationAttributesArray == null ? 0 : annotationAttributesArray.length;
-
-        if (length < 1) {
-            return emptySet();
-        }
-
-        Set<AnnotationAttributes> annotationAttributesSet = new LinkedHashSet<>();
-        for (int i = 0; i < length; i++) {
-            AnnotationAttributes annotationAttributes = annotationAttributesArray[i];
-            annotationAttributesSet.add(new GenericAnnotationAttributes<>(annotationAttributes));
-        }
-
-        return annotationAttributesSet;
     }
 
     /**

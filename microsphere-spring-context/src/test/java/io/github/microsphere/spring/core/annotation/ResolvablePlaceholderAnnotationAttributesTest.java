@@ -26,30 +26,31 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.beans.ConstructorProperties;
 
+import static io.github.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static org.junit.Assert.assertEquals;
 
 /**
- * {@link PlaceholderResolvableAnnotationAttributes} Test
+ * {@link ResolvablePlaceholderAnnotationAttributes} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {PlaceholderResolvableAnnotationAttributesTest.class})
+@ContextConfiguration(classes = {ResolvablePlaceholderAnnotationAttributesTest.class})
 @TestPropertySource(properties = {"a=1", "b=2"})
-public class PlaceholderResolvableAnnotationAttributesTest {
+public class ResolvablePlaceholderAnnotationAttributesTest {
 
     @Autowired
     private Environment environment;
 
     @ConstructorProperties({"${a}", "${b}"})
-    public PlaceholderResolvableAnnotationAttributesTest() {
+    public ResolvablePlaceholderAnnotationAttributesTest() {
     }
 
     @Test
     public void test() throws NoSuchMethodException {
-        ConstructorProperties constructorProperties = PlaceholderResolvableAnnotationAttributesTest.class.getConstructor().getAnnotation(ConstructorProperties.class);
-        PlaceholderResolvableAnnotationAttributes annotationAttributes = new PlaceholderResolvableAnnotationAttributes(constructorProperties, environment);
+        ConstructorProperties constructorProperties = ResolvablePlaceholderAnnotationAttributesTest.class.getConstructor().getAnnotation(ConstructorProperties.class);
+        ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(constructorProperties, environment);
         assertEquals(ConstructorProperties.class, annotationAttributes.annotationType());
         assertEquals(constructorProperties.annotationType(), annotationAttributes.annotationType());
         String[] values = annotationAttributes.getStringArray("value");

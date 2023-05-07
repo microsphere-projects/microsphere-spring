@@ -19,11 +19,9 @@ package io.github.microsphere.spring.core.annotation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.beans.ConstructorProperties;
-
+import static io.github.microsphere.spring.core.annotation.GenericAnnotationAttributes.of;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +38,7 @@ public class GenericAnnotationAttributesTest {
     @Test
     public void test() {
         ContextConfiguration contextConfiguration = GenericAnnotationAttributesTest.class.getAnnotation(ContextConfiguration.class);
-        GenericAnnotationAttributes annotationAttributes = new GenericAnnotationAttributes(contextConfiguration);
+        GenericAnnotationAttributes annotationAttributes = of(contextConfiguration);
         assertEquals(ContextConfiguration.class, annotationAttributes.annotationType());
         assertEquals(contextConfiguration.annotationType(), annotationAttributes.annotationType());
         assertArrayEquals(contextConfiguration.initializers(), annotationAttributes.getClassArray("initializers"));

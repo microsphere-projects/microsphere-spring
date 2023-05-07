@@ -17,6 +17,7 @@
 package io.github.microsphere.spring.core.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
@@ -106,5 +107,30 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             }
         }
         return h;
+    }
+
+
+    /**
+     * Create an instance of {@link GenericAnnotationAttributes} from the specified {@link Annotation annotation}
+     *
+     * @param annotation {@link Annotation annotation}
+     * @param <A>        the {@link Class class} of {@link Annotation annotation}
+     * @return non-null
+     */
+    @NonNull
+    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull A annotation) {
+        return new GenericAnnotationAttributes(annotation);
+    }
+
+    /**
+     * Create an instance of {@link GenericAnnotationAttributes} from the specified {@link AnnotationAttributes}
+     *
+     * @param attributes {@link AnnotationAttributes annotationAttributes}
+     * @param <A>        the {@link Class class} of {@link Annotation annotation}
+     * @return non-null
+     */
+    @NonNull
+    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes) {
+        return new GenericAnnotationAttributes(attributes);
     }
 }

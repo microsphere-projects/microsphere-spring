@@ -16,7 +16,7 @@
  */
 package io.github.microsphere.spring.config.context.annotation;
 
-import io.github.microsphere.util.CollectionUtils;
+import io.github.microsphere.spring.util.AnnotationUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -27,7 +27,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Set;
 
-import static io.github.microsphere.spring.util.AnnotationUtils.toAnnotationAttributesSet;
+import static io.github.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.ofSet;
 
 /**
  * The loader of {@link PropertySource} for {@link ResourcePropertySources}
@@ -52,7 +52,7 @@ class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<Resour
 
         AnnotationAttributes[] annotationAttributesArray = attributes.getAnnotationArray("value");
 
-        Set<AnnotationAttributes> attributesSet = toAnnotationAttributesSet(annotationAttributesArray);
+        Set<AnnotationAttributes> attributesSet = ofSet(annotationAttributesArray,getEnvironment());
 
         ResourcePropertySourceLoader delegate = getDelegate();
 
