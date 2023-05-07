@@ -1,11 +1,13 @@
 package io.github.microsphere.spring.util;
 
 import io.github.microsphere.spring.core.annotation.GenericAnnotationAttributes;
+import io.github.microsphere.util.ClassLoaderUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ClassUtils;
+import org.springframework.lang.Nullable;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -30,7 +32,6 @@ import static java.util.Collections.emptySet;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
-import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 import static org.springframework.util.ReflectionUtils.findMethod;
@@ -48,9 +49,19 @@ import static org.springframework.util.StringUtils.trimWhitespace;
 public abstract class AnnotationUtils {
 
     /**
-     * The class name of AnnotatedElementUtils that is introduced since Spring Framework 4
+     * The class name of {@link org.springframework.core.annotation.AnnotatedElementUtils that is introduced since Spring Framework 4
      */
     public static final String ANNOTATED_ELEMENT_UTILS_CLASS_NAME = "org.springframework.core.annotation.AnnotatedElementUtils";
+
+    /**
+     * The {@link Class} of {@link org.springframework.core.annotation.AnnotatedElementUtils} that is introduced since Spring Framework 4
+     */
+    public static final Class<?> ANNOTATED_ELEMENT_UTILS_CLASS = ClassLoaderUtils.resolveClass(ANNOTATED_ELEMENT_UTILS_CLASS_NAME);
+
+    /**
+     * The {@link Method} object of {@link AnnotationAttributes#annotationType()} is introduced since Spring Framework 4.2
+     */
+    public static final Method ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD = ReflectionUtils.findMethod(AnnotationAttributes.class, "annotationType");
 
     /**
      * Is specified {@link Annotation} present on {@link Method}'s declaring class or parameters or itself.
@@ -554,10 +565,9 @@ public abstract class AnnotationUtils {
 
         Annotation mergedAnnotation = null;
 
-        ClassLoader classLoader = annotationType.getClassLoader();
+        Class<?> annotatedElementUtilsClass = ANNOTATED_ELEMENT_UTILS_CLASS;
 
-        if (ClassUtils.isPresent(ANNOTATED_ELEMENT_UTILS_CLASS_NAME, classLoader)) {
-            Class<?> annotatedElementUtilsClass = resolveClassName(ANNOTATED_ELEMENT_UTILS_CLASS_NAME, classLoader);
+        if (annotatedElementUtilsClass != null) {
             // getMergedAnnotation method appears in the Spring Framework 4.2
             Method getMergedAnnotationMethod = findMethod(annotatedElementUtilsClass, "getMergedAnnotation",
                     AnnotatedElement.class, Class.class, boolean.class, boolean.class);
@@ -657,6 +667,31 @@ public abstract class AnnotationUtils {
         }
 
         return annotationAttributesSet;
+    }
+
+    /**
+     * Find the {@link Class class} of {@link Annotation} from the specified {@link AnnotationAttributes}
+     *
+     * @param annotationAttributes {@link AnnotationAttributes}
+     * @param <A>                  The {@link Class class} of {@link Annotation}
+     * @return <code>null</code> if not found
+     */
+    @Nullable
+    public static <A extends Annotation> Class<A> findAnnotationType(AnnotationAttributes annotationAttributes) {
+        if (annotationAttributes == null) {
+            return null;
+        }
+
+        if (annotationAttributes instanceof GenericAnnotationAttributes) {
+            return ((GenericAnnotationAttributes) annotationAttributes).annotationType();
+        }
+
+        if (ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD == null) {// If AnnotationAttributes#annotionType() method was not found
+            return null;
+        }
+
+        // Reflection call to the target method in order to resolve the complication issue before Spring Framework 4.2
+        return (Class<A>) invokeMethod(ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD, annotationAttributes);
     }
 
 }
