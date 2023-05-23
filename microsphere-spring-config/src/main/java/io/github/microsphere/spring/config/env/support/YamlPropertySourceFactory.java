@@ -17,13 +17,12 @@
 package io.github.microsphere.spring.config.env.support;
 
 import io.github.microsphere.spring.config.env.ImmutableMapPropertySource;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import io.github.microsphere.spring.config.env.config.ResourceYamlProcessor;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 
 import java.io.IOException;
-import java.util.Properties;
 
 /**
  * {@link PropertySourceFactory} for YAML
@@ -37,9 +36,7 @@ public class YamlPropertySourceFactory implements PropertySourceFactory {
 
     @Override
     public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws IOException {
-        YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
-        yamlPropertiesFactoryBean.setResources(resource.getResource());
-        Properties yamlProperties = yamlPropertiesFactoryBean.getObject();
-        return new ImmutableMapPropertySource(name, yamlProperties);
+        ResourceYamlProcessor processor = new ResourceYamlProcessor(resource.getResource());
+        return new ImmutableMapPropertySource(name, processor.process());
     }
 }
