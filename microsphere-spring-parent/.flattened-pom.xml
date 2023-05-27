@@ -14,7 +14,7 @@
   <name>Microsphere Projects :: Spring Parent</name>
   <description>Microsphere Spring Parent</description>
   <properties>
-    <spring-boot.version>2.7.9</spring-boot.version>
+    <spring-boot.version>2.7.12</spring-boot.version>
     <embedded-redis.version>0.6</embedded-redis.version>
     <resilience4j.version>1.7.0</resilience4j.version>
     <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
