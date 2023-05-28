@@ -26,9 +26,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static io.github.microsphere.collection.MapUtils.shallowCloneMap;
 import static io.github.microsphere.spring.util.AnnotationUtils.findAnnotationType;
 import static io.github.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
-import static io.github.microsphere.util.CollectionUtils.shallowCloneMap;
 import static java.util.Collections.emptySet;
 
 /**
