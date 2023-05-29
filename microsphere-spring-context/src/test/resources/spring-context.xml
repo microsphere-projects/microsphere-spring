@@ -6,7 +6,7 @@
        default-autowire="byName">
 
 
-    <bean id="user" class="io.github.microsphere.spring.util.UserFactoryBean">
+    <bean id="user" class="io.microsphere.spring.util.UserFactoryBean">
         <property name="name">
             <value>Mercy</value>
         </property>

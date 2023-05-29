@@ -1,6 +1,6 @@
-io.github.microsphere.spring.redis.context.RedisModuleInitializer=\
-io.github.microsphere.spring.redis.context.RedisInterceptorModuleInitializer
+io.microsphere.spring.redis.context.RedisModuleInitializer=\
+io.microsphere.spring.redis.context.RedisInterceptorModuleInitializer
 
 
 org.springframework.data.redis.serializer.RedisSerializer=\
-io.github.microsphere.spring.redis.serializer.RedisCommandEventSerializer
+io.microsphere.spring.redis.serializer.RedisCommandEventSerializer

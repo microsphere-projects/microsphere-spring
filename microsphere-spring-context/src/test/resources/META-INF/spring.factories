@@ -1,3 +1,3 @@
-io.github.microsphere.spring.util.Bean=\
-io.github.microsphere.spring.util.TestBean,\
-io.github.microsphere.spring.util.TestBean2
+io.microsphere.spring.util.Bean=\
+io.microsphere.spring.util.TestBean,\
+io.microsphere.spring.util.TestBean2
