@@ -51,8 +51,7 @@ public class SpringConverterAdapter implements ConditionalGenericConverter {
     }
 
     private static Map<ConvertiblePair, Converter> loadConvertersMap() {
-        ClassLoader classLoader = SpringConverterAdapter.class.getClassLoader();
-        List<Converter> converters = loadServicesList(Converter.class, classLoader);
+        List<Converter> converters = loadServicesList(Converter.class);
         int size = converters.size();
         Map<ConvertiblePair, Converter> convertersMap = new HashMap<>(size);
         for (int i = 0; i < size; i++) {
