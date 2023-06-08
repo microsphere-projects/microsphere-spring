@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.spring.util.AnnotationUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;

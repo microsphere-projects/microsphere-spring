@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
-import static io.microsphere.spring.util.BeanUtils.*;
+import static io.microsphere.spring.util.BeanUtils.getBeanIfAvailable;
+import static io.microsphere.spring.util.BeanUtils.getBeanNames;
+import static io.microsphere.spring.util.BeanUtils.isBeanPresent;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.util.ClassUtils.isAssignable;

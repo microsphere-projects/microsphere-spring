@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.circuitbreaker.annotation;
 
+import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfiguration;
 import io.microsphere.spring.resilience4j.circuitbreaker.event.CircuitBreakerApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.circuitbreaker.event.CircuitBreakerEventConsumerBeanRegistrar;
 import io.microsphere.spring.resilience4j.circuitbreaker.webmvc.CircuitBreakerHandlerInterceptor;
-import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfiguration;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;

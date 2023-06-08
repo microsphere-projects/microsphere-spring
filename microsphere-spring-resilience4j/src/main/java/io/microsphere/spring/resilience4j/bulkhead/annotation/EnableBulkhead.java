@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.resilience4j.bulkhead.annotation;
 
-import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
-import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBindings;
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.configure.BulkheadConfigurationProperties;
 import io.github.resilience4j.common.bulkhead.configuration.ThreadPoolBulkheadConfigurationProperties;
+import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
+import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBindings;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;

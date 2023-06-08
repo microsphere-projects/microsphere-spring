@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.resilience4j.retry.annotation;
 
-import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.configure.RetryConfigurationProperties;
+import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;

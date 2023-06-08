@@ -36,12 +36,12 @@ import org.junit.Test;
 
 import java.io.Serializable;
 
+import static io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry.ofDefaults;
 import static io.microsphere.spring.resilience4j.common.Resilience4jModule.BULKHEAD;
 import static io.microsphere.spring.resilience4j.common.Resilience4jModule.CIRCUIT_BREAKER;
 import static io.microsphere.spring.resilience4j.common.Resilience4jModule.RATE_LIMITER;
 import static io.microsphere.spring.resilience4j.common.Resilience4jModule.RETRY;
 import static io.microsphere.spring.resilience4j.common.Resilience4jModule.TIME_LIMITER;
-import static io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry.ofDefaults;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

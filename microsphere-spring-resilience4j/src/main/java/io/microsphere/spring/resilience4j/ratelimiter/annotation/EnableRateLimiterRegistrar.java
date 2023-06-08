@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.ratelimiter.annotation;
 
+import io.github.resilience4j.ratelimiter.configure.RateLimiterConfiguration;
 import io.microsphere.spring.resilience4j.ratelimiter.event.RateLimiterApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.ratelimiter.event.RateLimiterEventConsumerBeanRegistrar;
 import io.microsphere.spring.resilience4j.ratelimiter.webmvc.RateLimiterHandlerInterceptor;
-import io.github.resilience4j.ratelimiter.configure.RateLimiterConfiguration;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;

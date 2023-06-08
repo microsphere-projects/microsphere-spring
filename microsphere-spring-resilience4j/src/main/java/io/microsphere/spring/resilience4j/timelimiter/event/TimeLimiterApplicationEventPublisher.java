@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.timelimiter.event;
 
-import io.microsphere.spring.resilience4j.common.event.Resilience4jEventApplicationEventPublisher;
 import io.github.resilience4j.core.EventConsumer;
 import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.event.TimeLimiterEvent;
+import io.microsphere.spring.resilience4j.common.event.Resilience4jEventApplicationEventPublisher;
 import org.springframework.context.ApplicationEvent;
 
 /**

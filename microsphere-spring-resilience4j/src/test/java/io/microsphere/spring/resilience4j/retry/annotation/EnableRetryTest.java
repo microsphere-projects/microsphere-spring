@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.retry.annotation;
 
-import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
 import io.github.resilience4j.retry.configure.RetryConfigurationProperties;
+import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

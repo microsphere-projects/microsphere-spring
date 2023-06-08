@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.resilience4j.timelimiter.annotation;
 
-import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
 import io.github.resilience4j.timelimiter.configure.TimeLimiterConfigurationProperties;
 import io.github.resilience4j.timelimiter.event.TimeLimiterOnSuccessEvent;
+import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

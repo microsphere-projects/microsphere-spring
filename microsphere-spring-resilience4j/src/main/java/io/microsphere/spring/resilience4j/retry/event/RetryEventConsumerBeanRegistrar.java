@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.retry.event;
 
-import io.microsphere.spring.resilience4j.common.event.Resilience4jEventConsumerBeanRegistrar;
 import io.github.resilience4j.core.EventConsumer;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.event.RetryEvent;
+import io.microsphere.spring.resilience4j.common.event.Resilience4jEventConsumerBeanRegistrar;
 
 /**
  * The {@link RetryEvent RetryEvents'} {@link EventConsumer Event consumer beans} register

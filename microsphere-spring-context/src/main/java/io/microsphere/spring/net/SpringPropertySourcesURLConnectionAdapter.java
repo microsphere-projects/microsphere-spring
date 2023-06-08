@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.net;
 
-import io.microsphere.spring.core.convert.SpringConverterAdapter;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.PropertySources;
 import org.springframework.util.MimeType;

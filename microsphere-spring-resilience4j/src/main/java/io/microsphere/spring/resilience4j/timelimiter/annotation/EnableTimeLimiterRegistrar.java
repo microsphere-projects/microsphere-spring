@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.resilience4j.timelimiter.annotation;
 
+import io.github.resilience4j.timelimiter.configure.TimeLimiterConfiguration;
 import io.microsphere.spring.resilience4j.timelimiter.event.TimeLimiterApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.timelimiter.event.TimeLimiterEventConsumerBeanRegistrar;
-import io.github.resilience4j.timelimiter.configure.TimeLimiterConfiguration;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;

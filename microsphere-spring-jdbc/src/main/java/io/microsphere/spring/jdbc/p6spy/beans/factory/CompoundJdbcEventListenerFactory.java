@@ -20,11 +20,9 @@ import com.p6spy.engine.event.CompoundJdbcEventListener;
 import com.p6spy.engine.event.JdbcEventListener;
 import com.p6spy.engine.spy.P6Factory;
 import com.p6spy.engine.spy.P6LoadableOptions;
-import com.p6spy.engine.spy.option.P6OptionChangedListener;
 import com.p6spy.engine.spy.option.P6OptionsRepository;
 import io.microsphere.spring.jdbc.p6spy.NoOpP6LoadableOptions;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.List;
 

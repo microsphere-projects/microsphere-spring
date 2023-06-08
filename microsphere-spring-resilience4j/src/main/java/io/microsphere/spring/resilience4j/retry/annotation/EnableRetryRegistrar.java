@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.resilience4j.retry.annotation;
 
+import io.github.resilience4j.retry.configure.RetryConfiguration;
 import io.microsphere.spring.resilience4j.retry.event.RetryApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.retry.event.RetryEventConsumerBeanRegistrar;
-import io.github.resilience4j.retry.configure.RetryConfiguration;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;

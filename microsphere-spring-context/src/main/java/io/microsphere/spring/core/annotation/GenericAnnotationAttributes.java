@@ -17,13 +17,10 @@
 package io.microsphere.spring.core.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.env.PropertyResolver;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;

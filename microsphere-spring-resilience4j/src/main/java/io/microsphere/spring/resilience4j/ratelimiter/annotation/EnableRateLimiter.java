@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.resilience4j.ratelimiter.annotation;
 
-import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.configure.RateLimiterConfigurationProperties;
+import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;

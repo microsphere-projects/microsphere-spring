@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.resilience4j.circuitbreaker.annotation;
 
-import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfigurationProperties;
+import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;

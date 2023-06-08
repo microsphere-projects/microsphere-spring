@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.resilience4j.circuitbreaker.webmvc;
 
-import io.microsphere.spring.resilience4j.common.Resilience4jContext;
-import io.microsphere.spring.resilience4j.common.webmvc.Resilience4jMethodHandlerInterceptor;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.Registry;
+import io.microsphere.spring.resilience4j.common.Resilience4jContext;
+import io.microsphere.spring.resilience4j.common.webmvc.Resilience4jMethodHandlerInterceptor;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

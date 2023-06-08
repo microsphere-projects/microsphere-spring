@@ -16,15 +16,14 @@
  */
 package io.microsphere.spring.resilience4j.ratelimiter.annotation;
 
-import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.ratelimiter.configure.RateLimiterConfigurationProperties;
 import io.github.resilience4j.ratelimiter.event.RateLimiterOnSuccessEvent;
+import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;

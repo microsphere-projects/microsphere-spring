@@ -16,13 +16,13 @@
  */
 package io.microsphere.spring.resilience4j.common.webmvc;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.core.Registry;
 import io.microsphere.spring.resilience4j.common.Resilience4jContext;
 import io.microsphere.spring.resilience4j.common.Resilience4jModule;
 import io.microsphere.spring.webmvc.interceptor.MethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.core.Registry;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

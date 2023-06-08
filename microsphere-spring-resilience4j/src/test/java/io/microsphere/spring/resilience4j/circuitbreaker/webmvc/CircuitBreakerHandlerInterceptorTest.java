@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.circuitbreaker.webmvc;
 
-import io.microsphere.spring.resilience4j.common.Resilience4jModule;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.microsphere.spring.resilience4j.common.Resilience4jModule;
 import org.junit.jupiter.api.Test;
 
 import static io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry.ofDefaults;

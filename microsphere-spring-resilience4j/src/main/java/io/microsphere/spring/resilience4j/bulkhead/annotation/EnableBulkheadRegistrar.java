@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.bulkhead.annotation;
 
+import io.github.resilience4j.bulkhead.configure.BulkheadConfiguration;
 import io.microsphere.spring.resilience4j.bulkhead.event.BulkheadApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.bulkhead.event.BulkheadEventConsumerBeanRegistrar;
 import io.microsphere.spring.resilience4j.bulkhead.webmvc.BulkheadHandlerInterceptor;
-import io.github.resilience4j.bulkhead.configure.BulkheadConfiguration;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;

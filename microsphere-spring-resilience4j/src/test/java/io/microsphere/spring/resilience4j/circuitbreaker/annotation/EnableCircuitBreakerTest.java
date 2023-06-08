@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.resilience4j.circuitbreaker.annotation;
 
-import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfigurationProperties;
 import io.github.resilience4j.circuitbreaker.event.CircuitBreakerOnSuccessEvent;
+import io.microsphere.spring.core.convert.annotation.EnableSpringConverterAdapter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

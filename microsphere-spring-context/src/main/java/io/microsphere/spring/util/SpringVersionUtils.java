@@ -16,8 +16,6 @@
  */
 package io.github.microsphere.spring.util;
 
-import org.springframework.core.SpringVersion;
-
 /**
  * The Utilities class for Spring Framework Version
  *

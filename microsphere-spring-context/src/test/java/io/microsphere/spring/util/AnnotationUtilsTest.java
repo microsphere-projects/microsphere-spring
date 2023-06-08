@@ -19,7 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.spring.util.AnnotationUtils.*;
+import static io.microsphere.spring.util.AnnotationUtils.findAnnotations;
+import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.util.AnnotationUtils.getAttribute;
+import static io.microsphere.spring.util.AnnotationUtils.getAttributes;
 import static io.microsphere.spring.util.ObjectUtils.of;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertArrayEquals;

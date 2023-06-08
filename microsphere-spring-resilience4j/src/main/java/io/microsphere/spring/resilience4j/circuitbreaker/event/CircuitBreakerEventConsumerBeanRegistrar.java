@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.resilience4j.circuitbreaker.event;
 
-import io.microsphere.spring.resilience4j.common.event.Resilience4jEventConsumerBeanRegistrar;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.event.CircuitBreakerEvent;
 import io.github.resilience4j.core.EventConsumer;
+import io.microsphere.spring.resilience4j.common.event.Resilience4jEventConsumerBeanRegistrar;
 
 /**
  * The {@link CircuitBreakerEvent CircuitBreakerEvents'} {@link EventConsumer Event consumer beans} register

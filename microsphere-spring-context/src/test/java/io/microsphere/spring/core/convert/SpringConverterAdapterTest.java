@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.core.convert;
 
-import io.microsphere.spring.core.convert.SpringConverterAdapter;
 import org.junit.Test;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;

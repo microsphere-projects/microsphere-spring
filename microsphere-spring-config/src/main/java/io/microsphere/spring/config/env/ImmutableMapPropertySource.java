@@ -17,9 +17,7 @@
 package io.microsphere.spring.config.env;
 
 import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;

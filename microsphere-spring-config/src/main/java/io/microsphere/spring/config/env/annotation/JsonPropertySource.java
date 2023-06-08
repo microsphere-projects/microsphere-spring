@@ -19,7 +19,6 @@ package io.microsphere.spring.config.env.annotation;
 import io.microsphere.spring.config.context.annotation.ResourcePropertySource;
 import io.microsphere.spring.config.env.support.DefaultResourceComparator;
 import io.microsphere.spring.config.env.support.JsonPropertySourceFactory;
-import io.microsphere.spring.config.env.support.YamlPropertySourceFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.env.MapPropertySource;
