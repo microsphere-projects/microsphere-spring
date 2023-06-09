@@ -45,7 +45,8 @@ import java.util.function.Supplier;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProcessorAdapter implements BeanDefinitionRegistryPostProcessor, DestructionAwareBeanPostProcessor, InstantiationStrategy {
+class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProcessorAdapter
+        implements BeanDefinitionRegistryPostProcessor, DestructionAwareBeanPostProcessor, InstantiationStrategy {
 
     private BeanDefinitionRegistry registry;
 
@@ -53,67 +54,22 @@ class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProce
 
     private BeanListeners beanEventListeners;
 
+    private BeanFactoryListeners beanFactoryListeners;
+
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         this.registry = registry;
+        registerBeanFactoryListeners(registry);
         prepareBeanDefinitions(registry);
-    }
-
-    private void prepareBeanDefinitions(BeanDefinitionRegistry registry) {
-        String[] beanNames = registry.getBeanDefinitionNames();
-        int length = beanNames.length;
-        List<BeanDefinitionHolder> beanDefinitionHolders = new ArrayList<>(length);
-        for (int i = 0; i < length; i++) {
-            String beanName = beanNames[i];
-            // add current bean definition with name into holders that will be registered again
-            BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
-            beanDefinitionHolders.add(new BeanDefinitionHolder(beanDefinition, beanName));
-            // remove current bean definition
-            registry.removeBeanDefinition(beanName);
-        }
-
-        // register BeanAfterEventPublishingProcessor.Installer ensuring it's the first bean definition
-        BeanRegistrar.registerBeanDefinition(registry, BeanAfterEventPublishingProcessor.Initializer.class);
-
-        // re-register previous bean definitions
-        beanDefinitionHolders.forEach(beanDefinitionHolder -> {
-            BeanDefinitionReaderUtils.registerBeanDefinition(beanDefinitionHolder, registry);
-        });
+        fireBeanDefinitionRegistryReadyEvent(registry);
     }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        fireBeanFactoryReadyEvent(beanFactory);
         registerBeanEventListeners(beanFactory);
         decorateInstantiationStrategy(beanFactory);
         beanFactory.addBeanPostProcessor(this);
-    }
-
-    private void registerBeanEventListeners(ConfigurableListableBeanFactory context) {
-        BeanListeners beanEventListeners = new BeanListeners(context);
-        beanEventListeners.registerBean(registry);
-        this.beanEventListeners = beanEventListeners;
-    }
-
-    private void decorateInstantiationStrategy(ConfigurableListableBeanFactory beanFactory) {
-        if (beanFactory instanceof AbstractAutowireCapableBeanFactory) {
-            this.instantiationStrategyDelegate = getInstantiationStrategyDelegate(beanFactory);
-            if (instantiationStrategyDelegate != this) {
-                AbstractAutowireCapableBeanFactory autowireCapableBeanFactory = (AbstractAutowireCapableBeanFactory) beanFactory;
-                autowireCapableBeanFactory.setInstantiationStrategy(this);
-            }
-        }
-    }
-
-    private InstantiationStrategy getInstantiationStrategyDelegate(ConfigurableListableBeanFactory beanFactory) {
-        InstantiationStrategy instantiationStrategy = null;
-        try {
-            Method method = AbstractAutowireCapableBeanFactory.class.getDeclaredMethod("getInstantiationStrategy");
-            method.setAccessible(true);
-            instantiationStrategy = (InstantiationStrategy) method.invoke(beanFactory);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return instantiationStrategy;
     }
 
     @Override
@@ -152,5 +108,72 @@ class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProce
     @Override
     public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException {
         this.beanEventListeners.onBeforeBeanDestroy(beanName, bean);
+    }
+
+    private void prepareBeanDefinitions(BeanDefinitionRegistry registry) {
+        String[] beanNames = registry.getBeanDefinitionNames();
+        int length = beanNames.length;
+        List<BeanDefinitionHolder> beanDefinitionHolders = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            String beanName = beanNames[i];
+            // add current bean definition with name into holders that will be registered again
+            BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
+            beanDefinitionHolders.add(new BeanDefinitionHolder(beanDefinition, beanName));
+            // remove current bean definition
+            registry.removeBeanDefinition(beanName);
+        }
+
+        // register BeanAfterEventPublishingProcessor.Installer ensuring it's the first bean definition
+        BeanRegistrar.registerBeanDefinition(registry, BeanAfterEventPublishingProcessor.Initializer.class);
+
+        // re-register previous bean definitions
+        beanDefinitionHolders.forEach(beanDefinitionHolder -> {
+            BeanDefinitionReaderUtils.registerBeanDefinition(beanDefinitionHolder, registry);
+        });
+    }
+
+    private void fireBeanDefinitionRegistryReadyEvent(BeanDefinitionRegistry registry) {
+        beanFactoryListeners.onBeanDefinitionRegistryReady(registry);
+    }
+
+    private void fireBeanFactoryReadyEvent(ConfigurableListableBeanFactory beanFactory) {
+        beanFactoryListeners.onBeanFactoryReady(beanFactory);
+    }
+
+    private void registerBeanFactoryListeners(BeanDefinitionRegistry registry) {
+        if (registry instanceof ConfigurableListableBeanFactory) {
+            ConfigurableListableBeanFactory beanFactory = (ConfigurableListableBeanFactory) registry;
+            BeanFactoryListeners beanFactoryListeners = new BeanFactoryListeners(beanFactory);
+            beanFactoryListeners.registerBean(registry);
+            this.beanFactoryListeners = beanFactoryListeners;
+        }
+    }
+
+    private void registerBeanEventListeners(ConfigurableListableBeanFactory context) {
+        BeanListeners beanEventListeners = new BeanListeners(context);
+        beanEventListeners.registerBean(registry);
+        this.beanEventListeners = beanEventListeners;
+    }
+
+    private void decorateInstantiationStrategy(ConfigurableListableBeanFactory beanFactory) {
+        if (beanFactory instanceof AbstractAutowireCapableBeanFactory) {
+            this.instantiationStrategyDelegate = getInstantiationStrategyDelegate(beanFactory);
+            if (instantiationStrategyDelegate != this) {
+                AbstractAutowireCapableBeanFactory autowireCapableBeanFactory = (AbstractAutowireCapableBeanFactory) beanFactory;
+                autowireCapableBeanFactory.setInstantiationStrategy(this);
+            }
+        }
+    }
+
+    private InstantiationStrategy getInstantiationStrategyDelegate(ConfigurableListableBeanFactory beanFactory) {
+        InstantiationStrategy instantiationStrategy = null;
+        try {
+            Method method = AbstractAutowireCapableBeanFactory.class.getDeclaredMethod("getInstantiationStrategy");
+            method.setAccessible(true);
+            instantiationStrategy = (InstantiationStrategy) method.invoke(beanFactory);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return instantiationStrategy;
     }
 }
