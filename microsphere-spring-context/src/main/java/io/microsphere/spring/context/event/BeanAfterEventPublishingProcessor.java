@@ -138,11 +138,11 @@ class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProces
             ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             beanFactory.addBeanPostProcessor(processor);
             context.addApplicationListener(processor);
-            fireBeanFactoryConfigurationFrozen(beanFactory);
+            fireBeanFactoryConfigurationFrozenEvent(beanFactory);
             fireBeanDefinitionReadyEvent(beanFactory);
         }
 
-        private void fireBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory beanFactory) {
+        private void fireBeanFactoryConfigurationFrozenEvent(ConfigurableListableBeanFactory beanFactory) {
             BeanFactoryListeners beanFactoryListeners = BeanFactoryListeners.getBean(beanFactory);
             beanFactoryListeners.onBeanFactoryConfigurationFrozen(beanFactory);
         }
