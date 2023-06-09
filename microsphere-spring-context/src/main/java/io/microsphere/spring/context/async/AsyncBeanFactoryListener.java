@@ -22,16 +22,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,57 +54,87 @@ public class AsyncBeanFactoryListener extends BeanFactoryListenerAdapter {
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory beanFactory) {
-        String[] beanNames = beanFactory.getBeanDefinitionNames();
+        ClassLoader classLoader = beanFactory.getBeanClassLoader();
+        // Not Ready & Non-Lazy-Init Merged BeanDefinitions
+        List<BeanDefinitionHolder> beanDefinitionHolders = getNonLazyInitSingletonMergedBeanDefinitionHolders(beanFactory);
+        int beansCount = beanDefinitionHolders.size();
+        for (int i = 0; i < beansCount; i++) {
+            BeanDefinitionHolder beanDefinitionHolder = beanDefinitionHolders.get(i);
+            String beanName = beanDefinitionHolder.getBeanName();
+            BeanDefinition beanDefinition = beanDefinitionHolder.getBeanDefinition();
+            RootBeanDefinition mergedBeanDefinition = (RootBeanDefinition) beanDefinition;
+            Method factoryMethod = mergedBeanDefinition.getResolvedFactoryMethod();
 
-        for (String beanName : beanNames) {
-            if (beanFactory.containsSingleton(beanName)) {
-                logger.info("The Bean[name : '{}'] is ready", beanName);
-            } else {
-                BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);
-                logger.info("The Bean[name : '{}'] Definition : {}", beanName, beanDefinition.getClass());
+            Type[] genericParameterTypes = null;
 
-                if (isNonLazyInitSingleton(beanDefinition) && beanDefinition instanceof RootBeanDefinition) {
-                    // Not Ready Bean
-                    RootBeanDefinition mergedBeanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(beanName);
-                    ClassLoader classLoader = beanFactory.getBeanClassLoader();
-                    Method factoryMethod = mergedBeanDefinition.getResolvedFactoryMethod();
-                    if (factoryMethod == null) { // The bean-class Definition
-                        Class<?> beanClass = getBeanClass(mergedBeanDefinition, classLoader);
+            if (factoryMethod == null) { // The bean-class Definition
+                Class<?> beanClass = getBeanClass(mergedBeanDefinition, classLoader);
 
-                        Constructor[] constructors = findConstructors(beanName, beanClass, beanFactory);
-                        int constructorsLength = constructors.length;
-                        if (constructorsLength != 1) {
-                            logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
-                            continue;
-                        }
-                        // TODO
-                        Constructor constructor = constructors[0];
-
-                    } else { // the @Bean or customized Method Definition
-                        Type[] genericParameterTypes = factoryMethod.getGenericParameterTypes();
-                        // TODO
-                    }
-                    if (mergedBeanDefinition instanceof AnnotatedBeanDefinition) {
-                        AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
-                        annotatedBeanDefinition.getFactoryMethodMetadata();
-                    } else {
-
-                    }
+                Constructor[] constructors = resolveConstructors(beanName, beanClass, beanFactory);
+                int constructorsLength = constructors.length;
+                if (constructorsLength != 1) {
+                    logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
+                    continue;
                 }
+                Constructor constructor = constructors[0];
+                genericParameterTypes = constructor.getGenericParameterTypes();
+                // TODO
+            } else { // the @Bean or customized Method Definition
+                genericParameterTypes = factoryMethod.getGenericParameterTypes();
+                // TODO
+            }
+            int parametersLength = genericParameterTypes.length;
+            for (int j = 0; j < parametersLength; j++) {
+                Type genericParameterType = genericParameterTypes[j];
+                ResolvableType resolvableType = ResolvableType.forType(genericParameterType);
+                if (resolvableType.hasGenerics()) {
+                    ResolvableType gType = resolvableType.getGeneric(0);
+                }
+            }
+
+            if (mergedBeanDefinition instanceof AnnotatedBeanDefinition) {
+                AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
+                annotatedBeanDefinition.getFactoryMethodMetadata();
+            } else {
+
             }
         }
     }
 
-    private Constructor[] findConstructors(String beanName, Class<?> beanClass, ConfigurableListableBeanFactory beanFactory) {
-        List<SmartInstantiationAwareBeanPostProcessor> processors = getSmartInstantiationAwareBeanPostProcessors(beanFactory);
-        Constructor[] constructors = null;
-        for (SmartInstantiationAwareBeanPostProcessor processor : processors) {
-            constructors = processor.determineCandidateConstructors(beanClass, beanName);
-            if (constructors != null) {
-                break;
+    private List<BeanDefinitionHolder> getNonLazyInitSingletonMergedBeanDefinitionHolders(ConfigurableListableBeanFactory beanFactory) {
+        String[] beanNames = beanFactory.getBeanDefinitionNames();
+        int beansCount = beanNames.length;
+        List<BeanDefinitionHolder> beanDefinitionHolders = new ArrayList<>(beansCount);
+        for (int i = 0; i < beansCount; i++) {
+            String beanName = beanNames[i];
+            if (beanFactory.containsSingleton(beanName)) {
+                logger.debug("The Bean[name : '{}'] is ready", beanName);
+                continue;
+            }
+            BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);
+            if (isNonLazyInitSingletonMergedBeanDefinition(beanDefinition)) {
+                String[] aliases = beanFactory.getAliases(beanName);
+                BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanDefinition, beanName, aliases);
+                beanDefinitionHolders.add(beanDefinitionHolder);
             }
         }
-        return isEmpty(constructors) ? beanClass.getConstructors() : constructors;
+        return beanDefinitionHolders;
+    }
+
+    private Constructor[] resolveConstructors(String beanName, Class<?> beanClass, ConfigurableListableBeanFactory beanFactory) {
+        Constructor[] constructors = null;
+        if (!beanClass.isInterface()) {
+            List<SmartInstantiationAwareBeanPostProcessor> processors = getSmartInstantiationAwareBeanPostProcessors(beanFactory);
+            for (SmartInstantiationAwareBeanPostProcessor processor : processors) {
+                constructors = processor.determineCandidateConstructors(beanClass, beanName);
+                if (constructors != null) {
+                    break;
+                }
+            }
+        }
+        constructors = isEmpty(constructors) ? beanClass.getConstructors() : constructors;
+        constructors = isEmpty(constructors) ? beanClass.getDeclaredConstructors() : constructors;
+        return constructors;
     }
 
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
@@ -126,7 +159,8 @@ public class AsyncBeanFactoryListener extends BeanFactoryListenerAdapter {
                 resolveClass(beanDefinition.getBeanClassName(), classLoader);
     }
 
-    private boolean isNonLazyInitSingleton(BeanDefinition beanDefinition) {
-        return beanDefinition != null && beanDefinition.isSingleton() && !beanDefinition.isLazyInit();
+    private boolean isNonLazyInitSingletonMergedBeanDefinition(BeanDefinition beanDefinition) {
+        return beanDefinition != null && beanDefinition.isSingleton() && !beanDefinition.isLazyInit()
+                && beanDefinition instanceof RootBeanDefinition;
     }
 }
