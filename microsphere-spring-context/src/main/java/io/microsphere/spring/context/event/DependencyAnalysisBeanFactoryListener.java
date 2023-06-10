@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.async;
+package io.microsphere.spring.context.event;
 
-import io.microsphere.spring.context.event.BeanFactoryListener;
-import io.microsphere.spring.context.event.BeanFactoryListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -45,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,20 +56,21 @@ import static io.microsphere.util.ClassUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static org.springframework.core.MethodParameter.forParameter;
 import static org.springframework.core.ResolvableType.forMethodParameter;
 import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
- * Async {@link BeanFactoryListener}
+ * Dependency Analysis {@link BeanFactoryListener}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class AsyncBeanFactoryListener extends BeanFactoryListenerAdapter {
+public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(AsyncBeanFactoryListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(DependencyAnalysisBeanFactoryListener.class);
 
     private static final Parameter[] EMPTY_PARAMETER_ARRAY = new Parameter[0];
 
@@ -80,7 +80,7 @@ public class AsyncBeanFactoryListener extends BeanFactoryListenerAdapter {
     static {
         try {
             javaxInjectProviderClass =
-                    ClassUtils.forName("javax.inject.Provider", AsyncBeanFactoryListener.class.getClassLoader());
+                    ClassUtils.forName("javax.inject.Provider", DependencyAnalysisBeanFactoryListener.class.getClassLoader());
         } catch (ClassNotFoundException ex) {
             // JSR-330 API not available - Provider interface simply not supported then.
             javaxInjectProviderClass = null;
@@ -105,7 +105,55 @@ public class AsyncBeanFactoryListener extends BeanFactoryListenerAdapter {
                     resolvableDependencyTypes, beanDefinitionHolders, beanFactory);
             dependentBeanNamesMap.put(beanDefinitionHolder.getBeanName(), dependentBeanNames);
         }
+        flattenDependentBeanNamesMap(dependentBeanNamesMap);
         logger.info("dependentBeanNamesMap : {}", dependentBeanNamesMap);
+    }
+
+    private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
+        Map<String, Set<String>> dependenciesMap = new LinkedHashMap<>(dependentBeanNamesMap.size());
+        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+            Set<String> dependentBeanNames = entry.getValue();
+            if (dependentBeanNames.isEmpty()) { // No Dependent bean name
+                continue;
+            }
+            String beanName = entry.getKey();
+            Set<String> flattenDependentBeanNames = new LinkedHashSet<>(dependentBeanNames.size() * 2);
+            // flat
+            flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+            // Replace flattenDependentBeanNames to dependentBeanNames
+            entry.setValue(flattenDependentBeanNames);
+        }
+
+        // Remove the bean names that ware dependent by the requesting beans
+        for (String nonRootBeanName : dependenciesMap.keySet()) {
+            dependentBeanNamesMap.remove(nonRootBeanName);
+        }
+
+    }
+
+    private void flatDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap,
+                                        Map<String, Set<String>> dependenciesMap,
+                                        Set<String> flattenDependentBeanNames) {
+        Set<String> dependentBeanNames = retrieveDependentBeanNames(beanName, dependentBeanNamesMap);
+        if (dependentBeanNames.isEmpty()) {
+            return;
+        }
+        for (String dependentBeanName : dependentBeanNames) {
+            Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>());
+            dependencies.add(beanName);
+            flattenDependentBeanNames.add(dependentBeanName);
+            flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+        }
+    }
+
+    private Set<String> retrieveDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap) {
+        Set<String> dependentBeanNames = dependentBeanNamesMap.get(beanName);
+        if (dependentBeanNames == null) {
+            dependentBeanNames = emptySet();
+        } else {
+            dependentBeanNames.remove(beanName);
+        }
+        return dependentBeanNames;
     }
 
     private Set<String> resolveDependentBeanNames(BeanDefinitionHolder beanDefinitionHolder,
@@ -118,14 +166,27 @@ public class AsyncBeanFactoryListener extends BeanFactoryListenerAdapter {
         Set<String> dependentBeanNames = new LinkedHashSet<>();
         List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);
         List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypes, beanDefinitionHolders, beanFactory);
+        List<String> injectedBeanNames = resolveInjectedBeanNames(beanName, beanDefinition, resolvableDependencyTypes, beanDefinitionHolder, beanFactory);
 
         dependentBeanNames.addAll(beanDefinitionDependentBeanNames);
         dependentBeanNames.addAll(parameterDependentBeanNames);
+        dependentBeanNames.addAll(injectedBeanNames);
 
-        // removed the names of beans that had been initialized stored into DefaultListableBeanFactory.singletonObjects
+        // remove self
+        dependentBeanNames.remove(beanName);
+        // remove the names of beans that had been initialized stored into DefaultListableBeanFactory.singletonObjects
         removeInitializedBeanNames(dependentBeanNames, beanFactory);
 
         return dependentBeanNames;
+    }
+
+    private List<String> resolveInjectedBeanNames(String beanName, RootBeanDefinition beanDefinition,
+                                                  Set<Class<?>> resolvableDependencyTypes,
+                                                  BeanDefinitionHolder beanDefinitionHolder,
+                                                  DefaultListableBeanFactory beanFactory) {
+        List<String> injectedBeanNames = new LinkedList<>();
+        // TODO
+        return injectedBeanNames;
     }
 
     private void removeInitializedBeanNames(Set<String> dependentBeanNames, DefaultListableBeanFactory beanFactory) {
