@@ -106,7 +106,6 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
             dependentBeanNamesMap.put(beanDefinitionHolder.getBeanName(), dependentBeanNames);
         }
         flattenDependentBeanNamesMap(dependentBeanNamesMap);
-        logger.info("dependentBeanNamesMap : {}", dependentBeanNamesMap);
     }
 
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
@@ -125,11 +124,31 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
         }
 
         // Remove the bean names that ware dependent by the requesting beans
-        for (String nonRootBeanName : dependenciesMap.keySet()) {
-            dependentBeanNamesMap.remove(nonRootBeanName);
+        for (Map.Entry<String, Set<String>> entry : dependenciesMap.entrySet()) {
+            String dependentBeanName = entry.getKey();
+            dependentBeanNamesMap.remove(dependentBeanName);
+            logDependenciesTrace(dependentBeanName, entry);
         }
 
+        logDependentTrace(dependentBeanNamesMap);
     }
+
+
+    private void logDependenciesTrace(String dependentBeanName, Map.Entry<String, Set<String>> dependencies) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
+        }
+    }
+
+
+    private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
+        if (logger.isDebugEnabled()) {
+            for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+                logger.debug("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
 
     private void flatDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap,
                                         Map<String, Set<String>> dependenciesMap,
