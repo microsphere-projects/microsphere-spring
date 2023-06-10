@@ -44,6 +44,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -120,7 +121,24 @@ public class AsyncBeanFactoryListener extends BeanFactoryListenerAdapter {
 
         dependentBeanNames.addAll(beanDefinitionDependentBeanNames);
         dependentBeanNames.addAll(parameterDependentBeanNames);
+
+        // removed the names of beans that had been initialized stored into DefaultListableBeanFactory.singletonObjects
+        removeInitializedBeanNames(dependentBeanNames, beanFactory);
+
         return dependentBeanNames;
+    }
+
+    private void removeInitializedBeanNames(Set<String> dependentBeanNames, DefaultListableBeanFactory beanFactory) {
+        if (dependentBeanNames.isEmpty()) {
+            return;
+        }
+        Iterator<String> iterator = dependentBeanNames.iterator();
+        while (iterator.hasNext()) {
+            String dependentBeanName = iterator.next();
+            if (beanFactory.containsSingleton(dependentBeanName)) {
+                iterator.remove();
+            }
+        }
     }
 
     private List<String> resolveBeanDefinitionDependentBeanNames(RootBeanDefinition beanDefinition) {
