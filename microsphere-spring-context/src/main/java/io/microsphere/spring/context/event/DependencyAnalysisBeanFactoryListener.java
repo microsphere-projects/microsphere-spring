@@ -53,14 +53,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static io.microsphere.spring.util.FieldUtils.getFieldValue;
+import static io.microsphere.reflect.TypeUtils.isParameterizedType;
+import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
 import static io.microsphere.util.ClassUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static org.springframework.core.MethodParameter.forParameter;
-import static org.springframework.core.ResolvableType.forMethodParameter;
 import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -237,54 +238,60 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
                                                             List<BeanDefinitionHolder> beanDefinitionHolders,
                                                             DefaultListableBeanFactory beanFactory) {
         Parameter[] parameters = getParameters(beanName, beanDefinition, beanFactory);
-        Map<Integer, Class<?>> parameterDependentTypesMap = getParameterDependentTypesMap(parameters, resolvableDependencyTypeFilter);
-        int size = parameterDependentTypesMap.size();
-        if (size < 1) {
+
+        int parametersLength = parameters.length;
+        if (parametersLength < 1) {
             return emptyList();
         }
-        List<String> dependentBeanNames = new ArrayList<>(size);
-        AutowireCandidateResolver autowireCandidateResolver = beanFactory.getAutowireCandidateResolver();
-        for (Map.Entry<Integer, Class<?>> entry : parameterDependentTypesMap.entrySet()) {
-            Integer parameterIndex = entry.getKey();
-            Parameter parameter = parameters[parameterIndex];
-            MethodParameter methodParameter = forParameter(parameter);
-            String dependentBeanName = resolveSuggestedDependentBeanName(methodParameter, autowireCandidateResolver);
-            if (dependentBeanName == null) {
-                // Class<?> parameterDependentType = entry.getValue();
-                ResolvableType dependentType = forMethodParameter(methodParameter);
-                // Resolve the bean names
-                String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
-                dependentBeanNames.addAll(asList(beanNames));
-                // dependentBeanName = resolveDependentBeanName(beanName, beanDefinition, dependentType, beanDefinitionHolders, beanFactory);
-            } else {
-                dependentBeanNames.add(dependentBeanName);
+
+        List<String> dependentBeanNames = new ArrayList<>(parametersLength);
+
+        for (int i = 0; i < parametersLength; i++) {
+            Parameter parameter = parameters[i];
+            Class<?> dependentType = resolveDependentType(parameter);
+            if (resolvableDependencyTypeFilter.accept(dependentType)) {
+                continue;
             }
+            List<String> beanNames = resolveDependentBeanNames(parameter, dependentType, beanFactory);
+            dependentBeanNames.addAll(beanNames);
         }
 
         return dependentBeanNames;
     }
 
-    private String resolveSuggestedDependentBeanName(MethodParameter methodParameter, AutowireCandidateResolver autowireCandidateResolver) {
+    private List<String> resolveDependentBeanNames(Parameter parameter, Class<?> dependentType, DefaultListableBeanFactory beanFactory) {
+        String dependentBeanName = resolveSuggestedDependentBeanName(parameter, beanFactory);
+        if (dependentBeanName == null) {
+            String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
+            return asList(beanNames);
+        } else {
+            return singletonList(dependentBeanName);
+        }
+    }
+
+    private String resolveSuggestedDependentBeanName(Parameter parameter, DefaultListableBeanFactory beanFactory) {
+        AutowireCandidateResolver autowireCandidateResolver = beanFactory.getAutowireCandidateResolver();
         if (autowireCandidateResolver == null) {
             return null;
         }
-        DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(methodParameter, true);
+        DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
         return suggestedValue instanceof String ? (String) suggestedValue : null;
     }
 
-    private String resolveDependentBeanName(String beanName,
-                                            RootBeanDefinition beanDefinition,
-                                            ResolvableType dependentType,
-                                            List<BeanDefinitionHolder> beanDefinitionHolders,
-                                            DefaultListableBeanFactory beanFactory) {
-        String dependentBeanName = null;
-        int size = beanDefinitionHolders.size();
-        for (int i = 0; i < size; i++) {
-            BeanDefinitionHolder beanDefinitionHolder = beanDefinitionHolders.get(i);
-            String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
+    private Class<?> resolveDependentType(Parameter parameter) {
+        Type parameterType = parameter.getParameterizedType();
+        Class parameterRawType = parameter.getType();
+        Class dependentType = parameterRawType;
+        if (isParameterizedType(parameterType)) {
+            List<Class> arguments = resolveActualTypeArgumentClasses(parameterType, parameterRawType);
+            int argumentsSize = arguments.size();
+            if (argumentsSize > 0) {
+                // Last argument
+                dependentType = arguments.get(argumentsSize - 1);
+            }
         }
-        return dependentBeanName;
+        return dependentType;
     }
 
     private Parameter[] getParameters(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory) {
@@ -308,48 +315,6 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
             parameters = factoryMethod.getParameters();
         }
         return parameters;
-    }
-
-    private Set<Class<?>> getResolvableDependencyTypes(DefaultListableBeanFactory beanFactory) {
-        Map resolvableDependencies = getFieldValue(beanFactory, "resolvableDependencies", Map.class);
-        return resolvableDependencies.keySet();
-    }
-
-    /**
-     * @param parameters
-     * @param resolvableDependencyTypeFilter
-     * @return the Map of dependency types whose key is the parameter index and value is the dependency type
-     */
-    private Map<Integer, Class<?>> getParameterDependentTypesMap(Parameter[] parameters, Filter<Class<?>> resolvableDependencyTypeFilter) {
-        int parametersLength = parameters.length;
-        if (parametersLength < 1) {
-            return emptyMap();
-        }
-        Map<Integer, Class<?>> dependentTypesMap = new HashMap<>(parametersLength);
-        for (int i = 0; i < parametersLength; i++) {
-            Parameter parameter = parameters[i];
-            Type parameterType = parameter.getParameterizedType();
-            ResolvableType type = forType(parameterType);
-            Class<?> rawType = type.resolve();
-            Class dependentType = null;
-            if (type.hasGenerics()) {
-                if (Map.class.isAssignableFrom(rawType)) { // Bi-Type Container Wrapper
-                    dependentType = type.getGeneric(1).resolve();
-                } else if (Collection.class.isAssignableFrom(rawType)
-                        || Objects.equals(javaxInjectProviderClass, rawType)
-                        || ObjectFactory.class.equals(rawType)
-                        || ObjectProvider.class.equals(rawType)
-                ) {
-                    dependentType = type.getGeneric(0).resolve();
-                }
-            } else {
-                dependentType = rawType;
-            }
-            if (!resolvableDependencyTypeFilter.accept(dependentType)) {
-                dependentTypesMap.put(i, dependentType);
-            }
-        }
-        return dependentTypesMap;
     }
 
     private List<BeanDefinitionHolder> getNonLazyInitSingletonMergedBeanDefinitionHolders(ConfigurableListableBeanFactory beanFactory) {
