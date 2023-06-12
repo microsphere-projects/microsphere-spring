@@ -383,7 +383,6 @@ public abstract class BeanUtils {
         }
     }
 
-
     static void processAware(Object bean, ConfigurableBeanFactory beanFactory) {
         ClassLoader classLoader = beanFactory.getBeanClassLoader();
         if (bean instanceof BeanClassLoaderAware) {
