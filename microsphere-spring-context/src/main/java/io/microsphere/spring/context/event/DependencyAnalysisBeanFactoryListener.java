@@ -259,9 +259,17 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
     }
 
     private List<String> getRefBeanNames(RootBeanDefinition beanDefinition) {
+        MutablePropertyValues mutablePropertyValues = beanDefinition.getPropertyValues();
+        PropertyValue[] propertyValues = mutablePropertyValues.getPropertyValues();
+        int propertyValuesLength = propertyValues.length;
+        if (propertyValuesLength < 1) {
+            return emptyList();
+        }
+
         List<String> dependentBeanNames = newLinkedList();
-        MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
-        for (PropertyValue propertyValue : propertyValues) {
+
+        for (int i = 0; i < propertyValuesLength; i++) {
+            PropertyValue propertyValue = propertyValues[i];
             Object value = propertyValue.getValue();
             if (value instanceof BeanReference) {
                 BeanReference beanReference = (BeanReference) value;
