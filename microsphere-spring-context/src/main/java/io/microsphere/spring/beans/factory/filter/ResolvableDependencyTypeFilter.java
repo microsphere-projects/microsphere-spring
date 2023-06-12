@@ -44,6 +44,13 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
 
     @Override
     public boolean accept(Class<?> classToFilter) {
-        return resolvableDependencyTypes.contains(classToFilter);
+        boolean filtered = false;
+        for (Class<?> resolvableDependencyType : resolvableDependencyTypes) {
+            if (resolvableDependencyType.isAssignableFrom(classToFilter)) {
+                filtered = true;
+                break;
+            }
+        }
+        return filtered;
     }
 }
