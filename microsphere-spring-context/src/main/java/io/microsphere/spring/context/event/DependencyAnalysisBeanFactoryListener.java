@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.filter.Filter;
+import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -94,7 +96,9 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
             return;
         }
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) bf;
-        Set<Class<?>> resolvableDependencyTypes = getResolvableDependencyTypes(beanFactory);
+
+        Filter<Class<?>> resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
+
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         List<BeanDefinitionHolder> beanDefinitionHolders = getNonLazyInitSingletonMergedBeanDefinitionHolders(bf);
         int beansCount = beanDefinitionHolders.size();
@@ -102,7 +106,7 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
         for (int i = 0; i < beansCount; i++) {
             BeanDefinitionHolder beanDefinitionHolder = beanDefinitionHolders.get(i);
             Set<String> dependentBeanNames = resolveDependentBeanNames(beanDefinitionHolder,
-                    resolvableDependencyTypes, beanDefinitionHolders, beanFactory);
+                    resolvableDependencyTypeFilter, beanDefinitionHolders, beanFactory);
             dependentBeanNamesMap.put(beanDefinitionHolder.getBeanName(), dependentBeanNames);
         }
         flattenDependentBeanNamesMap(dependentBeanNamesMap);
@@ -176,16 +180,17 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
     }
 
     private Set<String> resolveDependentBeanNames(BeanDefinitionHolder beanDefinitionHolder,
-                                                  Set<Class<?>> resolvableDependencyTypes,
+                                                  Filter<Class<?>> resolvableDependencyTypeFilter,
                                                   List<BeanDefinitionHolder> beanDefinitionHolders,
                                                   DefaultListableBeanFactory beanFactory) {
         String beanName = beanDefinitionHolder.getBeanName();
         RootBeanDefinition beanDefinition = (RootBeanDefinition) beanDefinitionHolder.getBeanDefinition();
 
+
         Set<String> dependentBeanNames = new LinkedHashSet<>();
         List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);
-        List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypes, beanDefinitionHolders, beanFactory);
-        List<String> injectedBeanNames = resolveInjectedBeanNames(beanName, beanDefinition, resolvableDependencyTypes, beanDefinitionHolder, beanFactory);
+        List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolders, beanFactory);
+        List<String> injectedBeanNames = resolveInjectionDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolder, beanFactory);
 
         dependentBeanNames.addAll(beanDefinitionDependentBeanNames);
         dependentBeanNames.addAll(parameterDependentBeanNames);
@@ -199,10 +204,10 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
         return dependentBeanNames;
     }
 
-    private List<String> resolveInjectedBeanNames(String beanName, RootBeanDefinition beanDefinition,
-                                                  Set<Class<?>> resolvableDependencyTypes,
-                                                  BeanDefinitionHolder beanDefinitionHolder,
-                                                  DefaultListableBeanFactory beanFactory) {
+    private List<String> resolveInjectionDependentBeanNames(String beanName, RootBeanDefinition beanDefinition,
+                                                            Filter<Class<?>> resolvableDependencyTypeFilter,
+                                                            BeanDefinitionHolder beanDefinitionHolder,
+                                                            DefaultListableBeanFactory beanFactory) {
         List<String> injectedBeanNames = new LinkedList<>();
         // TODO
         return injectedBeanNames;
@@ -228,11 +233,11 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
 
     private List<String> resolveParameterDependentBeanNames(String beanName,
                                                             RootBeanDefinition beanDefinition,
-                                                            Set<Class<?>> resolvableDependencyTypes,
+                                                            Filter<Class<?>> resolvableDependencyTypeFilter,
                                                             List<BeanDefinitionHolder> beanDefinitionHolders,
                                                             DefaultListableBeanFactory beanFactory) {
         Parameter[] parameters = getParameters(beanName, beanDefinition, beanFactory);
-        Map<Integer, Class<?>> parameterDependentTypesMap = getParameterDependentTypesMap(parameters, resolvableDependencyTypes);
+        Map<Integer, Class<?>> parameterDependentTypesMap = getParameterDependentTypesMap(parameters, resolvableDependencyTypeFilter);
         int size = parameterDependentTypesMap.size();
         if (size < 1) {
             return emptyList();
@@ -312,10 +317,10 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
 
     /**
      * @param parameters
-     * @param resolvableDependencyTypes
+     * @param resolvableDependencyTypeFilter
      * @return the Map of dependency types whose key is the parameter index and value is the dependency type
      */
-    private Map<Integer, Class<?>> getParameterDependentTypesMap(Parameter[] parameters, Set<Class<?>> resolvableDependencyTypes) {
+    private Map<Integer, Class<?>> getParameterDependentTypesMap(Parameter[] parameters, Filter<Class<?>> resolvableDependencyTypeFilter) {
         int parametersLength = parameters.length;
         if (parametersLength < 1) {
             return emptyMap();
@@ -340,22 +345,11 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
             } else {
                 dependentType = rawType;
             }
-            if (!isResolvableDependencyType(dependentType, resolvableDependencyTypes)) {
+            if (!resolvableDependencyTypeFilter.accept(dependentType)) {
                 dependentTypesMap.put(i, dependentType);
             }
         }
         return dependentTypesMap;
-    }
-
-    private boolean isResolvableDependencyType(Class<?> dependencyType, Set<Class<?>> resolvableDependencyTypes) {
-        boolean result = false;
-        for (Class<?> resolvableDependencyType : resolvableDependencyTypes) {
-            if (ClassUtils.isAssignable(resolvableDependencyType, dependencyType)) {
-                result = true;
-                break;
-            }
-        }
-        return result;
     }
 
     private List<BeanDefinitionHolder> getNonLazyInitSingletonMergedBeanDefinitionHolders(ConfigurableListableBeanFactory beanFactory) {
