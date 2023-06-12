@@ -20,13 +20,17 @@ import io.microsphere.filter.Filter;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.BeanReference;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
@@ -53,6 +57,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
 import static io.microsphere.util.ClassUtils.resolveClass;
@@ -209,7 +215,7 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
                                                             Filter<Class<?>> resolvableDependencyTypeFilter,
                                                             BeanDefinitionHolder beanDefinitionHolder,
                                                             DefaultListableBeanFactory beanFactory) {
-        List<String> injectedBeanNames = new LinkedList<>();
+        List<String> injectedBeanNames = newLinkedList();
         // TODO
         return injectedBeanNames;
     }
@@ -228,8 +234,42 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
     }
 
     private List<String> resolveBeanDefinitionDependentBeanNames(RootBeanDefinition beanDefinition) {
+        // the bean names from RootBeanDefinitions' depends-on
+        List<String> dependsOnBeanNames = getDependsOnBeanNames(beanDefinition);
+
+        // the bean names from RootBeanDefinitions that were declared on XML elements,
+        // e.g <ref> or <bean>
+        List<String> refBeanNames = getRefBeanNames(beanDefinition);
+
+        int size = dependsOnBeanNames.size() + refBeanNames.size();
+
+        if (size < 1) {
+            return emptyList();
+        }
+
+        List<String> dependentBeanNames = newArrayList(size);
+        dependentBeanNames.addAll(dependsOnBeanNames);
+        dependentBeanNames.addAll(refBeanNames);
+        return dependentBeanNames;
+    }
+
+    private List<String> getDependsOnBeanNames(RootBeanDefinition beanDefinition) {
         String[] dependsOn = beanDefinition.getDependsOn();
         return isEmpty(dependsOn) ? emptyList() : asList(dependsOn);
+    }
+
+    private List<String> getRefBeanNames(RootBeanDefinition beanDefinition) {
+        List<String> dependentBeanNames = newLinkedList();
+        MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
+        for (PropertyValue propertyValue : propertyValues) {
+            Object value = propertyValue.getValue();
+            if (value instanceof BeanReference) {
+                BeanReference beanReference = (BeanReference) value;
+                String beanName = beanReference.getBeanName();
+                dependentBeanNames.add(beanName);
+            }
+        }
+        return dependentBeanNames;
     }
 
     private List<String> resolveParameterDependentBeanNames(String beanName,
@@ -244,7 +284,7 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
             return emptyList();
         }
 
-        List<String> dependentBeanNames = new ArrayList<>(parametersLength);
+        List<String> dependentBeanNames = newArrayList(parametersLength);
 
         for (int i = 0; i < parametersLength; i++) {
             Parameter parameter = parameters[i];
@@ -320,7 +360,7 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
     private List<BeanDefinitionHolder> getNonLazyInitSingletonMergedBeanDefinitionHolders(ConfigurableListableBeanFactory beanFactory) {
         String[] beanNames = beanFactory.getBeanDefinitionNames();
         int beansCount = beanNames.length;
-        List<BeanDefinitionHolder> beanDefinitionHolders = new ArrayList<>(beansCount);
+        List<BeanDefinitionHolder> beanDefinitionHolders = newArrayList(beansCount);
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {
