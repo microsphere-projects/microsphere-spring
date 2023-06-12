@@ -3,11 +3,17 @@ package io.microsphere.spring.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ClassUtils;
@@ -368,4 +374,33 @@ public abstract class BeanUtils {
         }
     }
 
+    public static void processAware(Object bean, BeanFactory beanFactory) {
+        if (bean instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
+        }
+        if (beanFactory instanceof ConfigurableBeanFactory) {
+            processAware(bean, (ConfigurableBeanFactory) beanFactory);
+        }
+    }
+
+
+    static void processAware(Object bean, ConfigurableBeanFactory beanFactory) {
+        ClassLoader classLoader = beanFactory.getBeanClassLoader();
+        if (bean instanceof BeanClassLoaderAware) {
+            ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
+        }
+    }
+
+    public static void processAware(Object bean, ApplicationContext context) {
+        if (bean instanceof ApplicationContextAware) {
+            ((ApplicationContextAware) bean).setApplicationContext(context);
+        }
+        if (context instanceof ConfigurableApplicationContext) {
+            processAware(bean, (ConfigurableApplicationContext) context);
+        }
+    }
+
+    static void processAware(Object bean, ConfigurableApplicationContext context) {
+
+    }
 }
