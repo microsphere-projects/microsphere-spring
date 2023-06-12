@@ -18,12 +18,18 @@ package io.microsphere.spring.util;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import static io.microsphere.spring.util.FieldUtils.getFieldValue;
 import static io.microsphere.spring.util.ObjectUtils.of;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -90,4 +96,41 @@ public abstract class BeanFactoryUtils {
 
         return unmodifiableList(beans);
     }
+
+    /**
+     * Is the given BeanFactory {@link DefaultListableBeanFactory}
+     *
+     * @param beanFactory {@link BeanFactory}
+     * @return <code>true</code> if it's {@link DefaultListableBeanFactory}, <code>false</code> otherwise
+     */
+    public static boolean isDefaultListableBeanFactory(BeanFactory beanFactory) {
+        return beanFactory instanceof DefaultListableBeanFactory;
+    }
+
+    /**
+     * Get the {@link ConfigurableListableBeanFactory#registerResolvableDependency(Class, Object) registered}
+     * Resolvable Dependency Types
+     *
+     * @param beanFactory {@link ConfigurableListableBeanFactory}
+     * @return non-null read-only {@link Set}
+     */
+    public static Set<Class<?>> getResolvableDependencyTypes(ConfigurableListableBeanFactory beanFactory) {
+        if (!isDefaultListableBeanFactory(beanFactory)) {
+            return emptySet();
+        }
+        return getResolvableDependencyTypes((DefaultListableBeanFactory) beanFactory);
+    }
+
+    /**
+     * Get the {@link ConfigurableListableBeanFactory#registerResolvableDependency(Class, Object) registered}
+     * Resolvable Dependency Types
+     *
+     * @param beanFactory {@link DefaultListableBeanFactory}
+     * @return non-null read-only {@link Set}
+     */
+    public static Set<Class<?>> getResolvableDependencyTypes(DefaultListableBeanFactory beanFactory) {
+        Map resolvableDependencies = getFieldValue(beanFactory, "resolvableDependencies", Map.class);
+        return resolvableDependencies == null ? emptySet() : resolvableDependencies.keySet();
+    }
+
 }
