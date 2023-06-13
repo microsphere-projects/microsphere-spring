@@ -17,7 +17,10 @@
 package io.microsphere.spring.util;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
@@ -28,7 +31,9 @@ import java.util.Set;
 
 import static io.microsphere.spring.util.FieldUtils.getFieldValue;
 import static io.microsphere.spring.util.ObjectUtils.of;
+import static io.microsphere.util.ClassUtils.cast;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
@@ -107,6 +112,30 @@ public abstract class BeanFactoryUtils {
         return beanFactory instanceof DefaultListableBeanFactory;
     }
 
+    public static ListableBeanFactory asListableBeanFactory(BeanFactory beanFactory) {
+        return cast(beanFactory, ListableBeanFactory.class);
+    }
+
+    public static HierarchicalBeanFactory asHierarchicalBeanFactory(BeanFactory beanFactory) {
+        return cast(beanFactory, HierarchicalBeanFactory.class);
+    }
+
+    public static ConfigurableBeanFactory asConfigurableBeanFactory(BeanFactory beanFactory) {
+        return cast(beanFactory, ConfigurableBeanFactory.class);
+    }
+
+    public static AutowireCapableBeanFactory asAutowireCapableBeanFactory(BeanFactory beanFactory) {
+        return cast(beanFactory, AutowireCapableBeanFactory.class);
+    }
+
+    public static ConfigurableListableBeanFactory asConfigurableListableBeanFactory(BeanFactory beanFactory) {
+        return cast(beanFactory, ConfigurableListableBeanFactory.class);
+    }
+
+    public static DefaultListableBeanFactory asDefaultListableBeanFactory(BeanFactory beanFactory) {
+        return cast(beanFactory, DefaultListableBeanFactory.class);
+    }
+
     /**
      * Get the {@link ConfigurableListableBeanFactory#registerResolvableDependency(Class, Object) registered}
      * Resolvable Dependency Types
@@ -115,7 +144,8 @@ public abstract class BeanFactoryUtils {
      * @return non-null read-only {@link Set}
      */
     public static Set<Class<?>> getResolvableDependencyTypes(ConfigurableListableBeanFactory beanFactory) {
-        if (!isDefaultListableBeanFactory(beanFactory)) {
+        DefaultListableBeanFactory defaultListableBeanFactory = asDefaultListableBeanFactory(beanFactory);
+        if (defaultListableBeanFactory == null) {
             return emptySet();
         }
         return getResolvableDependencyTypes((DefaultListableBeanFactory) beanFactory);
