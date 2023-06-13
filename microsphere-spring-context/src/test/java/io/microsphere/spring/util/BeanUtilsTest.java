@@ -21,8 +21,12 @@ import java.util.Map;
 import static io.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 import static io.microsphere.spring.util.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.util.BeanUtils.getBeanNames;
+import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.util.BeanUtils.isBeanPresent;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.util.ClassUtils.isAssignable;
 
@@ -54,7 +58,7 @@ public class BeanUtilsTest {
 
         Class<?> beanType = BeanUtils.resolveBeanType(this.getClass().getName(), classLoader);
 
-        Assert.assertEquals(beanType, this.getClass());
+        assertEquals(beanType, this.getClass());
 
         beanType = BeanUtils.resolveBeanType("", classLoader);
 
@@ -116,74 +120,74 @@ public class BeanUtilsTest {
 
         String[] beanNames = getBeanNames(listableBeanFactory, TestBean.class);
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
         String beanName = beanNames[0];
 
-        Assert.assertEquals("testBean", beanName);
+        assertEquals("testBean", beanName);
 
         beanNames = getBeanNames(listableBeanFactory, TestBean.class, true);
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
         beanName = beanNames[0];
 
-        Assert.assertEquals("testBean", beanName);
+        assertEquals("testBean", beanName);
 
         listableBeanFactory = beanFactory;
 
         beanNames = getBeanNames(listableBeanFactory, TestBean.class);
 
-        Assert.assertEquals(0, beanNames.length);
+        assertEquals(0, beanNames.length);
 
         beanNames = getBeanNames(listableBeanFactory, TestBean.class, true);
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
         beanName = beanNames[0];
 
-        Assert.assertEquals("testBean", beanName);
+        assertEquals("testBean", beanName);
 
         beanNames = getBeanNames(listableBeanFactory, TestBean2.class, true);
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
         beanName = beanNames[0];
 
-        Assert.assertEquals("testBean2", beanName);
+        assertEquals("testBean2", beanName);
 
         beanNames = getBeanNames(listableBeanFactory, io.microsphere.spring.util.Bean.class, true);
 
-        Assert.assertEquals(2, beanNames.length);
+        assertEquals(2, beanNames.length);
 
         beanName = beanNames[0];
 
-        Assert.assertEquals("testBean2", beanName);
+        assertEquals("testBean2", beanName);
 
         beanName = beanNames[1];
 
-        Assert.assertEquals("testBean", beanName);
+        assertEquals("testBean", beanName);
 
 
         beanNames = getBeanNames(beanFactory, io.microsphere.spring.util.Bean.class, true);
 
-        Assert.assertEquals(2, beanNames.length);
+        assertEquals(2, beanNames.length);
 
         beanName = beanNames[0];
 
-        Assert.assertEquals("testBean2", beanName);
+        assertEquals("testBean2", beanName);
 
         beanName = beanNames[1];
 
-        Assert.assertEquals("testBean", beanName);
+        assertEquals("testBean", beanName);
 
         beanNames = getBeanNames(beanFactory, io.microsphere.spring.util.Bean.class);
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
         beanName = beanNames[0];
 
-        Assert.assertEquals("testBean2", beanName);
+        assertEquals("testBean2", beanName);
 
 
     }
@@ -241,7 +245,7 @@ public class BeanUtilsTest {
 
         testBean = BeanUtils.getOptionalBean(registry, TestBean.class);
 
-        Assert.assertNotNull(testBean);
+        assertNotNull(testBean);
 
     }
 
@@ -254,15 +258,15 @@ public class BeanUtilsTest {
 
         List<io.microsphere.spring.util.Bean> beans = BeanUtils.getSortedBeans(registry, io.microsphere.spring.util.Bean.class);
 
-        Assert.assertEquals(2, beans.size());
+        assertEquals(2, beans.size());
 
         TestBean testBean = BeanUtils.getOptionalBean(registry, TestBean.class);
 
-        Assert.assertEquals(testBean, beans.get(0));
+        assertEquals(testBean, beans.get(0));
 
         TestBean2 testBean2 = BeanUtils.getOptionalBean(registry, TestBean2.class);
 
-        Assert.assertEquals(testBean2, beans.get(1));
+        assertEquals(testBean2, beans.get(1));
 
     }
 
@@ -301,6 +305,24 @@ public class BeanUtilsTest {
 
         Assert.assertArrayEquals(expectedBeansMap.values().toArray(), sortedBeansMap.values().toArray());
 
+    }
+
+    @Test
+    public void testInvokeAwareInterfaces() {
+        TestBean testBean = new TestBean();
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.refresh();
+        invokeAwareInterfaces(testBean, context);
+        assertSame(testBean.getMessageSource(), context);
+        assertSame(testBean.getApplicationContext(), context);
+        assertSame(testBean.getApplicationEventPublisher(), context);
+        assertSame(testBean.getBeanFactory(), context.getBeanFactory());
+        assertSame(testBean.getClassLoader(), context.getClassLoader());
+        assertSame(testBean.getEnvironment(), context.getEnvironment());
+        assertSame(testBean.getApplicationStartup(), context.getApplicationStartup());
+        assertSame(testBean.getResourceLoader(), context);
+        assertNotNull(testBean.getResolver());
+        context.close();
     }
 
 
@@ -349,10 +371,10 @@ public class BeanUtilsTest {
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 
-        Assert.assertEquals(1, namingBean.getOrder());
-        Assert.assertEquals(2, namingBean2.getOrder());
+        assertEquals(1, namingBean.getOrder());
+        assertEquals(2, namingBean2.getOrder());
 
-        Assert.assertEquals(-1, namingBean.compareTo(namingBean2));
+        assertEquals(-1, namingBean.compareTo(namingBean2));
 
 
     }

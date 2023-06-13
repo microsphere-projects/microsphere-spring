@@ -23,7 +23,6 @@ import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.support.ApplicationContextAwareProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ClassUtils;
@@ -353,7 +352,7 @@ public abstract class BeanUtils {
      * @param bean    the bean
      * @param context {@link ApplicationContext}
      * @see #invokeAwareInterfaces(Object, BeanFactory)
-     * @see ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
+     * @see org.springframework.context.support.ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
     public static void invokeAwareInterfaces(Object bean, ApplicationContext context) {
