@@ -3,6 +3,7 @@ package io.microsphere.spring.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.Aware;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -11,14 +12,24 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.EmbeddedValueResolver;
+import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.ApplicationStartupAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.EmbeddedValueResolverAware;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.support.ApplicationContextAwareProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.util.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableApplicationContext;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
@@ -319,6 +331,66 @@ public abstract class BeanUtils {
     }
 
 
+    public static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory) {
+        if (bean instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
+        }
+
+        if (bean instanceof BeanClassLoaderAware) {
+            if (beanFactory instanceof ConfigurableBeanFactory) {
+                ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+                ClassLoader classLoader = configurableBeanFactory.getBeanClassLoader();
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
+            }
+        }
+    }
+
+    /**
+     * Invoke {@link Aware} interfaces if the given bean implements
+     * <p>
+     * Current implementation keeps the order of invocation {@link Aware Aware interfaces}
+     *
+     * @param bean    the bean
+     * @param context {@link ApplicationContext}
+     * @see #invokeAwareInterfaces(Object, BeanFactory)
+     * @see ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
+     * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
+     */
+    public static void invokeAwareInterfaces(Object bean, ApplicationContext context) {
+        if (bean == null || context == null) {
+            return;
+        }
+
+        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
+
+        ConfigurableListableBeanFactory beanFactory = applicationContext != null ? applicationContext.getBeanFactory() : null;
+
+        invokeAwareInterfaces(bean, beanFactory);
+
+        if (bean instanceof EnvironmentAware) {
+            ((EnvironmentAware) bean).setEnvironment(context.getEnvironment());
+        }
+        if (bean instanceof EmbeddedValueResolverAware && beanFactory != null) {
+            StringValueResolver embeddedValueResolver = new EmbeddedValueResolver(beanFactory);
+            ((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(embeddedValueResolver);
+        }
+        if (bean instanceof ResourceLoaderAware) {
+            ((ResourceLoaderAware) bean).setResourceLoader(context);
+        }
+        if (bean instanceof ApplicationEventPublisherAware) {
+            ((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(context);
+        }
+        if (bean instanceof MessageSourceAware) {
+            ((MessageSourceAware) bean).setMessageSource(context);
+        }
+        if (bean instanceof ApplicationStartupAware && applicationContext != null) {
+            ((ApplicationStartupAware) bean).setApplicationStartup(applicationContext.getApplicationStartup());
+        }
+        if (bean instanceof ApplicationContextAware) {
+            ((ApplicationContextAware) bean).setApplicationContext(context);
+        }
+    }
+
     /**
      * Sort Beans {@link Map} via {@link AnnotationAwareOrderComparator#sort(List)} rule
      *
@@ -326,7 +398,7 @@ public abstract class BeanUtils {
      * @param <T>      the type of Bean
      * @return sorted Beans {@link Map}
      */
-    public static <T> Map<String, T> sort(final Map<String, T> beansMap) {
+    static <T> Map<String, T> sort(final Map<String, T> beansMap) {
 
         Map<String, T> unmodifiableBeansMap = Collections.unmodifiableMap(beansMap);
 
@@ -374,32 +446,4 @@ public abstract class BeanUtils {
         }
     }
 
-    public static void processAware(Object bean, BeanFactory beanFactory) {
-        if (bean instanceof BeanFactoryAware) {
-            ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
-        }
-        if (beanFactory instanceof ConfigurableBeanFactory) {
-            processAware(bean, (ConfigurableBeanFactory) beanFactory);
-        }
-    }
-
-    static void processAware(Object bean, ConfigurableBeanFactory beanFactory) {
-        ClassLoader classLoader = beanFactory.getBeanClassLoader();
-        if (bean instanceof BeanClassLoaderAware) {
-            ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
-        }
-    }
-
-    public static void processAware(Object bean, ApplicationContext context) {
-        if (bean instanceof ApplicationContextAware) {
-            ((ApplicationContextAware) bean).setApplicationContext(context);
-        }
-        if (context instanceof ConfigurableApplicationContext) {
-            processAware(bean, (ConfigurableApplicationContext) context);
-        }
-    }
-
-    static void processAware(Object bean, ConfigurableApplicationContext context) {
-
-    }
 }
