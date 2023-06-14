@@ -16,12 +16,12 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.spring.beans.factory.DependencyInjectionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -30,43 +30,23 @@ import java.util.Set;
 
 import static io.microsphere.reflect.TypeUtils.asClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
-import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
-import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
 import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static org.springframework.core.MethodParameter.forParameter;
 
 /**
- * Abstract {@link AnnotatedInjectionDependencyResolver}
+ * Abstract {@link DependencyInjectionResolver}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class AbstractAnnotatedInjectionDependencyResolver<A extends Annotation> implements AnnotatedInjectionDependencyResolver<A> {
-
-    private final Class<A> annotationType;
-
-    public AbstractAnnotatedInjectionDependencyResolver() {
-        this.annotationType = resolveActualTypeArgumentClass(getClass(), AnnotatedInjectionDependencyResolver.class, 0);
-    }
-
-    public AbstractAnnotatedInjectionDependencyResolver(Class<A> annotationType) {
-        this.annotationType = annotationType;
-    }
-
-    @Override
-    public final Class<A> getAnnotationType() {
-        return annotationType;
-    }
+public abstract class AbstractDependencyInjectionResolver implements DependencyInjectionResolver {
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
-        A annotation = getAnnotation(field);
-        if (annotation == null) {
-            return;
-        }
-        String dependentBeanName = resolveSuggestedDependentBeanName(field, annotation, beanFactory);
+        String dependentBeanName = resolveSuggestedDependentBeanName(field, beanFactory);
         if (dependentBeanName == null) {
-            Class<?> dependentType = resolveDependentType(field, annotation);
+            Class<?> dependentType = resolveDependentType(field);
             String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
             for (String beanName : beanNames) {
                 dependentBeanNames.add(beanName);
@@ -78,13 +58,9 @@ public abstract class AbstractAnnotatedInjectionDependencyResolver<A extends Ann
 
     @Override
     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
-        A annotation = getAnnotation(parameter);
-        if (annotation == null) {
-            return;
-        }
-        String dependentBeanName = resolveSuggestedDependentBeanName(parameter, annotation, beanFactory);
+        String dependentBeanName = resolveSuggestedDependentBeanName(parameter, beanFactory);
         if (dependentBeanName == null) {
-            Class<?> dependentType = resolveDependentType(parameter, annotation);
+            Class<?> dependentType = resolveDependentType(parameter);
             String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
             for (String beanName : beanNames) {
                 dependentBeanNames.add(beanName);
@@ -99,7 +75,7 @@ public abstract class AbstractAnnotatedInjectionDependencyResolver<A extends Ann
         return dbf == null ? null : dbf.getAutowireCandidateResolver();
     }
 
-    protected String resolveSuggestedDependentBeanName(Field field, A annotation, ConfigurableListableBeanFactory beanFactory) {
+    protected String resolveSuggestedDependentBeanName(Field field, ConfigurableListableBeanFactory beanFactory) {
         AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
         if (autowireCandidateResolver == null) {
             return null;
@@ -108,7 +84,7 @@ public abstract class AbstractAnnotatedInjectionDependencyResolver<A extends Ann
         return resolveSuggestedDependentBeanName(dependencyDescriptor, autowireCandidateResolver);
     }
 
-    protected String resolveSuggestedDependentBeanName(Parameter parameter, A annotation, ConfigurableListableBeanFactory beanFactory) {
+    protected String resolveSuggestedDependentBeanName(Parameter parameter, ConfigurableListableBeanFactory beanFactory) {
         AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
         if (autowireCandidateResolver == null) {
             return null;
@@ -126,12 +102,12 @@ public abstract class AbstractAnnotatedInjectionDependencyResolver<A extends Ann
         return suggestedValue instanceof String ? (String) suggestedValue : null;
     }
 
-    protected Class<?> resolveDependentType(Field field, A annotation) {
+    protected Class<?> resolveDependentType(Field field) {
         Type type = field.getGenericType();
         return resolveDependentType(type);
     }
 
-    protected Class<?> resolveDependentType(Parameter parameter, A annotation) {
+    protected Class<?> resolveDependentType(Parameter parameter) {
         Type parameterType = parameter.getParameterizedType();
         return resolveDependentType(parameterType);
     }
@@ -140,14 +116,30 @@ public abstract class AbstractAnnotatedInjectionDependencyResolver<A extends Ann
         Class klass = asClass(type);
         Class dependentType = klass;
         if (isParameterizedType(type)) {
-            List<Class> arguments = resolveActualTypeArgumentClasses(type, klass);
+            // ObjectProvider<SomeBean> == arguments == [SomeBean.class]
+            // ObjectFactory<SomeBean> == arguments == [SomeBean.class]
+            // Optional<SomeBean> == arguments == [SomeBean.class]
+            // javax.inject.Provider<SomeBean> == arguments == [SomeBean.class]
+            // Map<String,SomeBean> == arguments == [SomeBean.class]
+            // List<SomeBean> == arguments= [SomeBean.class]
+            // Set<SomeBean> == arguments= [SomeBean.class]
+            List<Type> arguments = resolveActualTypeArguments(type, klass);
             int argumentsSize = arguments.size();
             if (argumentsSize > 0) {
                 // Last argument
-                dependentType = arguments.get(argumentsSize - 1);
+                Type argumentType = arguments.get(argumentsSize - 1);
+                Class<?> argumentClass = asClass(argumentType);
+                if (argumentClass == null) {
+                    dependentType = resolveDependentType(argumentType);
+                } else {
+                    if (argumentClass.isArray()) {
+                        return argumentClass.getComponentType();
+                    } else {
+                        return argumentClass;
+                    }
+                }
             }
         }
         return dependentType;
     }
-
 }

@@ -41,9 +41,15 @@ public class Dependency {
 
     final String beanName;
 
+    List<Dependency> upstream;
+
+    List<Dependency> downstream;
+
     @Nullable
+    @Deprecated
     Dependency parent = null;
 
+    @Deprecated
     final List<Dependency> children = newLinkedList();
 
     boolean duplicated = false;

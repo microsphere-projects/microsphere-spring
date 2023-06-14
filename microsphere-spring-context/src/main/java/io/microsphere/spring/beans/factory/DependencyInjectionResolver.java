@@ -14,71 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.beans.factory.annotation;
+package io.microsphere.spring.beans.factory;
 
-import io.microsphere.spring.beans.factory.Dependency;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Set;
 
-import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
-
 /**
- * The Annotated Injection {@link Dependency} Resolver for Spring Beans
+ * Dependency Injection Resolver
  *
- * @param <A> the type of {@link Annotation} for injection
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public interface AnnotatedInjectionDependencyResolver<A extends Annotation> {
-
-    /**
-     * Get the type of {@link Annotation} for injection
-     *
-     * @return non-null
-     */
-    default Class<A> getAnnotationType() {
-        return resolveActualTypeArgumentClass(getClass(), AnnotatedInjectionDependencyResolver.class, 0);
-    }
-
-    /**
-     * Get the injection annotation from the annotated element
-     *
-     * @param field {@link Field}
-     * @return the injection annotation if found
-     */
-    default A getAnnotation(Field field) {
-        return getAnnotation((AnnotatedElement) field);
-    }
-
-    /**
-     * Get the injection annotation from the annotated element
-     *
-     * @param parameter {@link Parameter}
-     * @return the injection annotation if found
-     */
-    default A getAnnotation(Parameter parameter) {
-        return getAnnotation((AnnotatedElement) parameter);
-    }
-
-    /**
-     * Get the injection annotation from the annotated element
-     *
-     * @param annotated {@link Field} or {@link Parameter}
-     * @return the injection annotation if found
-     */
-    default A getAnnotation(AnnotatedElement annotated) {
-        return annotated.getAnnotation(getAnnotationType());
-    }
+public interface DependencyInjectionResolver {
 
     /**
      * Resolve the bean names as the dependencies from the specified {@link Field field}
-     *  @param field              the {@link Field field} was annotated by the annotation
+     *
+     * @param field              the {@link Field field} was annotated by the annotation
      * @param beanFactory        {@link ConfigurableListableBeanFactory}
      * @param dependentBeanNames the dependent bean names to be manipulated
      */

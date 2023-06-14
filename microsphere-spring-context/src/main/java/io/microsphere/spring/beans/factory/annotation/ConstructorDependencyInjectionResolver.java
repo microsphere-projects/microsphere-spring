@@ -18,29 +18,16 @@ package io.microsphere.spring.beans.factory.annotation;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.util.Set;
 
 /**
- * Composite {@link AnnotatedInjectionDependencyResolver}
+ * {@link AnnotatedDependencyInjectionResolver} for {@link Constructor}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class AnnotatedInjectionDependencyResolvers {
 
-    private final Iterable<AnnotatedInjectionDependencyResolver> resolvers;
-
-    public AnnotatedInjectionDependencyResolvers(Iterable<AnnotatedInjectionDependencyResolver> resolvers) {
-        this.resolvers = resolvers;
-    }
-
-    public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
-        resolvers.forEach(resolver -> resolver.resolve(field, beanFactory, dependentBeanNames));
-    }
-
-    public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
-        resolvers.forEach(resolver -> resolver.resolve(parameter, beanFactory, dependentBeanNames));
-    }
+public class ConstructorDependencyInjectionResolver extends AbstractDependencyInjectionResolver {
 }

@@ -17,27 +17,50 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.lang.reflect.Executable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
+import java.util.Set;
 
 /**
- * {@link AnnotatedInjectionDependencyResolver} for {@link Autowired}
+ * {@link AnnotatedDependencyInjectionResolver} for {@link Autowired}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class AutowiredInjectionDependencyResolver extends AbstractAnnotatedInjectionDependencyResolver<Autowired> {
+public class AutowiredDependencyInjectionResolver extends AnnotatedDependencyInjectionResolver<Autowired> {
 
     @Override
     public Autowired getAnnotation(Parameter parameter) {
+        // Find @Autowired annotation in the parameter
         Autowired autowired = super.getAnnotation(parameter);
         if (autowired == null) {
-            // Method or Constructor
+            // try to find @Autowired annotation in the method or constructor
             Executable executable = parameter.getDeclaringExecutable();
             autowired = super.getAnnotation(executable);
         }
         return autowired;
     }
 
+    @Override
+    public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        Autowired autowired = getAnnotation(field);
+        if (autowired == null) {
+            // @Autowired annotation can't be found in the field
+            return;
+        }
+        super.resolve(field, beanFactory, dependentBeanNames);
+    }
+
+    @Override
+    public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        Autowired autowired = getAnnotation(parameter);
+        if (autowired == null) {
+            // @Autowired annotation can't be found in the method parameter
+            return;
+        }
+        super.resolve(parameter, beanFactory, dependentBeanNames);
+    }
 }
