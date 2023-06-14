@@ -16,7 +16,19 @@
  */
 package io.microsphere.spring.util;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+
+import java.util.List;
+
+import static io.microsphere.spring.util.ApplicationContextUtils.asApplicationContext;
+import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
+import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 
 /**
  * The utilities class for {@link SpringFactoriesLoader}
@@ -26,4 +38,47 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * @since 1.0.0
  */
 public abstract class SpringFactoriesLoaderUtils {
+
+    public static <T> List<T> loadFactories(Class<T> factoryType, ApplicationContext context) {
+        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
+        ClassLoader classLoader = applicationContext == null ? getDefaultClassLoader() : applicationContext.getClassLoader();
+        List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
+        for (int i = 0; i < factories.size(); i++) {
+            T factory = factories.get(i);
+            invokeAwareInterfaces(factory, context, applicationContext);
+        }
+        return factories;
+    }
+
+    public static <T> List<T> loadFactories(Class<T> factoryType, BeanFactory beanFactory) {
+        ApplicationContext context = asApplicationContext(beanFactory);
+        if (context != null) {
+            return loadFactories(factoryType, context);
+        }
+        ConfigurableBeanFactory cbf = asConfigurableBeanFactory(beanFactory);
+        if (cbf != null) {
+            return loadFactories(factoryType, cbf);
+        }
+        ClassLoader classLoader = getDefaultClassLoader();
+        List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
+        for (int i = 0; i < factories.size(); i++) {
+            T factory = factories.get(i);
+            invokeAwareInterfaces(factory, beanFactory);
+        }
+        return factories;
+    }
+
+    public static <T> List<T> loadFactories(Class<T> factoryType, ConfigurableBeanFactory beanFactory) {
+        ApplicationContext context = asApplicationContext(beanFactory);
+        if (context != null) {
+            return loadFactories(factoryType, context);
+        }
+        ClassLoader classLoader = beanFactory == null ? getDefaultClassLoader() : beanFactory.getBeanClassLoader();
+        List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
+        for (int i = 0; i < factories.size(); i++) {
+            T factory = factories.get(i);
+            invokeAwareInterfaces(factory, beanFactory, beanFactory);
+        }
+        return factories;
+    }
 }
