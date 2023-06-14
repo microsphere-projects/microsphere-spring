@@ -25,7 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.microsphere.spring.util.ClassUtils.EMPTY_CLASS_ARRAY;
+import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.springframework.context.annotation.AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR;
