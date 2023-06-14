@@ -22,22 +22,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
-import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.BeanReference;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.core.MethodParameter;
-import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
@@ -45,8 +40,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -54,21 +47,19 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.springframework.core.MethodParameter.forParameter;
-import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -80,21 +71,6 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(DependencyAnalysisBeanFactoryListener.class);
-
-    private static final Parameter[] EMPTY_PARAMETER_ARRAY = new Parameter[0];
-
-    @Nullable
-    private static Class<?> javaxInjectProviderClass;
-
-    static {
-        try {
-            javaxInjectProviderClass =
-                    ClassUtils.forName("javax.inject.Provider", DependencyAnalysisBeanFactoryListener.class.getClassLoader());
-        } catch (ClassNotFoundException ex) {
-            // JSR-330 API not available - Provider interface simply not supported then.
-            javaxInjectProviderClass = null;
-        }
-    }
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
