@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.reflect.TypeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
@@ -56,7 +57,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static io.microsphere.spring.util.ClassUtils.resolveGenericType;
+import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
@@ -96,7 +97,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     public AnnotationInjectedBeanPostProcessor() {
-        this.annotationType = resolveGenericType(getClass());
+        this.annotationType = resolveActualTypeArgumentClass(getClass(), AnnotationInjectedBeanPostProcessor.class, 0);
     }
 
     private static <T> Collection<T> combine(Collection<? extends T>... elements) {
