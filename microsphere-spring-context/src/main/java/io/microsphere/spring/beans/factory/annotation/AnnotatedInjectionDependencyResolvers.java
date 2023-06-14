@@ -14,24 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.beans.factory;
+package io.microsphere.spring.beans.factory.annotation;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.Parameter;
+import java.util.Set;
 
 /**
- * The interface to resolve the dependencies from the given {@link RootBeanDefinition merged bean definition}
+ * Composite {@link AnnotatedInjectionDependencyResolver}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see RootBeanDefinition
- * @see ConfigurableListableBeanFactory
- * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
-public interface BeanDependencyResolver {
+public class AnnotatedInjectionDependencyResolvers {
 
-    List<String> resolveDependentBeanNames(String beanName, RootBeanDefinition mergedBeanDefinition);
+    private final Iterable<AnnotatedInjectionDependencyResolver> resolvers;
+
+    public AnnotatedInjectionDependencyResolvers(Iterable<AnnotatedInjectionDependencyResolver> resolvers) {
+        this.resolvers = resolvers;
+    }
+
+    public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        resolvers.forEach(resolver -> resolver.resolve(field, beanFactory, dependentBeanNames));
+    }
+
+    public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        resolvers.forEach(resolver -> resolver.resolve(parameter, beanFactory, dependentBeanNames));
+    }
 }
