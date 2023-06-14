@@ -17,12 +17,19 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.filter.Filter;
+import io.microsphere.reflect.MemberUtils;
+import io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionDependencyResolver;
+import io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionDependencyResolvers;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -34,10 +41,15 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -55,12 +67,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.lang.function.ThrowableAction.execute;
+import static io.microsphere.reflect.TypeUtils.asClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassUtils.resolveClass;
 import static java.util.Arrays.asList;
@@ -77,21 +91,32 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter implements BeanNameAware {
+public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter implements
+        InitializingBean, BeanNameAware, EnvironmentAware, BeanFactoryAware {
+
+    public static final String PARALLEL_TASKS_PROPERTY_NAME = "microsphere.spring.beans.process.parallel.tasks";
 
     private static final Logger logger = LoggerFactory.getLogger(ParallelBeanFactoryListener.class);
 
-    private static final int availableProcessors = Runtime.getRuntime().availableProcessors();
-
     private String beanName;
+
+    private Environment environment;
+
+    private int parallelTasks;
+
+    private DefaultListableBeanFactory beanFactory;
+
+    private AutowireCandidateResolver autowireCandidateResolver;
+
+    private AnnotatedInjectionDependencyResolvers dependencyResolvers;
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
-        if (!(bf instanceof DefaultListableBeanFactory)) {
+        DefaultListableBeanFactory beanFactory = this.beanFactory;
+        if (bf != beanFactory) {
             logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
             return;
         }
-        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) bf;
 
         Filter<Class<?>> resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
 
@@ -117,8 +142,7 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
                                        DefaultListableBeanFactory beanFactory) {
         StopWatch stopWatch = new StopWatch("Bean-Process-In-Parallel");
         stopWatch.start();
-        int threads = Math.max(1, availableProcessors);
-        ExecutorService executorService = newFixedThreadPool(threads);
+        ExecutorService executorService = newFixedThreadPool(parallelTasks);
         CompletionService completionService = new ExecutorCompletionService(executorService);
         int tasks = 0;
         AtomicInteger completedTasks = new AtomicInteger(0);
@@ -219,19 +243,16 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
 
     private Set<String> resolveDependentBeanNames(String beanName, RootBeanDefinition beanDefinition,
                                                   Filter<Class<?>> resolvableDependencyTypeFilter,
-                                                  Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap,
+                                                  Map<String, RootBeanDefinition> beanDefinitionsMap,
                                                   DefaultListableBeanFactory beanFactory) {
 
-
         Set<String> dependentBeanNames = new LinkedHashSet<>();
-        List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);
-        List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanFactory);
-        List<String> injectedBeanNames = resolveInjectionDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanFactory);
-
-        dependentBeanNames.addAll(beanDefinitionDependentBeanNames);
-        dependentBeanNames.addAll(parameterDependentBeanNames);
-        dependentBeanNames.addAll(injectedBeanNames);
-
+        // Resolve the dependent bean names from BeanDefinition
+        resolveBeanDefinitionDependentBeanNames(beanDefinition, dependentBeanNames);
+        // Resolve the dependent bean names from parameters
+        resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanFactory, dependentBeanNames);
+        // Resolve the dependent bean names from injection points
+        resolveInjectionDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanFactory, dependentBeanNames);
         // remove self
         dependentBeanNames.remove(beanName);
         // remove the names of beans that had been initialized stored into DefaultListableBeanFactory.singletonObjects
@@ -240,13 +261,33 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
         return dependentBeanNames;
     }
 
-    private List<String> resolveInjectionDependentBeanNames(String beanName, RootBeanDefinition beanDefinition,
-                                                            Filter<Class<?>> resolvableDependencyTypeFilter,
-                                                            DefaultListableBeanFactory beanFactory) {
-        List<String> injectedBeanNames = newLinkedList();
-        // TODO
-        return injectedBeanNames;
+    private void resolveInjectionDependentBeanNames(String beanName, RootBeanDefinition beanDefinition,
+                                                    Filter<Class<?>> resolvableDependencyTypeFilter,
+                                                    DefaultListableBeanFactory beanFactory,
+                                                    Set<String> dependentBeanNames) {
+
+        ResolvableType resolvableType = beanDefinition.getResolvableType();
+        Class beanClass = resolvableType.resolve();
+
+        ReflectionUtils.doWithFields(beanClass, field -> {
+            dependencyResolvers.resolve(field,beanFactory,dependentBeanNames);
+        }, field -> !MemberUtils.isStatic(field));
+
+
+        ReflectionUtils.doWithMethods(beanClass, method -> {
+            int length = method.getParameterCount();
+            if (length > 0) {
+                Parameter[] parameters = method.getParameters();
+                for (int i = 0; i < length; i++) {
+                    Parameter parameter = parameters[i];
+                    dependencyResolvers.resolve(parameter,beanFactory,dependentBeanNames);
+                }
+            }
+
+        }, method -> !MemberUtils.isStatic(method));
+
     }
+
 
     private void removeReadyBeanNames(Set<String> dependentBeanNames, DefaultListableBeanFactory beanFactory) {
         if (dependentBeanNames.isEmpty()) {
@@ -262,7 +303,7 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
         }
     }
 
-    private List<String> resolveBeanDefinitionDependentBeanNames(RootBeanDefinition beanDefinition) {
+    private void resolveBeanDefinitionDependentBeanNames(RootBeanDefinition beanDefinition, Set<String> dependentBeanNames) {
         // the bean names from RootBeanDefinitions' depends-on
         List<String> dependsOnBeanNames = getDependsOnBeanNames(beanDefinition);
 
@@ -277,16 +318,14 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
         int size = dependsOnBeanNames.size() + refBeanNames.size() + (hasFactoryBean ? 1 : 0);
 
         if (size < 1) {
-            return emptyList();
+            return;
         }
 
-        List<String> dependentBeanNames = newArrayList(size);
         dependentBeanNames.addAll(dependsOnBeanNames);
         dependentBeanNames.addAll(refBeanNames);
         if (hasFactoryBean) {
             dependentBeanNames.add(factoryBeanName);
         }
-        return dependentBeanNames;
     }
 
     private List<String> getDependsOnBeanNames(RootBeanDefinition beanDefinition) {
@@ -316,18 +355,16 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
         return dependentBeanNames;
     }
 
-    private List<String> resolveParameterDependentBeanNames(String beanName,
-                                                            RootBeanDefinition beanDefinition,
-                                                            Filter<Class<?>> resolvableDependencyTypeFilter,
-                                                            DefaultListableBeanFactory beanFactory) {
+    private void resolveParameterDependentBeanNames(String beanName,
+                                                    RootBeanDefinition beanDefinition,
+                                                    Filter<Class<?>> resolvableDependencyTypeFilter,
+                                                    DefaultListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Parameter[] parameters = getParameters(beanName, beanDefinition, beanFactory);
 
         int parametersLength = parameters.length;
         if (parametersLength < 1) {
-            return emptyList();
+            return;
         }
-
-        List<String> dependentBeanNames = newArrayList(parametersLength);
 
         for (int i = 0; i < parametersLength; i++) {
             Parameter parameter = parameters[i];
@@ -339,11 +376,10 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
             dependentBeanNames.addAll(beanNames);
         }
 
-        return dependentBeanNames;
     }
 
     private List<String> resolveDependentBeanNames(Parameter parameter, Class<?> dependentType, DefaultListableBeanFactory beanFactory) {
-        String dependentBeanName = resolveSuggestedDependentBeanName(parameter, beanFactory);
+        String dependentBeanName = resolveSuggestedDependentBeanName(parameter);
         if (dependentBeanName == null) {
             String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
             return asList(beanNames);
@@ -352,22 +388,41 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
         }
     }
 
-    private String resolveSuggestedDependentBeanName(Parameter parameter, DefaultListableBeanFactory beanFactory) {
-        AutowireCandidateResolver autowireCandidateResolver = beanFactory.getAutowireCandidateResolver();
+    private String resolveSuggestedDependentBeanName(Field field) {
+        if (autowireCandidateResolver == null) {
+            return null;
+        }
+        DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true, false);
+        return resolveSuggestedDependentBeanName(dependencyDescriptor, autowireCandidateResolver);
+    }
+
+    private String resolveSuggestedDependentBeanName(Parameter parameter) {
         if (autowireCandidateResolver == null) {
             return null;
         }
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
+        return resolveSuggestedDependentBeanName(dependencyDescriptor, autowireCandidateResolver);
+    }
+
+    private String resolveSuggestedDependentBeanName(DependencyDescriptor dependencyDescriptor,
+                                                     AutowireCandidateResolver autowireCandidateResolver) {
+        if (autowireCandidateResolver == null) {
+            return null;
+        }
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
         return suggestedValue instanceof String ? (String) suggestedValue : null;
     }
 
     private Class<?> resolveDependentType(Parameter parameter) {
         Type parameterType = parameter.getParameterizedType();
-        Class parameterRawType = parameter.getType();
-        Class dependentType = parameterRawType;
-        if (isParameterizedType(parameterType)) {
-            List<Class> arguments = resolveActualTypeArgumentClasses(parameterType, parameterRawType);
+        return resolveDependentType(parameterType);
+    }
+
+    private Class<?> resolveDependentType(Type type) {
+        Class klass = asClass(type);
+        Class dependentType = klass;
+        if (isParameterizedType(type)) {
+            List<Class> arguments = resolveActualTypeArgumentClasses(type, klass);
             int argumentsSize = arguments.size();
             if (argumentsSize > 0) {
                 // Last argument
@@ -508,5 +563,29 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
     @Override
     public void setBeanName(String name) {
         this.beanName = name;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.parallelTasks = environment.getProperty(PARALLEL_TASKS_PROPERTY_NAME, int.class, getDefaultParallelTasks());
+    }
+
+    private int getDefaultParallelTasks() {
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        return Math.max(1, availableProcessors);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = asDefaultListableBeanFactory(beanFactory);
+        if (this.beanFactory != null) {
+            this.autowireCandidateResolver = this.beanFactory.getAutowireCandidateResolver();
+        }
+        this.dependencyResolvers = new AnnotatedInjectionDependencyResolvers(loadFactories(AnnotatedInjectionDependencyResolver.class, beanFactory));
     }
 }

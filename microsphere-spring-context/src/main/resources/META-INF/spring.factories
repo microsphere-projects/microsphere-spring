@@ -1,0 +1,2 @@
+io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionDependencyResolver=\
+io.microsphere.spring.beans.factory.annotation.AutowiredInjectionDependencyResolver
