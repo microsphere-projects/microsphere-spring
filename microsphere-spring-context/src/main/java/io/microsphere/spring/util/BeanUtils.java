@@ -25,6 +25,7 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
@@ -331,16 +333,25 @@ public abstract class BeanUtils {
 
 
     public static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory) {
+        invokeAwareInterfaces(bean, beanFactory, asConfigurableBeanFactory(beanFactory));
+    }
+
+    public static void invokeAwareInterfaces(Object bean, ConfigurableBeanFactory beanFactory) {
+        invokeAwareInterfaces(bean, beanFactory, beanFactory);
+    }
+
+    static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory,
+                                      @Nullable ConfigurableBeanFactory configurableBeanFactory) {
+        if (bean == null || beanFactory == null) {
+            return;
+        }
         if (bean instanceof BeanFactoryAware) {
             ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
         }
 
-        if (bean instanceof BeanClassLoaderAware) {
-            if (beanFactory instanceof ConfigurableBeanFactory) {
-                ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
-                ClassLoader classLoader = configurableBeanFactory.getBeanClassLoader();
-                ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
-            }
+        if (bean instanceof BeanClassLoaderAware && configurableBeanFactory != null) {
+            ClassLoader classLoader = configurableBeanFactory.getBeanClassLoader();
+            ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
         }
     }
 
@@ -356,11 +367,29 @@ public abstract class BeanUtils {
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
     public static void invokeAwareInterfaces(Object bean, ApplicationContext context) {
+        invokeAwareInterfaces(bean, context, asConfigurableApplicationContext(context));
+    }
+
+    /**
+     * Invoke {@link Aware} interfaces if the given bean implements
+     * <p>
+     * Current implementation keeps the order of invocation {@link Aware Aware interfaces}
+     *
+     * @param bean    the bean
+     * @param context {@link ApplicationContext}
+     * @see #invokeAwareInterfaces(Object, BeanFactory)
+     * @see org.springframework.context.support.ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
+     * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
+     */
+    public static void invokeAwareInterfaces(Object bean, ConfigurableApplicationContext context) {
+        invokeAwareInterfaces(bean, context, context);
+    }
+
+    static void invokeAwareInterfaces(Object bean, ApplicationContext context,
+                                      @Nullable ConfigurableApplicationContext applicationContext) {
         if (bean == null || context == null) {
             return;
         }
-
-        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
 
         ConfigurableListableBeanFactory beanFactory = applicationContext != null ? applicationContext.getBeanFactory() : null;
 
