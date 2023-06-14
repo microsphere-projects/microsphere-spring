@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.util;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -30,6 +31,10 @@ import static io.microsphere.util.ClassUtils.cast;
 public abstract class ApplicationContextUtils {
 
     public static ConfigurableApplicationContext asConfigurableApplicationContext(ApplicationContext context) {
-        return cast(context,ConfigurableApplicationContext.class);
+        return cast(context, ConfigurableApplicationContext.class);
+    }
+
+    public static ApplicationContext asApplicationContext(BeanFactory beanFactory) {
+        return cast(beanFactory, ApplicationContext.class);
     }
 }
