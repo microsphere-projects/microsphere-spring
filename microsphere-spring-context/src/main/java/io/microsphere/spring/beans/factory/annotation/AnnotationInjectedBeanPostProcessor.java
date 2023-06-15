@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.reflect.TypeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
