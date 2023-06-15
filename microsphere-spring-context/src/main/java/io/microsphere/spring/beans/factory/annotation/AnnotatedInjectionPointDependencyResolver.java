@@ -16,7 +16,8 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.beans.factory.DependencyInjectionResolver;
+import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolver;
+import io.microsphere.spring.beans.factory.InjectionPointDependencyResolver;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -26,20 +27,20 @@ import java.lang.reflect.Parameter;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
 
 /**
- * Abstract Annotated {@link DependencyInjectionResolver}
+ * Abstract {@link InjectionPointDependencyResolver} for annotated element
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class AnnotatedDependencyInjectionResolver<A extends Annotation> extends AbstractDependencyInjectionResolver {
+public abstract class AnnotatedInjectionPointDependencyResolver<A extends Annotation> extends AbstractInjectionPointDependencyResolver {
 
     private final Class<A> annotationType;
 
-    public AnnotatedDependencyInjectionResolver() {
-        this.annotationType = resolveActualTypeArgumentClass(getClass(), AnnotatedDependencyInjectionResolver.class, 0);
+    public AnnotatedInjectionPointDependencyResolver() {
+        this.annotationType = resolveActualTypeArgumentClass(getClass(), AnnotatedInjectionPointDependencyResolver.class, 0);
     }
 
-    public AnnotatedDependencyInjectionResolver(Class<A> annotationType) {
+    public AnnotatedInjectionPointDependencyResolver(Class<A> annotationType) {
         this.annotationType = annotationType;
     }
 

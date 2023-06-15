@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.beans.factory.annotation;
+package io.microsphere.spring.beans.factory;
 
-import io.microsphere.spring.beans.factory.DependencyInjectionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
@@ -27,6 +26,7 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static io.microsphere.reflect.TypeUtils.asClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
@@ -35,22 +35,18 @@ import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanF
 import static org.springframework.core.MethodParameter.forParameter;
 
 /**
- * Abstract {@link DependencyInjectionResolver}
+ * Abstract {@link InjectionPointDependencyResolver}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class AbstractDependencyInjectionResolver implements DependencyInjectionResolver {
+public abstract class AbstractInjectionPointDependencyResolver implements InjectionPointDependencyResolver {
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
-        String dependentBeanName = resolveSuggestedDependentBeanName(field, beanFactory);
+        String dependentBeanName = resolveDependentBeanNameByName(field, beanFactory);
         if (dependentBeanName == null) {
-            Class<?> dependentType = resolveDependentType(field);
-            String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
-            for (String beanName : beanNames) {
-                dependentBeanNames.add(beanName);
-            }
+            resolveDependentBeanNamesByType(field::getGenericType, beanFactory, dependentBeanNames);
         } else {
             dependentBeanNames.add(dependentBeanName);
         }
@@ -58,15 +54,47 @@ public abstract class AbstractDependencyInjectionResolver implements DependencyI
 
     @Override
     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
-        String dependentBeanName = resolveSuggestedDependentBeanName(parameter, beanFactory);
+        String dependentBeanName = resolveDependentBeanNameByName(parameter, beanFactory);
         if (dependentBeanName == null) {
-            Class<?> dependentType = resolveDependentType(parameter);
-            String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
-            for (String beanName : beanNames) {
-                dependentBeanNames.add(beanName);
-            }
+            resolveDependentBeanNamesByType(parameter::getParameterizedType, beanFactory, dependentBeanNames);
         } else {
             dependentBeanNames.add(dependentBeanName);
+        }
+    }
+
+    protected String resolveDependentBeanNameByName(Field field, ConfigurableListableBeanFactory beanFactory) {
+        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
+        if (autowireCandidateResolver == null) {
+            return null;
+        }
+        DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true, false);
+        return resolveDependentBeanNameByName(dependencyDescriptor, autowireCandidateResolver);
+    }
+
+    protected String resolveDependentBeanNameByName(Parameter parameter, ConfigurableListableBeanFactory beanFactory) {
+        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
+        if (autowireCandidateResolver == null) {
+            return null;
+        }
+        DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
+        return resolveDependentBeanNameByName(dependencyDescriptor, autowireCandidateResolver);
+    }
+
+    protected String resolveDependentBeanNameByName(DependencyDescriptor dependencyDescriptor,
+                                                    AutowireCandidateResolver autowireCandidateResolver) {
+        if (autowireCandidateResolver == null) {
+            return null;
+        }
+        Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
+        return suggestedValue instanceof String ? (String) suggestedValue : null;
+    }
+
+    protected void resolveDependentBeanNamesByType(Supplier<Type> typeSupplier, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        Class<?> dependentType = resolveDependentType(typeSupplier);
+        String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
+        for (int i = 0; i < beanNames.length; i++) {
+            String beanName = beanNames[i];
+            dependentBeanNames.add(beanName);
         }
     }
 
@@ -75,41 +103,9 @@ public abstract class AbstractDependencyInjectionResolver implements DependencyI
         return dbf == null ? null : dbf.getAutowireCandidateResolver();
     }
 
-    protected String resolveSuggestedDependentBeanName(Field field, ConfigurableListableBeanFactory beanFactory) {
-        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
-        DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true, false);
-        return resolveSuggestedDependentBeanName(dependencyDescriptor, autowireCandidateResolver);
-    }
-
-    protected String resolveSuggestedDependentBeanName(Parameter parameter, ConfigurableListableBeanFactory beanFactory) {
-        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
-        DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
-        return resolveSuggestedDependentBeanName(dependencyDescriptor, autowireCandidateResolver);
-    }
-
-    protected String resolveSuggestedDependentBeanName(DependencyDescriptor dependencyDescriptor,
-                                                       AutowireCandidateResolver autowireCandidateResolver) {
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
-        Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
-        return suggestedValue instanceof String ? (String) suggestedValue : null;
-    }
-
-    protected Class<?> resolveDependentType(Field field) {
-        Type type = field.getGenericType();
+    private Class<?> resolveDependentType(Supplier<Type> typeSupplier) {
+        Type type = typeSupplier.get();
         return resolveDependentType(type);
-    }
-
-    protected Class<?> resolveDependentType(Parameter parameter) {
-        Type parameterType = parameter.getParameterizedType();
-        return resolveDependentType(parameterType);
     }
 
     protected Class<?> resolveDependentType(Type type) {

@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Dependency Injection Resolver
+ * Spring Injection Point Dependency Resolver
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public interface DependencyInjectionResolver {
+public interface InjectionPointDependencyResolver {
 
     /**
      * Resolve the bean names as the dependencies from the specified {@link Field field}

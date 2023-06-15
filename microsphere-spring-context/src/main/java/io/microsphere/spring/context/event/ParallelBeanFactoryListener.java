@@ -18,8 +18,8 @@ package io.microsphere.spring.context.event;
 
 import io.microsphere.filter.Filter;
 import io.microsphere.reflect.MemberUtils;
-import io.microsphere.spring.beans.factory.DependencyInjectionResolver;
-import io.microsphere.spring.beans.factory.DependencyInjectionResolvers;
+import io.microsphere.spring.beans.factory.InjectionPointDependencyResolver;
+import io.microsphere.spring.beans.factory.InjectionPointDependencyResolvers;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import io.microsphere.util.ClassUtils;
 import org.slf4j.Logger;
@@ -102,7 +102,7 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
 
     private AutowireCandidateResolver autowireCandidateResolver;
 
-    private DependencyInjectionResolvers resolvers;
+    private InjectionPointDependencyResolvers resolvers;
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
@@ -531,6 +531,6 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
         if (this.beanFactory != null) {
             this.autowireCandidateResolver = this.beanFactory.getAutowireCandidateResolver();
         }
-        this.resolvers = new DependencyInjectionResolvers(loadFactories(DependencyInjectionResolver.class, beanFactory));
+        this.resolvers = new InjectionPointDependencyResolvers(loadFactories(InjectionPointDependencyResolver.class, beanFactory));
     }
 }

@@ -27,12 +27,12 @@ import java.lang.reflect.Parameter;
 import java.util.Set;
 
 /**
- * {@link AnnotatedDependencyInjectionResolver} for {@link Resource}
+ * {@link AnnotatedInjectionPointDependencyResolver} for {@link Resource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ResourceDependencyInjectionResolver extends AnnotatedDependencyInjectionResolver<Resource> {
+public class ResourceInjectionPointDependencyResolver extends AnnotatedInjectionPointDependencyResolver<Resource> {
 
     @Override
     public Resource getAnnotation(Parameter parameter) {

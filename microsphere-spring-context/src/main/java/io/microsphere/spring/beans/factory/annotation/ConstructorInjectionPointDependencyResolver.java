@@ -16,18 +16,24 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Field;
 import java.util.Set;
 
 /**
- * {@link AnnotatedDependencyInjectionResolver} for {@link Constructor}
+ * {@link AnnotatedInjectionPointDependencyResolver} for {@link Constructor}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 
-public class ConstructorDependencyInjectionResolver extends AbstractDependencyInjectionResolver {
+public class ConstructorInjectionPointDependencyResolver extends AbstractInjectionPointDependencyResolver {
+
+    @Override
+    public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        //DO NOTHING
+    }
 }

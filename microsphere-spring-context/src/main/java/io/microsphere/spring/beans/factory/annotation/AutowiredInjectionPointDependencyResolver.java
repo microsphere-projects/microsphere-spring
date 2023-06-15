@@ -25,12 +25,12 @@ import java.lang.reflect.Parameter;
 import java.util.Set;
 
 /**
- * {@link AnnotatedDependencyInjectionResolver} for {@link Autowired}
+ * {@link AnnotatedInjectionPointDependencyResolver} for {@link Autowired}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class AutowiredDependencyInjectionResolver extends AnnotatedDependencyInjectionResolver<Autowired> {
+public class AutowiredInjectionPointDependencyResolver extends AnnotatedInjectionPointDependencyResolver<Autowired> {
 
     @Override
     public Autowired getAnnotation(Parameter parameter) {
