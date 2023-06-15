@@ -18,6 +18,7 @@ package io.microsphere.spring.beans.factory;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -42,13 +43,22 @@ public interface InjectionPointDependencyResolver {
     void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames);
 
     /**
-     * Resolve the bean names as the dependencies from the specified {@link Method field}
+     * Resolve the bean names as the dependencies from the specified {@link Method method}
      *
-     * @param method              the {@link Method method} may be an injection point
+     * @param method             the {@link Method method} may be an injection point
      * @param beanFactory        {@link ConfigurableListableBeanFactory}
      * @param dependentBeanNames the dependent bean names to be manipulated
      */
     void resolve(Method method, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames);
+
+    /**
+     * Resolve the bean names as the dependencies from the specified {@link Constructor constructor}
+     *
+     * @param constructor        the {@link Constructor constructor} may be an injection point
+     * @param beanFactory        {@link ConfigurableListableBeanFactory}
+     * @param dependentBeanNames the dependent bean names to be manipulated
+     */
+    void resolve(Constructor constructor, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames);
 
     /**
      * Resolve the bean names as the dependencies from the specified {@link Parameter parameter}

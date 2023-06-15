@@ -17,21 +17,21 @@
 package io.microsphere.spring.beans.factory;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.annotation.Bean;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Set;
 
 /**
- * {@link InjectionPointDependencyResolver} for {@link Constructor}
+ * {@link InjectionPointDependencyResolver} for {@link Bean @Bean} {@link Method method}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-
-public class ConstructorInjectionPointDependencyResolver extends AbstractInjectionPointDependencyResolver {
+public class BeanMethodInjectionPointDependencyResolver extends AbstractInjectionPointDependencyResolver {
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
@@ -41,7 +41,7 @@ public class ConstructorInjectionPointDependencyResolver extends AbstractInjecti
     @Override
     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Executable executable = parameter.getDeclaringExecutable();
-        if (executable instanceof Constructor) {
+        if (executable instanceof Method && executable.isAnnotationPresent(Bean.class)) {
             super.resolve(parameter, beanFactory, dependentBeanNames);
         }
     }

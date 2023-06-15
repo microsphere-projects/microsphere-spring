@@ -19,6 +19,7 @@ package io.microsphere.spring.beans.factory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -51,6 +52,11 @@ public class InjectionPointDependencyResolvers implements InjectionPointDependen
     @Override
     public void resolve(Method method, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         resolvers.forEach(resolver -> resolver.resolve(method, beanFactory, dependentBeanNames));
+    }
+
+    @Override
+    public void resolve(Constructor constructor, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        resolvers.forEach(resolver -> resolver.resolve(constructor, beanFactory, dependentBeanNames));
     }
 
     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {

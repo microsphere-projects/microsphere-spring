@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.util.ClassUtils;
+import io.microsphere.collection.SetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
@@ -33,9 +33,9 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
@@ -52,6 +52,7 @@ import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.reflect.MemberUtils.isStatic;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassUtils.resolveClass;
+import static java.lang.ThreadLocal.withInitial;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -73,6 +74,8 @@ import static org.springframework.util.ReflectionUtils.doWithLocalMethods;
 public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultBeanDependencyResolver.class);
+
+    private static final ThreadLocal<Set<Member>> resolvedBeanMembersHolder = withInitial(SetUtils::newLinkedHashSet);
 
     private final DefaultListableBeanFactory beanFactory;
 
@@ -103,6 +106,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         }
 
         flattenDependentBeanNamesMap(dependentBeanNamesMap);
+
+        clearResolvedBeanMembers();
 
         return dependentBeanNamesMap;
     }
@@ -163,11 +168,16 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         if (dependentBeanNames.isEmpty()) {
             return;
         }
+
+        // remove self-reference
+        dependentBeanNames.remove(beanName);
+
         for (String dependentBeanName : dependentBeanNames) {
             Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>());
             dependencies.add(beanName);
-            flattenDependentBeanNames.add(dependentBeanName);
-            flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+            if (flattenDependentBeanNames.add(dependentBeanName)) {
+                flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+            }
         }
     }
 
@@ -188,7 +198,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         // Resolve the dependent bean names from BeanDefinition
         resolveBeanDefinitionDependentBeanNames(beanDefinition, dependentBeanNames);
         // Resolve the dependent bean names from constructors' parameters
-        resolveConstructorParametersDependentBeanNames(beanName, beanDefinition, beanFactory, dependentBeanNames);
+        resolveConstructionParametersDependentBeanNames(beanName, beanDefinition, beanFactory, dependentBeanNames);
         // Resolve the dependent bean names from injection points
         resolveInjectionPointsDependentBeanNames(beanName, beanDefinition, beanFactory, dependentBeanNames);
         // remove self
@@ -203,12 +213,10 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                                                           DefaultListableBeanFactory beanFactory,
                                                           Set<String> dependentBeanNames) {
 
-        String beanClassName = beanDefinition.getBeanClassName();
         ClassLoader classLoader = beanFactory.getBeanClassLoader();
-        final Class beanClass;
-        if (StringUtils.hasText(beanClassName)) {
-            beanClass = ClassUtils.resolveClass(beanClassName, classLoader);
-        } else {
+
+        Class beanClass = getBeanClass(beanDefinition, classLoader);
+        if (beanClass == null) {
             ResolvableType resolvableType = beanDefinition.getResolvableType();
             beanClass = resolvableType.resolve();
         }
@@ -223,7 +231,6 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         resolveFieldDependentBeanNames(beanName, beanClass, beanFactory, dependentBeanNames);
 
         resolveMethodParametersDependentBeanNames(beanName, beanClass, beanFactory, dependentBeanNames);
-
 
     }
 
@@ -250,7 +257,12 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                     }
 
                     if (method.equals(getMostSpecificMethod(method, beanClass))) {
-                        resolvers.resolve(method, beanFactory, dependentBeanNames);
+                        if (isBeanMemberResolved(method)) {
+                            logger.debug("The beans'[name : '{}'] method has been resolved : {}", beanName, method);
+                        } else {
+                            resolvers.resolve(method, beanFactory, dependentBeanNames);
+                            addResolvedBeanMember(method);
+                        }
                     }
                 }
             });
@@ -273,7 +285,12 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                     }
                     return;
                 }
-                resolvers.resolve(field, beanFactory, dependentBeanNames);
+                if (isBeanMemberResolved(field)) {
+                    logger.debug("The beans'[name : '{}'] field has been resolved : {}", beanName, field);
+                } else {
+                    resolvers.resolve(field, beanFactory, dependentBeanNames);
+                    addResolvedBeanMember(field);
+                }
             });
 
             targetClass = targetClass.getSuperclass();
@@ -348,20 +365,35 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return dependentBeanNames;
     }
 
-    private void resolveConstructorParametersDependentBeanNames(String beanName,
-                                                                RootBeanDefinition beanDefinition,
-                                                                DefaultListableBeanFactory beanFactory,
-                                                                Set<String> dependentBeanNames) {
-        Parameter[] parameters = getParameters(beanName, beanDefinition, beanFactory);
+    private void resolveConstructionParametersDependentBeanNames(String beanName,
+                                                                 RootBeanDefinition beanDefinition,
+                                                                 DefaultListableBeanFactory beanFactory,
+                                                                 Set<String> dependentBeanNames) {
+        Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
 
-        int parametersLength = parameters.length;
-        if (parametersLength < 1) {
-            return;
-        }
+        if (factoryMethod == null) { // The bean-class Definition
+            Class<?> beanClass = getBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
 
-        for (int i = 0; i < parametersLength; i++) {
-            Parameter parameter = parameters[i];
-            resolvers.resolve(parameter, beanFactory, dependentBeanNames);
+            Constructor[] constructors = resolveConstructors(beanName, beanClass, beanFactory);
+            int constructorsLength = constructors.length;
+            if (constructorsLength != 1) {
+                logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
+            } else {
+                Constructor constructor = constructors[0];
+                if (isBeanMemberResolved(constructor)) {
+                    logger.debug("The beans'[name : '{}'] constructor has been resolved : {}", beanName, constructor);
+                } else {
+                    resolvers.resolve(constructor, beanFactory, dependentBeanNames);
+                    addResolvedBeanMember(constructor);
+                }
+            }
+        } else { // the @Bean or customized Method Definition
+            if (isBeanMemberResolved(factoryMethod)) {
+                logger.debug("The beans'[name : '{}'] factory-method has been resolved : {}", beanName, factoryMethod);
+            } else {
+                resolvers.resolve(factoryMethod, beanFactory, dependentBeanNames);
+                addResolvedBeanMember(factoryMethod);
+            }
         }
 
     }
@@ -370,6 +402,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
 
         Parameter[] parameters = null;
+
+        Member resolvedBeanMember = null;
 
         if (factoryMethod == null) { // The bean-class Definition
             Class<?> beanClass = getBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
@@ -382,10 +416,14 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             } else {
                 Constructor constructor = constructors[0];
                 parameters = constructor.getParameters();
+                resolvedBeanMember = constructor;
             }
         } else { // the @Bean or customized Method Definition
             parameters = factoryMethod.getParameters();
+            resolvedBeanMember = factoryMethod;
         }
+
+        addResolvedBeanMember(resolvedBeanMember);
         return parameters;
     }
 
@@ -488,5 +526,23 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             logger.debug("The Bean[name : '{}'] is ready in the BeanFactory[id : '{}']", beanName, beanFactory.getSerializationId());
         }
         return ready;
+    }
+
+    private static Set<Member> getResolvedBeanMembers() {
+        return resolvedBeanMembersHolder.get();
+    }
+
+    private static void addResolvedBeanMember(Member resolvedBeanMember) {
+        Set<Member> resolvedBeanMembers = getResolvedBeanMembers();
+        resolvedBeanMembers.add(resolvedBeanMember);
+    }
+
+    private static boolean isBeanMemberResolved(Member member) {
+        Set<Member> resolvedBeanMembers = getResolvedBeanMembers();
+        return resolvedBeanMembers.contains(member);
+    }
+
+    private static void clearResolvedBeanMembers() {
+        resolvedBeanMembersHolder.remove();
     }
 }

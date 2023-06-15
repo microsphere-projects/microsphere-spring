@@ -23,6 +23,7 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -65,6 +66,20 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             return;
         }
         Parameter[] parameters = method.getParameters();
+        for (int i = 0; i < parametersCount; i++) {
+            Parameter parameter = parameters[i];
+            resolve(parameter, beanFactory, dependentBeanNames);
+        }
+    }
+
+    @Override
+    public void resolve(Constructor constructor, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        int parametersCount = constructor.getParameterCount();
+        if (parametersCount < 1) {
+            logger.debug("The no-argument constructor[{}] will be ignored", constructor);
+            return;
+        }
+        Parameter[] parameters = constructor.getParameters();
         for (int i = 0; i < parametersCount; i++) {
             Parameter parameter = parameters[i];
             resolve(parameter, beanFactory, dependentBeanNames);

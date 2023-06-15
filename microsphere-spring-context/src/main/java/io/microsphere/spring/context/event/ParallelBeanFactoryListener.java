@@ -18,8 +18,6 @@ package io.microsphere.spring.context.event;
 
 import io.microsphere.spring.beans.factory.BeanDependencyResolver;
 import io.microsphere.spring.beans.factory.DefaultBeanDependencyResolver;
-import io.microsphere.spring.beans.factory.InjectionPointDependencyResolver;
-import io.microsphere.spring.beans.factory.InjectionPointDependencyResolvers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -27,7 +25,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
@@ -43,7 +40,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
@@ -65,9 +61,6 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
 
     private DefaultListableBeanFactory beanFactory;
 
-    private AutowireCandidateResolver autowireCandidateResolver;
-
-    private InjectionPointDependencyResolvers resolvers;
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
@@ -144,9 +137,5 @@ public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter impl
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = asDefaultListableBeanFactory(beanFactory);
-        if (this.beanFactory != null) {
-            this.autowireCandidateResolver = this.beanFactory.getAutowireCandidateResolver();
-        }
-        this.resolvers = new InjectionPointDependencyResolvers(loadFactories(InjectionPointDependencyResolver.class, beanFactory));
     }
 }
