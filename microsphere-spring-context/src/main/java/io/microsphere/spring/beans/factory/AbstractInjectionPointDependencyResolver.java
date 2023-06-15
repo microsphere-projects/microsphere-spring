@@ -16,12 +16,15 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -42,6 +45,8 @@ import static org.springframework.core.MethodParameter.forParameter;
  */
 public abstract class AbstractInjectionPointDependencyResolver implements InjectionPointDependencyResolver {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         String dependentBeanName = resolveDependentBeanNameByName(field, beanFactory);
@@ -49,6 +54,20 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             resolveDependentBeanNamesByType(field::getGenericType, beanFactory, dependentBeanNames);
         } else {
             dependentBeanNames.add(dependentBeanName);
+        }
+    }
+
+    @Override
+    public void resolve(Method method, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        int parametersCount = method.getParameterCount();
+        if (parametersCount < 1) {
+            logger.debug("The no-argument method[{}] will be ignored", method);
+            return;
+        }
+        Parameter[] parameters = method.getParameters();
+        for (int i = 0; i < parametersCount; i++) {
+            Parameter parameter = parameters[i];
+            resolve(parameter, beanFactory, dependentBeanNames);
         }
     }
 

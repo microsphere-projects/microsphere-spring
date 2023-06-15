@@ -21,10 +21,11 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.lang.NonNull;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
- * The interface to resolve the dependencies from the given {@link RootBeanDefinition merged bean definition}
+ * The interface to resolve the dependencies
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see RootBeanDefinition
@@ -33,6 +34,15 @@ import java.util.Set;
  * @since 1.0.0
  */
 public interface BeanDependencyResolver {
+
+    /**
+     * Resolve all beans with their dependent bean names from the given {@link ConfigurableListableBeanFactory BeanFactory}
+     *
+     * @param beanFactory {@link ConfigurableListableBeanFactory}
+     * @return non-null read-only {@link Map}
+     */
+    @NonNull
+    Map<String, Set<String>> resolve(ConfigurableListableBeanFactory beanFactory);
 
     /**
      * Resolve the bean names as the dependencies from the given {@link RootBeanDefinition merged bean definition}

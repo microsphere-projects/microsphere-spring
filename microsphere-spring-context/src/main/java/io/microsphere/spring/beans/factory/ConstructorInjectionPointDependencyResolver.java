@@ -16,12 +16,12 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolver;
-import io.microsphere.spring.beans.factory.InjectionPointDependencyResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Parameter;
 import java.util.Set;
 
 /**
@@ -36,5 +36,13 @@ public class ConstructorInjectionPointDependencyResolver extends AbstractInjecti
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         //DO NOTHING
+    }
+
+    @Override
+    public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        Executable executable = parameter.getDeclaringExecutable();
+        if (executable instanceof Constructor) {
+            super.resolve(parameter, beanFactory, dependentBeanNames);
+        }
     }
 }

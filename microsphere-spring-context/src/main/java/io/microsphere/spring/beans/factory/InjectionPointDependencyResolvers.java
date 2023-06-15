@@ -16,11 +16,15 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Set;
+
+import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 
 /**
  * Composite {@link InjectionPointDependencyResolver}
@@ -32,12 +36,21 @@ public class InjectionPointDependencyResolvers implements InjectionPointDependen
 
     private final Iterable<InjectionPointDependencyResolver> resolvers;
 
+    public InjectionPointDependencyResolvers(BeanFactory beanFactory) {
+        this(loadFactories(InjectionPointDependencyResolver.class, beanFactory));
+    }
+
     public InjectionPointDependencyResolvers(Iterable<InjectionPointDependencyResolver> resolvers) {
         this.resolvers = resolvers;
     }
 
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         resolvers.forEach(resolver -> resolver.resolve(field, beanFactory, dependentBeanNames));
+    }
+
+    @Override
+    public void resolve(Method method, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        resolvers.forEach(resolver -> resolver.resolve(method, beanFactory, dependentBeanNames));
     }
 
     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
