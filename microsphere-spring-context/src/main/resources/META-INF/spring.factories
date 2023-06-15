@@ -1,4 +1,4 @@
 io.microsphere.spring.beans.factory.InjectionPointDependencyResolver=\
-io.microsphere.spring.beans.factory.annotation.ConstructorInjectionPointDependencyResolver,\
+io.microsphere.spring.beans.factory.ConstructorInjectionPointDependencyResolver,\
 io.microsphere.spring.beans.factory.annotation.AutowiredInjectionPointDependencyResolver,\
 io.microsphere.spring.beans.factory.annotation.ResourceInjectionPointDependencyResolver

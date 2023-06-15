@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.beans.factory.annotation;
+package io.microsphere.spring.beans.factory;
 
 import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolver;
+import io.microsphere.spring.beans.factory.InjectionPointDependencyResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.lang.reflect.Constructor;
@@ -24,7 +25,7 @@ import java.lang.reflect.Field;
 import java.util.Set;
 
 /**
- * {@link AnnotatedInjectionPointDependencyResolver} for {@link Constructor}
+ * {@link InjectionPointDependencyResolver} for {@link Constructor}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
