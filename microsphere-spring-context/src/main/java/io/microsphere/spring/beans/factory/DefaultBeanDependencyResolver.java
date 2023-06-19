@@ -97,13 +97,19 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap = getEligibleBeanDefinitionsMap(beanFactory);
         int beansCount = eligibleBeanDefinitionsMap.size();
+
+        // No Bean(name) conflict here, thus it could be HashMap since Java 8
         Map<String, Set<String>> dependentBeanNamesMap = new HashMap<>(beansCount);
-        for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
-            String beanName = entry.getKey();
-            RootBeanDefinition beanDefinition = entry.getValue();
-            Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
-            dependentBeanNamesMap.put(beanName, dependentBeanNames);
-        }
+
+        eligibleBeanDefinitionsMap.entrySet()
+                .stream()
+                .parallel()
+                .forEach(entry -> {
+                    String beanName = entry.getKey();
+                    RootBeanDefinition beanDefinition = entry.getValue();
+                    Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
+                    dependentBeanNamesMap.put(beanName, dependentBeanNames);
+                });
 
         flattenDependentBeanNamesMap(dependentBeanNamesMap);
 
