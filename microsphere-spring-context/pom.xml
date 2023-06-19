@@ -20,6 +20,13 @@
 
     <dependencies>
 
+        <!-- Java Common Annotations -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- MicroSphere-commons-->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
