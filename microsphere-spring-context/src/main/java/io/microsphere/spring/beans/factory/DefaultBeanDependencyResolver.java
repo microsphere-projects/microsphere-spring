@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.collection.CollectionUtils;
 import io.microsphere.collection.SetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.MapUtils.isNotEmpty;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.reflect.MemberUtils.isStatic;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
@@ -101,15 +103,12 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         // No Bean(name) conflict here, thus it could be HashMap since Java 8
         Map<String, Set<String>> dependentBeanNamesMap = new HashMap<>(beansCount);
 
-        eligibleBeanDefinitionsMap.entrySet()
-                .stream()
-                .parallel()
-                .forEach(entry -> {
-                    String beanName = entry.getKey();
-                    RootBeanDefinition beanDefinition = entry.getValue();
-                    Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
-                    dependentBeanNamesMap.put(beanName, dependentBeanNames);
-                });
+        eligibleBeanDefinitionsMap.entrySet().stream().parallel().forEach(entry -> {
+            String beanName = entry.getKey();
+            RootBeanDefinition beanDefinition = entry.getValue();
+            Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
+            dependentBeanNamesMap.put(beanName, dependentBeanNames);
+        });
 
         flattenDependentBeanNamesMap(dependentBeanNamesMap);
 
@@ -129,7 +128,6 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
     }
 
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
-        Map<String, Set<String>> dependenciesMap = new LinkedHashMap<>(dependentBeanNamesMap.size());
         for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
             if (dependentBeanNames.isEmpty()) { // No Dependent bean name
@@ -138,25 +136,31 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             String beanName = entry.getKey();
             Set<String> flattenDependentBeanNames = new LinkedHashSet<>(dependentBeanNames.size() * 2);
             // flat
-            flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+            flatDependentBeanNames(beanName, dependentBeanNamesMap, flattenDependentBeanNames);
             // Replace flattenDependentBeanNames to dependentBeanNames
             entry.setValue(flattenDependentBeanNames);
         }
 
-        // Remove the bean names that ware dependent by the requesting beans
-        for (Map.Entry<String, Set<String>> entry : dependenciesMap.entrySet()) {
-            String dependentBeanName = entry.getKey();
-            dependentBeanNamesMap.remove(dependentBeanName);
-            logDependencies(dependentBeanName, entry);
+        Set<String> nonRootBeanNames = new LinkedHashSet<>();
+        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+            String beanName = entry.getKey();
+            Set<String> dependentBeanNames = entry.getValue();
+            for (String dependentBeanName : dependentBeanNames) {
+                Set<String> nestedDependentBeanNames = dependentBeanNamesMap.get(dependentBeanName);
+                if (CollectionUtils.isNotEmpty(nestedDependentBeanNames) && !dependentBeanNames.containsAll(nestedDependentBeanNames)) {
+                    nonRootBeanNames.add(beanName);
+                    break;
+                }
+            }
+        }
+
+        for (String nonRootBeanName : nonRootBeanNames) {
+            if (dependentBeanNamesMap.remove(nonRootBeanName) != null) {
+                logger.debug("Non Root Bean name was removed : {}", nonRootBeanName);
+            }
         }
 
         logDependentBeanNames(dependentBeanNamesMap);
-    }
-
-    private void logDependencies(String dependentBeanName, Map.Entry<String, Set<String>> dependencies) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
-        }
     }
 
     private void logDependentBeanNames(Map<String, Set<String>> dependentBeanNamesMap) {
@@ -167,9 +171,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         }
     }
 
-    private void flatDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap,
-                                        Map<String, Set<String>> dependenciesMap,
-                                        Set<String> flattenDependentBeanNames) {
+    private void flatDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap, Set<String> flattenDependentBeanNames) {
         Set<String> dependentBeanNames = retrieveDependentBeanNames(beanName, dependentBeanNamesMap);
         if (dependentBeanNames.isEmpty()) {
             return;
@@ -179,10 +181,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         dependentBeanNames.remove(beanName);
 
         for (String dependentBeanName : dependentBeanNames) {
-            Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>());
-            dependencies.add(beanName);
             if (flattenDependentBeanNames.add(dependentBeanName)) {
-                flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+                flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, flattenDependentBeanNames);
             }
         }
     }
@@ -197,8 +197,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return dependentBeanNames;
     }
 
-    private Set<String> resolveDependentBeanNames(String beanName, RootBeanDefinition beanDefinition,
-                                                  DefaultListableBeanFactory beanFactory) {
+    private Set<String> resolveDependentBeanNames(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory) {
 
         Set<String> dependentBeanNames = new LinkedHashSet<>();
         // Resolve the dependent bean names from BeanDefinition
@@ -215,9 +214,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return dependentBeanNames;
     }
 
-    private void resolveInjectionPointsDependentBeanNames(String beanName, RootBeanDefinition beanDefinition,
-                                                          DefaultListableBeanFactory beanFactory,
-                                                          Set<String> dependentBeanNames) {
+    private void resolveInjectionPointsDependentBeanNames(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
 
         ClassLoader classLoader = beanFactory.getBeanClassLoader();
 
@@ -240,17 +237,14 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     }
 
-    private void resolveMethodParametersDependentBeanNames(String beanName, Class beanClass,
-                                                           DefaultListableBeanFactory beanFactory,
-                                                           Set<String> dependentBeanNames) {
+    private void resolveMethodParametersDependentBeanNames(String beanName, Class beanClass, DefaultListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
 
         Class<?> targetClass = beanClass;
         do {
             doWithLocalMethods(targetClass, method -> {
                 if (isStatic(method)) {
                     if (logger.isWarnEnabled()) {
-                        logger.warn("The Injection Point[bean : '{}' , class : {}] is not supported on static method : {}",
-                                beanName, method.getDeclaringClass().getName(), method);
+                        logger.warn("The Injection Point[bean : '{}' , class : {}] is not supported on static method : {}", beanName, method.getDeclaringClass().getName(), method);
                     }
                     return;
                 }
@@ -279,15 +273,13 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     }
 
-    private void resolveFieldDependentBeanNames(String beanName, Class beanClass, DefaultListableBeanFactory beanFactory,
-                                                Set<String> dependentBeanNames) {
+    private void resolveFieldDependentBeanNames(String beanName, Class beanClass, DefaultListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Class<?> targetClass = beanClass;
         do {
             doWithLocalFields(targetClass, field -> {
                 if (isStatic(field)) {
                     if (logger.isWarnEnabled()) {
-                        logger.warn("The Injection Point[bean : '{}' , class : {}] is not supported on static field : {}",
-                                beanName, field.getDeclaringClass().getName(), field);
+                        logger.warn("The Injection Point[bean : '{}' , class : {}] is not supported on static field : {}", beanName, field.getDeclaringClass().getName(), field);
                     }
                     return;
                 }
@@ -371,10 +363,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return dependentBeanNames;
     }
 
-    private void resolveConstructionParametersDependentBeanNames(String beanName,
-                                                                 RootBeanDefinition beanDefinition,
-                                                                 DefaultListableBeanFactory beanFactory,
-                                                                 Set<String> dependentBeanNames) {
+    private void resolveConstructionParametersDependentBeanNames(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
 
         if (factoryMethod == null) { // The bean-class Definition
@@ -467,8 +456,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
     }
 
     private Class<?> getBeanClass(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
-        return beanDefinition.hasBeanClass() ? beanDefinition.getBeanClass() :
-                resolveClass(beanDefinition.getBeanClassName(), classLoader);
+        return beanDefinition.hasBeanClass() ? beanDefinition.getBeanClass() : resolveClass(beanDefinition.getBeanClassName(), classLoader);
     }
 
     private Map<String, RootBeanDefinition> getEligibleBeanDefinitionsMap(DefaultListableBeanFactory beanFactory) {
@@ -515,11 +503,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
      * @return <code>true</code> if the given {@link BeanDefinition} must be
      */
     private RootBeanDefinition getEligibleBeanDefinition(BeanDefinition beanDefinition) {
-        if (beanDefinition != null
-                && !beanDefinition.isAbstract()
-                && beanDefinition.isSingleton()
-                && !beanDefinition.isLazyInit()
-                && beanDefinition instanceof RootBeanDefinition) {
+        if (beanDefinition != null && !beanDefinition.isAbstract() && beanDefinition.isSingleton() && !beanDefinition.isLazyInit() && beanDefinition instanceof RootBeanDefinition) {
             RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
             return rootBeanDefinition.getInstanceSupplier() == null ? rootBeanDefinition : null;
         }
