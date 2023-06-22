@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 
 /**
@@ -55,6 +56,7 @@ class BeanFactoryListeners implements BeanFactoryListener {
     }
 
     private List<NamedBeanHolder<BeanFactoryListener>> getBeanDefinitionListeners(ConfigurableListableBeanFactory beanFactory) {
+        registerFactories(BeanFactoryListener.class, beanFactory);
         Map<String, BeanFactoryListener> beanDefinitionListenersMap = beanFactory.getBeansOfType(BeanFactoryListener.class);
         List<NamedBeanHolder<BeanFactoryListener>> namedListeners = new ArrayList<>(beanDefinitionListenersMap.size());
         for (Map.Entry<String, BeanFactoryListener> entry : beanDefinitionListenersMap.entrySet()) {

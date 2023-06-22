@@ -22,6 +22,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.ArrayList;
@@ -107,31 +108,39 @@ public abstract class BeanFactoryUtils {
      * @param beanFactory {@link BeanFactory}
      * @return <code>true</code> if it's {@link DefaultListableBeanFactory}, <code>false</code> otherwise
      */
-    public static boolean isDefaultListableBeanFactory(BeanFactory beanFactory) {
+    public static boolean isDefaultListableBeanFactory(Object beanFactory) {
         return beanFactory instanceof DefaultListableBeanFactory;
     }
 
-    public static ListableBeanFactory asListableBeanFactory(BeanFactory beanFactory) {
+    public static boolean isBeanDefinitionRegistry(Object beanFactory) {
+        return beanFactory instanceof BeanDefinitionRegistry;
+    }
+
+    public static BeanDefinitionRegistry asBeanDefinitionRegistry(Object beanFactory) {
+        return cast(beanFactory, BeanDefinitionRegistry.class);
+    }
+
+    public static ListableBeanFactory asListableBeanFactory(Object beanFactory) {
         return cast(beanFactory, ListableBeanFactory.class);
     }
 
-    public static HierarchicalBeanFactory asHierarchicalBeanFactory(BeanFactory beanFactory) {
+    public static HierarchicalBeanFactory asHierarchicalBeanFactory(Object beanFactory) {
         return cast(beanFactory, HierarchicalBeanFactory.class);
     }
 
-    public static ConfigurableBeanFactory asConfigurableBeanFactory(BeanFactory beanFactory) {
+    public static ConfigurableBeanFactory asConfigurableBeanFactory(Object beanFactory) {
         return cast(beanFactory, ConfigurableBeanFactory.class);
     }
 
-    public static AutowireCapableBeanFactory asAutowireCapableBeanFactory(BeanFactory beanFactory) {
+    public static AutowireCapableBeanFactory asAutowireCapableBeanFactory(Object beanFactory) {
         return cast(beanFactory, AutowireCapableBeanFactory.class);
     }
 
-    public static ConfigurableListableBeanFactory asConfigurableListableBeanFactory(BeanFactory beanFactory) {
+    public static ConfigurableListableBeanFactory asConfigurableListableBeanFactory(Object beanFactory) {
         return cast(beanFactory, ConfigurableListableBeanFactory.class);
     }
 
-    public static DefaultListableBeanFactory asDefaultListableBeanFactory(BeanFactory beanFactory) {
+    public static DefaultListableBeanFactory asDefaultListableBeanFactory(Object beanFactory) {
         return cast(beanFactory, DefaultListableBeanFactory.class);
     }
 

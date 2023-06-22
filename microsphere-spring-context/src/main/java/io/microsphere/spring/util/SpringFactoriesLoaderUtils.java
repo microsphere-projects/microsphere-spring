@@ -18,6 +18,8 @@ package io.microsphere.spring.util;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -26,9 +28,14 @@ import java.util.List;
 
 import static io.microsphere.spring.util.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static io.microsphere.util.ClassUtils.resolveClass;
+import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
 
 /**
  * The utilities class for {@link SpringFactoriesLoader}
@@ -38,6 +45,26 @@ import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
  * @since 1.0.0
  */
 public abstract class SpringFactoriesLoaderUtils {
+
+    public static void registerFactories(Class<?> factoryType, BeanFactory bf) {
+        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(bf);
+        if (registry == null) {
+            return;
+        }
+
+        ConfigurableListableBeanFactory beanFactory = asConfigurableListableBeanFactory(bf);
+        if (beanFactory == null) {
+            return;
+        }
+
+        ClassLoader beanClassLoader = beanFactory.getBeanClassLoader();
+        ClassLoader classLoader = beanClassLoader == null ? getDefaultClassLoader() : beanClassLoader;
+        List<String> factoryNames = loadFactoryNames(factoryType, classLoader);
+        for (String factoryName : factoryNames) {
+            Class<?> beanClass = resolveClass(factoryName, classLoader);
+            registerBeanDefinition(registry, beanClass);
+        }
+    }
 
     public static <T> List<T> loadFactories(Class<T> factoryType, ApplicationContext context) {
         ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);

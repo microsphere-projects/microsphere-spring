@@ -43,24 +43,23 @@ import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanF
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
- * Parallel {@link BeanFactoryListener}
+ * The {@link BeanFactoryListener} class {@link DefaultListableBeanFactory#preInstantiateSingletons() pre-instantiates singletons}
+ * in parallel.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ParallelBeanFactoryListener extends BeanFactoryListenerAdapter implements InitializingBean, EnvironmentAware, BeanFactoryAware {
+public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanFactoryListenerAdapter implements InitializingBean, EnvironmentAware, BeanFactoryAware {
 
     public static final String PARALLEL_TASKS_PROPERTY_NAME = "microsphere.spring.beans.process.parallel.tasks";
 
-    private static final Logger logger = LoggerFactory.getLogger(ParallelBeanFactoryListener.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
 
     private Environment environment;
 
     private int parallelTasks;
 
     private DefaultListableBeanFactory beanFactory;
-
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
