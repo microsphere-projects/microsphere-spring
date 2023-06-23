@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.lang.function.ThrowableSupplier;
 import io.microsphere.spring.beans.factory.BeanDependencyResolver;
 import io.microsphere.spring.beans.factory.DefaultBeanDependencyResolver;
 import org.slf4j.Logger;
@@ -30,19 +31,20 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.StopWatch;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
-import static io.microsphere.lang.function.ThrowableAction.execute;
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static org.springframework.util.CollectionUtils.containsAny;
 
 /**
  * The {@link BeanFactoryListener} class {@link DefaultListableBeanFactory#preInstantiateSingletons() pre-instantiates singletons}
@@ -107,39 +109,83 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
     private void preInstantiateSingletonsInParallel(Map<String, Set<String>> dependentBeanNamesMap,
                                                     DefaultListableBeanFactory beanFactory, ExecutorService executorService, StopWatch stopWatch) {
         stopWatch.start("preInstantiateSingletonsInParallel");
-        CompletionService completionService = new ExecutorCompletionService(executorService);
-        int tasks = 0;
-        AtomicInteger completedTasks = new AtomicInteger(0);
-        for (Map.Entry<String, Set<String>> dependentEntry : dependentBeanNamesMap.entrySet()) {
-            String beanName = dependentEntry.getKey();
-            Set<String> dependentBeanNames = dependentEntry.getValue();
-            // TODO Add parallel strategies:
-            // 1. add allow list
-            // 2. add disallow list
-            // 3. safest
-            // 4. Spring stack beans in the main thread
-            if (dependentBeanNames.isEmpty()) { // No Dependent Bean == safest
-                completionService.submit(() -> {
-                    Object bean = null;
-                    try {
-                        bean = beanFactory.getBean(beanName);
-                        logger.debug("The bean[name : '{}'] was created : {}", beanName, bean);
-                    } finally {
-                        completedTasks.incrementAndGet();
-                    }
-                    return bean;
-                });
-                logger.debug("The task to create bean[name : '{}'] is submitted", beanName);
-                tasks++;
-            }
+
+        List<Set<String>> beanNamesInDependencyPaths = resolveBeanNamesInDependencyPaths(dependentBeanNamesMap);
+
+        for (int i = 0; i < beanNamesInDependencyPaths.size(); i++) {
+            Set<String> beanNamesInDependencyPath = beanNamesInDependencyPaths.get(i);
+            executorService.submit(() -> {
+                for (String beanName : beanNamesInDependencyPath) {
+                    Object bean = beanFactory.getBean(beanName);
+                    logger.debug("The bean[name : '{}'] was created : {}", beanName, bean);
+                }
+                return null;
+            });
         }
 
-        while (tasks > completedTasks.getAndIncrement()) {
-            execute(() -> executorService.awaitTermination(1, TimeUnit.MILLISECONDS));
+        while (execute(() -> executorService.awaitTermination(10, TimeUnit.MILLISECONDS))) {
         }
 
         stopWatch.stop();
     }
+
+    private List<Set<String>> resolveBeanNamesInDependencyPaths(Map<String, Set<String>> dependentBeanNamesMap) {
+        List<Set<String>> beanNamesList = buildBeanNamesList(dependentBeanNamesMap);
+        List<Set<String>> dependencyPaths = newLinkedList();
+        int size = beanNamesList.size();
+        for (int i = 0; i < size; i++) {
+            Set<String> beanNames = beanNamesList.get(i);
+            if (!beanNames.isEmpty()) {
+                for (int j = i + 1; j < size; j++) {
+                    Set<String> otherNames = beanNamesList.get(j);
+                    if (containsAny(beanNames, otherNames)) {
+                        beanNames.addAll(otherNames);
+                        // set the empty set into the index 'j'
+                        beanNamesList.set(j, emptySet());
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < size; i++) {
+            Set<String> beanNames = beanNamesList.get(i);
+            if (!beanNames.isEmpty()) {
+                dependencyPaths.add(beanNames);
+            }
+        }
+
+        return dependencyPaths;
+    }
+
+    private List<Set<String>> buildBeanNamesList(Map<String, Set<String>> dependentBeanNamesMap) {
+        List<Set<String>> beanNamesList = newArrayList(dependentBeanNamesMap.size());
+        for (Map.Entry<String, Set<String>> dependentEntry : dependentBeanNamesMap.entrySet()) {
+            String beanName = dependentEntry.getKey();
+            Set<String> dependentBeanNames = dependentEntry.getValue();
+            // reuse the space of dependentBeanNames
+            Set<String> beanNames = dependentBeanNames;
+            beanNames.add(beanName);
+            beanNamesList.add(beanNames);
+        }
+        return beanNamesList;
+    }
+
+    private void mergeBeanNames(Map.Entry<String, Set<String>> dependentEntry, List<Set<String>> allBeanNamesList,
+                                Map<String, Set<String>> dependentBeanNamesMap) {
+
+        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+            if (dependentEntry.equals(entry)) {
+                continue;
+            }
+
+            String beanName = dependentEntry.getKey();
+            Set<String> dependentBeanNames = dependentEntry.getValue();
+            Set<String> allBeanNames = new LinkedHashSet<>(1 + dependentBeanNames.size());
+            allBeanNames.add(beanName);
+            allBeanNames.addAll(dependentBeanNames);
+        }
+    }
+
 
     @Override
     public void setEnvironment(Environment environment) {
