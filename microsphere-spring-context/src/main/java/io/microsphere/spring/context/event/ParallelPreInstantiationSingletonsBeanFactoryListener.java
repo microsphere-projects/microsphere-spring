@@ -55,7 +55,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
 
     public static final String THREADS_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.threads";
     public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.thread.name-prefix";
-    public static final String DEAULT_THREAD_NAME_PREFIX = "Parallel-Pre-Instantiation-Singletons-Thread-";
+    public static final String DEFAULT_THREAD_NAME_PREFIX = "Parallel-Pre-Instantiation-Singletons-Thread-";
 
     private static final Logger logger = LoggerFactory.getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
 
@@ -138,7 +138,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
     @Override
     public void afterPropertiesSet() throws Exception {
         int threads = environment.getProperty(THREADS_PROPERTY_NAME, int.class, getDefaultThreads());
-        String threadNamePrefix = environment.getProperty(THREAD_NAME_PREFIX_PROPERTY_NAME, DEAULT_THREAD_NAME_PREFIX);
+        String threadNamePrefix = environment.getProperty(THREAD_NAME_PREFIX_PROPERTY_NAME, DEFAULT_THREAD_NAME_PREFIX);
         this.executorService = newFixedThreadPool(threads, new CustomizableThreadFactory(threadNamePrefix));
     }
 
