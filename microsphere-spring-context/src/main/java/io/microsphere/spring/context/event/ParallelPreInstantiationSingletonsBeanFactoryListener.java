@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.EnvironmentAware;
@@ -34,11 +33,13 @@ import org.springframework.util.StopWatch;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -51,7 +52,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
  * @since 1.0.0
  */
 public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanFactoryListenerAdapter implements
-        InitializingBean, EnvironmentAware, BeanFactoryAware {
+        EnvironmentAware, BeanFactoryAware {
 
     public static final String THREADS_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.threads";
     public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.thread.name-prefix";
@@ -63,8 +64,6 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
 
     private DefaultListableBeanFactory beanFactory;
 
-    private ExecutorService executorService;
-
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
         DefaultListableBeanFactory beanFactory = this.beanFactory;
@@ -74,27 +73,40 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
         }
 
         StopWatch stopWatch = new StopWatch("ParallelPreInstantiationSingletons");
-
-        Map<String, Set<String>> dependentBeanNamesMap = resolveDependentBeanNamesMap(beanFactory, stopWatch);
-
-        preInstantiateSingletonsInParallel(dependentBeanNamesMap, beanFactory, stopWatch);
-
-        logger.info(stopWatch.toString());
+        ExecutorService executorService = newExecutorService();
+        if (executorService != null) {
+            try {
+                Map<String, Set<String>> dependentBeanNamesMap = resolveDependentBeanNamesMap(beanFactory, executorService, stopWatch);
+                preInstantiateSingletonsInParallel(dependentBeanNamesMap, beanFactory, executorService, stopWatch);
+            } finally {
+                logger.info(stopWatch.toString());
+                executorService.shutdown();
+            }
+        }
     }
 
-    private Map<String, Set<String>> resolveDependentBeanNamesMap(DefaultListableBeanFactory beanFactory, StopWatch stopWatch) {
+    private ExecutorService newExecutorService() {
+        int threads = environment.getProperty(THREADS_PROPERTY_NAME, int.class, getDefaultThreads());
+        if (threads < 1) {
+            return null;
+        }
+        String threadNamePrefix = environment.getProperty(THREAD_NAME_PREFIX_PROPERTY_NAME, DEFAULT_THREAD_NAME_PREFIX);
+        ExecutorService executorService = newFixedThreadPool(threads, new CustomizableThreadFactory(threadNamePrefix));
+        return executorService;
+    }
+
+    private Map<String, Set<String>> resolveDependentBeanNamesMap(DefaultListableBeanFactory beanFactory, ExecutorService executorService, StopWatch stopWatch) {
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         stopWatch.start("resolveDependentBeanNamesMap");
-        BeanDependencyResolver beanDependencyResolver = new DefaultBeanDependencyResolver(beanFactory, this.executorService);
+        BeanDependencyResolver beanDependencyResolver = new DefaultBeanDependencyResolver(beanFactory, executorService);
         Map<String, Set<String>> dependentBeanNamesMap = beanDependencyResolver.resolve(beanFactory);
         stopWatch.stop();
         return dependentBeanNamesMap;
     }
 
     private void preInstantiateSingletonsInParallel(Map<String, Set<String>> dependentBeanNamesMap,
-                                                    DefaultListableBeanFactory beanFactory, StopWatch stopWatch) {
+                                                    DefaultListableBeanFactory beanFactory, ExecutorService executorService, StopWatch stopWatch) {
         stopWatch.start("preInstantiateSingletonsInParallel");
-        ExecutorService executorService = this.executorService;
         CompletionService completionService = new ExecutorCompletionService(executorService);
         int tasks = 0;
         AtomicInteger completedTasks = new AtomicInteger(0);
@@ -123,23 +135,15 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
         }
 
         while (tasks > completedTasks.getAndIncrement()) {
-            execute(() -> executorService.awaitTermination(100, TimeUnit.MICROSECONDS));
+            execute(() -> executorService.awaitTermination(1, TimeUnit.MILLISECONDS));
         }
 
-        executorService.shutdown();
         stopWatch.stop();
     }
 
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        int threads = environment.getProperty(THREADS_PROPERTY_NAME, int.class, getDefaultThreads());
-        String threadNamePrefix = environment.getProperty(THREAD_NAME_PREFIX_PROPERTY_NAME, DEFAULT_THREAD_NAME_PREFIX);
-        this.executorService = newFixedThreadPool(threads, new CustomizableThreadFactory(threadNamePrefix));
     }
 
     private int getDefaultThreads() {
