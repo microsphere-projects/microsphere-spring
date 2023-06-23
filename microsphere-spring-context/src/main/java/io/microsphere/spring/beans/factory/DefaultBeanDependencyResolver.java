@@ -18,6 +18,7 @@ package io.microsphere.spring.beans.factory;
 
 import io.microsphere.collection.CollectionUtils;
 import io.microsphere.collection.SetUtils;
+import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
@@ -47,14 +48,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Future;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
-import static io.microsphere.collection.MapUtils.isNotEmpty;
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.reflect.MemberUtils.isStatic;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassUtils.resolveClass;
-import static java.lang.ThreadLocal.withInitial;
+import static java.lang.InheritableThreadLocal.withInitial;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -81,12 +87,22 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private final DefaultListableBeanFactory beanFactory;
 
+    private final ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
+
     private final InjectionPointDependencyResolvers resolvers;
 
+    private final Executor executor;
+
     public DefaultBeanDependencyResolver(BeanFactory bf) {
+        this(bf, Runnable::run);
+    }
+
+    public DefaultBeanDependencyResolver(BeanFactory bf, Executor executor) {
         isInstanceOf(DefaultListableBeanFactory.class, bf, "The BeanFactory is not an instance of DefaultListableBeanFactory");
         this.beanFactory = (DefaultListableBeanFactory) bf;
+        this.resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
         this.resolvers = new InjectionPointDependencyResolvers(beanFactory);
+        this.executor = executor;
     }
 
     @Override
@@ -96,19 +112,36 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
             return emptyMap();
         }
+
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap = getEligibleBeanDefinitionsMap(beanFactory);
         int beansCount = eligibleBeanDefinitionsMap.size();
 
+        CompletionService<Map.Entry<String, Set<String>>> completionService = new ExecutorCompletionService<>(this.executor);
+
         // No Bean(name) conflict here, thus it could be HashMap since Java 8
         Map<String, Set<String>> dependentBeanNamesMap = new HashMap<>(beansCount);
 
-        eligibleBeanDefinitionsMap.entrySet().stream().parallel().forEach(entry -> {
-            String beanName = entry.getKey();
-            RootBeanDefinition beanDefinition = entry.getValue();
-            Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
-            dependentBeanNamesMap.put(beanName, dependentBeanNames);
-        });
+        for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
+            completionService.submit(() -> {
+                String beanName = entry.getKey();
+                RootBeanDefinition beanDefinition = entry.getValue();
+                Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
+                return ofEntry(beanName, dependentBeanNames);
+            });
+        }
+
+        for (int i = 0; i < beansCount; i++) {
+            try {
+                Future<Map.Entry<String, Set<String>>> future = completionService.take();
+                Map.Entry<String, Set<String>> entry = future.get();
+                String beanName = entry.getKey();
+                Set<String> dependentBeanNames = entry.getValue();
+                dependentBeanNamesMap.put(beanName, dependentBeanNames);
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         flattenDependentBeanNamesMap(dependentBeanNamesMap);
 

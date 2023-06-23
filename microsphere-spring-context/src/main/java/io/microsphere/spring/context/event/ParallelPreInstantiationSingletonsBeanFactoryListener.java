@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.StopWatch;
 
 import java.util.Map;
@@ -49,17 +50,20 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanFactoryListenerAdapter implements InitializingBean, EnvironmentAware, BeanFactoryAware {
+public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanFactoryListenerAdapter implements
+        InitializingBean, EnvironmentAware, BeanFactoryAware {
 
-    public static final String PARALLEL_TASKS_PROPERTY_NAME = "microsphere.spring.beans.process.parallel.tasks";
+    public static final String THREADS_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.threads";
+    public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.thread.name-prefix";
+    public static final String DEAULT_THREAD_NAME_PREFIX = "Parallel-Pre-Instantiation-Singletons-Thread-";
 
     private static final Logger logger = LoggerFactory.getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
 
     private Environment environment;
 
-    private int parallelTasks;
-
     private DefaultListableBeanFactory beanFactory;
+
+    private ExecutorService executorService;
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
@@ -69,19 +73,28 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
             return;
         }
 
-        // Not Ready & Non-Lazy-Init Merged BeanDefinitions
-        BeanDependencyResolver beanDependencyResolver = new DefaultBeanDependencyResolver(beanFactory);
+        StopWatch stopWatch = new StopWatch("ParallelPreInstantiationSingletons");
 
-        Map<String, Set<String>> dependentBeanNamesMap = beanDependencyResolver.resolve(beanFactory);
+        Map<String, Set<String>> dependentBeanNamesMap = resolveDependentBeanNamesMap(beanFactory, stopWatch);
 
-        processBeanInParallel(dependentBeanNamesMap, beanFactory);
+        preInstantiateSingletonsInParallel(dependentBeanNamesMap, beanFactory, stopWatch);
+
+        logger.info(stopWatch.toString());
     }
 
-    private void processBeanInParallel(Map<String, Set<String>> dependentBeanNamesMap,
-                                       DefaultListableBeanFactory beanFactory) {
-        StopWatch stopWatch = new StopWatch("Bean-Process-In-Parallel");
-        stopWatch.start();
-        ExecutorService executorService = newFixedThreadPool(parallelTasks);
+    private Map<String, Set<String>> resolveDependentBeanNamesMap(DefaultListableBeanFactory beanFactory, StopWatch stopWatch) {
+        // Not Ready & Non-Lazy-Init Merged BeanDefinitions
+        stopWatch.start("resolveDependentBeanNamesMap");
+        BeanDependencyResolver beanDependencyResolver = new DefaultBeanDependencyResolver(beanFactory, this.executorService);
+        Map<String, Set<String>> dependentBeanNamesMap = beanDependencyResolver.resolve(beanFactory);
+        stopWatch.stop();
+        return dependentBeanNamesMap;
+    }
+
+    private void preInstantiateSingletonsInParallel(Map<String, Set<String>> dependentBeanNamesMap,
+                                                    DefaultListableBeanFactory beanFactory, StopWatch stopWatch) {
+        stopWatch.start("preInstantiateSingletonsInParallel");
+        ExecutorService executorService = this.executorService;
         CompletionService completionService = new ExecutorCompletionService(executorService);
         int tasks = 0;
         AtomicInteger completedTasks = new AtomicInteger(0);
@@ -115,7 +128,6 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
 
         executorService.shutdown();
         stopWatch.stop();
-        logger.info(stopWatch.toString());
     }
 
     @Override
@@ -125,10 +137,12 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.parallelTasks = environment.getProperty(PARALLEL_TASKS_PROPERTY_NAME, int.class, getDefaultParallelTasks());
+        int threads = environment.getProperty(THREADS_PROPERTY_NAME, int.class, getDefaultThreads());
+        String threadNamePrefix = environment.getProperty(THREAD_NAME_PREFIX_PROPERTY_NAME, DEAULT_THREAD_NAME_PREFIX);
+        this.executorService = newFixedThreadPool(threads, new CustomizableThreadFactory(threadNamePrefix));
     }
 
-    private int getDefaultParallelTasks() {
+    private int getDefaultThreads() {
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         return Math.max(1, availableProcessors);
     }
