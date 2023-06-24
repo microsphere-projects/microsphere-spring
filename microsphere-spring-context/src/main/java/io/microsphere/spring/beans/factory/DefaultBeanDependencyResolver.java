@@ -36,6 +36,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
@@ -59,7 +60,6 @@ import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.reflect.MemberUtils.isStatic;
 import static io.microsphere.spring.util.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.util.ClassLoaderUtils.loadClass;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.InheritableThreadLocal.withInitial;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -115,23 +115,29 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             return emptyMap();
         }
 
+        StopWatch stopWatch = new StopWatch("BeanDependencyResolver");
+
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
-        Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap = getEligibleBeanDefinitionsMap(beanFactory);
+        Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap = getEligibleBeanDefinitionsMap(beanFactory, stopWatch);
 
         // Pre-Process Bean Classes for BeanDefinitions
-        preProcessLoadBeanClasses(eligibleBeanDefinitionsMap);
+        preProcessLoadBeanClasses(eligibleBeanDefinitionsMap, stopWatch);
 
         // No Bean(name) conflict here, thus it could be HashMap since Java 8
-        Map<String, Set<String>> dependentBeanNamesMap = resolveDependentBeanNamesMap(eligibleBeanDefinitionsMap);
+        Map<String, Set<String>> dependentBeanNamesMap = resolveDependentBeanNamesMap(eligibleBeanDefinitionsMap, stopWatch);
 
-        flattenDependentBeanNamesMap(dependentBeanNamesMap);
+        flattenDependentBeanNamesMap(dependentBeanNamesMap, stopWatch);
 
         clearResolvedBeanMembers();
+
+        logger.info(stopWatch.toString());
 
         return dependentBeanNamesMap;
     }
 
-    private Map<String, Set<String>> resolveDependentBeanNamesMap(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap) {
+    private Map<String, Set<String>> resolveDependentBeanNamesMap(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap, StopWatch stopWatch) {
+        stopWatch.start("resolveDependentBeanNamesMap");
+
         int beansCount = eligibleBeanDefinitionsMap.size();
         final Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
 
@@ -156,10 +162,13 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             });
         }
 
+        stopWatch.stop();
         return dependentBeanNamesMap;
     }
 
-    private void preProcessLoadBeanClasses(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap) {
+    private void preProcessLoadBeanClasses(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap, StopWatch stopWatch) {
+        stopWatch.start("preProcessLoadBeanClasses");
+
         ClassLoader classLoader = this.classLoader;
         for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
             String beanName = entry.getKey();
@@ -167,6 +176,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             preProcessLoadBeanClass(beanName, beanDefinition, eligibleBeanDefinitionsMap, classLoader);
         }
         awaitTasksCompleted();
+
+        stopWatch.stop();
     }
 
     private void awaitTasksCompleted() {
@@ -214,7 +225,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return resolveDependentBeanNames(beanName, mergedBeanDefinition, beanFactory);
     }
 
-    private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
+    private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap, StopWatch stopWatch) {
+        stopWatch.start("flattenDependentBeanNamesMap");
+
         for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
             if (dependentBeanNames.isEmpty()) { // No Dependent bean name
@@ -248,6 +261,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         }
 
         logDependentBeanNames(dependentBeanNamesMap);
+
+        stopWatch.stop();
     }
 
     private void logDependentBeanNames(Map<String, Set<String>> dependentBeanNamesMap) {
@@ -330,8 +345,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         do {
             doWithLocalMethods(targetClass, method -> {
                 if (isStatic(method)) {
-                    if (logger.isWarnEnabled()) {
-                        logger.warn("The Injection Point[bean : '{}' , class : {}] is not supported on static method : {}", beanName, method.getDeclaringClass().getName(), method);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("The Injection Point[bean : '{}' , class : {}] is not supported on static method : {}", beanName, method.getDeclaringClass().getName(), method);
                     }
                     return;
                 }
@@ -365,8 +380,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         do {
             doWithLocalFields(targetClass, field -> {
                 if (isStatic(field)) {
-                    if (logger.isWarnEnabled()) {
-                        logger.warn("The Injection Point[bean : '{}' , class : {}] is not supported on static field : {}", beanName, field.getDeclaringClass().getName(), field);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("The Injection Point[bean : '{}' , class : {}] is not supported on static field : {}", beanName, field.getDeclaringClass().getName(), field);
                     }
                     return;
                 }
@@ -517,7 +532,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return resolveBeanType(beanDefinition, classLoader);
     }
 
-    private Map<String, RootBeanDefinition> getEligibleBeanDefinitionsMap(DefaultListableBeanFactory beanFactory) {
+    private Map<String, RootBeanDefinition> getEligibleBeanDefinitionsMap(DefaultListableBeanFactory beanFactory, StopWatch stopWatch) {
+        stopWatch.start("getEligibleBeanDefinitionsMap");
+
         String[] beanNames = beanFactory.getBeanDefinitionNames();
         int beansCount = beanNames.length;
         Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap = newHashMap(beansCount);
@@ -543,6 +560,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                 eligibleBeanDefinitionsMap.put(beanName, eligibleBeanDefinition);
             }
         }
+
+        stopWatch.stop();
         return eligibleBeanDefinitionsMap;
     }
 

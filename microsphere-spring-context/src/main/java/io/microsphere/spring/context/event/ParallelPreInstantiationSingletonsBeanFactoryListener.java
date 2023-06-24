@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.lang.function.ThrowableSupplier;
 import io.microsphere.spring.beans.factory.BeanDependencyResolver;
 import io.microsphere.spring.beans.factory.DefaultBeanDependencyResolver;
 import org.slf4j.Logger;
@@ -75,16 +74,18 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
         }
 
         StopWatch stopWatch = new StopWatch("ParallelPreInstantiationSingletons");
+
         ExecutorService executorService = newExecutorService();
         if (executorService != null) {
             try {
                 Map<String, Set<String>> dependentBeanNamesMap = resolveDependentBeanNamesMap(beanFactory, executorService, stopWatch);
                 preInstantiateSingletonsInParallel(dependentBeanNamesMap, beanFactory, executorService, stopWatch);
             } finally {
-                logger.info(stopWatch.toString());
                 executorService.shutdown();
             }
         }
+
+        logger.info(stopWatch.toString());
     }
 
     private ExecutorService newExecutorService() {
@@ -97,11 +98,14 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
         return executorService;
     }
 
+
     private Map<String, Set<String>> resolveDependentBeanNamesMap(DefaultListableBeanFactory beanFactory, ExecutorService executorService, StopWatch stopWatch) {
-        // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         stopWatch.start("resolveDependentBeanNamesMap");
+
+        // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         BeanDependencyResolver beanDependencyResolver = new DefaultBeanDependencyResolver(beanFactory, executorService);
         Map<String, Set<String>> dependentBeanNamesMap = beanDependencyResolver.resolve(beanFactory);
+
         stopWatch.stop();
         return dependentBeanNamesMap;
     }
