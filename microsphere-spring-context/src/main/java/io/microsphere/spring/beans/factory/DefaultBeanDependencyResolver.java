@@ -42,7 +42,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,13 +52,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 
-import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.reflect.MemberUtils.isStatic;
+import static io.microsphere.spring.util.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
-import static io.microsphere.util.ClassUtils.resolveClass;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.InheritableThreadLocal.withInitial;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -91,6 +90,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private final InjectionPointDependencyResolvers resolvers;
 
+    private final List<SmartInstantiationAwareBeanPostProcessor> smartInstantiationAwareBeanPostProcessors;
+
     private final Executor executor;
 
     public DefaultBeanDependencyResolver(BeanFactory bf) {
@@ -102,6 +103,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         this.beanFactory = (DefaultListableBeanFactory) bf;
         this.resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
         this.resolvers = new InjectionPointDependencyResolvers(beanFactory);
+        this.smartInstantiationAwareBeanPostProcessors = getSmartInstantiationAwareBeanPostProcessors(beanFactory);
         this.executor = executor;
     }
 
@@ -251,7 +253,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         ClassLoader classLoader = beanFactory.getBeanClassLoader();
 
-        Class beanClass = getBeanClass(beanDefinition, classLoader);
+        Class beanClass = resolveBeanClass(beanDefinition, classLoader);
         if (beanClass == null) {
             ResolvableType resolvableType = beanDefinition.getResolvableType();
             beanClass = resolvableType.resolve();
@@ -400,9 +402,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
 
         if (factoryMethod == null) { // The bean-class Definition
-            Class<?> beanClass = getBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
+            Class<?> beanClass = resolveBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
 
-            Constructor[] constructors = resolveConstructors(beanName, beanClass, beanFactory);
+            Constructor[] constructors = resolveConstructors(beanName, beanClass);
             int constructorsLength = constructors.length;
             if (constructorsLength != 1) {
                 logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
@@ -434,9 +436,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         Member resolvedBeanMember = null;
 
         if (factoryMethod == null) { // The bean-class Definition
-            Class<?> beanClass = getBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
+            Class<?> beanClass = resolveBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
 
-            Constructor[] constructors = resolveConstructors(beanName, beanClass, beanFactory);
+            Constructor[] constructors = resolveConstructors(beanName, beanClass);
             int constructorsLength = constructors.length;
             if (constructorsLength != 1) {
                 logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
@@ -455,10 +457,10 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return parameters;
     }
 
-    private Constructor[] resolveConstructors(String beanName, Class<?> beanClass, ConfigurableListableBeanFactory beanFactory) {
+    private Constructor[] resolveConstructors(String beanName, Class<?> beanClass) {
         Constructor[] constructors = null;
         if (!beanClass.isInterface()) {
-            List<SmartInstantiationAwareBeanPostProcessor> processors = getSmartInstantiationAwareBeanPostProcessors(beanFactory);
+            List<SmartInstantiationAwareBeanPostProcessor> processors = this.smartInstantiationAwareBeanPostProcessors;
             for (SmartInstantiationAwareBeanPostProcessor processor : processors) {
                 constructors = processor.determineCandidateConstructors(beanClass, beanName);
                 if (constructors != null) {
@@ -488,8 +490,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     }
 
-    private Class<?> getBeanClass(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
-        return beanDefinition.hasBeanClass() ? beanDefinition.getBeanClass() : resolveClass(beanDefinition.getBeanClassName(), classLoader);
+    private Class<?> resolveBeanClass(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
+        return resolveBeanType(beanDefinition, classLoader);
     }
 
     private Map<String, RootBeanDefinition> getEligibleBeanDefinitionsMap(DefaultListableBeanFactory beanFactory) {

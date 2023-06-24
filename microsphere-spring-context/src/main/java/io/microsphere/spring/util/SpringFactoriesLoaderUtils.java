@@ -34,7 +34,7 @@ import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableListable
 import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static io.microsphere.util.ClassUtils.resolveClass;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
 
 /**
