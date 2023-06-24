@@ -18,6 +18,7 @@ package io.microsphere.spring.beans.factory;
 
 import io.microsphere.collection.CollectionUtils;
 import io.microsphere.collection.SetUtils;
+import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,6 @@ import org.springframework.lang.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -48,16 +47,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletionService;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.reflect.MemberUtils.isStatic;
 import static io.microsphere.spring.util.BeanDefinitionUtils.resolveBeanType;
-import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
+import static io.microsphere.util.ClassLoaderUtils.loadClass;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.InheritableThreadLocal.withInitial;
 import static java.util.Arrays.asList;
@@ -86,25 +87,24 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private final DefaultListableBeanFactory beanFactory;
 
+    private final ClassLoader classLoader;
+
     private final ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
 
     private final InjectionPointDependencyResolvers resolvers;
 
     private final List<SmartInstantiationAwareBeanPostProcessor> smartInstantiationAwareBeanPostProcessors;
 
-    private final Executor executor;
+    private final ExecutorService executorService;
 
-    public DefaultBeanDependencyResolver(BeanFactory bf) {
-        this(bf, Runnable::run);
-    }
-
-    public DefaultBeanDependencyResolver(BeanFactory bf, Executor executor) {
+    public DefaultBeanDependencyResolver(BeanFactory bf, ExecutorService executorService) {
         isInstanceOf(DefaultListableBeanFactory.class, bf, "The BeanFactory is not an instance of DefaultListableBeanFactory");
         this.beanFactory = (DefaultListableBeanFactory) bf;
+        this.classLoader = this.beanFactory.getBeanClassLoader();
         this.resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
         this.resolvers = new InjectionPointDependencyResolvers(beanFactory);
         this.smartInstantiationAwareBeanPostProcessors = getSmartInstantiationAwareBeanPostProcessors(beanFactory);
-        this.executor = executor;
+        this.executorService = executorService;
     }
 
     @Override
@@ -117,12 +117,25 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap = getEligibleBeanDefinitionsMap(beanFactory);
-        int beansCount = eligibleBeanDefinitionsMap.size();
 
-        CompletionService<Map.Entry<String, Set<String>>> completionService = new ExecutorCompletionService<>(this.executor);
+        // Pre-Process Bean Classes for BeanDefinitions
+        preProcessLoadBeanClasses(eligibleBeanDefinitionsMap);
 
         // No Bean(name) conflict here, thus it could be HashMap since Java 8
-        Map<String, Set<String>> dependentBeanNamesMap = new HashMap<>(beansCount);
+        Map<String, Set<String>> dependentBeanNamesMap = resolveDependentBeanNamesMap(eligibleBeanDefinitionsMap);
+
+        flattenDependentBeanNamesMap(dependentBeanNamesMap);
+
+        clearResolvedBeanMembers();
+
+        return dependentBeanNamesMap;
+    }
+
+    private Map<String, Set<String>> resolveDependentBeanNamesMap(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap) {
+        int beansCount = eligibleBeanDefinitionsMap.size();
+        final Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
+
+        CompletionService<Map.Entry<String, Set<String>>> completionService = new ExecutorCompletionService<>(this.executorService);
 
         for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
             completionService.submit(() -> {
@@ -134,22 +147,61 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         }
 
         for (int i = 0; i < beansCount; i++) {
-            try {
+            ThrowableAction.execute(() -> {
                 Future<Map.Entry<String, Set<String>>> future = completionService.take();
                 Map.Entry<String, Set<String>> entry = future.get();
                 String beanName = entry.getKey();
                 Set<String> dependentBeanNames = entry.getValue();
                 dependentBeanNamesMap.put(beanName, dependentBeanNames);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
+            });
         }
 
-        flattenDependentBeanNamesMap(dependentBeanNamesMap);
-
-        clearResolvedBeanMembers();
-
         return dependentBeanNamesMap;
+    }
+
+    private void preProcessLoadBeanClasses(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap) {
+        ClassLoader classLoader = this.classLoader;
+        for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
+            String beanName = entry.getKey();
+            RootBeanDefinition beanDefinition = entry.getValue();
+            preProcessLoadBeanClass(beanName, beanDefinition, eligibleBeanDefinitionsMap, classLoader);
+        }
+        awaitTasksCompleted();
+    }
+
+    private void awaitTasksCompleted() {
+        while (execute(() -> executorService.awaitTermination(10, TimeUnit.MILLISECONDS))) {
+        }
+    }
+
+    private void preProcessLoadBeanClass(String beanName, RootBeanDefinition beanDefinition, Map<String, RootBeanDefinition> beanDefinitionsMap,
+                                         ClassLoader classLoader) {
+        String beanClassName = beanDefinition.getBeanClassName();
+        if (beanClassName == null) {
+            if (beanDefinition.getResolvedFactoryMethod() == null) {
+                String factoryBeanName = beanDefinition.getFactoryBeanName();
+                if (factoryBeanName != null) {
+                    RootBeanDefinition factoryBeanDefinition = getMergedBeanDefinition(factoryBeanName, beanDefinitionsMap);
+                    preProcessLoadBeanClass(factoryBeanName, factoryBeanDefinition, beanDefinitionsMap, classLoader);
+                }
+            }
+        } else {
+            executorService.execute(() -> {
+                Class beanClass = loadClass(beanClassName, classLoader, true);
+                beanDefinition.setBeanClass(beanClass);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("The bean[name : '{}'] class[name : '{}'] was loaded", beanName, beanClassName);
+                }
+            });
+        }
+    }
+
+    private RootBeanDefinition getMergedBeanDefinition(String beanName, Map<String, RootBeanDefinition> beanDefinitionsMap) {
+        RootBeanDefinition beanDefinition = beanDefinitionsMap.get(beanName);
+        if (beanDefinition == null) {
+            beanDefinition = (RootBeanDefinition) this.beanFactory.getMergedBeanDefinition(beanName);
+        }
+        return beanDefinition;
     }
 
     @Override
@@ -426,35 +478,6 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             }
         }
 
-    }
-
-    private Parameter[] getParameters(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory) {
-        Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
-
-        Parameter[] parameters = null;
-
-        Member resolvedBeanMember = null;
-
-        if (factoryMethod == null) { // The bean-class Definition
-            Class<?> beanClass = resolveBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
-
-            Constructor[] constructors = resolveConstructors(beanName, beanClass);
-            int constructorsLength = constructors.length;
-            if (constructorsLength != 1) {
-                logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
-                parameters = EMPTY_PARAMETER_ARRAY;
-            } else {
-                Constructor constructor = constructors[0];
-                parameters = constructor.getParameters();
-                resolvedBeanMember = constructor;
-            }
-        } else { // the @Bean or customized Method Definition
-            parameters = factoryMethod.getParameters();
-            resolvedBeanMember = factoryMethod;
-        }
-
-        addResolvedBeanMember(resolvedBeanMember);
-        return parameters;
     }
 
     private Constructor[] resolveConstructors(String beanName, Class<?> beanClass) {
