@@ -16,8 +16,12 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
@@ -44,9 +48,11 @@ import static org.springframework.core.MethodParameter.forParameter;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class AbstractInjectionPointDependencyResolver implements InjectionPointDependencyResolver {
+public abstract class AbstractInjectionPointDependencyResolver implements InjectionPointDependencyResolver, BeanFactoryAware {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
@@ -125,6 +131,10 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
 
     protected void resolveDependentBeanNamesByType(Supplier<Type> typeSupplier, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Class<?> dependentType = resolveDependentType(typeSupplier);
+        if (resolvableDependencyTypeFilter.accept(dependentType)) {
+            // The dependent type is a resolvable dependency type
+            return;
+        }
         String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
         for (int i = 0; i < beanNames.length; i++) {
             String beanName = beanNames[i];
@@ -171,5 +181,10 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             }
         }
         return dependentType;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.resolvableDependencyTypeFilter = ResolvableDependencyTypeFilter.getSingleton(beanFactory);
     }
 }
