@@ -17,12 +17,15 @@
 package io.microsphere.spring.beans.factory.filter;
 
 import io.microsphere.filter.Filter;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.Set;
 
 import static io.microsphere.spring.util.BeanFactoryUtils.getResolvableDependencyTypes;
+import static io.microsphere.spring.util.BeanRegistrar.registerSingleton;
 
 /**
  * A class to filter {@link ConfigurableListableBeanFactory#registerResolvableDependency(Class, Object) Resolvable Dependency Type}
@@ -32,14 +35,30 @@ import static io.microsphere.spring.util.BeanFactoryUtils.getResolvableDependenc
  */
 public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
 
+    public static final String BEAN_NAME = "resolvableDependencyTypeFilter";
+
     private final Set<Class<?>> resolvableDependencyTypes;
 
     public ResolvableDependencyTypeFilter(ConfigurableListableBeanFactory beanFactory) {
-        this.resolvableDependencyTypes = getResolvableDependencyTypes(beanFactory);
+        this((DefaultListableBeanFactory) beanFactory);
     }
 
     public ResolvableDependencyTypeFilter(DefaultListableBeanFactory beanFactory) {
         this.resolvableDependencyTypes = getResolvableDependencyTypes(beanFactory);
+        register(beanFactory);
+    }
+
+
+    private void register(SingletonBeanRegistry registry) {
+        registerSingleton(registry, BEAN_NAME, this);
+    }
+
+    public static ResolvableDependencyTypeFilter getSingleton(BeanFactory beanFactory) {
+        return getSingleton((SingletonBeanRegistry) beanFactory);
+    }
+
+    public static ResolvableDependencyTypeFilter getSingleton(SingletonBeanRegistry registry) {
+        return (ResolvableDependencyTypeFilter) registry.getSingleton(BEAN_NAME);
     }
 
     @Override
@@ -52,5 +71,12 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
             }
         }
         return filtered;
+    }
+
+    @Override
+    public String toString() {
+        return "ResolvableDependencyTypeFilter{" +
+                "resolvableDependencyTypes=" + resolvableDependencyTypes +
+                '}';
     }
 }
