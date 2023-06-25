@@ -16,9 +16,10 @@
  */
 package io.microsphere.spring.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -32,6 +33,7 @@ import java.util.List;
 import static java.beans.Introspector.decapitalize;
 import static java.lang.String.format;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
+import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
 import static org.springframework.util.ClassUtils.getShortName;
@@ -46,7 +48,7 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public abstract class BeanRegistrar {
 
-    private static final Log log = LogFactory.getLog(BeanRegistrar.class);
+    private static final Logger logger = LoggerFactory.getLogger(BeanRegistrar.class);
 
     /**
      * Register Infrastructure Bean
@@ -57,21 +59,7 @@ public abstract class BeanRegistrar {
      * @return if it's a first time to register, return <code>true</code>, or <code>false</code>
      */
     public static boolean registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry, String beanName, Class<?> beanType) {
-
-        boolean registered = false;
-
-        if (!beanDefinitionRegistry.containsBeanDefinition(beanName)) {
-            RootBeanDefinition beanDefinition = new RootBeanDefinition(beanType);
-            beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-            beanDefinitionRegistry.registerBeanDefinition(beanName, beanDefinition);
-            registered = true;
-
-            if (log.isInfoEnabled()) {
-                log.info("The Infrastructure bean definition [" + beanDefinition + "with name [" + beanName + "] has been registered.");
-            }
-        }
-
-        return registered;
+        return registerBeanDefinition(beanDefinitionRegistry, beanName, beanType, ROLE_INFRASTRUCTURE);
     }
 
     /**
@@ -111,18 +99,30 @@ public abstract class BeanRegistrar {
 
         boolean registered = false;
 
-        if (!registry.containsBeanDefinition(beanName)) {
+        if (registry.containsBeanDefinition(beanName)) {
+            BeanDefinition oldBeanDefinition = registry.getBeanDefinition(beanName);
+            if (logger.isWarnEnabled()) {
+                logger.warn("The bean[name : '{}'] definition [{}] was registered!", beanName, oldBeanDefinition);
+            }
+        } else {
             BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(beanType).setRole(role);
             AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
             registry.registerBeanDefinition(beanName, beanDefinition);
             registered = true;
 
-            if (log.isInfoEnabled()) {
-                log.info("The BeanDefinition [" + beanDefinition + "with name [" + beanName + "] has been registered.");
+            if (logger.isInfoEnabled()) {
+                logger.info("The bean[name : '{}' , role : {}] definition [{}] has been registered.", beanName, role, beanDefinition);
             }
         }
 
         return registered;
+    }
+
+    public static void registerSingleton(SingletonBeanRegistry registry, String beanName, Object bean) {
+        registry.registerSingleton(beanName, bean);
+        if (logger.isInfoEnabled()) {
+            logger.info("The singleton bean [name : '{}' , instance : {}] has been registered into the BeanFactory.", beanName, bean);
+        }
     }
 
     /**
@@ -160,8 +160,8 @@ public abstract class BeanRegistrar {
                 if (registerInfrastructureBean(registry, beanName, factoryImplClass)) {
                     count++;
                 } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn(format("The Factory Class bean[%s] has been registered with bean name[%s]", factoryImplClassName, beanName));
+                    if (logger.isWarnEnabled()) {
+                        logger.warn(format("The Factory Class bean[%s] has been registered with bean name[%s]", factoryImplClassName, beanName));
                     }
                 }
             }
