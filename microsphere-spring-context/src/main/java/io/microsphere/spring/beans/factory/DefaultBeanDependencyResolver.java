@@ -187,6 +187,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private void preProcessLoadBeanClass(String beanName, RootBeanDefinition beanDefinition, Map<String, RootBeanDefinition> beanDefinitionsMap,
                                          ClassLoader classLoader) {
+        if (beanDefinition.hasBeanClass()) {
+            return;
+        }
         String beanClassName = beanDefinition.getBeanClassName();
         if (beanClassName == null) {
             if (beanDefinition.getResolvedFactoryMethod() == null) {
