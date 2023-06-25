@@ -321,7 +321,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private void resolveInjectionPointsDependentBeanNames(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
 
-        ClassLoader classLoader = beanFactory.getBeanClassLoader();
+        ClassLoader classLoader = this.classLoader;
 
         Class beanClass = resolveBeanClass(beanDefinition, classLoader);
         if (beanClass == null) {
@@ -472,7 +472,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
 
         if (factoryMethod == null) { // The bean-class Definition
-            Class<?> beanClass = resolveBeanClass(beanDefinition, beanFactory.getBeanClassLoader());
+            Class<?> beanClass = resolveBeanClass(beanDefinition, this.classLoader);
 
             Constructor[] constructors = resolveConstructors(beanName, beanClass);
             int constructorsLength = constructors.length;
