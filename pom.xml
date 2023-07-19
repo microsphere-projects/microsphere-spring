@@ -44,6 +44,7 @@
         <module>microsphere-spring-context</module>
         <module>microsphere-spring-config</module>
         <module>microsphere-spring-jdbc</module>
+        <module>microsphere-spring-web</module>
         <module>microsphere-spring-webmvc</module>
         <module>microsphere-spring-redis</module>
         <module>microsphere-spring-redis-replicator</module>
