@@ -27,18 +27,18 @@ import java.util.Set;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see HttpRequestRule
  * @see org.springframework.web.servlet.mvc.condition.HeadersRequestCondition
- * @since 1.0.0
+ * @since 1.0.066
  */
 public class HttpRequestHeadersRule extends AbstractHttpRequestRule<HttpRequestHeadersRule> {
 
-    private final Set<HttpRequestParamExpression> expressions;
+    private final Set<HttpRequestHeaderExpression> expressions;
 
     public HttpRequestHeadersRule(String... params) {
-        this.expressions = HttpRequestParamExpression.of(params);
+        this.expressions = HttpRequestHeaderExpression.of(params);
     }
 
     @Override
-    protected Collection<HttpRequestParamExpression> getContent() {
+    protected Collection<HttpRequestHeaderExpression> getContent() {
         return this.expressions;
     }
 
@@ -49,7 +49,7 @@ public class HttpRequestHeadersRule extends AbstractHttpRequestRule<HttpRequestH
 
     @Override
     public HttpRequestHeadersRule getMatchingRule(HttpRequest request) {
-        for (HttpRequestParamExpression expression : expressions) {
+        for (HttpRequestHeaderExpression expression : expressions) {
             if (!expression.match(request)) {
                 return null;
             }
