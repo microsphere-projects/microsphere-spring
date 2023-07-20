@@ -17,28 +17,40 @@
 package io.microsphere.spring.web.rule;
 
 import org.springframework.http.HttpRequest;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
+
+import static io.microsphere.spring.web.rule.WebRequestHeaderExpression.parseExpressions;
 
 /**
- * {@link HttpRequest} Headers {@link HttpRequestRule}
+ * {@link HttpRequest} Headers {@link WebRequestRule}
+ * <p>
+ * A logical conjunction ({@code ' && '}) request condition that matches a request against
+ * a set of header expressions with syntax defined in {@link RequestMapping#headers()}.
  *
+ * <p>Expressions passed to the constructor with header names 'Accept' or
+ * 'Content-Type' are ignored.
+ *
+ * @author Arjen Poutsma
+ * @author Rossen Stoyanchev
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see HttpRequestRule
+ * @see WebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.HeadersRequestCondition
  * @since 1.0.066
  */
-public class HttpRequestHeadersRule extends AbstractHttpRequestRule<HttpRequestHeadersRule> {
+public class WebRequestHeadersRule extends AbstractWebRequestRule<WebRequestHeaderExpression> {
 
-    private final Set<HttpRequestHeaderExpression> expressions;
+    private final List<WebRequestHeaderExpression> expressions;
 
-    public HttpRequestHeadersRule(String... params) {
-        this.expressions = HttpRequestHeaderExpression.of(params);
+    public WebRequestHeadersRule(String... params) {
+        this.expressions = parseExpressions(params);
     }
 
     @Override
-    protected Collection<HttpRequestHeaderExpression> getContent() {
+    protected Collection<WebRequestHeaderExpression> getContent() {
         return this.expressions;
     }
 
@@ -48,12 +60,12 @@ public class HttpRequestHeadersRule extends AbstractHttpRequestRule<HttpRequestH
     }
 
     @Override
-    public HttpRequestHeadersRule getMatchingRule(HttpRequest request) {
-        for (HttpRequestHeaderExpression expression : expressions) {
+    public boolean matches(NativeWebRequest request) {
+        for (WebRequestHeaderExpression expression : expressions) {
             if (!expression.match(request)) {
-                return null;
+                return false;
             }
         }
-        return this;
+        return true;
     }
 }

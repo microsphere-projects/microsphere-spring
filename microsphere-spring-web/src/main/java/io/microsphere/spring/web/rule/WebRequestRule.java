@@ -18,16 +18,18 @@ package io.microsphere.spring.web.rule;
 
 import org.springframework.http.HttpRequest;
 import org.springframework.lang.Nullable;
+import org.springframework.web.context.request.NativeWebRequest;
 
 /**
- * {@link HttpRequest} Rule was inspired by {@linkplain org.springframework.web.servlet.mvc.condition.RequestCondition}
+ * {@link NativeWebRequest} Rule was inspired by {@linkplain org.springframework.web.servlet.mvc.condition.RequestCondition}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see NativeWebRequest
  * @see org.springframework.web.servlet.mvc.condition.RequestCondition
  * @since 1.0.0
  */
-public interface HttpRequestRule<T> {
+public interface WebRequestRule {
 
     @Nullable
-    T getMatchingRule(HttpRequest request);
+    boolean matches(NativeWebRequest request);
 }

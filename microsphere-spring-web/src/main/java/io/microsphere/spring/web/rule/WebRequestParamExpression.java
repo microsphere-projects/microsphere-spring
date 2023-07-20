@@ -16,32 +16,30 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.util.WebUtils;
 
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import static io.microsphere.net.URLUtils.resolveQueryParameters;
-import static java.util.Collections.emptySet;
+import static java.util.Collections.emptyList;
+import static org.springframework.util.ObjectUtils.containsElement;
 
 /**
- * {@link HttpRequest} Parameter {@link NameValueExpression}
+ * {@link NativeWebRequest WebRequest} Parameter {@link NameValueExpression}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see NameValueExpression
  * @since 1.0.0
  */
-public class HttpRequestParamExpression extends AbstractNameValueExpression {
+public class WebRequestParamExpression extends AbstractNameValueExpression {
 
     private final Set<String> namesToMatch = new HashSet<>(WebUtils.SUBMIT_IMAGE_SUFFIXES.length + 1);
 
-    public HttpRequestParamExpression(String expression) {
+    public WebRequestParamExpression(String expression) {
         super(expression);
         this.namesToMatch.add(getName());
         for (String suffix : WebUtils.SUBMIT_IMAGE_SUFFIXES) {
@@ -60,37 +58,30 @@ public class HttpRequestParamExpression extends AbstractNameValueExpression {
     }
 
     @Override
-    protected boolean matchName(HttpRequest request) {
-        Map<String, List<String>> parametersMap = getParametersMap(request);
+    protected boolean matchName(NativeWebRequest request) {
         for (String current : this.namesToMatch) {
-            if (parametersMap.containsKey(current)) {
+            if (request.getParameter(current) != null) {
                 return true;
             }
         }
-        return parametersMap.containsKey(this.name);
+        return request.getParameter(this.name) != null;
     }
 
     @Override
-    protected boolean matchValue(HttpRequest request) {
-        Map<String, List<String>> parametersMap = getParametersMap(request);
-        List<String> parameterValues = parametersMap.get(this.name);
-        return parameterValues != null && parameterValues.contains(this.value);
+    protected boolean matchValue(NativeWebRequest request) {
+        String[] parameterValues = request.getParameterValues(this.name);
+        return containsElement(parameterValues, this.value);
     }
 
-    private Map<String, List<String>> getParametersMap(HttpRequest request) {
-        URI requestURI = request.getURI();
-        return resolveQueryParameters(requestURI.toString());
-    }
-
-    protected static Set<HttpRequestParamExpression> of(String... params) {
+    protected static List<WebRequestParamExpression> parseExpressions(String... params) {
         if (ObjectUtils.isEmpty(params)) {
-            return emptySet();
+            return emptyList();
         }
         int length = params.length;
-        Set<HttpRequestParamExpression> expressions = new LinkedHashSet<>(length);
+        List<WebRequestParamExpression> expressions = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             String param = params[i];
-            expressions.add(new HttpRequestParamExpression(param));
+            expressions.add(new WebRequestParamExpression(param));
         }
         return expressions;
     }
