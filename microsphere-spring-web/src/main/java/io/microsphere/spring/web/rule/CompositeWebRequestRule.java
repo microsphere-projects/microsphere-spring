@@ -18,18 +18,35 @@ package io.microsphere.spring.web.rule;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 /**
  * Composite {@link WebRequestRule}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.0
  * @see org.springframework.web.servlet.mvc.condition.CompositeRequestCondition
  * @see org.springframework.web.reactive.result.condition.CompositeRequestCondition
+ * @since 1.0.0
  */
 public class CompositeWebRequestRule implements WebRequestRule {
-    
+
+    private List<WebRequestRule> webRequestRules;
+
+    public CompositeWebRequestRule(WebRequestRule... requestRules) {
+        this.webRequestRules = isEmpty(requestRules) ? emptyList() : Arrays.asList(requestRules);
+    }
+
     @Override
     public boolean matches(NativeWebRequest request) {
-        return false;
+        for (WebRequestRule webRequestRule : webRequestRules) {
+            if (!webRequestRule.matches(request)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
