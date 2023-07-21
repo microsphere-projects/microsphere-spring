@@ -35,7 +35,7 @@ import static org.springframework.util.ObjectUtils.containsElement;
  * @see NameValueExpression
  * @since 1.0.0
  */
-public class WebRequestParamExpression extends AbstractNameValueExpression {
+public class WebRequestParamExpression extends AbstractNameValueExpression<String> {
 
     private final Set<String> namesToMatch = new HashSet<>(WebUtils.SUBMIT_IMAGE_SUFFIXES.length + 1);
 
@@ -53,7 +53,7 @@ public class WebRequestParamExpression extends AbstractNameValueExpression {
     }
 
     @Override
-    protected Object parseValue(String valueExpression) {
+    protected String parseValue(String valueExpression) {
         return valueExpression;
     }
 

@@ -31,7 +31,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.util.ObjectUtils.containsElement;
 
 /**
- * {@link NativeWebRequest} Header {@link NameValueExpression}
+ * {@link NativeWebRequest WebRequest} Header {@link NameValueExpression}
  *
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
@@ -39,7 +39,7 @@ import static org.springframework.util.ObjectUtils.containsElement;
  * @see NameValueExpression
  * @since 1.0.0
  */
-public class WebRequestHeaderExpression extends AbstractNameValueExpression {
+public class WebRequestHeaderExpression extends AbstractNameValueExpression<String> {
 
     private final Set<String> namesToMatch = new HashSet<>(WebUtils.SUBMIT_IMAGE_SUFFIXES.length + 1);
 
@@ -57,7 +57,7 @@ public class WebRequestHeaderExpression extends AbstractNameValueExpression {
     }
 
     @Override
-    protected Object parseValue(String valueExpression) {
+    protected String parseValue(String valueExpression) {
         return valueExpression;
     }
 

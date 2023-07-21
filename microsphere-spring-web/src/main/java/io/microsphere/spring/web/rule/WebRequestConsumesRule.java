@@ -16,55 +16,62 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
 import java.util.List;
 
-import static io.microsphere.spring.web.rule.WebRequestHeaderExpression.parseExpressions;
+import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExpressions;
+
 
 /**
  * {@link NativeWebRequest WebRequest} Headers {@link WebRequestRule}
  * <p>
- * A logical conjunction ({@code ' && '}) request condition that matches a request against
- * a set of header expressions with syntax defined in {@link RequestMapping#headers()}.
- *
- * <p>Expressions passed to the constructor with header names 'Accept' or
- * 'Content-Type' are ignored.
+ * A logical disjunction (' || ') request condition to match a request's
+ * 'Content-Type' header to a list of media type expressions. Two kinds of
+ * media type expressions are supported, which are described in
+ * {@link RequestMapping#consumes()} and {@link RequestMapping#headers()}
+ * where the header name is 'Content-Type'. Regardless of which syntax is
+ * used, the semantics are the same.
  *
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebRequestRule
- * @see org.springframework.web.servlet.mvc.condition.HeadersRequestCondition
+ * @see org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition
  * @since 1.0.066
  */
-public class WebRequestHeadersRule extends AbstractWebRequestRule<WebRequestHeaderExpression> {
+public class WebRequestConsumesRule extends AbstractWebRequestRule<ConsumeMediaTypeExpression> {
 
-    private final List<WebRequestHeaderExpression> expressions;
+    private final List<ConsumeMediaTypeExpression> expressions;
 
-    public WebRequestHeadersRule(String... params) {
-        this.expressions = parseExpressions(params);
+    public WebRequestConsumesRule(String... consumes) {
+        this(consumes, null);
+    }
+
+    public WebRequestConsumesRule(String[] consumes, String... headers) {
+        this.expressions = parseExpressions(consumes, headers);
     }
 
     @Override
-    protected Collection<WebRequestHeaderExpression> getContent() {
+    protected Collection<ConsumeMediaTypeExpression> getContent() {
         return this.expressions;
     }
 
     @Override
     protected String getToStringInfix() {
-        return " && ";
+        return " || ";
     }
 
     @Override
     public boolean matches(NativeWebRequest request) {
-        for (WebRequestHeaderExpression expression : expressions) {
-            if (!expression.match(request)) {
-                return false;
-            }
+        int size = expressions.size();
+        for (int i = 0; i < size; i++) {
+            ConsumeMediaTypeExpression expression = expressions.get(i);
+//            if (!expression.match(request)) {
+//                return false;
+//            }
         }
         return true;
     }
