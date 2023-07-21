@@ -16,9 +16,11 @@
 
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.context.request.NativeWebRequest;
+
+import java.util.function.Function;
 
 /**
  * Supports "name=value" style expressions as described in:
@@ -69,7 +71,7 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
         return this.isNegated;
     }
 
-    public final boolean match(HttpRequest request) {
+    public final boolean match(NativeWebRequest request) {
         boolean isMatch;
         if (this.value != null) {
             isMatch = matchValue(request);
@@ -79,14 +81,13 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
         return this.isNegated != isMatch;
     }
 
-
     protected abstract boolean isCaseSensitiveName();
 
     protected abstract T parseValue(String valueExpression);
 
-    protected abstract boolean matchName(HttpRequest request);
+    protected abstract boolean matchName(NativeWebRequest request);
 
-    protected abstract boolean matchValue(HttpRequest request);
+    protected abstract boolean matchValue(NativeWebRequest request);
 
 
     @Override

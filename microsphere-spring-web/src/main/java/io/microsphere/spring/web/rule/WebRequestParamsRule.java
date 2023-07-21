@@ -16,29 +16,37 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.HttpRequest;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
+
+import static io.microsphere.spring.web.rule.WebRequestParamExpression.parseExpressions;
 
 /**
- * {@link HttpRequest} Parameters {@link HttpRequestRule}
+ * {@link NativeWebRequest WebRequest} Parameters {@link WebRequestRule}
+ * <p>
+ * A logical conjunction ({@code ' && '}) request condition that matches a request against
+ * a set parameter expressions with syntax defined in {@link RequestMapping#params()}.
  *
+ * @author Arjen Poutsma
+ * @author Rossen Stoyanchev
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see HttpRequestRule
+ * @see WebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.ParamsRequestCondition
  * @since 1.0.0
  */
-public class HttpRequestParamsRule extends AbstractHttpRequestRule<HttpRequestParamsRule> {
+public class WebRequestParamsRule extends AbstractWebRequestRule<WebRequestParamExpression> {
 
-    private final Set<HttpRequestParamExpression> expressions;
+    private final List<WebRequestParamExpression> expressions;
 
-    public HttpRequestParamsRule(String... params) {
-        this.expressions = HttpRequestParamExpression.of(params);
+    public WebRequestParamsRule(String... params) {
+        this.expressions = parseExpressions(params);
     }
 
     @Override
-    protected Collection<HttpRequestParamExpression> getContent() {
+    protected Collection<WebRequestParamExpression> getContent() {
         return this.expressions;
     }
 
@@ -48,12 +56,14 @@ public class HttpRequestParamsRule extends AbstractHttpRequestRule<HttpRequestPa
     }
 
     @Override
-    public HttpRequestParamsRule getMatchingRule(HttpRequest request) {
-        for (HttpRequestParamExpression expression : expressions) {
+    public boolean matches(NativeWebRequest request) {
+        int size = expressions.size();
+        for (int i = 0; i < size; i++) {
+            WebRequestParamExpression expression = expressions.get(i);
             if (!expression.match(request)) {
-                return null;
+                return false;
             }
         }
-        return this;
+        return true;
     }
 }

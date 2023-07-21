@@ -16,19 +16,18 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.lang.Nullable;
 
 import java.util.Collection;
 import java.util.StringJoiner;
 
 /**
- * Abstract {@link HttpRequestRule}
+ * Abstract {@link WebRequestRule}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class AbstractHttpRequestRule<T> implements HttpRequestRule<T> {
+public abstract class AbstractWebRequestRule<T> implements WebRequestRule {
 
     /**
      * Indicates whether this condition is empty, i.e. whether it
@@ -44,7 +43,7 @@ public abstract class AbstractHttpRequestRule<T> implements HttpRequestRule<T> {
      * <p>For example URL patterns, HTTP request methods, param expressions, etc.
      * @return a collection of objects (never {@code null})
      */
-    protected abstract Collection<?> getContent();
+    protected abstract Collection<T> getContent();
 
     /**
      * The notation to use when printing discrete items of content.
@@ -52,7 +51,6 @@ public abstract class AbstractHttpRequestRule<T> implements HttpRequestRule<T> {
      * for param expressions.
      */
     protected abstract String getToStringInfix();
-
 
     @Override
     public boolean equals(@Nullable Object other) {
@@ -62,7 +60,7 @@ public abstract class AbstractHttpRequestRule<T> implements HttpRequestRule<T> {
         if (other == null || getClass() != other.getClass()) {
             return false;
         }
-        return getContent().equals(((AbstractHttpRequestRule<?>) other).getContent());
+        return getContent().equals(((AbstractWebRequestRule<?>) other).getContent());
     }
 
     @Override

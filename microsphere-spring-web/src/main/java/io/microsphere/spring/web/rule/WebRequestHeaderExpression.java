@@ -16,34 +16,34 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
-import org.springframework.util.ObjectUtils;
+import io.microsphere.util.ArrayUtils;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.util.WebUtils;
 
-import java.net.URI;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import static io.microsphere.net.URLUtils.resolveQueryParameters;
-import static java.util.Collections.emptySet;
+import static java.util.Collections.emptyList;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.util.ObjectUtils.containsElement;
 
 /**
- * {@link HttpRequest} Header {@link NameValueExpression}
+ * {@link NativeWebRequest WebRequest} Header {@link NameValueExpression}
  *
+ * @author Arjen Poutsma
+ * @author Rossen Stoyanchev
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see NameValueExpression
  * @since 1.0.0
  */
-public class HttpRequestHeaderExpression extends AbstractNameValueExpression {
+public class WebRequestHeaderExpression extends AbstractNameValueExpression<String> {
 
     private final Set<String> namesToMatch = new HashSet<>(WebUtils.SUBMIT_IMAGE_SUFFIXES.length + 1);
 
-    public HttpRequestHeaderExpression(String expression) {
+    public WebRequestHeaderExpression(String expression) {
         super(expression);
         this.namesToMatch.add(getName());
         for (String suffix : WebUtils.SUBMIT_IMAGE_SUFFIXES) {
@@ -57,35 +57,35 @@ public class HttpRequestHeaderExpression extends AbstractNameValueExpression {
     }
 
     @Override
-    protected Object parseValue(String valueExpression) {
+    protected String parseValue(String valueExpression) {
         return valueExpression;
     }
 
     @Override
-    protected boolean matchName(HttpRequest request) {
-        HttpHeaders headers = request.getHeaders();
-        return headers.containsKey(this.name);
+    protected boolean matchName(NativeWebRequest request) {
+        return request.getHeader(this.name) != null;
     }
 
     @Override
-    protected boolean matchValue(HttpRequest request) {
-        HttpHeaders headers = request.getHeaders();
-        List<String> values = headers.getValuesAsList(this.name);
-        return values != null && values.contains(this.value);
+    protected boolean matchValue(NativeWebRequest request) {
+        String[] values = request.getHeaderValues(this.name);
+        return containsElement(values, this.value);
     }
 
-    protected static Set<HttpRequestHeaderExpression> of(String... headers) {
-        Set<HttpRequestHeaderExpression> result = null;
-        if (!ObjectUtils.isEmpty(headers)) {
-            for (String header : headers) {
-                HttpRequestHeaderExpression expression = new HttpRequestHeaderExpression(header);
-                if ("Accept".equalsIgnoreCase(expression.name) || "Content-Type".equalsIgnoreCase(expression.name)) {
+    protected static List<WebRequestHeaderExpression> parseExpressions(String... headers) {
+        List<WebRequestHeaderExpression> expressions = emptyList();
+        int size = ArrayUtils.size(headers);
+        if (size > 0) {
+            expressions = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                String header = headers[i];
+                WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
+                if (ACCEPT.equalsIgnoreCase(expression.name) || CONTENT_TYPE.equalsIgnoreCase(expression.name)) {
                     continue;
                 }
-                result = (result != null ? result : new LinkedHashSet<>(headers.length));
-                result.add(expression);
+                expressions.add(expression);
             }
         }
-        return (result != null ? result : emptySet());
+        return expressions;
     }
 }
