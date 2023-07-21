@@ -40,6 +40,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
  * @author Rossen Stoyanchev
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition
+ * @see org.springframework.web.reactive.result.condition.RequestMethodsRequestCondition
  * @since 1.0.0
  */
 public class WebRequestMethodsRule extends AbstractWebRequestRule<RequestMethod> {

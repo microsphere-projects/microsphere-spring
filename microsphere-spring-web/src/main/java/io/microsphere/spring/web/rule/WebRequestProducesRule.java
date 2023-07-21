@@ -49,6 +49,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.ProducesRequestCondition
+ * @see org.springframework.web.reactive.result.condition.ProducesRequestCondition
  * @since 1.0.066
  */
 public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaTypeExpression> {

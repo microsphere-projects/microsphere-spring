@@ -47,6 +47,7 @@ import static org.springframework.util.StringUtils.hasLength;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition
+ * @see org.springframework.web.reactive.result.condition.ConsumesRequestCondition
  * @since 1.0.066
  */
 public class WebRequestConsumesRule extends AbstractWebRequestRule<ConsumeMediaTypeExpression> {

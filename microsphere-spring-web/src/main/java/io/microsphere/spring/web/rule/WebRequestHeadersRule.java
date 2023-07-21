@@ -39,6 +39,7 @@ import static io.microsphere.spring.web.rule.WebRequestHeaderExpression.parseExp
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.HeadersRequestCondition
+ * @see org.springframework.web.reactive.result.condition.HeadersRequestCondition
  * @since 1.0.066
  */
 public class WebRequestHeadersRule extends AbstractWebRequestRule<WebRequestHeaderExpression> {

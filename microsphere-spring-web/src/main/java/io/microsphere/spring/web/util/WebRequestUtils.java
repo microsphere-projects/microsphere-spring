@@ -18,19 +18,16 @@ package io.microsphere.spring.web.util;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.ORIGIN;
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
+import static org.springframework.web.util.UrlPathHelper.PATH_ATTRIBUTE;
 
 /**
  * {@link WebRequest} Utilities class
@@ -65,6 +62,19 @@ public abstract class WebRequestUtils {
         String transferEncoding = request.getHeader(HttpHeaders.TRANSFER_ENCODING);
         return StringUtils.hasText(transferEncoding) ||
                 (StringUtils.hasText(contentLength) && !contentLength.trim().equals("0"));
+    }
+
+    /**
+     * Return a previously {@link #getLookupPathForRequest resolved} lookupPath.
+     *
+     * @param request the current request
+     * @return the previously resolved lookupPath
+     * @throws IllegalArgumentException if the lookup path is not found
+     */
+    public static String getResolvedLookupPath(NativeWebRequest request) {
+        String lookupPath = (String) request.getAttribute(PATH_ATTRIBUTE, SCOPE_REQUEST);
+        Assert.notNull(lookupPath, () -> "Expected lookupPath in request attribute \"" + PATH_ATTRIBUTE + "\".");
+        return lookupPath;
     }
 
 }
