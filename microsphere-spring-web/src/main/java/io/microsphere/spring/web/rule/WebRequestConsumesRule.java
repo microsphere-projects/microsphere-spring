@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.web.rule;
 
+import org.springframework.http.InvalidMediaTypeException;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -23,10 +25,15 @@ import java.util.Collection;
 import java.util.List;
 
 import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExpressions;
+import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
+import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
+import static org.springframework.http.MediaType.parseMediaType;
+import static org.springframework.util.StringUtils.hasLength;
 
 
 /**
- * {@link NativeWebRequest WebRequest} Headers {@link WebRequestRule}
+ * {@link NativeWebRequest WebRequest} Consumes {@link WebRequestRule}
  * <p>
  * A logical disjunction (' || ') request condition to match a request's
  * 'Content-Type' header to a list of media type expressions. Two kinds of
@@ -66,12 +73,27 @@ public class WebRequestConsumesRule extends AbstractWebRequestRule<ConsumeMediaT
 
     @Override
     public boolean matches(NativeWebRequest request) {
+        if (isPreFlightRequest(request)) {
+            return false;
+        }
+        if (isEmpty()) {
+            return false;
+        }
+
+        MediaType contentType;
+        try {
+            String contentTypeValue = getContentType(request);
+            contentType = hasLength(contentTypeValue) ? parseMediaType(contentTypeValue) : APPLICATION_OCTET_STREAM;
+        } catch (InvalidMediaTypeException ex) {
+            return false;
+        }
+
         int size = expressions.size();
         for (int i = 0; i < size; i++) {
             ConsumeMediaTypeExpression expression = expressions.get(i);
-//            if (!expression.match(request)) {
-//                return false;
-//            }
+            if (!expression.match(contentType)) {
+                return false;
+            }
         }
         return true;
     }

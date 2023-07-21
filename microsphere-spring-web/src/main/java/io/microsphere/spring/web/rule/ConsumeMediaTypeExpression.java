@@ -26,6 +26,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.parseMediaTypes;
+
 /**
  * Parses and matches a single media type expression to a request's 'Content-Type' header.
  *
@@ -56,9 +59,10 @@ public class ConsumeMediaTypeExpression extends AbstractMediaTypeExpression {
         if (!ObjectUtils.isEmpty(headers)) {
             for (String header : headers) {
                 WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
-                if ("Content-Type".equalsIgnoreCase(expression.name) && expression.value != null) {
+                if (CONTENT_TYPE.equalsIgnoreCase(expression.name) && expression.value != null) {
                     result = (result != null ? result : new LinkedHashSet<>());
-                    for (MediaType mediaType : MediaType.parseMediaTypes(expression.value)) {
+                    List<MediaType> mediaTypes = parseMediaTypes(expression.value);
+                    for (MediaType mediaType : mediaTypes) {
                         result.add(new ConsumeMediaTypeExpression(mediaType, expression.isNegated));
                     }
                 }

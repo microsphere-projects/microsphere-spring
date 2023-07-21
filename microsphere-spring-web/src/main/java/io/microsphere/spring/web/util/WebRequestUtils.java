@@ -18,33 +18,53 @@ package io.microsphere.spring.web.util;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpRequest;
+import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.ORIGIN;
 
 /**
- * HTTP Utilities class
+ * {@link WebRequest} Utilities class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class HttpUtils {
+public abstract class WebRequestUtils {
+
+    public static String getMethod(NativeWebRequest request) {
+        String method = request.getHeader(":METHOD:");
+        return method;
+    }
 
     /**
      * Returns {@code true} if the request is a valid CORS pre-flight one by checking {@code OPTIONS} method with
      * {@code Origin} and {@code Access-Control-Request-Method} headers presence.
      */
-    public static boolean isPreFlightRequest(HttpRequest request) {
-        HttpHeaders headers = request.getHeaders();
-        return (HttpMethod.OPTIONS.equals(request.getMethod()) &&
-                headers.containsKey(ORIGIN) &&
-                headers.containsKey(ACCESS_CONTROL_REQUEST_METHOD));
+    public static boolean isPreFlightRequest(NativeWebRequest request) {
+        String method = getMethod(request);
+        return (HttpMethod.OPTIONS.matches(method) &&
+                request.getParameter(ORIGIN) != null &&
+                request.getParameter(ACCESS_CONTROL_REQUEST_METHOD) != null);
     }
 
-    public static String getContentType(HttpRequest request) {
-        HttpHeaders headers = request.getHeaders();
-        return headers.getFirst(CONTENT_TYPE);
+    public static String getContentType(NativeWebRequest request) {
+        return request.getParameter(CONTENT_TYPE);
     }
+
+    public static boolean hasBody(NativeWebRequest request) {
+        String contentLength = request.getHeader(HttpHeaders.CONTENT_LENGTH);
+        String transferEncoding = request.getHeader(HttpHeaders.TRANSFER_ENCODING);
+        return StringUtils.hasText(transferEncoding) ||
+                (StringUtils.hasText(contentLength) && !contentLength.trim().equals("0"));
+    }
+
 }
