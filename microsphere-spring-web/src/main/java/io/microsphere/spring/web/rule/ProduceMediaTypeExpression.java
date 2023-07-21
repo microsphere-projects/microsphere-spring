@@ -38,7 +38,7 @@ import static org.springframework.http.MediaType.parseMediaTypes;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ProduceMediaTypeExpression extends AbstractMediaTypeExpression {
+public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
 
     public ProduceMediaTypeExpression(String expression) {
         super(expression);

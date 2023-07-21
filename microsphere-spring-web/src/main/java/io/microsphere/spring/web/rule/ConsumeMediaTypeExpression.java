@@ -38,7 +38,7 @@ import static org.springframework.http.MediaType.parseMediaTypes;
  * @see org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition.ConsumeMediaTypeExpression
  * @since 1.0.0
  */
-public class ConsumeMediaTypeExpression extends AbstractMediaTypeExpression {
+public class ConsumeMediaTypeExpression extends GenericMediaTypeExpression {
 
     public ConsumeMediaTypeExpression(String expression) {
         super(expression);
