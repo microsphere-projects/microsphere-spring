@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
