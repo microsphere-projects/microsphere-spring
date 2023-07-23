@@ -16,7 +16,10 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import org.springframework.core.ResolvableType;
 import org.springframework.lang.NonNull;
+
+import static org.springframework.core.ResolvableType.forClass;
 
 /**
  * The factory interface for {@link WebMappingDescriptor}
@@ -26,6 +29,16 @@ import org.springframework.lang.NonNull;
  * @since 1.0.0
  */
 public interface WebMappingDescriptorFactory<S> {
+
+    /**
+     * Get the type of source
+     *
+     * @return the type of source
+     */
+    @NonNull
+    default Class<S> getSourceType() {
+        return (Class<S>) forClass(getClass()).as(WebMappingDescriptorFactory.class).resolveGeneric(0);
+    }
 
     /**
      * Create the instance of {@link WebMappingDescriptor}
