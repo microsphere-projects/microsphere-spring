@@ -14,13 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.bind.annotation;
+package io.microsphere.spring.web.metadata;
 
 import io.microsphere.util.ArrayUtils;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.method.HandlerMethod;
+
 
 import java.util.Arrays;
+import java.util.EventObject;
 
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COLON_CHAR;
@@ -29,15 +33,29 @@ import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
 
 /**
- * The Raw meta-data class for the Spring's annotation {@link RequestMapping @RequestMapping}.
+ * The descriptor class for Web Mapping that could be one of these sources:
+ * <ul>
+ *     <li>Servlet Mapping</li>
+ *     <li>Servlet's Filter Mapping</li>
+ *     <li>Spring WebMVC Mapping</li>
+ *     <li>Spring WebFlux Mapping</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see javax.servlet.ServletRegistration
+ * @see javax.servlet.FilterRegistration
+ * @see javax.servlet.annotation.WebServlet
+ * @see javax.servlet.annotation.WebFilter
+ * @see org.springframework.web.servlet.HandlerMapping
+ * @see org.springframework.web.reactive.HandlerMapping
  * @see RequestMapping
  * @see org.springframework.web.servlet.mvc.method.RequestMappingInfo
  * @see org.springframework.web.reactive.result.method.RequestMappingInfo
  * @since 1.0.0
  */
-public class RawRequestMappingMetadata {
+public class WebMappingDescriptor {
+
+    private final Object source;
 
     private final String[] patterns;
 
@@ -51,42 +69,82 @@ public class RawRequestMappingMetadata {
 
     private final String[] produces;
 
-    public RawRequestMappingMetadata(String... patterns) {
-        this(patterns, null);
+    public static class Builder {
+
+        private final Object source;
+
+        private String[] patterns;
+
+        private String[] methods;
+
+        private String[] params;
+
+        private String[] headers;
+
+        private String[] consumes;
+
+        private String[] produces;
+
+        private Builder(Object source) {
+            Assert.notNull(source, "The source must not be null!");
+            this.source = source;
+        }
+
+        public Builder patterns(String... patterns) {
+            this.patterns = patterns;
+            return this;
+        }
+
+        public Builder methods(String... methods) {
+            this.methods = methods;
+            return this;
+        }
+
+        public Builder params(String... params) {
+            this.params = params;
+            return this;
+        }
+
+        public Builder headers(String... headers) {
+            this.headers = headers;
+            return this;
+        }
+
+        public Builder consumes(String... consumes) {
+            this.consumes = consumes;
+            return this;
+        }
+
+        public Builder produces(String... produces) {
+            this.produces = produces;
+            return this;
+        }
+
+        public WebMappingDescriptor build() {
+            return new WebMappingDescriptor(this.source,
+                    this.patterns,
+                    this.methods,
+                    this.params,
+                    this.headers,
+                    this.consumes,
+                    this.produces
+            );
+        }
+
     }
 
-    public RawRequestMappingMetadata(String[] patterns,
-                                     @Nullable String... methods) {
-        this(patterns, methods, null);
+    public static Builder source(Object source) {
+        return new Builder(source);
     }
 
-    public RawRequestMappingMetadata(String[] patterns,
-                                     @Nullable String[] methods,
-                                     @Nullable String... params) {
-        this(patterns, methods, params, null);
-    }
-
-    public RawRequestMappingMetadata(String[] patterns,
-                                     @Nullable String[] methods,
-                                     @Nullable String[] params,
-                                     @Nullable String... headers) {
-        this(patterns, methods, params, headers, null);
-    }
-
-    public RawRequestMappingMetadata(String[] patterns,
-                                     @Nullable String[] methods,
-                                     @Nullable String[] params,
-                                     @Nullable String[] headers,
-                                     @Nullable String... consumes) {
-        this(patterns, methods, params, headers, consumes, null);
-    }
-
-    public RawRequestMappingMetadata(String[] patterns,
-                                     @Nullable String[] methods,
-                                     @Nullable String[] params,
-                                     @Nullable String[] headers,
-                                     @Nullable String[] consumes,
-                                     @Nullable String... produces) {
+    private WebMappingDescriptor(Object source,
+                                 String[] patterns,
+                                 @Nullable String[] methods,
+                                 @Nullable String[] params,
+                                 @Nullable String[] headers,
+                                 @Nullable String[] consumes,
+                                 @Nullable String... produces) {
+        this.source = source;
         this.patterns = patterns;
         this.methods = methods;
         this.params = params;
@@ -95,35 +153,40 @@ public class RawRequestMappingMetadata {
         this.produces = produces;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RawRequestMappingMetadata that = (RawRequestMappingMetadata) o;
-        return Arrays.equals(patterns, that.patterns) && Arrays.equals(methods, that.methods) && Arrays.equals(params, that.params) && Arrays.equals(headers, that.headers) && Arrays.equals(consumes, that.consumes) && Arrays.equals(produces, that.produces);
+    public HandlerMethod getHandlerMethod() {
+        Object source = getSource();
+        if (source instanceof HandlerMethod) {
+            return (HandlerMethod) source;
+        }
+        return null;
     }
 
-    @Override
-    public int hashCode() {
-        int result = Arrays.hashCode(patterns);
-        result = 31 * result + Arrays.hashCode(methods);
-        result = 31 * result + Arrays.hashCode(params);
-        result = 31 * result + Arrays.hashCode(headers);
-        result = 31 * result + Arrays.hashCode(consumes);
-        result = 31 * result + Arrays.hashCode(produces);
-        return result;
+    public Object getSource() {
+        return source;
     }
 
-    @Override
-    public String toString() {
-        return "RawRequestMappingMetadata{" +
-                "patterns=" + Arrays.toString(patterns) +
-                ", methods=" + Arrays.toString(methods) +
-                ", params=" + Arrays.toString(params) +
-                ", headers=" + Arrays.toString(headers) +
-                ", consumes=" + Arrays.toString(consumes) +
-                ", produces=" + Arrays.toString(produces) +
-                '}';
+    public String[] getPatterns() {
+        return patterns;
+    }
+
+    public String[] getMethods() {
+        return methods;
+    }
+
+    public String[] getParams() {
+        return params;
+    }
+
+    public String[] getHeaders() {
+        return headers;
+    }
+
+    public String[] getConsumes() {
+        return consumes;
+    }
+
+    public String[] getProduces() {
+        return produces;
     }
 
     public String toJSON() {

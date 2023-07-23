@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.bind.annotation;
+package io.microsphere.spring.web.metadata;
 
+import io.microsphere.spring.web.metadata.WebMappingDescriptor;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static io.microsphere.util.ArrayUtils.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * {@link RawRequestMappingMetadata} Test
+ * {@link WebMappingDescriptor} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class RawRequestMappingMetadataTest {
+public class WebMappingInfoTest {
 
     private static final String P_JSON = "{\n" +
             "\"patterns\":[\"/a\",\"/b\",\"/c\"]\n" +
@@ -46,13 +49,23 @@ public class RawRequestMappingMetadataTest {
 
     @Test
     public void testToJSON() {
-        RawRequestMappingMetadata metadata = new RawRequestMappingMetadata("/a", "/b", "/c");
-        assertEquals(P_JSON, metadata.toJSON());
+        WebMappingDescriptor descriptor = WebMappingDescriptor.source(this)
+                .patterns("/a", "/b", "/c")
+                .build();
+        assertEquals(P_JSON, descriptor.toJSON());
 
-        metadata = new RawRequestMappingMetadata(of("/a", "/b", "/c"), "GET", "POST");
-        assertEquals(PM_JSON, metadata.toJSON());
+        descriptor = WebMappingDescriptor.source(this)
+                .patterns("/a", "/b", "/c")
+                .methods("GET", "POST")
+                .build();
+        assertEquals(PM_JSON, descriptor.toJSON());
 
-        metadata = new RawRequestMappingMetadata(of("/a", "/b", "/c"), of("GET", "POST"), "a=1", "b=2");
-        assertEquals(PMP_JSON, metadata.toJSON());
+        descriptor = WebMappingDescriptor.source(this)
+                .patterns("/a", "/b", "/c")
+                .methods("GET", "POST")
+                .params("a=1", "b=2")
+                .build();
+
+        assertEquals(PMP_JSON, descriptor.toJSON());
     }
 }
