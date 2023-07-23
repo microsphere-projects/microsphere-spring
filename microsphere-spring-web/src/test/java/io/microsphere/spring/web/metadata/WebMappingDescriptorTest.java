@@ -94,6 +94,7 @@ public class WebMappingDescriptorTest {
                 .patterns("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")
+                .headers("c=3", "d!=4")
                 .consumes("application/json", "application/xml")
                 .produces("text/html", "text/xml")
                 .build();

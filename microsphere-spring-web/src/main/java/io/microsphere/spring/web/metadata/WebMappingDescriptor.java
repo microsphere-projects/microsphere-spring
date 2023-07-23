@@ -17,6 +17,7 @@
 package io.microsphere.spring.web.metadata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.microsphere.util.ArrayUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -137,7 +138,6 @@ public class WebMappingDescriptor {
         return new Builder(source);
     }
 
-    @JsonCreator
     private WebMappingDescriptor(Object source,
                                  String[] patterns,
                                  @Nullable String[] methods,
@@ -152,6 +152,13 @@ public class WebMappingDescriptor {
         this.headers = headers;
         this.consumes = consumes;
         this.produces = produces;
+    }
+
+    /**
+     * For serialization
+     */
+    private WebMappingDescriptor() {
+        this(null, null, null, null, null, null, null);
     }
 
     public HandlerMethod getHandlerMethod() {
