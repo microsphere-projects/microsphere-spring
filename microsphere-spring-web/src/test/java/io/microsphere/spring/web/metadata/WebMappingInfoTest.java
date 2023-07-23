@@ -16,12 +16,8 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.web.metadata.WebMappingDescriptor;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static io.microsphere.util.ArrayUtils.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

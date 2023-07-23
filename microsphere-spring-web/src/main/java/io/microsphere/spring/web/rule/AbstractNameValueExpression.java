@@ -20,8 +20,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.function.Function;
-
 /**
  * Supports "name=value" style expressions as described in:
  * {@link org.springframework.web.bind.annotation.RequestMapping#params()} and
