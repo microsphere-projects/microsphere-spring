@@ -21,10 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
 
 /**
@@ -51,6 +53,9 @@ public class SmartWebMappingDescriptorFactory implements WebMappingDescriptorFac
         ClassLoader targetClassLoader = classLoader == null ? ClassLoaderUtils.getDefaultClassLoader() : classLoader;
         List<String> factoryClassNames = loadFactoryNames(WebMappingDescriptorFactory.class, targetClassLoader);
         int size = factoryClassNames.size();
+        if (size == 0) {
+            return emptyMap();
+        }
         Map<Class<?>, WebMappingDescriptorFactory<?>> delegates = new HashMap<>(size);
         for (int i = 0; i < size; i++) {
             String factoryClassName = factoryClassNames.get(i);
