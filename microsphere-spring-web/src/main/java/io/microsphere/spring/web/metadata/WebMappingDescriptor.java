@@ -143,7 +143,7 @@ public class WebMappingDescriptor {
                                  @Nullable String[] params,
                                  @Nullable String[] headers,
                                  @Nullable String[] consumes,
-                                 @Nullable String... produces) {
+                                 @Nullable String[] produces) {
         this.source = source;
         this.patterns = patterns;
         this.methods = methods;
