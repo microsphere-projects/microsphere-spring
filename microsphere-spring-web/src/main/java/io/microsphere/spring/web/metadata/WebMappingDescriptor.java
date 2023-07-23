@@ -55,7 +55,7 @@ import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
  */
 public class WebMappingDescriptor {
 
-    private final Object source;
+    private final transient Object source;
 
     private final String[] patterns;
 
