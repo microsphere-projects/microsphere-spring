@@ -31,13 +31,19 @@ import static org.springframework.core.ResolvableType.forClass;
 public interface WebMappingDescriptorFactory<S> {
 
     /**
-     * Get the type of source
+     * Current factory supports the specified source or not
      *
-     * @return the type of source
+     * @param source could be one of these :
+     *               <ul>
+     *               <li>{@link javax.servlet.ServletRegistration}</li>
+     *               <li>{@link javax.servlet.FilterRegistration}</li>
+     *               <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
+     *               <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
+     *               </ul>
+     * @return <code>true</code> if supports, <code>false</code> otherwise
      */
-    @NonNull
-    default Class<S> getSourceType() {
-        return (Class<S>) forClass(getClass()).as(WebMappingDescriptorFactory.class).resolveGeneric(0);
+    default boolean supports(S source) {
+        return true;
     }
 
     /**
@@ -54,4 +60,15 @@ public interface WebMappingDescriptorFactory<S> {
      */
     @NonNull
     WebMappingDescriptor create(S source);
+
+
+    /**
+     * Get the type of source
+     *
+     * @return the type of source
+     */
+    @NonNull
+    default Class<S> getSourceType() {
+        return (Class<S>) forClass(getClass()).as(WebMappingDescriptorFactory.class).resolveGeneric(0);
+    }
 }

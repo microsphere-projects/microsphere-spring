@@ -16,11 +16,15 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.microsphere.util.ArrayUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COLON_CHAR;
@@ -133,6 +137,7 @@ public class WebMappingDescriptor {
         return new Builder(source);
     }
 
+    @JsonCreator
     private WebMappingDescriptor(Object source,
                                  String[] patterns,
                                  @Nullable String[] methods,
@@ -183,6 +188,39 @@ public class WebMappingDescriptor {
 
     public String[] getProduces() {
         return produces;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WebMappingDescriptor that = (WebMappingDescriptor) o;
+        return Objects.equals(source, that.source) && Arrays.equals(patterns, that.patterns) && Arrays.equals(methods, that.methods) && Arrays.equals(params, that.params) && Arrays.equals(headers, that.headers) && Arrays.equals(consumes, that.consumes) && Arrays.equals(produces, that.produces);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(source);
+        result = 31 * result + Arrays.hashCode(patterns);
+        result = 31 * result + Arrays.hashCode(methods);
+        result = 31 * result + Arrays.hashCode(params);
+        result = 31 * result + Arrays.hashCode(headers);
+        result = 31 * result + Arrays.hashCode(consumes);
+        result = 31 * result + Arrays.hashCode(produces);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "WebMappingDescriptor{" +
+                "source=" + source +
+                ", patterns=" + Arrays.toString(patterns) +
+                ", methods=" + Arrays.toString(methods) +
+                ", params=" + Arrays.toString(params) +
+                ", headers=" + Arrays.toString(headers) +
+                ", consumes=" + Arrays.toString(consumes) +
+                ", produces=" + Arrays.toString(produces) +
+                '}';
     }
 
     public String toJSON() {
