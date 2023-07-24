@@ -18,6 +18,7 @@ package io.microsphere.spring.web.metadata;
 
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import static org.springframework.core.ResolvableType.forClass;
 
@@ -56,9 +57,9 @@ public interface WebMappingDescriptorFactory<S> {
      *               <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
      *               <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
      *               </ul>
-     * @return non-null
+     * @return <code>null</code> if can't be created
      */
-    @NonNull
+    @Nullable
     WebMappingDescriptor create(S source);
 
 

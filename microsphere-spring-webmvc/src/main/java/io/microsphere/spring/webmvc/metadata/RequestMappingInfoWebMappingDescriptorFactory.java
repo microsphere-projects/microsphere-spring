@@ -18,6 +18,8 @@ package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.web.metadata.WebMappingDescriptor;
 import io.microsphere.spring.web.metadata.WebMappingDescriptorFactory;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
@@ -25,12 +27,16 @@ import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
 import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 import org.springframework.web.servlet.mvc.condition.NameValueExpression;
 import org.springframework.web.servlet.mvc.condition.ParamsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
+import java.util.Set;
+
 import static io.microsphere.spring.web.metadata.WebMappingDescriptor.patterns;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link WebMappingDescriptorFactory} based on Spring WebMVC {@link RequestMappingInfo}
@@ -42,22 +48,48 @@ import static io.microsphere.spring.web.metadata.WebMappingDescriptor.patterns;
  */
 public class RequestMappingInfoWebMappingDescriptorFactory implements WebMappingDescriptorFactory<RequestMappingInfo> {
 
+    private static final String CLASS_NAME = "org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition";
+
+    private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
+
     @Override
     public WebMappingDescriptor create(RequestMappingInfo source) {
 
-        PatternsRequestCondition patternsCondition = source.getPatternsCondition();
+        Set<String> patterns = getPatterns(source);
+
+        if (isEmpty(patterns)) {
+            return null;
+        }
+
         RequestMethodsRequestCondition methodsCondition = source.getMethodsCondition();
         ParamsRequestCondition paramsCondition = source.getParamsCondition();
         HeadersRequestCondition headersCondition = source.getHeadersCondition();
         ConsumesRequestCondition consumesCondition = source.getConsumesCondition();
         ProducesRequestCondition producesCondition = source.getProducesCondition();
 
-        return patterns(patternsCondition.getPatterns())
+        return patterns(patterns)
                 .methods(methodsCondition.getMethods(), RequestMethod::name)
                 .params(paramsCondition.getExpressions(), NameValueExpression::toString)
                 .headers(headersCondition.getExpressions(), NameValueExpression::toString)
                 .consumes(consumesCondition.getExpressions(), MediaTypeExpression::toString)
                 .produces(producesCondition.getExpressions(), MediaTypeExpression::toString)
                 .build();
+    }
+
+    private Set<String> getPatterns(RequestMappingInfo source) {
+        Set<String> patterns = null;
+        if (PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT) {
+            PathPatternsRequestCondition pathPatternsCondition = source.getPathPatternsCondition();
+            if (pathPatternsCondition != null) {
+                patterns = pathPatternsCondition.getPatternValues();
+            }
+        }
+        if (isEmpty(patterns)) {
+            PatternsRequestCondition patternsCondition = source.getPatternsCondition();
+            if (patternsCondition != null) {
+                patterns = patternsCondition.getPatterns();
+            }
+        }
+        return patterns;
     }
 }

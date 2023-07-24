@@ -16,18 +16,13 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.web.metadata.SmartWebMappingDescriptorFactory;
 import io.microsphere.spring.web.metadata.WebMappingDescriptor;
-import io.microsphere.spring.webmvc.method.PublishingHandlerMethodsEventListener;
-import io.microsphere.spring.webmvc.method.RequestMappingInfoHandlerMethodsReadyEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.EventListener;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -47,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(classes = {
         RequestMappingInfoWebMappingDescriptorFactoryTest.class
 },
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
 public class RequestMappingInfoWebMappingDescriptorFactoryTest {
 
@@ -67,9 +62,9 @@ public class RequestMappingInfoWebMappingDescriptorFactoryTest {
     @Test
     public void test() {
         assertNotNull(handlerMethods);
-        handlerMethods.keySet().forEach(requestMappingInfo ->{
+        handlerMethods.keySet().forEach(requestMappingInfo -> {
             WebMappingDescriptor webMappingDescriptor = factory.create(requestMappingInfo);
-            System.out.println(webMappingDescriptor.toJSON());
+            assertNotNull(webMappingDescriptor.toJSON());
         });
 
     }
