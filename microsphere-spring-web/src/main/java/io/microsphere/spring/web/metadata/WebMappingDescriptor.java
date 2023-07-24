@@ -17,9 +17,8 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.util.ArrayUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Arrays;
@@ -59,6 +58,10 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  */
 public class WebMappingDescriptor {
 
+    public static final Object NON_SOURCE = new Object();
+
+    private final transient Object source;
+
     private final String[] patterns;
 
     private final String[] methods;
@@ -72,6 +75,9 @@ public class WebMappingDescriptor {
     private final String[] produces;
 
     public static class Builder {
+
+        private final Object source;
+
         private final String[] patterns;
 
         private String[] methods;
@@ -84,8 +90,9 @@ public class WebMappingDescriptor {
 
         private String[] produces;
 
-        private Builder(String[] patterns) {
+        private Builder(Object source, String[] patterns) {
             isTrue(!isEmpty(patterns), "The patterns must not be empty!");
+            this.source = source == null ? NON_SOURCE : source;
             this.patterns = patterns;
         }
 
@@ -143,6 +150,7 @@ public class WebMappingDescriptor {
 
         public WebMappingDescriptor build() {
             return new WebMappingDescriptor(
+                    this.source,
                     this.patterns,
                     this.methods,
                     this.params,
@@ -154,20 +162,31 @@ public class WebMappingDescriptor {
 
     }
 
-    public static Builder patterns(Collection<String> patterns) {
-        return patterns(ArrayUtils.asArray(patterns, String.class));
+    public static Builder of(@NonNull Collection<String> patterns) {
+        return of(null, patterns);
     }
 
-    public static Builder patterns(String... patterns) {
-        return new Builder(patterns);
+    public static Builder of(@NonNull String... patterns) {
+        return of(null, patterns);
     }
 
-    private WebMappingDescriptor(String[] patterns,
-                                 @Nullable String[] methods,
-                                 @Nullable String[] params,
-                                 @Nullable String[] headers,
-                                 @Nullable String[] consumes,
-                                 @Nullable String[] produces) {
+    public static Builder of(@Nullable Object source, Collection<String> patterns) {
+        return of(source, ArrayUtils.asArray(patterns, String.class));
+    }
+
+    public static Builder of(@Nullable Object source, String... patterns) {
+        return new Builder(source, patterns);
+    }
+
+    private WebMappingDescriptor(
+            Object source,
+            String[] patterns,
+            @Nullable String[] methods,
+            @Nullable String[] params,
+            @Nullable String[] headers,
+            @Nullable String[] consumes,
+            @Nullable String[] produces) {
+        this.source = source;
         this.patterns = patterns;
         this.methods = methods;
         this.params = params;
@@ -180,7 +199,7 @@ public class WebMappingDescriptor {
      * For serialization
      */
     private WebMappingDescriptor() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     public String[] getPatterns() {
@@ -207,42 +226,6 @@ public class WebMappingDescriptor {
         return produces;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        WebMappingDescriptor that = (WebMappingDescriptor) o;
-        return Arrays.equals(patterns, that.patterns)
-                && Arrays.equals(methods, that.methods)
-                && Arrays.equals(params, that.params)
-                && Arrays.equals(headers, that.headers)
-                && Arrays.equals(consumes, that.consumes)
-                && Arrays.equals(produces, that.produces);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Arrays.hashCode(patterns);
-        result = 31 * result + Arrays.hashCode(methods);
-        result = 31 * result + Arrays.hashCode(params);
-        result = 31 * result + Arrays.hashCode(headers);
-        result = 31 * result + Arrays.hashCode(consumes);
-        result = 31 * result + Arrays.hashCode(produces);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "WebMappingDescriptor{" +
-                "patterns=" + Arrays.toString(patterns) +
-                ", methods=" + Arrays.toString(methods) +
-                ", params=" + Arrays.toString(params) +
-                ", headers=" + Arrays.toString(headers) +
-                ", consumes=" + Arrays.toString(consumes) +
-                ", produces=" + Arrays.toString(produces) +
-                '}';
-    }
-
     public String toJSON() {
         StringBuilder stringBuilder = new StringBuilder("{").append(LINE_SEPARATOR);
         append(stringBuilder, "patterns", this.patterns);
@@ -253,6 +236,46 @@ public class WebMappingDescriptor {
         append(stringBuilder, "produces", this.produces, COMMA, LINE_SEPARATOR);
         stringBuilder.append(LINE_SEPARATOR).append("}");
         return stringBuilder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WebMappingDescriptor that = (WebMappingDescriptor) o;
+        return Objects.equals(source, that.source)
+                && Arrays.equals(patterns, that.patterns)
+                && Arrays.equals(methods, that.methods)
+                && Arrays.equals(params, that.params)
+                && Arrays.equals(headers, that.headers)
+                && Arrays.equals(consumes, that.consumes)
+                && Arrays.equals(produces, that.produces);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(source);
+        result = 31 * result + Arrays.hashCode(patterns);
+        result = 31 * result + Arrays.hashCode(methods);
+        result = 31 * result + Arrays.hashCode(params);
+        result = 31 * result + Arrays.hashCode(headers);
+        result = 31 * result + Arrays.hashCode(consumes);
+        result = 31 * result + Arrays.hashCode(produces);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("WebMappingDescriptor{");
+        sb.append("source=").append(source);
+        sb.append(", patterns=").append(Arrays.toString(patterns));
+        sb.append(", methods=").append(Arrays.toString(methods));
+        sb.append(", params=").append(Arrays.toString(params));
+        sb.append(", headers=").append(Arrays.toString(headers));
+        sb.append(", consumes=").append(Arrays.toString(consumes));
+        sb.append(", produces=").append(Arrays.toString(produces));
+        sb.append('}');
+        return sb.toString();
     }
 
     private void append(StringBuilder appendable, String name, String[] values, String... prefixes) {

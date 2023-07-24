@@ -3,13 +3,12 @@ package io.microsphere.spring.webmvc.method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.AbstractHandlerMethodMapping;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 
@@ -19,17 +18,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
+
 /**
- * Publishing {@link HandlerMethod} Event Listener
+ * Event Publishing Listener for Spring WebMVC's {@link HandlerMapping}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see HandlerMethodsInitializedEvent
- * @see RequestMappingInfoHandlerMethodsReadyEvent
+ * @see RequestMappingInfoHandlerMethodMetadataReadyEvent
  * @since 1.0.0
  */
-public class PublishingHandlerMethodsEventListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
+public class EventPublishingHandlerMappingListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(PublishingHandlerMethodsEventListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(EventPublishingHandlerMappingListener.class);
 
     private ApplicationContext context;
 
@@ -43,22 +44,21 @@ public class PublishingHandlerMethodsEventListener implements ApplicationListene
     }
 
     private void publishHandlerMethodsEvent(ApplicationContext applicationContext) {
-        Map<String, AbstractHandlerMethodMapping> handlerMappingsMap =
-                BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, AbstractHandlerMethodMapping.class);
+        Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(applicationContext, HandlerMapping.class);
         Set<HandlerMethod> handlerMethods = new HashSet<>();
 
         Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = new HashMap<>();
 
-        for (AbstractHandlerMethodMapping handlerMapping : handlerMappingsMap.values()) {
-            handlerMethods.addAll(handlerMapping.getHandlerMethods().values());
+        for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
                 RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
+                handlerMethods.addAll(requestMappingInfoHandlerMapping.getHandlerMethods().values());
                 requestMappingInfoHandlerMethods.putAll(requestMappingInfoHandlerMapping.getHandlerMethods());
             }
         }
 
         applicationContext.publishEvent(new HandlerMethodsInitializedEvent(applicationContext, handlerMethods));
-        applicationContext.publishEvent(new RequestMappingInfoHandlerMethodsReadyEvent(applicationContext, requestMappingInfoHandlerMethods));
+        applicationContext.publishEvent(new RequestMappingInfoHandlerMethodMetadataReadyEvent(applicationContext, requestMappingInfoHandlerMethods));
         logger.info("The current application context [id: '{}'] has sent the HandlerMethod events");
     }
 

@@ -19,7 +19,6 @@ package io.microsphere.spring.webmvc.metadata;
 import io.microsphere.spring.web.metadata.WebMappingDescriptor;
 import io.microsphere.spring.web.metadata.WebMappingDescriptorFactory;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
@@ -35,7 +34,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.Set;
 
-import static io.microsphere.spring.web.metadata.WebMappingDescriptor.patterns;
+import static io.microsphere.spring.web.metadata.WebMappingDescriptor.of;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -67,7 +66,7 @@ public class RequestMappingInfoWebMappingDescriptorFactory implements WebMapping
         ConsumesRequestCondition consumesCondition = source.getConsumesCondition();
         ProducesRequestCondition producesCondition = source.getProducesCondition();
 
-        return patterns(patterns)
+        return of(patterns)
                 .methods(methodsCondition.getMethods(), RequestMethod::name)
                 .params(paramsCondition.getExpressions(), NameValueExpression::toString)
                 .headers(headersCondition.getExpressions(), NameValueExpression::toString)
