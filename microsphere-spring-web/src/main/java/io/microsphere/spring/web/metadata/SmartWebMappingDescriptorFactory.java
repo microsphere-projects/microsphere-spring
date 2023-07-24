@@ -48,7 +48,7 @@ public class SmartWebMappingDescriptorFactory implements WebMappingDescriptorFac
     private final Map<Class<?>, List<WebMappingDescriptorFactory>> delegates;
 
 
-    public SmartWebMappingDescriptorFactory() {
+    SmartWebMappingDescriptorFactory() {
         this(null);
     }
 
