@@ -70,18 +70,18 @@ public class WebMappingDescriptorTest {
 
     @Test
     public void testToJSON() throws IOException {
-        WebMappingDescriptor descriptor = WebMappingDescriptor.source(this)
+        WebMappingDescriptor descriptor = WebMappingDescriptor
                 .patterns("/a", "/b", "/c")
                 .build();
         assertEquals(P_JSON, descriptor.toJSON());
 
-        descriptor = WebMappingDescriptor.source(this)
+        descriptor = WebMappingDescriptor
                 .patterns("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .build();
         assertEquals(PM_JSON, descriptor.toJSON());
 
-        descriptor = WebMappingDescriptor.source(this)
+        descriptor = WebMappingDescriptor
                 .patterns("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")
@@ -90,7 +90,7 @@ public class WebMappingDescriptorTest {
         assertEquals(PMP_JSON, descriptor.toJSON());
 
 
-        descriptor = WebMappingDescriptor.source(this)
+        descriptor = WebMappingDescriptor
                 .patterns("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")

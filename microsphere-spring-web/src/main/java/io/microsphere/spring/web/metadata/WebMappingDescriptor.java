@@ -16,22 +16,25 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.microsphere.util.ArrayUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.method.HandlerMethod;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COLON_CHAR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
+import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * The descriptor class for Web Mapping that could be one of these sources:
@@ -56,8 +59,6 @@ import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
  */
 public class WebMappingDescriptor {
 
-    private final transient Object source;
-
     private final String[] patterns;
 
     private final String[] methods;
@@ -71,10 +72,7 @@ public class WebMappingDescriptor {
     private final String[] produces;
 
     public static class Builder {
-
-        private final Object source;
-
-        private String[] patterns;
+        private final String[] patterns;
 
         private String[] methods;
 
@@ -86,14 +84,13 @@ public class WebMappingDescriptor {
 
         private String[] produces;
 
-        private Builder(Object source) {
-            Assert.notNull(source, "The source must not be null!");
-            this.source = source;
+        private Builder(String[] patterns) {
+            isTrue(!isEmpty(patterns), "The patterns must not be empty!");
+            this.patterns = patterns;
         }
 
-        public Builder patterns(String... patterns) {
-            this.patterns = patterns;
-            return this;
+        public <V> Builder methods(Collection<V> values, Function<V, String> stringFunction) {
+            return methods(toStrings(values, stringFunction));
         }
 
         public Builder methods(String... methods) {
@@ -101,9 +98,17 @@ public class WebMappingDescriptor {
             return this;
         }
 
+        public <V> Builder params(Collection<V> values, Function<V, String> stringFunction) {
+            return params(toStrings(values, stringFunction));
+        }
+
         public Builder params(String... params) {
             this.params = params;
             return this;
+        }
+
+        public <V> Builder headers(Collection<V> values, Function<V, String> stringFunction) {
+            return headers(toStrings(values, stringFunction));
         }
 
         public Builder headers(String... headers) {
@@ -111,9 +116,17 @@ public class WebMappingDescriptor {
             return this;
         }
 
+        public <V> Builder consumes(Collection<V> values, Function<V, String> stringFunction) {
+            return consumes(toStrings(values, stringFunction));
+        }
+
         public Builder consumes(String... consumes) {
             this.consumes = consumes;
             return this;
+        }
+
+        public <V> Builder produces(Collection<V> values, Function<V, String> stringFunction) {
+            return produces(toStrings(values, stringFunction));
         }
 
         public Builder produces(String... produces) {
@@ -121,8 +134,15 @@ public class WebMappingDescriptor {
             return this;
         }
 
+        protected <V> String[] toStrings(Collection<V> values, Function<V, String> stringFunction) {
+            if (values.isEmpty()) {
+                return EMPTY_STRING_ARRAY;
+            }
+            return values.stream().map(stringFunction).toArray(String[]::new);
+        }
+
         public WebMappingDescriptor build() {
-            return new WebMappingDescriptor(this.source,
+            return new WebMappingDescriptor(
                     this.patterns,
                     this.methods,
                     this.params,
@@ -134,18 +154,20 @@ public class WebMappingDescriptor {
 
     }
 
-    public static Builder source(Object source) {
-        return new Builder(source);
+    public static Builder patterns(Collection<String> patterns) {
+        return patterns(ArrayUtils.asArray(patterns, String.class));
     }
 
-    private WebMappingDescriptor(Object source,
-                                 String[] patterns,
+    public static Builder patterns(String... patterns) {
+        return new Builder(patterns);
+    }
+
+    private WebMappingDescriptor(String[] patterns,
                                  @Nullable String[] methods,
                                  @Nullable String[] params,
                                  @Nullable String[] headers,
                                  @Nullable String[] consumes,
                                  @Nullable String[] produces) {
-        this.source = source;
         this.patterns = patterns;
         this.methods = methods;
         this.params = params;
@@ -158,19 +180,7 @@ public class WebMappingDescriptor {
      * For serialization
      */
     private WebMappingDescriptor() {
-        this(null, null, null, null, null, null, null);
-    }
-
-    public HandlerMethod getHandlerMethod() {
-        Object source = getSource();
-        if (source instanceof HandlerMethod) {
-            return (HandlerMethod) source;
-        }
-        return null;
-    }
-
-    public Object getSource() {
-        return source;
+        this(null, null, null, null, null, null);
     }
 
     public String[] getPatterns() {
@@ -202,13 +212,17 @@ public class WebMappingDescriptor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WebMappingDescriptor that = (WebMappingDescriptor) o;
-        return Objects.equals(source, that.source) && Arrays.equals(patterns, that.patterns) && Arrays.equals(methods, that.methods) && Arrays.equals(params, that.params) && Arrays.equals(headers, that.headers) && Arrays.equals(consumes, that.consumes) && Arrays.equals(produces, that.produces);
+        return Arrays.equals(patterns, that.patterns)
+                && Arrays.equals(methods, that.methods)
+                && Arrays.equals(params, that.params)
+                && Arrays.equals(headers, that.headers)
+                && Arrays.equals(consumes, that.consumes)
+                && Arrays.equals(produces, that.produces);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(source);
-        result = 31 * result + Arrays.hashCode(patterns);
+        int result = Arrays.hashCode(patterns);
         result = 31 * result + Arrays.hashCode(methods);
         result = 31 * result + Arrays.hashCode(params);
         result = 31 * result + Arrays.hashCode(headers);
@@ -220,8 +234,7 @@ public class WebMappingDescriptor {
     @Override
     public String toString() {
         return "WebMappingDescriptor{" +
-                "source=" + source +
-                ", patterns=" + Arrays.toString(patterns) +
+                "patterns=" + Arrays.toString(patterns) +
                 ", methods=" + Arrays.toString(methods) +
                 ", params=" + Arrays.toString(params) +
                 ", headers=" + Arrays.toString(headers) +
