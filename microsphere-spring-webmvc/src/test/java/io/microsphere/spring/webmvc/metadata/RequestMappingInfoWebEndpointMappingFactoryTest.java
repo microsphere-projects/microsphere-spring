@@ -33,7 +33,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link RequestMappingInfoWebMappingDescriptorFactory} Test
+ * {@link RequestMappingInfoWebEndpointMappingFactory} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -48,14 +48,14 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
 
     private Map<RequestMappingInfo, HandlerMethod> handlerMethods;
 
-    private RequestMappingInfoWebMappingDescriptorFactory factory;
+    private RequestMappingInfoWebEndpointMappingFactory factory;
 
     @Autowired
     private RequestMappingInfoHandlerMapping handlerMapping;
 
     @BeforeEach
     public void init() {
-        factory = new RequestMappingInfoWebMappingDescriptorFactory();
+        factory = new RequestMappingInfoWebEndpointMappingFactory();
         this.handlerMethods = handlerMapping.getHandlerMethods();
     }
 

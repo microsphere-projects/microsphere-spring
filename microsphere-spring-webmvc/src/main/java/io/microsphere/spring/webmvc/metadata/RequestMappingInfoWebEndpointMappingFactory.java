@@ -17,7 +17,7 @@
 package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.web.metadata.WebMappingDescriptorFactory;
+import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,21 +38,21 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * {@link WebMappingDescriptorFactory} based on Spring WebMVC {@link RequestMappingInfo}
+ * {@link WebEndpointMappingFactory} based on Spring WebMVC {@link RequestMappingInfo}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see RequestMapping
  * @see RequestMappingInfo
  * @since 1.0.0
  */
-public class RequestMappingInfoWebMappingDescriptorFactory implements WebMappingDescriptorFactory<RequestMappingInfo> {
+public class RequestMappingInfoWebEndpointMappingFactory implements WebEndpointMappingFactory<RequestMappingInfo> {
 
     private static final String CLASS_NAME = "org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition";
 
     private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
 
     @Override
-    public WebEndpointMapping create(RequestMappingInfo source) {
+    public WebEndpointMapping<RequestMappingInfo> create(RequestMappingInfo source) {
 
         Set<String> patterns = getPatterns(source);
 

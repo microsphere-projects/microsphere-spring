@@ -1,2 +1,2 @@
-io.microsphere.spring.web.metadata.WebMappingDescriptorFactory=\
-io.microsphere.spring.webmvc.metadata.RequestMappingInfoWebMappingDescriptorFactory
+io.microsphere.spring.web.metadata.WebEndpointMappingFactory=\
+io.microsphere.spring.webmvc.metadata.RequestMappingInfoWebEndpointMappingFactory

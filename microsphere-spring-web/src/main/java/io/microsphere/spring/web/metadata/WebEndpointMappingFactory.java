@@ -28,7 +28,7 @@ import static org.springframework.core.ResolvableType.forClass;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public interface WebMappingDescriptorFactory<S> {
+public interface WebEndpointMappingFactory<S> {
 
     /**
      * Current factory supports the specified source or not
@@ -59,7 +59,7 @@ public interface WebMappingDescriptorFactory<S> {
      * @return <code>null</code> if can't be created
      */
     @Nullable
-    WebEndpointMapping create(S source);
+    <T> WebEndpointMapping<T> create(S source);
 
 
     /**
@@ -69,6 +69,6 @@ public interface WebMappingDescriptorFactory<S> {
      */
     @NonNull
     default Class<S> getSourceType() {
-        return (Class<S>) forClass(getClass()).as(WebMappingDescriptorFactory.class).resolveGeneric(0);
+        return (Class<S>) forClass(getClass()).as(WebEndpointMappingFactory.class).resolveGeneric(0);
     }
 }

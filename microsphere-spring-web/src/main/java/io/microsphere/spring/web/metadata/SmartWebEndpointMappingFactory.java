@@ -35,36 +35,36 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * The smart {@link WebMappingDescriptorFactory} class based on Spring's {@link WebMappingDescriptorFactory} SPI
+ * The smart {@link WebEndpointMappingFactory} class based on Spring's {@link WebEndpointMappingFactory} SPI
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SmartWebMappingDescriptorFactory implements WebMappingDescriptorFactory<Object> {
+public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory<Object> {
 
-    private static final Class<WebMappingDescriptorFactory> FACTORY_CLASS = WebMappingDescriptorFactory.class;
+    private static final Class<WebEndpointMappingFactory> FACTORY_CLASS = WebEndpointMappingFactory.class;
     private final static Logger logger = LoggerFactory.getLogger(FACTORY_CLASS);
 
-    private final Map<Class<?>, List<WebMappingDescriptorFactory>> delegates;
+    private final Map<Class<?>, List<WebEndpointMappingFactory>> delegates;
 
 
-    SmartWebMappingDescriptorFactory() {
+    SmartWebEndpointMappingFactory() {
         this(null);
     }
 
-    public SmartWebMappingDescriptorFactory(@Nullable ConfigurableListableBeanFactory beanFactory) {
+    public SmartWebEndpointMappingFactory(@Nullable ConfigurableListableBeanFactory beanFactory) {
         this.delegates = loadDelegates(beanFactory);
     }
 
-    private Map<Class<?>, List<WebMappingDescriptorFactory>> loadDelegates(@Nullable ConfigurableListableBeanFactory beanFactory) {
+    private Map<Class<?>, List<WebEndpointMappingFactory>> loadDelegates(@Nullable ConfigurableListableBeanFactory beanFactory) {
         ClassLoader classLoader = getClassLoader(beanFactory);
 
-        List<WebMappingDescriptorFactory> factories = loadFactories(classLoader);
-        Collection<WebMappingDescriptorFactory> factoryBeans = getFactoryBeans(beanFactory);
+        List<WebEndpointMappingFactory> factories = loadFactories(classLoader);
+        Collection<WebEndpointMappingFactory> factoryBeans = getFactoryBeans(beanFactory);
 
         int size = factories.size() + factoryBeans.size();
 
-        Map<Class<?>, List<WebMappingDescriptorFactory>> delegates = new HashMap<>(size);
+        Map<Class<?>, List<WebEndpointMappingFactory>> delegates = new HashMap<>(size);
 
         initDelegates(factories, delegates);
         initDelegates(factoryBeans, delegates);
@@ -72,32 +72,32 @@ public class SmartWebMappingDescriptorFactory implements WebMappingDescriptorFac
         return delegates;
     }
 
-    private Collection<WebMappingDescriptorFactory> getFactoryBeans(ConfigurableListableBeanFactory beanFactory) {
+    private Collection<WebEndpointMappingFactory> getFactoryBeans(ConfigurableListableBeanFactory beanFactory) {
         return beanFactory == null ? emptyList() : beanFactory.getBeansOfType(FACTORY_CLASS).values();
     }
 
-    private void initDelegates(Collection<WebMappingDescriptorFactory> factories,
-                               Map<Class<?>, List<WebMappingDescriptorFactory>> delegates) {
-        for (WebMappingDescriptorFactory factory : factories) {
+    private void initDelegates(Collection<WebEndpointMappingFactory> factories,
+                               Map<Class<?>, List<WebEndpointMappingFactory>> delegates) {
+        for (WebEndpointMappingFactory factory : factories) {
             Class<?> sourceType = factory.getSourceType();
-            List<WebMappingDescriptorFactory> factoriesList =
+            List<WebEndpointMappingFactory> factoriesList =
                     delegates.computeIfAbsent(sourceType, t -> new LinkedList<>());
             factoriesList.add(factory);
             AnnotationAwareOrderComparator.sort(factoriesList);
         }
     }
 
-    private List<WebMappingDescriptorFactory> loadFactories(ClassLoader classLoader) {
+    private List<WebEndpointMappingFactory> loadFactories(ClassLoader classLoader) {
         List<String> factoryClassNames = loadFactoryNames(FACTORY_CLASS, classLoader);
         int size = factoryClassNames.size();
         if (size == 0) {
             return emptyList();
         }
-        List<WebMappingDescriptorFactory> factories = new ArrayList<>(size);
+        List<WebEndpointMappingFactory> factories = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             String factoryClassName = factoryClassNames.get(i);
             if (hasText(factoryClassName)) {
-                WebMappingDescriptorFactory factory = createFactory(factoryClassName, classLoader);
+                WebEndpointMappingFactory factory = createFactory(factoryClassName, classLoader);
                 if (factory != null) {
                     factories.add(factory);
                 }
@@ -110,12 +110,12 @@ public class SmartWebMappingDescriptorFactory implements WebMappingDescriptorFac
         return beanFactory == null ? getDefaultClassLoader() : beanFactory.getBeanClassLoader();
     }
 
-    private WebMappingDescriptorFactory createFactory(String factoryClassName,
-                                                      ClassLoader targetClassLoader) {
-        WebMappingDescriptorFactory factory = null;
+    private WebEndpointMappingFactory createFactory(String factoryClassName,
+                                                    ClassLoader targetClassLoader) {
+        WebEndpointMappingFactory factory = null;
         try {
             Class<?> factoryClass = targetClassLoader.loadClass(factoryClassName);
-            factory = (WebMappingDescriptorFactory) factoryClass.newInstance();
+            factory = (WebEndpointMappingFactory) factoryClass.newInstance();
         } catch (Throwable e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("The factory class[name :'{}'] can't be instantiated!", factoryClassName);
@@ -127,14 +127,14 @@ public class SmartWebMappingDescriptorFactory implements WebMappingDescriptorFac
     @Override
     public WebEndpointMapping create(Object source) {
         Class<?> sourceType = source.getClass();
-        List<WebMappingDescriptorFactory> factories = delegates.get(sourceType);
+        List<WebEndpointMappingFactory> factories = delegates.get(sourceType);
         int size = factories == null ? 0 : factories.size();
         if (size < 1) {
             return null;
         }
         WebEndpointMapping descriptor = null;
         for (int i = 0; i < size; i++) {
-            WebMappingDescriptorFactory factory = factories.get(i);
+            WebEndpointMappingFactory factory = factories.get(i);
             if (factory.supports(source)) {
                 descriptor = factory.create(source);
                 if (descriptor != null) {

@@ -16,35 +16,36 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 
 import java.util.List;
 
 /**
- * An {@link ApplicationContextEvent} was raised when the {@link HandlerMappingDescriptor HandlerMappingDescriptors}
+ * An {@link ApplicationContextEvent} was raised when the {@link WebEndpointMapping WebEndpointMappings}
  * are ready.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class HandlerMappingDescriptorsReadyEvent extends ApplicationContextEvent {
+public class WebEndpointMappingsReadyEvent extends ApplicationContextEvent {
 
-    private final List<HandlerMappingDescriptor> descriptors;
+    private final List<WebEndpointMapping> mappings;
 
     /**
      * Create a new ApplicationContextEvent.
      *
-     * @param source the {@code ApplicationContext} that the event is raised for
-     *               (must not be {@code null})
-     * @param descriptors
+     * @param source   the {@code ApplicationContext} that the event is raised for
+     *                 (must not be {@code null})
+     * @param mappings
      */
-    public HandlerMappingDescriptorsReadyEvent(ApplicationContext source, List<HandlerMappingDescriptor> descriptors) {
+    public WebEndpointMappingsReadyEvent(ApplicationContext source, List<WebEndpointMapping> mappings) {
         super(source);
-        this.descriptors = descriptors;
+        this.mappings = mappings;
     }
 
-    public List<HandlerMappingDescriptor> getDescriptors() {
-        return descriptors;
+    public List<WebEndpointMapping> getMappings() {
+        return mappings;
     }
 }

@@ -97,47 +97,47 @@ public class WebEndpointMapping<S> {
             this.patterns = patterns;
         }
 
-        public <V> Builder methods(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<S> methods(Collection<V> values, Function<V, String> stringFunction) {
             return methods(toStrings(values, stringFunction));
         }
 
-        public Builder methods(String... methods) {
+        public Builder<S> methods(String... methods) {
             this.methods = methods;
             return this;
         }
 
-        public <V> Builder params(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<S> params(Collection<V> values, Function<V, String> stringFunction) {
             return params(toStrings(values, stringFunction));
         }
 
-        public Builder params(String... params) {
+        public Builder<S> params(String... params) {
             this.params = params;
             return this;
         }
 
-        public <V> Builder headers(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<S> headers(Collection<V> values, Function<V, String> stringFunction) {
             return headers(toStrings(values, stringFunction));
         }
 
-        public Builder headers(String... headers) {
+        public Builder<S> headers(String... headers) {
             this.headers = headers;
             return this;
         }
 
-        public <V> Builder consumes(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<S> consumes(Collection<V> values, Function<V, String> stringFunction) {
             return consumes(toStrings(values, stringFunction));
         }
 
-        public Builder consumes(String... consumes) {
+        public Builder<S> consumes(String... consumes) {
             this.consumes = consumes;
             return this;
         }
 
-        public <V> Builder produces(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<S> produces(Collection<V> values, Function<V, String> stringFunction) {
             return produces(toStrings(values, stringFunction));
         }
 
-        public Builder produces(String... produces) {
+        public Builder<S> produces(String... produces) {
             this.produces = produces;
             return this;
         }
@@ -163,19 +163,19 @@ public class WebEndpointMapping<S> {
 
     }
 
-    public static Builder of(@NonNull Collection<String> patterns) {
+    public static Builder<?> of(@NonNull Collection<String> patterns) {
         return of(null, patterns);
     }
 
-    public static Builder of(@NonNull String... patterns) {
+    public static Builder<?> of(@NonNull String... patterns) {
         return of(null, patterns);
     }
 
-    public static Builder of(@Nullable Object source, Collection<String> patterns) {
+    public static <S> Builder<S> of(@Nullable S source, Collection<String> patterns) {
         return of(source, ArrayUtils.asArray(patterns, String.class));
     }
 
-    public static Builder of(@Nullable Object source, String... patterns) {
+    public static <S> Builder of(@Nullable S source, String... patterns) {
         return new Builder(source, patterns);
     }
 

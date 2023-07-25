@@ -20,16 +20,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.ClassUtils;
 
 /**
- * The {@link WebMappingDescriptorFactory} class based on Jackson2 for JSON
+ * The {@link WebEndpointMappingFactory} class based on Jackson2 for JSON
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class Jackson2WebMappingDescriptorFactory implements WebMappingDescriptorFactory<String> {
+public class Jackson2WebEndpointMappingFactory implements WebEndpointMappingFactory<String> {
 
     private static final String OBJECT_MAPPER_CLASS_NAME = "com.fasterxml.jackson.databind.ObjectMapper";
 
-    private static final ClassLoader classLoader = Jackson2WebMappingDescriptorFactory.class.getClassLoader();
+    private static final ClassLoader classLoader = Jackson2WebEndpointMappingFactory.class.getClassLoader();
 
     private static final boolean objectMapperPresent = ClassUtils.isPresent(OBJECT_MAPPER_CLASS_NAME, classLoader);
 

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.util.StreamUtils.copyToString;
 
 /**
- * {@link SmartWebMappingDescriptorFactory} Test
+ * {@link SmartWebEndpointMappingFactory} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -43,7 +43,7 @@ import static org.springframework.util.StreamUtils.copyToString;
 @ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
 public class SmartWebEndpointMappingFactoryTest {
 
-    private WebMappingDescriptorFactory factory = new SmartWebMappingDescriptorFactory();
+    private WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory();
 
     @Value("classpath:META-INF/web-mapping-descriptor.json")
     private Resource fullJsonResource;
