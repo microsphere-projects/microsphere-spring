@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.ClassUtils;
 
@@ -40,11 +39,11 @@ public class Jackson2WebMappingDescriptorFactory implements WebMappingDescriptor
     }
 
     @Override
-    public WebMappingDescriptor create(String source) {
-        WebMappingDescriptor descriptor = null;
+    public WebEndpointMapping create(String source) {
+        WebEndpointMapping descriptor = null;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            descriptor = objectMapper.readValue(source, WebMappingDescriptor.class);
+            descriptor = objectMapper.readValue(source, WebEndpointMapping.class);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

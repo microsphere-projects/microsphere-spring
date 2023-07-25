@@ -36,7 +36,7 @@ import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
- * The descriptor class for Web Mapping that could be one of these sources:
+ * The meta-data class for Web Endpoint Mapping that could be one of these sources:
  * <ul>
  *     <li>Servlet Mapping</li>
  *     <li>Servlet's Filter Mapping</li>
@@ -44,6 +44,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  *     <li>Spring WebFlux Mapping</li>
  * </ul>
  *
+ * @param <S> the type of source
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see javax.servlet.ServletRegistration
  * @see javax.servlet.FilterRegistration
@@ -56,11 +57,11 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @see org.springframework.web.reactive.result.method.RequestMappingInfo
  * @since 1.0.0
  */
-public class WebMappingDescriptor {
+public class WebEndpointMapping<S> {
 
     public static final Object NON_SOURCE = new Object();
 
-    private final transient Object source;
+    private final transient S source;
 
     private final String[] patterns;
 
@@ -74,7 +75,7 @@ public class WebMappingDescriptor {
 
     private final String[] produces;
 
-    public static class Builder {
+    public static class Builder<S> {
 
         private final Object source;
 
@@ -90,7 +91,7 @@ public class WebMappingDescriptor {
 
         private String[] produces;
 
-        private Builder(Object source, String[] patterns) {
+        private Builder(S source, String[] patterns) {
             isTrue(!isEmpty(patterns), "The patterns must not be empty!");
             this.source = source == null ? NON_SOURCE : source;
             this.patterns = patterns;
@@ -148,8 +149,8 @@ public class WebMappingDescriptor {
             return values.stream().map(stringFunction).toArray(String[]::new);
         }
 
-        public WebMappingDescriptor build() {
-            return new WebMappingDescriptor(
+        public WebEndpointMapping build() {
+            return new WebEndpointMapping(
                     this.source,
                     this.patterns,
                     this.methods,
@@ -178,8 +179,8 @@ public class WebMappingDescriptor {
         return new Builder(source, patterns);
     }
 
-    private WebMappingDescriptor(
-            Object source,
+    private WebEndpointMapping(
+            S source,
             String[] patterns,
             @Nullable String[] methods,
             @Nullable String[] params,
@@ -198,8 +199,12 @@ public class WebMappingDescriptor {
     /**
      * For serialization
      */
-    private WebMappingDescriptor() {
+    private WebEndpointMapping() {
         this(null, null, null, null, null, null, null);
+    }
+
+    public S getSource() {
+        return source;
     }
 
     public String[] getPatterns() {
@@ -242,7 +247,7 @@ public class WebMappingDescriptor {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WebMappingDescriptor that = (WebMappingDescriptor) o;
+        WebEndpointMapping that = (WebEndpointMapping) o;
         return Objects.equals(source, that.source)
                 && Arrays.equals(patterns, that.patterns)
                 && Arrays.equals(methods, that.methods)

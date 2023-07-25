@@ -16,14 +16,13 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import org.springframework.core.ResolvableType;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import static org.springframework.core.ResolvableType.forClass;
 
 /**
- * The factory interface for {@link WebMappingDescriptor}
+ * The factory interface for {@link WebEndpointMapping}
  *
  * @param <S> the source type
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -48,7 +47,7 @@ public interface WebMappingDescriptorFactory<S> {
     }
 
     /**
-     * Create the instance of {@link WebMappingDescriptor}
+     * Create the instance of {@link WebEndpointMapping}
      *
      * @param source could be one of these :
      *               <ul>
@@ -60,7 +59,7 @@ public interface WebMappingDescriptorFactory<S> {
      * @return <code>null</code> if can't be created
      */
     @Nullable
-    WebMappingDescriptor create(S source);
+    WebEndpointMapping create(S source);
 
 
     /**

@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.web.metadata.WebMappingDescriptor;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebMappingDescriptorFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +34,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.Set;
 
-import static io.microsphere.spring.web.metadata.WebMappingDescriptor.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -52,7 +52,7 @@ public class RequestMappingInfoWebMappingDescriptorFactory implements WebMapping
     private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
 
     @Override
-    public WebMappingDescriptor create(RequestMappingInfo source) {
+    public WebEndpointMapping create(RequestMappingInfo source) {
 
         Set<String> patterns = getPatterns(source);
 

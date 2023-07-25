@@ -125,14 +125,14 @@ public class SmartWebMappingDescriptorFactory implements WebMappingDescriptorFac
     }
 
     @Override
-    public WebMappingDescriptor create(Object source) {
+    public WebEndpointMapping create(Object source) {
         Class<?> sourceType = source.getClass();
         List<WebMappingDescriptorFactory> factories = delegates.get(sourceType);
         int size = factories == null ? 0 : factories.size();
         if (size < 1) {
             return null;
         }
-        WebMappingDescriptor descriptor = null;
+        WebEndpointMapping descriptor = null;
         for (int i = 0; i < size; i++) {
             WebMappingDescriptorFactory factory = factories.get(i);
             if (factory.supports(source)) {

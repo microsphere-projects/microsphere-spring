@@ -40,8 +40,8 @@ import static org.springframework.util.StreamUtils.copyToString;
  */
 @Execution(ExecutionMode.SAME_THREAD)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = SmartWebMappingDescriptorFactoryTest.class)
-public class SmartWebMappingDescriptorFactoryTest {
+@ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
+public class SmartWebEndpointMappingFactoryTest {
 
     private WebMappingDescriptorFactory factory = new SmartWebMappingDescriptorFactory();
 
@@ -57,7 +57,7 @@ public class SmartWebMappingDescriptorFactoryTest {
 
     @Test
     public void testCreate() {
-        WebMappingDescriptor descriptor = factory.create(fullJson);
+        WebEndpointMapping descriptor = factory.create(fullJson);
         assertNotNull(descriptor);
         assertEquals(fullJson, descriptor.toJSON());
     }

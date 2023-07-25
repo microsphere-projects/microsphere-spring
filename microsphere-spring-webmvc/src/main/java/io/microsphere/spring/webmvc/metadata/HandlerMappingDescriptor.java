@@ -16,27 +16,27 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.web.metadata.WebMappingDescriptor;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.Objects;
 
 /**
- * The metadata of {@link DispatcherServlet}'s handler and {@link WebMappingDescriptor}
+ * The metadata of {@link DispatcherServlet}'s handler and {@link WebEndpointMapping}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see DispatcherServlet
- * @see WebMappingDescriptor
+ * @see WebEndpointMapping
  * @since 1.0.0
  */
 public class HandlerMappingDescriptor {
 
     private final Object handler;
 
-    private final WebMappingDescriptor descriptor;
+    private final WebEndpointMapping descriptor;
 
-    public HandlerMappingDescriptor(Object handler, WebMappingDescriptor descriptor) {
+    public HandlerMappingDescriptor(Object handler, WebEndpointMapping descriptor) {
         Assert.notNull(handler,"The 'handler' argument must not be null");
         Assert.notNull(descriptor,"The 'descriptor' argument must not be null");
         this.handler = handler;
@@ -47,7 +47,7 @@ public class HandlerMappingDescriptor {
         return handler;
     }
 
-    public WebMappingDescriptor getDescriptor() {
+    public WebEndpointMapping getDescriptor() {
         return descriptor;
     }
 

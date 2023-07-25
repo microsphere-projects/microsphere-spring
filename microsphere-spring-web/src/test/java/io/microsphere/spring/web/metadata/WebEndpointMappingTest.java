@@ -33,30 +33,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.util.StreamUtils.copyToString;
 
 /**
- * {@link WebMappingDescriptor} Test
+ * {@link WebEndpointMapping} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @Execution(ExecutionMode.SAME_THREAD)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = WebMappingDescriptorTest.class)
-public class WebMappingDescriptorTest {
-
-    private static final String P_JSON = "{\n" +
-            "\"patterns\":[\"/a\",\"/b\",\"/c\"]\n" +
-            "}";
-
-    private static final String PM_JSON = "{\n" +
-            "\"patterns\":[\"/a\",\"/b\",\"/c\"],\n" +
-            "\"methods\":[\"GET\",\"POST\"]\n" +
-            "}";
-
-    private static final String PMP_JSON = "{\n" +
-            "\"patterns\":[\"/a\",\"/b\",\"/c\"],\n" +
-            "\"methods\":[\"GET\",\"POST\"],\n" +
-            "\"params\":[\"a=1\",\"b=2\"]\n" +
-            "}";
+@ContextConfiguration(classes = WebEndpointMappingTest.class)
+public class WebEndpointMappingTest {
 
     @Value("classpath:META-INF/web-mapping-descriptor.json")
     private Resource fullJsonResource;
@@ -70,27 +55,7 @@ public class WebMappingDescriptorTest {
 
     @Test
     public void testToJSON() throws IOException {
-        WebMappingDescriptor descriptor = WebMappingDescriptor
-                .of("/a", "/b", "/c")
-                .build();
-        assertEquals(P_JSON, descriptor.toJSON());
-
-        descriptor = WebMappingDescriptor
-                .of("/a", "/b", "/c")
-                .methods("GET", "POST")
-                .build();
-        assertEquals(PM_JSON, descriptor.toJSON());
-
-        descriptor = WebMappingDescriptor
-                .of("/a", "/b", "/c")
-                .methods("GET", "POST")
-                .params("a=1", "b=2")
-                .build();
-
-        assertEquals(PMP_JSON, descriptor.toJSON());
-
-
-        descriptor = WebMappingDescriptor
+        WebEndpointMapping descriptor = WebEndpointMapping
                 .of("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")

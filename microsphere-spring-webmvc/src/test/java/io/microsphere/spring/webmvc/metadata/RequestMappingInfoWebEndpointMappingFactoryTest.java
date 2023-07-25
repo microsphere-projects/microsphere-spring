@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.web.metadata.WebMappingDescriptor;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,11 +40,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {
-        RequestMappingInfoWebMappingDescriptorFactoryTest.class
+        RequestMappingInfoWebEndpointMappingFactoryTest.class
 },
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
-public class RequestMappingInfoWebMappingDescriptorFactoryTest {
+public class RequestMappingInfoWebEndpointMappingFactoryTest {
 
     private Map<RequestMappingInfo, HandlerMethod> handlerMethods;
 
@@ -63,8 +63,8 @@ public class RequestMappingInfoWebMappingDescriptorFactoryTest {
     public void test() {
         assertNotNull(handlerMethods);
         handlerMethods.keySet().forEach(requestMappingInfo -> {
-            WebMappingDescriptor webMappingDescriptor = factory.create(requestMappingInfo);
-            assertNotNull(webMappingDescriptor.toJSON());
+            WebEndpointMapping webEndpointMapping = factory.create(requestMappingInfo);
+            assertNotNull(webEndpointMapping.toJSON());
         });
 
     }
