@@ -22,7 +22,8 @@ import io.github.resilience4j.core.Registry;
 import io.microsphere.spring.resilience4j.common.Resilience4jContext;
 import io.microsphere.spring.resilience4j.common.Resilience4jModule;
 import io.microsphere.spring.webmvc.interceptor.MethodHandlerInterceptor;
-import io.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
+import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
+import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 import static io.microsphere.reflect.MethodUtils.getSignature;
@@ -56,7 +57,8 @@ import static org.springframework.core.ResolvableType.forType;
  * @see Resilience4jModule
  * @since 1.0.0
  */
-public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodHandlerInterceptor implements ApplicationListener<HandlerMethodsInitializedEvent>, DisposableBean, Ordered {
+public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodHandlerInterceptor implements
+        ApplicationListener<RequestMappingMetadataReadyEvent>, DisposableBean, Ordered {
 
     protected final static int ENTRY_CLASS_GENERIC_INDEX = 0;
 
@@ -119,9 +121,9 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
     protected abstract void afterCompletion(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Throwable;
 
     @Override
-    public void onApplicationEvent(HandlerMethodsInitializedEvent event) {
-        Set<HandlerMethod> handlerMethods = event.getHandlerMethods();
-        initEntryCache(handlerMethods);
+    public void onApplicationEvent(RequestMappingMetadataReadyEvent event) {
+        List<RequestMappingMetadata> metadata = event.getMetadata();
+        initEntryCache(metadata);
     }
 
     @Override
@@ -148,11 +150,13 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
         return this.module.getDefaultAspectOrder();
     }
 
-    protected void initEntryCache(Set<HandlerMethod> handlerMethods) {
-        int size = handlerMethods.size();
+    protected void initEntryCache(List<RequestMappingMetadata> metadata) {
+        int size = metadata.size();
         Map<String, E> entryCaches = new HashMap<>(size);
 
-        for (HandlerMethod handlerMethod : handlerMethods) {
+        for (int i = 0; i < size; i++) {
+            RequestMappingMetadata requestMappingMetadata = metadata.get(i);
+            HandlerMethod handlerMethod = requestMappingMetadata.getHandlerMethod();
             String entryName = getEntryName(handlerMethod);
             E entry = createEntry(entryName);
             entryCaches.put(entryName, entry);

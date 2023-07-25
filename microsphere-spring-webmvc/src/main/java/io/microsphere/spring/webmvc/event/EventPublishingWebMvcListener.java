@@ -2,7 +2,6 @@ package io.microsphere.spring.webmvc.event;
 
 import io.microsphere.spring.context.OnceApplicationContextEventListener;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -15,9 +14,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
@@ -47,23 +44,25 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
     }
 
     private void publishEvents(WebApplicationContext context) {
-        
+
         Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(context, HandlerMapping.class);
 
-        Set<HandlerMethod> handlerMethods = new HashSet<>();
         Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = new HashMap<>();
 
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
-            if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
-                RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
-                Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
-                handlerMethods.addAll(handlerMethodsMap.values());
-                requestMappingInfoHandlerMethods.putAll(handlerMethodsMap);
-            }
+            collectRequestMappingInfoHandlerMethods(handlerMapping, requestMappingInfoHandlerMethods);
+
         }
 
-        context.publishEvent(new HandlerMethodsInitializedEvent(context, handlerMethods));
         context.publishEvent(new RequestMappingMetadataReadyEvent(context, requestMappingInfoHandlerMethods));
         logger.info("The current application context [id: '{}'] has published the events");
+    }
+
+    private void collectRequestMappingInfoHandlerMethods(HandlerMapping handlerMapping, Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods) {
+        if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
+            RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
+            Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
+            requestMappingInfoHandlerMethods.putAll(handlerMethodsMap);
+        }
     }
 }

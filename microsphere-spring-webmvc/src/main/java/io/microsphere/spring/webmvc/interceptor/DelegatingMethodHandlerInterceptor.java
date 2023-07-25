@@ -1,6 +1,7 @@
 package io.microsphere.spring.webmvc.interceptor;
 
-import io.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
+import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
+import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -19,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
@@ -32,7 +32,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * @since 1.0.0
  */
 public class DelegatingMethodHandlerInterceptor extends MethodHandlerInterceptor implements ApplicationContextAware,
-        ApplicationListener<HandlerMethodsInitializedEvent> {
+        ApplicationListener<RequestMappingMetadataReadyEvent> {
 
     private ApplicationContext applicationContext;
 
@@ -73,13 +73,13 @@ public class DelegatingMethodHandlerInterceptor extends MethodHandlerInterceptor
     }
 
     @Override
-    public void onApplicationEvent(HandlerMethodsInitializedEvent event) {
+    public void onApplicationEvent(RequestMappingMetadataReadyEvent event) {
 
         List<MethodHandlerInterceptor> delegateHandlerInterceptors = getDelegateHandlerInterceptors();
 
-        Set<HandlerMethod> handlerMethods = event.getHandlerMethods();
+        List<RequestMappingMetadata> metadata = event.getMetadata();
 
-        initDelegateHandlerInterceptors(handlerMethods, delegateHandlerInterceptors);
+        initDelegateHandlerInterceptors(metadata, delegateHandlerInterceptors);
     }
 
     private List<MethodHandlerInterceptor> getDelegateHandlerInterceptors() {
@@ -95,12 +95,15 @@ public class DelegatingMethodHandlerInterceptor extends MethodHandlerInterceptor
         return delegates;
     }
 
-    private void initDelegateHandlerInterceptors(Set<HandlerMethod> handlerMethods,
+    private void initDelegateHandlerInterceptors(List<RequestMappingMetadata> metadata,
                                                  List<MethodHandlerInterceptor> delegateHandlerInterceptors) {
 
         delegateHandlerInterceptorsMap = new HashMap<>();
+        int size = metadata.size();
 
-        for (HandlerMethod handlerMethod : handlerMethods) {
+        for (int i = 0; i < size; i++) {
+            RequestMappingMetadata requestMappingMetadata = metadata.get(i);
+            HandlerMethod handlerMethod = requestMappingMetadata.getHandlerMethod();
             Method method = handlerMethod.getMethod();
 
             for (MethodHandlerInterceptor handlerInterceptor : delegateHandlerInterceptors) {
