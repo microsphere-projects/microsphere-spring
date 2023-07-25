@@ -11,7 +11,7 @@ import java.util.Set;
  * {@link HandlerMethod} Initialized Event
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see RequestMappingInfoHandlerMethodMetadataReadyEvent
+ * @see io.microsphere.spring.webmvc.metadata.RequestMappingInfoHandlerMethodMetadataReadyEvent
  * @since 1.0.0
  */
 public class HandlerMethodsInitializedEvent extends ApplicationEvent {

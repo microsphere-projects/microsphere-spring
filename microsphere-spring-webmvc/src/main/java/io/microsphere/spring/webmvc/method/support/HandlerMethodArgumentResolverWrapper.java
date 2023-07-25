@@ -21,11 +21,11 @@ public class HandlerMethodArgumentResolverWrapper implements HandlerMethodArgume
 
     private final HandlerMethodArgumentResolver resolver;
 
-    private final ApplicationContext applicationContext;
+    private final ApplicationContext context;
 
-    public HandlerMethodArgumentResolverWrapper(HandlerMethodArgumentResolver handlerMethodArgumentResolver, ApplicationContext applicationContext) {
+    public HandlerMethodArgumentResolverWrapper(HandlerMethodArgumentResolver handlerMethodArgumentResolver, ApplicationContext context) {
         this.resolver = handlerMethodArgumentResolver;
-        this.applicationContext = applicationContext;
+        this.context = context;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class HandlerMethodArgumentResolverWrapper implements HandlerMethodArgume
             if (arguments == null) {
                 arguments = WebMvcUtils.getHandlerMethodArguments(webRequest, parameter);
             }
-            applicationContext.publishEvent(new HandlerMethodArgumentsResolvedEvent(method, arguments, webRequest));
+            context.publishEvent(new HandlerMethodArgumentsResolvedEvent(method, arguments, webRequest));
         }
 
         return argument;

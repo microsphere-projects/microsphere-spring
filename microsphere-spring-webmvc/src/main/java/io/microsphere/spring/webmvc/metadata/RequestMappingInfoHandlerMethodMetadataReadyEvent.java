@@ -1,4 +1,4 @@
-package io.microsphere.spring.webmvc.method;
+package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.webmvc.metadata.RequestMappingInfoHandlerMethodMetadata;
 import org.springframework.context.ApplicationContext;

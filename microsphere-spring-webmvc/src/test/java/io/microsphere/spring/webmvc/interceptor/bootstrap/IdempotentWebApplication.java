@@ -19,7 +19,7 @@ package io.microsphere.spring.webmvc.interceptor.bootstrap;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
 import io.microsphere.spring.webmvc.config.CommonWebMvcConfigurer;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
-import io.microsphere.spring.webmvc.method.RequestMappingHandlerAdapterListener;
+import io.microsphere.spring.webmvc.event.RequestMappingHandlerAdapterListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Import;
