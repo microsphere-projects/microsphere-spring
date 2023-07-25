@@ -31,36 +31,39 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
 /**
  * The abstract class {@link ApplicationListener} for {@link ApplicationEvent} guarantees just one-time execution
  * and prevents the event propagation in the hierarchical {@link ApplicationContext ApplicationContexts}
+ *
  * @since 1.0.0
  */
-public abstract class OnceApplicationContextEventListener implements ApplicationListener, ApplicationContextAware {
+public abstract class OnceApplicationContextEventListener<E extends ApplicationContextEvent> implements ApplicationListener<E>,
+        ApplicationContextAware {
 
     protected final Log log = LogFactory.getLog(getClass());
 
     private ApplicationContext applicationContext;
 
     public OnceApplicationContextEventListener() {
-
     }
 
     public OnceApplicationContextEventListener(ApplicationContext applicationContext) {
         setApplicationContext(applicationContext);
     }
 
-    public final void onApplicationEvent(ApplicationEvent event) {
-        if (isOriginalEventSource(event) && event instanceof ApplicationContextEvent) {
-            onApplicationContextEvent((ApplicationContextEvent) event);
+    public final void onApplicationEvent(E event) {
+        if (isOriginalEventSource(event)) {
+            onApplicationContextEvent(event);
         }
     }
 
     /**
      * The subclass overrides this method to handle {@link ApplicationContextEvent}
+     *
      * @param event {@link ApplicationContextEvent}
      */
-    protected abstract void onApplicationContextEvent(ApplicationContextEvent event);
+    protected abstract void onApplicationContextEvent(E event);
 
     /**
      * Is original {@link ApplicationContext} as the event source
+     *
      * @param event {@link ApplicationEvent}
      * @return if original, return <code>true</code>, or <code>false</code>
      */

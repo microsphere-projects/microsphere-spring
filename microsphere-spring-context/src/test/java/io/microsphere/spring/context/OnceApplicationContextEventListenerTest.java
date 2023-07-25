@@ -80,7 +80,7 @@ public class OnceApplicationContextEventListenerTest {
         return context;
     }
 
-    static class MyContextEventListener extends OnceApplicationContextEventListener {
+    static class MyContextEventListener extends OnceApplicationContextEventListener<ApplicationContextEvent> {
 
         public MyContextEventListener() {
 
