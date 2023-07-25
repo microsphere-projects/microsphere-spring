@@ -27,6 +27,13 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- MicroSphere Servlet -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-servlet</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <!-- Servlet API -->
         <dependency>
             <groupId>javax.servlet</groupId>

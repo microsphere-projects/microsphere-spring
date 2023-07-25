@@ -27,7 +27,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- MicroSphere-commons-->
+        <!-- MicroSphere Core -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-core</artifactId>

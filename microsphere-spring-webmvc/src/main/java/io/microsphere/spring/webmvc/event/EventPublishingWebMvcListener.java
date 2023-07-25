@@ -5,10 +5,10 @@ import io.microsphere.spring.webmvc.metadata.RequestMappingInfoHandlerMethodMeta
 import io.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -39,12 +39,16 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
 
     @Override
     public void onApplicationContextEvent(ContextRefreshedEvent event) {
-        ApplicationContext applicationContext = event.getApplicationContext();
-        publishEvents(applicationContext);
+        ApplicationContext context = event.getApplicationContext();
+        if (context instanceof WebApplicationContext) {
+            publishEvents((WebApplicationContext) context);
+        }
+
     }
 
-    private void publishEvents(ApplicationContext applicationContext) {
-        Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(applicationContext, HandlerMapping.class);
+    private void publishEvents(WebApplicationContext context) {
+        
+        Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(context, HandlerMapping.class);
 
         Set<HandlerMethod> handlerMethods = new HashSet<>();
         Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = new HashMap<>();
@@ -58,8 +62,8 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
             }
         }
 
-        applicationContext.publishEvent(new HandlerMethodsInitializedEvent(applicationContext, handlerMethods));
-        applicationContext.publishEvent(new RequestMappingInfoHandlerMethodMetadataReadyEvent(applicationContext, requestMappingInfoHandlerMethods));
+        context.publishEvent(new HandlerMethodsInitializedEvent(context, handlerMethods));
+        context.publishEvent(new RequestMappingInfoHandlerMethodMetadataReadyEvent(context, requestMappingInfoHandlerMethods));
         logger.info("The current application context [id: '{}'] has published the events");
     }
 }
