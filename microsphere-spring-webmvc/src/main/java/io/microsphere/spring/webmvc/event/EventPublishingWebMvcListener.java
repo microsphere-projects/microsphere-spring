@@ -1,7 +1,7 @@
 package io.microsphere.spring.webmvc.event;
 
 import io.microsphere.spring.context.OnceApplicationContextEventListener;
-import io.microsphere.spring.webmvc.metadata.RequestMappingInfoHandlerMethodMetadataReadyEvent;
+import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import io.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see HandlerMethodsInitializedEvent
- * @see RequestMappingInfoHandlerMethodMetadataReadyEvent
+ * @see RequestMappingMetadataReadyEvent
  * @since 1.0.0
  */
 public class EventPublishingWebMvcListener extends OnceApplicationContextEventListener<ContextRefreshedEvent> implements ApplicationContextAware {
@@ -63,7 +63,7 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
         }
 
         context.publishEvent(new HandlerMethodsInitializedEvent(context, handlerMethods));
-        context.publishEvent(new RequestMappingInfoHandlerMethodMetadataReadyEvent(context, requestMappingInfoHandlerMethods));
+        context.publishEvent(new RequestMappingMetadataReadyEvent(context, requestMappingInfoHandlerMethods));
         logger.info("The current application context [id: '{}'] has published the events");
     }
 }

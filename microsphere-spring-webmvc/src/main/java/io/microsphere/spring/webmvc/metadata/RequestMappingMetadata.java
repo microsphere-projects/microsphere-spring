@@ -28,10 +28,9 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
  * @see RequestMappingInfo
  * @since 1.0.0
  */
-public class RequestMappingInfoHandlerMethodMetadata extends HandlerMethodMetadata<RequestMappingInfo> {
+public class RequestMappingMetadata extends HandlerMethodMetadata<RequestMappingInfo> {
 
-    public RequestMappingInfoHandlerMethodMetadata(HandlerMethod handlerMethod,
-                                                   RequestMappingInfo requestMappingInfo) {
+    public RequestMappingMetadata(RequestMappingInfo requestMappingInfo, HandlerMethod handlerMethod) {
         super(handlerMethod, requestMappingInfo);
     }
 

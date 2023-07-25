@@ -12,14 +12,14 @@ import java.util.Map;
 import static java.util.Collections.unmodifiableList;
 
 /**
- * {@link RequestMappingInfoHandlerMethodMetadata} Ready Event
+ * {@link RequestMappingMetadata} Ready Event
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
-public class RequestMappingInfoHandlerMethodMetadataReadyEvent extends ApplicationContextEvent {
+public class RequestMappingMetadataReadyEvent extends ApplicationContextEvent {
 
-    private final List<RequestMappingInfoHandlerMethodMetadata> metadata;
+    private final List<RequestMappingMetadata> metadata;
 
     /**
      * Create a new ContextStartedEvent.
@@ -28,21 +28,21 @@ public class RequestMappingInfoHandlerMethodMetadataReadyEvent extends Applicati
      *                       (must not be {@code null})
      * @param handlerMethods Map<RequestMappingInfo, HandlerMethod>
      */
-    public RequestMappingInfoHandlerMethodMetadataReadyEvent(ApplicationContext source,
-                                                             Map<RequestMappingInfo, HandlerMethod> handlerMethods) {
+    public RequestMappingMetadataReadyEvent(ApplicationContext source,
+                                            Map<RequestMappingInfo, HandlerMethod> handlerMethods) {
         super(source);
         this.metadata = buildMetadata(handlerMethods);
     }
 
-    private List<RequestMappingInfoHandlerMethodMetadata> buildMetadata(Map<RequestMappingInfo, HandlerMethod> handlerMethods) {
-        List<RequestMappingInfoHandlerMethodMetadata> metadata = new ArrayList<>(handlerMethods.size());
+    private List<RequestMappingMetadata> buildMetadata(Map<RequestMappingInfo, HandlerMethod> handlerMethods) {
+        List<RequestMappingMetadata> metadata = new ArrayList<>(handlerMethods.size());
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
-            metadata.add(new RequestMappingInfoHandlerMethodMetadata(entry.getValue(), entry.getKey()));
+            metadata.add(new RequestMappingMetadata(entry.getKey(), entry.getValue()));
         }
         return unmodifiableList(metadata);
     }
 
-    public List<RequestMappingInfoHandlerMethodMetadata> getMetadata() {
+    public List<RequestMappingMetadata> getMetadata() {
         return metadata;
     }
 }

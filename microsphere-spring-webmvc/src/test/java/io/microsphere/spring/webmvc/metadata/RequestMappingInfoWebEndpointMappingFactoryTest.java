@@ -33,7 +33,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link RequestMappingInfoWebEndpointMappingFactory} Test
+ * {@link RequestMappingMetadataWebEndpointMappingFactory} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -48,25 +48,25 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
 
     private Map<RequestMappingInfo, HandlerMethod> handlerMethods;
 
-    private RequestMappingInfoWebEndpointMappingFactory factory;
+    private RequestMappingMetadataWebEndpointMappingFactory factory;
 
     @Autowired
     private RequestMappingInfoHandlerMapping handlerMapping;
 
     @BeforeEach
     public void init() {
-        factory = new RequestMappingInfoWebEndpointMappingFactory();
+        factory = new RequestMappingMetadataWebEndpointMappingFactory();
         this.handlerMethods = handlerMapping.getHandlerMethods();
     }
 
     @Test
     public void test() {
         assertNotNull(handlerMethods);
-        handlerMethods.keySet().forEach(requestMappingInfo -> {
-            WebEndpointMapping webEndpointMapping = factory.create(requestMappingInfo);
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
+            RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
+            WebEndpointMapping webEndpointMapping = factory.create(metadata);
             assertNotNull(webEndpointMapping.toJSON());
-        });
-
+        }
     }
 
 }

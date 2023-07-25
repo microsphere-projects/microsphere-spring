@@ -21,6 +21,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
 import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
 import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
@@ -45,28 +46,32 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @see RequestMappingInfo
  * @since 1.0.0
  */
-public class RequestMappingInfoWebEndpointMappingFactory implements WebEndpointMappingFactory<RequestMappingInfo> {
+public class RequestMappingMetadataWebEndpointMappingFactory implements WebEndpointMappingFactory<RequestMappingMetadata> {
 
     private static final String CLASS_NAME = "org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition";
 
     private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
 
     @Override
-    public WebEndpointMapping<RequestMappingInfo> create(RequestMappingInfo source) {
+    public WebEndpointMapping<HandlerMethod> create(RequestMappingMetadata source) {
 
-        Set<String> patterns = getPatterns(source);
+        RequestMappingInfo requestMappingInfo = source.getRequestMappingInfo();
+
+        Set<String> patterns = getPatterns(requestMappingInfo);
 
         if (isEmpty(patterns)) {
             return null;
         }
 
-        RequestMethodsRequestCondition methodsCondition = source.getMethodsCondition();
-        ParamsRequestCondition paramsCondition = source.getParamsCondition();
-        HeadersRequestCondition headersCondition = source.getHeadersCondition();
-        ConsumesRequestCondition consumesCondition = source.getConsumesCondition();
-        ProducesRequestCondition producesCondition = source.getProducesCondition();
+        HandlerMethod handlerMethod = source.getHandlerMethod();
 
-        return of(patterns)
+        RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
+        ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
+        HeadersRequestCondition headersCondition = requestMappingInfo.getHeadersCondition();
+        ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
+        ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
+
+        return of(handlerMethod, patterns)
                 .methods(methodsCondition.getMethods(), RequestMethod::name)
                 .params(paramsCondition.getExpressions(), NameValueExpression::toString)
                 .headers(headersCondition.getExpressions(), NameValueExpression::toString)
