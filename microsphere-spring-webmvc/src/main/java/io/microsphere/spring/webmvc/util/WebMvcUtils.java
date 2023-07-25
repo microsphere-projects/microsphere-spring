@@ -133,16 +133,6 @@ public abstract class WebMvcUtils {
         return request;
     }
 
-    public static <T> T getAttribute(HttpServletRequest request, String attributeName) {
-        return (T) request.getAttribute(attributeName);
-    }
-
-    public static void setAttribute(HttpServletRequest request, String attributeName, Object attributeValue) {
-        if (attributeName == null || attributeValue == null) {
-            return;
-        }
-        request.setAttribute(attributeName, attributeValue);
-    }
 
     /**
      * Gets the {@link WebApplicationContext} associated with the current Servlet Request request
