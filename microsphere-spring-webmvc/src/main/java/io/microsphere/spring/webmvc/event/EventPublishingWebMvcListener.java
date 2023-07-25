@@ -1,5 +1,6 @@
 package io.microsphere.spring.webmvc.event;
 
+import io.microsphere.spring.context.OnceApplicationContextEventListener;
 import io.microsphere.spring.webmvc.metadata.RequestMappingInfoHandlerMethodMetadataReadyEvent;
 import io.microsphere.spring.webmvc.method.HandlerMethodsInitializedEvent;
 import org.slf4j.Logger;
@@ -7,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
@@ -30,18 +29,17 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * @see RequestMappingInfoHandlerMethodMetadataReadyEvent
  * @since 1.0.0
  */
-public class EventPublishingWebMvcListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
+public class EventPublishingWebMvcListener extends OnceApplicationContextEventListener<ContextRefreshedEvent> implements ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(EventPublishingWebMvcListener.class);
 
-    private ApplicationContext context;
+    public EventPublishingWebMvcListener(ApplicationContext context) {
+        super(context);
+    }
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public void onApplicationContextEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
-        if (!Objects.equals(context, applicationContext)) {
-            return;
-        }
         publishEvents(applicationContext);
     }
 
@@ -63,10 +61,5 @@ public class EventPublishingWebMvcListener implements ApplicationListener<Contex
         applicationContext.publishEvent(new HandlerMethodsInitializedEvent(applicationContext, handlerMethods));
         applicationContext.publishEvent(new RequestMappingInfoHandlerMethodMetadataReadyEvent(applicationContext, requestMappingInfoHandlerMethods));
         logger.info("The current application context [id: '{}'] has published the events");
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
     }
 }
