@@ -1,8 +1,8 @@
 package io.microsphere.spring.webmvc.config;
 
+import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
 import io.microsphere.spring.webmvc.interceptor.DelegatingMethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.interceptor.MethodHandlerInterceptor;
-import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;

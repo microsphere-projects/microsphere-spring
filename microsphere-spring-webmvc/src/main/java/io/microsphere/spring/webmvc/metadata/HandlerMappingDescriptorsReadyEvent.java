@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.webmvc.metadata.HandlerMappingDescriptor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 

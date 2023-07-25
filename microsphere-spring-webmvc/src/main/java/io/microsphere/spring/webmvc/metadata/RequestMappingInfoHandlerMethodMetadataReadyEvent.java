@@ -1,6 +1,5 @@
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.webmvc.metadata.RequestMappingInfoHandlerMethodMetadata;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.web.method.HandlerMethod;
