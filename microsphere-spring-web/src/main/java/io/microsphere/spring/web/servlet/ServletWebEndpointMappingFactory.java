@@ -18,19 +18,33 @@ package io.microsphere.spring.web.servlet;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
+import org.springframework.util.CollectionUtils;
 
-import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
+import java.util.Collection;
+
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
- * {@link WebEndpointMappingFactory} for {@link javax.servlet.Servlet}
+ * {@link WebEndpointMappingFactory} from {@link ServletRegistration}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ServletContext
+ * @see ServletRegistration
  * @since 1.0.0
  */
-public class ServletWebEndpointMappingFactory implements WebEndpointMappingFactory<Servlet> {
+public class ServletWebEndpointMappingFactory implements WebEndpointMappingFactory<ServletRegistration> {
 
     @Override
-    public <T> WebEndpointMapping<T> create(Servlet source) {
-        return null;
+    public <T> WebEndpointMapping<T> create(ServletRegistration registration) {
+        String servletName = registration.getName();
+        Collection<String> mappings = registration.getMappings();
+        if (CollectionUtils.isEmpty(mappings)) {
+            // No Mapping ?
+            return null;
+        }
+        return of(servletName, mappings)
+                .build();
     }
 }
