@@ -43,6 +43,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory<Object> {
 
     private static final Class<WebEndpointMappingFactory> FACTORY_CLASS = WebEndpointMappingFactory.class;
+
     private final static Logger logger = LoggerFactory.getLogger(FACTORY_CLASS);
 
     private final Map<Class<?>, List<WebEndpointMappingFactory>> delegates;
