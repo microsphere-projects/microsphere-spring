@@ -48,7 +48,6 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
 
     private final Map<Class<?>, List<WebEndpointMappingFactory>> delegates;
 
-
     SmartWebEndpointMappingFactory() {
         this(null);
     }
