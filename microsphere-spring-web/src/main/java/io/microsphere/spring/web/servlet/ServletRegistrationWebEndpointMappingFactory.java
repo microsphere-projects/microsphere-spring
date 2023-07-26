@@ -20,31 +20,33 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.util.CollectionUtils;
 
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 import java.util.Collection;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
- * {@link WebEndpointMappingFactory} from {@link FilterRegistration}
+ * {@link WebEndpointMappingFactory} from {@link ServletRegistration}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ServletContext
- * @see FilterRegistration
+ * @see ServletContext#getServletRegistrations()
+ * @see ServletRegistration
  * @since 1.0.0
  */
-public class FilterWebEndpointMappingFactory implements WebEndpointMappingFactory<FilterRegistration> {
+public class ServletRegistrationWebEndpointMappingFactory implements WebEndpointMappingFactory<ServletRegistration> {
+
+    public static final ServletRegistrationWebEndpointMappingFactory INSTANCE = new ServletRegistrationWebEndpointMappingFactory();
 
     @Override
-    public <T> WebEndpointMapping<T> create(FilterRegistration registration) {
-        String filterName = registration.getName();
-        Collection<String> mappings = registration.getUrlPatternMappings();
+    public <T> WebEndpointMapping<T> create(ServletRegistration registration) {
+        String servletName = registration.getName();
+        Collection<String> mappings = registration.getMappings();
         if (CollectionUtils.isEmpty(mappings)) {
-            // If filter mappings one or more servlets, the WebEndpointMappings will be generated from them.
+            // No Mapping ?
             return null;
         }
-        return of(filterName, mappings)
+        return of(servletName, mappings)
                 .build();
     }
 }

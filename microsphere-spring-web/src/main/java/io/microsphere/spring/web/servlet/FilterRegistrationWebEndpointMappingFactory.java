@@ -18,39 +18,35 @@ package io.microsphere.spring.web.servlet;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
+import org.springframework.util.CollectionUtils;
 
-import javax.servlet.Servlet;
+import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import java.util.Collection;
+
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
- * {@link WebEndpointMappingFactory} from {@link Servlet}
+ * {@link WebEndpointMappingFactory} from {@link FilterRegistration}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see Servlet
- * @see ServletRegistration
- * @see ServletContext
+ * @see ServletContext#getFilterRegistrations()
+ * @see FilterRegistration
  * @since 1.0.0
  */
-public class ServletWebEndpointMappingFactory implements WebEndpointMappingFactory<Servlet> {
+public class FilterRegistrationWebEndpointMappingFactory implements WebEndpointMappingFactory<FilterRegistration> {
 
-    private final ServletContext servletContext;
-
-    private final ServletRegistrationWebEndpointMappingFactory delegate;
-
-    public ServletWebEndpointMappingFactory(ServletContext servletContext) {
-        this.servletContext = servletContext;
-        this.delegate = ServletRegistrationWebEndpointMappingFactory.INSTANCE;
-    }
+    public static final FilterRegistrationWebEndpointMappingFactory INSTANCE = new FilterRegistrationWebEndpointMappingFactory();
 
     @Override
-    public <T> WebEndpointMapping<T> create(Servlet servlet) {
-        String servletName = servlet.getServletConfig().getServletName();
-        ServletRegistration registration = servletContext.getServletRegistration(servletName);
-        if (registration == null) {
-            // No Mapping for Servlet?
+    public <T> WebEndpointMapping<T> create(FilterRegistration registration) {
+        String filterName = registration.getName();
+        Collection<String> mappings = registration.getUrlPatternMappings();
+        if (CollectionUtils.isEmpty(mappings)) {
+            // If filter mappings one or more servlets, the WebEndpointMappings will be generated from them.
             return null;
         }
-        return delegate.create(registration);
+        return of(filterName, mappings)
+                .build();
     }
 }
