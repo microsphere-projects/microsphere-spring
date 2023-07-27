@@ -2,11 +2,14 @@ package io.microsphere.spring.webmvc.event;
 
 import io.microsphere.spring.context.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.servlet.FilterRegistrationWebEndpointMappingFactory;
+import io.microsphere.spring.web.servlet.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadata;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
+import io.microsphere.spring.webmvc.metadata.WebEndpointMappingsReadyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -19,12 +22,16 @@ import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 
+import javax.servlet.FilterRegistration;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.microsphere.enterprise.servlet.enumeration.ServletVersion.SERVLET_3_0;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
@@ -57,14 +64,48 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
         Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = new HashMap<>();
         List<WebEndpointMapping> webEndpointMappings = new LinkedList<>();
 
+        ServletContext servletContext = context.getServletContext();
+
+        if (SERVLET_3_0.le(servletContext)) { // Servlet 3.0+
+            collectFromServletContext(servletContext, context, webEndpointMappings);
+        }
+
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             collectFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);
             collectFromRequestMappingInfoHandlerMapping(handlerMapping, requestMappingInfoHandlerMethods, webEndpointMappings);
-
         }
 
         context.publishEvent(new RequestMappingMetadataReadyEvent(context, requestMappingInfoHandlerMethods));
+        context.publishEvent(new WebEndpointMappingsReadyEvent(context, webEndpointMappings));
         logger.info("The current application context [id: '{}'] has published the events");
+    }
+
+    private void collectFromServletContext(ServletContext servletContext, WebApplicationContext context,
+                                           List<WebEndpointMapping> webEndpointMappings) {
+        collectFromFilters(servletContext, context, webEndpointMappings);
+        collectFromServlets(servletContext, context, webEndpointMappings);
+    }
+
+    private void collectFromFilters(ServletContext servletContext, WebApplicationContext context,
+                                    List<WebEndpointMapping> webEndpointMappings) {
+        FilterRegistrationWebEndpointMappingFactory factory = FilterRegistrationWebEndpointMappingFactory.INSTANCE;
+        Map<String, ? extends FilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
+        for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
+            FilterRegistration registration = entry.getValue();
+            Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
+            webEndpointMapping.ifPresent(webEndpointMappings::add);
+        }
+    }
+
+    private void collectFromServlets(ServletContext servletContext, WebApplicationContext context,
+                                     List<WebEndpointMapping> webEndpointMappings) {
+        ServletRegistrationWebEndpointMappingFactory factory = ServletRegistrationWebEndpointMappingFactory.INSTANCE;
+        Map<String, ? extends ServletRegistration> servletRegistrations = servletContext.getServletRegistrations();
+        for (Map.Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
+            ServletRegistration registration = entry.getValue();
+            Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
+            webEndpointMapping.ifPresent(webEndpointMappings::add);
+        }
     }
 
     private void collectFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {

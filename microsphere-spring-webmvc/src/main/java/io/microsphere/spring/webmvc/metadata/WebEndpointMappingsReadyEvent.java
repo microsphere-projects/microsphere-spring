@@ -20,6 +20,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,21 +32,21 @@ import java.util.List;
  */
 public class WebEndpointMappingsReadyEvent extends ApplicationContextEvent {
 
-    private final List<WebEndpointMapping> mappings;
+    private final Collection<WebEndpointMapping> mappings;
 
     /**
      * Create a new ApplicationContextEvent.
      *
      * @param source   the {@code ApplicationContext} that the event is raised for
      *                 (must not be {@code null})
-     * @param mappings
+     * @param mappings {@lin WebEndpointMapping} list
      */
-    public WebEndpointMappingsReadyEvent(ApplicationContext source, List<WebEndpointMapping> mappings) {
+    public WebEndpointMappingsReadyEvent(ApplicationContext source, Collection<WebEndpointMapping> mappings) {
         super(source);
         this.mappings = mappings;
     }
 
-    public List<WebEndpointMapping> getMappings() {
+    public Collection<WebEndpointMapping> getMappings() {
         return mappings;
     }
 }

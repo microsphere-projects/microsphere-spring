@@ -18,11 +18,16 @@ package io.microsphere.spring.webmvc.interceptor.bootstrap;
 
 import io.microsphere.spring.webmvc.annotation.Idempotent;
 import io.microsphere.spring.webmvc.config.CommonWebMvcConfigurer;
-import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.event.RequestMappingHandlerAdapterListener;
+import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
+import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
+import io.microsphere.spring.webmvc.metadata.WebEndpointMappingsReadyEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListener;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,8 +45,20 @@ import org.springframework.web.bind.annotation.RestController;
         DemoController.class})
 public class IdempotentWebApplication {
 
+    private static final Logger logger = LoggerFactory.getLogger(IdempotentWebApplication.class);
+
     public static void main(String[] args) {
         SpringApplication.run(IdempotentWebApplication.class, args);
+    }
+
+    @EventListener(RequestMappingMetadataReadyEvent.class)
+    public void onEvent(RequestMappingMetadataReadyEvent event) {
+        logger.info("RequestMappingMetadataReadyEvent's Metadata : {}", event.getMetadata());
+    }
+
+    @EventListener(WebEndpointMappingsReadyEvent.class)
+    public void onEvent(WebEndpointMappingsReadyEvent event) {
+        logger.info("WebEndpointMappingsReadyEvent's Mappings : {}", event.getMappings());
     }
 
 }
