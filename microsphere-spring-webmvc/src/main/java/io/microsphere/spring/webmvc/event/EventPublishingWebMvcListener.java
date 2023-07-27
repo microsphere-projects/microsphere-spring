@@ -88,8 +88,12 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
 
     private void collectFromFilters(ServletContext servletContext, WebApplicationContext context,
                                     List<WebEndpointMapping> webEndpointMappings) {
-        FilterRegistrationWebEndpointMappingFactory factory = FilterRegistrationWebEndpointMappingFactory.INSTANCE;
         Map<String, ? extends FilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
+        if (filterRegistrations.isEmpty()) {
+            return;
+        }
+
+        FilterRegistrationWebEndpointMappingFactory factory = FilterRegistrationWebEndpointMappingFactory.INSTANCE;
         for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
             FilterRegistration registration = entry.getValue();
             Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
@@ -99,8 +103,12 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
 
     private void collectFromServlets(ServletContext servletContext, WebApplicationContext context,
                                      List<WebEndpointMapping> webEndpointMappings) {
-        ServletRegistrationWebEndpointMappingFactory factory = ServletRegistrationWebEndpointMappingFactory.INSTANCE;
         Map<String, ? extends ServletRegistration> servletRegistrations = servletContext.getServletRegistrations();
+        if (servletRegistrations.isEmpty()) {
+            return;
+        }
+
+        ServletRegistrationWebEndpointMappingFactory factory = ServletRegistrationWebEndpointMappingFactory.INSTANCE;
         for (Map.Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
             ServletRegistration registration = entry.getValue();
             Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
@@ -110,9 +118,13 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
 
     private void collectFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
         if (handlerMapping instanceof AbstractUrlHandlerMapping) {
-            HandlerMetadataWebEndpointMappingFactory factory = HandlerMetadataWebEndpointMappingFactory.INSTANCE;
             AbstractUrlHandlerMapping urlHandlerMapping = (AbstractUrlHandlerMapping) handlerMapping;
             Map<String, Object> handlerMap = urlHandlerMapping.getHandlerMap();
+            if (handlerMap.isEmpty()) {
+                return;
+            }
+
+            HandlerMetadataWebEndpointMappingFactory factory = HandlerMetadataWebEndpointMappingFactory.INSTANCE;
             for (Map.Entry<String, Object> entry : handlerMap.entrySet()) {
                 HandlerMetadata<Object, String> metadata = new HandlerMetadata<>(entry.getValue(), entry.getKey());
                 Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(metadata);
@@ -124,10 +136,14 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
     private void collectFromRequestMappingInfoHandlerMapping(HandlerMapping handlerMapping,
                                                              Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods,
                                                              List<WebEndpointMapping> webEndpointMappings) {
-        RequestMappingMetadataWebEndpointMappingFactory factory = RequestMappingMetadataWebEndpointMappingFactory.INSTANCE;
         if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
             RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
             Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
+            if (handlerMethodsMap.isEmpty()) {
+                return;
+            }
+
+            RequestMappingMetadataWebEndpointMappingFactory factory = RequestMappingMetadataWebEndpointMappingFactory.INSTANCE;
             for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodsMap.entrySet()) {
                 RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
                 Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(metadata);
