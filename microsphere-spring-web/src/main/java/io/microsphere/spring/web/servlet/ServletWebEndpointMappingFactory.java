@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.servlet;
 
+import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 
@@ -32,7 +33,7 @@ import javax.servlet.ServletRegistration;
  * @see ServletContext
  * @since 1.0.0
  */
-public class ServletWebEndpointMappingFactory implements WebEndpointMappingFactory<Servlet> {
+public class ServletWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<Servlet> {
 
     private final ServletContext servletContext;
 
@@ -44,13 +45,13 @@ public class ServletWebEndpointMappingFactory implements WebEndpointMappingFacto
     }
 
     @Override
-    public <T> WebEndpointMapping<T> create(Servlet servlet) {
+    protected WebEndpointMapping<String> doCreate(Servlet servlet) {
         String servletName = servlet.getServletConfig().getServletName();
         ServletRegistration registration = servletContext.getServletRegistration(servletName);
         if (registration == null) {
             // No Mapping for Servlet?
             return null;
         }
-        return delegate.create(registration);
+        return delegate.doCreate(registration);
     }
 }

@@ -19,6 +19,8 @@ package io.microsphere.spring.web.metadata;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import java.util.Optional;
+
 import static org.springframework.core.ResolvableType.forClass;
 
 /**
@@ -59,7 +61,7 @@ public interface WebEndpointMappingFactory<S> {
      * @return <code>null</code> if can't be created
      */
     @Nullable
-    <T> WebEndpointMapping<T> create(S source);
+    Optional<WebEndpointMapping<?>> create(S source);
 
 
     /**

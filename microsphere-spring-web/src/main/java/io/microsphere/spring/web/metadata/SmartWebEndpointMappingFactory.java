@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
@@ -125,23 +126,23 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
     }
 
     @Override
-    public WebEndpointMapping create(Object source) {
+    public Optional<WebEndpointMapping<?>> create(Object source) {
         Class<?> sourceType = source.getClass();
         List<WebEndpointMappingFactory> factories = delegates.get(sourceType);
         int size = factories == null ? 0 : factories.size();
         if (size < 1) {
             return null;
         }
-        WebEndpointMapping descriptor = null;
+        Optional<WebEndpointMapping<?>> result = null;
         for (int i = 0; i < size; i++) {
             WebEndpointMappingFactory factory = factories.get(i);
             if (factory.supports(source)) {
-                descriptor = factory.create(source);
-                if (descriptor != null) {
+                result = factory.create(source);
+                if (result != null) {
                     break;
                 }
             }
         }
-        return descriptor;
+        return result;
     }
 }

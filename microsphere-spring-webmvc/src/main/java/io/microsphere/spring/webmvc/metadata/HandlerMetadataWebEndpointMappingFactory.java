@@ -16,23 +16,27 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import org.springframework.web.method.HandlerMethod;
+import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
+
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
- * The metadata class for Spring WebMVC's {@link HandlerMethod}
+ * {@link WebEndpointMappingFactory} based on Spring WebMVC Handlers
  *
- * @param <M> the type of metadata
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see HandlerMethod
  * @since 1.0.0
  */
-public class HandlerMethodMetadata<M> extends HandlerMetadata<HandlerMethod, M> {
+public class HandlerMetadataWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<HandlerMetadata<Object, String>> {
 
-    public HandlerMethodMetadata(HandlerMethod handlerMethod, M metadata) {
-        super(handlerMethod, metadata);
-    }
+    public static final HandlerMetadataWebEndpointMappingFactory INSTANCE = new HandlerMetadataWebEndpointMappingFactory();
 
-    public final HandlerMethod getHandlerMethod() {
-        return getHandler();
+    @Override
+    protected WebEndpointMapping<Object> doCreate(HandlerMetadata<Object, String> source) {
+        Object handler = source.getHandler();
+        String url = source.getMetadata();
+        return of(handler, url)
+                .build();
     }
 }

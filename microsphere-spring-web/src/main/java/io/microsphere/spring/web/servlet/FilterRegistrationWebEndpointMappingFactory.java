@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.servlet;
 
+import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.util.CollectionUtils;
@@ -34,12 +35,12 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
  * @see FilterRegistration
  * @since 1.0.0
  */
-public class FilterRegistrationWebEndpointMappingFactory implements WebEndpointMappingFactory<FilterRegistration> {
+public class FilterRegistrationWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<FilterRegistration> {
 
     public static final FilterRegistrationWebEndpointMappingFactory INSTANCE = new FilterRegistrationWebEndpointMappingFactory();
 
     @Override
-    public <T> WebEndpointMapping<T> create(FilterRegistration registration) {
+    protected WebEndpointMapping<String> doCreate(FilterRegistration registration) {
         String filterName = registration.getName();
         Collection<String> mappings = registration.getUrlPatternMappings();
         if (CollectionUtils.isEmpty(mappings)) {

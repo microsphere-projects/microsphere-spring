@@ -28,7 +28,7 @@ import java.util.Objects;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class HandlerMetadata<H, M> {
+public class HandlerMetadata<H, M> {
 
     private final H handler;
 

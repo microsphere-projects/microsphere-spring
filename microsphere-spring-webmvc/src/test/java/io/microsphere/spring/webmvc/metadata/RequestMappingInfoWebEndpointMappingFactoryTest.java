@@ -29,8 +29,10 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link RequestMappingMetadataWebEndpointMappingFactory} Test
@@ -64,8 +66,9 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
         assertNotNull(handlerMethods);
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
-            WebEndpointMapping webEndpointMapping = factory.create(metadata);
-            assertNotNull(webEndpointMapping.toJSON());
+            Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(metadata);
+            assertTrue(webEndpointMapping.isPresent());
+            assertNotNull(webEndpointMapping.get().toJSON());
         }
     }
 

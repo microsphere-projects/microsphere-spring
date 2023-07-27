@@ -26,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,8 +58,8 @@ public class SmartWebEndpointMappingFactoryTest {
 
     @Test
     public void testCreate() {
-        WebEndpointMapping descriptor = factory.create(fullJson);
+        Optional<WebEndpointMapping> descriptor = factory.create(fullJson);
         assertNotNull(descriptor);
-        assertEquals(fullJson, descriptor.toJSON());
+        assertEquals(fullJson, descriptor.get().toJSON());
     }
 }

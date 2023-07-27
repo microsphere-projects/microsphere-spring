@@ -16,35 +16,36 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.util.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
+
 /**
- * The {@link WebEndpointMappingFactory} class based on Jackson2 for JSON
+ * Abstract class for {@link WebEndpointMappingFactory}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see WebEndpointMappingFactory
  * @since 1.0.0
  */
-public class Jackson2WebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<String> {
+public abstract class AbstractWebEndpointMappingFactory<S> implements WebEndpointMappingFactory<S> {
 
-    private static final String OBJECT_MAPPER_CLASS_NAME = "com.fasterxml.jackson.databind.ObjectMapper";
-
-    private static final ClassLoader classLoader = Jackson2WebEndpointMappingFactory.class.getClassLoader();
-
-    private static final boolean objectMapperPresent = ClassUtils.isPresent(OBJECT_MAPPER_CLASS_NAME, classLoader);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public boolean supports(String source) {
-        return objectMapperPresent;
+    public final Optional<WebEndpointMapping<?>> create(S source) {
+        WebEndpointMapping<?> mapping = null;
+        try {
+            mapping = doCreate(source);
+        } catch (Throwable e) {
+            logger.error("The WebEndpointMapping instance can't be created by the source : {}", source, e);
+        }
+        return ofNullable(mapping);
     }
 
-    @Override
-    protected WebEndpointMapping<String> doCreate(String source) throws Throwable {
-        WebEndpointMapping mapping = null;
-        ObjectMapper objectMapper = new ObjectMapper();
-        mapping = objectMapper.readValue(source, WebEndpointMapping.class);
-        return mapping;
-    }
+    @Nullable
+    protected abstract WebEndpointMapping<?> doCreate(S source) throws Throwable;
 }

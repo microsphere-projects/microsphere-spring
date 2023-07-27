@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.util.ClassUtils;
@@ -46,14 +47,16 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @see RequestMappingInfo
  * @since 1.0.0
  */
-public class RequestMappingMetadataWebEndpointMappingFactory implements WebEndpointMappingFactory<RequestMappingMetadata> {
+public class RequestMappingMetadataWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<RequestMappingMetadata> {
 
     private static final String CLASS_NAME = "org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition";
 
     private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
 
+    public static final RequestMappingMetadataWebEndpointMappingFactory INSTANCE = new RequestMappingMetadataWebEndpointMappingFactory();
+
     @Override
-    public WebEndpointMapping<HandlerMethod> create(RequestMappingMetadata source) {
+    protected WebEndpointMapping<HandlerMethod> doCreate(RequestMappingMetadata source) {
 
         RequestMappingInfo requestMappingInfo = source.getRequestMappingInfo();
 

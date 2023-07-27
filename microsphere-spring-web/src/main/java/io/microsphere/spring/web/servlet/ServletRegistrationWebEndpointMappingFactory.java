@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.servlet;
 
+import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.util.CollectionUtils;
@@ -34,12 +35,12 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
  * @see ServletRegistration
  * @since 1.0.0
  */
-public class ServletRegistrationWebEndpointMappingFactory implements WebEndpointMappingFactory<ServletRegistration> {
+public class ServletRegistrationWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<ServletRegistration> {
 
     public static final ServletRegistrationWebEndpointMappingFactory INSTANCE = new ServletRegistrationWebEndpointMappingFactory();
 
     @Override
-    public <T> WebEndpointMapping<T> create(ServletRegistration registration) {
+    protected WebEndpointMapping<String> doCreate(ServletRegistration registration) {
         String servletName = registration.getName();
         Collection<String> mappings = registration.getMappings();
         if (CollectionUtils.isEmpty(mappings)) {
