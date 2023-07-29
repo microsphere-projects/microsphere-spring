@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.webmvc.interceptor.bootstrap;
 
+import io.microsphere.spring.webmvc.annotation.EnableCommonWebMvc;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
-import io.microsphere.spring.webmvc.config.CommonWebMvcConfigurer;
 import io.microsphere.spring.webmvc.event.RequestMappingHandlerAdapterListener;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
@@ -39,10 +39,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @EnableAutoConfiguration
-@Import({CommonWebMvcConfigurer.class,
+@EnableCommonWebMvc
+@Import(value = {
         IdempotentAnnotatedMethodHandlerInterceptor.class,
         RequestMappingHandlerAdapterListener.class,
-        DemoController.class})
+        DemoController.class
+})
 public class IdempotentWebApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(IdempotentWebApplication.class);
