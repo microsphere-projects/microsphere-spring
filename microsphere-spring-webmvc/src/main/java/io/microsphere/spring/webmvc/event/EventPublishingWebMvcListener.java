@@ -39,6 +39,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see RequestMappingMetadataReadyEvent
+ * @see WebMvcEventPublisher
  * @since 1.0.0
  */
 public class EventPublishingWebMvcListener extends OnceApplicationContextEventListener<ContextRefreshedEvent> implements ApplicationContextAware {
@@ -57,7 +58,7 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
         }
     }
 
-    private void publishWebEvents(WebApplicationContext context) {
+    protected void publishWebEvents(WebApplicationContext context) {
 
         Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(context, HandlerMapping.class);
 
