@@ -1,6 +1,7 @@
 package io.microsphere.spring.webmvc.config;
 
 import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
+import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
 import io.microsphere.spring.webmvc.interceptor.DelegatingMethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.interceptor.MethodHandlerInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @since 1.0.0
  */
 @Import(value = {
-        EventPublishingWebMvcListener.class,
+        WebMvcEventPublisher.class,
         DelegatingMethodHandlerInterceptor.class
 })
 public class CommonWebMvcConfigurer implements WebMvcConfigurer {
