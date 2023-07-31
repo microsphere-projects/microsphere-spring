@@ -248,8 +248,7 @@ public class WebEndpointMapping<S> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WebEndpointMapping that = (WebEndpointMapping) o;
-        return Objects.equals(source, that.source)
-                && Arrays.equals(patterns, that.patterns)
+        return Arrays.equals(patterns, that.patterns)
                 && Arrays.equals(methods, that.methods)
                 && Arrays.equals(params, that.params)
                 && Arrays.equals(headers, that.headers)
@@ -259,8 +258,7 @@ public class WebEndpointMapping<S> {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(source);
-        result = 31 * result + Arrays.hashCode(patterns);
+        int result = Arrays.hashCode(patterns);
         result = 31 * result + Arrays.hashCode(methods);
         result = 31 * result + Arrays.hashCode(params);
         result = 31 * result + Arrays.hashCode(headers);
