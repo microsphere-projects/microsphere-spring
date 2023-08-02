@@ -60,7 +60,7 @@ public class FilterRegistrationWebEndpointMappingFactoryTest {
     public void testCreate() {
         Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
         webEndpointMapping.ifPresent(mapping -> {
-            assertEquals(this.filterName, mapping.getSource());
+            assertEquals(this.filterName, mapping.getEndpoint());
             assertArrayEquals(of(this.url), mapping.getPatterns());
         });
     }

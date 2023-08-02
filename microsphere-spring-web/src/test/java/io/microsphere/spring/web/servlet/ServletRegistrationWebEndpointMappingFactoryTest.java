@@ -59,7 +59,7 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
 
         Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
         webEndpointMapping.ifPresent(mapping -> {
-            assertEquals(this.servletName, mapping.getSource());
+            assertEquals(this.servletName, mapping.getEndpoint());
             assertArrayEquals(of(this.url), mapping.getPatterns());
         });
     }

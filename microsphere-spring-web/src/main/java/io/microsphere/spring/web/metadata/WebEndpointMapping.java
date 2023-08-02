@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
@@ -44,7 +46,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  *     <li>Spring WebFlux Mapping</li>
  * </ul>
  *
- * @param <S> the type of source
+ * @param <E> the type of endpoint
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see javax.servlet.ServletRegistration
  * @see javax.servlet.FilterRegistration
@@ -57,18 +59,20 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @see org.springframework.web.reactive.result.method.RequestMappingInfo
  * @since 1.0.0
  */
-public class WebEndpointMapping<S> {
+public class WebEndpointMapping<E> {
 
     /**
      * The HTTP header name for {@link WebEndpointMapping#getId()}
      */
     public static final String ID_HEADER_NAME = "microsphere_wem_id";
 
+    public static final Object UNKNOWN_ENDPOINT = new Object();
+
     public static final Object NON_SOURCE = new Object();
 
     private final transient Kind kind;
 
-    private final transient S source;
+    private final transient E endpoint;
 
     private final int id;
 
@@ -84,7 +88,11 @@ public class WebEndpointMapping<S> {
 
     private final String[] produces;
 
+    private transient final Object source;
+
     private transient int hashCode = 0;
+
+    private transient Map<String, Object> attributes;
 
 
     /**
@@ -119,11 +127,13 @@ public class WebEndpointMapping<S> {
 
     }
 
-    public static class Builder<S> {
+    public static class Builder<E> {
 
         private final Kind kind;
 
-        private final Object source;
+        private final E endpoint;
+
+        private Object source;
 
         private final String[] patterns;
 
@@ -137,55 +147,60 @@ public class WebEndpointMapping<S> {
 
         private String[] produces;
 
-        private Builder(Kind kind, S source, String[] patterns) {
+        private Builder(Kind kind, E endpoint, String[] patterns) {
             isTrue(!isEmpty(patterns), "The patterns must not be empty!");
             this.kind = kind == null ? UNKNOWN : kind;
-            this.source = source == null ? NON_SOURCE : source;
+            this.endpoint = endpoint == null ? (E) UNKNOWN_ENDPOINT : endpoint;
             this.patterns = patterns;
         }
 
-        public <V> Builder<S> methods(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<E> methods(Collection<V> values, Function<V, String> stringFunction) {
             return methods(toStrings(values, stringFunction));
         }
 
-        public Builder<S> methods(String... methods) {
+        public Builder<E> methods(String... methods) {
             this.methods = methods;
             return this;
         }
 
-        public <V> Builder<S> params(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<E> params(Collection<V> values, Function<V, String> stringFunction) {
             return params(toStrings(values, stringFunction));
         }
 
-        public Builder<S> params(String... params) {
+        public Builder<E> params(String... params) {
             this.params = params;
             return this;
         }
 
-        public <V> Builder<S> headers(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<E> headers(Collection<V> values, Function<V, String> stringFunction) {
             return headers(toStrings(values, stringFunction));
         }
 
-        public Builder<S> headers(String... headers) {
+        public Builder<E> headers(String... headers) {
             this.headers = headers;
             return this;
         }
 
-        public <V> Builder<S> consumes(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<E> consumes(Collection<V> values, Function<V, String> stringFunction) {
             return consumes(toStrings(values, stringFunction));
         }
 
-        public Builder<S> consumes(String... consumes) {
+        public Builder<E> consumes(String... consumes) {
             this.consumes = consumes;
             return this;
         }
 
-        public <V> Builder<S> produces(Collection<V> values, Function<V, String> stringFunction) {
+        public <V> Builder<E> produces(Collection<V> values, Function<V, String> stringFunction) {
             return produces(toStrings(values, stringFunction));
         }
 
-        public Builder<S> produces(String... produces) {
+        public Builder<E> produces(String... produces) {
             this.produces = produces;
+            return this;
+        }
+
+        public Builder<E> source(Object source) {
+            this.source = source;
             return this;
         }
 
@@ -199,6 +214,7 @@ public class WebEndpointMapping<S> {
         public WebEndpointMapping build() {
             return new WebEndpointMapping(
                     this.kind,
+                    this.endpoint,
                     this.source,
                     this.patterns,
                     this.methods,
@@ -219,17 +235,26 @@ public class WebEndpointMapping<S> {
         return of(null, null, patterns);
     }
 
-    public static <S> Builder<S> of(@Nullable Kind kind, @Nullable S source, Collection<String> patterns) {
-        return of(kind, source, ArrayUtils.asArray(patterns, String.class));
+    public static <E> Builder<E> of(@Nullable E endpoint, Collection<String> patterns) {
+        return of(null, endpoint, patterns);
     }
 
-    public static <S> Builder of(@Nullable Kind kind, @Nullable S source, String... patterns) {
-        return new Builder(kind, source, patterns);
+    public static <E> Builder<E> of(@Nullable E endpoint, String... patterns) {
+        return of(null, endpoint, patterns);
+    }
+
+    public static <E> Builder<E> of(@Nullable Kind kind, @Nullable E endpoint, Collection<String> patterns) {
+        return of(kind, endpoint, ArrayUtils.asArray(patterns, String.class));
+    }
+
+    public static <E> Builder of(@Nullable Kind kind, @Nullable E endpoint, String... patterns) {
+        return new Builder(kind, endpoint, patterns);
     }
 
     private WebEndpointMapping(
             Kind kind,
-            S source,
+            E endpoint,
+            Object source,
             String[] patterns,
             @Nullable String[] methods,
             @Nullable String[] params,
@@ -237,9 +262,10 @@ public class WebEndpointMapping<S> {
             @Nullable String[] consumes,
             @Nullable String[] produces) {
         this.kind = kind;
-        this.source = source;
-        // id is a hash code of the source
-        this.id = source == null ? 0 : source.hashCode();
+        this.endpoint = endpoint;
+        // id is a hash code of the endpoint
+        this.id = endpoint == null ? 0 : endpoint.hashCode();
+        this.source = source == null ? NON_SOURCE : source;
         this.patterns = patterns;
         this.methods = methods;
         this.params = params;
@@ -252,15 +278,17 @@ public class WebEndpointMapping<S> {
      * For serialization
      */
     private WebEndpointMapping() {
-        this(UNKNOWN, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
+    @NonNull
     public Kind getKind() {
         return kind;
     }
 
-    public S getSource() {
-        return source;
+    @NonNull
+    public E getEndpoint() {
+        return endpoint;
     }
 
     public int getId() {
@@ -268,9 +296,16 @@ public class WebEndpointMapping<S> {
     }
 
     @NonNull
+    public Object getSource() {
+        return this.source;
+    }
+
+    @NonNull
     public String[] getPatterns() {
         return patterns;
     }
+
+    @NonNull
 
     public String[] getMethods() {
         if (methods == null) {
@@ -279,6 +314,8 @@ public class WebEndpointMapping<S> {
         return methods;
     }
 
+    @NonNull
+
     public String[] getParams() {
         if (params == null) {
             return EMPTY_STRING_ARRAY;
@@ -286,6 +323,7 @@ public class WebEndpointMapping<S> {
         return params;
     }
 
+    @NonNull
     public String[] getHeaders() {
         if (headers == null) {
             return EMPTY_STRING_ARRAY;
@@ -293,6 +331,7 @@ public class WebEndpointMapping<S> {
         return headers;
     }
 
+    @NonNull
     public String[] getConsumes() {
         if (consumes == null) {
             return EMPTY_STRING_ARRAY;
@@ -300,11 +339,30 @@ public class WebEndpointMapping<S> {
         return consumes;
     }
 
+    @NonNull
     public String[] getProduces() {
         if (produces == null) {
             return EMPTY_STRING_ARRAY;
         }
         return produces;
+    }
+
+    public <V> WebEndpointMapping<E> setAttribute(String name, @Nullable V value) {
+        if (value != null) {
+            if (attributes == null) {
+                attributes = new HashMap<>();
+            }
+            attributes.put(name, value);
+        }
+        return this;
+    }
+
+    @Nullable
+    public <V> V getAttribute(String name) {
+        if (attributes == null) {
+            return null;
+        }
+        return (V) attributes.get(name);
     }
 
     public String toJSON() {
@@ -362,8 +420,9 @@ public class WebEndpointMapping<S> {
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebMappingDescriptor{");
         sb.append("kind=").append(kind);
-        sb.append(", source=").append(source);
+        sb.append(", endpoint=").append(endpoint);
         sb.append(", id=").append(id);
+        sb.append(", source=").append(source);
         sb.append(", patterns=").append(Arrays.toString(patterns));
         sb.append(", methods=").append(Arrays.toString(methods));
         sb.append(", params=").append(Arrays.toString(params));

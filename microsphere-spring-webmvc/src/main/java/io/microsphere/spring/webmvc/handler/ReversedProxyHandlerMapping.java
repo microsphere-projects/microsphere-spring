@@ -21,6 +21,7 @@ import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFa
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.WebEndpointMappingsReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMethodMapping;
@@ -72,7 +73,11 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
             return null;
         }
 
-        Object source = webEndpointMapping.getSource();
+        Object source = webEndpointMapping.getEndpoint();
+        if (source instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) source;
+            return handlerMethod.createWithResolvedBean();
+        }
         return source;
     }
 

@@ -20,7 +20,6 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockServletConfig;
-import org.springframework.mock.web.MockServletContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -71,7 +70,7 @@ public class ServletWebEndpointMappingFactoryTest {
     public void testCreate() {
         Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(this.testServlet);
         webEndpointMapping.ifPresent(mapping -> {
-            assertEquals(this.servletName, mapping.getSource());
+            assertEquals(this.servletName, mapping.getEndpoint());
             assertArrayEquals(of(this.url), mapping.getPatterns());
         });
     }
