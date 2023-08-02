@@ -20,6 +20,7 @@ import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
@@ -36,7 +37,7 @@ public class HandlerMetadataWebEndpointMappingFactory extends AbstractWebEndpoin
     protected WebEndpointMapping<Object> doCreate(HandlerMetadata<Object, String> source) {
         Object handler = source.getHandler();
         String url = source.getMetadata();
-        return of(handler, url)
+        return of(WEB_MVC, handler, url)
                 .build();
     }
 }

@@ -25,6 +25,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.Collection;
 
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
@@ -47,7 +48,7 @@ public class ServletRegistrationWebEndpointMappingFactory extends AbstractWebEnd
             // No Mapping ?
             return null;
         }
-        return of(servletName, mappings)
+        return of(SERVLET, servletName, mappings)
                 .build();
     }
 }

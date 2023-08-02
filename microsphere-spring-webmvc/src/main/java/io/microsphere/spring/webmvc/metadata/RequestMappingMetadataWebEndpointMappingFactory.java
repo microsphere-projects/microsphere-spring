@@ -36,6 +36,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.Set;
 
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -74,7 +75,7 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends AbstractWeb
         ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
         ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
 
-        return of(handlerMethod, patterns)
+        return of(WEB_MVC, handlerMethod, patterns)
                 .methods(methodsCondition.getMethods(), RequestMethod::name)
                 .params(paramsCondition.getExpressions(), NameValueExpression::toString)
                 .headers(headersCondition.getExpressions(), NameValueExpression::toString)

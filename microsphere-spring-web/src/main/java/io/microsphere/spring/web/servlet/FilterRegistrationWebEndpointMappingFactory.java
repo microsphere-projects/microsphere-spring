@@ -25,6 +25,7 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import java.util.Collection;
 
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
@@ -47,7 +48,7 @@ public class FilterRegistrationWebEndpointMappingFactory extends AbstractWebEndp
             // If filter mappings one or more servlets, the WebEndpointMappings will be generated from them.
             return null;
         }
-        return of(filterName, mappings)
+        return of(FILTER, filterName, mappings)
                 .build();
     }
 }

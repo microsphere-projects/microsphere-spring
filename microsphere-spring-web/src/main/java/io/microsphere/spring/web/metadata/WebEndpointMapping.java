@@ -31,6 +31,7 @@ import static io.microsphere.constants.SymbolConstants.COLON_CHAR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.UNKNOWN;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -61,6 +62,8 @@ public class WebEndpointMapping<S> {
 
     public static final Object NON_SOURCE = new Object();
 
+    private final transient Kind kind;
+
     private final transient S source;
 
     private final int id;
@@ -77,7 +80,42 @@ public class WebEndpointMapping<S> {
 
     private final String[] produces;
 
+
+    /**
+     * {@link WebEndpointMapping} Kind
+     */
+    public enum Kind {
+
+        /**
+         * {@link javax.servlet.Servlet}
+         */
+        SERVLET,
+
+        /**
+         * {@link javax.servlet.Filter}
+         */
+        FILTER,
+
+        /**
+         * Spring WebMVC
+         */
+        WEB_MVC,
+
+        /**
+         * Spring WebFlux
+         */
+        WEB_FLUX,
+
+        /**
+         * Unknown
+         */
+        UNKNOWN,
+
+    }
+
     public static class Builder<S> {
+
+        private final Kind kind;
 
         private final Object source;
 
@@ -93,8 +131,9 @@ public class WebEndpointMapping<S> {
 
         private String[] produces;
 
-        private Builder(S source, String[] patterns) {
+        private Builder(Kind kind, S source, String[] patterns) {
             isTrue(!isEmpty(patterns), "The patterns must not be empty!");
+            this.kind = kind == null ? UNKNOWN : kind;
             this.source = source == null ? NON_SOURCE : source;
             this.patterns = patterns;
         }
@@ -153,6 +192,7 @@ public class WebEndpointMapping<S> {
 
         public WebEndpointMapping build() {
             return new WebEndpointMapping(
+                    this.kind,
                     this.source,
                     this.patterns,
                     this.methods,
@@ -165,23 +205,24 @@ public class WebEndpointMapping<S> {
 
     }
 
-    public static Builder<?> of(@NonNull Collection<String> patterns) {
-        return of(null, patterns);
+    public static Builder<?> of(Collection<String> patterns) {
+        return of(null, null, patterns);
     }
 
-    public static Builder<?> of(@NonNull String... patterns) {
-        return of(null, patterns);
+    public static Builder<?> of(String... patterns) {
+        return of(null, null, patterns);
     }
 
-    public static <S> Builder<S> of(@Nullable S source, Collection<String> patterns) {
-        return of(source, ArrayUtils.asArray(patterns, String.class));
+    public static <S> Builder<S> of(@Nullable Kind kind, @Nullable S source, Collection<String> patterns) {
+        return of(kind, source, ArrayUtils.asArray(patterns, String.class));
     }
 
-    public static <S> Builder of(@Nullable S source, String... patterns) {
-        return new Builder(source, patterns);
+    public static <S> Builder of(@Nullable Kind kind, @Nullable S source, String... patterns) {
+        return new Builder(kind, source, patterns);
     }
 
     private WebEndpointMapping(
+            Kind kind,
             S source,
             String[] patterns,
             @Nullable String[] methods,
@@ -189,6 +230,7 @@ public class WebEndpointMapping<S> {
             @Nullable String[] headers,
             @Nullable String[] consumes,
             @Nullable String[] produces) {
+        this.kind = kind;
         this.source = source;
         // id is a hash code of the source
         this.id = source == null ? 0 : source.hashCode();
@@ -204,7 +246,7 @@ public class WebEndpointMapping<S> {
      * For serialization
      */
     private WebEndpointMapping() {
-        this(null, null, null, null, null, null, null);
+        this(UNKNOWN, null, null, null, null, null, null, null);
     }
 
     public S getSource() {
