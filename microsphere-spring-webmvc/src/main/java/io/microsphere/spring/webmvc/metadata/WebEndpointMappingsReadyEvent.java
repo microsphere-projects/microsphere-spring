@@ -21,7 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * An {@link ApplicationContextEvent} was raised when the {@link WebEndpointMapping WebEndpointMappings}
