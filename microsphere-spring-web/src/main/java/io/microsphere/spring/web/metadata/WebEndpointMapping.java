@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
@@ -60,6 +59,11 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  */
 public class WebEndpointMapping<S> {
 
+    /**
+     * The HTTP header name for {@link WebEndpointMapping#getId()}
+     */
+    public static final String ID_HEAD_NAME = "web::endpoint::id";
+
     public static final Object NON_SOURCE = new Object();
 
     private final transient Kind kind;
@@ -79,6 +83,8 @@ public class WebEndpointMapping<S> {
     private final String[] consumes;
 
     private final String[] produces;
+
+    private transient int hashCode = 0;
 
 
     /**
@@ -249,6 +255,10 @@ public class WebEndpointMapping<S> {
         this(UNKNOWN, null, null, null, null, null, null, null);
     }
 
+    public Kind getKind() {
+        return kind;
+    }
+
     public S getSource() {
         return source;
     }
@@ -257,27 +267,43 @@ public class WebEndpointMapping<S> {
         return id;
     }
 
+    @NonNull
     public String[] getPatterns() {
         return patterns;
     }
 
     public String[] getMethods() {
+        if (methods == null) {
+            return EMPTY_STRING_ARRAY;
+        }
         return methods;
     }
 
     public String[] getParams() {
+        if (params == null) {
+            return EMPTY_STRING_ARRAY;
+        }
         return params;
     }
 
     public String[] getHeaders() {
+        if (headers == null) {
+            return EMPTY_STRING_ARRAY;
+        }
         return headers;
     }
 
     public String[] getConsumes() {
+        if (consumes == null) {
+            return EMPTY_STRING_ARRAY;
+        }
         return consumes;
     }
 
     public String[] getProduces() {
+        if (produces == null) {
+            return EMPTY_STRING_ARRAY;
+        }
         return produces;
     }
 
@@ -308,19 +334,35 @@ public class WebEndpointMapping<S> {
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(patterns);
-        result = 31 * result + Arrays.hashCode(methods);
-        result = 31 * result + Arrays.hashCode(params);
-        result = 31 * result + Arrays.hashCode(headers);
-        result = 31 * result + Arrays.hashCode(consumes);
-        result = 31 * result + Arrays.hashCode(produces);
-        return result;
+        int hashCode = this.hashCode;
+        if (hashCode == 0) {
+            hashCode = Arrays.hashCode(patterns);
+            if (methods != null) {
+                hashCode = 31 * hashCode + Arrays.hashCode(methods);
+            }
+            if (params != null) {
+                hashCode = 31 * hashCode + Arrays.hashCode(params);
+            }
+            if (headers != null) {
+                hashCode = 31 * hashCode + Arrays.hashCode(headers);
+            }
+            if (consumes != null) {
+                hashCode = 31 * hashCode + Arrays.hashCode(consumes);
+            }
+            if (produces != null) {
+                hashCode = 31 * hashCode + Arrays.hashCode(produces);
+            }
+            this.hashCode = hashCode;
+        }
+        return hashCode;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebMappingDescriptor{");
-        sb.append("source=").append(source);
+        sb.append("kind=").append(kind);
+        sb.append(", source=").append(source);
+        sb.append(", id=").append(id);
         sb.append(", patterns=").append(Arrays.toString(patterns));
         sb.append(", methods=").append(Arrays.toString(methods));
         sb.append(", params=").append(Arrays.toString(params));
