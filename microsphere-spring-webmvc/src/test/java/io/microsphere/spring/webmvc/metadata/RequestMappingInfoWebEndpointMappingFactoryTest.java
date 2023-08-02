@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import java.util.Map;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,12 +54,12 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
     private RequestMappingMetadataWebEndpointMappingFactory factory;
 
     @Autowired
-    private RequestMappingInfoHandlerMapping handlerMapping;
+    private RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping;
 
     @BeforeEach
     public void init() {
-        factory = new RequestMappingMetadataWebEndpointMappingFactory();
-        this.handlerMethods = handlerMapping.getHandlerMethods();
+        factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
+        this.handlerMethods = requestMappingInfoHandlerMapping.getHandlerMethods();
     }
 
     @Test
@@ -66,9 +67,12 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
         assertNotNull(handlerMethods);
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
-            Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(metadata);
+            Optional<WebEndpointMapping<HandlerMetadata<HandlerMethod, RequestMappingInfo>>> webEndpointMapping = factory.create(metadata);
             assertTrue(webEndpointMapping.isPresent());
-            assertNotNull(webEndpointMapping.get().toJSON());
+            webEndpointMapping.ifPresent(mapping -> {
+                assertEquals(this.requestMappingInfoHandlerMapping, mapping.getSource());
+                assertNotNull(webEndpointMapping.get().toJSON());
+            });
         }
     }
 

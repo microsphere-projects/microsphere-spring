@@ -31,21 +31,21 @@ import static java.util.Optional.ofNullable;
  * @see WebEndpointMappingFactory
  * @since 1.0.0
  */
-public abstract class AbstractWebEndpointMappingFactory<S> implements WebEndpointMappingFactory<S> {
+public abstract class AbstractWebEndpointMappingFactory<E> implements WebEndpointMappingFactory<E> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public final Optional<WebEndpointMapping<?>> create(S source) {
+    public final Optional<WebEndpointMapping<E>> create(E endpoint) {
         WebEndpointMapping<?> mapping = null;
         try {
-            mapping = doCreate(source);
+            mapping = doCreate(endpoint);
         } catch (Throwable e) {
-            logger.error("The WebEndpointMapping instance can't be created by the source : {}", source, e);
+            logger.error("The WebEndpointMapping instance can't be created by the source : {}", endpoint, e);
         }
-        return ofNullable(mapping);
+        return ofNullable((WebEndpointMapping<E>) mapping);
     }
 
     @Nullable
-    protected abstract WebEndpointMapping<?> doCreate(S source) throws Throwable;
+    protected abstract WebEndpointMapping<?> doCreate(E endpoint) throws Throwable;
 }

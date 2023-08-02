@@ -16,16 +16,14 @@
  */
 package io.microsphere.spring.web.servlet;
 
-import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
-import org.springframework.util.CollectionUtils;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
+
 import java.util.Collection;
 
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
@@ -36,19 +34,19 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
  * @see FilterRegistration
  * @since 1.0.0
  */
-public class FilterRegistrationWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<FilterRegistration> {
+public class FilterRegistrationWebEndpointMappingFactory extends RegistrationWebEndpointMappingFactory<FilterRegistration> {
 
-    public static final FilterRegistrationWebEndpointMappingFactory INSTANCE = new FilterRegistrationWebEndpointMappingFactory();
+    public FilterRegistrationWebEndpointMappingFactory(ServletContext servletContext) {
+        super(servletContext);
+    }
 
     @Override
-    protected WebEndpointMapping<String> doCreate(FilterRegistration registration) {
-        String filterName = registration.getName();
-        Collection<String> mappings = registration.getUrlPatternMappings();
-        if (CollectionUtils.isEmpty(mappings)) {
-            // If filter mappings one or more servlets, the WebEndpointMappings will be generated from them.
-            return null;
-        }
-        return of(FILTER, filterName, mappings)
-                .build();
+    protected FilterRegistration getRegistration(String name, ServletContext servletContext) {
+        return servletContext.getFilterRegistration(name);
+    }
+
+    @Override
+    protected Collection<String> getPatterns(FilterRegistration registration) {
+        return registration.getUrlPatternMappings();
     }
 }

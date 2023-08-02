@@ -16,16 +16,12 @@
  */
 package io.microsphere.spring.web.servlet;
 
-import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
-import org.springframework.util.CollectionUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.Collection;
 
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
@@ -36,19 +32,19 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
  * @see ServletRegistration
  * @since 1.0.0
  */
-public class ServletRegistrationWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<ServletRegistration> {
+public class ServletRegistrationWebEndpointMappingFactory extends RegistrationWebEndpointMappingFactory<ServletRegistration> {
 
-    public static final ServletRegistrationWebEndpointMappingFactory INSTANCE = new ServletRegistrationWebEndpointMappingFactory();
+    public ServletRegistrationWebEndpointMappingFactory(ServletContext servletContext) {
+        super(servletContext);
+    }
 
     @Override
-    protected WebEndpointMapping<String> doCreate(ServletRegistration registration) {
-        String servletName = registration.getName();
-        Collection<String> mappings = registration.getMappings();
-        if (CollectionUtils.isEmpty(mappings)) {
-            // No Mapping ?
-            return null;
-        }
-        return of(SERVLET, servletName, mappings)
-                .build();
+    protected ServletRegistration getRegistration(String name, ServletContext servletContext) {
+        return servletContext.getServletRegistration(name);
+    }
+
+    @Override
+    protected Collection<String> getPatterns(ServletRegistration registration) {
+        return registration.getMappings();
     }
 }

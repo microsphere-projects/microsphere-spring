@@ -14,24 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.bind.annotation;
+package io.microsphere.spring.web.servlet;
 
-import org.springframework.core.ResolvableType;
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServlet;
 
 /**
- * {@link RequestMappingMetadata} Factory
+ * {@link Servlet} for Testing
  *
- * @param <E> the type of source
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public interface RequestMappingMetadataFactory<E> {
+public class TestServlet extends HttpServlet {
 
-    default Class<?> getSourceType() {
-        return ResolvableType.forClass(this.getClass())
-                .as(RequestMappingMetadataFactory.class)
-                .resolveGeneric(0);
-    }
-
-    RequestMappingMetadata create(E source);
 }

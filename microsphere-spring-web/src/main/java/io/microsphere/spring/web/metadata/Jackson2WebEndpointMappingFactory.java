@@ -36,15 +36,15 @@ public class Jackson2WebEndpointMappingFactory extends AbstractWebEndpointMappin
     private static final boolean objectMapperPresent = ClassUtils.isPresent(OBJECT_MAPPER_CLASS_NAME, classLoader);
 
     @Override
-    public boolean supports(String source) {
+    public boolean supports(String endpoint) {
         return objectMapperPresent;
     }
 
     @Override
-    protected WebEndpointMapping<String> doCreate(String source) throws Throwable {
+    protected WebEndpointMapping<String> doCreate(String endpoint) throws Throwable {
         WebEndpointMapping mapping = null;
         ObjectMapper objectMapper = new ObjectMapper();
-        mapping = objectMapper.readValue(source, WebEndpointMapping.class);
+        mapping = objectMapper.readValue(endpoint, WebEndpointMapping.class);
         return mapping;
     }
 }

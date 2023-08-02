@@ -19,6 +19,7 @@ package io.microsphere.spring.web.servlet;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockServletConfig;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -42,22 +43,30 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
 
     private String url;
 
-    private ServletRegistration.Dynamic registration;
+    private TestServletContext servletContext;
+
+    private MockServletConfig servletConfig;
+
+    private TestServlet testServlet;
 
     @BeforeEach
     public void init() throws ServletException {
         servletName = "test-servlet";
         url = "/test";
-        this.factory = ServletRegistrationWebEndpointMappingFactory.INSTANCE;
+        servletContext = new TestServletContext();
 
-        this.registration = new TestServletRegistration(servletName, "TestServlet");
-        this.registration.addMapping(url);
+        servletConfig = new MockServletConfig(servletName);
+        this.testServlet = new TestServlet();
+        this.testServlet.init(servletConfig);
+        this.factory = new ServletRegistrationWebEndpointMappingFactory(servletContext);
+
+        ServletRegistration.Dynamic dynamic = this.servletContext.addServlet(servletName, this.testServlet);
+        dynamic.addMapping(url);
     }
 
     @Test
     public void testCreate() {
-
-        Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
+        Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(servletName);
         webEndpointMapping.ifPresent(mapping -> {
             assertEquals(this.servletName, mapping.getEndpoint());
             assertArrayEquals(of(this.url), mapping.getPatterns());

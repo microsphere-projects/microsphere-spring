@@ -20,6 +20,7 @@ import io.microsphere.util.ArrayUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.method.HandlerMethod;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,19 +33,49 @@ import static io.microsphere.constants.SymbolConstants.COLON_CHAR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.UNKNOWN;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
- * The meta-data class for Web Endpoint Mapping that could be one of these sources:
+ * The meta-data class for Web Endpoint Mapping that could be one of these endpoints:
  * <ul>
- *     <li>Servlet Mapping</li>
- *     <li>Servlet's Filter Mapping</li>
- *     <li>Spring WebMVC Mapping</li>
- *     <li>Spring WebFlux Mapping</li>
+ *     <li>{@link javax.servlet.Servlet Servlet}</li>
+ *     <li>{@link javax.servlet.Filter Servlet's Filter}</li>
+ *     <li>Spring WebMVC {@link org.springframework.web.servlet.DispatcherServlet DispatcherServlet}</li>
+ *     <li>Spring WebFlux {@link org.springframework.web.reactive.DispatcherHandler DispatcherHandler}</li>
+ *     <li>Customized</li>
  * </ul>
+ * <p>
+ * The method {@link #getKind()} can be used to identify the kind of endpoints, and the method
+ * {@link #getEndpoint()} is an abstract presentation of actual endpoint that may be :
+ * <ul>
+ *     <li>{@link javax.servlet.ServletRegistration#getName() the name of Servlet}</li>
+ *     <li>{@link javax.servlet.FilterRegistration#getName() the name of Servlet's Filter}</li>
+ *     <li>the any handler of Spring WebMVC {@link org.springframework.web.servlet.HandlerMapping}:
+ *      <ul>
+ *          <li>The {@link String} presenting the name of Handler bean</li>
+ *          <li>The {@link org.springframework.web.servlet.mvc.Controller} Bean</li>
+ *          <li>The {@link HandlerMethod} could be annotated the {@link RequestMapping @RequestMapping}</li>
+ *          <li>The {@link org.springframework.web.servlet.function.HandlerFunction} since Spring Framework 5.2</li>
+ *      </ul>
+ *     </li>
+ *     <li>the any handler of Spring WebFlux {@link org.springframework.web.reactive.HandlerMapping}:
+ *      <ul>
+ *          <li>The {@link String} presenting the name of Handler bean</li>
+ *          <li>The {@link HandlerMethod} could be annotated the {@link RequestMapping @RequestMapping}</li>
+ *          <li>The {@link org.springframework.web.reactive.function.server.RouterFunction} since Spring Framework 5.0</li>
+ *      </ul>
+ *     </li>
+ * </ul>
+ * <p>
+ * The method {@link #getSource()} can trace the source of {@link WebEndpointMapping} if present, it could be :
+ * <ul>
+ *     <li>{@link javax.servlet.ServletContext ServletContext}</li>
+ *     <li>Spring WebMVC {@link org.springframework.web.servlet.HandlerMapping}</li>
+ *     <li>Spring WebFlux {@link org.springframework.web.reactive.HandlerMapping}</li>
+ * </ul>, or it's {@link #NON_SOURCE non-source}
  *
  * @param <E> the type of endpoint
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -52,6 +83,8 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @see javax.servlet.FilterRegistration
  * @see javax.servlet.annotation.WebServlet
  * @see javax.servlet.annotation.WebFilter
+ * @see org.springframework.web.servlet.DispatcherServlet
+ * @see org.springframework.web.reactive.DispatcherHandler
  * @see org.springframework.web.servlet.HandlerMapping
  * @see org.springframework.web.reactive.HandlerMapping
  * @see RequestMapping
@@ -66,7 +99,7 @@ public class WebEndpointMapping<E> {
      */
     public static final String ID_HEADER_NAME = "microsphere_wem_id";
 
-    public static final Object UNKNOWN_ENDPOINT = new Object();
+    public static final Object NON_ENDPOINT = new Object();
 
     public static final Object NON_SOURCE = new Object();
 
@@ -111,19 +144,19 @@ public class WebEndpointMapping<E> {
         FILTER,
 
         /**
-         * Spring WebMVC
+         * Spring WebMVC {@link org.springframework.web.servlet.DispatcherServlet DispatcherServlet}
          */
         WEB_MVC,
 
         /**
-         * Spring WebFlux
+         * Spring WebFlux {@link org.springframework.web.reactive.DispatcherHandler DispatcherHandler}
          */
         WEB_FLUX,
 
         /**
-         * Unknown
+         * Customized
          */
-        UNKNOWN,
+        CUSTOMIZED,
 
     }
 
@@ -149,8 +182,8 @@ public class WebEndpointMapping<E> {
 
         private Builder(Kind kind, E endpoint, String[] patterns) {
             isTrue(!isEmpty(patterns), "The patterns must not be empty!");
-            this.kind = kind == null ? UNKNOWN : kind;
-            this.endpoint = endpoint == null ? (E) UNKNOWN_ENDPOINT : endpoint;
+            this.kind = kind == null ? CUSTOMIZED : kind;
+            this.endpoint = endpoint == null ? (E) NON_ENDPOINT : endpoint;
             this.patterns = patterns;
         }
 
@@ -281,20 +314,64 @@ public class WebEndpointMapping<E> {
         this(null, null, null, null, null, null, null, null, null);
     }
 
+    /**
+     * The kind of endpoint:
+     * <ul>
+     *     <li>{@link javax.servlet.Servlet Servlet}</li>
+     *     <li>{@link javax.servlet.Filter Servlet's Filter}</li>
+     *     <li>Spring WebMVC {@link org.springframework.web.servlet.DispatcherServlet DispatcherServlet}</li>
+     *     <li>Spring WebFlux {@link org.springframework.web.reactive.DispatcherHandler DispatcherHandler}</li>
+     *     <li>Customized</li>
+     * </ul>
+     *
+     * @return non-null
+     */
     @NonNull
     public Kind getKind() {
         return kind;
     }
 
+    /**
+     * The abstract presentation of actual endpoint that may be :
+     * <ul>
+     *     <li>{@link javax.servlet.ServletRegistration#getName() the name of Servlet}</li>
+     *     <li>{@link javax.servlet.FilterRegistration#getName() the name of Servlet's Filter}</li>
+     *     <li>the any handler of Spring WebMVC {@link org.springframework.web.servlet.HandlerMapping}:
+     *      <ul>
+     *          <li>The {@link String} presenting the name of Handler bean</li>
+     *          <li>The {@link org.springframework.web.servlet.mvc.Controller} Bean</li>
+     *          <li>The {@link HandlerMethod} could be annotated the {@link RequestMapping @RequestMapping}</li>
+     *          <li>The {@link org.springframework.web.servlet.function.HandlerFunction} since Spring Framework 5.2</li>
+     *      </ul>
+     *     </li>
+     *     <li>the any handler of Spring WebFlux {@link org.springframework.web.reactive.DispatcherHandler}:
+     *      <ul>
+     *          <li>The {@link String} presenting the name of Handler bean</li>
+     *          <li>The {@link HandlerMethod} could be annotated the {@link RequestMapping @RequestMapping}</li>
+     *          <li>The {@link org.springframework.web.reactive.function.server.RouterFunction} since Spring Framework 5.0</li>
+     *      </ul>
+     *     </li>
+     * </ul>
+     *
+     * @return non-null
+     */
     @NonNull
     public E getEndpoint() {
         return endpoint;
     }
 
+    /**
+     * The id of endpoint
+     *
+     * @return 0 if {@link #NON_ENDPOINT no endpoint present}
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * @return
+     */
     @NonNull
     public Object getSource() {
         return this.source;

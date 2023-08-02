@@ -1,5 +1,2 @@
 io.microsphere.spring.web.metadata.WebEndpointMappingFactory=\
-io.microsphere.spring.web.metadata.Jackson2WebEndpointMappingFactory,\
-io.microsphere.spring.web.servlet.ServletRegistrationWebEndpointMappingFactory,\
-io.microsphere.spring.web.servlet.FilterRegistrationWebEndpointMappingFactory,\
-io.microsphere.spring.web.servlet.ServletWebEndpointMappingFactory
+io.microsphere.spring.web.metadata.Jackson2WebEndpointMappingFactory

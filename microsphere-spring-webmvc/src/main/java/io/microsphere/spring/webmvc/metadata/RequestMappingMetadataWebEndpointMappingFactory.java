@@ -23,6 +23,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
 import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
 import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
@@ -48,26 +50,24 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @see RequestMappingInfo
  * @since 1.0.0
  */
-public class RequestMappingMetadataWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<RequestMappingMetadata> {
+public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMappingWebEndpointMappingFactory<HandlerMethod, RequestMappingInfo> {
 
     private static final String CLASS_NAME = "org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition";
 
     private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
 
-    public static final RequestMappingMetadataWebEndpointMappingFactory INSTANCE = new RequestMappingMetadataWebEndpointMappingFactory();
+    public RequestMappingMetadataWebEndpointMappingFactory(HandlerMapping handlerMapping) {
+        super(handlerMapping);
+    }
 
     @Override
-    protected WebEndpointMapping<HandlerMethod> doCreate(RequestMappingMetadata source) {
+    protected Collection<String> getPatterns(HandlerMethod handler, RequestMappingInfo requestMappingInfo) {
+        return getPatterns(requestMappingInfo);
+    }
 
-        RequestMappingInfo requestMappingInfo = source.getRequestMappingInfo();
-
-        Set<String> patterns = getPatterns(requestMappingInfo);
-
-        if (isEmpty(patterns)) {
-            return null;
-        }
-
-        HandlerMethod handlerMethod = source.getHandlerMethod();
+    @Override
+    protected void contribute(HandlerMethod handlerMethod, RequestMappingInfo requestMappingInfo,
+                              HandlerMapping handlerMapping, WebEndpointMapping.Builder<HandlerMethod> builder) {
 
         RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
         ParamsRequestCondition paramsCondition = requestMappingInfo.getParamsCondition();
@@ -75,13 +75,11 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends AbstractWeb
         ConsumesRequestCondition consumesCondition = requestMappingInfo.getConsumesCondition();
         ProducesRequestCondition producesCondition = requestMappingInfo.getProducesCondition();
 
-        return of(WEB_MVC, handlerMethod, patterns)
-                .methods(methodsCondition.getMethods(), RequestMethod::name)
+        builder.methods(methodsCondition.getMethods(), RequestMethod::name)
                 .params(paramsCondition.getExpressions(), NameValueExpression::toString)
                 .headers(headersCondition.getExpressions(), NameValueExpression::toString)
                 .consumes(consumesCondition.getExpressions(), MediaTypeExpression::toString)
-                .produces(producesCondition.getExpressions(), MediaTypeExpression::toString)
-                .build();
+                .produces(producesCondition.getExpressions(), MediaTypeExpression::toString);
     }
 
     private Set<String> getPatterns(RequestMappingInfo source) {
@@ -100,4 +98,6 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends AbstractWeb
         }
         return patterns;
     }
+
+
 }

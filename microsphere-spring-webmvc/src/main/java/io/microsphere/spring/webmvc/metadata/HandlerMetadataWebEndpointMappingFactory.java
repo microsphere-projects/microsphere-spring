@@ -19,6 +19,11 @@ package io.microsphere.spring.webmvc.metadata;
 import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
+import io.microsphere.util.ArrayUtils;
+import org.springframework.web.servlet.HandlerMapping;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
@@ -29,15 +34,14 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class HandlerMetadataWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<HandlerMetadata<Object, String>> {
+public class HandlerMetadataWebEndpointMappingFactory extends HandlerMappingWebEndpointMappingFactory<Object, String> {
 
-    public static final HandlerMetadataWebEndpointMappingFactory INSTANCE = new HandlerMetadataWebEndpointMappingFactory();
+    public HandlerMetadataWebEndpointMappingFactory(HandlerMapping handlerMapping) {
+        super(handlerMapping);
+    }
 
     @Override
-    protected WebEndpointMapping<Object> doCreate(HandlerMetadata<Object, String> source) {
-        Object handler = source.getHandler();
-        String url = source.getMetadata();
-        return of(WEB_MVC, handler, url)
-                .build();
+    protected Collection<String> getPatterns(Object handler, String metadata) {
+        return Collections.singleton(metadata);
     }
 }

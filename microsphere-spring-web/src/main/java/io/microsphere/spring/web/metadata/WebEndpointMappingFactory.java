@@ -26,16 +26,16 @@ import static org.springframework.core.ResolvableType.forClass;
 /**
  * The factory interface for {@link WebEndpointMapping}
  *
- * @param <S> the source type
+ * @param <E> the type of endpoint
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public interface WebEndpointMappingFactory<S> {
+public interface WebEndpointMappingFactory<E> {
 
     /**
-     * Current factory supports the specified source or not
+     * Current factory supports the specified endpoint or not
      *
-     * @param source could be one of these :
+     * @param endpoint could be one of these :
      *               <ul>
      *               <li>{@link javax.servlet.ServletRegistration}</li>
      *               <li>{@link javax.servlet.FilterRegistration}</li>
@@ -44,14 +44,14 @@ public interface WebEndpointMappingFactory<S> {
      *               </ul>
      * @return <code>true</code> if supports, <code>false</code> otherwise
      */
-    default boolean supports(S source) {
+    default boolean supports(E endpoint) {
         return true;
     }
 
     /**
      * Create the instance of {@link WebEndpointMapping}
      *
-     * @param source could be one of these :
+     * @param endpoint could be one of these :
      *               <ul>
      *               <li>{@link javax.servlet.ServletRegistration}</li>
      *               <li>{@link javax.servlet.FilterRegistration}</li>
@@ -61,7 +61,7 @@ public interface WebEndpointMappingFactory<S> {
      * @return <code>null</code> if can't be created
      */
     @Nullable
-    Optional<WebEndpointMapping<?>> create(S source);
+    Optional<WebEndpointMapping<E>> create(E endpoint);
 
 
     /**
@@ -70,7 +70,7 @@ public interface WebEndpointMappingFactory<S> {
      * @return the type of source
      */
     @NonNull
-    default Class<S> getSourceType() {
-        return (Class<S>) forClass(getClass()).as(WebEndpointMappingFactory.class).resolveGeneric(0);
+    default Class<E> getSourceType() {
+        return (Class<E>) forClass(getClass()).as(WebEndpointMappingFactory.class).resolveGeneric(0);
     }
 }

@@ -94,10 +94,10 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
             return;
         }
 
-        FilterRegistrationWebEndpointMappingFactory factory = FilterRegistrationWebEndpointMappingFactory.INSTANCE;
+        FilterRegistrationWebEndpointMappingFactory factory = new FilterRegistrationWebEndpointMappingFactory(servletContext);
         for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
-            FilterRegistration registration = entry.getValue();
-            Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
+            String filterName = entry.getKey();
+            Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(filterName);
             webEndpointMapping.ifPresent(webEndpointMappings::add);
         }
     }
@@ -109,10 +109,10 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
             return;
         }
 
-        ServletRegistrationWebEndpointMappingFactory factory = ServletRegistrationWebEndpointMappingFactory.INSTANCE;
+        ServletRegistrationWebEndpointMappingFactory factory = new ServletRegistrationWebEndpointMappingFactory(servletContext);
         for (Map.Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
-            ServletRegistration registration = entry.getValue();
-            Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
+            String servletName = entry.getKey();
+            Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(servletName);
             webEndpointMapping.ifPresent(webEndpointMappings::add);
         }
     }
@@ -125,10 +125,10 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
                 return;
             }
 
-            HandlerMetadataWebEndpointMappingFactory factory = HandlerMetadataWebEndpointMappingFactory.INSTANCE;
+            HandlerMetadataWebEndpointMappingFactory factory = new HandlerMetadataWebEndpointMappingFactory(urlHandlerMapping);
             for (Map.Entry<String, Object> entry : handlerMap.entrySet()) {
                 HandlerMetadata<Object, String> metadata = new HandlerMetadata<>(entry.getValue(), entry.getKey());
-                Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(metadata);
+                Optional<WebEndpointMapping<HandlerMetadata<Object, String>>> webEndpointMapping = factory.create(metadata);
                 webEndpointMapping.ifPresent(webEndpointMappings::add);
             }
         }
@@ -144,14 +144,13 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
                 return;
             }
 
-            RequestMappingMetadataWebEndpointMappingFactory factory = RequestMappingMetadataWebEndpointMappingFactory.INSTANCE;
+            RequestMappingMetadataWebEndpointMappingFactory factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
             for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodsMap.entrySet()) {
                 RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
-                Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(metadata);
+                Optional<WebEndpointMapping<HandlerMetadata<HandlerMethod, RequestMappingInfo>>> webEndpointMapping = factory.create(metadata);
                 webEndpointMapping.ifPresent(webEndpointMappings::add);
             }
             requestMappingInfoHandlerMethods.putAll(handlerMethodsMap);
         }
-
     }
 }

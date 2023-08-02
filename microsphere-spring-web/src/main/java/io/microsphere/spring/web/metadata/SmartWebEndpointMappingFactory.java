@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import io.microsphere.spring.util.SpringFactoriesLoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -58,9 +59,8 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
     }
 
     private Map<Class<?>, List<WebEndpointMappingFactory>> loadDelegates(@Nullable ConfigurableListableBeanFactory beanFactory) {
-        ClassLoader classLoader = getClassLoader(beanFactory);
 
-        List<WebEndpointMappingFactory> factories = loadFactories(classLoader);
+        List<WebEndpointMappingFactory> factories = loadFactories(beanFactory);
         Collection<WebEndpointMappingFactory> factoryBeans = getFactoryBeans(beanFactory);
 
         int size = factories.size() + factoryBeans.size();
@@ -88,56 +88,23 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
         }
     }
 
-    private List<WebEndpointMappingFactory> loadFactories(ClassLoader classLoader) {
-        List<String> factoryClassNames = loadFactoryNames(FACTORY_CLASS, classLoader);
-        int size = factoryClassNames.size();
-        if (size == 0) {
-            return emptyList();
-        }
-        List<WebEndpointMappingFactory> factories = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            String factoryClassName = factoryClassNames.get(i);
-            if (hasText(factoryClassName)) {
-                WebEndpointMappingFactory factory = createFactory(factoryClassName, classLoader);
-                if (factory != null) {
-                    factories.add(factory);
-                }
-            }
-        }
-        return factories;
-    }
-
-    private ClassLoader getClassLoader(ConfigurableListableBeanFactory beanFactory) {
-        return beanFactory == null ? getDefaultClassLoader() : beanFactory.getBeanClassLoader();
-    }
-
-    private WebEndpointMappingFactory createFactory(String factoryClassName,
-                                                    ClassLoader targetClassLoader) {
-        WebEndpointMappingFactory factory = null;
-        try {
-            Class<?> factoryClass = targetClassLoader.loadClass(factoryClassName);
-            factory = (WebEndpointMappingFactory) factoryClass.newInstance();
-        } catch (Throwable e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("The factory class[name :'{}'] can't be instantiated!", factoryClassName);
-            }
-        }
-        return factory;
+    private List<WebEndpointMappingFactory> loadFactories(ConfigurableListableBeanFactory beanFactory) {
+        return SpringFactoriesLoaderUtils.loadFactories(FACTORY_CLASS, beanFactory);
     }
 
     @Override
-    public Optional<WebEndpointMapping<?>> create(Object source) {
-        Class<?> sourceType = source.getClass();
+    public Optional<WebEndpointMapping<Object>> create(Object endpoint) {
+        Class<?> sourceType = endpoint.getClass();
         List<WebEndpointMappingFactory> factories = delegates.get(sourceType);
         int size = factories == null ? 0 : factories.size();
         if (size < 1) {
             return null;
         }
-        Optional<WebEndpointMapping<?>> result = null;
+        Optional<WebEndpointMapping<Object>> result = null;
         for (int i = 0; i < size; i++) {
             WebEndpointMappingFactory factory = factories.get(i);
-            if (factory.supports(source)) {
-                result = factory.create(source);
+            if (factory.supports(endpoint)) {
+                result = factory.create(endpoint);
                 if (result != null) {
                     break;
                 }
