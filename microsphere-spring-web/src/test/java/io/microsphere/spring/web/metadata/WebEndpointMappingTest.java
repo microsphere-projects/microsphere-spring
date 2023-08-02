@@ -28,6 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.UNKNOWN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.util.StreamUtils.copyToString;
@@ -56,7 +57,7 @@ public class WebEndpointMappingTest {
     @Test
     public void testToJSON() throws IOException {
         WebEndpointMapping descriptor = WebEndpointMapping
-                .of("/a", "/b", "/c")
+                .of(UNKNOWN, 1, "/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")
                 .headers("c=3", "d!=4")

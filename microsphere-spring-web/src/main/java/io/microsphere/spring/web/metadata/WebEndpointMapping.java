@@ -62,7 +62,7 @@ public class WebEndpointMapping<S> {
     /**
      * The HTTP header name for {@link WebEndpointMapping#getId()}
      */
-    public static final String ID_HEAD_NAME = "web::endpoint::id";
+    public static final String ID_HEADER_NAME = "microsphere_wem_id";
 
     public static final Object NON_SOURCE = new Object();
 
@@ -309,7 +309,8 @@ public class WebEndpointMapping<S> {
 
     public String toJSON() {
         StringBuilder stringBuilder = new StringBuilder("{").append(LINE_SEPARATOR);
-        append(stringBuilder, "patterns", this.patterns);
+        append(stringBuilder, "id", this.id);
+        append(stringBuilder, "patterns", this.patterns, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "methods", this.methods, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "params", this.params, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "headers", this.headers, COMMA, LINE_SEPARATOR);
@@ -371,6 +372,12 @@ public class WebEndpointMapping<S> {
         sb.append(", produces=").append(Arrays.toString(produces));
         sb.append('}');
         return sb.toString();
+    }
+
+    private void append(StringBuilder appendable, String name, int value) {
+        append(appendable, name);
+        appendable.append(COLON_CHAR)
+                .append(value);
     }
 
     private void append(StringBuilder appendable, String name, String[] values, String... prefixes) {

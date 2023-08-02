@@ -1,7 +1,7 @@
 package io.microsphere.spring.webmvc.config;
 
-import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
 import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
+import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.interceptor.DelegatingMethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.interceptor.MethodHandlerInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
@@ -19,7 +19,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Import(value = {
         WebMvcEventPublisher.class,
-        DelegatingMethodHandlerInterceptor.class
+        DelegatingMethodHandlerInterceptor.class,
+        ReversedProxyHandlerMapping.class
 })
 public class CommonWebMvcConfigurer implements WebMvcConfigurer {
 
