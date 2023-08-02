@@ -128,26 +128,24 @@ public class ReversedProxyRequestMappingHandlerMapping extends AbstractHandlerMa
     protected HandlerExecutionChain getHandlerExecutionChain(WebEndpointMapping
                                                                      webEndpointMapping, HttpServletRequest request) {
         HandlerExecutionChain handlerExecutionChain = null;
-        Object endpoint = webEndpointMapping.getEndpoint();
-        if (endpoint instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) endpoint;
-            Object source = webEndpointMapping.getSource();
-            if (source instanceof RequestMappingHandlerMapping) {
-                RequestMappingHandlerMapping handlerMapping = (RequestMappingHandlerMapping) source;
-                Object handler = handlerMethod.createWithResolvedBean();
-                MethodHandle methodHandle = getHandlerExecutionChainMethodHandle;
-                if (methodHandle != null) {
-                    try {
-                        handlerExecutionChain = (HandlerExecutionChain) methodHandle.invoke(handlerMapping, handler, request);
-                    } catch (Throwable e) {
-                        logger.error("The method {}{} can't be executed in the {}",
-                                getHandlerExecutionChainMethodName,
-                                methodHandle.type(),
-                                handlerMapping.getClass().getName());
-                    }
+        Object source = webEndpointMapping.getSource();
+        if (source instanceof RequestMappingHandlerMapping) {
+            HandlerMethod handlerMethod = (HandlerMethod) webEndpointMapping.getEndpoint();
+            RequestMappingHandlerMapping handlerMapping = (RequestMappingHandlerMapping) source;
+            Object handler = handlerMethod;
+            MethodHandle methodHandle = getHandlerExecutionChainMethodHandle;
+            if (methodHandle != null) {
+                try {
+                    handlerExecutionChain = (HandlerExecutionChain) methodHandle.invokeExact(handlerMapping, handler, request);
+                } catch (Throwable e) {
+                    logger.error("The method {}{} can't be executed in the {}",
+                            getHandlerExecutionChainMethodName,
+                            methodHandle.type(),
+                            handlerMapping.getClass().getName());
                 }
             }
         }
+
         return handlerExecutionChain;
     }
 

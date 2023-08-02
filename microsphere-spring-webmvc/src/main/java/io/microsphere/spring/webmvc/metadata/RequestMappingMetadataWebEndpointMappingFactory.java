@@ -61,6 +61,12 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     }
 
     @Override
+    protected HandlerMethod getHandler(HandlerMetadata<HandlerMethod, RequestMappingInfo> handlerMetadata) {
+        HandlerMethod handlerMethod = handlerMetadata.getHandler();
+        return handlerMethod.createWithResolvedBean();
+    }
+
+    @Override
     protected Collection<String> getPatterns(HandlerMethod handler, RequestMappingInfo requestMappingInfo) {
         return getPatterns(requestMappingInfo);
     }

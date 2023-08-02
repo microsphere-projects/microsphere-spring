@@ -495,7 +495,7 @@ public class WebEndpointMapping<E> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("WebMappingDescriptor{");
+        final StringBuilder sb = new StringBuilder("WebEndpointMapping{");
         sb.append("kind=").append(kind);
         sb.append(", endpoint=").append(endpoint);
         sb.append(", id=").append(id);

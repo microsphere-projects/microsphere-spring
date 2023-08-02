@@ -47,13 +47,21 @@ public abstract class HandlerMappingWebEndpointMappingFactory<H, M> extends Abst
     @Override
     protected final WebEndpointMapping<?> doCreate(HandlerMetadata<H, M> handlerMetadata) throws Throwable {
         HandlerMapping handlerMapping = this.handlerMapping;
-        H handler = handlerMetadata.getHandler();
-        M metadata = handlerMetadata.getMetadata();
+        H handler = getHandler(handlerMetadata);
+        M metadata = getMetadata(handlerMetadata);
         Collection<String> patterns = getPatterns(handler, metadata);
         WebEndpointMapping.Builder builder = of(WEB_MVC, handler, patterns);
         builder.source(handlerMapping);
         contribute(handler, metadata, handlerMapping, builder);
         return builder.build();
+    }
+
+    protected H getHandler(HandlerMetadata<H, M> handlerMetadata) {
+        return handlerMetadata.getHandler();
+    }
+
+    protected M getMetadata(HandlerMetadata<H, M> handlerMetadata) {
+        return handlerMetadata.getMetadata();
     }
 
     /**
