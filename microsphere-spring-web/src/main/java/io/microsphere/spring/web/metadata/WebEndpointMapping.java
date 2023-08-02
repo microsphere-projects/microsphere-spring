@@ -63,6 +63,8 @@ public class WebEndpointMapping<S> {
 
     private final transient S source;
 
+    private final int id;
+
     private final String[] patterns;
 
     private final String[] methods;
@@ -188,6 +190,8 @@ public class WebEndpointMapping<S> {
             @Nullable String[] consumes,
             @Nullable String[] produces) {
         this.source = source;
+        // id is a hash code of the source
+        this.id = source == null ? 0 : source.hashCode();
         this.patterns = patterns;
         this.methods = methods;
         this.params = params;
@@ -205,6 +209,10 @@ public class WebEndpointMapping<S> {
 
     public S getSource() {
         return source;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String[] getPatterns() {
