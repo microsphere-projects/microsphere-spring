@@ -49,7 +49,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC
 /**
  * The performance optimization {@link HandlerMapping} to process the forwarded request
  * from the reversed proxy web server, e.g, Spring Cloud Netflix Zuul, Spring Cloud Gateway or others.
- * the request must have a header named {@link WebEndpointMapping#ID_HEADER_NAME "microsphere_wem_id"},
+ * The request must have a header named {@link WebEndpointMapping#ID_HEADER_NAME "microsphere_wem_id"},
  * which is a string presenting {@link WebEndpointMapping#getId() the id of endpoint}, used to
  * locate the actual {@link WebEndpointMapping#getEndpoint() endpoint} easily, such as {@link HandlerMethod},
  * {@link HandlerFunction} and {@link Controller}.
