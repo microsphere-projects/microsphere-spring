@@ -20,6 +20,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.WebEndpointMappingsReadyEvent;
+import io.microsphere.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -27,31 +28,41 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.function.HandlerFunction;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMethodMapping;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
+import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
-import static java.lang.invoke.MethodHandles.Lookup.PROTECTED;
-import static java.lang.invoke.MethodType.methodType;
 
 /**
- * The Spring WebMVC {@link RequestMappingHandlerMapping} for Reversed Proxy, e.g,
- * Spring Cloud Netflix Zuul, Spring Cloud Gateway , other reversed proxy web server.
- * The HTTP request must be forwarded by the reversed proxy web server, which contains
- * the specified header named {@link WebEndpointMapping#ID_HEADER_NAME}, {@link ReversedProxyRequestMappingHandlerMapping}
- * will process this header and then locate the identified handler to response the request.
+ * The performance optimization {@link HandlerMapping} to process the forwarded request
+ * from the reversed proxy web server, e.g, Spring Cloud Netflix Zuul, Spring Cloud Gateway or others.
+ * the request must have a header named {@link WebEndpointMapping#ID_HEADER_NAME "microsphere_wem_id"},
+ * which is a string presenting {@link WebEndpointMapping#getId() the id of endpoint}, used to
+ * locate the actual {@link WebEndpointMapping#getEndpoint() endpoint} easily, such as {@link HandlerMethod},
+ * {@link HandlerFunction} and {@link Controller}.
+ * <p>
+ * As a result, {@link ReversedProxyHandlerMapping} has the higher precedence than others, which ensures that it
+ * prioritizes {@link HandlerMapping#getHandler(HttpServletRequest) getting the handler} and avoid the duplication
+ * that was executed by the reversed proxy.
+ * As regards the details of {@link WebEndpointMapping#getEndpoint() endpoint}, it's recommended to read the JavaDoc of
+ * {@link WebEndpointMapping#getEndpoint()}.
+ *
+ * <p>
+ * For now, {@link ReversedProxyHandlerMapping} only supports to get the handlers from
+ * {@link RequestMappingHandlerMapping}.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebEndpointMapping
@@ -62,9 +73,9 @@ import static java.lang.invoke.MethodType.methodType;
  * @see RequestMappingInfoHandlerMapping
  * @since 1.0.0
  */
-public class ReversedProxyRequestMappingHandlerMapping extends AbstractHandlerMapping implements ApplicationListener<WebEndpointMappingsReadyEvent> {
+public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implements ApplicationListener<WebEndpointMappingsReadyEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReversedProxyRequestMappingHandlerMapping.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReversedProxyHandlerMapping.class);
 
     public static final int DEFAULT_ORDER = HIGHEST_PRECEDENCE + 1;
 
@@ -72,40 +83,22 @@ public class ReversedProxyRequestMappingHandlerMapping extends AbstractHandlerMa
 
     private static final MethodHandle getHandlerExecutionChainMethodHandle;
 
-
     static {
         Class<?> declaredClass = AbstractHandlerMapping.class;
         String methodName = getHandlerExecutionChainMethodName;
-        MethodType methodType = methodType(HandlerExecutionChain.class, Object.class, HttpServletRequest.class);
         MethodHandle methodHandle = null;
+        Class<?>[] parameterTypes = ArrayUtils.of(Object.class, HttpServletRequest.class);
         try {
-            MethodHandles.Lookup lookup = createLookup();
-            methodHandle = lookup.findVirtual(declaredClass, methodName, methodType);
+            methodHandle = findVirtual(RequestMappingHandlerMapping.class, methodName, parameterTypes);
         } catch (Throwable e) {
-            logger.error("The method {}{} can't be found in the {}", methodName, methodType, declaredClass.getName(), e);
+            logger.error("The method {}{} can't be found in the {}", methodName, Arrays.toString(parameterTypes), declaredClass.getName(), e);
         }
         getHandlerExecutionChainMethodHandle = methodHandle;
     }
 
-    private static MethodHandles.Lookup createLookup() throws Throwable {
-        MethodHandles.Lookup lookup = null;
-        Class<MethodHandles.Lookup> lookupClass = MethodHandles.Lookup.class;
-        Constructor<?>[] constructors = lookupClass.getDeclaredConstructors();
-        for (Constructor<?> constructor : constructors) {
-            if (constructor.getParameterCount() == 2) {
-                constructor.setAccessible(true);
-                lookup = (MethodHandles.Lookup) constructor.newInstance(RequestMappingHandlerMapping.class, PROTECTED);
-                constructor.setAccessible(false);
-                break;
-            }
-        }
-        return lookup;
-    }
-
-
     private Map<Integer, WebEndpointMapping> webEndpointMappingsCache;
 
-    public ReversedProxyRequestMappingHandlerMapping() {
+    public ReversedProxyHandlerMapping() {
         setOrder(DEFAULT_ORDER);
     }
 
