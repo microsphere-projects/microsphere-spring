@@ -45,7 +45,7 @@ import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanName
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProcessorAdapter implements SmartApplicationListener {
+class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements SmartApplicationListener {
 
     private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = ClassUtils.resolveClassName("org.springframework.beans.factory.support.DisposableBeanAdapter", null);
 
@@ -53,7 +53,7 @@ class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProces
 
     private final BeanListeners beanEventListeners;
 
-    public BeanAfterEventPublishingProcessor(ConfigurableApplicationContext context) {
+    public EventPublishingBeanAfterProcessor(ConfigurableApplicationContext context) {
         this.context = context;
         this.beanEventListeners = BeanListeners.getBean(context);
     }
@@ -128,13 +128,13 @@ class BeanAfterEventPublishingProcessor extends InstantiationAwareBeanPostProces
 
 
     /**
-     * {@link BeanBeforeEventPublishingProcessor} Initializer that
-     * is not a general propose Spring Bean initializes {@link BeanBeforeEventPublishingProcessor}
+     * {@link EventPublishingBeanBeforeProcessor} Initializer that
+     * is not a general propose Spring Bean initializes {@link EventPublishingBeanBeforeProcessor}
      */
     static class Initializer {
 
         public Initializer(ConfigurableApplicationContext context) {
-            BeanAfterEventPublishingProcessor processor = new BeanAfterEventPublishingProcessor(context);
+            EventPublishingBeanAfterProcessor processor = new EventPublishingBeanAfterProcessor(context);
             ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             beanFactory.addBeanPostProcessor(processor);
             context.addApplicationListener(processor);

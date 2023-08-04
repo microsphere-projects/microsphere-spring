@@ -16,29 +16,22 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.PriorityOrdered;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * {@link ApplicationContextInitializer} for Publishing Bean Event with highest priority
+ * {@link BeanListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class BeanEventPublishingInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>, PriorityOrdered {
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {EventPublishingBeanInitializerTest.class, LoggingBeanListener.class}, initializers = {EventPublishingBeanInitializer.class})
+public class EventPublishingBeanInitializerTest {
 
-    @Override
-    public void initialize(ConfigurableApplicationContext context) {
-        addBeanBeforeEventPublishingProcessor(context);
-    }
-
-    private void addBeanBeforeEventPublishingProcessor(ConfigurableApplicationContext context) {
-        context.addBeanFactoryPostProcessor(new BeanBeforeEventPublishingProcessor());
-    }
-
-    @Override
-    public int getOrder() {
-        return HIGHEST_PRECEDENCE;
+    @Test
+    public void test() {
     }
 }

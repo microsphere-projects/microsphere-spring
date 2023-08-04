@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(classes = {
         LoggingBeanFactoryListener.class,
         LoggingBeanFactoryListenerTest.class},
-        initializers = {BeanEventPublishingInitializer.class})
+        initializers = {EventPublishingBeanInitializer.class})
 public class LoggingBeanFactoryListenerTest {
 
     @Test

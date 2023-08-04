@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {BeanTimeStatistics.class, BeanTimeStatisticsTest.class},
-        initializers = {BeanEventPublishingInitializer.class})
+        initializers = {EventPublishingBeanInitializer.class})
 public class BeanTimeStatisticsTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BeanTimeStatisticsTest.class);

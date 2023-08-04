@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProcessorAdapter
+class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProcessorAdapter
         implements BeanDefinitionRegistryPostProcessor, DestructionAwareBeanPostProcessor, InstantiationStrategy {
 
     private BeanDefinitionRegistry registry;
@@ -124,7 +124,7 @@ class BeanBeforeEventPublishingProcessor extends InstantiationAwareBeanPostProce
         }
 
         // register BeanAfterEventPublishingProcessor.Installer ensuring it's the first bean definition
-        BeanRegistrar.registerBeanDefinition(registry, BeanAfterEventPublishingProcessor.Initializer.class);
+        BeanRegistrar.registerBeanDefinition(registry, EventPublishingBeanAfterProcessor.Initializer.class);
 
         // re-register previous bean definitions
         beanDefinitionHolders.forEach(beanDefinitionHolder -> {
