@@ -73,7 +73,7 @@ public class InterceptingApplicationEventMulticasterTest {
 
         context.addApplicationListener((ApplicationListener<PayloadApplicationEvent<String>>)
                 event -> eventValueRef.set(event.getPayload()));
-        
+
         context.publishEvent("Hello,World");
 
         assertEquals("Hello,World", eventValueRef.get());
