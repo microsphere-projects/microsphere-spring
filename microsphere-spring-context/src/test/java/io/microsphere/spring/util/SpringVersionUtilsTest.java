@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link SpringVersionUtils} Test
@@ -49,5 +50,8 @@ public class SpringVersionUtilsTest {
         assertEquals(5, version.getMajor());
         assertEquals(3, version.getMinor());
         assertEquals(27, version.getPatch());
+        assertTrue(version.gt(Version.of(5, 3)));
+        assertTrue(version.gt(Version.of(5)));
+        assertTrue(version.gt(Version.of(4, 2)));
     }
 }
