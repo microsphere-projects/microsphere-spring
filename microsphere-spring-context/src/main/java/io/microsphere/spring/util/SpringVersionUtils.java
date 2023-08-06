@@ -67,7 +67,6 @@ public abstract class SpringVersionUtils extends BaseUtils {
      * The version of "spring-context" module
      */
     @NonNull
-
     public static final Version SPRING_CONTEXT_VERSION = getSpringVersion(ApplicationContext.class);
 
     /**
