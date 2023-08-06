@@ -19,20 +19,36 @@ package io.microsphere.spring.context.event;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import java.util.List;
+
 /**
- * {@link ApplicationListenerInterceptor} Chain
+ * Intercepting {@link ApplicationListener} Wrapper
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public interface ApplicationListenerInterceptorChain {
+class InterceptingApplicationListener<E extends ApplicationEvent> implements ApplicationListener<E> {
 
-    /**
-     * Causes the next interceptor in the chain to be invoked, or if the calling interceptor is the last interceptor
-     * in the chain, causes the resource at the end of the chain to be invoked.
-     *
-     * @param applicationListener {@link ApplicationListener}
-     * @param event               {@link ApplicationEvent}
-     */
-    void intercept(ApplicationListener<?> applicationListener, ApplicationEvent event);
+    private final ApplicationListener<E> delegate;
+
+    private final List<ApplicationListenerInterceptor> interceptors;
+
+    InterceptingApplicationListener(ApplicationListener<E> delegate, List<ApplicationListenerInterceptor> interceptors) {
+        this.delegate = delegate;
+        this.interceptors = interceptors;
+    }
+
+    @Override
+    public void onApplicationEvent(E event) {
+        DefaultApplicationListenerInterceptorChain chain = new DefaultApplicationListenerInterceptorChain(this.interceptors, this::onEvent);
+        chain.intercept(this, event);
+    }
+
+    private void onEvent(ApplicationListener<?> applicationListener, ApplicationEvent event) {
+        delegate.onApplicationEvent((E) event);
+    }
+
+    public ApplicationListener<E> getDelegate() {
+        return delegate;
+    }
 }

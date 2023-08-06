@@ -14,16 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.event;
+package io.microsphere.spring.context.annotation;
 
+import io.microsphere.spring.context.event.ApplicationEventInterceptor;
+import io.microsphere.spring.context.event.ApplicationListenerInterceptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -33,20 +38,23 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
 /**
- * {@link InterceptingApplicationEventMulticaster} Test
+ * {@link EnableEventManagement} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        InterceptingApplicationEventMulticasterTest.class
+        EnableEventManagementTest.class
 })
-public class InterceptingApplicationEventMulticasterTest {
+@EnableEventManagement(intercepted = true)
+public class EnableEventManagementTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(EnableEventManagementTest.class);
 
     @Bean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
     public static ApplicationEventMulticaster applicationEventMulticaster() {
-        return new InterceptingApplicationEventMulticaster();
+        return new SimpleApplicationEventMulticaster();
     }
 
     @Bean
@@ -61,6 +69,13 @@ public class InterceptingApplicationEventMulticasterTest {
         return ((listener, event, chain) -> {
             chain.intercept(listener, event);
         });
+    }
+
+    @Bean
+    public ApplicationListener<PayloadApplicationEvent<String>> applicationListener() {
+        return event -> {
+            logger.info("The Event : {}", event);
+        };
     }
 
     @Autowired

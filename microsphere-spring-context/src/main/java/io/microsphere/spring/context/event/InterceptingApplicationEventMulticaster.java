@@ -46,22 +46,22 @@ public class InterceptingApplicationEventMulticaster extends SimpleApplicationEv
     @Override
     public final void multicastEvent(ApplicationEvent event, @Nullable ResolvableType eventType) {
         ResolvableType type = resolveEventType(event, eventType);
-        DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this, this.applicationEventInterceptors);
+        DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this.applicationEventInterceptors, this::doMulticastEvent);
         chain.intercept(event, type);
     }
 
-    private ResolvableType resolveEventType(ApplicationEvent event, ResolvableType eventType) {
+    static ResolvableType resolveEventType(ApplicationEvent event, ResolvableType eventType) {
         return eventType != null ? eventType : resolveDefaultEventType(event);
     }
 
-    private ResolvableType resolveDefaultEventType(ApplicationEvent event) {
+    static ResolvableType resolveDefaultEventType(ApplicationEvent event) {
         return ResolvableType.forInstance(event);
     }
 
     @Override
     protected final void invokeListener(ApplicationListener<?> listener, ApplicationEvent event) {
-        DefaultApplicationListenerInterceptorChain chain = new DefaultApplicationListenerInterceptorChain(this, this.applicationListenerInterceptors);
-        chain.doIntercept(listener, event);
+        DefaultApplicationListenerInterceptorChain chain = new DefaultApplicationListenerInterceptorChain(this.applicationListenerInterceptors, this::doInvokeListener);
+        chain.intercept(listener, event);
     }
 
     protected void doMulticastEvent(ApplicationEvent event, ResolvableType eventType) {

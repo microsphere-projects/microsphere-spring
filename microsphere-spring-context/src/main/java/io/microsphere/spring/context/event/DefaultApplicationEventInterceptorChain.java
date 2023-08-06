@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
 
 import java.util.Iterator;
+import java.util.function.BiConsumer;
 
 /**
  * {@link ApplicationEventInterceptor} Chain
@@ -30,14 +31,14 @@ import java.util.Iterator;
  */
 class DefaultApplicationEventInterceptorChain implements ApplicationEventInterceptorChain {
 
-    private final InterceptingApplicationEventMulticaster applicationEventMulticaster;
 
     private final Iterator<ApplicationEventInterceptor> iterator;
+    private final BiConsumer<ApplicationEvent, ResolvableType> eventAndTypeConsumer;
 
-    public DefaultApplicationEventInterceptorChain(InterceptingApplicationEventMulticaster applicationEventMulticaster,
-                                                   Iterable<ApplicationEventInterceptor> interceptors) {
-        this.applicationEventMulticaster = applicationEventMulticaster;
+    public DefaultApplicationEventInterceptorChain(Iterable<ApplicationEventInterceptor> interceptors,
+                                                   BiConsumer<ApplicationEvent, ResolvableType> eventAndTypeConsumer) {
         this.iterator = interceptors.iterator();
+        this.eventAndTypeConsumer = eventAndTypeConsumer;
     }
 
     @Override
@@ -47,6 +48,6 @@ class DefaultApplicationEventInterceptorChain implements ApplicationEventInterce
             interceptor.intercept(event, eventType, this);
             return;
         }
-    applicationEventMulticaster.doMulticastEvent(event, eventType);
+        eventAndTypeConsumer.accept(event, eventType);
     }
 }

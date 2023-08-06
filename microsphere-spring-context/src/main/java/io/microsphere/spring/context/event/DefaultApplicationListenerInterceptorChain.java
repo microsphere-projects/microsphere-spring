@@ -18,9 +18,9 @@ package io.microsphere.spring.context.event;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.core.ResolvableType;
 
 import java.util.Iterator;
+import java.util.function.BiConsumer;
 
 /**
  * {@link ApplicationEventInterceptor} Chain
@@ -31,23 +31,23 @@ import java.util.Iterator;
  */
 class DefaultApplicationListenerInterceptorChain implements ApplicationListenerInterceptorChain {
 
-    private final InterceptingApplicationEventMulticaster applicationEventMulticaster;
-
     private final Iterator<ApplicationListenerInterceptor> iterator;
 
-    public DefaultApplicationListenerInterceptorChain(InterceptingApplicationEventMulticaster applicationEventMulticaster,
-                                                      Iterable<ApplicationListenerInterceptor> interceptors) {
-        this.applicationEventMulticaster = applicationEventMulticaster;
+    private final BiConsumer<ApplicationListener<?>, ApplicationEvent> listenerAndEventConsumer;
+
+    public DefaultApplicationListenerInterceptorChain(Iterable<ApplicationListenerInterceptor> interceptors,
+                                                      BiConsumer<ApplicationListener<?>, ApplicationEvent> listenerAndEventConsumer) {
         this.iterator = interceptors.iterator();
+        this.listenerAndEventConsumer = listenerAndEventConsumer;
     }
 
     @Override
-    public void doIntercept(ApplicationListener<?> applicationListener, ApplicationEvent event) {
+    public void intercept(ApplicationListener<?> applicationListener, ApplicationEvent event) {
         while (iterator.hasNext()) {
             ApplicationListenerInterceptor interceptor = iterator.next();
             interceptor.intercept(applicationListener, event, this);
             return;
         }
-        applicationEventMulticaster.doInvokeListener(applicationListener, event);
+        listenerAndEventConsumer.accept(applicationListener, event);
     }
 }
