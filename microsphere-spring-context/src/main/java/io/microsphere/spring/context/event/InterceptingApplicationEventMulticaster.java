@@ -17,12 +17,17 @@
 package io.microsphere.spring.context.event;
 
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.ResolvableType;
+import org.springframework.lang.Nullable;
+
+import java.util.List;
+
+import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
 
 /**
  * Intercepting {@link ApplicationEventMulticaster} based on {@link SimpleApplicationEventMulticaster}
@@ -34,14 +39,23 @@ import org.springframework.core.ResolvableType;
  */
 public class InterceptingApplicationEventMulticaster extends SimpleApplicationEventMulticaster {
 
-    private ObjectProvider<ApplicationEventInterceptor> applicationEventInterceptors;
+    private List<ApplicationEventInterceptor> applicationEventInterceptors;
 
-    private ObjectProvider<ApplicationListenerInterceptor> applicationListenerInterceptors;
+    private List<ApplicationListenerInterceptor> applicationListenerInterceptors;
 
     @Override
-    public final void multicastEvent(ApplicationEvent event, ResolvableType eventType) {
+    public final void multicastEvent(ApplicationEvent event, @Nullable ResolvableType eventType) {
+        ResolvableType type = resolveEventType(event, eventType);
         DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this, this.applicationEventInterceptors);
-        chain.intercept(event, eventType);
+        chain.intercept(event, type);
+    }
+
+    private ResolvableType resolveEventType(ApplicationEvent event, ResolvableType eventType) {
+        return eventType != null ? eventType : resolveDefaultEventType(event);
+    }
+
+    private ResolvableType resolveDefaultEventType(ApplicationEvent event) {
+        return ResolvableType.forInstance(event);
     }
 
     @Override
@@ -61,7 +75,8 @@ public class InterceptingApplicationEventMulticaster extends SimpleApplicationEv
     @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         super.setBeanFactory(beanFactory);
-        this.applicationEventInterceptors = beanFactory.getBeanProvider(ApplicationEventInterceptor.class);
-        this.applicationListenerInterceptors = beanFactory.getBeanProvider(ApplicationListenerInterceptor.class);
+        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
+        this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
+        this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);
     }
 }

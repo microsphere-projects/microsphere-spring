@@ -17,6 +17,7 @@
 package io.microsphere.spring.context.event;
 
 import org.springframework.context.ApplicationEvent;
+import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 
 /**
@@ -26,7 +27,7 @@ import org.springframework.core.ResolvableType;
  * @see ApplicationEvent
  * @since 1.0.0
  */
-public interface ApplicationEventInterceptor {
+public interface ApplicationEventInterceptor extends Ordered {
 
     /**
      * Intercept the specified {@link ApplicationEvent} with {@link ResolvableType type}
@@ -36,4 +37,9 @@ public interface ApplicationEventInterceptor {
      * @param chain     {@link ApplicationEventInterceptorChain}
      */
     void intercept(ApplicationEvent event, ResolvableType eventType, ApplicationEventInterceptorChain chain);
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 }
