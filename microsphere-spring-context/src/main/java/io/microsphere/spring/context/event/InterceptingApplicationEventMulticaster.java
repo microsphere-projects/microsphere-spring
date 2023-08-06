@@ -62,8 +62,7 @@ public class InterceptingApplicationEventMulticaster extends SimpleApplicationEv
     @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         super.setBeanFactory(beanFactory);
-        ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
-        this.applicationEventInterceptors = configurableBeanFactory.getBeanProvider(ApplicationEventInterceptor.class);
-        this.applicationListenerInterceptors = configurableBeanFactory.getBeanProvider(ApplicationListenerInterceptor.class);
+        this.applicationEventInterceptors = beanFactory.getBeanProvider(ApplicationEventInterceptor.class);
+        this.applicationListenerInterceptors = beanFactory.getBeanProvider(ApplicationListenerInterceptor.class);
     }
 }
