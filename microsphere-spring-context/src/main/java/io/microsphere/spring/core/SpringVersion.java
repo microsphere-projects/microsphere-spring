@@ -33,6 +33,8 @@ import static io.microsphere.constants.SymbolConstants.UNDER_SCORE_CHAR;
  */
 public enum SpringVersion {
 
+    SPRING_3_2,
+
     SPRING_3_2_0,
 
     SPRING_3_2_1,
@@ -71,6 +73,10 @@ public enum SpringVersion {
 
     SPRING_3_2_18,
 
+    SPRING_4,
+
+    SPRING_4_0,
+
     SPRING_4_0_0,
 
     SPRING_4_0_1,
@@ -90,6 +96,8 @@ public enum SpringVersion {
     SPRING_4_0_8,
 
     SPRING_4_0_9,
+
+    SPRING_4_1,
 
     SPRING_4_1_0,
 
@@ -111,6 +119,8 @@ public enum SpringVersion {
 
     SPRING_4_1_9,
 
+    SPRING_4_2,
+
     SPRING_4_2_0,
 
     SPRING_4_2_1,
@@ -130,6 +140,8 @@ public enum SpringVersion {
     SPRING_4_2_8,
 
     SPRING_4_2_9,
+
+    SPRING_4_3,
 
     SPRING_4_3_0,
 
@@ -193,6 +205,10 @@ public enum SpringVersion {
 
     SPRING_4_3_30,
 
+    SPRING_5,
+
+    SPRING_5_0,
+
     SPRING_5_0_0,
 
     SPRING_5_0_1,
@@ -235,6 +251,8 @@ public enum SpringVersion {
 
     SPRING_5_0_20,
 
+    SPRING_5_1,
+
     SPRING_5_1_0,
 
     SPRING_5_1_1,
@@ -276,6 +294,8 @@ public enum SpringVersion {
     SPRING_5_1_19,
 
     SPRING_5_1_20,
+
+    SPRING_5_2,
 
     SPRING_5_2_0,
 
@@ -328,6 +348,8 @@ public enum SpringVersion {
     SPRING_5_2_24,
 
     SPRING_5_2_25,
+
+    SPRING_5_3,
 
     SPRING_5_3_0,
 
@@ -388,6 +410,10 @@ public enum SpringVersion {
     SPRING_5_3_28,
 
     SPRING_5_3_29,
+
+    SPRING_6,
+
+    SPRING_6_0,
 
     SPRING_6_0_0,
 
