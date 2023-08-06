@@ -21,10 +21,12 @@ import io.microsphere.util.BaseUtils;
 import io.microsphere.util.Version;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
-
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
