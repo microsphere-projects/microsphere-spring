@@ -52,7 +52,7 @@ public class InterceptingApplicationEventMulticasterTest {
     @Bean
     public static ApplicationEventInterceptor applicationEventInterceptor() {
         return ((event, eventType, chain) -> {
-            chain.doIntercept(event, eventType);
+            chain.intercept(event, eventType);
         });
     }
 
@@ -71,6 +71,7 @@ public class InterceptingApplicationEventMulticasterTest {
     public void test() {
         AtomicReference<String> eventValueRef = new AtomicReference<>();
 
+        // EventType -> ResolvableType -> PayloadApplicationEvent<String>
         context.addApplicationListener((ApplicationListener<PayloadApplicationEvent<String>>)
                 event -> eventValueRef.set(event.getPayload()));
 

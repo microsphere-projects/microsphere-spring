@@ -41,12 +41,12 @@ class DefaultApplicationEventInterceptorChain implements ApplicationEventInterce
     }
 
     @Override
-    public void doIntercept(ApplicationEvent event, ResolvableType eventType) {
+    public void intercept(ApplicationEvent event, ResolvableType eventType) {
         while (iterator.hasNext()) {
             ApplicationEventInterceptor interceptor = iterator.next();
             interceptor.intercept(event, eventType, this);
             return;
         }
-        applicationEventMulticaster.doMulticastEvent(event, eventType);
+    applicationEventMulticaster.doMulticastEvent(event, eventType);
     }
 }

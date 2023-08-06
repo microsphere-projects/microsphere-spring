@@ -34,5 +34,5 @@ public interface ApplicationEventInterceptorChain {
      * @param event     {@link ApplicationEvent}
      * @param eventType {@link ResolvableType} to present the type of {@link ApplicationEvent}
      */
-    void doIntercept(ApplicationEvent event, ResolvableType eventType);
+    void intercept(ApplicationEvent event, ResolvableType eventType);
 }

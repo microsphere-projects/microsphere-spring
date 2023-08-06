@@ -18,7 +18,6 @@ package io.microsphere.spring.context.event;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -42,7 +41,7 @@ public class InterceptingApplicationEventMulticaster extends SimpleApplicationEv
     @Override
     public final void multicastEvent(ApplicationEvent event, ResolvableType eventType) {
         DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this, this.applicationEventInterceptors);
-        chain.doIntercept(event, eventType);
+        chain.intercept(event, eventType);
     }
 
     @Override
