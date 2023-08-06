@@ -35,7 +35,7 @@ public class SpringVersionUtilsTest {
 
     @Test(expected = NullPointerException.class)
     public void testGetSpringVersionOnNPE() {
-        getSpringVersion(null);
+        getSpringVersion((Class) null);
     }
 
     @Test(expected = IllegalArgumentException.class)
