@@ -18,8 +18,8 @@ package io.microsphere.spring.context.event;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ApplicationListenerMethodAdapter;
 import org.springframework.context.event.GenericApplicationListener;
+import org.springframework.context.event.GenericApplicationListenerAdapter;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
@@ -34,29 +34,20 @@ class InterceptingApplicationListener implements GenericApplicationListener {
 
     private final ApplicationListener<?> delegate;
 
-    private final ResolvableType eventType;
+    private final GenericApplicationListener smartListener;
 
     private final List<ApplicationListenerInterceptor> interceptors;
 
     InterceptingApplicationListener(ApplicationListener<?> delegate, List<ApplicationListenerInterceptor> interceptors) {
         this.delegate = delegate;
-        this.eventType = getEventType(delegate);
+        this.smartListener = (delegate instanceof GenericApplicationListener ?
+                (GenericApplicationListener) delegate : new GenericApplicationListenerAdapter(delegate));
         this.interceptors = interceptors;
-    }
-
-    private ResolvableType getEventType(ApplicationListener<?> delegate) {
-        return ResolvableType.forInstance(delegate)
-                .as(ApplicationListener.class)
-                .getGeneric(0);
     }
 
     @Override
     public boolean supportsEventType(ResolvableType eventType) {
-        if (delegate instanceof ApplicationListenerMethodAdapter) {
-            ApplicationListenerMethodAdapter adapter = (ApplicationListenerMethodAdapter) delegate;
-            return adapter.supportsEventType(eventType);
-        }
-        return this.eventType.equals(eventType);
+        return smartListener.supportsEventType(eventType);
     }
 
     @Override
