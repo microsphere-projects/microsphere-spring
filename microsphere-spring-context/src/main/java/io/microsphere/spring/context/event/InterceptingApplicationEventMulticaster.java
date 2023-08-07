@@ -26,6 +26,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
 
@@ -45,9 +46,11 @@ public class InterceptingApplicationEventMulticaster extends SimpleApplicationEv
 
     @Override
     public final void multicastEvent(ApplicationEvent event, @Nullable ResolvableType eventType) {
-        ResolvableType type = resolveEventType(event, eventType);
-        DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this.applicationEventInterceptors, this::doMulticastEvent);
-        chain.intercept(event, type);
+        execute(() -> {
+            ResolvableType type = resolveEventType(event, eventType);
+            DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this.applicationEventInterceptors, this::doMulticastEvent);
+            chain.intercept(event, type);
+        });
     }
 
     static ResolvableType resolveEventType(ApplicationEvent event, ResolvableType eventType) {
@@ -79,4 +82,18 @@ public class InterceptingApplicationEventMulticaster extends SimpleApplicationEv
         this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
         this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);
     }
+
+    @Override
+    protected Executor getTaskExecutor() {
+        Executor executor = super.getTaskExecutor();
+        if (executor == null) {
+            executor = Runnable::run;
+        }
+        return executor;
+    }
+
+    private void execute(Runnable runnable) {
+        getTaskExecutor().execute(runnable);
+    }
+
 }

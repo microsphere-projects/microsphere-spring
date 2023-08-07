@@ -18,22 +18,29 @@ package io.microsphere.spring.context.annotation;
 
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy;
+import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 import static io.microsphere.spring.context.annotation.EnableEventManagement.NO_EXECUTOR;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
-import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
+import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Event Management Registrar
@@ -73,36 +80,73 @@ public class EventManagementRegistrar implements ImportBeanDefinitionRegistrar, 
 
         boolean associatedExecutorBean = !NO_EXECUTOR.equals(executorForListener);
 
-        if (registry.containsBeanDefinition(BEAN_NAME)) {
+
+        boolean beanExists = registry.containsBeanDefinition(beanName);
+
+        final AbstractBeanDefinition targetBeanDefinition;
+
+        if (beanExists) {
             // Current BeanFactory registered a BeanDefinition for ApplicationEventMulticaster
-            registerApplicationEventMulticasterIfPresent(intercepted, associatedExecutorBean, executorForListener, beanName, registry);
+            targetBeanDefinition = rebuildApplicationEventMulticasterBeanDefinition(intercepted, beanName, registry);
         } else {
             // NO ApplicationEventMulticaster BeanDefinition present
-            registerApplicationEventMulticasterIfAbsent(intercepted, associatedExecutorBean, executorForListener, beanName, registry);
+            targetBeanDefinition = buildApplicationEventMulticasterBeanDefinition(intercepted);
+            registry.registerBeanDefinition(beanName, targetBeanDefinition);
         }
+
+        associateExecutorBeanIfRequired(targetBeanDefinition, associatedExecutorBean, executorForListener);
+
     }
 
-    private void registerApplicationEventMulticasterIfPresent(boolean intercepted,
-                                                              boolean associatedExecutorBean, String executorForListener,
-                                                              String beanName, BeanDefinitionRegistry registry) {
+    private AbstractBeanDefinition rebuildApplicationEventMulticasterBeanDefinition(boolean intercepted,
+                                                                                    String beanName, BeanDefinitionRegistry registry) {
+
+        BeanDefinition originalBeanDefinition = registry.getBeanDefinition(beanName);
+
+        final AbstractBeanDefinition targetBeanDefinition;
         if (intercepted) {
-            BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
             // Remove the original BeanDefinition of ApplicationEventMulticaster
             registry.removeBeanDefinition(beanName);
             String resetBeanName = getResetBeanName(this.environment);
-            // Reset bean name for the original BeanDefinition of ApplicationEventMulticaster
-            registry.registerBeanDefinition(resetBeanName, beanDefinition);
-            // Register InterceptingApplicationEventMulticasterProxy with bean name
-            registerBeanDefinition(registry, beanName, InterceptingApplicationEventMulticasterProxy.class);
+            // Reset bean name and re-register the original BeanDefinition of ApplicationEventMulticaster
+            registry.registerBeanDefinition(resetBeanName, originalBeanDefinition);
+            // Build BeanDefinition InterceptingApplicationEventMulticasterProxy with bean name
+            targetBeanDefinition = new RootBeanDefinition(InterceptingApplicationEventMulticasterProxy.class);
+        } else {
+            targetBeanDefinition = (AbstractBeanDefinition) originalBeanDefinition;
+        }
+
+        return targetBeanDefinition;
+    }
+
+
+    private AbstractBeanDefinition buildApplicationEventMulticasterBeanDefinition(boolean intercepted) {
+        Class<?> beanClass = intercepted ? InterceptingApplicationEventMulticaster.class : SimpleApplicationEventMulticaster.class;
+        return new RootBeanDefinition(beanClass);
+    }
+
+    private String getExecutorBeanName(boolean associatedExecutorBean, String executorForListener) {
+        return associatedExecutorBean ? executorForListener : null;
+    }
+
+    private AbstractBeanDefinition buildBeanDefinition(Class<?> beanClass, @Nullable String executorBeanName) {
+        BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(beanClass);
+        if (hasText(executorBeanName)) {
+
+        }
+        return beanDefinitionBuilder.getBeanDefinition();
+    }
+
+    private void associateExecutorBeanIfRequired(AbstractBeanDefinition beanDefinition,
+                                                 boolean associatedExecutorBean,
+                                                 String executorBeanName) {
+        if (associatedExecutorBean) {
+            MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
+            // The bean class must have setTaskExecutor(Executor) method
+            propertyValues.addPropertyValue("taskExecutor", new RuntimeBeanReference(executorBeanName));
         }
     }
 
-
-    private void registerApplicationEventMulticasterIfAbsent(boolean intercepted,
-                                                             boolean associatedExecutorBean, String executorForListener,
-                                                             String beanName, BeanDefinitionRegistry registry) {
-        // TODO
-    }
 
     @Override
     public void setEnvironment(Environment environment) {

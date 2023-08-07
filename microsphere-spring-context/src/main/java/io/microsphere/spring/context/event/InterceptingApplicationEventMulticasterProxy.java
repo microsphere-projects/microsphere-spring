@@ -30,11 +30,11 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
@@ -73,6 +73,8 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
     private List<ApplicationEventInterceptor> applicationEventInterceptors;
 
     private List<ApplicationListenerInterceptor> applicationListenerInterceptors;
+
+    private Executor executor;
 
     public InterceptingApplicationEventMulticasterProxy(Environment environment) {
         this.delegateBeanName = getResetBeanName(environment);
@@ -120,18 +122,35 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
 
     @Override
     public void multicastEvent(ApplicationEvent event) {
-        delegate.multicastEvent(event);
+        execute(() -> delegate.multicastEvent(event));
     }
 
     @Override
     public void multicastEvent(ApplicationEvent event, ResolvableType eventType) {
-        ResolvableType type = resolveEventType(event, eventType);
-        DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this.applicationEventInterceptors, this::onEvent);
-        chain.intercept(event, type);
+        execute(() -> {
+            ResolvableType type = resolveEventType(event, eventType);
+            DefaultApplicationEventInterceptorChain chain = new DefaultApplicationEventInterceptorChain(this.applicationEventInterceptors, this::onEvent);
+            chain.intercept(event, type);
+        });
     }
 
     private void onEvent(ApplicationEvent event, ResolvableType resolvableType) {
         delegate.multicastEvent(event, resolvableType);
+    }
+
+    private void execute(Runnable runnable) {
+        getExecutor().execute(runnable);
+    }
+
+    public void setTaskExecutor(@Nullable Executor executor) {
+        this.executor = executor;
+    }
+
+    public Executor getExecutor() {
+        if (executor == null) {
+            executor = Runnable::run;
+        }
+        return executor;
     }
 
     @Override
@@ -169,7 +188,7 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
 
     @Nullable
     @Override
-    public Object invoke(@Nonnull MethodInvocation invocation) throws Throwable {
+    public Object invoke(MethodInvocation invocation) throws Throwable {
         ApplicationListener applicationListener = (ApplicationListener) invocation.getThis();
         InterceptingApplicationListener wrapper = new InterceptingApplicationListener(applicationListener, applicationListenerInterceptors);
         Object[] args = invocation.getArguments();

@@ -31,6 +31,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -51,7 +53,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
         EnableEventManagementTest.Config.class,
         DefaultAdvisorAutoProxyCreator.class
 })
-@EnableEventManagement(intercepted = true)
+@EnableEventManagement(intercepted = true, executorForListener = "taskExecutor")
 public class EnableEventManagementTest {
 
     private static final Logger logger = LoggerFactory.getLogger(EnableEventManagementTest.class);
@@ -59,6 +61,11 @@ public class EnableEventManagementTest {
     @Bean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
     public static ApplicationEventMulticaster applicationEventMulticaster() {
         return new SimpleApplicationEventMulticaster();
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        return new SyncTaskExecutor();
     }
 
     @Bean
