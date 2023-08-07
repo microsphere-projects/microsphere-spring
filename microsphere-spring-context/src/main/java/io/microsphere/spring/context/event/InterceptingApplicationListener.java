@@ -18,6 +18,9 @@ package io.microsphere.spring.context.event;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ApplicationListenerMethodAdapter;
+import org.springframework.context.event.GenericApplicationListener;
+import org.springframework.core.ResolvableType;
 
 import java.util.List;
 
@@ -27,28 +30,47 @@ import java.util.List;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class InterceptingApplicationListener<E extends ApplicationEvent> implements ApplicationListener<E> {
+class InterceptingApplicationListener implements GenericApplicationListener {
 
-    private final ApplicationListener<E> delegate;
+    private final ApplicationListener<?> delegate;
+
+    private final ResolvableType eventType;
 
     private final List<ApplicationListenerInterceptor> interceptors;
 
-    InterceptingApplicationListener(ApplicationListener<E> delegate, List<ApplicationListenerInterceptor> interceptors) {
+    InterceptingApplicationListener(ApplicationListener<?> delegate, List<ApplicationListenerInterceptor> interceptors) {
         this.delegate = delegate;
+        this.eventType = getEventType(delegate);
         this.interceptors = interceptors;
     }
 
+    private ResolvableType getEventType(ApplicationListener<?> delegate) {
+        return ResolvableType.forInstance(delegate)
+                .as(ApplicationListener.class)
+                .getGeneric(0);
+    }
+
     @Override
-    public void onApplicationEvent(E event) {
+    public boolean supportsEventType(ResolvableType eventType) {
+        if (delegate instanceof ApplicationListenerMethodAdapter) {
+            ApplicationListenerMethodAdapter adapter = (ApplicationListenerMethodAdapter) delegate;
+            return adapter.supportsEventType(eventType);
+        }
+        return this.eventType.equals(eventType);
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
         DefaultApplicationListenerInterceptorChain chain = new DefaultApplicationListenerInterceptorChain(this.interceptors, this::onEvent);
-        chain.intercept(this, event);
+        chain.intercept(delegate, event);
     }
 
-    private void onEvent(ApplicationListener<?> applicationListener, ApplicationEvent event) {
-        delegate.onApplicationEvent((E) event);
+    private void onEvent(ApplicationListener applicationListener, ApplicationEvent event) {
+        applicationListener.onApplicationEvent(event);
     }
 
-    public ApplicationListener<E> getDelegate() {
+    public ApplicationListener<?> getDelegate() {
         return delegate;
     }
+
 }

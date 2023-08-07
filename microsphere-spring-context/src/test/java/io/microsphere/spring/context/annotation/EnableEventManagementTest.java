@@ -22,12 +22,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.EventListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -45,7 +48,9 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        EnableEventManagementTest.class
+        EnableEventManagementTest.class,
+        EnableEventManagementTest.Config.class,
+        DefaultAdvisorAutoProxyCreator.class
 })
 @EnableEventManagement(intercepted = true)
 public class EnableEventManagementTest {
@@ -72,14 +77,33 @@ public class EnableEventManagementTest {
     }
 
     @Bean
-    public ApplicationListener<PayloadApplicationEvent<String>> applicationListener() {
-        return event -> {
+    public StringApplicationListener stringApplicationListener() {
+        return new StringApplicationListener();
+    }
+
+    static class StringApplicationListener implements ApplicationListener<PayloadApplicationEvent<String>> {
+
+        @Override
+        public void onApplicationEvent(PayloadApplicationEvent<String> event) {
             logger.info("The Event : {}", event);
-        };
+        }
     }
 
     @Autowired
     private ConfigurableApplicationContext context;
+
+    static class Config {
+
+        @EventListener(PayloadApplicationEvent.class)
+        public void onPayloadApplicationEvent(PayloadApplicationEvent<String> event) {
+            logger.info("The Event : {}", event);
+        }
+
+        @EventListener(String.class)
+        public void onPayloadApplicationEvent(String event) {
+            logger.info("The Event payload : {}", event);
+        }
+    }
 
 
     @Test

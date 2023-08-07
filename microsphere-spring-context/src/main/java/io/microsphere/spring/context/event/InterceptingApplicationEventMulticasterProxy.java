@@ -24,7 +24,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -39,8 +38,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
-import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
-import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
@@ -51,7 +48,8 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @see ApplicationEventMulticaster
  * @since 1.0.0
  */
-public class InterceptingApplicationEventMulticasterProxy implements ApplicationEventMulticaster, BeanFactoryAware {
+public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMatcherPointcutAdvisor
+        implements InitializingBean, MethodInterceptor, ApplicationEventMulticaster, BeanFactoryAware {
 
     /**
      * The property name of the reset bean name of {@link ApplicationEventMulticaster}
@@ -86,7 +84,7 @@ public class InterceptingApplicationEventMulticasterProxy implements Application
 
     @Override
     public void addApplicationListener(ApplicationListener<?> listener) {
-        InterceptingApplicationListener<?> wrapper = new InterceptingApplicationListener(listener, applicationListenerInterceptors);
+        InterceptingApplicationListener wrapper = new InterceptingApplicationListener(listener, applicationListenerInterceptors);
         delegate.addApplicationListener(wrapper);
     }
 
@@ -142,53 +140,45 @@ public class InterceptingApplicationEventMulticasterProxy implements Application
         this.delegate = beanFactory.getBean(this.delegateBeanName, ApplicationEventMulticaster.class);
         this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
         this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
-        registerBeanDefinition(registry, ApplicationListenerAdvisor.class);
     }
 
-    class ApplicationListenerAdvisor extends StaticMethodMatcherPointcutAdvisor
-            implements InitializingBean, MethodInterceptor {
-
-        @Override
-        public boolean matches(Method method, Class<?> targetClass) {
-            if (!ApplicationListener.class.isAssignableFrom(targetClass)) {
-                return false;
-            }
-
-            String methodName = method.getName();
-            if (!"onApplicationEvent".equals(methodName)) {
-                return false;
-            }
-
-            if (method.getParameterCount() != 1) {
-                return false;
-            }
-
-            Class<?> parameterType = method.getParameterTypes()[0];
-
-            if (!ApplicationEvent.class.isAssignableFrom(parameterType)) {
-                return false;
-            }
-
-            return true;
+    @Override
+    public boolean matches(Method method, Class<?> targetClass) {
+        if (!ApplicationListener.class.isAssignableFrom(targetClass)) {
+            return false;
         }
 
-
-        @Nullable
-        @Override
-        public Object invoke(@Nonnull MethodInvocation invocation) throws Throwable {
-            ApplicationListener applicationListener = (ApplicationListener) invocation.getThis();
-            InterceptingApplicationListener wrapper = new InterceptingApplicationListener(applicationListener, applicationListenerInterceptors);
-            Object[] args = invocation.getArguments();
-            Method method = invocation.getMethod();
-            return method.invoke(wrapper, args);
+        String methodName = method.getName();
+        if (!"onApplicationEvent".equals(methodName)) {
+            return false;
         }
 
-        @Override
-        public void afterPropertiesSet() throws Exception {
-            setAdvice(this);
+        if (method.getParameterCount() != 1) {
+            return false;
         }
+
+        Class<?> parameterType = method.getParameterTypes()[0];
+
+        if (!ApplicationEvent.class.isAssignableFrom(parameterType)) {
+            return false;
+        }
+
+        return true;
     }
 
 
+    @Nullable
+    @Override
+    public Object invoke(@Nonnull MethodInvocation invocation) throws Throwable {
+        ApplicationListener applicationListener = (ApplicationListener) invocation.getThis();
+        InterceptingApplicationListener wrapper = new InterceptingApplicationListener(applicationListener, applicationListenerInterceptors);
+        Object[] args = invocation.getArguments();
+        Method method = invocation.getMethod();
+        return method.invoke(wrapper, args);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        setAdvice(this);
+    }
 }
