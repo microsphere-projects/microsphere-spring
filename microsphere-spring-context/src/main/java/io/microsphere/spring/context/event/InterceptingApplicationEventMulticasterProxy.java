@@ -74,7 +74,7 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
 
     private List<ApplicationListenerInterceptor> applicationListenerInterceptors;
 
-    private Executor executor;
+    private Executor taskExecutor;
 
     public InterceptingApplicationEventMulticasterProxy(Environment environment) {
         this.delegateBeanName = getResetBeanName(environment);
@@ -139,18 +139,18 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
     }
 
     private void execute(Runnable runnable) {
-        getExecutor().execute(runnable);
+        getTaskExecutor().execute(runnable);
     }
 
-    public void setTaskExecutor(@Nullable Executor executor) {
-        this.executor = executor;
+    public void setTaskExecutor(@Nullable Executor taskExecutor) {
+        this.taskExecutor = taskExecutor;
     }
 
-    public Executor getExecutor() {
-        if (executor == null) {
-            executor = Runnable::run;
+    protected Executor getTaskExecutor() {
+        if (taskExecutor == null) {
+            taskExecutor = Runnable::run;
         }
-        return executor;
+        return taskExecutor;
     }
 
     @Override
