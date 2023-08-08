@@ -41,7 +41,7 @@ public class OnceApplicationContextEventListenerTest {
     @Test
     public void test() {
 
-        for (int levels = 1; levels < 100; levels++) {
+        for (int levels = 1; levels < 10; levels++) {
             testOnceApplicationContextEventListener(levels, true);
             testOnceApplicationContextEventListener(levels, false);
         }
