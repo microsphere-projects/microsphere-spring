@@ -159,6 +159,11 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
         }
         // FIXME : WebFlux
         String lookupPath = getResolvedLookupPath(request);
+        return matches(lookupPath);
+
+    }
+
+    public boolean matches(String lookupPath) {
         List<String> matches = getMatchingPatterns(lookupPath);
         return !matches.isEmpty();
     }
@@ -182,7 +187,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
     }
 
     @Nullable
-    private String getMatchingPattern(String pattern, String lookupPath) {
+    protected String getMatchingPattern(String pattern, String lookupPath) {
         if (pattern.equals(lookupPath)) {
             return pattern;
         }
