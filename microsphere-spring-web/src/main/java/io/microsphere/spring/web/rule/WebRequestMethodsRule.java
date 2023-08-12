@@ -21,15 +21,16 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import static io.microsphere.collection.SetUtils.asSet;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
-import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * {@link NativeWebRequest WebRequest} {@link HttpMethod Methods} {@link WebRequestRule}
@@ -43,19 +44,21 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
  * @see org.springframework.web.reactive.result.condition.RequestMethodsRequestCondition
  * @since 1.0.0
  */
-public class WebRequestMethodsRule extends AbstractWebRequestRule<RequestMethod> {
+public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
 
-    private static final String ERROR_REQUEST_URI = "javax.servlet.error.request_uri";
-
-    private final Set<RequestMethod> methods;
+    private final Set<String> methods;
 
     public WebRequestMethodsRule(RequestMethod... requestMethods) {
-        this.methods = (ObjectUtils.isEmpty(requestMethods) ?
-                Collections.emptySet() : new LinkedHashSet<>(Arrays.asList(requestMethods)));
+        this.methods = ObjectUtils.isEmpty(requestMethods) ? emptySet() :
+                Stream.of(requestMethods).map(RequestMethod::name).collect(toSet());
+    }
+
+    public WebRequestMethodsRule(String method, String... others) {
+        this.methods = ObjectUtils.isEmpty(others) ? singleton(method) : asSet(method, others);
     }
 
     @Override
-    protected Collection<RequestMethod> getContent() {
+    protected Collection<String> getContent() {
         return methods;
     }
 
@@ -71,28 +74,20 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<RequestMethod>
         }
 
         String method = getMethod(request);
+        return matches(method);
+    }
 
+    public boolean matches(String method) {
         if (isEmpty()) {
-            if (RequestMethod.OPTIONS.name().equals(method) && request.getAttribute(ERROR_REQUEST_URI, SCOPE_REQUEST) == null) {
+            if (RequestMethod.OPTIONS.name().equals(method)) {
                 return false;
             }
             return true;
         }
-
         return matchRequestMethod(method);
     }
 
     private boolean matchRequestMethod(String method) {
-        RequestMethod requestMethod;
-        Collection<RequestMethod> methods = this.methods;
-        try {
-            requestMethod = RequestMethod.valueOf(method);
-            if (methods.contains(requestMethod)) {
-                return true;
-            }
-        } catch (IllegalArgumentException ex) {
-            // Custom request method
-        }
-        return false;
+        return this.methods.contains(method);
     }
 }
