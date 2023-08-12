@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.servlet;
-
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
+package io.microsphere.spring.web.metadata;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;

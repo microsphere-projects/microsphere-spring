@@ -17,6 +17,7 @@
 package io.microsphere.spring.web.servlet;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockServletConfig;

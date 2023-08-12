@@ -16,28 +16,20 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.webmvc.config.CommonWebMvcConfigurer;
-import org.springframework.context.annotation.Import;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.type.AnnotationMetadata;
 
 /**
- * Enable annotation to import {@link CommonWebMvcConfigurer} with {@link EnableWebMvc @EnableWebMvc}
+ * {@link ImportBeanDefinitionRegistrar} for Spring WebMVC Extension
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see EnableWebMvc
- * @see CommonWebMvcConfigurer
  * @since 1.0.0
  */
-@Import(CommonWebMvcConfigurer.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Documented
-@EnableWebMvc
-public @interface EnableCommonWebMvc {
+public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
+
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+
+    }
 }

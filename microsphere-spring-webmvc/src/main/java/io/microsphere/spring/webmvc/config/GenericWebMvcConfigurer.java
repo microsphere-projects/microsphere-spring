@@ -22,7 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         DelegatingMethodHandlerInterceptor.class,
         ReversedProxyHandlerMapping.class
 })
-public class CommonWebMvcConfigurer implements WebMvcConfigurer {
+public class GenericWebMvcConfigurer implements WebMvcConfigurer {
 
     @Autowired
     private ObjectProvider<MethodHandlerInterceptor> methodHandlerInterceptors;

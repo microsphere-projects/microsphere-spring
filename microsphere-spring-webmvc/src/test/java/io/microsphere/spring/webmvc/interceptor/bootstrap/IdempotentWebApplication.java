@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.webmvc.interceptor.bootstrap;
 
-import io.microsphere.spring.webmvc.annotation.EnableCommonWebMvc;
+import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
 import io.microsphere.spring.webmvc.event.RequestMappingHandlerAdapterListener;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @EnableAutoConfiguration
-@EnableCommonWebMvc
+@EnableWebMvcExtension
 @Import(value = {
         IdempotentAnnotatedMethodHandlerInterceptor.class,
         RequestMappingHandlerAdapterListener.class,
