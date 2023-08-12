@@ -24,17 +24,17 @@ import java.lang.annotation.Target;
 public @interface EnableEmbeddedDatabase {
 
     /**
-     * @return 嵌入式数据库类型，默认 SQLite
+     * @return Embedded Database Type, SQLite as default
      */
     EmbeddedDatabaseType type() default EmbeddedDatabaseType.SQLITE;
 
     /**
-     * @return {@link DataSource} Bean 名称
+     * @return {@link DataSource} Bean Name
      */
     String dataSource();
 
     /**
-     * @return 是否为 Primary Bean
+     * @return Primary Bean or not
      */
     boolean primary() default false;
 
