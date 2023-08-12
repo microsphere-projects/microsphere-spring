@@ -28,7 +28,7 @@ import static io.microsphere.util.ArrayUtils.asArray;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebEndpointMappingRegistry
  * @see WebEndpointMappingFilter
- * @since 1.0.0
+ * @since 1.0.07`
  */
 public abstract class FilteringWebEndpointMappingRegistry implements WebEndpointMappingRegistry {
 
@@ -53,7 +53,7 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
         this.setWebEndpointMappingFilters(asArray(filters, WebEndpointMappingFilter.class));
     }
 
-    public void setWebEndpointMappingFilters(WebEndpointMappingFilter[] filters) {
+    public void setWebEndpointMappingFilters(WebEndpointMappingFilter... filters) {
         compositeFilter = getFilterOperator().createFilter(filters);
     }
 
