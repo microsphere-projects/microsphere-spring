@@ -20,6 +20,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.constants.SymbolConstants.EQUAL_CHAR;
+import static io.microsphere.constants.SymbolConstants.EXCLAMATION;
+import static io.microsphere.constants.SymbolConstants.EXCLAMATION_CHAR;
+
 /**
  * Supports "name=value" style expressions as described in:
  * {@link org.springframework.web.bind.annotation.RequestMapping#params()} and
@@ -40,13 +44,13 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
     protected final boolean isNegated;
 
     protected AbstractNameValueExpression(String expression) {
-        int separator = expression.indexOf('=');
+        int separator = expression.indexOf(EQUAL_CHAR);
         if (separator == -1) {
-            this.isNegated = expression.startsWith("!");
+            this.isNegated = expression.startsWith(EXCLAMATION);
             this.name = (this.isNegated ? expression.substring(1) : expression);
             this.value = null;
         } else {
-            this.isNegated = (separator > 0) && (expression.charAt(separator - 1) == '!');
+            this.isNegated = (separator > 0) && (expression.charAt(separator - 1) == EXCLAMATION_CHAR);
             this.name = (this.isNegated ? expression.substring(0, separator - 1) : expression.substring(0, separator));
             this.value = parseValue(expression.substring(separator + 1));
         }
@@ -115,13 +119,13 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
         if (this.value != null) {
             builder.append(this.name);
             if (this.isNegated) {
-                builder.append('!');
+                builder.append(EXCLAMATION_CHAR);
             }
             builder.append('=');
             builder.append(this.value);
         } else {
             if (this.isNegated) {
-                builder.append('!');
+                builder.append(EXCLAMATION_CHAR);
             }
             builder.append(this.name);
         }
