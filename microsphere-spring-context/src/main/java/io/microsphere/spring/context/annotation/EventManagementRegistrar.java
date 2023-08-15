@@ -91,11 +91,10 @@ public class EventManagementRegistrar implements ImportBeanDefinitionRegistrar, 
         } else {
             // NO ApplicationEventMulticaster BeanDefinition present
             targetBeanDefinition = buildApplicationEventMulticasterBeanDefinition(intercepted);
-            registry.registerBeanDefinition(beanName, targetBeanDefinition);
         }
 
         associateExecutorBeanIfRequired(targetBeanDefinition, associatedExecutorBean, executorForListener);
-
+        registry.registerBeanDefinition(beanName, targetBeanDefinition);
     }
 
     private AbstractBeanDefinition rebuildApplicationEventMulticasterBeanDefinition(boolean intercepted,

@@ -18,6 +18,7 @@ package io.microsphere.spring.context.annotation;
 
 import io.microsphere.spring.context.event.ApplicationEventInterceptor;
 import io.microsphere.spring.context.event.ApplicationListenerInterceptor;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
@@ -58,19 +59,25 @@ public class EnableEventManagementTest {
 
     private static final Logger logger = LoggerFactory.getLogger(EnableEventManagementTest.class);
 
+    private static AtomicInteger eventValueRef = new AtomicInteger();
+
+
     @Bean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
     public static ApplicationEventMulticaster applicationEventMulticaster() {
         return new SimpleApplicationEventMulticaster();
     }
 
     @Bean
-    public TaskExecutor taskExecutor() {
+    public static TaskExecutor taskExecutor() {
         return new SyncTaskExecutor();
     }
 
     @Bean
     public static ApplicationEventInterceptor applicationEventInterceptor() {
         return ((event, eventType, chain) -> {
+            if(event instanceof PayloadApplicationEvent) {
+                eventValueRef.incrementAndGet();
+            }
             chain.intercept(event, eventType);
         });
     }
@@ -78,12 +85,15 @@ public class EnableEventManagementTest {
     @Bean
     public static ApplicationListenerInterceptor applicationListenerInterceptor() {
         return ((listener, event, chain) -> {
+            if(event instanceof PayloadApplicationEvent) {
+                eventValueRef.incrementAndGet();
+            }
             chain.intercept(listener, event);
         });
     }
 
     @Bean
-    public StringApplicationListener stringApplicationListener() {
+    public static StringApplicationListener stringApplicationListener() {
         return new StringApplicationListener();
     }
 
@@ -91,6 +101,7 @@ public class EnableEventManagementTest {
 
         @Override
         public void onApplicationEvent(PayloadApplicationEvent<String> event) {
+            eventValueRef.incrementAndGet();
             logger.info("The Event : {}", event);
         }
     }
@@ -102,26 +113,34 @@ public class EnableEventManagementTest {
 
         @EventListener(PayloadApplicationEvent.class)
         public void onPayloadApplicationEvent(PayloadApplicationEvent<String> event) {
+            eventValueRef.incrementAndGet();
             logger.info("The Event : {}", event);
         }
 
         @EventListener(String.class)
         public void onPayloadApplicationEvent(String event) {
+            eventValueRef.incrementAndGet();
             logger.info("The Event payload : {}", event);
         }
+    }
+
+    @After
+    public void rest() {
+        eventValueRef.set(0);
     }
 
 
     @Test
     public void test() {
-        AtomicReference<String> eventValueRef = new AtomicReference<>();
 
         // EventType -> ResolvableType -> PayloadApplicationEvent<String>
         context.addApplicationListener((ApplicationListener<PayloadApplicationEvent<String>>)
-                event -> eventValueRef.set(event.getPayload()));
+                event -> {
+                    eventValueRef.incrementAndGet();
+                });
 
         context.publishEvent("Hello,World");
 
-        assertEquals("Hello,World", eventValueRef.get());
+        assertEquals(12, eventValueRef.get());
     }
 }
