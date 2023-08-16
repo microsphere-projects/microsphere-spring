@@ -54,13 +54,13 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
         EnableEventManagementTest.Config.class,
         DefaultAdvisorAutoProxyCreator.class
 })
-@EnableEventManagement(intercepted = true, executorForListener = "taskExecutor")
+@EnableEventManagement(intercepted = true, executorForListener = "taskExecutor"
+)
 public class EnableEventManagementTest {
 
     private static final Logger logger = LoggerFactory.getLogger(EnableEventManagementTest.class);
 
     private static AtomicInteger eventValueRef = new AtomicInteger();
-
 
     @Bean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
     public static ApplicationEventMulticaster applicationEventMulticaster() {
@@ -75,7 +75,7 @@ public class EnableEventManagementTest {
     @Bean
     public static ApplicationEventInterceptor applicationEventInterceptor() {
         return ((event, eventType, chain) -> {
-            if(event instanceof PayloadApplicationEvent) {
+            if (event instanceof PayloadApplicationEvent) {
                 eventValueRef.incrementAndGet();
             }
             chain.intercept(event, eventType);
@@ -85,8 +85,9 @@ public class EnableEventManagementTest {
     @Bean
     public static ApplicationListenerInterceptor applicationListenerInterceptor() {
         return ((listener, event, chain) -> {
-            if(event instanceof PayloadApplicationEvent) {
+            if (event instanceof PayloadApplicationEvent) {
                 eventValueRef.incrementAndGet();
+                logger.info("listener : {} , event : {} , chain : {}", listener, event, chain);
             }
             chain.intercept(listener, event);
         });
@@ -102,7 +103,6 @@ public class EnableEventManagementTest {
         @Override
         public void onApplicationEvent(PayloadApplicationEvent<String> event) {
             eventValueRef.incrementAndGet();
-            logger.info("The Event : {}", event);
         }
     }
 
@@ -114,13 +114,11 @@ public class EnableEventManagementTest {
         @EventListener(PayloadApplicationEvent.class)
         public void onPayloadApplicationEvent(PayloadApplicationEvent<String> event) {
             eventValueRef.incrementAndGet();
-            logger.info("The Event : {}", event);
         }
 
         @EventListener(String.class)
         public void onPayloadApplicationEvent(String event) {
             eventValueRef.incrementAndGet();
-            logger.info("The Event payload : {}", event);
         }
     }
 
@@ -141,6 +139,6 @@ public class EnableEventManagementTest {
 
         context.publishEvent("Hello,World");
 
-        assertEquals(12, eventValueRef.get());
+        assertEquals(9, eventValueRef.get());
     }
 }

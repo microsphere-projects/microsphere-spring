@@ -23,6 +23,7 @@ import org.springframework.context.event.GenericApplicationListenerAdapter;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Intercepting {@link ApplicationListener} Wrapper
@@ -61,7 +62,23 @@ class InterceptingApplicationListener implements GenericApplicationListener {
     }
 
     public ApplicationListener<?> getDelegate() {
+        ApplicationListener delegate = this.delegate;
+        while (delegate instanceof InterceptingApplicationListener) {
+            delegate = ((InterceptingApplicationListener) delegate).delegate;
+        }
         return delegate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InterceptingApplicationListener that = (InterceptingApplicationListener) o;
+        return getDelegate().equals(that.getDelegate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDelegate());
+    }
 }

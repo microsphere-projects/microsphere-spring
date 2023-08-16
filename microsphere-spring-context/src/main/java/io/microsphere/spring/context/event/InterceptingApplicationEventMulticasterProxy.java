@@ -16,13 +16,10 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
+import io.microsphere.spring.beans.factory.config.GenericBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -32,7 +29,6 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
@@ -48,8 +44,8 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @see ApplicationEventMulticaster
  * @since 1.0.0
  */
-public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMatcherPointcutAdvisor
-        implements InitializingBean, MethodInterceptor, ApplicationEventMulticaster, BeanFactoryAware {
+public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPostProcessorAdapter<ApplicationListener>
+        implements ApplicationEventMulticaster, BeanFactoryAware {
 
     /**
      * The property name of the reset bean name of {@link ApplicationEventMulticaster}
@@ -86,8 +82,7 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
 
     @Override
     public void addApplicationListener(ApplicationListener<?> listener) {
-        InterceptingApplicationListener wrapper = new InterceptingApplicationListener(listener, applicationListenerInterceptors);
-        delegate.addApplicationListener(wrapper);
+        delegate.addApplicationListener(wrap(listener));
     }
 
     @Override
@@ -134,6 +129,17 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
         });
     }
 
+    @Override
+    protected ApplicationListener doPostProcessAfterInitialization(ApplicationListener bean, String beanName) throws BeansException {
+        return wrap(bean);
+    }
+
+    private ApplicationListener wrap(ApplicationListener listener) {
+        return listener instanceof InterceptingApplicationListener ?
+                listener :
+                new InterceptingApplicationListener(listener, applicationListenerInterceptors);
+    }
+
     private void onEvent(ApplicationEvent event, ResolvableType resolvableType) {
         delegate.multicastEvent(event, resolvableType);
     }
@@ -159,45 +165,5 @@ public class InterceptingApplicationEventMulticasterProxy extends StaticMethodMa
         this.delegate = beanFactory.getBean(this.delegateBeanName, ApplicationEventMulticaster.class);
         this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
         this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);
-    }
-
-    @Override
-    public boolean matches(Method method, Class<?> targetClass) {
-        if (!ApplicationListener.class.isAssignableFrom(targetClass)) {
-            return false;
-        }
-
-        String methodName = method.getName();
-        if (!"onApplicationEvent".equals(methodName)) {
-            return false;
-        }
-
-        if (method.getParameterCount() != 1) {
-            return false;
-        }
-
-        Class<?> parameterType = method.getParameterTypes()[0];
-
-        if (!ApplicationEvent.class.isAssignableFrom(parameterType)) {
-            return false;
-        }
-
-        return true;
-    }
-
-
-    @Nullable
-    @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        ApplicationListener applicationListener = (ApplicationListener) invocation.getThis();
-        InterceptingApplicationListener wrapper = new InterceptingApplicationListener(applicationListener, applicationListenerInterceptors);
-        Object[] args = invocation.getArguments();
-        Method method = invocation.getMethod();
-        return method.invoke(wrapper, args);
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        setAdvice(this);
     }
 }
