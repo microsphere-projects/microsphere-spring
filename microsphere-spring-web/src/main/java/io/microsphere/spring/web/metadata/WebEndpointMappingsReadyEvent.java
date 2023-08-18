@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc.metadata;
+package io.microsphere.spring.web.metadata;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.springframework.context.ApplicationContext;

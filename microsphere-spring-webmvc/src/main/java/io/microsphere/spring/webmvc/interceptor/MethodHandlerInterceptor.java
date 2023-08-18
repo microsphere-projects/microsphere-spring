@@ -1,6 +1,6 @@
 package io.microsphere.spring.webmvc.interceptor;
 
-import io.microsphere.spring.webmvc.config.GenericWebMvcConfigurer;
+import io.microsphere.spring.webmvc.config.HandlerInterceptorWebMvcConfigurer;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ *
  * {@link HandlerMethod} {@link HandlerInterceptor} abstract implementation
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
@@ -80,7 +81,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
      *
      * @return If <code>true<code>, current instance will be looked up by {@link DelegatingMethodHandlerInterceptor} as a delegate
      * for intercepting, otherwise, current instance will be registered into {@link InterceptorRegistry} when
-     * the {@link GenericWebMvcConfigurer#addInterceptors(InterceptorRegistry)} method will be called.
+     * the {@link HandlerInterceptorWebMvcConfigurer#addInterceptors(InterceptorRegistry)} method will be called.
      */
     public boolean isDelegate() {
         return delegate;

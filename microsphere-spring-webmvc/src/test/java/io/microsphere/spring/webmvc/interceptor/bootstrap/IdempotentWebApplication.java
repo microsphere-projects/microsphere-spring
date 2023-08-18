@@ -21,7 +21,7 @@ import io.microsphere.spring.webmvc.annotation.Idempotent;
 import io.microsphere.spring.webmvc.event.RequestMappingHandlerAdapterListener;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.webmvc.metadata.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
