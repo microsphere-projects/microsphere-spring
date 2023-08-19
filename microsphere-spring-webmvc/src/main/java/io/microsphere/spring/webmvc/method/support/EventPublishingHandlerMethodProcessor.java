@@ -17,7 +17,6 @@
 package io.microsphere.spring.webmvc.method.support;
 
 import io.microsphere.spring.context.OnceApplicationContextEventListener;
-import io.microsphere.spring.util.BeanUtils;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import io.microsphere.spring.webmvc.method.HandlerMethodArgumentsResolvedEvent;
@@ -29,7 +28,6 @@ import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolverComposite;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -44,7 +42,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.getHandlerMethodArguments;
+import static java.util.Collections.emptyList;
 
 /**
  * {@link HandlerMethodArgumentResolver} and {@link HandlerMethodReturnValueHandler} processor of {@link HandlerMethod}
@@ -73,6 +73,10 @@ public class EventPublishingHandlerMethodProcessor extends OnceApplicationContex
 
     private final Map<MethodParameter, HandlerMethodReturnValueHandler> returnValueHandlersCache = new HashMap<>(256);
 
+    private List<HandlerMethodArgumentResolverAdvice> advices = emptyList();
+
+    private int advicesSize = 0;
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return true;
@@ -90,9 +94,32 @@ public class EventPublishingHandlerMethodProcessor extends OnceApplicationContex
         if (resolver == null) {
             return null;
         }
+
+        beforeResolveArgument(parameter, mavContainer, webRequest, binderFactory);
+
         Object argument = resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+
         publishEvents(resolver, parameter, argument, webRequest);
+
+        afterResolveArgument(parameter, argument, mavContainer, webRequest, binderFactory);
+
         return argument;
+    }
+
+    private void beforeResolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+                                       NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        for (int i = 0; i < advicesSize; i++) {
+            HandlerMethodArgumentResolverAdvice advice = advices.get(i);
+            advice.beforeResolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        }
+    }
+
+    private void afterResolveArgument(MethodParameter parameter, Object argument, ModelAndViewContainer mavContainer,
+                                      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        for (int i = 0; i < advicesSize; i++) {
+            HandlerMethodArgumentResolverAdvice advice = advices.get(i);
+            advice.afterResolveArgument(parameter, argument, mavContainer, webRequest, binderFactory);
+        }
     }
 
     @Override
@@ -134,12 +161,20 @@ public class EventPublishingHandlerMethodProcessor extends OnceApplicationContex
     @Override
     protected void onApplicationContextEvent(RequestMappingMetadataReadyEvent event) {
         initRequestMappingHandlerAdapters(event);
+        initAdvices(event);
+    }
+
+    private void initAdvices(RequestMappingMetadataReadyEvent event) {
+        ApplicationContext context = event.getApplicationContext();
+        List<HandlerMethodArgumentResolverAdvice> advices = getSortedBeans(context, HandlerMethodArgumentResolverAdvice.class);
+        this.advices = advices;
+        this.advicesSize = advices.size();
     }
 
     private void initRequestMappingHandlerAdapters(RequestMappingMetadataReadyEvent event) {
         ApplicationContext context = event.getApplicationContext();
         List<RequestMappingMetadata> metadata = event.getMetadata();
-        List<RequestMappingHandlerAdapter> adapters = BeanUtils.getSortedBeans(context, RequestMappingHandlerAdapter.class);
+        List<RequestMappingHandlerAdapter> adapters = getSortedBeans(context, RequestMappingHandlerAdapter.class);
         for (int i = 0; i < adapters.size(); i++) {
             RequestMappingHandlerAdapter adapter = adapters.get(i);
             initRequestMappingHandlerAdapter(adapter, metadata);
