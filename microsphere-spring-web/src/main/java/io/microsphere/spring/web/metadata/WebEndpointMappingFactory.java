@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.metadata;
 
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 
@@ -36,12 +35,12 @@ public interface WebEndpointMappingFactory<E> {
      * Current factory supports the specified endpoint or not
      *
      * @param endpoint could be one of these :
-     *               <ul>
-     *               <li>{@link javax.servlet.ServletRegistration}</li>
-     *               <li>{@link javax.servlet.FilterRegistration}</li>
-     *               <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
-     *               <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
-     *               </ul>
+     *                 <ul>
+     *                 <li>{@link javax.servlet.ServletRegistration}</li>
+     *                 <li>{@link javax.servlet.FilterRegistration}</li>
+     *                 <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
+     *                 <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
+     *                 </ul>
      * @return <code>true</code> if supports, <code>false</code> otherwise
      */
     default boolean supports(E endpoint) {
@@ -52,17 +51,15 @@ public interface WebEndpointMappingFactory<E> {
      * Create the instance of {@link WebEndpointMapping}
      *
      * @param endpoint could be one of these :
-     *               <ul>
-     *               <li>{@link javax.servlet.ServletRegistration}</li>
-     *               <li>{@link javax.servlet.FilterRegistration}</li>
-     *               <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
-     *               <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
-     *               </ul>
-     * @return <code>null</code> if can't be created
+     *                 <ul>
+     *                 <li>{@link javax.servlet.ServletRegistration}</li>
+     *                 <li>{@link javax.servlet.FilterRegistration}</li>
+     *                 <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
+     *                 <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
+     *                 </ul>
+     * @return <code>WebEndpointMapping</code> if present
      */
-    @Nullable
     Optional<WebEndpointMapping<E>> create(E endpoint);
-
 
     /**
      * Get the type of source
