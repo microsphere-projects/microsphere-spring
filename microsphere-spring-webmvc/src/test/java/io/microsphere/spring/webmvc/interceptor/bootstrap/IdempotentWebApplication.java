@@ -16,12 +16,11 @@
  */
 package io.microsphere.spring.webmvc.interceptor.bootstrap;
 
+import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
-import io.microsphere.spring.webmvc.event.RequestMappingHandlerAdapterListener;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -42,7 +41,6 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableWebMvcExtension
 @Import(value = {
         IdempotentAnnotatedMethodHandlerInterceptor.class,
-        RequestMappingHandlerAdapterListener.class,
         DemoController.class
 })
 public class IdempotentWebApplication {

@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static io.microsphere.collection.CollectionUtils.size;
+import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
  * Lazy {@link HandlerInterceptor} that is composited by {@link HandlerInterceptor} beans with the specified types
@@ -78,11 +79,13 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
     @Override
     protected void onApplicationContextEvent(ContextRefreshedEvent event) {
         ApplicationContext context = event.getApplicationContext();
-        this.interceptors = new LinkedList<>();
+        List<HandlerInterceptor> allInterceptors = new LinkedList<>();
         for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {
             Collection<? extends HandlerInterceptor> interceptors = context.getBeansOfType(interceptorClass).values();
-            this.interceptors.addAll(interceptors);
+            allInterceptors.addAll(interceptors);
         }
+        sort(allInterceptors);
+        this.interceptors = allInterceptors;
     }
 
     private void forEach(ThrowableConsumer<HandlerInterceptor> interceptorConsumer) throws Exception {

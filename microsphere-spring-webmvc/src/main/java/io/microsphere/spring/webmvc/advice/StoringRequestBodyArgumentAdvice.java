@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
  * @since 1.0.0
  */
 @RestControllerAdvice
-public final class StoringHandlerMethodArgumentRequestBodyAdvice extends RequestBodyAdviceAdapter {
+public final class StoringRequestBodyArgumentAdvice extends RequestBodyAdviceAdapter {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {

@@ -17,15 +17,19 @@
 package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
-import io.microsphere.spring.webmvc.advice.StoringHandlerMethodArgumentRequestBodyAdvice;
+import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.config.HandlerInterceptorWebMvcConfigurer;
+import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
 import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
+import io.microsphere.spring.webmvc.method.HandlerMethodArgumentResolvedEvent;
 import io.microsphere.spring.webmvc.method.HandlerMethodArgumentsResolvedEvent;
+import io.microsphere.spring.webmvc.method.support.EventPublishingHandlerMethodProcessor;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.MethodParameter;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -56,13 +60,17 @@ public @interface EnableWebMvcExtension {
      * <ul>
      *     <li>{@link RequestMappingMetadataReadyEvent}</li>
      *     <li>{@link WebEndpointMappingsReadyEvent}</li>
+     *     <li>{@link HandlerMethodArgumentResolvedEvent}</li>
      *     <li>{@link HandlerMethodArgumentsResolvedEvent}</li>
      * </ul>
      *
      * @return <code>true</code> as default
      * @see WebMvcEventPublisher
+     * @see EventPublishingWebMvcListener
+     * @see EventPublishingHandlerMethodProcessor
      * @see RequestMappingMetadataReadyEvent
      * @see WebEndpointMappingsReadyEvent
+     * @see HandlerMethodArgumentResolvedEvent
      * @see HandlerMethodArgumentsResolvedEvent
      */
     boolean publishEvents() default true;
@@ -78,14 +86,14 @@ public @interface EnableWebMvcExtension {
     Class<? extends HandlerInterceptor>[] registerHandlerInterceptors() default {};
 
     /**
-     * Indicate that Stores the arguments of {@link HandlerMethod} that had been resolved by {@link HandlerMethodArgumentResolver}
+     * Indicate that Stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}
      *
      * @return <code>false</code> as default
-     * @see StoringHandlerMethodArgumentRequestBodyAdvice
-     * @see HandlerMethodArgumentResolver
+     * @see RequestBody
+     * @see StoringRequestBodyArgumentAdvice
      * @see HandlerMethod
      */
-    boolean storeResolvedHandlerMethodArguments() default false;
+    boolean storeRequestBodyArgument() default false;
 
     /**
      * Stores the return value of {@link HandlerMethod} before write as the {@link ResponseBody}
@@ -93,5 +101,5 @@ public @interface EnableWebMvcExtension {
      * @return <code>false</code> as default
      * @see ResponseBody
      */
-    boolean storeHandlerMethodReturnValue() default false;
+    boolean storeResponseBodyReturnValue() default false;
 }

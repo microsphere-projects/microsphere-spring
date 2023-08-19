@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.webmvc.advice.StoringHandlerMethodArgumentRequestBodyAdvice;
-import io.microsphere.spring.webmvc.advice.StoringHandlerMethodReturnValueResponseBodyAdvice;
-import io.microsphere.spring.webmvc.event.RequestMappingHandlerAdapterListener;
+import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
+import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
+import io.microsphere.spring.webmvc.method.support.EventPublishingHandlerMethodProcessor;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -56,9 +56,9 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
         registerHandlerInterceptors(enableWebMvcExtension, registry);
 
-        registerStoringHandlerMethodArgumentBeanDefinitions(enableWebMvcExtension, registry);
+        registerStoringRequestBodyArgumentAdvice(enableWebMvcExtension, registry);
 
-        registerStoringHandlerMethodReturnValueBeanDefinitions(enableWebMvcExtension, registry);
+        registerStoringResponseBodyReturnValueAdvice(enableWebMvcExtension, registry);
 
     }
 
@@ -71,6 +71,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     private void registerEventPublishingBeanDefinitions(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
         if (enableWebMvcExtension.publishEvents()) {
             registerBeanDefinition(registry, WebMvcEventPublisher.class);
+            registerBeanDefinition(registry, EventPublishingHandlerMethodProcessor.class);
         }
     }
 
@@ -85,16 +86,15 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     }
 
 
-    private void registerStoringHandlerMethodArgumentBeanDefinitions(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
-        if (enableWebMvcExtension.storeResolvedHandlerMethodArguments()) {
-            registerBeanDefinition(registry, StoringHandlerMethodArgumentRequestBodyAdvice.class);
-            registerBeanDefinition(registry, RequestMappingHandlerAdapterListener.class);
+    private void registerStoringRequestBodyArgumentAdvice(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
+        if (enableWebMvcExtension.storeRequestBodyArgument()) {
+            registerBeanDefinition(registry, StoringRequestBodyArgumentAdvice.class);
         }
     }
 
-    private void registerStoringHandlerMethodReturnValueBeanDefinitions(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
-        if (enableWebMvcExtension.storeHandlerMethodReturnValue()) {
-            registerBeanDefinition(registry, StoringHandlerMethodReturnValueResponseBodyAdvice.class);
+    private void registerStoringResponseBodyReturnValueAdvice(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
+        if (enableWebMvcExtension.storeResponseBodyReturnValue()) {
+            registerBeanDefinition(registry, StoringResponseBodyReturnValueAdvice.class);
         }
     }
 
