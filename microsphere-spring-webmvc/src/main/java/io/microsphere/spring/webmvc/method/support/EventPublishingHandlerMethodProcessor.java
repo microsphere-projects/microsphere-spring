@@ -20,7 +20,6 @@ import io.microsphere.spring.context.OnceApplicationContextEventListener;
 import io.microsphere.spring.util.BeanUtils;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.webmvc.method.HandlerMethodArgumentResolvedEvent;
 import io.microsphere.spring.webmvc.method.HandlerMethodArgumentsResolvedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolverComposite;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -57,7 +57,6 @@ import static io.microsphere.spring.webmvc.util.WebMvcUtils.getHandlerMethodArgu
  * Besides, current class also optimize the performance using {@link HashMap}, instead of {@link ConcurrentMap}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see HandlerMethodArgumentResolvedEvent
  * @see HandlerMethodArgumentsResolvedEvent
  * @see HandlerMethodArgumentResolver
  * @see HandlerMethodArgumentResolverComposite
@@ -107,13 +106,7 @@ public class EventPublishingHandlerMethodProcessor extends OnceApplicationContex
     }
 
     private void publishEvents(HandlerMethodArgumentResolver resolver, MethodParameter parameter, Object argument, NativeWebRequest webRequest) {
-        publishHandlerMethodArgumentResolvedEvent(resolver, parameter, argument, webRequest);
         publishHandlerMethodArgumentsResolvedEvent(resolver, parameter, argument, webRequest);
-    }
-
-    private void publishHandlerMethodArgumentResolvedEvent(HandlerMethodArgumentResolver resolver, MethodParameter parameter, Object argument, NativeWebRequest webRequest) {
-        ApplicationEventPublisher publisher = getApplicationContext();
-        publisher.publishEvent(new HandlerMethodArgumentResolvedEvent(resolver, parameter, argument, webRequest));
     }
 
     private void publishHandlerMethodArgumentsResolvedEvent(HandlerMethodArgumentResolver resolver, MethodParameter parameter, Object argument, NativeWebRequest webRequest) {

@@ -22,7 +22,6 @@ import io.microsphere.spring.webmvc.config.HandlerInterceptorWebMvcConfigurer;
 import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
 import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.webmvc.method.HandlerMethodArgumentResolvedEvent;
 import io.microsphere.spring.webmvc.method.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.webmvc.method.support.EventPublishingHandlerMethodProcessor;
 import org.springframework.context.annotation.Import;
@@ -60,7 +59,6 @@ public @interface EnableWebMvcExtension {
      * <ul>
      *     <li>{@link RequestMappingMetadataReadyEvent}</li>
      *     <li>{@link WebEndpointMappingsReadyEvent}</li>
-     *     <li>{@link HandlerMethodArgumentResolvedEvent}</li>
      *     <li>{@link HandlerMethodArgumentsResolvedEvent}</li>
      * </ul>
      *
@@ -70,7 +68,6 @@ public @interface EnableWebMvcExtension {
      * @see EventPublishingHandlerMethodProcessor
      * @see RequestMappingMetadataReadyEvent
      * @see WebEndpointMappingsReadyEvent
-     * @see HandlerMethodArgumentResolvedEvent
      * @see HandlerMethodArgumentsResolvedEvent
      */
     boolean publishEvents() default true;
