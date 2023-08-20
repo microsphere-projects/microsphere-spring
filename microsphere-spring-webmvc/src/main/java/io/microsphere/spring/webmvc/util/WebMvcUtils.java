@@ -204,8 +204,17 @@ public abstract class WebMvcUtils {
         return request == null ? null : (T) request.getAttribute(attributeName);
     }
 
+    public static Object[] getHandlerMethodArguments(WebRequest webRequest, HandlerMethod handlerMethod) {
+        Method method = handlerMethod.getMethod();
+        return getHandlerMethodArguments(webRequest, method);
+    }
+
     public static Object[] getHandlerMethodArguments(WebRequest webRequest, MethodParameter parameter) {
         Method method = parameter.getMethod();
+        return getHandlerMethodArguments(webRequest, method);
+    }
+
+    public static Object[] getHandlerMethodArguments(WebRequest webRequest, Method method) {
         HttpServletRequest request = getHttpServletRequest(webRequest);
         final Object[] arguments;
         if (request != null) {
@@ -221,8 +230,7 @@ public abstract class WebMvcUtils {
      *
      * @param request       {@link ServletRequest}
      * @param handlerMethod {@link HandlerMethod}
-     * @return non-null，If return all of the elements in an array is null, the method has no parameters or
-     * without {@link HandlerMethodArgumentResolverWrapper}
+     * @return non-null
      */
     public static Object[] getHandlerMethodArguments(ServletRequest request, HandlerMethod handlerMethod) {
         return getHandlerMethodArguments(request, handlerMethod.getMethod());
@@ -233,8 +241,7 @@ public abstract class WebMvcUtils {
      *
      * @param request {@link ServletRequest}
      * @param method  {@link Method}
-     * @return non-null，If return all of the elements in an array is null, the method has no parameters or without 
-     * {@link HandlerMethodArgumentResolverWrapper}
+     * @return non-null
      */
     public static Object[] getHandlerMethodArguments(ServletRequest request, Method method) {
         String attributeName = getHandlerMethodArgumentsAttributeName(method);
@@ -250,8 +257,7 @@ public abstract class WebMvcUtils {
      * Gets the {@link HandlerMethod} method parameter
      *
      * @param method {@link Method}
-     * @return non-null，If return all of the elements in an array is null, the method has no parameters or 
-     * without {@link HandlerMethodArgumentResolverWrapper}
+     * @return non-null
      */
     public static Object[] getHandlerMethodArguments(Method method) {
         return getHandlerMethodArguments(getHttpServletRequest(), method);

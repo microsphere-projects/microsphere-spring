@@ -16,11 +16,12 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.web.event.EventPublishingHandlerMethodInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
-import io.microsphere.spring.webmvc.method.support.EventPublishingHandlerMethodProcessor;
+import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -52,6 +53,8 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
         EnableWebMvcExtension enableWebMvcExtension = getEnableWebMvcExtension(metadata);
 
+        registerInterceptingHandlerMethodProcessor(enableWebMvcExtension, registry);
+
         registerEventPublishingBeanDefinitions(enableWebMvcExtension, registry);
 
         registerHandlerInterceptors(enableWebMvcExtension, registry);
@@ -60,6 +63,10 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
         registerStoringResponseBodyReturnValueAdvice(enableWebMvcExtension, registry);
 
+    }
+
+    private void registerInterceptingHandlerMethodProcessor(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
+        registerBeanDefinition(registry, InterceptingHandlerMethodProcessor.class);
     }
 
     private EnableWebMvcExtension getEnableWebMvcExtension(AnnotationMetadata metadata) {
@@ -71,7 +78,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     private void registerEventPublishingBeanDefinitions(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
         if (enableWebMvcExtension.publishEvents()) {
             registerBeanDefinition(registry, WebMvcEventPublisher.class);
-            registerBeanDefinition(registry, EventPublishingHandlerMethodProcessor.class);
+            registerBeanDefinition(registry, EventPublishingHandlerMethodInterceptor.class);
         }
     }
 

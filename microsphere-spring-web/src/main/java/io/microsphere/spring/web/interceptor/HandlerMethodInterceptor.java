@@ -1,5 +1,6 @@
 package io.microsphere.spring.web.interceptor;
 
+import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
@@ -14,6 +15,7 @@ import org.springframework.web.method.HandlerMethod;
  * triggers the execution of the handler itself.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see HandlerMethod
  * @see org.springframework.web.servlet.DispatcherServlet
  * @see org.springframework.web.reactive.DispatcherHandler
  * @see org.springframework.web.servlet.HandlerMapping
@@ -31,11 +33,10 @@ public interface HandlerMethodInterceptor {
      *
      * @param request       {@link WebRequest}
      * @param handlerMethod {@link HandlerMethod}
-     * @return if <code>false</code>, it will interrupt the execution of a {@link HandlerMethod} and
-     * the following {@link HandlerMethodInterceptor HandlerMethodInterceptors}.
-     * @throws Throwable if any error caused
+     * @param args          the resolved arguments of {@link HandlerMethod}
+     * @throws Exception if any error caused
      */
-    boolean beforeHandle(NativeWebRequest request, HandlerMethod handlerMethod) throws Throwable;
+    void beforeExecute(NativeWebRequest request, HandlerMethod handlerMethod, Object[] args) throws Exception;
 
     /**
      * Interception point after successful execution of a {@link HandlerMethod}.
@@ -43,27 +44,12 @@ public interface HandlerMethodInterceptor {
      *
      * @param request       {@link WebRequest}
      * @param handlerMethod {@link HandlerMethod}
-     * @throws Throwable if any error caused
+     * @param args          the resolved arguments of {@link HandlerMethod}
+     * @param returnValue   the return value of {@link HandlerMethod}
+     * @param error         the error after {@link HandlerMethod} invocation
+     * @throws Exception if any error caused
      */
-    void afterHandle(NativeWebRequest request, HandlerMethod handlerMethod) throws Throwable;
+    void afterExecute(NativeWebRequest request, HandlerMethod handlerMethod, Object[] args,
+                      @Nullable Object returnValue, @Nullable Throwable error) throws Exception;
 
-    /**
-     * Callback after completion of request processing.
-     * Will be called on any outcome of handler execution, thus allows for proper resource cleanup.
-     *
-     * @param request       {@link WebRequest}
-     * @param handlerMethod {@link HandlerMethod}
-     * @throws Throwable if any error caused
-     */
-    void onCompletion(NativeWebRequest request, HandlerMethod handlerMethod) throws Throwable;
-
-    /**
-     * Callback after completion of request processing if any error caused.
-     * Will be called on any outcome of handler execution, thus allows for proper resource cleanup.
-     *
-     * @param request       {@link WebRequest}
-     * @param handlerMethod {@link HandlerMethod}
-     * @param error         {@link Throwable} if any error caused
-     */
-    void onError(NativeWebRequest request, HandlerMethod handlerMethod, Throwable error);
 }

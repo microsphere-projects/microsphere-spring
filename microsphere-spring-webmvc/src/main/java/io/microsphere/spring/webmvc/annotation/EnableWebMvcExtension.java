@@ -16,14 +16,14 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.web.event.EventPublishingHandlerMethodInterceptor;
 import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.config.HandlerInterceptorWebMvcConfigurer;
 import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
 import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.webmvc.method.HandlerMethodArgumentsResolvedEvent;
-import io.microsphere.spring.webmvc.method.support.EventPublishingHandlerMethodProcessor;
+import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,7 +65,7 @@ public @interface EnableWebMvcExtension {
      * @return <code>true</code> as default
      * @see WebMvcEventPublisher
      * @see EventPublishingWebMvcListener
-     * @see EventPublishingHandlerMethodProcessor
+     * @see EventPublishingHandlerMethodInterceptor
      * @see RequestMappingMetadataReadyEvent
      * @see WebEndpointMappingsReadyEvent
      * @see HandlerMethodArgumentsResolvedEvent
