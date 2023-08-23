@@ -92,7 +92,7 @@ public @interface TTLCacheable {
     String keyGenerator() default "";
 
     /**
-     * The bean name of the custom {@link org.springframework.cache.CacheManager} to use to
+     * The bean names of the custom {@link org.springframework.cache.CacheManager} to use to
      * create a default {@link org.springframework.cache.interceptor.CacheResolver} if none
      * is set already.
      */
