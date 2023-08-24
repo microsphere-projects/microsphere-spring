@@ -19,10 +19,10 @@ package io.microsphere.spring.cache.intereptor;
 import io.microsphere.collection.MapUtils;
 import io.microsphere.spring.cache.annotation.TTLCachePut;
 import io.microsphere.spring.cache.annotation.TTLCacheable;
+import io.microsphere.spring.context.OnceApplicationContextEventListener;
 import io.microsphere.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperation;
@@ -30,7 +30,8 @@ import org.springframework.cache.interceptor.CacheOperationInvocationContext;
 import org.springframework.cache.interceptor.CachePutOperation;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.CacheableOperation;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 
@@ -55,13 +56,11 @@ import static java.util.Collections.emptyList;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class TTLCacheResolver implements CacheResolver, EnvironmentAware {
+public class TTLCacheResolver extends OnceApplicationContextEventListener<ContextRefreshedEvent> implements CacheResolver {
 
     public static final String BEAN_NAME = "ttlCacheResolver";
 
     private static final Logger logger = LoggerFactory.getLogger(TTLCacheResolver.class);
-
-    private static final Class<? extends Annotation>[] TTL_ANNOTATION_TYPES = ArrayUtils.of(TTLCacheable.class, TTLCachePut.class);
 
     private static final Map<Class<? extends CacheOperation>, Class<? extends Annotation>> ttlAnnotationTypes = MapUtils.of(
             CacheableOperation.class, TTLCacheable.class,
@@ -70,13 +69,9 @@ public class TTLCacheResolver implements CacheResolver, EnvironmentAware {
 
     private static final ThreadLocal<Duration> ttlThreadLocal = new ThreadLocal<>();
 
-    private final ObjectProvider<Map<String, CacheManager>> namedCacheManagerProvider;
-
     private Environment environment;
 
-    public TTLCacheResolver(ObjectProvider<Map<String, CacheManager>> namedCacheManagerProvider) {
-        this.namedCacheManagerProvider = namedCacheManagerProvider;
-    }
+    private Map<String, CacheManager> namedCacheManagersMap;
 
     @Override
     public Collection<? extends Cache> resolveCaches(CacheOperationInvocationContext<?> context) {
@@ -88,8 +83,8 @@ public class TTLCacheResolver implements CacheResolver, EnvironmentAware {
             return emptyList();
         }
 
-        Map<String, CacheManager> namedCacheManagersMap = namedCacheManagerProvider.getIfAvailable();
-        int cacheManagersSize = namedCacheManagersMap == null ? 0 : namedCacheManagersMap.size();
+        Map<String, CacheManager> namedCacheManagersMap = this.namedCacheManagersMap;
+        int cacheManagersSize = namedCacheManagersMap.size();
         if (cacheManagersSize < 1) {
             return emptyList();
         }
@@ -169,7 +164,9 @@ public class TTLCacheResolver implements CacheResolver, EnvironmentAware {
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
+    protected void onApplicationContextEvent(ContextRefreshedEvent event) {
+        ApplicationContext context = event.getApplicationContext();
+        this.environment = context.getEnvironment();
+        this.namedCacheManagersMap = context.getBeansOfType(CacheManager.class);
     }
 }

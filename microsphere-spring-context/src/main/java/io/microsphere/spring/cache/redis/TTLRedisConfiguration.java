@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.cache.annotation;
+package io.microsphere.spring.cache.redis;
 
-import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
+
 import org.springframework.context.annotation.Bean;
 
+import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static io.microsphere.util.ClassLoaderUtils.isPresent;
+
 /**
- * TTL Caching Configuration
+ * Redis Configuration with TTL features
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see org.springframework.data.redis.cache.RedisCacheManager
  * @since 1.0.0
  */
-class TTLCachingConfiguration {
+public class TTLRedisConfiguration {
 
-    @Bean(name = TTLCacheResolver.BEAN_NAME)
-    public TTLCacheResolver ttlCacheResolver() {
-        return new TTLCacheResolver();
-    }
+    private static final String REDIS_CACHE_MANAGER_CLASS_NAME = "org.springframework.data.redis.cache.RedisCacheManager";
+
+    private static final boolean REDIS_CACHE_MANAGER_CLASS_PRESENT = isPresent(REDIS_CACHE_MANAGER_CLASS_NAME, getDefaultClassLoader());
+
+
 }
