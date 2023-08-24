@@ -41,7 +41,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +63,7 @@ public class TTLCacheResolver implements CacheResolver, EnvironmentAware {
 
     private static final Class<? extends Annotation>[] TTL_ANNOTATION_TYPES = ArrayUtils.of(TTLCacheable.class, TTLCachePut.class);
 
-    private static final Map<Class<? extends CacheOperation>, Class<? extends Annotation>> ttlAnnotationTypesMapping = (Map) MapUtils.of(
+    private static final Map<Class<? extends CacheOperation>, Class<? extends Annotation>> ttlAnnotationTypes = MapUtils.of(
             CacheableOperation.class, TTLCacheable.class,
             CachePutOperation.class, TTLCachePut.class
     );
@@ -132,7 +131,7 @@ public class TTLCacheResolver implements CacheResolver, EnvironmentAware {
     private AnnotationAttributes getTTLAnnotationAttributes(CacheOperationInvocationContext<?> context, CacheOperation cacheOperation) {
         Class<?> cacheOperationClass = cacheOperation.getClass();
 
-        Class<? extends Annotation> annotationType = ttlAnnotationTypesMapping.get(cacheOperationClass);
+        Class<? extends Annotation> annotationType = ttlAnnotationTypes.get(cacheOperationClass);
         if (annotationType == null) {
             return null;
         }
@@ -155,18 +154,6 @@ public class TTLCacheResolver implements CacheResolver, EnvironmentAware {
         TimeUnit timeUnit = (TimeUnit) attributes.get("timeUnit");
         Duration ttl = ofMillis(timeUnit.toMillis(expire));
         return ttl;
-    }
-
-    private List<AnnotationAttributes> getTTLAnnotationAttributesList(CacheOperationInvocationContext<?> context) {
-        Method method = context.getMethod();
-        int size = TTL_ANNOTATION_TYPES.length;
-        List<AnnotationAttributes> annotationAttributesList = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            Class<? extends Annotation> annotationType = TTL_ANNOTATION_TYPES[i];
-            AnnotationAttributes annotationAttributes = getAnnotationAttributes(method, annotationType, environment, false);
-            annotationAttributesList.add(annotationAttributes);
-        }
-        return annotationAttributesList;
     }
 
     public static void setTTL(Duration ttl) {
