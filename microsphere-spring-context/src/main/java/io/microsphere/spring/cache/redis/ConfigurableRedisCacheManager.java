@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.cache.redis;
 
+import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -33,8 +34,6 @@ import java.util.Map;
  * @since TODO
  */
 public class ConfigurableRedisCacheManager extends RedisCacheManager {
-
-    private static ThreadLocal<Duration> ttlThreadLocal = new ThreadLocal<>();
 
     private final RedisCacheConfiguration defaultCacheConfig;
 
@@ -65,25 +64,16 @@ public class ConfigurableRedisCacheManager extends RedisCacheManager {
 
     @Override
     protected RedisCache createRedisCache(String name, RedisCacheConfiguration cacheConfig) {
-        try {
-            Duration ttl = ttlThreadLocal.get();
-            RedisCacheConfiguration newCacheConfig =
-                    ttl == null ? cacheConfig :
-                            (cacheConfig == null ?
-                                    this.defaultCacheConfig.entryTtl(ttl) : cacheConfig.entryTtl(ttl));
-            RedisCache redisCache = super.createRedisCache(name, newCacheConfig);
-            return redisCache;
-        } finally {
-            clearTTL();
-        }
+        RedisCacheConfiguration targetConfig = resolveTTLConfig(cacheConfig);
+        RedisCache redisCache = super.createRedisCache(name, targetConfig);
+        return redisCache;
     }
 
-    public static void setTTL(Duration ttl) {
-        ttlThreadLocal.set(ttl);
-    }
-
-    public static void clearTTL() {
-        ttlThreadLocal.remove();
+    private RedisCacheConfiguration resolveTTLConfig(RedisCacheConfiguration cacheConfig) {
+        Duration ttl = TTLCacheResolver.getTTL();
+        RedisCacheConfiguration targetConfig = ttl == null ? cacheConfig :
+                (cacheConfig == null ? this.defaultCacheConfig.entryTtl(ttl) : cacheConfig.entryTtl(ttl));
+        return targetConfig;
     }
 
 

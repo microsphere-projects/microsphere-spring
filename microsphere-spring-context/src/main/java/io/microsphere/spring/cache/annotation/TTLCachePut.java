@@ -18,7 +18,7 @@ package io.microsphere.spring.cache.annotation;
 
 import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.Documented;
@@ -27,11 +27,10 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * {@link Cacheable @Cacheable} with TTL
+ * {@link CachePut @CachePut} with TTL
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -40,13 +39,13 @@ import java.util.concurrent.TimeUnit;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@Cacheable(cacheResolver = TTLCacheResolver.BEAN_NAME)
-public @interface TTLCacheable {
+@CachePut(cacheResolver = TTLCacheResolver.BEAN_NAME)
+public @interface TTLCachePut {
 
     /**
      * Alias for {@link #cacheNames}.
      */
-    @AliasFor(annotation = Cacheable.class)
+    @AliasFor(annotation = CachePut.class)
     String[] value() default {};
 
     /**
@@ -58,7 +57,7 @@ public @interface TTLCacheable {
      * @see CacheConfig#cacheNames
      * @since 4.2
      */
-    @AliasFor(annotation = Cacheable.class)
+    @AliasFor(annotation = CachePut.class)
     String[] cacheNames() default {};
 
     /**
@@ -78,7 +77,7 @@ public @interface TTLCacheable {
      * can also be accessed by name if that information is available.</li>
      * </ul>
      */
-    @AliasFor(annotation = Cacheable.class)
+    @AliasFor(annotation = CachePut.class)
     String key() default "";
 
     /**
@@ -88,7 +87,7 @@ public @interface TTLCacheable {
      *
      * @see CacheConfig#keyGenerator
      */
-    @AliasFor(annotation = Cacheable.class)
+    @AliasFor(annotation = CachePut.class)
     String keyGenerator() default "";
 
     /**
@@ -114,7 +113,7 @@ public @interface TTLCacheable {
      * can also be accessed by name if that information is available.</li>
      * </ul>
      */
-    @AliasFor(annotation = Cacheable.class)
+    @AliasFor(annotation = CachePut.class)
     String condition() default "";
 
     /**
@@ -141,27 +140,8 @@ public @interface TTLCacheable {
      *
      * @since 3.2
      */
-    @AliasFor(annotation = Cacheable.class)
+    @AliasFor(annotation = CachePut.class)
     String unless() default "";
-
-    /**
-     * Synchronize the invocation of the underlying method if several threads are
-     * attempting to load a value for the same key. The synchronization leads to
-     * a couple of limitations:
-     * <ol>
-     * <li>{@link #unless()} is not supported</li>
-     * <li>Only one cache may be specified</li>
-     * <li>No other cache-related operation can be combined</li>
-     * </ol>
-     * This is effectively a hint and the actual cache provider that you are
-     * using may not support it in a synchronized fashion. Check your provider
-     * documentation for more details on the actual semantics.
-     *
-     * @see org.springframework.cache.Cache#get(Object, Callable)
-     * @since 4.3
-     */
-    @AliasFor(annotation = Cacheable.class)
-    boolean sync() default false;
 
     /**
      * The expire time for cacheable entry

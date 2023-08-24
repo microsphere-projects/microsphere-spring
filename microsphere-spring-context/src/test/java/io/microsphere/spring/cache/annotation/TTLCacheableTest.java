@@ -74,7 +74,7 @@ public class TTLCacheableTest {
 
     static class CachingData {
         @TTLCacheable(cacheNames = "test",
-                cacheManagerBeanNames = {"redisCacheManager"},
+                cacheManagers = {"redisCacheManager"},
                 expire = 100)
         public int randomInt(int value) {
             return ThreadLocalRandom.current().nextInt(value);

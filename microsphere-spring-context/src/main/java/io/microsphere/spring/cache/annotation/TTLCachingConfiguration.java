@@ -18,13 +18,9 @@ package io.microsphere.spring.cache.annotation;
 
 import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -35,19 +31,8 @@ import java.util.Map;
  */
 public class TTLCachingConfiguration {
 
-//    @Bean
-//    @Primary
-//    @Autowired
-//    public CompositeCacheManager cacheManager(Collection<CacheManager> cacheManagers) {
-//        CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
-//        compositeCacheManager.setCacheManagers(cacheManagers);
-//        return compositeCacheManager;
-//    }
-
     @Bean(name = TTLCacheResolver.BEAN_NAME)
-    public TTLCacheResolver ttlCacheResolver(ObjectProvider<Map<String,CacheManager>> cacheManagerProvider) {
+    public TTLCacheResolver ttlCacheResolver(ObjectProvider<Map<String, CacheManager>> cacheManagerProvider) {
         return new TTLCacheResolver(cacheManagerProvider);
     }
-
-
 }
