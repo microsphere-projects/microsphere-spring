@@ -17,6 +17,7 @@
 package io.microsphere.spring.cache.intereptor;
 
 import io.microsphere.collection.MapUtils;
+import io.microsphere.spring.cache.TTLContext;
 import io.microsphere.spring.cache.annotation.TTLCachePut;
 import io.microsphere.spring.cache.annotation.TTLCacheable;
 import io.microsphere.spring.context.OnceApplicationContextEventListener;
@@ -67,7 +68,6 @@ public class TTLCacheResolver extends OnceApplicationContextEventListener<Contex
             CachePutOperation.class, TTLCachePut.class
     );
 
-    private static final ThreadLocal<Duration> ttlThreadLocal = new ThreadLocal<>();
 
     private Environment environment;
 
@@ -94,33 +94,36 @@ public class TTLCacheResolver extends OnceApplicationContextEventListener<Contex
         Collection<Cache> caches = new ArrayList<>(cachesSize);
 
         AnnotationAttributes ttlAnnotationAttributes = getTTLAnnotationAttributes(context, cacheOperation);
-        try {
-            Duration ttl = getTTL(ttlAnnotationAttributes);
-            Collection<CacheManager> targetCacheManagers;
-            setTTL(ttl);
-            String[] cacheManagerBeanNames = ttlAnnotationAttributes.getStringArray("cacheManagers");
-            if (ArrayUtils.isEmpty(cacheManagerBeanNames)) {
-                targetCacheManagers = namedCacheManagersMap.values();
-            } else {
-                targetCacheManagers = new LinkedList<>();
-                for (String cacheManagerBeanName : cacheManagerBeanNames) {
-                    CacheManager cacheManager = namedCacheManagersMap.get(cacheManagerBeanName);
-                    targetCacheManagers.add(cacheManager);
+
+        setTTL(ttlAnnotationAttributes);
+
+        Collection<CacheManager> targetCacheManagers;
+
+        String[] cacheManagerBeanNames = ttlAnnotationAttributes.getStringArray("cacheManagers");
+        if (ArrayUtils.isEmpty(cacheManagerBeanNames)) {
+            targetCacheManagers = namedCacheManagersMap.values();
+        } else {
+            targetCacheManagers = new LinkedList<>();
+            for (String cacheManagerBeanName : cacheManagerBeanNames) {
+                CacheManager cacheManager = namedCacheManagersMap.get(cacheManagerBeanName);
+                targetCacheManagers.add(cacheManager);
+            }
+        }
+        for (CacheManager cacheManager : targetCacheManagers) {
+            for (String cacheName : cacheNames) {
+                Cache cache = cacheManager.getCache(cacheName);
+                if (cache != null) {
+                    caches.add(cache);
                 }
             }
-            for (CacheManager cacheManager : targetCacheManagers) {
-                for (String cacheName : cacheNames) {
-                    Cache cache = cacheManager.getCache(cacheName);
-                    if (cache != null) {
-                        caches.add(cache);
-                    }
-                }
-            }
-        } finally {
-            clearTTL();
         }
 
         return caches;
+    }
+
+    private void setTTL(AnnotationAttributes ttlAnnotationAttributes) {
+        Duration ttl = getTTL(ttlAnnotationAttributes);
+        TTLContext.setTTL(ttl);
     }
 
     private AnnotationAttributes getTTLAnnotationAttributes(CacheOperationInvocationContext<?> context, CacheOperation cacheOperation) {
@@ -149,18 +152,6 @@ public class TTLCacheResolver extends OnceApplicationContextEventListener<Contex
         TimeUnit timeUnit = (TimeUnit) attributes.get("timeUnit");
         Duration ttl = ofMillis(timeUnit.toMillis(expire));
         return ttl;
-    }
-
-    public static void setTTL(Duration ttl) {
-        ttlThreadLocal.set(ttl);
-    }
-
-    public static Duration getTTL() {
-        return ttlThreadLocal.get();
-    }
-
-    public static void clearTTL() {
-        ttlThreadLocal.remove();
     }
 
     @Override

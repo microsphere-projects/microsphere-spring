@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.cache.annotation;
 
-import io.microsphere.spring.cache.redis.ConfigurableRedisCacheManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -63,7 +63,7 @@ public class TTLCacheableTest {
     @Bean
     @Primary
     public static CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-        return ConfigurableRedisCacheManager.create(redisConnectionFactory);
+        return RedisCacheManager.create(redisConnectionFactory);
     }
 
     @Bean(destroyMethod = "destroy")

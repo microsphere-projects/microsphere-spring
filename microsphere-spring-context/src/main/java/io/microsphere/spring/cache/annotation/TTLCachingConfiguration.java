@@ -17,7 +17,9 @@
 package io.microsphere.spring.cache.annotation;
 
 import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
+import io.microsphere.spring.cache.redis.TTLRedisConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 /**
  * TTL Caching Configuration
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.Bean;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
+@Import(TTLRedisConfiguration.class)
 class TTLCachingConfiguration {
 
     @Bean(name = TTLCacheResolver.BEAN_NAME)
