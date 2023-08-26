@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.web.event.EventPublishingHandlerMethodInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
@@ -53,7 +52,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
         EnableWebMvcExtension enableWebMvcExtension = getEnableWebMvcExtension(metadata);
 
-        registerInterceptingHandlerMethodProcessor(enableWebMvcExtension, registry);
+        registerInterceptingHandlerMethodProcessor(registry);
 
         registerEventPublishingBeanDefinitions(enableWebMvcExtension, registry);
 
@@ -65,8 +64,9 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
     }
 
-    private void registerInterceptingHandlerMethodProcessor(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
-        registerBeanDefinition(registry, InterceptingHandlerMethodProcessor.class);
+    private void registerInterceptingHandlerMethodProcessor(BeanDefinitionRegistry registry) {
+        String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
+        registerBeanDefinition(registry, beanName, WebMvcEventPublisher.class);
     }
 
     private EnableWebMvcExtension getEnableWebMvcExtension(AnnotationMetadata metadata) {
@@ -78,7 +78,6 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     private void registerEventPublishingBeanDefinitions(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
         if (enableWebMvcExtension.publishEvents()) {
             registerBeanDefinition(registry, WebMvcEventPublisher.class);
-            registerBeanDefinition(registry, EventPublishingHandlerMethodInterceptor.class);
         }
     }
 

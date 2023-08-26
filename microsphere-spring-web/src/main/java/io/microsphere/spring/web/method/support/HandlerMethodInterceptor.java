@@ -1,4 +1,4 @@
-package io.microsphere.spring.web.interceptor;
+package io.microsphere.spring.web.method.support;
 
 import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -31,25 +31,25 @@ public interface HandlerMethodInterceptor {
      * HandlerMapping determined an appropriate handler object, but before
      * HandlerAdapter invokes the handler.
      *
-     * @param request       {@link WebRequest}
      * @param handlerMethod {@link HandlerMethod}
      * @param args          the resolved arguments of {@link HandlerMethod}
+     * @param request       {@link WebRequest}
      * @throws Exception if any error caused
      */
-    void beforeExecute(NativeWebRequest request, HandlerMethod handlerMethod, Object[] args) throws Exception;
+    void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception;
 
     /**
      * Interception point after successful execution of a {@link HandlerMethod}.
      * Called after HandlerAdapter actually invoked the handler.
      *
-     * @param request       {@link WebRequest}
      * @param handlerMethod {@link HandlerMethod}
      * @param args          the resolved arguments of {@link HandlerMethod}
      * @param returnValue   the return value of {@link HandlerMethod}
      * @param error         the error after {@link HandlerMethod} invocation
+     * @param request       {@link WebRequest}
      * @throws Exception if any error caused
      */
-    void afterExecute(NativeWebRequest request, HandlerMethod handlerMethod, Object[] args,
-                      @Nullable Object returnValue, @Nullable Throwable error) throws Exception;
+    void afterExecute(HandlerMethod handlerMethod, Object[] args, @Nullable Object returnValue, @Nullable Throwable error,
+                      NativeWebRequest request) throws Exception;
 
 }

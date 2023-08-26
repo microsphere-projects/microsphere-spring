@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.web.event;
 
-import io.microsphere.spring.web.interceptor.HandlerMethodInterceptor;
+import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -34,13 +34,12 @@ public class EventPublishingHandlerMethodInterceptor implements HandlerMethodInt
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
-    public void beforeExecute(NativeWebRequest request, HandlerMethod handlerMethod, Object[] args) throws Exception {
+    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
         applicationEventPublisher.publishEvent(new HandlerMethodArgumentsResolvedEvent(request, handlerMethod, args));
     }
 
     @Override
-    public void afterExecute(NativeWebRequest request, HandlerMethod handlerMethod, Object[] args, Object returnValue,
-                             Throwable error) throws Exception {
+    public void afterExecute(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Exception {
         // DO NOTHING
     }
 
