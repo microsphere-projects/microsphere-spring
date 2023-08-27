@@ -16,7 +16,11 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import org.springframework.lang.NonNull;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * {@link WebEndpointMapping} Registry
@@ -28,10 +32,52 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 public interface WebEndpointMappingRegistry {
 
     /**
+     * Registers an instance of {@link WebEndpointMapping}
+     *
+     * @param webEndpointMapping an instance of {@link WebEndpointMapping}
+     * @return <code>true</code> if success, <code>false</code> otherwise
+     */
+    boolean register(WebEndpointMapping webEndpointMapping);
+
+    /**
+     * Registers the instances of {@link WebEndpointMapping}
+     *
+     * @param webEndpointMapping an instance of {@link WebEndpointMapping}
+     * @param others             others of {@link WebEndpointMapping}
+     * @return <code>true</code> if success, <code>false</code> otherwise
+     */
+    default int register(WebEndpointMapping webEndpointMapping, WebEndpointMapping... others) {
+        int count = 0;
+        if (register(webEndpointMapping)) {
+            count++;
+        }
+        count += register(Arrays.asList(others));
+        return count;
+    }
+
+    /**
      * Registers the instances of {@link WebEndpointMapping}
      *
      * @param webEndpointMappings the instances of {@link WebEndpointMapping}
-     * @return <code>true</code> if success, <code>false</code> otherwise
+     * @return the count of the registered instances of {@link WebEndpointMapping}
      */
-    boolean register(Iterable<WebEndpointMapping> webEndpointMappings);
+    default int register(Iterable<WebEndpointMapping> webEndpointMappings) {
+        int count = 0;
+        Iterator<WebEndpointMapping> iterator = webEndpointMappings.iterator();
+        while (iterator.hasNext()) {
+            WebEndpointMapping webEndpointMapping = iterator.next();
+            if (register(webEndpointMapping)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Get all registered instances of {@link WebEndpointMapping}
+     *
+     * @return non-null
+     */
+    @NonNull
+    Collection<WebEndpointMapping> getWebEndpointMappings();
 }

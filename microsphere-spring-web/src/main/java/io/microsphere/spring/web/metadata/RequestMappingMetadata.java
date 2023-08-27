@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.bind.annotation;
+package io.microsphere.spring.web.metadata;
 
 import io.microsphere.spring.web.rule.MediaTypeExpression;
 import io.microsphere.spring.web.rule.NameValueExpression;

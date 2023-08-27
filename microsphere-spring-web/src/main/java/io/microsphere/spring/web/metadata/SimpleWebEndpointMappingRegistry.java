@@ -14,34 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.event;
+package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.web.metadata.RequestMappingMetadata;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.web.method.HandlerMethod;
-
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Collections.unmodifiableMap;
-
 /**
- * Event raised when all {@link HandlerMethod HandlerMethods'} {@link RequestMappingMetadata} are ready.
+ * Simple {@link WebEndpointMappingRegistry}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see RequestMappingMetadata
+ * @see FilteringWebEndpointMappingRegistry
  * @since 1.0.0
  */
-public class RequestMappingMetadataReadyEvent extends ApplicationContextEvent {
+public class SimpleWebEndpointMappingRegistry extends FilteringWebEndpointMappingRegistry {
 
-    private final Map<RequestMappingMetadata, HandlerMethod> metadata;
+    private final Map<Integer, WebEndpointMapping> repository = new HashMap<>();
 
-    public RequestMappingMetadataReadyEvent(ApplicationContext source, Map<RequestMappingMetadata, HandlerMethod> metadata) {
-        super(source);
-        this.metadata = unmodifiableMap(metadata);
+    @Override
+    public boolean register(WebEndpointMapping webEndpointMapping) {
+        return repository.put(webEndpointMapping.getId(), webEndpointMapping) == null;
     }
 
-    public Map<RequestMappingMetadata, HandlerMethod> getMetadata() {
-        return metadata;
+    @Override
+    public Collection<WebEndpointMapping> getWebEndpointMappings() {
+        return repository.values();
     }
 }

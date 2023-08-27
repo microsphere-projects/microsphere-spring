@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.bind.annotation;
 
+import io.microsphere.spring.web.metadata.RequestMappingMetadata;
 import io.microsphere.spring.web.rule.GenericMediaTypeExpression;
 import io.microsphere.spring.web.rule.StringNameValueExpression;
 import io.microsphere.util.ArrayUtils;

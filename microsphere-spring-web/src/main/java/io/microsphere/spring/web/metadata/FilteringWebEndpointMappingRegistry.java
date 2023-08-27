@@ -19,6 +19,8 @@ package io.microsphere.spring.web.metadata;
 import io.microsphere.filter.Filter;
 import io.microsphere.filter.FilterOperator;
 
+import java.util.List;
+
 import static io.microsphere.lang.function.Streams.filterList;
 import static io.microsphere.util.ArrayUtils.asArray;
 
@@ -28,7 +30,7 @@ import static io.microsphere.util.ArrayUtils.asArray;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebEndpointMappingRegistry
  * @see WebEndpointMappingFilter
- * @since 1.0.07`
+ * @since 1.0.0
  */
 public abstract class FilteringWebEndpointMappingRegistry implements WebEndpointMappingRegistry {
 
@@ -41,8 +43,21 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
     private FilterOperator filterOperator = DEFAULT_FILTER_OPERATOR;
 
     @Override
-    public final boolean register(Iterable<WebEndpointMapping> webEndpointMappings) {
-        return doRegister(filterList(webEndpointMappings, getCompositeFilter()::accept));
+    public final int register(Iterable<WebEndpointMapping> webEndpointMappings) {
+        List<WebEndpointMapping> filteredWebEndpointMappings = filterWebEndpointMappings(webEndpointMappings);
+        int size = filteredWebEndpointMappings.size();
+        int count = size;
+        for (int i = 0; i < size; i++) {
+            WebEndpointMapping filteredWebEndpointMapping = filteredWebEndpointMappings.get(i);
+            if (!register(filteredWebEndpointMapping)) {
+                count--;
+            }
+        }
+        return count;
+    }
+
+    protected List<WebEndpointMapping> filterWebEndpointMappings(Iterable<WebEndpointMapping> webEndpointMappings) {
+        return filterList(webEndpointMappings, getCompositeFilter()::accept);
     }
 
     public void setFilterOperator(FilterOperator filterOperator) {
@@ -70,12 +85,4 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
         }
         return filterOperator;
     }
-
-    /**
-     * Registers the instances of {@link WebEndpointMapping} after be filtered
-     *
-     * @param webEndpointMappings the instances of {@link WebEndpointMapping} after be filtered
-     * @return <code>true</code> if success, <code>false</code> otherwise
-     */
-    protected abstract boolean doRegister(Iterable<WebEndpointMapping> webEndpointMappings);
 }
