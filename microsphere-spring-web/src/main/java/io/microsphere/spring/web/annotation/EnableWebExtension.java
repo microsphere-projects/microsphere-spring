@@ -16,10 +16,11 @@
  */
 package io.microsphere.spring.web.annotation;
 
-import io.microsphere.spring.web.event.EventPublishingHandlerMethodInterceptor;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
-import io.microsphere.spring.web.event.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEventPublisher;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import org.springframework.context.annotation.Import;
@@ -48,6 +49,16 @@ import java.lang.annotation.Target;
 public @interface EnableWebExtension {
 
     /**
+     * Indicate whether The Spring Web registers the instances of {@link WebEndpointMapping}
+     * that source from Spring WebMVC, Spring WebFlux or Classical Servlet.
+     *
+     * @return <code>true</code> as default
+     * @see WebEndpointMapping
+     * @see WebEndpointMappingRegistry
+     */
+    boolean registerWebEndpointMappings() default true;
+
+    /**
      * Indicate whether Spring Web {@link HandlerMethod} should be intercepted.
      * If <code>true</code>, {@link HandlerMethodArgumentInterceptor} and {@link HandlerMethodInterceptor} beans
      * will be initialized and then be invoked around {@link HandlerMethod} being executed.
@@ -59,16 +70,14 @@ public @interface EnableWebExtension {
     boolean interceptHandlerMethods() default true;
 
     /**
-     * Indicate whether it publishes the Spring Web extension events :
+     * Indicate whether it publishes the Spring Web extension events:
      * <ul>
-     *     <li>{@link RequestMappingMetadataReadyEvent}</li>
-     *     <li>{@link WebEndpointMappingsReadyEvent}</li>
-     *     <li>{@link HandlerMethodArgumentsResolvedEvent}</li>
+     *     <li>{@link HandlerMethodArgumentsResolvedEvent}({@link EnableWebExtension#interceptHandlerMethods() if enabled})</li>
+     *     <li>{@link WebEndpointMappingsReadyEvent}({@link EnableWebExtension#registerWebEndpointMappings() if enabled})</li>
      * </ul>
      *
      * @return <code>true</code> as default
-     * @see EventPublishingHandlerMethodInterceptor
-     * @see RequestMappingMetadataReadyEvent
+     * @see WebEventPublisher
      * @see WebEndpointMappingsReadyEvent
      * @see HandlerMethodArgumentsResolvedEvent
      */

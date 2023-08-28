@@ -17,9 +17,11 @@
 package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.spring.web.annotation.EnableWebExtension;
-import io.microsphere.spring.web.event.EventPublishingHandlerMethodInterceptor;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
-import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEventPublisher;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
@@ -60,6 +62,17 @@ import java.lang.annotation.Target;
 public @interface EnableWebMvcExtension {
 
     /**
+     * Indicate whether The Spring Web registers the instances of {@link WebEndpointMapping}
+     * that source from Spring WebMVC, Spring WebFlux or Classical Servlet.
+     *
+     * @return <code>true</code> as default
+     * @see WebEndpointMapping
+     * @see WebEndpointMappingRegistry
+     */
+    @AliasFor(annotation = EnableWebExtension.class)
+    boolean registerWebEndpointMappings() default true;
+
+    /**
      * Indicate whether Spring Web {@link HandlerMethod} should be intercepted.
      * If <code>true</code>, {@link HandlerMethodArgumentInterceptor} and {@link HandlerMethodInterceptor} beans
      * will be initialized and then be invoked around {@link HandlerMethod} being executed.
@@ -82,7 +95,7 @@ public @interface EnableWebMvcExtension {
      * @return <code>true</code> as default
      * @see WebMvcEventPublisher
      * @see EventPublishingWebMvcListener
-     * @see EventPublishingHandlerMethodInterceptor
+     * @see WebEventPublisher
      * @see RequestMappingMetadataReadyEvent
      * @see WebEndpointMappingsReadyEvent
      * @see HandlerMethodArgumentsResolvedEvent

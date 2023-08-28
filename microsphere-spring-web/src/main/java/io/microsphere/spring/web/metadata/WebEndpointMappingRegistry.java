@@ -27,6 +27,7 @@ import java.util.Iterator;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebEndpointMapping
+ * @see SimpleWebEndpointMappingRegistry
  * @since 1.0.0
  */
 public interface WebEndpointMappingRegistry {

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple {@link WebEndpointMappingRegistry}
+ * Simple {@link WebEndpointMappingRegistry} supports to filter {@link WebEndpointMapping}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see FilteringWebEndpointMappingRegistry
@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class SimpleWebEndpointMappingRegistry extends FilteringWebEndpointMappingRegistry {
 
-    private final Map<Integer, WebEndpointMapping> repository = new HashMap<>();
+    private final Map<Integer, WebEndpointMapping> repository = new HashMap<>(256);
 
     @Override
     public boolean register(WebEndpointMapping webEndpointMapping) {

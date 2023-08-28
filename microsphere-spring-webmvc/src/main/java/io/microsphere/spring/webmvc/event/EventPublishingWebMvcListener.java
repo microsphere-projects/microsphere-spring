@@ -9,7 +9,7 @@ import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFa
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
-import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

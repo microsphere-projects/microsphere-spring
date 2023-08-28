@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.webmvc.interceptor.bootstrap;
 
-import io.microsphere.spring.web.metadata.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;

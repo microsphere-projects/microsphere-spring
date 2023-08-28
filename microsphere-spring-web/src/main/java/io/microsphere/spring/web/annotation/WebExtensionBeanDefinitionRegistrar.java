@@ -16,14 +16,13 @@
  */
 package io.microsphere.spring.web.annotation;
 
-import io.microsphere.spring.web.event.EventPublishingHandlerMethodInterceptor;
+import io.microsphere.spring.web.event.WebEventPublisher;
+import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ClassUtils;
 
 import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
@@ -35,53 +34,48 @@ import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
  * @see EnableWebExtension
  * @since 1.0.0
  */
-public class WebExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
+public class WebExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
 
     private static final Class<EnableWebExtension> ANNOTATION_CLASS = EnableWebExtension.class;
 
-    private ClassLoader classLoader;
+    private static final String ANNOTATION_CLASS_NAME = ANNOTATION_CLASS.getName();
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 
         AnnotationAttributes attributes = getAttributes(metadata);
 
-        boolean interceptHandlerMethods = attributes.getBoolean("interceptHandlerMethods");
+        registerWebEndpointMappingRegistry(attributes, registry);
 
-        registerInterceptingHandlerMethodProcessor(interceptHandlerMethods, registry);
+        registerDelegatingHandlerMethodAdvice(attributes, registry);
 
-        registerEventPublishingBeanDefinitions(attributes, interceptHandlerMethods, registry);
+        registerEventPublishingProcessor(attributes, registry);
+
     }
 
     private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
-        return fromMap(metadata.getAnnotationAttributes(ANNOTATION_CLASS.getName()));
+        return fromMap(metadata.getAnnotationAttributes(ANNOTATION_CLASS_NAME));
     }
 
-    private void registerInterceptingHandlerMethodProcessor(boolean interceptHandlerMethods, BeanDefinitionRegistry registry) {
+    private void registerWebEndpointMappingRegistry(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
+        if (registerWebEndpointMappings) {
+            registerBeanDefinition(registry, SimpleWebEndpointMappingRegistry.class);
+        }
+    }
+
+    private void registerDelegatingHandlerMethodAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean interceptHandlerMethods = attributes.getBoolean("interceptHandlerMethods");
         if (interceptHandlerMethods) {
             String beanName = DelegatingHandlerMethodAdvice.BEAN_NAME;
             registerBeanDefinition(registry, beanName, DelegatingHandlerMethodAdvice.class);
         }
     }
 
-    private EnableWebExtension getEnableWebMvcExtension(AnnotationMetadata metadata) {
-        String annotatedClassName = metadata.getClassName();
-        Class<?> annotatedClass = ClassUtils.resolveClassName(annotatedClassName, classLoader);
-        return annotatedClass.getAnnotation(ANNOTATION_CLASS);
-    }
-
-    private void registerEventPublishingBeanDefinitions(AnnotationAttributes attributes,
-                                                        boolean interceptHandlerMethods, BeanDefinitionRegistry registry) {
+    private void registerEventPublishingProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         boolean publishEvents = attributes.getBoolean("publishEvents");
         if (publishEvents) {
-            if (interceptHandlerMethods) {
-                registerBeanDefinition(registry, EventPublishingHandlerMethodInterceptor.class);
-            }
+            registerBeanDefinition(registry, WebEventPublisher.class);
         }
-    }
-
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 }
