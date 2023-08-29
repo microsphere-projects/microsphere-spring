@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.util.ClassUtils;
@@ -38,8 +37,6 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import java.util.Collection;
 import java.util.Set;
 
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**

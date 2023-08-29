@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.webmvc.handler;
 
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
-import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

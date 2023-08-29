@@ -16,17 +16,11 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
-import io.microsphere.util.ArrayUtils;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.Collection;
 import java.util.Collections;
-
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
  * {@link WebEndpointMappingFactory} based on Spring WebMVC Handlers

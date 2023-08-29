@@ -22,11 +22,6 @@ public abstract class AnnotatedMethodHandlerInterceptor<A extends Annotation> ex
     private final Class<A> annotationType;
 
     public AnnotatedMethodHandlerInterceptor() {
-        this(Boolean.TRUE);
-    }
-
-    public AnnotatedMethodHandlerInterceptor(boolean delegated) {
-        super(delegated);
         this.annotationType = resolveAnnotationType();
     }
 

@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.web.method.support;
 
-import io.microsphere.spring.context.OnceApplicationContextEventListener;
+import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

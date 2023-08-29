@@ -16,20 +16,22 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.web.annotation.EnableWebExtension;
+import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
-import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
+import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
@@ -39,50 +41,54 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebMvcExtension
+ * @see EnableWebExtension
+ * @see WebExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
-public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
+public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
 
-    private static final Class<EnableWebMvcExtension> ANNOTATION_CLASS = EnableWebMvcExtension.class;
+    public static final Class<EnableWebMvcExtension> ANNOTATION_CLASS = EnableWebMvcExtension.class;
 
-    private ClassLoader classLoader;
+    public static final String ANNOTATION_CLASS_NAME = ANNOTATION_CLASS.getName();
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 
-        EnableWebMvcExtension enableWebMvcExtension = getEnableWebMvcExtension(metadata);
+        AnnotationAttributes attributes = getAttributes(metadata);
 
-        registerInterceptingHandlerMethodProcessor(registry);
+        registerWebEndpointMappingRegistrar(attributes, registry);
 
-        registerEventPublishingBeanDefinitions(enableWebMvcExtension, registry);
+        registerInterceptingHandlerMethodProcessor(attributes, registry);
 
-        registerHandlerInterceptors(enableWebMvcExtension, registry);
+        registerHandlerInterceptors(attributes, registry);
 
-        registerStoringRequestBodyArgumentAdvice(enableWebMvcExtension, registry);
+        registerStoringRequestBodyArgumentAdvice(attributes, registry);
 
-        registerStoringResponseBodyReturnValueAdvice(enableWebMvcExtension, registry);
+        registerStoringResponseBodyReturnValueAdvice(attributes, registry);
 
     }
 
-    private void registerInterceptingHandlerMethodProcessor(BeanDefinitionRegistry registry) {
-        String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
-        registerBeanDefinition(registry, beanName, WebMvcEventPublisher.class);
-    }
-
-    private EnableWebMvcExtension getEnableWebMvcExtension(AnnotationMetadata metadata) {
-        String annotatedClassName = metadata.getClassName();
-        Class<?> annotatedClass = ClassUtils.resolveClassName(annotatedClassName, classLoader);
-        return annotatedClass.getAnnotation(ANNOTATION_CLASS);
-    }
-
-    private void registerEventPublishingBeanDefinitions(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
-        if (enableWebMvcExtension.publishEvents()) {
-            registerBeanDefinition(registry, WebMvcEventPublisher.class);
+    private void registerWebEndpointMappingRegistrar(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
+        if (registerWebEndpointMappings) {
+            registerBeanDefinition(registry, WebEndpointMappingRegistrar.class);
         }
     }
 
-    private void registerHandlerInterceptors(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
-        Class<? extends HandlerInterceptor>[] interceptorClasses = enableWebMvcExtension.registerHandlerInterceptors();
+    private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean interceptHandlerMethods = attributes.getBoolean("interceptHandlerMethods");
+        if (interceptHandlerMethods) {
+            String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
+            registerBeanDefinition(registry, beanName, InterceptingHandlerMethodProcessor.class);
+        }
+    }
+
+    private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
+        return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
+    }
+
+    private void registerHandlerInterceptors(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        Class<? extends HandlerInterceptor>[] interceptorClasses = (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("registerHandlerInterceptors");
         if (!ObjectUtils.isEmpty(interceptorClasses)) {
             AbstractBeanDefinition beanDefinition = rootBeanDefinition(LazyCompositeHandlerInterceptor.class)
                     .addConstructorArgValue(interceptorClasses)
@@ -91,21 +97,17 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         }
     }
 
-
-    private void registerStoringRequestBodyArgumentAdvice(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
-        if (enableWebMvcExtension.storeRequestBodyArgument()) {
+    private void registerStoringRequestBodyArgumentAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean storeRequestBodyArgument = attributes.getBoolean("storeRequestBodyArgument");
+        if (storeRequestBodyArgument) {
             registerBeanDefinition(registry, StoringRequestBodyArgumentAdvice.class);
         }
     }
 
-    private void registerStoringResponseBodyReturnValueAdvice(EnableWebMvcExtension enableWebMvcExtension, BeanDefinitionRegistry registry) {
-        if (enableWebMvcExtension.storeResponseBodyReturnValue()) {
+    private void registerStoringResponseBodyReturnValueAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean storeResponseBodyReturnValue = attributes.getBoolean("storeResponseBodyReturnValue");
+        if (storeResponseBodyReturnValue) {
             registerBeanDefinition(registry, StoringResponseBodyReturnValueAdvice.class);
         }
-    }
-
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 }

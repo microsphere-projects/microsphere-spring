@@ -24,8 +24,8 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
+import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
-import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 
 /**
  * {@link ImportBeanDefinitionRegistrar} for Spring Web Extension
@@ -36,9 +36,9 @@ import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
  */
 public class WebExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
 
-    private static final Class<EnableWebExtension> ANNOTATION_CLASS = EnableWebExtension.class;
+    public static final Class<EnableWebExtension> ANNOTATION_CLASS = EnableWebExtension.class;
 
-    private static final String ANNOTATION_CLASS_NAME = ANNOTATION_CLASS.getName();
+    public static final String ANNOTATION_CLASS_NAME = ANNOTATION_CLASS.getName();
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -54,7 +54,7 @@ public class WebExtensionBeanDefinitionRegistrar implements ImportBeanDefinition
     }
 
     private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
-        return fromMap(metadata.getAnnotationAttributes(ANNOTATION_CLASS_NAME));
+        return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
     }
 
     private void registerWebEndpointMappingRegistry(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {

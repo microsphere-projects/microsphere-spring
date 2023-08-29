@@ -21,6 +21,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 
 import java.util.Collection;
+import java.util.Collections;
+
+import static java.util.Collections.unmodifiableCollection;
 
 /**
  * An {@link ApplicationContextEvent} was raised when the {@link WebEndpointMapping WebEndpointMappings}
@@ -42,7 +45,7 @@ public class WebEndpointMappingsReadyEvent extends ApplicationContextEvent {
      */
     public WebEndpointMappingsReadyEvent(ApplicationContext source, Collection<WebEndpointMapping> mappings) {
         super(source);
-        this.mappings = mappings;
+        this.mappings = unmodifiableCollection(mappings);
     }
 
     public Collection<WebEndpointMapping> getMappings() {

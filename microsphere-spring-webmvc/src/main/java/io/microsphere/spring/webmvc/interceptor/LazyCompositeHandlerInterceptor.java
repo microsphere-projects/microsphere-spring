@@ -18,7 +18,7 @@ package io.microsphere.spring.webmvc.interceptor;
 
 import io.microsphere.lang.function.ThrowableConsumer;
 import io.microsphere.lang.function.ThrowableFunction;
-import io.microsphere.spring.context.OnceApplicationContextEventListener;
+import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.servlet.HandlerInterceptor;

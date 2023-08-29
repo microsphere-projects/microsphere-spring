@@ -16,12 +16,12 @@
  */
 package io.microsphere.spring.webmvc.method.support;
 
-import io.microsphere.spring.context.OnceApplicationContextEventListener;
+import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -43,6 +43,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,20 +55,20 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 /**
- * The {@link HandlerMethod} processor based on
+ * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
  * {@link HandlerMethodArgumentResolver}, {@link HandlerMethodReturnValueHandler} and {@link HandlerInterceptor}.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see HandlerMethodAdvice
  * @see HandlerMethodInterceptor
  * @see HandlerMethodArgumentInterceptor
- * @see HandlerMethodAdvice
  * @see HandlerMethodArgumentResolver
  * @see HandlerMethodArgumentResolverComposite
  * @see HandlerMethodReturnValueHandler
  * @see HandlerMethodReturnValueHandlerComposite
  * @since 1.0.0
  */
-public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEventListener<RequestMappingMetadataReadyEvent>
+public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>
         implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler, HandlerInterceptor {
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
@@ -104,7 +105,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     @Override
-    protected void onApplicationContextEvent(RequestMappingMetadataReadyEvent event) {
+    protected void onApplicationContextEvent(WebEndpointMappingsReadyEvent event) {
         ApplicationContext context = event.getApplicationContext();
         initAdvices(context);
         initHandlerMethodAdvice(context);
@@ -188,28 +189,31 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         this.handlerMethodAdvice = getOptionalBean(context, HandlerMethodAdvice.class);
     }
 
-    private void initRequestMappingHandlerAdapters(RequestMappingMetadataReadyEvent event, ApplicationContext context) {
-        List<RequestMappingMetadata> metadata = event.getMetadata();
+    private void initRequestMappingHandlerAdapters(WebEndpointMappingsReadyEvent event, ApplicationContext context) {
+        Collection<WebEndpointMapping> mappings = event.getMappings();
         List<RequestMappingHandlerAdapter> adapters = getSortedBeans(context, RequestMappingHandlerAdapter.class);
         for (int i = 0; i < adapters.size(); i++) {
             RequestMappingHandlerAdapter adapter = adapters.get(i);
-            initRequestMappingHandlerAdapter(adapter, metadata);
+            initRequestMappingHandlerAdapter(adapter, mappings);
         }
     }
 
-    private void initRequestMappingHandlerAdapter(RequestMappingHandlerAdapter adapter, List<RequestMappingMetadata> metadata) {
+    private void initRequestMappingHandlerAdapter(RequestMappingHandlerAdapter adapter, Collection<WebEndpointMapping> webEndpointMappings) {
         List<HandlerMethodArgumentResolver> resolvers = adapter.getArgumentResolvers();
         List<HandlerMethodReturnValueHandler> handlers = adapter.getReturnValueHandlers();
-        for (RequestMappingMetadata requestMappingMetadata : metadata) {
-            HandlerMethod handlerMethod = requestMappingMetadata.getHandlerMethod();
-            MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-            Method method = handlerMethod.getMethod();
-            int parameterCount = method.getParameterCount();
-            for (int i = 0; i < parameterCount; i++) {
-                MethodParameter methodParameter = methodParameters[i];
-                initMethodParameterContextsCache(methodParameter, handlerMethod, parameterCount, resolvers);
+        for (WebEndpointMapping webEndpointMapping : webEndpointMappings) {
+            Object endpoint = webEndpointMapping.getEndpoint();
+            if (endpoint instanceof HandlerMethod) {
+                HandlerMethod handlerMethod = (HandlerMethod) endpoint;
+                MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
+                Method method = handlerMethod.getMethod();
+                int parameterCount = method.getParameterCount();
+                for (int i = 0; i < parameterCount; i++) {
+                    MethodParameter methodParameter = methodParameters[i];
+                    initMethodParameterContextsCache(methodParameter, handlerMethod, parameterCount, resolvers);
+                }
+                initReturnTypeContextsCache(handlerMethod, handlers);
             }
-            initReturnTypeContextsCache(handlerMethod, handlers);
         }
         adapter.setArgumentResolvers(singletonList(this));
         adapter.setReturnValueHandlers(singletonList(this));

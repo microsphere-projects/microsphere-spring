@@ -25,10 +25,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
-import io.microsphere.spring.webmvc.config.HandlerInterceptorWebMvcConfigurer;
-import io.microsphere.spring.webmvc.event.EventPublishingWebMvcListener;
-import io.microsphere.spring.webmvc.event.WebMvcEventPublisher;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
+import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
@@ -51,7 +48,8 @@ import java.lang.annotation.Target;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebMvc
- * @see HandlerInterceptorWebMvcConfigurer
+ * @see EnableWebExtension
+ * @see WebMvcExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -68,6 +66,7 @@ public @interface EnableWebMvcExtension {
      * @return <code>true</code> as default
      * @see WebEndpointMapping
      * @see WebEndpointMappingRegistry
+     * @see WebEndpointMappingRegistrar
      */
     @AliasFor(annotation = EnableWebExtension.class)
     boolean registerWebEndpointMappings() default true;
@@ -85,18 +84,14 @@ public @interface EnableWebMvcExtension {
     boolean interceptHandlerMethods() default true;
 
     /**
-     * Indicate whether {@link WebMvcEventPublisher} publishes the Spring WebMVC extension events :
+     * Indicate whether it publishes the Spring Web extension events:
      * <ul>
-     *     <li>{@link RequestMappingMetadataReadyEvent}</li>
-     *     <li>{@link WebEndpointMappingsReadyEvent}</li>
-     *     <li>{@link HandlerMethodArgumentsResolvedEvent}</li>
+     *     <li>{@link HandlerMethodArgumentsResolvedEvent}({@link EnableWebExtension#interceptHandlerMethods() if enabled})</li>
+     *     <li>{@link WebEndpointMappingsReadyEvent}({@link EnableWebExtension#registerWebEndpointMappings() if enabled})</li>
      * </ul>
      *
      * @return <code>true</code> as default
-     * @see WebMvcEventPublisher
-     * @see EventPublishingWebMvcListener
      * @see WebEventPublisher
-     * @see RequestMappingMetadataReadyEvent
      * @see WebEndpointMappingsReadyEvent
      * @see HandlerMethodArgumentsResolvedEvent
      */

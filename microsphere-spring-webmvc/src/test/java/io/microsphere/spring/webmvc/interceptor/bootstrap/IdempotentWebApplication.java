@@ -20,7 +20,6 @@ import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -38,9 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @EnableAutoConfiguration
-@EnableWebMvcExtension
+@EnableWebMvcExtension(registerHandlerInterceptors = IdempotentAnnotatedMethodHandlerInterceptor.class)
 @Import(value = {
-        IdempotentAnnotatedMethodHandlerInterceptor.class,
         DemoController.class
 })
 public class IdempotentWebApplication {
@@ -51,14 +49,9 @@ public class IdempotentWebApplication {
         SpringApplication.run(IdempotentWebApplication.class, args);
     }
 
-    @EventListener(RequestMappingMetadataReadyEvent.class)
-    public void onEvent(RequestMappingMetadataReadyEvent event) {
-        logger.info("RequestMappingMetadataReadyEvent's Metadata : {}", event.getMetadata());
-    }
-
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onEvent(WebEndpointMappingsReadyEvent event) {
-        logger.info("WebEndpointMappingsReadyEvent's Mappings : {}", event.getMappings());
+        logger.info("WebEndpointMappingsReadyEvent's mappings : {}", event.getMappings());
     }
 
 }

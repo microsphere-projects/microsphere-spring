@@ -1,13 +1,11 @@
 package io.microsphere.spring.webmvc.interceptor;
 
-import io.microsphere.spring.webmvc.config.HandlerInterceptorWebMvcConfigurer;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -21,19 +19,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 1.0.0
  */
 public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
-
-    /**
-     * Whether the current {@link HandlerInterceptor} is a delegate object
-     */
-    private final boolean delegate;
-
-    public MethodHandlerInterceptor() {
-        this(Boolean.FALSE);
-    }
-
-    public MethodHandlerInterceptor(boolean delegate) {
-        this.delegate = delegate;
-    }
 
     @Override
     public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -74,27 +59,6 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     protected boolean supports(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         return true;
-    }
-
-    /**
-     * Whether the current {@link HandlerInterceptor} is a Spring Bean as the delegate
-     *
-     * @return If <code>true<code>, current instance will be looked up by {@link DelegatingMethodHandlerInterceptor} as a delegate
-     * for intercepting, otherwise, current instance will be registered into {@link InterceptorRegistry} when
-     * the {@link HandlerInterceptorWebMvcConfigurer#addInterceptors(InterceptorRegistry)} method will be called.
-     */
-    public boolean isDelegate() {
-        return delegate;
-    }
-
-    /**
-     * Whether the current handler is delegate {@link HandlerMethod}
-     *
-     * @param handlerMethod {@link HandlerMethod}
-     * @return <code>true<code> If the proxy {@link HandlerInterceptor}, default <code>false<code>
-     */
-    public boolean isDelegate(HandlerMethod handlerMethod) {
-        return false;
     }
 
     /**
