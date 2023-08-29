@@ -43,22 +43,22 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
 /**
- * {@link EnableEventManagement} Test
+ * {@link EnableEventExtension} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        EnableEventManagementTest.class,
-        EnableEventManagementTest.Config.class,
+        EnableEventExtensionTest.class,
+        EnableEventExtensionTest.Config.class,
         DefaultAdvisorAutoProxyCreator.class
 })
-@EnableEventManagement(intercepted = true, executorForListener = "taskExecutor"
+@EnableEventExtension(intercepted = true, executorForListener = "taskExecutor"
 )
-public class EnableEventManagementTest {
+public class EnableEventExtensionTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(EnableEventManagementTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(EnableEventExtensionTest.class);
 
     private static AtomicInteger eventValueRef = new AtomicInteger();
 

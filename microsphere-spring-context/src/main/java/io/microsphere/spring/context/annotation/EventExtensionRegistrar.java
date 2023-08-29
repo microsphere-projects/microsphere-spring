@@ -36,7 +36,7 @@ import org.springframework.lang.Nullable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import static io.microsphere.spring.context.annotation.EnableEventManagement.NO_EXECUTOR;
+import static io.microsphere.spring.context.annotation.EnableEventExtension.NO_EXECUTOR;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
@@ -46,16 +46,16 @@ import static org.springframework.util.StringUtils.hasText;
  * Event Management Registrar
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see EnableEventManagement
+ * @see EnableEventExtension
  * @see InterceptingApplicationEventMulticaster
  * @see SimpleApplicationEventMulticaster
  * @see Executor
  * @see TaskExecutor
  * @since 1.0.0
  */
-public class EventManagementRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-    private static final String ANNOTATION_CLASS_NAME = EnableEventManagement.class.getName();
+    private static final String ANNOTATION_CLASS_NAME = EnableEventExtension.class.getName();
 
     private static final String BEAN_NAME = APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 

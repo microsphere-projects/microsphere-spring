@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 import java.util.concurrent.Executor;
 
 /**
- * Enables Spring's Event Management
+ * Enables Spring's Event Extension
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -41,8 +41,8 @@ import java.util.concurrent.Executor;
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(EventManagementRegistrar.class)
-public @interface EnableEventManagement {
+@Import(EventExtensionRegistrar.class)
+public @interface EnableEventExtension {
 
     /**
      * No {@link Executor} Present
