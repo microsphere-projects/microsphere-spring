@@ -370,7 +370,13 @@ public class WebEndpointMapping<E> {
     }
 
     /**
-     * @return
+     * The source of {@link WebEndpointMapping} if present, it could be :
+     * <ul>
+     *     <li>{@link javax.servlet.ServletContext ServletContext}</li>
+     *     <li>Spring WebMVC {@link org.springframework.web.servlet.HandlerMapping}</li>
+     *     <li>Spring WebFlux {@link org.springframework.web.reactive.HandlerMapping}</li>
+     * </ul>, or it's {@link #NON_SOURCE non-source}
+     * @return non-null
      */
     @NonNull
     public Object getSource() {
