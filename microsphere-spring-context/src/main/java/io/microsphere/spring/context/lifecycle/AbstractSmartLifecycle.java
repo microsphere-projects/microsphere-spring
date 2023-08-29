@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context;
+package io.microsphere.spring.context.lifecycle;
 
 import org.springframework.context.SmartLifecycle;
 
@@ -26,9 +26,26 @@ import org.springframework.context.SmartLifecycle;
  */
 public abstract class AbstractSmartLifecycle implements SmartLifecycle {
 
-    private volatile boolean started = false;
+    /**
+     * The earliest phase
+     */
+    public static final int EARLIEST_PHASE = Integer.MIN_VALUE;
+
+    /**
+     * The latest phase
+     */
+    public static final int LATEST_PHASE = Integer.MIN_VALUE;
+
+    /**
+     * Compatible with {@link SmartLifecycle#DEFAULT_PHASE} before Spring Framework 5.1
+     *
+     * @see SmartLifecycle#DEFAULT_PHASE
+     */
+    public static final int DEFAULT_PHASE = LATEST_PHASE;
 
     private int phase = DEFAULT_PHASE;
+
+    private volatile boolean started = false;
 
     @Override
     public final void start() {
@@ -36,8 +53,7 @@ public abstract class AbstractSmartLifecycle implements SmartLifecycle {
         started = true;
     }
 
-    protected void doStart() {
-    }
+    protected abstract void doStart();
 
     @Override
     public final void stop() {
@@ -45,8 +61,7 @@ public abstract class AbstractSmartLifecycle implements SmartLifecycle {
         started = false;
     }
 
-    protected void doStop() {
-    }
+    protected abstract void doStop();
 
     @Override
     public final boolean isRunning() {
@@ -65,7 +80,7 @@ public abstract class AbstractSmartLifecycle implements SmartLifecycle {
     }
 
     @Override
-    public int getPhase() {
+    public final int getPhase() {
         return phase;
     }
 
@@ -73,7 +88,7 @@ public abstract class AbstractSmartLifecycle implements SmartLifecycle {
         return started;
     }
 
-    public void setPhase(int phase) {
+    public final void setPhase(int phase) {
         this.phase = phase;
     }
 

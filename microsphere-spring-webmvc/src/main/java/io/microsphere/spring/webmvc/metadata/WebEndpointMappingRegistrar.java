@@ -1,20 +1,30 @@
-package io.microsphere.spring.webmvc.event;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.spring.context.OnceApplicationContextEventListener;
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.context.lifecycle.AbstractSmartLifecycle;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.FilterRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
-import io.microsphere.spring.webmvc.metadata.HandlerMetadata;
-import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
-import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
@@ -25,6 +35,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,31 +46,45 @@ import static io.microsphere.enterprise.servlet.enumeration.ServletVersion.SERVL
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
- * Event Publishing Listener for Spring WebMVC
+ * The class registers all instances of {@link WebEndpointMapping} that are
+ * collected from Spring Web MVC and Servlet components into {@link WebEndpointMappingRegistry}
+ * before {@link WebEventPublisher} publishing the {@link WebEndpointMappingsReadyEvent}
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see RequestMappingMetadataReadyEvent
- * @see WebMvcEventPublisher
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see WebEndpointMappingRegistry
+ * @see WebEventPublisher
+ * @see AbstractSmartLifecycle
  * @since 1.0.0
  */
-public class EventPublishingWebMvcListener extends OnceApplicationContextEventListener<ContextRefreshedEvent> implements ApplicationContextAware {
+public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventPublishingWebMvcListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebEndpointMappingRegistrar.class);
 
-    public EventPublishingWebMvcListener(ApplicationContext context) {
-        super(context);
+    private final WebApplicationContext context;
+
+    public WebEndpointMappingRegistrar(WebApplicationContext context) {
+        this.context = context;
+        // Mark sure earlier than WebEventPublisher
+        setPhase(WebEventPublisher.DEFAULT_PHASE - 10);
     }
 
     @Override
-    public void onApplicationContextEvent(ContextRefreshedEvent event) {
-        ApplicationContext context = event.getApplicationContext();
-        if (context instanceof WebApplicationContext) {
-            publishWebEvents((WebApplicationContext) context);
-        }
+    protected void doStart() {
+        registerWebEndpointMappings();
     }
 
-    protected void publishWebEvents(WebApplicationContext context) {
+    private void registerWebEndpointMappings() {
+        WebEndpointMappingRegistry registry = getRegistry();
+        Collection<WebEndpointMapping> webEndpointMappings = collectWebEndpointMappings();
+        int count = registry.register(webEndpointMappings);
+        logger.info("{} WebEndpointMappings were registered from the Spring context[id :'{}']", count, context.getId());
+    }
 
+    private WebEndpointMappingRegistry getRegistry() {
+        return context.getBean(WebEndpointMappingRegistry.class);
+    }
+
+    private Collection<WebEndpointMapping> collectWebEndpointMappings() {
         Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(context, HandlerMapping.class);
 
         Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = new HashMap<>();
@@ -76,9 +101,7 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
             collectFromRequestMappingInfoHandlerMapping(handlerMapping, requestMappingInfoHandlerMethods, webEndpointMappings);
         }
 
-        context.publishEvent(new RequestMappingMetadataReadyEvent(context, requestMappingInfoHandlerMethods));
-        context.publishEvent(new WebEndpointMappingsReadyEvent(context, webEndpointMappings));
-        logger.info("The current application context [id: '{}'] has published the events");
+        return webEndpointMappings;
     }
 
     private void collectFromServletContext(ServletContext servletContext, WebApplicationContext context,
@@ -152,5 +175,10 @@ public class EventPublishingWebMvcListener extends OnceApplicationContextEventLi
             }
             requestMappingInfoHandlerMethods.putAll(handlerMethodsMap);
         }
+    }
+
+    @Override
+    protected void doStop() {
+
     }
 }

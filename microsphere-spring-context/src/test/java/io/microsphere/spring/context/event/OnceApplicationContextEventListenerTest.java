@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context;
+package io.microsphere.spring.context.event;
 
+import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
