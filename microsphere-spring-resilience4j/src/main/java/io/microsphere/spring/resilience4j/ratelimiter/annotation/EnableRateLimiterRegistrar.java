@@ -19,7 +19,7 @@ package io.microsphere.spring.resilience4j.ratelimiter.annotation;
 import io.github.resilience4j.ratelimiter.configure.RateLimiterConfiguration;
 import io.microsphere.spring.resilience4j.ratelimiter.event.RateLimiterApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.ratelimiter.event.RateLimiterEventConsumerBeanRegistrar;
-import io.microsphere.spring.resilience4j.ratelimiter.webmvc.RateLimiterHandlerInterceptor;
+import io.microsphere.spring.resilience4j.ratelimiter.web.RateLimiterHandlerMethodInterceptor;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -44,7 +44,7 @@ class EnableRateLimiterRegistrar implements ImportBeanDefinitionRegistrar, BeanC
         registerBeanDefinition(registry, RateLimiterApplicationEventPublisher.class);
         registerBeanDefinition(registry, RateLimiterEventConsumerBeanRegistrar.class);
         if (isPresent("org.springframework.web.servlet.HandlerInterceptor", classLoader)) {
-            registerBeanDefinition(registry, RateLimiterHandlerInterceptor.class);
+            registerBeanDefinition(registry, RateLimiterHandlerMethodInterceptor.class);
         }
     }
 

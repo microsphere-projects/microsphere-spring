@@ -19,7 +19,7 @@ package io.microsphere.spring.resilience4j.circuitbreaker.annotation;
 import io.github.resilience4j.circuitbreaker.configure.CircuitBreakerConfiguration;
 import io.microsphere.spring.resilience4j.circuitbreaker.event.CircuitBreakerApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.circuitbreaker.event.CircuitBreakerEventConsumerBeanRegistrar;
-import io.microsphere.spring.resilience4j.circuitbreaker.webmvc.CircuitBreakerHandlerInterceptor;
+import io.microsphere.spring.resilience4j.circuitbreaker.web.CircuitBreakerHandlerMethodInterceptor;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -44,7 +44,7 @@ class EnableCircuitBreakerRegistrar implements ImportBeanDefinitionRegistrar, Be
         registerBeanDefinition(registry, CircuitBreakerApplicationEventPublisher.class);
         registerBeanDefinition(registry, CircuitBreakerEventConsumerBeanRegistrar.class);
         if (isPresent("org.springframework.web.servlet.HandlerInterceptor", classLoader)) {
-            registerBeanDefinition(registry, CircuitBreakerHandlerInterceptor.class);
+            registerBeanDefinition(registry, CircuitBreakerHandlerMethodInterceptor.class);
         }
     }
 

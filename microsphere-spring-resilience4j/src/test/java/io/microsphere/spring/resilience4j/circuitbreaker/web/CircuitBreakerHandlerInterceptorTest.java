@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.resilience4j.circuitbreaker.webmvc;
+package io.microsphere.spring.resilience4j.circuitbreaker.web;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -26,7 +26,7 @@ import static io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry.ofDef
 import static org.junit.Assert.assertEquals;
 
 /**
- * {@link CircuitBreakerHandlerInterceptor} Test
+ * {@link CircuitBreakerHandlerMethodInterceptor} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -35,7 +35,7 @@ public class CircuitBreakerHandlerInterceptorTest {
 
     private static final CircuitBreakerRegistry registry = ofDefaults();
 
-    private final CircuitBreakerHandlerInterceptor interceptor = new CircuitBreakerHandlerInterceptor(registry);
+    private final CircuitBreakerHandlerMethodInterceptor interceptor = new CircuitBreakerHandlerMethodInterceptor(registry);
 
 
     @Test

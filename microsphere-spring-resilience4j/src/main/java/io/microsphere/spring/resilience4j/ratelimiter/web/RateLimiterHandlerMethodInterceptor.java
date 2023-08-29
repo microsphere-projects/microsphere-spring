@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.resilience4j.ratelimiter.webmvc;
+package io.microsphere.spring.resilience4j.ratelimiter.web;
 
 import io.github.resilience4j.core.Registry;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.microsphere.spring.resilience4j.common.Resilience4jContext;
-import io.microsphere.spring.resilience4j.common.webmvc.Resilience4jMethodHandlerInterceptor;
+import io.microsphere.spring.resilience4j.common.web.Resilience4jHandlerMethodInterceptor;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * {@link HandlerInterceptor} based on Resilience4j {@link RateLimiter}
@@ -36,29 +33,26 @@ import javax.servlet.http.HttpServletResponse;
  * @see RateLimiter
  * @since 1.0.0
  */
-public class RateLimiterHandlerInterceptor extends Resilience4jMethodHandlerInterceptor<RateLimiter, RateLimiterConfig> {
+public class RateLimiterHandlerMethodInterceptor extends Resilience4jHandlerMethodInterceptor<RateLimiter, RateLimiterConfig> {
 
-    public RateLimiterHandlerInterceptor(Registry<RateLimiter, RateLimiterConfig> registry) {
+    public RateLimiterHandlerMethodInterceptor(Registry<RateLimiter, RateLimiterConfig> registry) {
         super(registry);
     }
 
     @Override
-    protected void preHandle(Resilience4jContext<RateLimiter> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Throwable {
+    protected void beforeExecute(Resilience4jContext<RateLimiter> context, HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Throwable {
         context.start(r -> {
             r.acquirePermission();
         });
     }
 
     @Override
-    protected void postHandle(Resilience4jContext<RateLimiter> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Throwable {
-        context.end((RateLimiter, duration) -> RateLimiter.onResult(modelAndView));
-    }
-
-    @Override
-    protected void afterCompletion(Resilience4jContext<RateLimiter> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Throwable {
+    protected void afterExecute(Resilience4jContext<RateLimiter> context, HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Throwable {
         context.end((RateLimiter, duration) -> {
-            if (ex != null) {
-                RateLimiter.onError(ex);
+            if (error == null) {
+                RateLimiter.onResult(args);
+            } else {
+                RateLimiter.onError(error);
             }
         });
     }
@@ -67,5 +61,4 @@ public class RateLimiterHandlerInterceptor extends Resilience4jMethodHandlerInte
     protected RateLimiter createEntry(String name) {
         return RateLimiter.of(name, getConfiguration(name), registry.getTags());
     }
-
 }

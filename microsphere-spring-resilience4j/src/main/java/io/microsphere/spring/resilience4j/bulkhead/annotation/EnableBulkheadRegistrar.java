@@ -19,7 +19,7 @@ package io.microsphere.spring.resilience4j.bulkhead.annotation;
 import io.github.resilience4j.bulkhead.configure.BulkheadConfiguration;
 import io.microsphere.spring.resilience4j.bulkhead.event.BulkheadApplicationEventPublisher;
 import io.microsphere.spring.resilience4j.bulkhead.event.BulkheadEventConsumerBeanRegistrar;
-import io.microsphere.spring.resilience4j.bulkhead.webmvc.BulkheadHandlerInterceptor;
+import io.microsphere.spring.resilience4j.bulkhead.web.BulkheadHandlerMethodInterceptor;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -44,7 +44,7 @@ class EnableBulkheadRegistrar implements ImportBeanDefinitionRegistrar, BeanClas
         registerBeanDefinition(registry, BulkheadApplicationEventPublisher.class);
         registerBeanDefinition(registry, BulkheadEventConsumerBeanRegistrar.class);
         if (isPresent("org.springframework.web.servlet.HandlerInterceptor", classLoader)) {
-            registerBeanDefinition(registry, BulkheadHandlerInterceptor.class);
+            registerBeanDefinition(registry, BulkheadHandlerMethodInterceptor.class);
         }
     }
 

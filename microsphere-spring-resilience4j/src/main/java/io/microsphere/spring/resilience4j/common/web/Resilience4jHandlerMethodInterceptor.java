@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.resilience4j.common.webmvc;
+package io.microsphere.spring.resilience4j.common.web;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.Registry;
 import io.microsphere.spring.resilience4j.common.Resilience4jContext;
 import io.microsphere.spring.resilience4j.common.Resilience4jModule;
-import io.microsphere.spring.webmvc.interceptor.MethodHandlerInterceptor;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadata;
-import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataReadyEvent;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,33 +32,33 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 
 import static io.microsphere.reflect.MethodUtils.getSignature;
 import static io.microsphere.spring.resilience4j.common.Resilience4jModule.valueOf;
 import static org.springframework.core.ResolvableType.forType;
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 /**
- * The abstract template class for Resilience4j's {@link MethodHandlerInterceptor}
+ * The abstract template class for Resilience4j's {@link HandlerMethodInterceptor}
  *
  * @param <E> the type of Resilience4j's entity, e.g., {@link CircuitBreaker}
  * @param <C> the type of Resilience4j's configuration, e.g., {@link CircuitBreakerConfig}
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see MethodHandlerInterceptor
+ * @see HandlerMethodInterceptor
  * @see Resilience4jModule
  * @since 1.0.0
  */
-public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodHandlerInterceptor implements
-        ApplicationListener<RequestMappingMetadataReadyEvent>, DisposableBean, Ordered {
+public abstract class Resilience4jHandlerMethodInterceptor<E, C> implements HandlerMethodInterceptor,
+        ApplicationListener<WebEndpointMappingsReadyEvent>, DisposableBean, Ordered {
 
     protected final static int ENTRY_CLASS_GENERIC_INDEX = 0;
 
@@ -81,49 +81,37 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
 
     private final Resilience4jModule module;
 
-    public Resilience4jMethodHandlerInterceptor(Registry<E, C> registry) {
+    public Resilience4jHandlerMethodInterceptor(Registry<E, C> registry) {
         // always keep self being a delegate
-        super(Boolean.TRUE);
         Assert.notNull(registry, "The 'registry' argument can't be null");
         this.registry = registry;
         this.entryCaches = new HashMap<>();
         ResolvableType currentType = forType(getClass());
-        ResolvableType superType = currentType.as(Resilience4jMethodHandlerInterceptor.class);
+        ResolvableType superType = currentType.as(Resilience4jHandlerMethodInterceptor.class);
         this.entryClass = (Class<E>) superType.getGeneric(ENTRY_CLASS_GENERIC_INDEX).resolve();
         this.configurationClass = (Class<C>) superType.getGeneric(CONFIGURATION_CLASS_GENERIC_INDEX).resolve();
         this.module = valueOf(this.entryClass);
     }
 
     @Override
-    protected final boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
         Resilience4jContext<E> context = getContext(request, handlerMethod);
-        Try.run(() -> preHandle(context, request, response, handlerMethod)).getOrElseThrow(EXCEPTION_PROVIDER);
-        return true;
-    }
-
-
-    @Override
-    protected final void postHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Exception {
-        Resilience4jContext<E> context = getContext(request, handlerMethod);
-        Try.run(() -> postHandle(context, request, response, handlerMethod, modelAndView)).getOrElseThrow(EXCEPTION_PROVIDER);
+        Try.run(() -> beforeExecute(context, handlerMethod, args, request)).getOrElseThrow(EXCEPTION_PROVIDER);
     }
 
     @Override
-    protected final void afterCompletion(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Exception {
+    public void afterExecute(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Exception {
         Resilience4jContext<E> context = getContext(request, handlerMethod);
-        Try.run(() -> afterCompletion(context, request, response, handlerMethod, ex)).getOrElseThrow(EXCEPTION_PROVIDER);
+        Try.run(() -> afterExecute(context, handlerMethod, args, returnValue, error, request)).getOrElseThrow(EXCEPTION_PROVIDER);
     }
 
-    protected abstract void preHandle(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Throwable;
+    protected abstract void beforeExecute(Resilience4jContext<E> context, HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Throwable;
 
-    protected abstract void postHandle(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Throwable;
-
-    protected abstract void afterCompletion(Resilience4jContext<E> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Throwable;
+    protected abstract void afterExecute(Resilience4jContext<E> context, HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Throwable;
 
     @Override
-    public void onApplicationEvent(RequestMappingMetadataReadyEvent event) {
-        List<RequestMappingMetadata> metadata = event.getMetadata();
-        initEntryCache(metadata);
+    public void onApplicationEvent(WebEndpointMappingsReadyEvent event) {
+        initEntryCache(event);
     }
 
     @Override
@@ -150,30 +138,35 @@ public abstract class Resilience4jMethodHandlerInterceptor<E, C> extends MethodH
         return this.module.getDefaultAspectOrder();
     }
 
-    protected void initEntryCache(List<RequestMappingMetadata> metadata) {
-        int size = metadata.size();
+    protected void initEntryCache(WebEndpointMappingsReadyEvent event) {
+        Collection<WebEndpointMapping> webEndpointMappings = event.getMappings();
+        int size = webEndpointMappings.size();
         Map<String, E> entryCaches = new HashMap<>(size);
 
-        for (int i = 0; i < size; i++) {
-            RequestMappingMetadata requestMappingMetadata = metadata.get(i);
-            HandlerMethod handlerMethod = requestMappingMetadata.getHandlerMethod();
-            String entryName = getEntryName(handlerMethod);
-            E entry = createEntry(entryName);
-            entryCaches.put(entryName, entry);
-            logger.debug("A new entry[name : '{}' , type : '{}'] was added into cache", entryName, entry.getClass().getName());
+        Iterator<WebEndpointMapping> iterator = webEndpointMappings.iterator();
+        while (iterator.hasNext()) {
+            WebEndpointMapping webEndpointMapping = iterator.next();
+            Object endpoint = webEndpointMapping.getEndpoint();
+            if (endpoint instanceof HandlerMethod) {
+                HandlerMethod handlerMethod = (HandlerMethod) endpoint;
+                String entryName = getEntryName(handlerMethod);
+                E entry = createEntry(entryName);
+                entryCaches.put(entryName, entry);
+                logger.debug("A new entry[name : '{}' , type : '{}'] was added into cache", entryName, entry.getClass().getName());
+            }
         }
-
         this.entryCaches.putAll(entryCaches);
     }
 
-    protected final Resilience4jContext<E> getContext(HttpServletRequest request, HandlerMethod handlerMethod) {
+    protected final Resilience4jContext<E> getContext(NativeWebRequest request, HandlerMethod handlerMethod) {
+        int scope = SCOPE_REQUEST;
         String attributeName = getModule().name();
-        Resilience4jContext<E> context = (Resilience4jContext<E>) request.getAttribute(attributeName);
+        Resilience4jContext<E> context = (Resilience4jContext<E>) request.getAttribute(attributeName, scope);
         if (context == null) {
             String name = getEntryName(handlerMethod);
             E entry = getEntry(name);
             context = new Resilience4jContext<>(name, entry, module);
-            request.setAttribute(attributeName, context);
+            request.setAttribute(attributeName, context, scope);
         }
         return context;
     }

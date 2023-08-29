@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.resilience4j.circuitbreaker.webmvc;
+package io.microsphere.spring.resilience4j.circuitbreaker.web;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.Registry;
 import io.microsphere.spring.resilience4j.common.Resilience4jContext;
-import io.microsphere.spring.resilience4j.common.webmvc.Resilience4jMethodHandlerInterceptor;
+import io.microsphere.spring.resilience4j.common.web.Resilience4jHandlerMethodInterceptor;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,27 +35,24 @@ import java.util.concurrent.TimeUnit;
  * @see CircuitBreaker
  * @since 1.0.0
  */
-public class CircuitBreakerHandlerInterceptor extends Resilience4jMethodHandlerInterceptor<CircuitBreaker, CircuitBreakerConfig> {
+public class CircuitBreakerHandlerMethodInterceptor extends Resilience4jHandlerMethodInterceptor<CircuitBreaker, CircuitBreakerConfig> {
 
-    public CircuitBreakerHandlerInterceptor(Registry<CircuitBreaker, CircuitBreakerConfig> registry) {
+    public CircuitBreakerHandlerMethodInterceptor(Registry<CircuitBreaker, CircuitBreakerConfig> registry) {
         super(registry);
     }
 
     @Override
-    protected void preHandle(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Throwable {
+    protected void beforeExecute(Resilience4jContext<CircuitBreaker> context, HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Throwable {
         context.start(CircuitBreaker::acquirePermission);
     }
 
     @Override
-    protected void postHandle(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) throws Throwable {
-        context.end((circuitBreaker, duration) -> circuitBreaker.onResult(duration, TimeUnit.NANOSECONDS, modelAndView));
-    }
-
-    @Override
-    protected void afterCompletion(Resilience4jContext<CircuitBreaker> context, HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) throws Throwable {
+    protected void afterExecute(Resilience4jContext<CircuitBreaker> context, HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Throwable {
         context.end((circuitBreaker, duration) -> {
-            if (ex != null) {
-                circuitBreaker.onError(duration, TimeUnit.NANOSECONDS, ex);
+            if (error == null) {
+                circuitBreaker.onResult(duration, TimeUnit.NANOSECONDS, args);
+            } else {
+                circuitBreaker.onError(duration, TimeUnit.NANOSECONDS, error);
             }
         });
     }
