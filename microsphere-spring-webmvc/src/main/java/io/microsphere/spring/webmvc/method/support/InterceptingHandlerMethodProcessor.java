@@ -43,6 +43,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +53,6 @@ import static io.microsphere.spring.util.BeanUtils.getOptionalBean;
 import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.getHandlerMethodArguments;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
@@ -215,8 +215,19 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                 initReturnTypeContextsCache(handlerMethod, handlers);
             }
         }
-        adapter.setArgumentResolvers(singletonList(this));
-        adapter.setReturnValueHandlers(singletonList(this));
+
+        List<HandlerMethodArgumentResolver> newResolvers = new ArrayList<>(resolvers.size() + 1);
+        // Current instance is the first element, others as the fallback if first can't resolve
+        newResolvers.add(this);
+        newResolvers.addAll(resolvers);
+
+        List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>(handlers.size() + 1);
+        // Current instance is the first element, others as the fallback if first can't handle
+        newHandlers.add(this);
+        newHandlers.addAll(handlers);
+
+        adapter.setArgumentResolvers(newResolvers);
+        adapter.setReturnValueHandlers(newHandlers);
     }
 
     private void initMethodParameterContextsCache(MethodParameter methodParameter, HandlerMethod handlerMethod,

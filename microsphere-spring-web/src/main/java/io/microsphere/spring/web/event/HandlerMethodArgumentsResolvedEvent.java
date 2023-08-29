@@ -5,6 +5,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * {@link HandlerMethod} Arguments Resolved Event
@@ -55,5 +56,13 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
      */
     public WebRequest getWebRequest() {
         return (WebRequest) getSource();
+    }
+
+    @Override
+    public String toString() {
+        return "HandlerMethodArgumentsResolvedEvent{" +
+                "handlerMethod=" + handlerMethod +
+                ", arguments=" + Arrays.toString(arguments) +
+                '}';
     }
 }

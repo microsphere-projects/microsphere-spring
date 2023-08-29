@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.interceptor.bootstrap;
 
+import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
@@ -52,6 +53,11 @@ public class IdempotentWebApplication {
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onEvent(WebEndpointMappingsReadyEvent event) {
         logger.info("WebEndpointMappingsReadyEvent's mappings : {}", event.getMappings());
+    }
+
+    @EventListener(HandlerMethodArgumentsResolvedEvent.class)
+    public void onEvent(HandlerMethodArgumentsResolvedEvent event) {
+        logger.info(event.toString());
     }
 
 }
