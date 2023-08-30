@@ -61,7 +61,8 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
     @Override
     public String toString() {
         return "HandlerMethodArgumentsResolvedEvent{" +
-                "handlerMethod=" + handlerMethod +
+                "source=" + getSource() +
+                ", handlerMethod=" + handlerMethod +
                 ", arguments=" + Arrays.toString(arguments) +
                 '}';
     }

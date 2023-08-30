@@ -21,7 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import static java.util.Collections.unmodifiableCollection;
 
@@ -50,5 +49,13 @@ public class WebEndpointMappingsReadyEvent extends ApplicationContextEvent {
 
     public Collection<WebEndpointMapping> getMappings() {
         return mappings;
+    }
+
+    @Override
+    public String toString() {
+        return "WebEndpointMappingsReadyEvent{" +
+                "source=" + source +
+                ", mappings=" + mappings +
+                '}';
     }
 }

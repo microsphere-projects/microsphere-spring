@@ -52,7 +52,7 @@ public class IdempotentWebApplication {
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onEvent(WebEndpointMappingsReadyEvent event) {
-        logger.info("WebEndpointMappingsReadyEvent's mappings : {}", event.getMappings());
+        logger.info(event.toString());
     }
 
     @EventListener(HandlerMethodArgumentsResolvedEvent.class)
