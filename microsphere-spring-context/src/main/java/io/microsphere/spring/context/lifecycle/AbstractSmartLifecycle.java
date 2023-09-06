@@ -34,7 +34,7 @@ public abstract class AbstractSmartLifecycle implements SmartLifecycle {
     /**
      * The latest phase
      */
-    public static final int LATEST_PHASE = Integer.MIN_VALUE;
+    public static final int LATEST_PHASE = Integer.MAX_VALUE;
 
     /**
      * Compatible with {@link SmartLifecycle#DEFAULT_PHASE} before Spring Framework 5.1
