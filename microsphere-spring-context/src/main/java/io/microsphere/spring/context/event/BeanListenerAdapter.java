@@ -31,6 +31,11 @@ import java.lang.reflect.Method;
 public class BeanListenerAdapter implements BeanListener {
 
     @Override
+    public boolean supports(String beanName) {
+        return true;
+    }
+
+    @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
     }
 

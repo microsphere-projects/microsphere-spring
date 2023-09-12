@@ -37,9 +37,7 @@ public interface BeanListener extends EventListener {
      * @param beanName the name of bean
      * @return If <code>false</code>, any method of bean lifecycle will not be called
      */
-    default boolean supports(String beanName) {
-        return true;
-    }
+    boolean supports(String beanName);
 
     /**
      * Handle the event when the {@link RootBeanDefinition BeanDefinition} is ready(merged)

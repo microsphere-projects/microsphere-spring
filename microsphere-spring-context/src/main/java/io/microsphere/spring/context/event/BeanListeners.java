@@ -90,6 +90,11 @@ class BeanListeners implements BeanListener {
 
 
     @Override
+    public boolean supports(String beanName) {
+        return true;
+    }
+
+    @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
         iterate(beanName, listener -> listener.onBeanDefinitionReady(beanName, mergedBeanDefinition), "onBeanDefinitionReady");
     }
