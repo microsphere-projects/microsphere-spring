@@ -53,6 +53,7 @@
         <module>microsphere-spring-guice</module>
         <module>microsphere-spring-test</module>
         <module>microspehere-spring-zookeeper-config</module>
+        <module>microspehere-spring-etcd-config</module>
     </modules>
 
     <properties>
