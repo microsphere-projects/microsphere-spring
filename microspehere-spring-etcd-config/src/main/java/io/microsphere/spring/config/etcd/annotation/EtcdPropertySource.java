@@ -44,7 +44,7 @@ import java.util.Comparator;
 @Inherited
 @Documented
 @ResourcePropertySource
-@Import(EnableEtcdConfigPropertySourceLoader.class)
+@Import(EtcdConfigPropertySourceLoader.class)
 public @interface EtcdPropertySource {
 
     /**

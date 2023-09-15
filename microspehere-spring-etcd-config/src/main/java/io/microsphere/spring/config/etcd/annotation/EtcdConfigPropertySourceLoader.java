@@ -40,7 +40,7 @@ import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class EnableEtcdConfigPropertySourceLoader extends ResourcePropertySourceLoader<EtcdPropertySource, EtcdPropertySourceAttributes> {
+public class EtcdConfigPropertySourceLoader extends ResourcePropertySourceLoader<EtcdPropertySource, EtcdPropertySourceAttributes> {
 
     private static final Map<String, Client> clientsCache;
 
