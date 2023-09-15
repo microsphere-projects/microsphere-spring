@@ -70,7 +70,7 @@ public @interface ResourcePropertySource {
      * @see org.springframework.core.env.PropertySource#getName()
      * @see org.springframework.core.io.Resource#getDescription()
      */
-    @AliasFor(annotation = PropertySourceExtension.class, attribute = "name")
+    @AliasFor(annotation = PropertySourceExtension.class)
     String name() default "";
 
     /**
@@ -79,7 +79,7 @@ public @interface ResourcePropertySource {
      *
      * @return default value is <code>false</code>
      */
-    @AliasFor(annotation = PropertySourceExtension.class, attribute = "first")
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean first() default false;
 
     /**
@@ -91,7 +91,7 @@ public @interface ResourcePropertySource {
      *
      * @return the name of {@link org.springframework.core.env.PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = PropertySourceExtension.class, attribute = "before")
+    @AliasFor(annotation = PropertySourceExtension.class)
     String before() default "";
 
     /**
@@ -103,11 +103,11 @@ public @interface ResourcePropertySource {
      *
      * @return the name of {@link org.springframework.core.env.PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = PropertySourceExtension.class, attribute = "after")
+    @AliasFor(annotation = PropertySourceExtension.class)
     String after() default "";
 
     /**
-     * Indicate the resource location(s) of the properties file to be loaded.
+     * Indicate the resource location(s) of the property source file to be loaded.
      * <p>Both traditional and XML-based properties file formats are supported
      * &mdash; for example, {@code "classpath:/com/myco/app.properties"}
      * or {@code "file:/path/to/file.xml"}.
@@ -121,6 +121,7 @@ public @interface ResourcePropertySource {
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards
+     * or the same resource names with the different absolute paths.
      * <p>For example, {@code "classpath:/com/myco/*.properties"}, suppose there are two resources named
      * "a.properties" and "b.properties" where two instances of {@link Resource} will be resolved, they are
      * the sources of {@link org.springframework.core.env.PropertySource}, thus it has to sort

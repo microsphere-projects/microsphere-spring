@@ -56,7 +56,7 @@ public @interface YamlPropertySource {
      * @see org.springframework.core.env.PropertySource#getName()
      * @see org.springframework.core.io.Resource#getDescription()
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "name")
+    @AliasFor(annotation = ResourcePropertySource.class)
     String name() default "";
 
     /**
@@ -65,7 +65,7 @@ public @interface YamlPropertySource {
      *
      * @return default value is <code>false</code>
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "first")
+    @AliasFor(annotation = ResourcePropertySource.class)
     boolean first() default false;
 
     /**
@@ -77,7 +77,7 @@ public @interface YamlPropertySource {
      *
      * @return the name of {@link org.springframework.core.env.PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "before")
+    @AliasFor(annotation = ResourcePropertySource.class)
     String before() default "";
 
     /**
@@ -89,7 +89,7 @@ public @interface YamlPropertySource {
      *
      * @return the name of {@link org.springframework.core.env.PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "after")
+    @AliasFor(annotation = ResourcePropertySource.class)
     String after() default "";
 
     /**
@@ -102,7 +102,7 @@ public @interface YamlPropertySource {
      * <p>Each location will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "value")
+    @AliasFor(annotation = ResourcePropertySource.class)
     String[] value() default {};
 
     /**
@@ -117,7 +117,7 @@ public @interface YamlPropertySource {
      *
      * @see DefaultResourceComparator
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "resourceComparator")
+    @AliasFor(annotation = ResourcePropertySource.class)
     Class<? extends Comparator<Resource>> resourceComparator() default DefaultResourceComparator.class;
 
     /**
@@ -126,13 +126,13 @@ public @interface YamlPropertySource {
      * <p>{@code true} is appropriate if the YAML file is completely optional.
      * <p>Default is {@code false}.
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "ignoreResourceNotFound")
+    @AliasFor(annotation = ResourcePropertySource.class)
     boolean ignoreResourceNotFound() default false;
 
     /**
      * A specific character encoding for the given resources.
      * <p>Default is "UTF-8"
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "encoding")
+    @AliasFor(annotation = ResourcePropertySource.class)
     String encoding() default "UTF-8";
 }
