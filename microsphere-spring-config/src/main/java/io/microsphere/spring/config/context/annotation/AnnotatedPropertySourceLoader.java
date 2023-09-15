@@ -72,7 +72,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
         this.annotationType = resolveAnnotationType();
     }
 
-    private Class<A> resolveAnnotationType() {
+    protected Class<A> resolveAnnotationType() {
         ResolvableType type = ResolvableType.forType(this.getClass());
         ResolvableType superType = type.as(AnnotatedPropertySourceLoader.class);
         return (Class<A>) superType.resolveGeneric(0);

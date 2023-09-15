@@ -46,27 +46,27 @@ public class PropertySourceExtensionAttributes<A extends Annotation> extends Res
         super(another, annotationType, propertyResolver);
     }
 
-    public String getName() {
+    public final String getName() {
         return getString("name");
     }
 
-    public boolean isAutoRefreshed() {
+    public final boolean isAutoRefreshed() {
         return getBoolean("autoRefreshed");
     }
 
-    public boolean isFirstPropertySource() {
+    public final boolean isFirstPropertySource() {
         return getBoolean("first");
     }
 
-    public String getBeforePropertySourceName() {
+    public final String getBeforePropertySourceName() {
         return getString("before");
     }
 
-    public String getAfterPropertySourceName() {
+    public final String getAfterPropertySourceName() {
         return getString("after");
     }
 
-    public Class<A> getAnnotationType() {
+    public final Class<A> getAnnotationType() {
         return annotationType();
     }
 
