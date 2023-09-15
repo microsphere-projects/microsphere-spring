@@ -23,6 +23,7 @@
     </properties>
 
     <dependencies>
+
         <!-- Microsphere Spring Config -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
