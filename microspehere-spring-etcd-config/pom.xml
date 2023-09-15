@@ -19,7 +19,7 @@
     <description>Microsphere Spring etcd Config</description>
 
     <properties>
-        <jetcd.version>0.6.1</jetcd.version>
+        <jetcd.version>0.5.0</jetcd.version>
     </properties>
 
     <dependencies>

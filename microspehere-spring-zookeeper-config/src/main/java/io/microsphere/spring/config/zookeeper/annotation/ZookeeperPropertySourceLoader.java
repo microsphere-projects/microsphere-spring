@@ -48,15 +48,15 @@ public class ZookeeperPropertySourceLoader extends ResourcePropertySourceLoader<
 
     static {
         clientsCache = new HashMap<>();
-        addShutdownHookCallback(new Runnable() {
-            @Override
-            public void run() {
-                // Close clients
-                close(clientsCache.values());
-                // Clear clients cache when JVM is shutdown
-                clientsCache.clear();
-            }
-        });
+//        addShutdownHookCallback(new Runnable() {
+//            @Override
+//            public void run() {
+//                // Close clients
+//                close(clientsCache.values());
+//                // Clear clients cache when JVM is shutdown
+//                clientsCache.clear();
+//            }
+//        });
     }
 
     @Override

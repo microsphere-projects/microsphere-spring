@@ -16,9 +16,8 @@
  */
 package io.microsphere.spring.config.zookeeper.annotation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.net.URLUtils;
-import io.microsphere.spring.config.zookeeper.metadata.ConfigEntity;
+import io.microsphere.spring.config.env.support.JsonPropertySourceFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryForever;
@@ -35,6 +34,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StreamUtils;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,7 +45,6 @@ import static org.junit.Assert.assertEquals;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ZookeeperPropertySource(paths = "/META-INF/zookeeper/test.json")
 @ContextConfiguration(classes = {
         ZookeeperPropertySourceTest.class,
         ZookeeperPropertySourceTest.Config.class
@@ -59,7 +59,7 @@ public class ZookeeperPropertySourceTest {
     @BeforeClass
     public static void init() throws Exception {
         ZookeeperPropertySource annotation =
-                ZookeeperPropertySourceTest.class.getAnnotation(ZookeeperPropertySource.class);
+                ZookeeperPropertySourceTest.Config.class.getAnnotation(ZookeeperPropertySource.class);
         client = CuratorFrameworkFactory.builder()
                 .connectString(annotation.connectString())
                 .retryPolicy(new RetryForever(300))
@@ -67,7 +67,7 @@ public class ZookeeperPropertySourceTest {
 
         client.start();
 
-        String rootPath = "/";
+        String rootPath = "/configs";
 
         // 创建根路径，如果不存在
         resolveDir(rootPath);
@@ -100,12 +100,6 @@ public class ZookeeperPropertySourceTest {
         }
     }
 
-    private static void writeConfig(String path, ConfigEntity configEntity) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        byte[] data = objectMapper.writeValueAsBytes(configEntity);
-        writeConfig(path, data);
-    }
-
     private static void writeConfig(String path, byte[] data) throws Exception {
         if (client.checkExists().forPath(path) == null) {
             client.create().forPath(path, data);
@@ -133,18 +127,15 @@ public class ZookeeperPropertySourceTest {
     public void test() throws Exception {
         assertEquals("mercyblitz", environment.getProperty("my.name"));
 
-        ConfigEntity configEntity = new ConfigEntity();
-        ConfigEntity.Header header = new ConfigEntity.Header();
-        header.setContentType("text/properties");
-        configEntity.setHeader(header);
-        configEntity.setBody("my.name: Mercy Ma");
-
-        writeConfig("/configs/test.json", configEntity);
+        writeConfig("/configs/test.json", "my.name: Mercy Ma".getBytes(StandardCharsets.UTF_8));
         Thread.sleep(1 * 100);
         assertEquals("Mercy Ma", environment.getProperty("my.name"));
     }
 
-    @ZookeeperPropertySource
+    @ZookeeperPropertySource(
+            connectString = "127.0.0.1:2181",
+            value = "/configs/test.json",
+            factory = JsonPropertySourceFactory.class)
     static class Config {
 
     }

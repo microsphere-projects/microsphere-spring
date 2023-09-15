@@ -44,7 +44,7 @@ import java.util.Comparator;
 @Inherited
 @Documented
 @ResourcePropertySource
-@Import(EtcdConfigPropertySourceLoader.class)
+@Import(EtcdPropertySourceLoader.class)
 public @interface EtcdPropertySource {
 
     /**
@@ -106,6 +106,7 @@ public @interface EtcdPropertySource {
      * <p>Each location will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
+    @AliasFor(annotation = ResourcePropertySource.class)
     String[] value() default {};
 
     /**
@@ -163,11 +164,4 @@ public @interface EtcdPropertySource {
      * @return no specific as default
      */
     String target() default "";
-
-    /**
-     * The root path of all configurations
-     *
-     * @return non-null
-     */
-    String rootPath() default "/configs";
 }

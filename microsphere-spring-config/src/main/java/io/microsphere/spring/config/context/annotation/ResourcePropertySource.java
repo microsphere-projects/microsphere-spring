@@ -55,13 +55,12 @@ import java.util.Comparator;
  * @see Configuration
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
 @PropertySourceExtension
 @Repeatable(ResourcePropertySources.class)
-@Import(ResourcePropertySourceLoader.class)
 public @interface ResourcePropertySource {
 
     /**
@@ -72,6 +71,15 @@ public @interface ResourcePropertySource {
      */
     @AliasFor(annotation = PropertySourceExtension.class)
     String name() default "";
+
+    /**
+     * It indicates the property source is auto-refreshed when the configuration is
+     * changed.
+     *
+     * @return default value is <code>false</code>
+     */
+    @AliasFor(annotation = PropertySourceExtension.class)
+    boolean autoRefreshed() default false;
 
     /**
      * Indicates current {@link org.springframework.core.env.PropertySource} is first order or not If specified ,
