@@ -52,6 +52,7 @@
         <module>microsphere-spring-resilience4j</module>
         <module>microsphere-spring-guice</module>
         <module>microsphere-spring-test</module>
+        <module>microspehere-spring-zookeeper-config</module>
     </modules>
 
     <properties>

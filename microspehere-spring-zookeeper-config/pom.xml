@@ -2,23 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.microsphere-projects</groupId>
         <artifactId>microsphere-spring-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../microsphere-spring-parent/pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.microsphere-projects</groupId>
-    <artifactId>microsphere-spring-config</artifactId>
+    <artifactId>microspehere-spring-zookeeper-config</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring Config</name>
-    <description>Microsphere Spring Config</description>
+    <name>Microsphere Projects :: Spring Config :: Zookeeper</name>
+    <description>Microsphere Spring Zookeeper Config</description>
+
+    <properties>
+        <curator.version>5.4.0</curator.version>
+    </properties>
 
     <dependencies>
+        <!-- Microsphere Spring Config -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-spring-config</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
         <!-- Spring Framework -->
         <dependency>
@@ -31,13 +41,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <!-- Microsphere Spring Context -->
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-context</artifactId>
-            <version>${revision}</version>
         </dependency>
 
         <!-- Jackson -->
@@ -57,6 +60,14 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Apache Curator -->
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>${curator.version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -86,4 +97,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>
