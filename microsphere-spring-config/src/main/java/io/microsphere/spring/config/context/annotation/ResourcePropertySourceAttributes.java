@@ -35,14 +35,6 @@ import java.util.Map;
  */
 public class ResourcePropertySourceAttributes<A extends Annotation> extends PropertySourceExtensionAttributes<A> {
 
-    public ResourcePropertySourceAttributes(A annotation, PropertyResolver propertyResolver) {
-        super(annotation, propertyResolver);
-    }
-
-    public ResourcePropertySourceAttributes(AnnotationAttributes another, PropertyResolver propertyResolver) {
-        super(another, propertyResolver);
-    }
-
     public ResourcePropertySourceAttributes(Map<String, Object> another, Class<A> annotationType, PropertyResolver propertyResolver) {
         super(another, annotationType, propertyResolver);
     }
