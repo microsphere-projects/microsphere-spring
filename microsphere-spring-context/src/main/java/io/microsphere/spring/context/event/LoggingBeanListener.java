@@ -36,6 +36,11 @@ public class LoggingBeanListener implements BeanListener {
     private static final Logger logger = LoggerFactory.getLogger(LoggingBeanListener.class);
 
     @Override
+    public boolean supports(String beanName) {
+        return true;
+    }
+
+    @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
         logger.info("onBeanDefinitionReady - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
     }
