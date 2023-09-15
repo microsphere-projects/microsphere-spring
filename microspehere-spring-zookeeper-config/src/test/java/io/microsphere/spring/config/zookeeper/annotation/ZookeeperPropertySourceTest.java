@@ -38,18 +38,18 @@ import org.springframework.util.StreamUtils;
 import static org.junit.Assert.assertEquals;
 
 /**
- * {@link EnableZookeeperConfig} Test
+ * {@link ZookeeperPropertySource} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@EnableZookeeperConfig
+@ZookeeperPropertySource(paths = "/META-INF/zookeeper/test.json")
 @ContextConfiguration(classes = {
-        EnableZookeeperConfigTest.class,
-        EnableZookeeperConfigTest.Config.class
+        ZookeeperPropertySourceTest.class,
+        ZookeeperPropertySourceTest.Config.class
 })
-public class EnableZookeeperConfigTest {
+public class ZookeeperPropertySourceTest {
 
     private static CuratorFramework client;
 
@@ -58,8 +58,8 @@ public class EnableZookeeperConfigTest {
 
     @BeforeClass
     public static void init() throws Exception {
-        EnableZookeeperConfig annotation =
-                EnableZookeeperConfigTest.class.getAnnotation(EnableZookeeperConfig.class);
+        ZookeeperPropertySource annotation =
+                ZookeeperPropertySourceTest.class.getAnnotation(ZookeeperPropertySource.class);
         client = CuratorFrameworkFactory.builder()
                 .connectString(annotation.connectString())
                 .retryPolicy(new RetryForever(300))
@@ -67,7 +67,7 @@ public class EnableZookeeperConfigTest {
 
         client.start();
 
-        String rootPath = annotation.rootPath();
+        String rootPath = "/";
 
         // 创建根路径，如果不存在
         resolveDir(rootPath);
@@ -144,7 +144,7 @@ public class EnableZookeeperConfigTest {
         assertEquals("Mercy Ma", environment.getProperty("my.name"));
     }
 
-    @EnableZookeeperConfig
+    @ZookeeperPropertySource
     static class Config {
 
     }

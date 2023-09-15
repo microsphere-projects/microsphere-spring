@@ -16,28 +16,24 @@
  */
 package io.microsphere.spring.config.zookeeper.annotation;
 
-import io.microsphere.spring.config.context.annotation.ExtendablePropertySourceLoader;
-import io.microsphere.spring.config.context.annotation.PropertySourceExtensionAttributes;
-import io.microsphere.spring.config.zookeeper.env.ZookeeperPropertySource;
+import io.microsphere.spring.config.context.annotation.ResourcePropertySourceLoader;
+import io.microsphere.util.ArrayUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.RetryForever;
-import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertySource;
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.net.URLUtils.buildURI;
 import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 
 /**
- * {@link EnableZookeeperConfig} {@link PropertySource} Loader to load the Zookeeper Configuration:
+ * {@link ZookeeperPropertySource} {@link PropertySource} Loader to load the Zookeeper Configuration:
  * <ul>
  *     <li>Create a CuratorFramework client based on the @EnableZookeeperConfig meta information, connection string, and root path</li>
  *     <li>Traverse all PropertySource child nodes according to the root path rootPath</li>
@@ -46,7 +42,7 @@ import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class EnableZookeeperConfigPropertySourceLoader extends ExtendablePropertySourceLoader<EnableZookeeperConfig> {
+public class ZookeeperPropertySourceLoader extends ResourcePropertySourceLoader<ZookeeperPropertySource, ZookeeperPropertySourceAttributes> {
 
     private static final Map<String, CuratorFramework> clientsCache;
 
@@ -64,45 +60,30 @@ public class EnableZookeeperConfigPropertySourceLoader extends ExtendablePropert
     }
 
     @Override
-    protected PropertySource<?> loadPropertySource(PropertySourceExtensionAttributes<EnableZookeeperConfig> attributes,
-                                                   String propertySourceName, AnnotationMetadata metadata) throws Throwable {
+    protected Resource[] getResources(ZookeeperPropertySourceAttributes zookeeperPropertySourceAttributes, String propertySourceName, String resourcePath) throws Throwable {
+        CuratorFramework client = getClient(zookeeperPropertySourceAttributes);
 
-        String rootPath = attributes.getString("rootPath");
+        boolean resourcePathNotExisted = client.checkExists().forPath(resourcePath) == null;
 
-        CuratorFramework client = getClient(attributes, rootPath);
+        boolean autoRefreshed = zookeeperPropertySourceAttributes.isAutoRefreshed();
 
-        CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
-        boolean rootPathNotExisted = client.checkExists().forPath(rootPath) == null;
-
-        boolean autoRefreshed = attributes.isAutoRefreshed();
-
-        if (rootPathNotExisted) { // Not Existed
+        if (resourcePathNotExisted) { // Not Existed
             if (!autoRefreshed) {
                 return null;
             }
             // Create Root Path
-            client.create().forPath(rootPath);
+            client.create().forPath(resourcePath);
         }
 
-        GetChildrenBuilder childrenBuilder = client.getChildren();
+        byte[] bytes = client.getData().forPath(resourcePath);
 
-        List<String> configBasePaths = childrenBuilder.forPath(rootPath);
+        return ArrayUtils.of(new ByteArrayResource(bytes, "The zookeeper configuration from the path : " + resourcePath));
 
-        for (String configBasePath : configBasePaths) {
-            String configPath = buildURI(rootPath, configBasePath);
-            ZookeeperPropertySource zookeeperPropertySource = createPropertySource(configPath, client, autoRefreshed);
-            compositePropertySource.addPropertySource(zookeeperPropertySource);
-        }
-        return compositePropertySource;
     }
 
-    private ZookeeperPropertySource createPropertySource(String configPath, CuratorFramework client, boolean autoRefreshed) {
-        return new ZookeeperPropertySource(configPath, client, autoRefreshed);
-    }
-
-    private CuratorFramework getClient(PropertySourceExtensionAttributes<EnableZookeeperConfig> propertySourceExtensionAttributes, String rootPath) {
-        String connectString = propertySourceExtensionAttributes.getString("connectString");
-        String key = connectString + rootPath;
+    private CuratorFramework getClient(ZookeeperPropertySourceAttributes zookeeperPropertySourceAttributes) {
+        String connectString = zookeeperPropertySourceAttributes.getConnectString();
+        String key = connectString;
         return clientsCache.computeIfAbsent(key, k -> {
             CuratorFramework client = CuratorFrameworkFactory.builder()
                     .connectString(connectString)
