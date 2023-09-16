@@ -30,9 +30,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -41,6 +41,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Abstract {@link ImportSelector} class to load the {@link PropertySource PropertySource}
@@ -62,15 +64,6 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     public PropertySourceExtensionLoader() {
         super();
         this.extensionAttributesType = resolveExtensionAttributesType();
-    }
-
-    @Override
-    protected Class<A> resolveAnnotationType() {
-        Class<A> annotationType = super.resolveAnnotationType();
-        if (Annotation.class.equals(annotationType)) {
-            annotationType = (Class<A>) PropertySourceExtension.class;
-        }
-        return annotationType;
     }
 
     protected Class<EA> resolveExtensionAttributesType() {
@@ -104,12 +97,12 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
                 propertySources.addFirst(propertySource);
             } else {
                 String relativePropertySourceName = extensionAttributes.getAfterPropertySourceName();
-                if (StringUtils.hasText(relativePropertySourceName)) {
+                if (hasText(relativePropertySourceName)) {
                     propertySources.addAfter(relativePropertySourceName, propertySource);
                 } else {
                     relativePropertySourceName = extensionAttributes.getBeforePropertySourceName();
                 }
-                if (StringUtils.hasText(relativePropertySourceName)) {
+                if (hasText(relativePropertySourceName)) {
                     propertySources.addBefore(relativePropertySourceName, propertySource);
                 } else {
                     propertySources.addLast(propertySource);
@@ -119,7 +112,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     }
 
     /**
-     * Build an instance of {@link EA}
+     * Builds an instance of {@link EA}
      *
      * @param annotationType          the type of {@link A}
      * @param extensionAttributesType the type of {@link EA}
@@ -134,30 +127,32 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         return (EA) constructor.newInstance(attributes, annotationType, environment);
     }
 
-    protected PropertySource<?> loadPropertySource(EA extensionAttributes, String propertySourceName,
-                                                   AnnotationMetadata metadata) throws Throwable {
-        String[] resourceLocations = extensionAttributes.getValue();
+    protected final PropertySource<?> loadPropertySource(EA extensionAttributes, String propertySourceName,
+                                                         AnnotationMetadata metadata) throws Throwable {
+        String[] resourceValues = extensionAttributes.getValue();
+
         boolean ignoreResourceNotFound = extensionAttributes.isIgnoreResourceNotFound();
 
-        if (ObjectUtils.isEmpty(resourceLocations)) {
+        if (ObjectUtils.isEmpty(resourceValues)) {
             if (ignoreResourceNotFound) {
                 return null;
             }
             throw new IllegalArgumentException("The 'value' attribute must be present at the annotation : @" + getAnnotationType().getName());
         }
 
-        Comparator<Resource> resourceComparator = createInstance(extensionAttributes, PropertySourceExtensionAttributes::getResourceComparatorClass);
-        PropertySourceFactory factory = createInstance(extensionAttributes, PropertySourceExtensionAttributes::getPropertySourceFactoryClass);
+        Comparator<Resource> resourceComparator = createResourceComparator(extensionAttributes, propertySourceName, metadata);
+
+        PropertySourceFactory factory = createPropertySourceFactory(extensionAttributes, propertySourceName, metadata);
 
         CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
 
         List<Resource> resourcesList = new LinkedList<>();
 
-        for (String resourceLocation : resourceLocations) {
+        for (String resourceValue : resourceValues) {
             Resource[] resources = null;
 
             try {
-                resources = getResources(extensionAttributes, propertySourceName, resourceLocation);
+                resources = getResources(extensionAttributes, propertySourceName, resourceValue);
             } catch (Throwable e) {
                 if (!ignoreResourceNotFound) {
                     throw e;
@@ -182,6 +177,10 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
         String encoding = extensionAttributes.getEncoding();
 
+        if (extensionAttributes.isAutoRefreshed()) {
+            configureAutoRefreshedResources(extensionAttributes, propertySourceName, resourceValues, resourcesList);
+        }
+
         for (int i = 0; i < resourcesList.size(); i++) {
             Resource resource = resourcesList.get(i);
             EncodedResource encodedResource = new EncodedResource(resource, encoding);
@@ -191,6 +190,49 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         }
 
         return compositePropertySource;
+    }
+
+    /**
+     * Creates an instance of {@link PropertySourceFactory}
+     *
+     * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
+     * @param propertySourceName  {@link PropertySourceExtension#name()}
+     * @param metadata            {@link AnnotationMetadata}
+     * @return
+     * @see PropertySourceExtension#factory()
+     * @see PropertySourceFactory
+     */
+    @NonNull
+    private PropertySourceFactory createPropertySourceFactory(EA extensionAttributes, String propertySourceName, AnnotationMetadata metadata) {
+        return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getPropertySourceFactoryClass);
+    }
+
+    /**
+     * Creates an instance of {@link Comparator} for {@link Resource}
+     *
+     * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
+     * @param propertySourceName  {@link PropertySourceExtension#name()}
+     * @param metadata            {@link AnnotationMetadata}
+     * @return an instance of {@link Comparator} for {@link Resource}
+     * @see PropertySourceExtension#resourceComparator()
+     * @see Comparator
+     */
+    @NonNull
+    protected Comparator<Resource> createResourceComparator(EA extensionAttributes, String propertySourceName, AnnotationMetadata metadata) {
+        return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getResourceComparatorClass);
+    }
+
+    /**
+     * Configure the listeners for Auto-Refreshed Resources when
+     * {@link PropertySourceExtension#autoRefreshed()} is <code>true</code>
+     *
+     * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
+     * @param propertySourceName  {@link PropertySourceExtension#name()}
+     * @param resourceValues      {@link PropertySourceExtension#value() the values of resources}
+     * @param resourcesList       The resolved {@link Resource resources} list
+     */
+    protected void configureAutoRefreshedResources(EA extensionAttributes, String propertySourceName, String[] resourceValues, List<Resource> resourcesList) {
+
     }
 
     /**

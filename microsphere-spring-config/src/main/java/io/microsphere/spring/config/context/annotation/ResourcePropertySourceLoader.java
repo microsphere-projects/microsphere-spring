@@ -16,21 +16,22 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.spring.config.env.support.YamlPropertySourceFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternUtils;
+
+import java.util.List;
+
+import static org.springframework.core.io.support.ResourcePatternUtils.getResourcePatternResolver;
 
 /**
- * The Internal {@link AnnotatedPropertySourceLoader} Class for {@link ResourcePropertySource}
+ * The {@link PropertySourceExtensionLoader} Class for {@link ResourcePropertySource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource
- * @see ResourcePropertySourceAttributes
- * @see YamlPropertySourceFactory
+ * @see PropertySourceExtensionAttributes
  * @since 1.0.0
  */
 public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource, PropertySourceExtensionAttributes<ResourcePropertySource>> implements ResourceLoaderAware, BeanClassLoaderAware {
@@ -39,25 +40,21 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     private ClassLoader classLoader;
 
-    /**
-     * Resolve the given location pattern into Resource objects.
-     * <p>
-     * The subclass can override this method for customization
-     *
-     * @param extensionAttributes {@link PropertySourceExtensionAttributes} for {@link ResourcePropertySource @ResourcePropertySource}
-     * @param propertySourceName  {@link ResourcePropertySource#name()}
-     * @param resourceValue       the resource value to resolve
-     * @return non-null
-     * @throws Throwable
-     */
+    @Override
     protected Resource[] getResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, String propertySourceName, String resourceValue)
             throws Throwable {
         return resourcePatternResolver.getResources(resourceValue);
     }
 
     @Override
+    protected void configureAutoRefreshedResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
+                                                   String propertySourceName, String[] resourceValues, List<Resource> resourcesList) {
+
+    }
+
+    @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
+        this.resourcePatternResolver = getResourcePatternResolver(resourceLoader);
     }
 
     @Override
