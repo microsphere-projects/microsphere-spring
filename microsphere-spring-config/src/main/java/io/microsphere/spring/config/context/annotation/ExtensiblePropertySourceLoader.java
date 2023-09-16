@@ -16,21 +16,30 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
+import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.Nullable;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Abstract {@link ImportSelector} class to load the {@link PropertySource PropertySource}
@@ -44,12 +53,12 @@ import java.util.Map;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class ExtendablePropertySourceLoader<A extends Annotation, EA extends PropertySourceExtensionAttributes<A>>
+public abstract class ExtensiblePropertySourceLoader<A extends Annotation, EA extends PropertySourceExtensionAttributes<A>>
         extends AnnotatedPropertySourceLoader<A> {
 
     private final Class<EA> extensionAttributesType;
 
-    public ExtendablePropertySourceLoader() {
+    public ExtensiblePropertySourceLoader() {
         super();
         this.extensionAttributesType = resolveExtensionAttributesType();
     }
@@ -65,7 +74,7 @@ public abstract class ExtendablePropertySourceLoader<A extends Annotation, EA ex
 
     protected Class<EA> resolveExtensionAttributesType() {
         ResolvableType type = ResolvableType.forType(this.getClass());
-        ResolvableType superType = type.as(ExtendablePropertySourceLoader.class);
+        ResolvableType superType = type.as(ExtensiblePropertySourceLoader.class);
         return (Class<EA>) superType.resolveGeneric(1);
     }
 
@@ -124,17 +133,80 @@ public abstract class ExtendablePropertySourceLoader<A extends Annotation, EA ex
         return (EA) constructor.newInstance(attributes, annotationType, environment);
     }
 
+    protected PropertySource<?> loadPropertySource(EA extensionAttributes, String propertySourceName,
+                                                   AnnotationMetadata metadata) throws Throwable {
+        String[] resourceLocations = extensionAttributes.getValue();
+        boolean ignoreResourceNotFound = extensionAttributes.isIgnoreResourceNotFound();
+
+        if (ObjectUtils.isEmpty(resourceLocations)) {
+            if (ignoreResourceNotFound) {
+                return null;
+            }
+            throw new IllegalArgumentException("The 'value' attribute must be present at the annotation : @" + getAnnotationType().getName());
+        }
+
+        Comparator<Resource> resourceComparator = createInstance(extensionAttributes, extensionAttributes::getResourceComparatorClass);
+        PropertySourceFactory factory = createInstance(extensionAttributes, extensionAttributes::getPropertySourceFactoryClass);
+
+        CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
+
+        List<Resource> resourcesList = new LinkedList<>();
+
+        for (String resourceLocation : resourceLocations) {
+            Resource[] resources = null;
+
+            try {
+                resources = getResources(extensionAttributes, propertySourceName, resourceLocation);
+            } catch (Throwable e) {
+                if (!ignoreResourceNotFound) {
+                    throw e;
+                }
+            }
+
+            if (resources == null) {
+                // Nullable result
+                continue;
+            }
+
+            // iterate
+            int length = resources.length;
+            for (int i = 0; i < length; i++) {
+                Resource resource = resources[i];
+                resourcesList.add(resource);
+            }
+        }
+
+        // sort
+        resourcesList.sort(resourceComparator);
+
+        String encoding = extensionAttributes.getEncoding();
+
+        for (int i = 0; i < resourcesList.size(); i++) {
+            Resource resource = resourcesList.get(i);
+            EncodedResource encodedResource = new EncodedResource(resource, encoding);
+            String name = propertySourceName + "#" + i;
+            PropertySource propertySource = factory.createPropertySource(name, encodedResource);
+            compositePropertySource.addPropertySource(propertySource);
+        }
+
+        return compositePropertySource;
+    }
+
     /**
-     * Load the {@link PropertySource}
+     * Resolve the given location pattern into Resource objects.
      *
      * @param extensionAttributes {@link EA}
-     * @param propertySourceName  the name of {@link PropertySource}
-     * @param metadata            {@link AnnotationMetadata}
-     * @return <code>null</code> if the {@link PropertySource} can't be loaded
-     * @throws Throwable the failure of the loading
+     * @param propertySourceName  {@link PropertySourceExtension#name()}
+     * @param resourceValue       the resource value to resolve
+     * @return non-null
+     * @throws Throwable
      */
-    @Nullable
-    protected abstract PropertySource<?> loadPropertySource(EA extensionAttributes,
-                                                            String propertySourceName, AnnotationMetadata metadata) throws Throwable;
+    protected abstract Resource[] getResources(EA extensionAttributes, String propertySourceName, String resourceValue)
+            throws Throwable;
+
+    protected <T> T createInstance(AnnotationAttributes attributes, Supplier<Class<T>> typeSupplier) {
+        Class<T> type = typeSupplier.get();
+        return BeanUtils.instantiateClass(type);
+    }
 
 }

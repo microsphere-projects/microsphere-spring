@@ -22,7 +22,7 @@ import io.etcd.jetcd.ClientBuilder;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.kv.GetResponse;
-import io.microsphere.spring.config.context.annotation.ResourcePropertySourceLoader;
+import io.microsphere.spring.config.context.annotation.ExtensiblePropertySourceLoader;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -44,7 +44,7 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class EtcdPropertySourceLoader extends ResourcePropertySourceLoader<EtcdPropertySource, EtcdPropertySourceAttributes> {
+public class EtcdPropertySourceLoader extends ExtensiblePropertySourceLoader<EtcdPropertySource, EtcdPropertySourceAttributes> {
 
     private static final Map<String, Client> clientsCache;
 
@@ -63,13 +63,13 @@ public class EtcdPropertySourceLoader extends ResourcePropertySourceLoader<EtcdP
 
     @Override
     protected Resource[] getResources(EtcdPropertySourceAttributes etcdPropertySourceAttributes,
-                                      String propertySourceName, String resourceLocation) throws Throwable {
+                                      String propertySourceName, String resourceValue) throws Throwable {
 
         Client client = getClient(etcdPropertySourceAttributes);
 
         KV kv = client.getKVClient();
         String encoding = etcdPropertySourceAttributes.getEncoding();
-        ByteSequence key = ByteSequence.from(resourceLocation.getBytes(encoding));
+        ByteSequence key = ByteSequence.from(resourceValue.getBytes(encoding));
         CompletableFuture<GetResponse> future = kv.get(key);
         GetResponse getResponse = future.get();
         List<KeyValue> keyValues = getResponse.getKvs();

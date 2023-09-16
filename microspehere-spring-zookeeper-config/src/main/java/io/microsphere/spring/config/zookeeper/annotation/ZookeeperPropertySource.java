@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.zookeeper.annotation;
 
-import io.microsphere.spring.config.context.annotation.ResourcePropertySource;
+import io.microsphere.spring.config.context.annotation.PropertySourceExtension;
 import io.microsphere.spring.config.env.support.DefaultResourceComparator;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
@@ -39,18 +39,18 @@ import java.util.Comparator;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@ResourcePropertySource
+@PropertySourceExtension
 @Import(ZookeeperPropertySourceLoader.class)
 public @interface ZookeeperPropertySource {
 
     /**
      * The name of Zookeeper {@link PropertySource}
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String name() default "";
 
     /**
@@ -59,7 +59,7 @@ public @interface ZookeeperPropertySource {
      *
      * @return default value is <code>true</code>
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean autoRefreshed() default true;
 
     /**
@@ -68,7 +68,7 @@ public @interface ZookeeperPropertySource {
      *
      * @return default value is <code>false</code>
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean first() default false;
 
     /**
@@ -80,7 +80,7 @@ public @interface ZookeeperPropertySource {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String before() default "";
 
     /**
@@ -92,7 +92,7 @@ public @interface ZookeeperPropertySource {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String after() default "";
 
     /**
@@ -105,7 +105,7 @@ public @interface ZookeeperPropertySource {
      * <p>Each location will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
-    @AliasFor(annotation = ResourcePropertySource.class, attribute = "value")
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
     String[] value() default {};
 
 //    /**
@@ -122,7 +122,7 @@ public @interface ZookeeperPropertySource {
 //    String[] paths();
 
     /**
-     * Indicate the resources to be sorted when {@link #paths()} specifies the resource location wildcards
+     * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards
      * or the same resource names with the different absolute paths.
      * <p>For example, {@code "/com/myco/*.properties"}, suppose there are two resources named
      * "a.properties" and "b.properties" where two instances of {@link Resource} will be resolved, they are
@@ -134,23 +134,23 @@ public @interface ZookeeperPropertySource {
      *
      * @see DefaultResourceComparator
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     Class<? extends Comparator<Resource>> resourceComparator() default DefaultResourceComparator.class;
 
     /**
-     * Indicate if a failure to find a {@link #paths property resource} should be
+     * Indicate if a failure to find a {@link #value() property resource} should be
      * ignored.
      * <p>{@code true} is appropriate if the properties file is completely optional.
      * <p>Default is {@code false}.
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean ignoreResourceNotFound() default false;
 
     /**
      * A specific character encoding for the given resources.
      * <p>Default is "UTF-8"
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String encoding() default "UTF-8";
 
     /**
@@ -161,7 +161,7 @@ public @interface ZookeeperPropertySource {
      * @see DefaultPropertySourceFactory
      * @see org.springframework.core.io.support.ResourcePropertySource
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     Class<? extends PropertySourceFactory> factory() default DefaultPropertySourceFactory.class;
 
     /**

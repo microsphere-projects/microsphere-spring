@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.zookeeper.annotation;
 
-import io.microsphere.spring.config.context.annotation.ResourcePropertySourceLoader;
+import io.microsphere.spring.config.context.annotation.ExtensiblePropertySourceLoader;
 import io.microsphere.util.ArrayUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -30,8 +30,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
-
 /**
  * {@link ZookeeperPropertySource} {@link PropertySource} Loader to load the Zookeeper Configuration:
  * <ul>
@@ -42,7 +40,7 @@ import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ZookeeperPropertySourceLoader extends ResourcePropertySourceLoader<ZookeeperPropertySource, ZookeeperPropertySourceAttributes> {
+public class ZookeeperPropertySourceLoader extends ExtensiblePropertySourceLoader<ZookeeperPropertySource, ZookeeperPropertySourceAttributes> {
 
     private static final Map<String, CuratorFramework> clientsCache;
 
@@ -60,10 +58,10 @@ public class ZookeeperPropertySourceLoader extends ResourcePropertySourceLoader<
     }
 
     @Override
-    protected Resource[] getResources(ZookeeperPropertySourceAttributes zookeeperPropertySourceAttributes, String propertySourceName, String resourcePath) throws Throwable {
+    protected Resource[] getResources(ZookeeperPropertySourceAttributes zookeeperPropertySourceAttributes, String propertySourceName, String resourceValue) throws Throwable {
         CuratorFramework client = getClient(zookeeperPropertySourceAttributes);
 
-        boolean resourcePathNotExisted = client.checkExists().forPath(resourcePath) == null;
+        boolean resourcePathNotExisted = client.checkExists().forPath(resourceValue) == null;
 
         boolean autoRefreshed = zookeeperPropertySourceAttributes.isAutoRefreshed();
 
@@ -72,12 +70,12 @@ public class ZookeeperPropertySourceLoader extends ResourcePropertySourceLoader<
                 return null;
             }
             // Create Root Path
-            client.create().forPath(resourcePath);
+            client.create().forPath(resourceValue);
         }
 
-        byte[] bytes = client.getData().forPath(resourcePath);
+        byte[] bytes = client.getData().forPath(resourceValue);
 
-        return ArrayUtils.of(new ByteArrayResource(bytes, "The zookeeper configuration from the path : " + resourcePath));
+        return ArrayUtils.of(new ByteArrayResource(bytes, "The zookeeper configuration from the path : " + resourceValue));
 
     }
 

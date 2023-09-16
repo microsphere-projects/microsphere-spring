@@ -43,7 +43,7 @@ import java.util.Comparator;
  * @see YamlPropertySourceFactory
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented

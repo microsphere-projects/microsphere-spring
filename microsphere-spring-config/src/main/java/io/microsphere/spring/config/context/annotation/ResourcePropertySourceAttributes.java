@@ -38,24 +38,4 @@ public class ResourcePropertySourceAttributes<A extends Annotation> extends Prop
     public ResourcePropertySourceAttributes(Map<String, Object> another, Class<A> annotationType, PropertyResolver propertyResolver) {
         super(another, annotationType, propertyResolver);
     }
-
-    public final String[] getValue() {
-        return getStringArray("value");
-    }
-
-    public final Class<? extends Comparator<Resource>> getResourceComparatorClass() {
-        return getClass("resourceComparator");
-    }
-
-    public final boolean isIgnoreResourceNotFound() {
-        return getBoolean("ignoreResourceNotFound");
-    }
-
-    public final String getEncoding() {
-        return getString("encoding");
-    }
-
-    public final Class<? extends PropertySourceFactory> getPropertySourceFactoryClass() {
-        return getClass("factory");
-    }
 }

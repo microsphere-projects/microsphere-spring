@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  * @see ResourcePropertySource
  * @since 1.0.0
  */
-@Target(ElementType.ANNOTATION_TYPE)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented

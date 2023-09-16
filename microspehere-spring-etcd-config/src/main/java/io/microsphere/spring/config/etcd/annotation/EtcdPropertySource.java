@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.etcd.annotation;
 
-import io.microsphere.spring.config.context.annotation.ResourcePropertySource;
+import io.microsphere.spring.config.context.annotation.PropertySourceExtension;
 import io.microsphere.spring.config.env.support.DefaultResourceComparator;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
@@ -39,18 +39,18 @@ import java.util.Comparator;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@ResourcePropertySource
+@PropertySourceExtension
 @Import(EtcdPropertySourceLoader.class)
 public @interface EtcdPropertySource {
 
     /**
      * The name of etcd {@link PropertySource}
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String name() default "";
 
     /**
@@ -59,7 +59,7 @@ public @interface EtcdPropertySource {
      *
      * @return default value is <code>true</code>
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean autoRefreshed() default true;
 
     /**
@@ -68,7 +68,7 @@ public @interface EtcdPropertySource {
      *
      * @return default value is <code>false</code>
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean first() default false;
 
     /**
@@ -80,7 +80,7 @@ public @interface EtcdPropertySource {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String before() default "";
 
     /**
@@ -92,7 +92,7 @@ public @interface EtcdPropertySource {
      *
      * @return the name of {@link PropertySource}, default value is the empty string
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String after() default "";
 
     /**
@@ -106,7 +106,7 @@ public @interface EtcdPropertySource {
      * <p>Each location will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String[] value() default {};
 
     /**
@@ -121,7 +121,7 @@ public @interface EtcdPropertySource {
      *
      * @see DefaultResourceComparator
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     Class<? extends Comparator<Resource>> resourceComparator() default DefaultResourceComparator.class;
 
     /**
@@ -130,14 +130,14 @@ public @interface EtcdPropertySource {
      * <p>{@code true} is appropriate if the properties file is completely optional.
      * <p>Default is {@code false}.
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean ignoreResourceNotFound() default false;
 
     /**
      * A specific character encoding for the given resources.
      * <p>Default is "UTF-8"
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     String encoding() default "UTF-8";
 
     /**
@@ -146,9 +146,8 @@ public @interface EtcdPropertySource {
      * <p>Default is {@link DefaultPropertySourceFactory}
      *
      * @see DefaultPropertySourceFactory
-     * @see org.springframework.core.io.support.ResourcePropertySource
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
+    @AliasFor(annotation = PropertySourceExtension.class)
     Class<? extends PropertySourceFactory> factory() default DefaultPropertySourceFactory.class;
 
     /**

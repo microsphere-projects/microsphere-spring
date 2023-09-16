@@ -19,9 +19,12 @@ package io.microsphere.spring.config.context.annotation;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -33,14 +36,6 @@ import java.util.Map;
  * @since 1.0.0
  */
 public class PropertySourceExtensionAttributes<A extends Annotation> extends ResolvablePlaceholderAnnotationAttributes<A> {
-
-    public PropertySourceExtensionAttributes(A annotation, @Nullable PropertyResolver propertyResolver) {
-        super(annotation, propertyResolver);
-    }
-
-    public PropertySourceExtensionAttributes(AnnotationAttributes another, @Nullable PropertyResolver propertyResolver) {
-        super(another, propertyResolver);
-    }
 
     public PropertySourceExtensionAttributes(Map<String, Object> another, Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
         super(another, annotationType, propertyResolver);
@@ -68,6 +63,26 @@ public class PropertySourceExtensionAttributes<A extends Annotation> extends Res
 
     public final Class<A> getAnnotationType() {
         return annotationType();
+    }
+
+    public final String[] getValue() {
+        return getStringArray("value");
+    }
+
+    public final Class<? extends Comparator<Resource>> getResourceComparatorClass() {
+        return getClass("resourceComparator");
+    }
+
+    public final boolean isIgnoreResourceNotFound() {
+        return getBoolean("ignoreResourceNotFound");
+    }
+
+    public final String getEncoding() {
+        return getString("encoding");
+    }
+
+    public final Class<? extends PropertySourceFactory> getPropertySourceFactoryClass() {
+        return getClass("factory");
     }
 
     @Override

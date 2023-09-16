@@ -55,12 +55,13 @@ import java.util.Comparator;
  * @see Configuration
  * @since 1.0.0
  */
-@Target({ElementType.ANNOTATION_TYPE})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
 @PropertySourceExtension
 @Repeatable(ResourcePropertySources.class)
+@Import(ResourcePropertySourceLoader.class)
 public @interface ResourcePropertySource {
 
     /**
@@ -125,6 +126,7 @@ public @interface ResourcePropertySource {
      * <p>Each location will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
+    @AliasFor(annotation = PropertySourceExtension.class)
     String[] value() default {};
 
     /**
@@ -140,6 +142,7 @@ public @interface ResourcePropertySource {
      *
      * @see DefaultResourceComparator
      */
+    @AliasFor(annotation = PropertySourceExtension.class)
     Class<? extends Comparator<Resource>> resourceComparator() default DefaultResourceComparator.class;
 
     /**
@@ -148,12 +151,14 @@ public @interface ResourcePropertySource {
      * <p>{@code true} is appropriate if the properties file is completely optional.
      * <p>Default is {@code false}.
      */
+    @AliasFor(annotation = PropertySourceExtension.class)
     boolean ignoreResourceNotFound() default false;
 
     /**
      * A specific character encoding for the given resources.
      * <p>Default is "UTF-8"
      */
+    @AliasFor(annotation = PropertySourceExtension.class)
     String encoding() default "UTF-8";
 
     /**
@@ -164,5 +169,6 @@ public @interface ResourcePropertySource {
      * @see DefaultPropertySourceFactory
      * @see org.springframework.core.io.support.ResourcePropertySource
      */
+    @AliasFor(annotation = PropertySourceExtension.class)
     Class<? extends PropertySourceFactory> factory() default DefaultPropertySourceFactory.class;
 }
