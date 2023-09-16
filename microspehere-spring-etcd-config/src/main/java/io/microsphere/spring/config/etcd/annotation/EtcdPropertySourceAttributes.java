@@ -22,11 +22,11 @@ import org.springframework.core.env.PropertyResolver;
 import java.util.Map;
 
 /**
- * The {@link ResourcePropertySourceAttributes} for {@link EtcdPropertySource}
+ * The {@link PropertySourceExtensionAttributes} for {@link EtcdPropertySource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EtcdPropertySource
- * @see ResourcePropertySourceAttributes
+ * @see PropertySourceExtensionAttributes
  * @since 1.0.0
  */
 public class EtcdPropertySourceAttributes extends PropertySourceExtensionAttributes<EtcdPropertySource> {

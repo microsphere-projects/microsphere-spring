@@ -22,7 +22,7 @@ import org.springframework.core.env.PropertyResolver;
 import java.util.Map;
 
 /**
- * {@link ResourcePropertySourceAttributes} for {@link ZookeeperPropertySource}
+ * {@link PropertySourceExtensionAttributes} for {@link ZookeeperPropertySource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
