@@ -44,7 +44,7 @@ import java.util.Comparator;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySource
  * @see org.springframework.core.env.PropertySource
- * @see ExtensiblePropertySourceLoader
+ * @see PropertySourceExtensionLoader
  * @since 1.0.0
  */
 @Target(ElementType.ANNOTATION_TYPE)

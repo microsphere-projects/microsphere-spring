@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.zookeeper.annotation;
 
-import io.microsphere.spring.config.context.annotation.ExtensiblePropertySourceLoader;
+import io.microsphere.spring.config.context.annotation.PropertySourceExtensionLoader;
 import io.microsphere.util.ArrayUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -40,7 +40,7 @@ import java.util.Map;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ZookeeperPropertySourceLoader extends ExtensiblePropertySourceLoader<ZookeeperPropertySource, ZookeeperPropertySourceAttributes> {
+public class ZookeeperPropertySourceLoader extends PropertySourceExtensionLoader<ZookeeperPropertySource, ZookeeperPropertySourceAttributes> {
 
     private static final Map<String, CuratorFramework> clientsCache;
 

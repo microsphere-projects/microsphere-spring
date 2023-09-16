@@ -50,7 +50,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @param <A> The type of {@link Annotation}
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySourceLoader
- * @see ExtensiblePropertySourceLoader
+ * @see PropertySourceExtensionLoader
  * @see ImportSelector
  * @since 1.0.0
  */

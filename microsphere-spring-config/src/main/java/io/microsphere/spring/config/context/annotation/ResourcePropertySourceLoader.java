@@ -19,21 +19,10 @@ package io.microsphere.spring.config.context.annotation;
 import io.microsphere.spring.config.env.support.YamlPropertySourceFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.EncodedResource;
-import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternUtils;
-import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ObjectUtils;
-
-import java.lang.annotation.Annotation;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * The Internal {@link AnnotatedPropertySourceLoader} Class for {@link ResourcePropertySource}
@@ -44,34 +33,24 @@ import java.util.List;
  * @see YamlPropertySourceFactory
  * @since 1.0.0
  */
-public class ResourcePropertySourceLoader<A extends Annotation, EA extends ResourcePropertySourceAttributes<A>>
-        extends ExtensiblePropertySourceLoader<A, EA> implements ResourceLoaderAware, BeanClassLoaderAware {
+public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource, PropertySourceExtensionAttributes<ResourcePropertySource>> implements ResourceLoaderAware, BeanClassLoaderAware {
 
     private ResourcePatternResolver resourcePatternResolver;
 
     private ClassLoader classLoader;
-
-    @Override
-    protected Class<A> resolveAnnotationType() {
-        Class<A> annotationType = super.resolveAnnotationType();
-        if (PropertySourceExtension.class.equals(annotationType)) {
-            annotationType = (Class<A>) ResourcePropertySource.class;
-        }
-        return annotationType;
-    }
 
     /**
      * Resolve the given location pattern into Resource objects.
      * <p>
      * The subclass can override this method for customization
      *
-     * @param extensionAttributes
-     * @param propertySourceName
-     * @param resourceValue       the resource location to resolve
+     * @param extensionAttributes {@link PropertySourceExtensionAttributes} for {@link ResourcePropertySource @ResourcePropertySource}
+     * @param propertySourceName  {@link ResourcePropertySource#name()}
+     * @param resourceValue       the resource value to resolve
      * @return non-null
      * @throws Throwable
      */
-    protected Resource[] getResources(EA extensionAttributes, String propertySourceName, String resourceValue)
+    protected Resource[] getResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, String propertySourceName, String resourceValue)
             throws Throwable {
         return resourcePatternResolver.getResources(resourceValue);
     }

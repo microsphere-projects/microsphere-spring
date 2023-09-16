@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.zookeeper.annotation;
 
-import io.microsphere.spring.config.context.annotation.ResourcePropertySourceAttributes;
+import io.microsphere.spring.config.context.annotation.PropertySourceExtensionAttributes;
 import org.springframework.core.env.PropertyResolver;
 
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.Map;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public final class ZookeeperPropertySourceAttributes extends ResourcePropertySourceAttributes<ZookeeperPropertySource> {
+public final class ZookeeperPropertySourceAttributes extends PropertySourceExtensionAttributes<ZookeeperPropertySource> {
 
     public ZookeeperPropertySourceAttributes(Map<String, Object> another, Class<ZookeeperPropertySource> annotationType, PropertyResolver propertyResolver) {
         super(another, annotationType, propertyResolver);

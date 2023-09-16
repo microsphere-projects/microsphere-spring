@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.etcd.annotation;
 
-import io.microsphere.spring.config.context.annotation.ResourcePropertySourceAttributes;
+import io.microsphere.spring.config.context.annotation.PropertySourceExtensionAttributes;
 import org.springframework.core.env.PropertyResolver;
 
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @see ResourcePropertySourceAttributes
  * @since 1.0.0
  */
-public class EtcdPropertySourceAttributes extends ResourcePropertySourceAttributes<EtcdPropertySource> {
+public class EtcdPropertySourceAttributes extends PropertySourceExtensionAttributes<EtcdPropertySource> {
 
     public EtcdPropertySourceAttributes(Map<String, Object> another, Class<EtcdPropertySource> annotationType, PropertyResolver propertyResolver) {
         super(another, annotationType, propertyResolver);

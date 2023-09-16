@@ -22,7 +22,7 @@ import io.etcd.jetcd.ClientBuilder;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.kv.GetResponse;
-import io.microsphere.spring.config.context.annotation.ExtensiblePropertySourceLoader;
+import io.microsphere.spring.config.context.annotation.PropertySourceExtensionLoader;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -44,7 +44,7 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class EtcdPropertySourceLoader extends ExtensiblePropertySourceLoader<EtcdPropertySource, EtcdPropertySourceAttributes> {
+public class EtcdPropertySourceLoader extends PropertySourceExtensionLoader<EtcdPropertySource, EtcdPropertySourceAttributes> {
 
     private static final Map<String, Client> clientsCache;
 

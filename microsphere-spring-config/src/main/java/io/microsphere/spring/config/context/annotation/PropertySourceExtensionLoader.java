@@ -30,6 +30,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -39,7 +40,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * Abstract {@link ImportSelector} class to load the {@link PropertySource PropertySource}
@@ -53,12 +54,12 @@ import java.util.function.Supplier;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class ExtensiblePropertySourceLoader<A extends Annotation, EA extends PropertySourceExtensionAttributes<A>>
+public abstract class PropertySourceExtensionLoader<A extends Annotation, EA extends PropertySourceExtensionAttributes<A>>
         extends AnnotatedPropertySourceLoader<A> {
 
     private final Class<EA> extensionAttributesType;
 
-    public ExtensiblePropertySourceLoader() {
+    public PropertySourceExtensionLoader() {
         super();
         this.extensionAttributesType = resolveExtensionAttributesType();
     }
@@ -74,7 +75,7 @@ public abstract class ExtensiblePropertySourceLoader<A extends Annotation, EA ex
 
     protected Class<EA> resolveExtensionAttributesType() {
         ResolvableType type = ResolvableType.forType(this.getClass());
-        ResolvableType superType = type.as(ExtensiblePropertySourceLoader.class);
+        ResolvableType superType = type.as(PropertySourceExtensionLoader.class);
         return (Class<EA>) superType.resolveGeneric(1);
     }
 
@@ -145,8 +146,8 @@ public abstract class ExtensiblePropertySourceLoader<A extends Annotation, EA ex
             throw new IllegalArgumentException("The 'value' attribute must be present at the annotation : @" + getAnnotationType().getName());
         }
 
-        Comparator<Resource> resourceComparator = createInstance(extensionAttributes, extensionAttributes::getResourceComparatorClass);
-        PropertySourceFactory factory = createInstance(extensionAttributes, extensionAttributes::getPropertySourceFactoryClass);
+        Comparator<Resource> resourceComparator = createInstance(extensionAttributes, PropertySourceExtensionAttributes::getResourceComparatorClass);
+        PropertySourceFactory factory = createInstance(extensionAttributes, PropertySourceExtensionAttributes::getPropertySourceFactoryClass);
 
         CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
 
@@ -198,14 +199,15 @@ public abstract class ExtensiblePropertySourceLoader<A extends Annotation, EA ex
      * @param extensionAttributes {@link EA}
      * @param propertySourceName  {@link PropertySourceExtension#name()}
      * @param resourceValue       the resource value to resolve
-     * @return non-null
+     * @return nullable
      * @throws Throwable
      */
+    @Nullable
     protected abstract Resource[] getResources(EA extensionAttributes, String propertySourceName, String resourceValue)
             throws Throwable;
 
-    protected <T> T createInstance(AnnotationAttributes attributes, Supplier<Class<T>> typeSupplier) {
-        Class<T> type = typeSupplier.get();
+    protected <T> T createInstance(EA extensionAttributes, Function<EA, Class<T>> classFunction) {
+        Class<T> type = classFunction.apply(extensionAttributes);
         return BeanUtils.instantiateClass(type);
     }
 
