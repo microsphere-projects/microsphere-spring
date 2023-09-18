@@ -79,8 +79,6 @@ public class EtcdPropertySourceTest {
 
         Resource[] resources = patternResolver.getResources("classpath:/META-INF/etcd/*.json");
 
-        String rootPath = "/";
-
         for (Resource resource : resources) {
             // test.json
             String fileName = resource.getFilename();
@@ -108,14 +106,15 @@ public class EtcdPropertySourceTest {
     public void test() throws Exception {
         assertEquals("mercyblitz", environment.getProperty("my.name"));
 
-        writeConfig("/configs/test.json", "my.name: Mercy Ma".getBytes(StandardCharsets.UTF_8));
-        Thread.sleep(1 * 100);
+        writeConfig("test.json", "{ \"my.name\": \"Mercy Ma\" }".getBytes(StandardCharsets.UTF_8));
+
+        Thread.sleep(1 * 1000);
+
         assertEquals("Mercy Ma", environment.getProperty("my.name"));
     }
 
     @EtcdPropertySource(
             value = "test.json",
-            endpoints = "http://127.0.0.1:2379",
             factory = JsonPropertySourceFactory.class)
     static class Config {
 

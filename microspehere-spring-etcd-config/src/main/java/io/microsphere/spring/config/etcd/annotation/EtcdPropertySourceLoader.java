@@ -21,13 +21,21 @@ import io.etcd.jetcd.Client;
 import io.etcd.jetcd.ClientBuilder;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
+import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.kv.GetResponse;
+import io.etcd.jetcd.watch.WatchEvent;
 import io.microsphere.spring.config.context.annotation.PropertySourceExtensionLoader;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
+import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -68,8 +76,7 @@ public class EtcdPropertySourceLoader extends PropertySourceExtensionLoader<Etcd
         Client client = getClient(etcdPropertySourceAttributes);
 
         KV kv = client.getKVClient();
-        String encoding = etcdPropertySourceAttributes.getEncoding();
-        ByteSequence key = ByteSequence.from(resourceValue.getBytes(encoding));
+        ByteSequence key = toByteSequence(resourceValue, etcdPropertySourceAttributes);
         CompletableFuture<GetResponse> future = kv.get(key);
         GetResponse getResponse = future.get();
         List<KeyValue> keyValues = getResponse.getKvs();
@@ -88,6 +95,54 @@ public class EtcdPropertySourceLoader extends PropertySourceExtensionLoader<Etcd
         }
 
         return resources;
+    }
+
+    @Override
+    protected void configureAutoRefreshedResources(EtcdPropertySourceAttributes etcdPropertySourceAttributes,
+                                                   String propertySourceName, String[] keyValues,
+                                                   List<Resource> resourcesList) throws Throwable {
+        Client client = getClient(etcdPropertySourceAttributes);
+        Watch watchClient = client.getWatchClient();
+        for (String keyValue : keyValues) {
+            ByteSequence key = toByteSequence(keyValue, etcdPropertySourceAttributes);
+            watchClient.watch(key, response -> {
+                List<WatchEvent> watchEvents = response.getEvents();
+                watchEvents.forEach(watchEvent -> {
+                    WatchEvent.EventType eventType = watchEvent.getEventType();
+                    if (WatchEvent.EventType.PUT.equals(eventType)) {
+                        onConfigModified(watchEvent, etcdPropertySourceAttributes, propertySourceName);
+                    }
+                });
+            });
+        }
+
+    }
+
+    public void onConfigModified(WatchEvent watchEvent,
+                                 EtcdPropertySourceAttributes etcdPropertySourceAttributes,
+                                 String compositePropertySourceName) {
+        // etcd config has been modified
+        KeyValue keyValue = watchEvent.getKeyValue();
+        ByteSequence key = keyValue.getKey();
+        ByteSequence value = keyValue.getValue();
+        ConfigurableEnvironment environment = getEnvironment();
+        MutablePropertySources propertySources = environment.getPropertySources();
+        String encoding = etcdPropertySourceAttributes.getEncoding();
+        Resource resource = new ByteArrayResource(value.getBytes());
+        EncodedResource encodedResource = new EncodedResource(resource, encoding);
+        PropertySourceFactory factory = createPropertySourceFactory(etcdPropertySourceAttributes);
+        try {
+            String propertySourceName = compositePropertySourceName + "-" + new String(key.getBytes(), encoding);
+            PropertySource propertySource = factory.createPropertySource(propertySourceName, encodedResource);
+            propertySources.addFirst(propertySource);
+        } catch (IOException e) {
+            logger.error("TODO message", e);
+        }
+    }
+
+    private ByteSequence toByteSequence(String value, EtcdPropertySourceAttributes etcdPropertySourceAttribute) throws UnsupportedEncodingException {
+        String encoding = etcdPropertySourceAttribute.getEncoding();
+        return ByteSequence.from(value.getBytes(encoding));
     }
 
     private Client getClient(EtcdPropertySourceAttributes etcdPropertySourceAttributes) {
