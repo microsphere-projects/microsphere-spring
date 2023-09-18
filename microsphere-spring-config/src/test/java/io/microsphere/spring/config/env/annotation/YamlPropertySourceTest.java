@@ -18,9 +18,16 @@ package io.microsphere.spring.config.env.annotation;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,14 +44,29 @@ import static org.junit.Assert.assertEquals;
 })
 @YamlPropertySource(value = {
         "classpath*:/META-INF/test/yaml/*.yaml"
-})
+}, autoRefreshed = true
+)
 public class YamlPropertySourceTest {
 
     @Value("${my.name}")
     private String myName;
 
+    @Value("classpath*:/META-INF/test/yaml/*.yaml")
+    private Resource[] resources;
+
+    @Autowired
+    private Environment environment;
+
     @Test
-    public void test() {
+    public void test() throws Exception {
         assertEquals("mercyblitz", myName);
+
+        Resource resource = resources[1];
+        File yamlFile2 = resource.getFile();
+        Files.write(yamlFile2.toPath(), "my.name : Mercy Ma 2023".getBytes(StandardCharsets.UTF_8));
+        // wait 10 seconds
+        Thread.sleep(1000 * 10L);
+        assertEquals("Mercy Ma 2023", environment.getProperty("my.name"));
+
     }
 }
