@@ -110,6 +110,12 @@ public @interface EtcdPropertySource {
     String[] value() default {};
 
     /**
+     * Indicate the resource configuration(s) of etcd
+     */
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
+    String[] key() default {};
+
+    /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards
      * <p>For example, {@code "classpath:/com/myco/*.properties"}, suppose there are two resources named
      * "a.properties" and "b.properties" where two instances of {@link Resource} will be resolved, they are
