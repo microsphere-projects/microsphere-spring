@@ -142,7 +142,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
         Comparator<Resource> resourceComparator = createResourceComparator(extensionAttributes, propertySourceName, metadata);
 
-        PropertySourceFactory factory = createPropertySourceFactory(extensionAttributes, propertySourceName, metadata);
+        PropertySourceFactory factory = createPropertySourceFactory(extensionAttributes);
 
         CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
 
@@ -196,14 +196,12 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * Creates an instance of {@link PropertySourceFactory}
      *
      * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
-     * @param propertySourceName  {@link PropertySourceExtension#name()}
-     * @param metadata            {@link AnnotationMetadata}
      * @return
      * @see PropertySourceExtension#factory()
      * @see PropertySourceFactory
      */
     @NonNull
-    private PropertySourceFactory createPropertySourceFactory(EA extensionAttributes, String propertySourceName, AnnotationMetadata metadata) {
+    protected PropertySourceFactory createPropertySourceFactory(EA extensionAttributes) {
         return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getPropertySourceFactoryClass);
     }
 
@@ -230,8 +228,10 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @param propertySourceName  {@link PropertySourceExtension#name()}
      * @param resourceValues      {@link PropertySourceExtension#value() the values of resources}
      * @param resourcesList       The resolved {@link Resource resources} list
+     * @throws Throwable any error
      */
-    protected void configureAutoRefreshedResources(EA extensionAttributes, String propertySourceName, String[] resourceValues, List<Resource> resourcesList) {
+    protected void configureAutoRefreshedResources(EA extensionAttributes, String propertySourceName,
+                                                   String[] resourceValues, List<Resource> resourcesList) throws Throwable {
 
     }
 
