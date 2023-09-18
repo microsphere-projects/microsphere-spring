@@ -61,6 +61,15 @@ public @interface JsonPropertySource {
     String name() default "";
 
     /**
+     * It indicates the property source is auto-refreshed when the configuration is
+     * changed.
+     *
+     * @return default value is <code>false</code>
+     */
+    @AliasFor(annotation = ResourcePropertySource.class)
+    boolean autoRefreshed() default false;
+
+    /**
      * Indicates current {@link org.springframework.core.env.PropertySource} is first order or not If specified ,
      * {@link #before()} and {@link #after()} will be ignored, or last order.
      *

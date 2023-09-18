@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config.env.annotation;
 
+import io.microsphere.spring.config.context.annotation.PropertySourceExtension;
 import io.microsphere.spring.config.context.annotation.ResourcePropertySource;
 import io.microsphere.spring.config.env.ImmutableMapPropertySource;
 import io.microsphere.spring.config.env.support.DefaultResourceComparator;
@@ -58,6 +59,15 @@ public @interface YamlPropertySource {
      */
     @AliasFor(annotation = ResourcePropertySource.class)
     String name() default "";
+
+    /**
+     * It indicates the property source is auto-refreshed when the configuration is
+     * changed.
+     *
+     * @return default value is <code>false</code>
+     */
+    @AliasFor(annotation = ResourcePropertySource.class)
+    boolean autoRefreshed() default false;
 
     /**
      * Indicates current {@link org.springframework.core.env.PropertySource} is first order or not If specified ,
