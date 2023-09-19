@@ -134,7 +134,7 @@ public class ZookeeperPropertySourceTest {
 
     @ZookeeperPropertySource(
             connectString = "127.0.0.1:2181",
-            value = "/configs/test.json",
+            path = "/configs/test.json",
             factory = JsonPropertySourceFactory.class)
     static class Config {
 

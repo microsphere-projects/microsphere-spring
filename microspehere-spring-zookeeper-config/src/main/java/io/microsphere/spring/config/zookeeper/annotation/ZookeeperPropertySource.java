@@ -108,18 +108,18 @@ public @interface ZookeeperPropertySource {
     @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
     String[] value() default {};
 
-//    /**
-//     * Indicate the resource paths(s) of the property source file to be loaded.
-//     * <p>For example, {@code "/com/myco/app.properties"}
-//     * or {@code "/path/to/file.xml"}.
-//     * <p>Resource paths wildcards (e.g. *&#42;/*.properties) also are permitted;
-//     * <p>${...} placeholders will be resolved against any/all property sources already
-//     * registered with the {@code Environment}.
-//     * <p>Each location will be added to the enclosing {@code Environment} as its own
-//     * property source, and in the order declared.
-//     */
-//    @AliasFor(attribute = "value")
-//    String[] paths();
+    /**
+     * Indicate the resource path(s) of the property source file to be loaded.
+     * <p>For example, {@code "/com/myco/app.properties"}
+     * or {@code "/path/to/file.xml"}.
+     * <p>Resource paths wildcards (e.g. *&#42;/*.properties) also are permitted;
+     * <p>${...} placeholders will be resolved against any/all property sources already
+     * registered with the {@code Environment}.
+     * <p>Each location will be added to the enclosing {@code Environment} as its own
+     * property source, and in the order declared.
+     */
+    @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
+    String[] path();
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards
