@@ -19,6 +19,7 @@ package io.microsphere.spring.config.context.annotation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.CompositePropertySource;
@@ -140,19 +141,13 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             throw new IllegalArgumentException("The 'value' attribute must be present at the annotation : @" + getAnnotationType().getName());
         }
 
-        Comparator<Resource> resourceComparator = createResourceComparator(extensionAttributes, propertySourceName, metadata);
-
-        PropertySourceFactory factory = createPropertySourceFactory(extensionAttributes);
-
-        CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
-
         List<Resource> resourcesList = new LinkedList<>();
 
         for (String resourceValue : resourceValues) {
             Resource[] resources = null;
 
             try {
-                resources = getResources(extensionAttributes, propertySourceName, resourceValue);
+                resources = resolveResources(extensionAttributes, propertySourceName, resourceValue);
             } catch (Throwable e) {
                 if (!ignoreResourceNotFound) {
                     throw e;
@@ -172,13 +167,19 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             }
         }
 
+        Comparator<Resource> resourceComparator = createResourceComparator(extensionAttributes, propertySourceName, metadata);
+
+        PropertySourceFactory factory = createPropertySourceFactory(extensionAttributes);
+
+        CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
+
         // sort
         resourcesList.sort(resourceComparator);
 
         String encoding = extensionAttributes.getEncoding();
 
         if (extensionAttributes.isAutoRefreshed()) {
-            configureAutoRefreshedResources(extensionAttributes, propertySourceName, resourceValues, resourcesList);
+            configureAutoRefreshedResources(extensionAttributes, resourcesList, resourceComparator, factory, compositePropertySource);
         }
 
         for (int i = 0; i < resourcesList.size(); i++) {
@@ -225,14 +226,19 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * {@link PropertySourceExtension#autoRefreshed()} is <code>true</code>
      *
      * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
-     * @param propertySourceName  {@link PropertySourceExtension#name()}
-     * @param resourceValues      {@link PropertySourceExtension#value() the values of resources}
-     * @param resourcesList       The resolved {@link Resource resources} list
+     * @param resourcesList       The sorted list of the resolved {@link Resource resources}
+     * @param resourceComparator  The {@link Comparator comparator} of {@link Resource resource}
+     *                            declared by {@link PropertySourceExtension#resourceComparator()}
+     * @param factory             The {@link PropertySourceFactory factory} of {@link PropertySource property source}
+     *                            declared by {@link PropertySourceExtension#factory()}
+     * @param propertySource      The {@link CompositePropertySource property source} of current loader to be added into
+     *                            the Spring's {@link PropertySources property sources}
      * @throws Throwable any error
      */
-    protected void configureAutoRefreshedResources(EA extensionAttributes, String propertySourceName,
-                                                   String[] resourceValues, List<Resource> resourcesList) throws Throwable {
-
+    protected void configureAutoRefreshedResources(EA extensionAttributes, List<Resource> resourcesList,
+                                                   Comparator<Resource> resourceComparator, PropertySourceFactory factory,
+                                                   CompositePropertySource propertySource) throws Throwable {
+        // DO NOTHING
     }
 
     /**
@@ -245,12 +251,11 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @throws Throwable
      */
     @Nullable
-    protected abstract Resource[] getResources(EA extensionAttributes, String propertySourceName, String resourceValue)
+    protected abstract Resource[] resolveResources(EA extensionAttributes, String propertySourceName, String resourceValue)
             throws Throwable;
 
     protected <T> T createInstance(EA extensionAttributes, Function<EA, Class<T>> classFunction) {
         Class<T> type = classFunction.apply(extensionAttributes);
         return BeanUtils.instantiateClass(type);
     }
-
 }

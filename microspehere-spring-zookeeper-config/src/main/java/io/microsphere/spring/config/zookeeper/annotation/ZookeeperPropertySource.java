@@ -119,10 +119,10 @@ public @interface ZookeeperPropertySource {
      * property source, and in the order declared.
      */
     @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
-    String[] path();
+    String[] paths();
 
     /**
-     * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards
+     * Indicate the resources to be sorted when {@link #paths()} specifies the resource location wildcards
      * or the same resource names with the different absolute paths.
      * <p>For example, {@code "/com/myco/*.properties"}, suppose there are two resources named
      * "a.properties" and "b.properties" where two instances of {@link Resource} will be resolved, they are

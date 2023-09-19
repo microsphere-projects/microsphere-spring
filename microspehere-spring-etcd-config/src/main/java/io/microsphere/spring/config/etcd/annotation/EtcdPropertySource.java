@@ -110,10 +110,10 @@ public @interface EtcdPropertySource {
     String[] value() default {};
 
     /**
-     * Indicate the resource configuration(s) of etcd
+     * Indicate the key(s) of the etcd configuration
      */
     @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
-    String[] key();
+    String[] keys();
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards
@@ -157,7 +157,7 @@ public @interface EtcdPropertySource {
     Class<? extends PropertySourceFactory> factory() default DefaultPropertySourceFactory.class;
 
     /**
-     * The etcd server endpoints using the IPNameResolver.
+     * The etcd server endpoint(s) using the IPNameResolver.
      *
      * @return the default endpoint : "http://127.0.0.1:2379"
      */

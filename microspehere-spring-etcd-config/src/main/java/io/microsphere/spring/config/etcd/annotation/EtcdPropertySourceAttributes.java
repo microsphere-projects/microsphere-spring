@@ -35,6 +35,10 @@ public class EtcdPropertySourceAttributes extends PropertySourceExtensionAttribu
         super(another, annotationType, propertyResolver);
     }
 
+    public final String[] getKeys() {
+        return getStringArray("key");
+    }
+
     public final String getTarget() {
         return getString("target");
     }

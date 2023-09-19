@@ -68,6 +68,8 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
 
     private ConfigurableListableBeanFactory beanFactory;
 
+    private String propertySourceName;
+
     public AnnotatedPropertySourceLoader() {
         this.annotationType = resolveAnnotationType();
     }
@@ -84,6 +86,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
         Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
         ResolvablePlaceholderAnnotationAttributes attributes = ResolvablePlaceholderAnnotationAttributes.of(annotationAttributes, annotationType, getEnvironment());
         String propertySourceName = resolvePropertySourceName(attributes, metadata);
+        this.propertySourceName = propertySourceName;
         MutablePropertySources propertySources = environment.getPropertySources();
         try {
             loadPropertySource(attributes, metadata, propertySourceName, propertySources);
@@ -196,5 +199,9 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
     @NonNull
     public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
+    }
+
+    protected String getPropertySourceName() {
+        return this.propertySourceName;
     }
 }

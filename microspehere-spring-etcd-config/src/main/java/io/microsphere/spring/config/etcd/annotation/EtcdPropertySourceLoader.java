@@ -25,6 +25,7 @@ import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.watch.WatchEvent;
 import io.microsphere.spring.config.context.annotation.PropertySourceExtensionLoader;
+import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
@@ -37,10 +38,13 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 
 /**
  * {@link EtcdPropertySource} {@link PropertySource} Loader to load the etcd Configuration:
@@ -58,20 +62,20 @@ public class EtcdPropertySourceLoader extends PropertySourceExtensionLoader<Etcd
 
     static {
         clientsCache = new HashMap<>();
-//        addShutdownHookCallback(new Runnable() {
-//            @Override
-//            public void run() {
-//                // Close clients
-//                close(clientsCache.values());
-//                // Clear clients cache when JVM is shutdown
-//                clientsCache.clear();
-//            }
-//        });
+        addShutdownHookCallback(new Runnable() {
+            @Override
+            public void run() {
+                // Close clients
+                close(clientsCache.values());
+                // Clear clients cache when JVM is shutdown
+                clientsCache.clear();
+            }
+        });
     }
 
     @Override
-    protected Resource[] getResources(EtcdPropertySourceAttributes etcdPropertySourceAttributes,
-                                      String propertySourceName, String resourceValue) throws Throwable {
+    protected Resource[] resolveResources(EtcdPropertySourceAttributes etcdPropertySourceAttributes,
+                                          String propertySourceName, String resourceValue) throws Throwable {
 
         Client client = getClient(etcdPropertySourceAttributes);
 
@@ -99,10 +103,11 @@ public class EtcdPropertySourceLoader extends PropertySourceExtensionLoader<Etcd
 
     @Override
     protected void configureAutoRefreshedResources(EtcdPropertySourceAttributes etcdPropertySourceAttributes,
-                                                   String propertySourceName, String[] keyValues,
-                                                   List<Resource> resourcesList) throws Throwable {
+                                                   List<Resource> resourcesList, Comparator<Resource> resourceComparator, PropertySourceFactory factory, CompositePropertySource propertySource) throws Throwable {
         Client client = getClient(etcdPropertySourceAttributes);
+        String propertySourceName = propertySource.getName();
         Watch watchClient = client.getWatchClient();
+        String[] keyValues = etcdPropertySourceAttributes.getKeys();
         for (String keyValue : keyValues) {
             ByteSequence key = toByteSequence(keyValue, etcdPropertySourceAttributes);
             watchClient.watch(key, response -> {

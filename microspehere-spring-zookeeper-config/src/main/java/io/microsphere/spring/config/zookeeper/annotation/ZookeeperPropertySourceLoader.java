@@ -30,6 +30,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
+
 /**
  * {@link ZookeeperPropertySource} {@link PropertySource} Loader to load the Zookeeper Configuration:
  * <ul>
@@ -46,19 +48,19 @@ public class ZookeeperPropertySourceLoader extends PropertySourceExtensionLoader
 
     static {
         clientsCache = new HashMap<>();
-//        addShutdownHookCallback(new Runnable() {
-//            @Override
-//            public void run() {
-//                // Close clients
-//                close(clientsCache.values());
-//                // Clear clients cache when JVM is shutdown
-//                clientsCache.clear();
-//            }
-//        });
+        addShutdownHookCallback(new Runnable() {
+            @Override
+            public void run() {
+                // Close clients
+                close(clientsCache.values());
+                // Clear clients cache when JVM is shutdown
+                clientsCache.clear();
+            }
+        });
     }
 
     @Override
-    protected Resource[] getResources(ZookeeperPropertySourceAttributes zookeeperPropertySourceAttributes, String propertySourceName, String resourceValue) throws Throwable {
+    protected Resource[] resolveResources(ZookeeperPropertySourceAttributes zookeeperPropertySourceAttributes, String propertySourceName, String resourceValue) throws Throwable {
         CuratorFramework client = getClient(zookeeperPropertySourceAttributes);
 
         boolean resourcePathNotExisted = client.checkExists().forPath(resourceValue) == null;

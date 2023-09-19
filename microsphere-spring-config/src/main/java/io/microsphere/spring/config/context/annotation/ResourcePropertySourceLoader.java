@@ -22,6 +22,7 @@ import io.microsphere.io.event.FileChangedListener;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
@@ -35,6 +36,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.springframework.core.io.support.ResourcePatternUtils.getResourcePatternResolver;
@@ -56,23 +58,20 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     private StandardFileWatchService fileWatchService;
 
-    private PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes;
-
     @Override
-    protected Resource[] getResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, String propertySourceName, String resourceValue)
+    protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, String propertySourceName, String resourceValue)
             throws Throwable {
         return resourcePatternResolver.getResources(resourceValue);
     }
 
     @Override
     protected void configureAutoRefreshedResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
-                                                   String propertySourceName, String[] resourceValues,
-                                                   List<Resource> resourcesList) throws Throwable {
+                                                   List<Resource> resourcesList, Comparator<Resource> resourceComparator,
+                                                   PropertySourceFactory factory, CompositePropertySource propertySource) throws Throwable {
 
         this.fileWatchService = new StandardFileWatchService();
-        this.extensionAttributes = extensionAttributes;
 
-        Listener listener = new Listener();
+        Listener listener = new Listener(extensionAttributes, propertySource, resourceComparator, factory);
         for (Resource resource : resourcesList) {
             if (isFileSystemBasedResource(resource)) {
                 File resourceFile = resource.getFile();
@@ -86,6 +85,21 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     class Listener implements FileChangedListener {
 
+        private final PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes;
+
+        private final CompositePropertySource compositePropertySource;
+
+        private final Comparator<Resource> resourceComparator;
+
+        private final PropertySourceFactory factory;
+
+        Listener(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, CompositePropertySource propertySource, Comparator<Resource> resourceComparator, PropertySourceFactory factory) {
+            this.extensionAttributes = extensionAttributes;
+            this.compositePropertySource = propertySource;
+            this.resourceComparator = resourceComparator;
+            this.factory = factory;
+        }
+
         @Override
         public void onFileModified(FileChangedEvent event) {
             // PropertySource file has been modified
@@ -95,7 +109,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             String encoding = extensionAttributes.getEncoding();
             Resource resource = new FileSystemResource(resourceFile);
             EncodedResource encodedResource = new EncodedResource(resource, encoding);
-            PropertySourceFactory factory = createPropertySourceFactory(extensionAttributes);
             String propertySourceName = resourceFile.getAbsolutePath();
             try {
                 PropertySource propertySource = factory.createPropertySource(propertySourceName, encodedResource);
