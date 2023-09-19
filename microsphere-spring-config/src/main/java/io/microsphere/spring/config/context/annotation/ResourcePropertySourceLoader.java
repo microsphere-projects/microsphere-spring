@@ -68,14 +68,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
     protected void configureAutoRefreshedResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
                                                    String propertySourceName, String[] resourceValues,
                                                    List<Resource> resourcesList) throws Throwable {
-        // resource location : classpath:/META-INF/a.properties ->
-        // actual path(origin) : /users/admin/some-project/META-INF/a.properties
-        // name = a
-
-        // actual path(modified) : /users/admin/some-project/META-INF/a.properties
-        // -> name = b
-        // based on FileSystem
-        // interesting kind = MODIFIED
 
         this.fileWatchService = new StandardFileWatchService();
         this.extensionAttributes = extensionAttributes;
@@ -96,10 +88,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
         @Override
         public void onFileModified(FileChangedEvent event) {
-
-            // a.properties > b.properties
-            // name = a   >   name = b
-
             // PropertySource file has been modified
             ConfigurableEnvironment environment = getEnvironment();
             MutablePropertySources propertySources = environment.getPropertySources();
