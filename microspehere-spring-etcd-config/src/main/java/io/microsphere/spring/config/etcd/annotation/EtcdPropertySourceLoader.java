@@ -26,19 +26,14 @@ import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.watch.WatchEvent;
 import io.microsphere.spring.config.context.annotation.PropertySourceExtensionLoader;
 import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.EncodedResource;
-import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,46 +97,39 @@ public class EtcdPropertySourceLoader extends PropertySourceExtensionLoader<Etcd
     }
 
     @Override
-    protected void configureAutoRefreshedResources(EtcdPropertySourceAttributes etcdPropertySourceAttributes,
-                                                   List<Resource> resourcesList, Comparator<Resource> resourceComparator, PropertySourceFactory factory, CompositePropertySource propertySource) throws Throwable {
+    protected void configureResourcePropertySourcesRefresher(EtcdPropertySourceAttributes etcdPropertySourceAttributes,
+                                                             List<PropertySourceResource> propertySourceResources,
+                                                             CompositePropertySource propertySource,
+                                                             ResourcePropertySourcesRefresher refresher) throws Throwable {
         Client client = getClient(etcdPropertySourceAttributes);
-        String propertySourceName = propertySource.getName();
         Watch watchClient = client.getWatchClient();
-        String[] keyValues = etcdPropertySourceAttributes.getKeys();
-        for (String keyValue : keyValues) {
-            ByteSequence key = toByteSequence(keyValue, etcdPropertySourceAttributes);
+        String encoding = etcdPropertySourceAttributes.getEncoding();
+        Charset charset = Charset.forName(encoding);
+
+        int size = propertySourceResources.size();
+        for (int i = 0; i < size; i++) {
+            PropertySourceResource propertySourceResource = propertySourceResources.get(i);
+            String resourceValue = propertySourceResource.getResourceValue();
+            ByteSequence key = toByteSequence(resourceValue, etcdPropertySourceAttributes);
             watchClient.watch(key, response -> {
                 List<WatchEvent> watchEvents = response.getEvents();
-                watchEvents.forEach(watchEvent -> {
-                    WatchEvent.EventType eventType = watchEvent.getEventType();
-                    if (WatchEvent.EventType.PUT.equals(eventType)) {
-                        onConfigModified(watchEvent, etcdPropertySourceAttributes, propertySourceName);
-                    }
-                });
+                watchEvents.forEach(watchEvent -> onConfigChanged(watchEvent, charset, refresher));
             });
         }
-
     }
 
-    public void onConfigModified(WatchEvent watchEvent,
-                                 EtcdPropertySourceAttributes etcdPropertySourceAttributes,
-                                 String compositePropertySourceName) {
-        // etcd config has been modified
-        KeyValue keyValue = watchEvent.getKeyValue();
-        ByteSequence key = keyValue.getKey();
-        ByteSequence value = keyValue.getValue();
-        ConfigurableEnvironment environment = getEnvironment();
-        MutablePropertySources propertySources = environment.getPropertySources();
-        String encoding = etcdPropertySourceAttributes.getEncoding();
-        Resource resource = new ByteArrayResource(value.getBytes());
-        EncodedResource encodedResource = new EncodedResource(resource, encoding);
-        PropertySourceFactory factory = createPropertySourceFactory(etcdPropertySourceAttributes);
-        try {
-            String propertySourceName = compositePropertySourceName + "-" + new String(key.getBytes(), encoding);
-            PropertySource propertySource = factory.createPropertySource(propertySourceName, encodedResource);
-            propertySources.addFirst(propertySource);
-        } catch (IOException e) {
-            logger.error("TODO message", e);
+    private void onConfigChanged(WatchEvent watchEvent, Charset charset, ResourcePropertySourcesRefresher refresher) {
+        WatchEvent.EventType eventType = watchEvent.getEventType();
+        if (WatchEvent.EventType.PUT.equals(eventType)) {
+            KeyValue keyValue = watchEvent.getKeyValue();
+            String resourceValue = keyValue.getKey().toString(charset);
+            ByteSequence value = keyValue.getValue();
+            ByteArrayResource resource = new ByteArrayResource(value.getBytes());
+            try {
+                refresher.refresh(resourceValue, resource);
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
