@@ -318,12 +318,12 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @param propertySourceResources          The sorted list of the resolved {@link Resource resources}
      * @param propertySource                   The {@link CompositePropertySource property source} of current loader to be added into
      *                                         the Spring's {@link PropertySources property sources}
-     * @param resourcePropertySourcesRefresher The Refresher of {@link PropertySource PropertySources'} {@link Resource}
+     * @param refresher The Refresher of {@link PropertySource PropertySources'} {@link Resource}
      * @throws Throwable any error
      */
     protected void configureResourcePropertySourcesRefresher(EA extensionAttributes, List<PropertySourceResource> propertySourceResources,
                                                              CompositePropertySource propertySource,
-                                                             ResourcePropertySourcesRefresher resourcePropertySourcesRefresher) throws Throwable {
+                                                             ResourcePropertySourcesRefresher refresher) throws Throwable {
         // DO NOTHING
     }
 

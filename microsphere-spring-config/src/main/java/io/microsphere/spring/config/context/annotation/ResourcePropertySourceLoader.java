@@ -69,12 +69,12 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
     @Override
     protected void configureResourcePropertySourcesRefresher(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
                                                              List<PropertySourceResource> propertySourceResources, CompositePropertySource propertySource,
-                                                             ResourcePropertySourcesRefresher resourcePropertySourcesRefresher) throws Throwable {
+                                                             ResourcePropertySourcesRefresher refresher) throws Throwable {
 
         this.fileWatchService = new StandardFileWatchService();
 
         int size = propertySourceResources.size();
-        ListenerAdapter listenerAdapter = new ListenerAdapter(resourcePropertySourcesRefresher, size);
+        ListenerAdapter listenerAdapter = new ListenerAdapter(refresher, size);
 
         for (int i = 0; i < size; i++) {
             PropertySourceResource propertySourceResource = propertySourceResources.get(i);
