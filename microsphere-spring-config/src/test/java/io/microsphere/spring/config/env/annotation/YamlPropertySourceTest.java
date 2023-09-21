@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
@@ -61,12 +62,17 @@ public class YamlPropertySourceTest {
     public void test() throws Exception {
         assertEquals("mercyblitz", myName);
 
-        Resource resource = resources[1];
-        File yamlFile2 = resource.getFile();
-        Files.write(yamlFile2.toPath(), "my.name : Mercy Ma 2023".getBytes(StandardCharsets.UTF_8));
+        String name = "Mercy Ma @ " + new Date();
+        write(1, "my.name2 : " + name);
+
         // wait 10 seconds
         Thread.sleep(1000 * 10L);
-        assertEquals("Mercy Ma 2023", environment.getProperty("my.name"));
+        assertEquals(name, environment.getProperty("my.name2"));
+    }
 
+    private void write(int resourceIndex, String content) throws Exception {
+        Resource resource = resources[resourceIndex];
+        File file = resource.getFile();
+        Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
     }
 }

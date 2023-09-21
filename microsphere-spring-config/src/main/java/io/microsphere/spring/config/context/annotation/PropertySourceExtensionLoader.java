@@ -19,7 +19,6 @@ package io.microsphere.spring.config.context.annotation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.CompositePropertySource;
@@ -27,6 +26,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
@@ -37,12 +37,17 @@ import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
+import static io.microsphere.text.FormatUtils.format;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -84,30 +89,46 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     }
 
     @Override
-    protected final void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata,
-                                            String propertySourceName, MutablePropertySources propertySources) throws Throwable {
+    protected final void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata, String propertySourceName,
+                                            MutablePropertySources propertySources) throws Throwable {
         Class<A> annotationType = getAnnotationType();
         Class<EA> extensionAttributesClass = getExtensionAttributesType();
         ConfigurableEnvironment environment = getEnvironment();
         EA extensionAttributes = buildExtensionAttributes(annotationType, extensionAttributesClass, attributes, environment);
         PropertySource<?> propertySource = loadPropertySource(extensionAttributes, propertySourceName, metadata);
         if (propertySource == null) {
-            logger.warn("The PropertySource[annotationType : '{}' , configuration : '{}'] can't be loaded", annotationType.getName(), metadata.getClassName());
-        } else {
-            if (extensionAttributes.isFirstPropertySource()) {
-                propertySources.addFirst(propertySource);
+            String message = format("The PropertySources' Resource can't be found by the {} that annotated on {}", extensionAttributes, metadata.getClassName());
+            if (extensionAttributes.isIgnoreResourceNotFound()) {
+                logger.warn(message);
             } else {
-                String relativePropertySourceName = extensionAttributes.getAfterPropertySourceName();
-                if (hasText(relativePropertySourceName)) {
-                    propertySources.addAfter(relativePropertySourceName, propertySource);
-                } else {
-                    relativePropertySourceName = extensionAttributes.getBeforePropertySourceName();
-                }
-                if (hasText(relativePropertySourceName)) {
-                    propertySources.addBefore(relativePropertySourceName, propertySource);
-                } else {
-                    propertySources.addLast(propertySource);
-                }
+                throw new IllegalArgumentException(message);
+            }
+        } else {
+            addPropertySource(extensionAttributes, propertySources, propertySource);
+        }
+    }
+
+    /**
+     * Add the {@link PropertySource} into {@link PropertySources} via {@link EA}
+     *
+     * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
+     * @param propertySources     the {@link MutablePropertySources} to be added
+     * @param propertySource      the {@link PropertySource} is about to add
+     */
+    protected void addPropertySource(EA extensionAttributes, MutablePropertySources propertySources, PropertySource<?> propertySource) {
+        if (extensionAttributes.isFirstPropertySource()) {
+            propertySources.addFirst(propertySource);
+        } else {
+            String relativePropertySourceName = extensionAttributes.getAfterPropertySourceName();
+            if (hasText(relativePropertySourceName)) {
+                propertySources.addAfter(relativePropertySourceName, propertySource);
+            } else {
+                relativePropertySourceName = extensionAttributes.getBeforePropertySourceName();
+            }
+            if (hasText(relativePropertySourceName)) {
+                propertySources.addBefore(relativePropertySourceName, propertySource);
+            } else {
+                propertySources.addLast(propertySource);
             }
         }
     }
@@ -122,14 +143,12 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @return non-null
      * @throws Throwable
      */
-    protected EA buildExtensionAttributes(Class<A> annotationType, Class<EA> extensionAttributesType,
-                                          AnnotationAttributes attributes, ConfigurableEnvironment environment) throws Throwable {
+    protected EA buildExtensionAttributes(Class<A> annotationType, Class<EA> extensionAttributesType, AnnotationAttributes attributes, ConfigurableEnvironment environment) throws Throwable {
         Constructor constructor = extensionAttributesType.getConstructor(Map.class, Class.class, PropertyResolver.class);
         return (EA) constructor.newInstance(attributes, annotationType, environment);
     }
 
-    protected final PropertySource<?> loadPropertySource(EA extensionAttributes, String propertySourceName,
-                                                         AnnotationMetadata metadata) throws Throwable {
+    protected final PropertySource<?> loadPropertySource(EA extensionAttributes, String propertySourceName, AnnotationMetadata metadata) throws Throwable {
         String[] resourceValues = extensionAttributes.getValue();
 
         boolean ignoreResourceNotFound = extensionAttributes.isIgnoreResourceNotFound();
@@ -141,7 +160,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             throw new IllegalArgumentException("The 'value' attribute must be present at the annotation : @" + getAnnotationType().getName());
         }
 
-        List<Resource> resourcesList = new LinkedList<>();
+        List<PropertySourceResource> propertySourceResources = new LinkedList<>();
 
         for (String resourceValue : resourceValues) {
             Resource[] resources = null;
@@ -163,8 +182,13 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             int length = resources.length;
             for (int i = 0; i < length; i++) {
                 Resource resource = resources[i];
-                resourcesList.add(resource);
+                PropertySourceResource propertySourceResource = createPropertySourceResource(resourceValue, resource);
+                propertySourceResources.add(propertySourceResource);
             }
+        }
+
+        if (propertySourceResources.isEmpty()) {
+            return null;
         }
 
         Comparator<Resource> resourceComparator = createResourceComparator(extensionAttributes, propertySourceName, metadata);
@@ -174,23 +198,57 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         CompositePropertySource compositePropertySource = new CompositePropertySource(propertySourceName);
 
         // sort
-        resourcesList.sort(resourceComparator);
+        Collections.sort(propertySourceResources, (o1, o2) -> resourceComparator.compare(o1.resource, o2.resource));
 
-        String encoding = extensionAttributes.getEncoding();
 
-        if (extensionAttributes.isAutoRefreshed()) {
-            configureAutoRefreshedResources(extensionAttributes, resourcesList, resourceComparator, factory, compositePropertySource);
+        // Add Resources' PropertySource
+        for (int i = 0; i < propertySourceResources.size(); i++) {
+            PropertySourceResource propertySourceResource = propertySourceResources.get(i);
+            PropertySource resourcePropertySource = createResourcePropertySource(extensionAttributes, propertySourceName, factory, propertySourceResource);
+            compositePropertySource.addPropertySource(resourcePropertySource);
         }
 
-        for (int i = 0; i < resourcesList.size(); i++) {
-            Resource resource = resourcesList.get(i);
-            EncodedResource encodedResource = new EncodedResource(resource, encoding);
-            String name = propertySourceName + "#" + i;
-            PropertySource propertySource = factory.createPropertySource(name, encodedResource);
-            compositePropertySource.addPropertySource(propertySource);
+        if (extensionAttributes.isAutoRefreshed()) {
+            ResourcePropertySourcesRefresher resourcePropertySourcesRefresher = (resourceValue, resource) -> {
+                PropertySourceResource propertySourceResource = createPropertySourceResource(resourceValue, resource);
+                // Merge Resources' PropertySource
+                PropertySource resourcePropertySource = createResourcePropertySource(extensionAttributes, propertySourceName, factory, propertySourceResource);
+                updatePropertySource(extensionAttributes, propertySourceName, resourcePropertySource);
+            };
+            configureResourcePropertySourcesRefresher(extensionAttributes, propertySourceResources, compositePropertySource,
+                    resourcePropertySourcesRefresher);
         }
 
         return compositePropertySource;
+    }
+
+    private void updatePropertySource(EA extensionAttributes, String propertySourceName, PropertySource resourcePropertySource) {
+        MutablePropertySources propertySources = getEnvironment().getPropertySources();
+        PropertySource propertySource = propertySources.get(propertySourceName);
+        if (propertySource instanceof CompositePropertySource) {
+            CompositePropertySource oldCompositePropertySource = (CompositePropertySource) propertySource;
+            Collection<PropertySource<?>> resourcePropertySources = oldCompositePropertySource.getPropertySources();
+            Iterator<PropertySource<?>> iterator = resourcePropertySources.iterator();
+
+            String resourcePropertySourceName = resourcePropertySource.getName();
+
+            // New CompositePropertySource
+            CompositePropertySource newCompositePropertySource = new CompositePropertySource(propertySourceName);
+
+            while (iterator.hasNext()) {
+                PropertySource oldResourcePropertySource = iterator.next();
+                if (Objects.equals(resourcePropertySourceName, oldResourcePropertySource.getName())) {
+                    // Add the new Resources' PropertySource if same with old one
+                    newCompositePropertySource.addPropertySource(resourcePropertySource);
+                    // TODO may publish events
+                } else {
+                    // Add an old Resources' PropertySource if not same
+                    newCompositePropertySource.addPropertySource(oldResourcePropertySource);
+                }
+            }
+
+            addPropertySource(extensionAttributes, propertySources, newCompositePropertySource);
+        }
     }
 
     /**
@@ -210,7 +268,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * Creates an instance of {@link Comparator} for {@link Resource}
      *
      * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
-     * @param propertySourceName  {@link PropertySourceExtension#name()}
+     * @param propertySourceName  the name of {PropertySource} declared by {@link PropertySourceExtension#name()}
      * @param metadata            {@link AnnotationMetadata}
      * @return an instance of {@link Comparator} for {@link Resource}
      * @see PropertySourceExtension#resourceComparator()
@@ -221,28 +279,56 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getResourceComparatorClass);
     }
 
+
+    protected PropertySourceResource createPropertySourceResource(String resourceValue, Resource resource) {
+        return new PropertySourceResource(resourceValue, resource);
+    }
+
+    protected String createResourcePropertySourceName(String propertySourceName, String resourceValue, Resource resource) {
+        Object suffix = resource.toString() == null ? resource.hashCode() : resource.toString();
+        return propertySourceName + "#" + resourceValue + "@" + suffix;
+    }
+
     /**
-     * Configure the listeners for Auto-Refreshed Resources when
+     * Create the {@link PropertySource PropertySource} for the specified {@link Resource resource}
+     *
+     * @param extensionAttributes    the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
+     * @param propertySourceName     the name of {PropertySource} declared by {@link PropertySourceExtension#name()}
+     * @param factory                the factory to the {@link PropertySource PropertySource} declared by {@link PropertySourceExtension#factory()}
+     * @param propertySourceResource
+     * @return
+     * @throws Throwable
+     */
+    protected PropertySource createResourcePropertySource(EA extensionAttributes, String propertySourceName,
+                                                          PropertySourceFactory factory,
+                                                          PropertySourceResource propertySourceResource) throws Throwable {
+        String resourceValue = propertySourceResource.resourceValue;
+        Resource resource = propertySourceResource.resource;
+        String encoding = extensionAttributes.getEncoding();
+        EncodedResource encodedResource = new EncodedResource(resource, encoding);
+        String name = createResourcePropertySourceName(propertySourceName, resourceValue, resource);
+        return factory.createPropertySource(name, encodedResource);
+    }
+
+    /**
+     * Configure the {@link ResourcePropertySourcesRefresher} of {@link PropertySource} {@link Resource Resources} when
      * {@link PropertySourceExtension#autoRefreshed()} is <code>true</code>
      *
-     * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
-     * @param resourcesList       The sorted list of the resolved {@link Resource resources}
-     * @param resourceComparator  The {@link Comparator comparator} of {@link Resource resource}
-     *                            declared by {@link PropertySourceExtension#resourceComparator()}
-     * @param factory             The {@link PropertySourceFactory factory} of {@link PropertySource property source}
-     *                            declared by {@link PropertySourceExtension#factory()}
-     * @param propertySource      The {@link CompositePropertySource property source} of current loader to be added into
-     *                            the Spring's {@link PropertySources property sources}
+     * @param extensionAttributes              the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
+     * @param propertySourceResources          The sorted list of the resolved {@link Resource resources}
+     * @param propertySource                   The {@link CompositePropertySource property source} of current loader to be added into
+     *                                         the Spring's {@link PropertySources property sources}
+     * @param resourcePropertySourcesRefresher The Refresher of {@link PropertySource PropertySources'} {@link Resource}
      * @throws Throwable any error
      */
-    protected void configureAutoRefreshedResources(EA extensionAttributes, List<Resource> resourcesList,
-                                                   Comparator<Resource> resourceComparator, PropertySourceFactory factory,
-                                                   CompositePropertySource propertySource) throws Throwable {
+    protected void configureResourcePropertySourcesRefresher(EA extensionAttributes, List<PropertySourceResource> propertySourceResources,
+                                                             CompositePropertySource propertySource,
+                                                             ResourcePropertySourcesRefresher resourcePropertySourcesRefresher) throws Throwable {
         // DO NOTHING
     }
 
     /**
-     * Resolve the given location pattern into Resource objects.
+     * Resolve the given resource value(s) to be {@link PropertySourceResource} array.
      *
      * @param extensionAttributes {@link EA}
      * @param propertySourceName  {@link PropertySourceExtension#name()}
@@ -251,11 +337,53 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @throws Throwable
      */
     @Nullable
-    protected abstract Resource[] resolveResources(EA extensionAttributes, String propertySourceName, String resourceValue)
-            throws Throwable;
+    protected abstract Resource[] resolveResources(EA extensionAttributes, String propertySourceName, String resourceValue) throws Throwable;
 
     protected <T> T createInstance(EA extensionAttributes, Function<EA, Class<T>> classFunction) {
         Class<T> type = classFunction.apply(extensionAttributes);
         return BeanUtils.instantiateClass(type);
     }
+
+
+    protected static class PropertySourceResource {
+
+        private final String resourceValue;
+
+        private final Resource resource;
+
+        public PropertySourceResource(String resourceValue, Resource resource) {
+            this.resourceValue = resourceValue;
+            this.resource = resource;
+        }
+
+        public String getResourceValue() {
+            return resourceValue;
+        }
+
+        public Resource getResource() {
+            return resource;
+        }
+    }
+
+    /**
+     * The Refresher of {@link PropertySources PropertySources'} for {@link Resource}
+     *
+     * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+     * @see PropertySource
+     * @see Resource
+     * @since 1.0.0
+     */
+    @FunctionalInterface
+    protected interface ResourcePropertySourcesRefresher {
+
+        /**
+         * Refresh the {@link PropertySources PropertySources} on {@link {@link Resource}} being refreshed
+         *
+         * @param resourceValue the value of resource declared by {@link PropertySourceExtension#value()}
+         * @param resource      the {@link PropertySource PropertySources'} {@link Resource}
+         * @throws Throwable any error occurs
+         */
+        void refresh(String resourceValue, Resource resource) throws Throwable;
+    }
+
 }

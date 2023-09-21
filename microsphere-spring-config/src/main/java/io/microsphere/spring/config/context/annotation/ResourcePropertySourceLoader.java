@@ -37,7 +37,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.core.io.support.ResourcePatternUtils.getResourcePatternResolver;
 
@@ -65,22 +67,57 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
     }
 
     @Override
-    protected void configureAutoRefreshedResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
-                                                   List<Resource> resourcesList, Comparator<Resource> resourceComparator,
-                                                   PropertySourceFactory factory, CompositePropertySource propertySource) throws Throwable {
+    protected void configureResourcePropertySourcesRefresher(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
+                                                             List<PropertySourceResource> propertySourceResources, CompositePropertySource propertySource,
+                                                             ResourcePropertySourcesRefresher resourcePropertySourcesRefresher) throws Throwable {
 
         this.fileWatchService = new StandardFileWatchService();
 
-        Listener listener = new Listener(extensionAttributes, propertySource, resourceComparator, factory);
-        for (Resource resource : resourcesList) {
+        int size = propertySourceResources.size();
+        ListenerAdapter listenerAdapter = new ListenerAdapter(resourcePropertySourcesRefresher, size);
+
+        for (int i = 0; i < size; i++) {
+            PropertySourceResource propertySourceResource = propertySourceResources.get(i);
+            Resource resource = propertySourceResource.getResource();
             if (isFileSystemBasedResource(resource)) {
                 File resourceFile = resource.getFile();
-                fileWatchService.watch(resourceFile, listener, FileChangedEvent.Kind.MODIFIED);
+                listenerAdapter.register(resourceFile, propertySourceResource.getResourceValue());
+                fileWatchService.watch(resourceFile, listenerAdapter, FileChangedEvent.Kind.MODIFIED);
             }
         }
 
         fileWatchService.start();
 
+    }
+
+    class ListenerAdapter implements FileChangedListener {
+
+        private final ResourcePropertySourcesRefresher refresher;
+
+        private final Map<File, String> fileToResourceValues;
+
+        ListenerAdapter(ResourcePropertySourcesRefresher refresher, int initialCapacity) {
+            this.refresher = refresher;
+            this.fileToResourceValues = new HashMap<>(initialCapacity);
+        }
+
+        public void register(File file, String resourceValue) {
+            fileToResourceValues.put(file, resourceValue);
+        }
+
+        @Override
+        public void onFileModified(FileChangedEvent event) {
+            File resourceFile = event.getFile();
+            String resourceValue = fileToResourceValues.get(resourceFile);
+            if (resourceValue != null) {
+                Resource resource = new FileSystemResource(resourceFile);
+                try {
+                    refresher.refresh(resourceValue, resource);
+                } catch (Throwable e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     class Listener implements FileChangedListener {
@@ -106,8 +143,8 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             ConfigurableEnvironment environment = getEnvironment();
             MutablePropertySources propertySources = environment.getPropertySources();
             File resourceFile = event.getFile();
-            String encoding = extensionAttributes.getEncoding();
             Resource resource = new FileSystemResource(resourceFile);
+            String encoding = extensionAttributes.getEncoding();
             EncodedResource encodedResource = new EncodedResource(resource, encoding);
             String propertySourceName = resourceFile.getAbsolutePath();
             try {
