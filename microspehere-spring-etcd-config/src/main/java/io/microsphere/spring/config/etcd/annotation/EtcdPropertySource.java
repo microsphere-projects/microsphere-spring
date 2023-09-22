@@ -113,7 +113,7 @@ public @interface EtcdPropertySource {
      * Indicate the key(s) of the etcd configuration
      */
     @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
-    String[] keys();
+    String[] keys() default {};
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards

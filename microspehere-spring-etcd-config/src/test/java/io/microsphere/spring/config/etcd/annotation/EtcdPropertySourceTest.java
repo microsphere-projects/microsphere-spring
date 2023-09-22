@@ -108,7 +108,7 @@ public class EtcdPropertySourceTest {
 
         writeConfig("test.json", "{ \"my.name\": \"Mercy Ma\" }".getBytes(StandardCharsets.UTF_8));
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(5 * 1000);
 
         assertEquals("Mercy Ma", environment.getProperty("my.name"));
     }
