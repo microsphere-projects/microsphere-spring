@@ -37,6 +37,8 @@ import java.util.Comparator;
  * The annotation for etcd {@link PropertySource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EtcdPropertySourceAttributes
+ * @see EtcdPropertySourceLoader
  * @since 1.0.0
  */
 @Target(ElementType.TYPE)

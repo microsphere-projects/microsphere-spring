@@ -96,33 +96,37 @@ public @interface ZookeeperPropertySource {
     String after() default "";
 
     /**
-     * Indicate the resource paths(s) of the property source file to be loaded.
+     * Indicate the resource path(s) of the property source to be loaded.
      * <p>For example, {@code "/com/myco/app.properties"}
      * or {@code "/path/to/file.xml"}.
-     * <p>Resource paths wildcards (e.g. *&#42;/*.properties) also are permitted;
+     * <p>Resource path wildcards (e.g. /*.properties) also are permitted;
      * <p>${...} placeholders will be resolved against any/all property sources already
      * registered with the {@code Environment}.
-     * <p>Each location will be added to the enclosing {@code Environment} as its own
+     * <p>Each path will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
+     *
+     * @see #path()
      */
     @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
     String[] value() default {};
 
     /**
-     * Indicate the resource path(s) of the property source file to be loaded.
-     * <p>For example, {@code "/com/myco/app.properties"}
-     * or {@code "/path/to/file.xml"}.
-     * <p>Resource paths wildcards (e.g. *&#42;/*.properties) also are permitted;
+     * Indicate the resource path(s) of the property source to be loaded.
+     * <p>The resource format is supported by the specified {@link #factory()},
+     * for example, {@code "/com/myco/app.properties"} or {@code "/path/to/file.xml"}.
+     * <p>Resource path wildcards (e.g. /*.properties) also are permitted;
      * <p>${...} placeholders will be resolved against any/all property sources already
      * registered with the {@code Environment}.
-     * <p>Each location will be added to the enclosing {@code Environment} as its own
+     * <p>Each path will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
+     *
+     * @see #value()
      */
     @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
-    String[] paths();
+    String[] path();
 
     /**
-     * Indicate the resources to be sorted when {@link #paths()} specifies the resource location wildcards
+     * Indicate the resources to be sorted when {@link #path()} specifies the resource location wildcards
      * or the same resource names with the different absolute paths.
      * <p>For example, {@code "/com/myco/*.properties"}, suppose there are two resources named
      * "a.properties" and "b.properties" where two instances of {@link Resource} will be resolved, they are
