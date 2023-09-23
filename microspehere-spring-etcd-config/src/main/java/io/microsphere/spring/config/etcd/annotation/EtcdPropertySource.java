@@ -96,24 +96,34 @@ public @interface EtcdPropertySource {
     String after() default "";
 
     /**
-     * Indicate the resource location(s) of the properties file to be loaded.
-     * <p>Both traditional and XML-based properties file formats are supported
-     * &mdash; for example, {@code "classpath:/com/myco/app.properties"}
-     * or {@code "file:/path/to/file.xml"}.
-     * <p>Resource location wildcards (e.g. *&#42;/*.properties) also are permitted;
+     * Indicate the key(s) of the property source resource(s) to be loaded.
+     * <p>The resource format is supported by the specified {@link #factory()}
+     * , for example, {@code "/com/myco/app.properties"} or {@code "/path/to/file.xml"}.
+     * <p>The etcd key wildcards (e.g. /*.properties) also are permitted;
      * <p>${...} placeholders will be resolved against any/all property sources already
      * registered with the {@code Environment}.
-     * <p>Each location will be added to the enclosing {@code Environment} as its own
+     * <p>Each key will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
+     *
+     * @see #key()
      */
     @AliasFor(annotation = PropertySourceExtension.class)
     String[] value() default {};
 
     /**
-     * Indicate the key(s) of the etcd configuration
+     * Indicate the key(s) of the property source resource(s) to be loaded.
+     * <p>The resource format is supported by the specified {@link #factory()}
+     * , for example, {@code "/com/myco/app.properties"} or {@code "/path/to/file.xml"}.
+     * <p>The etcd key wildcards (e.g. /*.properties) also are permitted;
+     * <p>${...} placeholders will be resolved against any/all property sources already
+     * registered with the {@code Environment}.
+     * <p>Each key will be added to the enclosing {@code Environment} as its own
+     * property source, and in the order declared.
+     *
+     * @see #value()
      */
     @AliasFor(annotation = PropertySourceExtension.class, attribute = "value")
-    String[] keys() default {};
+    String[] key() default {};
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards

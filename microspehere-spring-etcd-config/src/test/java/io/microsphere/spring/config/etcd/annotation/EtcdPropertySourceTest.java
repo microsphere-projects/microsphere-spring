@@ -114,7 +114,7 @@ public class EtcdPropertySourceTest {
     }
 
     @EtcdPropertySource(
-            keys = "test.json",
+            key = "test.json",
             factory = JsonPropertySourceFactory.class)
     static class Config {
 
