@@ -25,6 +25,8 @@ import java.util.Map;
  * {@link PropertySourceExtensionAttributes} for {@link ZookeeperPropertySource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ZookeeperPropertySource
+ * @see ZookeeperPropertySourceLoader
  * @since 1.0.0
  */
 public final class ZookeeperPropertySourceAttributes extends PropertySourceExtensionAttributes<ZookeeperPropertySource> {

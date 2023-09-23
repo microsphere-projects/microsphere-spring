@@ -37,6 +37,8 @@ import java.util.Comparator;
  * The annotation for Zookeeper {@link PropertySource}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ZookeeperPropertySourceAttributes
+ * @see ZookeeperPropertySourceLoader
  * @since 1.0.0
  */
 @Target(ElementType.TYPE)

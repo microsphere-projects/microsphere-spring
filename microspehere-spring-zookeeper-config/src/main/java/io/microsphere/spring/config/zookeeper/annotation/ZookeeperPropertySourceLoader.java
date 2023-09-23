@@ -40,6 +40,8 @@ import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
  * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ZookeeperPropertySource
+ * @see ZookeeperPropertySourceAttributes
  * @since 1.0.0
  */
 public class ZookeeperPropertySourceLoader extends PropertySourceExtensionLoader<ZookeeperPropertySource, ZookeeperPropertySourceAttributes> {
