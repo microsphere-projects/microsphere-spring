@@ -15,7 +15,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>Microsphere Projects :: Spring Parent</name>
+    <name>Microsphere :: Spring :: Parent</name>
     <description>Microsphere Spring Parent</description>
 
     <properties>

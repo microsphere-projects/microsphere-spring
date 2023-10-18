@@ -15,7 +15,7 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring WebFlux</name>
+    <name>Microsphere :: Spring :: WebFlux</name>
     <description>Microsphere Spring WebFlux</description>
 
     <dependencies>

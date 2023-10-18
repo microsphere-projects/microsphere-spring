@@ -15,8 +15,8 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring Testing</name>
-    <description>Microsphere Spring Testing</description>
+    <name>Microsphere :: Spring :: Test</name>
+    <description>Microsphere Spring Test</description>
 
     <properties>
         <zookeeper.version>3.8.1</zookeeper.version>

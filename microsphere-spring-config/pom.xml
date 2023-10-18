@@ -15,7 +15,7 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring Config</name>
+    <name>Microsphere :: Spring :: Config</name>
     <description>Microsphere Spring Config</description>
 
     <dependencies>

@@ -14,7 +14,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>Microsphere Projects :: Spring</name>
+    <name>Microsphere :: Spring</name>
     <description>Microsphere Projects for Spring Framework</description>
 
     <scm>

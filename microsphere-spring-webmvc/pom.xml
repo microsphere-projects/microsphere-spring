@@ -15,7 +15,7 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring Web MVC</name>
+    <name>Microsphere :: Spring :: Web MVC</name>
     <description>Microsphere Spring Web MVC</description>
 
     <dependencies>

@@ -15,7 +15,7 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring Redis</name>
+    <name>Microsphere :: Spring :: Redis</name>
     <description>Microsphere Spring Redis</description>
 
     <properties>

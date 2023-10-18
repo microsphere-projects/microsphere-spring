@@ -15,7 +15,7 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring Config :: Zookeeper</name>
+    <name>Microsphere :: Spring :: Zookeeper Config</name>
     <description>Microsphere Spring Zookeeper Config</description>
 
     <properties>

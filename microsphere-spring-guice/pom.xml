@@ -15,7 +15,7 @@
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere Projects :: Spring Guice</name>
+    <name>Microsphere :: Spring :: Guice</name>
     <description>Microsphere Spring Bridge Guice</description>
 
     <properties>
