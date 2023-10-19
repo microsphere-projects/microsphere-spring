@@ -49,7 +49,6 @@
         <module>microsphere-spring-webflux</module>
         <module>microsphere-spring-redis</module>
         <module>microsphere-spring-redis-replicator</module>
-        <module>microsphere-spring-resilience4j</module>
         <module>microsphere-spring-guice</module>
         <module>microsphere-spring-test</module>
         <module>microspehere-spring-zookeeper-config</module>
