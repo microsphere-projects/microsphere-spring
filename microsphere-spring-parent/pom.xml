@@ -20,7 +20,7 @@
 
     <properties>
         <microsphere.version>${revision}</microsphere.version>
-        <spring-boot.version>2.7.12</spring-boot.version>
+        <spring-boot.version>2.7.17</spring-boot.version>
         <resilience4j.version>1.7.0</resilience4j.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <embedded-redis.version>0.6</embedded-redis.version>
