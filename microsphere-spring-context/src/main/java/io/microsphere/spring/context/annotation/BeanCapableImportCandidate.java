@@ -66,13 +66,13 @@ import static io.microsphere.text.FormatUtils.format;
 public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware,
         BeanFactoryAware, EnvironmentAware, ResourceLoaderAware {
 
-    private ClassLoader classLoader;
+    protected ClassLoader classLoader;
 
-    private ConfigurableListableBeanFactory beanFactory;
+    protected ConfigurableListableBeanFactory beanFactory;
 
-    private ConfigurableEnvironment environment;
+    protected ConfigurableEnvironment environment;
 
-    private ResourceLoader resourceLoader;
+    protected ResourceLoader resourceLoader;
 
     @Override
     public final void setBeanClassLoader(ClassLoader classLoader) {
