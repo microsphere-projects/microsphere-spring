@@ -87,10 +87,14 @@ public class EtcdPropertySourceLoader extends PropertySourceExtensionLoader<Etcd
 
         Resource[] resources = new Resource[size];
 
+        String encoding = etcdPropertySourceAttributes.getEncoding();
+        Charset charset = Charset.forName(encoding);
+
         for (int i = 0; i < size; i++) {
             KeyValue keyValue = keyValues.get(i);
             ByteSequence value = keyValue.getValue();
-            resources[i] = new ByteArrayResource(value.getBytes());
+            String description = keyValue.getKey().toString(charset);
+            resources[i] = new ByteArrayResource(value.getBytes(), description);
         }
 
         return resources;
