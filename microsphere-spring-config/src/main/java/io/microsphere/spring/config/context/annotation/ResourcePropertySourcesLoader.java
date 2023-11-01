@@ -41,10 +41,6 @@ import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.
 class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<ResourcePropertySources> implements
         ResourceLoaderAware, BeanClassLoaderAware {
 
-    private ResourceLoader resourceLoader;
-
-    private ClassLoader classLoader;
-
     @Override
     protected void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata, String propertySourceName,
                                       MutablePropertySources propertySources) throws Throwable {
@@ -65,19 +61,8 @@ class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<Resour
         ResourcePropertySourceLoader delegate = new ResourcePropertySourceLoader();
         delegate.setEnvironment(getEnvironment());
         delegate.setBeanFactory(getBeanFactory());
-        delegate.setResourceLoader(resourceLoader);
-        delegate.setBeanClassLoader(classLoader);
+        delegate.setResourceLoader(getResourceLoader());
+        delegate.setBeanClassLoader(getClassLoader());
         return delegate;
     }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
-
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
-
 }

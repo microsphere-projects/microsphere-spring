@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.util.BeanRegistrar;
 import org.slf4j.Logger;
@@ -61,8 +62,8 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implements ImportSelector,
-        EnvironmentAware, BeanFactoryAware {
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends BeanCapableImportCandidate
+        implements ImportSelector {
 
     private static final String[] NO_CLASS_TO_IMPORT = new String[0];
 
@@ -71,10 +72,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Class<A> annotationType;
-
-    private ConfigurableEnvironment environment;
-
-    private ConfigurableListableBeanFactory beanFactory;
 
     private String propertySourceName;
 
@@ -95,9 +92,8 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
         ResolvablePlaceholderAnnotationAttributes attributes = ResolvablePlaceholderAnnotationAttributes.of(annotationAttributes, annotationType, getEnvironment());
         String propertySourceName = resolvePropertySourceName(attributes, metadata);
         this.propertySourceName = propertySourceName;
-        MutablePropertySources propertySources = environment.getPropertySources();
+        MutablePropertySources propertySources = getEnvironment().getPropertySources();
         try {
-            initializeSelf();
             loadPropertySource(attributes, metadata, propertySourceName, propertySources);
         } catch (Throwable e) {
             String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationClassName + "] can't load the PropertySource[name : '" + propertySourceName + "']";
@@ -105,12 +101,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
             throw new BeanCreationException(errorMessage, e);
         }
         return NO_CLASS_TO_IMPORT;
-    }
-
-    private void initializeSelf() {
-        String beanName = this.propertySourceName;
-        this.beanFactory.registerSingleton(beanName, this);
-        this.beanFactory.initializeBean(this, beanName);
     }
 
 
@@ -173,20 +163,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
     protected abstract void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata,
                                                String propertySourceName, MutablePropertySources propertySources) throws Throwable;
 
-    @Override
-    public final void setEnvironment(Environment environment) {
-        Class<ConfigurableEnvironment> targetType = ConfigurableEnvironment.class;
-        Assert.isInstanceOf(targetType, environment, "The 'environment' argument must be an instance of class " + targetType.getName());
-        this.environment = targetType.cast(environment);
-    }
-
-    @Override
-    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        Class<ConfigurableListableBeanFactory> targetType = ConfigurableListableBeanFactory.class;
-        Assert.isInstanceOf(targetType, beanFactory, "The 'beanFactory' argument must be an instance of class " + targetType.getName());
-        this.beanFactory = targetType.cast(beanFactory);
-    }
-
     /**
      * The annotation type
      *
@@ -195,26 +171,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
     @NonNull
     public final Class<A> getAnnotationType() {
         return annotationType;
-    }
-
-    /**
-     * The {@link ConfigurableEnvironment} instance
-     *
-     * @return non-null
-     */
-    @NonNull
-    public final ConfigurableEnvironment getEnvironment() {
-        return environment;
-    }
-
-    /**
-     * The {@link ConfigurableListableBeanFactory} instance
-     *
-     * @return non-null
-     */
-    @NonNull
-    public final ConfigurableListableBeanFactory getBeanFactory() {
-        return beanFactory;
     }
 
     protected String getPropertySourceName() {

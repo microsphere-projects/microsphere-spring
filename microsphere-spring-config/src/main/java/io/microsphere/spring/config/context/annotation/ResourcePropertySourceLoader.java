@@ -31,6 +31,7 @@ import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.EncodedResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
@@ -57,14 +58,17 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     private ResourcePatternResolver resourcePatternResolver;
 
-    private ClassLoader classLoader;
-
     private StandardFileWatchService fileWatchService;
 
     @Override
     protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
                                           String propertySourceName, String resourceValue)
             throws Throwable {
+        ResourcePatternResolver resourcePatternResolver = this.resourcePatternResolver;
+        if (resourcePatternResolver == null) {
+            resourcePatternResolver = new PathMatchingResourcePatternResolver(getResourceLoader());
+            this.resourcePatternResolver = resourcePatternResolver;
+        }
         return resourcePatternResolver.getResources(resourceValue);
     }
 
@@ -161,17 +165,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
     private boolean isFileSystemBasedResource(Resource resource) {
         return resource instanceof FileSystemResource ||
                 resource instanceof FileUrlResource;
-    }
-
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourcePatternResolver = getResourcePatternResolver(resourceLoader);
-    }
-
-    @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 
     @Override
