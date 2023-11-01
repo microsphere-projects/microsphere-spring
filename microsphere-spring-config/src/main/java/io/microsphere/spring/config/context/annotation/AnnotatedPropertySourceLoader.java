@@ -17,15 +17,22 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
+import io.microsphere.spring.util.BeanRegistrar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -54,7 +61,8 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implements ImportSelector, EnvironmentAware, BeanFactoryAware {
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implements ImportSelector,
+        EnvironmentAware, BeanFactoryAware {
 
     private static final String[] NO_CLASS_TO_IMPORT = new String[0];
 
@@ -89,6 +97,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
         this.propertySourceName = propertySourceName;
         MutablePropertySources propertySources = environment.getPropertySources();
         try {
+            initializeSelf();
             loadPropertySource(attributes, metadata, propertySourceName, propertySources);
         } catch (Throwable e) {
             String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationClassName + "] can't load the PropertySource[name : '" + propertySourceName + "']";
@@ -97,6 +106,13 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> implem
         }
         return NO_CLASS_TO_IMPORT;
     }
+
+    private void initializeSelf() {
+        String beanName = this.propertySourceName;
+        this.beanFactory.registerSingleton(beanName, this);
+        this.beanFactory.initializeBean(this, beanName);
+    }
+
 
     /**
      * Resolve the name of {@link PropertySource}

@@ -34,12 +34,12 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        ResourcePropertySourceTest.class
+        EncodedExtensionAttributesPropertySourceTest.class
 })
 @ResourcePropertySource(value = {
         "classpath*:/META-INF/test/*.properties"
 })
-public class ResourcePropertySourceTest {
+public class EncodedExtensionAttributesPropertySourceTest {
 
     @Autowired
     private Environment environment;

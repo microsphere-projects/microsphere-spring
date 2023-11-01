@@ -100,14 +100,13 @@ public @interface PropertySourceExtension {
     String after() default "";
 
     /**
-     * Indicate the resource location(s) of the property source file to be loaded.
-     * <p>Both traditional and XML-based properties file formats are supported
-     * &mdash; for example, {@code "classpath:/com/myco/app.properties"}
+     * Indicate the resource(s) of the property source to be loaded.
+     * <p>For example, {@code "classpath:/com/myco/app.properties"}
      * or {@code "file:/path/to/file.xml"}.
-     * <p>Resource location wildcards (e.g. *&#42;/*.properties) also are permitted;
+     * <p>Resource wildcards (e.g. *&#42;/*.properties) also are permitted;
      * <p>${...} placeholders will be resolved against any/all property sources already
      * registered with the {@code Environment}.
-     * <p>Each location will be added to the enclosing {@code Environment} as its own
+     * <p>Each value will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
     String[] value() default {};

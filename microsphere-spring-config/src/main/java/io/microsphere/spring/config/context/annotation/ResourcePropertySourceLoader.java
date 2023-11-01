@@ -51,7 +51,8 @@ import static org.springframework.core.io.support.ResourcePatternUtils.getResour
  * @see PropertySourceExtensionAttributes
  * @since 1.0.0
  */
-public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource, PropertySourceExtensionAttributes<ResourcePropertySource>>
+public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource,
+        PropertySourceExtensionAttributes<ResourcePropertySource>>
         implements ResourceLoaderAware, BeanClassLoaderAware, DisposableBean {
 
     private ResourcePatternResolver resourcePatternResolver;
@@ -61,7 +62,8 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
     private StandardFileWatchService fileWatchService;
 
     @Override
-    protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, String propertySourceName, String resourceValue)
+    protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
+                                          String propertySourceName, String resourceValue)
             throws Throwable {
         return resourcePatternResolver.getResources(resourceValue);
     }

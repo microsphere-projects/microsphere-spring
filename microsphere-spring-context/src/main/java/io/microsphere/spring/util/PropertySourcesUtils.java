@@ -11,13 +11,18 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
 
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import static io.microsphere.collection.MapUtils.MIN_LOAD_FACTOR;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.spring.util.ObjectUtils.EMPTY_STRING_ARRAY;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
 /**
@@ -133,6 +138,7 @@ public abstract class PropertySourcesUtils {
      * @return non-null
      * @since 1.0.0
      */
+    @Nonnull
     public static String[] getPropertyNames(PropertySource propertySource) {
         String[] propertyNames = propertySource instanceof EnumerablePropertySource ? ((EnumerablePropertySource) propertySource).getPropertyNames() : null;
 
@@ -141,6 +147,27 @@ public abstract class PropertySourcesUtils {
         }
 
         return propertyNames;
+    }
+
+    /**
+     * Get the {@link Map} as the properties from the specified {@link PropertySource}
+     *
+     * @param propertySource the specified {@link PropertySource}
+     * @return non-null read-only {@link Map}
+     */
+    @Nonnull
+    public static Map<String, Object> getProperties(PropertySource propertySource) {
+        String[] propertyNames = getPropertyNames(propertySource);
+        int length = propertyNames.length;
+        if (length < 1) {
+            return emptyMap();
+        }
+        Map<String, Object> properties = newLinkedHashMap(length, MIN_LOAD_FACTOR);
+        for (int i = 0; i < length; i++) {
+            String propertyName = propertyNames[i];
+            properties.put(propertyName, propertySource.getProperty(propertyName));
+        }
+        return unmodifiableMap(properties);
     }
 
     public static void addDefaultProperties(ConfigurableEnvironment environment, String key, Object value, Object... others) {

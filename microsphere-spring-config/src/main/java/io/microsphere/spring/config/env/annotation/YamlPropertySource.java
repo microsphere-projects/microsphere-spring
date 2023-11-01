@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.config.env.annotation;
 
-import io.microsphere.spring.config.context.annotation.PropertySourceExtension;
 import io.microsphere.spring.config.context.annotation.ResourcePropertySource;
 import io.microsphere.spring.config.env.ImmutableMapPropertySource;
 import io.microsphere.spring.config.env.support.DefaultResourceComparator;
