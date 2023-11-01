@@ -18,14 +18,11 @@ package io.microsphere.spring.context.annotation;
 
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.Aware;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -63,8 +60,7 @@ import static io.microsphere.text.FormatUtils.format;
  * @see org.springframework.context.support.ApplicationContextAwareProcessor
  * @since 1.0.0
  */
-public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware,
-        BeanFactoryAware, EnvironmentAware, ResourceLoaderAware {
+public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware, ResourceLoaderAware {
 
     protected ClassLoader classLoader;
 
@@ -155,8 +151,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
         Class<?> interface1 = ImportSelector.class;
         Class<?> interface2 = ImportBeanDefinitionRegistrar.class;
         if (!interface1.isAssignableFrom(klass) && !interface2.isAssignableFrom(klass)) {
-            String message = format("The @Import Candidate[class : '{}'] must implement the interface '{}' or '{}'",
-                    klass.getName(), interface1.getName(), interface2.getName());
+            String message = format("The @Import Candidate[class : '{}'] must implement the interface '{}' or '{}'", klass.getName(), interface1.getName(), interface2.getName());
             throw new IllegalStateException(message);
         }
     }
