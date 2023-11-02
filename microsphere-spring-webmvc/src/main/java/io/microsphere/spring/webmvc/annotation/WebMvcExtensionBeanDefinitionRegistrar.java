@@ -90,11 +90,26 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     private void registerHandlerInterceptors(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         Class<? extends HandlerInterceptor>[] interceptorClasses = (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("registerHandlerInterceptors");
         if (!ObjectUtils.isEmpty(interceptorClasses)) {
-            AbstractBeanDefinition beanDefinition = rootBeanDefinition(LazyCompositeHandlerInterceptor.class)
-                    .addConstructorArgValue(interceptorClasses)
-                    .getBeanDefinition();
-            registry.registerBeanDefinition(BEAN_NAME, beanDefinition);
+            registerLazyCompositeHandlerInterceptor(registry, interceptorClasses);
+            registerInterceptors(registry, interceptorClasses);
         }
+    }
+
+    private void registerLazyCompositeHandlerInterceptor(BeanDefinitionRegistry registry, Class<? extends HandlerInterceptor>... interceptorClasses) {
+        AbstractBeanDefinition beanDefinition = rootBeanDefinition(LazyCompositeHandlerInterceptor.class)
+                .addConstructorArgValue(interceptorClasses)
+                .getBeanDefinition();
+        registry.registerBeanDefinition(BEAN_NAME, beanDefinition);
+    }
+
+    private void registerInterceptors(BeanDefinitionRegistry registry, Class<? extends HandlerInterceptor>[] interceptorClasses) {
+        for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {
+            registerInterceptor(registry, interceptorClass);
+        }
+    }
+
+    private void registerInterceptor(BeanDefinitionRegistry registry, Class<? extends HandlerInterceptor> interceptorClass) {
+        registerBeanDefinition(registry, interceptorClass);
     }
 
     private void registerStoringRequestBodyArgumentAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {

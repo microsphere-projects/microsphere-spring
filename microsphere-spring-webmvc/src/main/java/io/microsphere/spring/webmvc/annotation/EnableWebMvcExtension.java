@@ -50,12 +50,16 @@ import java.lang.annotation.Target;
  * @see EnableWebMvc
  * @see EnableWebExtension
  * @see WebMvcExtensionBeanDefinitionRegistrar
+ * @see WebMvcExtensionConfiguration
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(WebMvcExtensionBeanDefinitionRegistrar.class)
+@Import(value = {
+        WebMvcExtensionBeanDefinitionRegistrar.class,
+        WebMvcExtensionConfiguration.class
+})
 @EnableWebExtension
 public @interface EnableWebMvcExtension {
 
