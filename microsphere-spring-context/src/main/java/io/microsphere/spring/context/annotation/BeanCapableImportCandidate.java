@@ -158,7 +158,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     }
 
     private void initializeSelf() {
-        String beanName = toString();
+        String beanName = getClass().getName() + "@" + Integer.toHexString(hashCode());
         this.beanFactory.registerSingleton(beanName, this);
         this.beanFactory.initializeBean(this, beanName);
     }
