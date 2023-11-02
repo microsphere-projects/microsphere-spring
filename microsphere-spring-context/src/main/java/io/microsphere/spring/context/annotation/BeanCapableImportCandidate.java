@@ -60,7 +60,8 @@ import static io.microsphere.text.FormatUtils.format;
  * @see org.springframework.context.support.ApplicationContextAwareProcessor
  * @since 1.0.0
  */
-public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware, ResourceLoaderAware {
+public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware,
+        ResourceLoaderAware {
 
     protected ClassLoader classLoader;
 
