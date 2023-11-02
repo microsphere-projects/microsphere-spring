@@ -91,9 +91,4 @@ public abstract class AnnotatedMethodHandlerInterceptor<A extends Annotation> ex
     private String getAnnotationAttributeName(HandlerMethod handlerMethod) {
         return getAnnotationType() + "@" + handlerMethod.toString();
     }
-
-    public boolean isDelegate(HandlerMethod handlerMethod) {
-        return handlerMethod.hasMethodAnnotation(annotationType);
-    }
-
 }
