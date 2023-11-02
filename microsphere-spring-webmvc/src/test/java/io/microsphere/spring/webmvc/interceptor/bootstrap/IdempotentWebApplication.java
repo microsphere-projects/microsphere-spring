@@ -38,7 +38,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @EnableAutoConfiguration
-@EnableWebMvcExtension(registerHandlerInterceptors = IdempotentAnnotatedMethodHandlerInterceptor.class)
+@EnableWebMvcExtension(registerHandlerInterceptors = {
+        IdempotentAnnotatedMethodHandlerInterceptor.class,
+        IdempotentAnnotatedMethodHandlerInterceptor.class,
+        IdempotentAnnotatedMethodHandlerInterceptor.class
+})
 @Import(value = {
         DemoController.class
 })

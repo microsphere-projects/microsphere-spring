@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.interceptor;
 
+import io.microsphere.collection.SetUtils;
 import io.microsphere.lang.function.ThrowableConsumer;
 import io.microsphere.lang.function.ThrowableFunction;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static io.microsphere.collection.CollectionUtils.size;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -47,12 +49,12 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
      */
     public static final String BEAN_NAME = "lazyCompositeHandlerInterceptor";
 
-    private final Class<? extends HandlerInterceptor>[] interceptorClasses;
+    private final Set<Class<? extends HandlerInterceptor>> interceptorClasses;
 
     private List<HandlerInterceptor> interceptors;
 
     public LazyCompositeHandlerInterceptor(Class<? extends HandlerInterceptor>... interceptorClasses) {
-        this.interceptorClasses = interceptorClasses;
+        this.interceptorClasses = SetUtils.of(interceptorClasses);
     }
 
     @Override
