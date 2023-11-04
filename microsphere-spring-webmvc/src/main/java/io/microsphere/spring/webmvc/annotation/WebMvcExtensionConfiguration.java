@@ -28,6 +28,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see WebMvcConfigurer
+ * @see EnableWebMvcExtension
  * @since 1.0.0
  */
 public class WebMvcExtensionConfiguration extends WebMvcConfigurerAdapter {
@@ -37,8 +38,7 @@ public class WebMvcExtensionConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor = lazyCompositeHandlerInterceptorProvider.getIfAvailable();
-        if (lazyCompositeHandlerInterceptor != null) {
+        for (LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor : lazyCompositeHandlerInterceptorProvider) {
             registry.addInterceptor(lazyCompositeHandlerInterceptor);
         }
     }
