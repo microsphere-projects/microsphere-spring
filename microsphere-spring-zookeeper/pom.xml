@@ -11,15 +11,15 @@
     </parent>
 
     <groupId>io.github.microsphere-projects</groupId>
-    <artifactId>microspehere-spring-etcd-config</artifactId>
+    <artifactId>microsphere-spring-zookeeper</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>Microsphere :: Spring :: Etcd Config</name>
-    <description>Microsphere Spring etcd Config</description>
+    <name>Microsphere :: Spring :: Zookeeper</name>
+    <description>Microsphere Spring Zookeeper</description>
 
     <properties>
-        <jetcd.version>0.5.0</jetcd.version>
+        <curator.version>5.4.0</curator.version>
     </properties>
 
     <dependencies>
@@ -64,11 +64,11 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Java etcd API -->
+        <!-- Apache Curator -->
         <dependency>
-            <groupId>io.etcd</groupId>
-            <artifactId>jetcd-core</artifactId>
-            <version>${jetcd.version}</version>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>${curator.version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -97,7 +97,6 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 </project>

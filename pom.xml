@@ -46,12 +46,12 @@
         <module>microsphere-spring-web</module>
         <module>microsphere-spring-webmvc</module>
         <module>microsphere-spring-webflux</module>
+        <module>microsphere-spring-guice</module>
+        <module>microsphere-spring-zookeeper</module>
+        <module>microsphere-spring-etcd</module>
         <module>microsphere-spring-redis</module>
         <module>microsphere-spring-redis-replicator</module>
-        <module>microsphere-spring-guice</module>
         <module>microsphere-spring-test</module>
-        <module>microspehere-spring-zookeeper-config</module>
-        <module>microspehere-spring-etcd-config</module>
     </modules>
 
     <properties>
