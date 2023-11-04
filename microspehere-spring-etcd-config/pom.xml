@@ -24,10 +24,10 @@
 
     <dependencies>
 
-        <!-- Microsphere Spring Config -->
+        <!-- Microsphere Spring Context -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-config</artifactId>
+            <artifactId>microsphere-spring-context</artifactId>
             <version>${revision}</version>
         </dependency>
 
