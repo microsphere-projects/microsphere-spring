@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
@@ -25,7 +26,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -51,7 +51,7 @@ public class SmartWebEndpointMappingFactoryTest {
 
     private String fullJson;
 
-    @PostConstruct
+    @BeforeEach
     public void init() throws Throwable {
         this.fullJson = copyToString(this.fullJsonResource.getInputStream(), UTF_8);
     }
