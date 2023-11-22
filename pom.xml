@@ -38,6 +38,10 @@
         </developer>
     </developers>
 
+    <properties>
+        <revision>0.0.1-SNAPSHOT</revision>
+    </properties>
+
     <modules>
         <module>microsphere-spring-parent</module>
         <module>microsphere-spring-dependencies</module>
@@ -54,8 +58,15 @@
         <module>microsphere-spring-test</module>
     </modules>
 
-    <properties>
-        <revision>0.0.1-SNAPSHOT</revision>
-    </properties>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
