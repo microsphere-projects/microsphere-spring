@@ -1,6 +1,0 @@
-io.microsphere.spring.redis.context.RedisModuleInitializer=\
-io.microsphere.spring.redis.context.RedisInterceptorModuleInitializer
-
-
-org.springframework.data.redis.serializer.RedisSerializer=\
-io.microsphere.spring.redis.serializer.RedisCommandEventSerializer
