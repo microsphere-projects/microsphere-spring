@@ -12,7 +12,6 @@ import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -181,10 +180,29 @@ public abstract class PropertySourcesUtils {
         }
     }
 
+    /**
+     * Get the {@link Map} properties from the "default" {@link PropertySource} that is the lowest
+     * order one of the Spring {@link PropertySources} is created if absent
+     *
+     * @param environment {@link ConfigurableEnvironment}
+     * @return non-null mutable {@link Map}
+     * @see #DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME
+     * @see #getDefaultProperties(ConfigurableEnvironment, boolean)
+     */
     public static Map<String, Object> getDefaultProperties(ConfigurableEnvironment environment) {
         return getDefaultProperties(environment, true);
     }
 
+    /**
+     * Get the {@link Map} properties from the "default" {@link PropertySource} that is the lowest
+     * order one of the Spring {@link PropertySources} is created if specified.
+     *
+     * @param environment    {@link ConfigurableEnvironment}
+     * @param createIfAbsent <code>true</code> indicates the "default" {@link PropertySource} will be created if absent
+     * @return non-null mutable {@link Map}
+     * @see #DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME
+     * @see #getDefaultProperties(ConfigurableEnvironment, boolean)
+     */
     public static Map<String, Object> getDefaultProperties(ConfigurableEnvironment environment, boolean createIfAbsent) {
         Map<String, Object> defaultProperties = null;
         MapPropertySource defaultPropertiesPropertySource = getDefaultPropertiesPropertySource(environment, createIfAbsent);
@@ -195,10 +213,25 @@ public abstract class PropertySourcesUtils {
         return defaultProperties;
     }
 
+    /**
+     * Get the "default" {@link PropertySource} that is the lowest order one of the Spring {@link PropertySources}
+     * is created if absent
+     *
+     * @param environment {@link ConfigurableEnvironment}
+     * @return non-null {@link MapPropertySource}
+     */
     public static MapPropertySource getDefaultPropertiesPropertySource(ConfigurableEnvironment environment) {
         return getDefaultPropertiesPropertySource(environment, true);
     }
 
+    /**
+     * Get the "default" {@link PropertySource} that is the lowest order one of the Spring {@link PropertySources}
+     * is created if specified
+     *
+     * @param environment    {@link ConfigurableEnvironment}
+     * @param createIfAbsent <code>true</code> indicates the "default" {@link PropertySource} will be created if absent
+     * @return non-null {@link MapPropertySource}
+     */
     public static MapPropertySource getDefaultPropertiesPropertySource(ConfigurableEnvironment environment, boolean createIfAbsent) {
         MutablePropertySources propertySources = environment.getPropertySources();
         final String name = DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
