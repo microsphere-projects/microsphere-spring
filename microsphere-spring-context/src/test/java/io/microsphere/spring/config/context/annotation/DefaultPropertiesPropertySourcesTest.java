@@ -38,13 +38,8 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {DefaultPropertiesPropertySourcesTest.class})
-
-@DefaultPropertiesPropertySources(value = {
-        @DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/a.properties"}),
-        @DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/b.properties"})
-}
-)
-
+@DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/a.properties"})
+@DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/b.properties"})
 public class DefaultPropertiesPropertySourcesTest {
 
     @Autowired
