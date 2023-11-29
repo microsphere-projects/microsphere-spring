@@ -17,28 +17,19 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
-import io.microsphere.spring.util.AnnotationUtils;
 import io.microsphere.spring.util.PropertySourcesUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
 
-import static io.microsphere.spring.config.context.annotation.DefaultPropertiesPropertySourceLoader.DefaultPropertiesPropertySourceProcessor.getBeanDefinition;
 import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultProperties;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 
 /**
  * The Loader class for {@link DefaultPropertiesPropertySource @DefaultPropertiesPropertySource}
@@ -48,7 +39,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * @see ResourcePropertySourceLoader
  * @since 1.0.0
  */
-class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
+class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -60,7 +51,7 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
 
     /**
      * Load a {@link PropertySource} as a segment of {@link PropertySourcesUtils#DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME "defaultProperties"}
-     * {@link PropertySource} that will be associated into th attribute of {@link BeanDefinition} of {@link DefaultPropertiesPropertySourceProcessor}
+     * {@link PropertySource}
      *
      * @param attributes {@link AnnotationAttributes}
      * @param registry   {@link BeanDefinitionRegistry}
@@ -71,13 +62,18 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
         // Reuse ResourcePropertySourceLoader
         ResourcePropertySourceLoader delegate = getDelegate();
 
+        Map<String, Object> defaultProperties = getDefaultProperties(this.environment);
+
         PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes = buildExtensionAttributes(attributes);
         try {
             PropertySource<?> propertySource = delegate.loadPropertySource(extensionAttributes, propertySourceName);
-            BeanDefinition beanDefinition = getBeanDefinition(registry);
-            // AttributeAccessorSupport#attributes is a LinkedHashMap instance that ensures the insertion order, that means
-            // the order is based on the loading order of @DefaultPropertiesPropertySource
-            beanDefinition.setAttribute(propertySourceName, propertySource);
+            if (propertySource instanceof EnumerablePropertySource) {
+                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+                for (String propertyName : enumerablePropertySource.getPropertyNames()) {
+                    Object propertyValue = propertySource.getProperty(propertyName);
+                    defaultProperties.put(propertyName, propertyValue);
+                }
+            }
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +83,6 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
         return new PropertySourceExtensionAttributes(attributes, ResourcePropertySource.class, this.getEnvironment());
     }
 
-
     private ResourcePropertySourceLoader getDelegate() {
         ResourcePropertySourceLoader delegate = new ResourcePropertySourceLoader();
         delegate.setEnvironment(getEnvironment());
@@ -95,56 +90,5 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
         delegate.setResourceLoader(getResourceLoader());
         delegate.setBeanClassLoader(getClassLoader());
         return delegate;
-    }
-
-    static class DefaultPropertiesPropertySourceProcessor implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
-
-        static final String BEAN_NAME = "defaultPropertiesPropertySourceProcessor";
-
-        private final ConfigurableEnvironment environment;
-
-        DefaultPropertiesPropertySourceProcessor(ConfigurableEnvironment environment) {
-            this.environment = environment;
-        }
-
-        @Override
-        public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-            BeanDefinition beanDefinition = getBeanDefinition(registry);
-            mergeDefaultProperties(beanDefinition);
-        }
-
-        private void mergeDefaultProperties(BeanDefinition beanDefinition) {
-
-            Map<String, Object> defaultProperties = getDefaultProperties(this.environment);
-
-            for (String attributeName : beanDefinition.attributeNames()) {
-                Object attribute = beanDefinition.getAttribute(attributeName);
-                if (attribute instanceof EnumerablePropertySource) {
-                    EnumerablePropertySource propertySource = (EnumerablePropertySource) attribute;
-                    for (String propertyName : propertySource.getPropertyNames()) {
-                        Object propertyValue = propertySource.getProperty(propertyName);
-                        defaultProperties.put(propertyName, propertyValue);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        }
-
-        @Override
-        public int getOrder() {
-            return HIGHEST_PRECEDENCE;
-        }
-
-        static BeanDefinition getBeanDefinition(BeanDefinitionRegistry registry) {
-            BeanDefinition beanDefinition = registry.getBeanDefinition(BEAN_NAME);
-            if (beanDefinition == null) {
-                beanDefinition = rootBeanDefinition(DefaultPropertiesPropertySourceProcessor.class).getBeanDefinition();
-                registry.registerBeanDefinition(BEAN_NAME, beanDefinition);
-            }
-            return beanDefinition;
-        }
     }
 }

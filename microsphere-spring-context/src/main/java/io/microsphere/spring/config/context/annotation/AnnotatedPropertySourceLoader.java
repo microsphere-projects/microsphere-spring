@@ -18,6 +18,7 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
+import io.microsphere.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -32,9 +33,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.spring.util.ObjectUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -48,7 +49,10 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends BeanCapableImportCandidate {
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends BeanCapableImportCandidate
+        implements ImportSelector {
+
+    private static final String[] NO_CLASS_TO_IMPORT = EMPTY_STRING_ARRAY;
 
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 
@@ -69,7 +73,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
     }
 
     @Override
-    protected void selectImports(AnnotationMetadata metadata, List<String> importingClassNames) {
+    public final String[] selectImports(AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
         Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
         ResolvablePlaceholderAnnotationAttributes attributes = ResolvablePlaceholderAnnotationAttributes.of(annotationAttributes, annotationType, getEnvironment());
@@ -83,6 +87,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
             logger.error(errorMessage, e);
             throw new BeanCreationException(errorMessage, e);
         }
+        return NO_CLASS_TO_IMPORT;
     }
 
 

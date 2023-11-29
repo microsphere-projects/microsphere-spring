@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.annotation;
 
-import io.microsphere.util.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -26,26 +25,19 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import static io.microsphere.text.FormatUtils.format;
-import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 
 /**
  * The {@link Import @Import} candidate is an instance of {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}
@@ -54,7 +46,15 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
  * not be  {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper) populated} and
  * {@link AbstractAutowireCapableBeanFactory#initializeBean(Object, String) initialized} .
  * <p>
- * The current abstract implementation is a template class supports the population and initialization.
+ * The current abstract implementation is a template class supports the population and initialization,
+ * the sub-class must implement the interface {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}, and can't
+ * override those methods:
+ * <ul>
+ *     <li>{@link #setBeanClassLoader(ClassLoader)}</li>
+ *     <li>{@link #setBeanFactory(BeanFactory)}</li>
+ *     <li>{@link #setEnvironment(Environment)}</li>
+ *     <li>{@link #setResourceLoader(ResourceLoader)}</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper)
@@ -62,8 +62,8 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
  * @see org.springframework.context.support.ApplicationContextAwareProcessor
  * @since 1.0.0
  */
-public abstract class BeanCapableImportCandidate implements ImportSelector, ImportBeanDefinitionRegistrar,
-        BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware, ResourceLoaderAware {
+public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware,
+        ResourceLoaderAware {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -74,32 +74,6 @@ public abstract class BeanCapableImportCandidate implements ImportSelector, Impo
     protected ConfigurableEnvironment environment;
 
     protected ResourceLoader resourceLoader;
-
-    @Override
-    public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        List<String> classesToImport = new LinkedList<>();
-        selectImports(importingClassMetadata, classesToImport);
-        if (classesToImport.isEmpty()) {
-            return EMPTY_STRING_ARRAY;
-        }
-        return classesToImport.toArray(EMPTY_STRING_ARRAY);
-    }
-
-    /**
-     * Select names of which class(es) should be imported based on
-     * the {@link AnnotationMetadata} of the importing @{@link Configuration} class.
-     *
-     * @param importingClassMetadata {@link AnnotationMetadata}
-     * @param importingClassNames    names of which class(es) should be imported
-     */
-    protected void selectImports(AnnotationMetadata importingClassMetadata, List<String> importingClassNames) {
-        // Overridden by the sub-class
-    }
-
-    @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        // Overridden by the sub-class
-    }
 
     @Override
     public final void setBeanClassLoader(ClassLoader classLoader) {

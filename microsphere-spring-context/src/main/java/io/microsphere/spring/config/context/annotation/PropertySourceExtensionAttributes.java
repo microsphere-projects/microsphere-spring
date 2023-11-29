@@ -46,7 +46,7 @@ public class PropertySourceExtensionAttributes<A extends Annotation> extends Res
     }
 
     public final boolean isAutoRefreshed() {
-        return getBoolean("autoRefreshed");
+        return Boolean.TRUE.equals(get("autoRefreshed"));
     }
 
     public final boolean isFirstPropertySource() {

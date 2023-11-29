@@ -47,7 +47,7 @@ import java.util.Comparator;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@Import(DefaultPropertiesPropertySourceLoader.class)
+@Import(DefaultPropertiesPropertySourcesLoader.class)
 public @interface DefaultPropertiesPropertySources {
 
     DefaultPropertiesPropertySource[] value();

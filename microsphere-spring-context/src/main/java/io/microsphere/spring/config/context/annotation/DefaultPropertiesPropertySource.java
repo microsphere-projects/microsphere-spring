@@ -58,8 +58,8 @@ import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@Import(DefaultPropertiesPropertySourceLoader.class)
 @Repeatable(DefaultPropertiesPropertySources.class)
+@Import(DefaultPropertiesPropertySourceLoader.class)
 public @interface DefaultPropertiesPropertySource {
 
     /**

@@ -21,6 +21,7 @@ import io.microsphere.spring.util.AnnotationUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
@@ -43,7 +44,7 @@ import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes
  * @see AnnotatedPropertySourceLoader
  * @since 1.0.0
  */
-class DefaultPropertiesPropertySourcesLoader extends BeanCapableImportCandidate {
+class DefaultPropertiesPropertySourcesLoader extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
