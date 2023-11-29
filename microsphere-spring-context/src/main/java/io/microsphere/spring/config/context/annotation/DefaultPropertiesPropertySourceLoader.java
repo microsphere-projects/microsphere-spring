@@ -18,6 +18,7 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.util.AnnotationUtils;
+import io.microsphere.spring.util.PropertySourcesUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -34,6 +35,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Map;
 
 import static io.microsphere.spring.config.context.annotation.DefaultPropertiesPropertySourceLoader.DefaultPropertiesPropertySourceProcessor.getBeanDefinition;
+import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultProperties;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
@@ -51,12 +53,25 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 
+        AnnotationAttributes attributes = getAnnotationAttributes(metadata, DefaultPropertiesPropertySource.class);
+
+        loadPropertySource(attributes, registry);
+    }
+
+    /**
+     * Load a {@link PropertySource} as a segment of {@link PropertySourcesUtils#DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME "defaultProperties"}
+     * {@link PropertySource} that will be associated into th attribute of {@link BeanDefinition} of {@link DefaultPropertiesPropertySourceProcessor}
+     *
+     * @param attributes {@link AnnotationAttributes}
+     * @param registry   {@link BeanDefinitionRegistry}
+     */
+    protected void loadPropertySource(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         // The property source name of current single @DefaultPropertiesPropertySource
         String propertySourceName = DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME + "@" + hashCode();
-        PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes = buildExtensionAttributes(metadata);
-
+        // Reuse ResourcePropertySourceLoader
         ResourcePropertySourceLoader delegate = getDelegate();
 
+        PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes = buildExtensionAttributes(attributes);
         try {
             PropertySource<?> propertySource = delegate.loadPropertySource(extensionAttributes, propertySourceName);
             BeanDefinition beanDefinition = getBeanDefinition(registry);
@@ -68,10 +83,10 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
         }
     }
 
-    private PropertySourceExtensionAttributes<ResourcePropertySource> buildExtensionAttributes(AnnotationMetadata metadata) {
-        AnnotationAttributes attributes = AnnotationUtils.getAnnotationAttributes(metadata, DefaultPropertiesPropertySource.class);
+    private PropertySourceExtensionAttributes<ResourcePropertySource> buildExtensionAttributes(AnnotationAttributes attributes) {
         return new PropertySourceExtensionAttributes(attributes, ResourcePropertySource.class, this.getEnvironment());
     }
+
 
     private ResourcePropertySourceLoader getDelegate() {
         ResourcePropertySourceLoader delegate = new ResourcePropertySourceLoader();
