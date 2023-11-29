@@ -123,7 +123,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         Class<EA> extensionAttributesClass = getExtensionAttributesType();
         ConfigurableEnvironment environment = getEnvironment();
         EA extensionAttributes = buildExtensionAttributes(annotationType, extensionAttributesClass, attributes, environment);
-        PropertySource<?> propertySource = loadPropertySource(extensionAttributes, propertySourceName, metadata);
+        PropertySource<?> propertySource = loadPropertySource(extensionAttributes, propertySourceName);
         if (propertySource == null) {
             String message = format("The PropertySources' Resource can't be found by the {} that annotated on {}", extensionAttributes, metadata.getClassName());
             if (extensionAttributes.isIgnoreResourceNotFound()) {
@@ -176,9 +176,9 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         return (EA) constructor.newInstance(attributes, annotationType, environment);
     }
 
-    protected final PropertySource<?> loadPropertySource(EA extensionAttributes, String propertySourceName, AnnotationMetadata metadata) throws Throwable {
+    protected final PropertySource<?> loadPropertySource(EA extensionAttributes, String propertySourceName) throws Throwable {
 
-        Comparator<Resource> resourceComparator = createResourceComparator(extensionAttributes, propertySourceName, metadata);
+        Comparator<Resource> resourceComparator = createResourceComparator(extensionAttributes, propertySourceName);
 
         List<PropertySourceResource> propertySourceResources = resolvePropertySourceResources(extensionAttributes, propertySourceName, resourceComparator);
 
@@ -443,13 +443,12 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      *
      * @param extensionAttributes the {@link PropertySourceExtensionAttributes annotation attributes} of {@link PropertySourceExtension}
      * @param propertySourceName  the name of {PropertySource} declared by {@link PropertySourceExtension#name()}
-     * @param metadata            {@link AnnotationMetadata}
      * @return an instance of {@link Comparator} for {@link Resource}
      * @see PropertySourceExtension#resourceComparator()
      * @see Comparator
      */
     @NonNull
-    protected Comparator<Resource> createResourceComparator(EA extensionAttributes, String propertySourceName, AnnotationMetadata metadata) {
+    protected Comparator<Resource> createResourceComparator(EA extensionAttributes, String propertySourceName) {
         return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getResourceComparatorClass);
     }
 
