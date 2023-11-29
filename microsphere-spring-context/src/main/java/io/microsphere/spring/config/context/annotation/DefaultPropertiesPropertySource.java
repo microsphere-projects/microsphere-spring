@@ -87,7 +87,6 @@ public @interface DefaultPropertiesPropertySource {
      *
      * @see DefaultResourceComparator
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
     Class<? extends Comparator<Resource>> resourceComparator() default DefaultResourceComparator.class;
 
     /**
@@ -96,14 +95,12 @@ public @interface DefaultPropertiesPropertySource {
      * <p>{@code true} is appropriate if the properties file is completely optional.
      * <p>Default is {@code false}.
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
     boolean ignoreResourceNotFound() default false;
 
     /**
      * A specific character encoding for the given resources.
      * <p>Default is "UTF-8"
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
     String encoding() default "UTF-8";
 
     /**
@@ -114,6 +111,5 @@ public @interface DefaultPropertiesPropertySource {
      * @see DefaultPropertySourceFactory
      * @see org.springframework.core.io.support.ResourcePropertySource
      */
-    @AliasFor(annotation = ResourcePropertySource.class)
     Class<? extends PropertySourceFactory> factory() default DefaultPropertySourceFactory.class;
 }
