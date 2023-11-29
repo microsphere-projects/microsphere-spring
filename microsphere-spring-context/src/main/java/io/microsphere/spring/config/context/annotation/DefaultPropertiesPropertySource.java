@@ -59,6 +59,7 @@ import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES
 @Inherited
 @Documented
 @Import(DefaultPropertiesPropertySourceLoader.class)
+@Repeatable(DefaultPropertiesPropertySources.class)
 public @interface DefaultPropertiesPropertySource {
 
     /**

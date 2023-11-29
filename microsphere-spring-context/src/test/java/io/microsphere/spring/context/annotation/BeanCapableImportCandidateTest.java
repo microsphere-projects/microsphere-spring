@@ -80,16 +80,10 @@ public class BeanCapableImportCandidateTest {
     }
 
 
-    static class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector, ApplicationContextAware {
-
+    static class MyImportSelector extends BeanCapableImportCandidate implements ApplicationContextAware {
 
         private ApplicationContext applicationContext;
 
-
-        @Override
-        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-            return new String[0];
-        }
 
         @Override
         public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

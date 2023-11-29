@@ -32,6 +32,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -47,10 +48,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends BeanCapableImportCandidate
-        implements ImportSelector {
-
-    private static final String[] NO_CLASS_TO_IMPORT = new String[0];
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends BeanCapableImportCandidate {
 
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 
@@ -71,7 +69,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
     }
 
     @Override
-    public final String[] selectImports(AnnotationMetadata metadata) {
+    protected void selectImports(AnnotationMetadata metadata, List<String> importingClassNames) {
         String annotationClassName = annotationType.getName();
         Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
         ResolvablePlaceholderAnnotationAttributes attributes = ResolvablePlaceholderAnnotationAttributes.of(annotationAttributes, annotationType, getEnvironment());
@@ -85,7 +83,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
             logger.error(errorMessage, e);
             throw new BeanCreationException(errorMessage, e);
         }
-        return NO_CLASS_TO_IMPORT;
     }
 
 

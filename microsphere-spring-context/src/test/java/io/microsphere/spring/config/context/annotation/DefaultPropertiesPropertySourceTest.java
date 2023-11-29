@@ -16,6 +16,20 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * {@link DefaultPropertiesPropertySource} Test
  *
@@ -23,5 +37,29 @@ package io.microsphere.spring.config.context.annotation;
  * @see DefaultPropertiesPropertySource
  * @since 1.0.0
  */
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {
+        DefaultPropertiesPropertySourceTest.class
+})
+@DefaultPropertiesPropertySource(value = {
+        "classpath*:/META-INF/test/*.properties"
+})
 public class DefaultPropertiesPropertySourceTest {
+
+    @Autowired
+    private ConfigurableEnvironment environment;
+
+    private MutablePropertySources propertySources;
+
+    @Before
+    public void before() {
+        this.propertySources = environment.getPropertySources();
+    }
+
+    @Test
+    public void test() {
+        assertTrue(propertySources.contains(DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME));
+        assertEquals("1", environment.getProperty("a"));
+        assertEquals("3", environment.getProperty("b"));
+    }
 }

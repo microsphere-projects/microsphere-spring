@@ -46,7 +46,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * @see ResourcePropertySourceLoader
  * @since 1.0.0
  */
-final class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
