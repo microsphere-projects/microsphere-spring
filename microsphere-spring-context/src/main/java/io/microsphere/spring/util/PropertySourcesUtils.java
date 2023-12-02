@@ -38,6 +38,14 @@ public abstract class PropertySourcesUtils {
     public static final String DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME = "defaultProperties";
 
     /**
+     * The {@link org.springframework.context.annotation.PropertySource} name for Spring Cloud Bootstrap context
+     *
+     * @see org.springframework.cloud.bootstrap.BootstrapApplicationListener#BOOTSTRAP_PROPERTY_SOURCE_NAME
+     */
+    public static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrap";
+
+
+    /**
      * Get Sub {@link Properties}
      *
      * @param propertySources {@link PropertySource} Iterable
@@ -248,6 +256,28 @@ public abstract class PropertySourcesUtils {
             logger.warn("'defaultProperties' PropertySource[name: {}] is not an MapPropertySource instance; it is actually: {}", name, propertySource.getClass().getName());
         }
         return defaultPropertiesPropertySource;
+    }
+
+    /**
+     * Contains the specified {@link PropertySource} or not
+     *
+     * @param environment        {@link ConfigurableEnvironment}
+     * @param propertySourceName {@link PropertySource#getName() the PropertySource name}
+     * @return if contains, return <code>true</code>, otherwise <code>false</code>
+     */
+    public static boolean containsPropertySource(ConfigurableEnvironment environment, String propertySourceName) {
+        PropertySources propertySources = environment.getPropertySources();
+        return propertySources.contains(propertySourceName);
+    }
+
+    /**
+     * Contains the Bootstrap {@link PropertySource} or not
+     *
+     * @param environment {@link ConfigurableEnvironment}
+     * @return if contains, return <code>true</code>, otherwise <code>false</code>
+     */
+    public static boolean containsBootstrapPropertySource(ConfigurableEnvironment environment) {
+        return containsPropertySource(environment, BOOTSTRAP_PROPERTY_SOURCE_NAME);
     }
 }
 
