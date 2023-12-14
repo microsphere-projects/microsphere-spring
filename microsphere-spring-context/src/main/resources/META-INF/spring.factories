@@ -2,3 +2,8 @@ io.microsphere.spring.beans.factory.InjectionPointDependencyResolver=\
 io.microsphere.spring.beans.factory.ConstructionInjectionPointDependencyResolver,\
 io.microsphere.spring.beans.factory.annotation.AutowiredInjectionPointDependencyResolver,\
 io.microsphere.spring.beans.factory.annotation.ResourceInjectionPointDependencyResolver
+
+io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
+io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\
+io.microsphere.spring.beans.factory.support.LineJoinAliasGenerator,\
+io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator
