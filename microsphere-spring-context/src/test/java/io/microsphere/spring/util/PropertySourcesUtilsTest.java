@@ -1,22 +1,44 @@
 package io.microsphere.spring.util;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.support.ResourcePropertySource;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.mock.env.MockPropertySource;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static io.microsphere.spring.util.PropertySourcesUtils.addDefaultProperties;
+import static io.microsphere.spring.util.PropertySourcesUtils.findConfiguredPropertySource;
+import static io.microsphere.spring.util.PropertySourcesUtils.findConfiguredPropertySourceName;
+import static io.microsphere.spring.util.PropertySourcesUtils.findPropertyNamesByPrefix;
+import static io.microsphere.spring.util.PropertySourcesUtils.getConversionService;
 import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultProperties;
 import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultPropertiesPropertySource;
+import static io.microsphere.spring.util.PropertySourcesUtils.getMapPropertySource;
+import static io.microsphere.spring.util.PropertySourcesUtils.getPropertySource;
 import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.spring.util.PropertySourcesUtils.resolveCommaDelimitedValueToList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.core.convert.support.DefaultConversionService.getSharedInstance;
 
 /**
  * {@link PropertySourcesUtils} Test
@@ -27,6 +49,98 @@ import static org.junit.Assert.assertEquals;
  */
 @SuppressWarnings("unchecked")
 public class PropertySourcesUtilsTest {
+
+    private ConfigurableEnvironment environment;
+
+    @Before
+    public void before() {
+        MockEnvironment mockEnvironment = new MockEnvironment();
+        mockEnvironment.setProperty("test-key", "test-value");
+        mockEnvironment.setProperty("test-key2", "test-value2");
+        mockEnvironment.setConversionService((ConfigurableConversionService) getSharedInstance());
+        this.environment = mockEnvironment;
+    }
+
+    @Test
+    public void testGetPropertySource() {
+        PropertySource propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, PropertySource.class);
+        assertNotNull(propertySource);
+
+        propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, EnumerablePropertySource.class);
+        assertNotNull(propertySource);
+
+        propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, MapPropertySource.class);
+        assertNotNull(propertySource);
+
+        propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, PropertiesPropertySource.class);
+        assertNotNull(propertySource);
+
+        propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, MockPropertySource.class);
+        assertNotNull(propertySource);
+
+        propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, ResourcePropertySource.class);
+        assertNull(propertySource);
+
+        propertySource = getPropertySource(environment, "test", ResourcePropertySource.class);
+        assertNull(propertySource);
+
+        propertySource = getPropertySource(environment, "test", MockPropertySource.class, MockPropertySource::new);
+        assertNotNull(propertySource);
+    }
+
+    @Test
+    public void testGetMapPropertySource() {
+        PropertySource propertySource = getMapPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME);
+        assertNotNull(propertySource);
+
+        propertySource = getMapPropertySource(environment, "test");
+        assertNull(propertySource);
+
+        propertySource = getMapPropertySource(environment, "test", true);
+        assertNotNull(propertySource);
+
+        propertySource = getMapPropertySource(environment, "test");
+        assertNotNull(propertySource);
+    }
+
+    @Test
+    public void testFindConfiguredPropertySource() {
+        PropertySource propertySource = findConfiguredPropertySource(environment, "test-key");
+        assertNotNull(propertySource);
+
+        propertySource = findConfiguredPropertySource(environment, "non-exist-key");
+        assertNull(propertySource);
+    }
+
+    @Test
+    public void testFindConfiguredPropertySourceName() {
+        String propertySourceName = findConfiguredPropertySourceName(environment, "test-key");
+        assertNotNull(propertySourceName, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME);
+
+        propertySourceName = findConfiguredPropertySourceName(environment, "non-exist-key");
+        assertNull(propertySourceName);
+    }
+
+    @Test
+    public void testResolveCommaDelimitedValueToList() {
+        List<String> values = resolveCommaDelimitedValueToList(environment, "${test-key},${test-key2}");
+        assertEquals("test-value", values.get(0));
+        assertEquals("test-value2", values.get(1));
+    }
+
+    @Test
+    public void testGetConversionService() {
+        ConversionService conversionService = getConversionService(environment);
+        assertEquals(getSharedInstance(), conversionService);
+    }
+
+    @Test
+    public void testFindPropertyNamesByPrefix() {
+        Set<String> propertyNames = findPropertyNamesByPrefix(environment, "test-");
+        assertEquals(2, propertyNames.size());
+        assertTrue(propertyNames.contains("test-key"));
+        assertTrue(propertyNames.contains("test-key2"));
+    }
 
     @Test
     public void testGetSubProperties() {

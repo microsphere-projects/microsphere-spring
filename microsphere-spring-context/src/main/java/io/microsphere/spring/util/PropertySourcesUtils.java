@@ -2,48 +2,207 @@ package io.microsphere.spring.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
+import org.springframework.format.support.DefaultFormattingConversionService;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.MIN_LOAD_FACTOR;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.spring.util.ObjectUtils.EMPTY_STRING_ARRAY;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * {@link PropertySources} Utilities
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySources
- * @since 2017.01.19
+ * @since 1.0.0
  */
 public abstract class PropertySourcesUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(PropertySourcesUtils.class);
 
+    /**
+     * The {@link PropertySource#getName() PropertySource name} of {@link org.springframework.boot.SpringApplication#setDefaultProperties Spring Boot default poperties}
+     *
+     * @see org.springframework.boot.DefaultPropertiesPropertySource#addOrMerge(Map, MutablePropertySources)
+     * @see org.springframework.boot.DefaultPropertiesPropertySource#NAME
+     */
     public static final String DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME = "defaultProperties";
 
     /**
-     * The {@link org.springframework.context.annotation.PropertySource} name for Spring Cloud Bootstrap context
+     * The name of the {@link PropertySource} {@link ConfigurationPropertySources#attach(Environment) adapter} from Spring Boot
+     *
+     * @see org.springframework.boot.context.properties.source.ConfigurationPropertySources#ATTACHED_PROPERTY_SOURCE_NAME
+     * @see org.springframework.boot.context.properties.source.ConfigurationPropertySources#attach(Environment)
+     */
+    private static final String ATTACHED_PROPERTY_SOURCE_NAME = "configurationProperties";
+
+    /**
+     * The {@link PropertySource#getName() PropertySource name} of Spring Cloud Bootstrap context
      *
      * @see org.springframework.cloud.bootstrap.BootstrapApplicationListener#BOOTSTRAP_PROPERTY_SOURCE_NAME
      */
     public static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrap";
 
+
+    public static <T extends PropertySource<?>> T getPropertySource(ConfigurableEnvironment environment, String propertySourceName,
+                                                                    Class<T> propertySourceType) {
+        return getPropertySource(environment, propertySourceName, propertySourceType, null);
+    }
+
+    public static <T extends PropertySource<?>> T getPropertySource(ConfigurableEnvironment environment, String propertySourceName,
+                                                                    Class<T> propertySourceType, Supplier<T> propertySourceSupplierIfAbsent) {
+        MutablePropertySources propertySources = environment.getPropertySources();
+        PropertySource propertySource = propertySources.get(propertySourceName);
+        T targetPropertySource = null;
+        if (propertySource == null) {
+            logger.debug("The '{}' PropertySource can't be found!", propertySourceName);
+            if (propertySourceSupplierIfAbsent != null) {
+                targetPropertySource = propertySourceSupplierIfAbsent.get();
+                if (targetPropertySource != null) {
+                    logger.debug("A new PropertySource[{}] will be created.", targetPropertySource);
+                    propertySources.addLast(targetPropertySource);
+                }
+            }
+        } else if (propertySourceType.isInstance(propertySource)) {
+            logger.debug("The '{}' PropertySource[type: {}] was found!", propertySourceName, propertySource.getClass().getName());
+            targetPropertySource = propertySourceType.cast(propertySource);
+        } else {
+            logger.warn("The '{}' PropertySource is not a {} instance, actual type : {}", propertySource.getClass().getName(),
+                    propertySourceType.getName());
+        }
+        return targetPropertySource;
+    }
+
+    public static MapPropertySource getMapPropertySource(ConfigurableEnvironment environment, String propertySourceName) {
+        return getMapPropertySource(environment, propertySourceName, false);
+    }
+
+    public static MapPropertySource getMapPropertySource(ConfigurableEnvironment environment, String propertySourceName, boolean created) {
+        Supplier<MapPropertySource> propertySourceSupplierIfAbsent =
+                created ? () -> new MapPropertySource(propertySourceName, new HashMap<>()) : null;
+        return getPropertySource(environment, propertySourceName, MapPropertySource.class, propertySourceSupplierIfAbsent);
+    }
+
+    public static PropertySource findConfiguredPropertySource(ConfigurableEnvironment environment, String propertyName) {
+        return findConfiguredPropertySource(environment.getPropertySources(), propertyName);
+    }
+
+    public static PropertySource findConfiguredPropertySource(Iterable<PropertySource<?>> propertySources, String propertyName) {
+        PropertySource configuredPropertySource = null;
+        for (PropertySource propertySource : propertySources) {
+            if (propertySource.getName().equals(ATTACHED_PROPERTY_SOURCE_NAME)) {
+                continue;
+            }
+            if (propertySource.containsProperty(propertyName)) {
+                configuredPropertySource = propertySource;
+                break;
+            }
+        }
+        return configuredPropertySource;
+    }
+
+    public static String findConfiguredPropertySourceName(ConfigurableEnvironment environment, String propertyName) {
+        return findConfiguredPropertySourceName(environment.getPropertySources(), propertyName);
+    }
+
+    public static String findConfiguredPropertySourceName(Iterable<PropertySource<?>> propertySources, String propertyName) {
+        PropertySource configuredPropertySource = findConfiguredPropertySource(propertySources, propertyName);
+        return configuredPropertySource == null ? null : configuredPropertySource.getName();
+    }
+
+
+    public static List<String> resolveCommaDelimitedValueToList(Environment environment, String commaDelimitedValue) {
+        List<String> values = resolvePlaceholders(environment, commaDelimitedValue, List.class);
+        return values == null ? emptyList() : unmodifiableList(values);
+    }
+
+    public static <T> T resolvePlaceholders(Environment environment, String propertyValue, Class<T> targetType) {
+        return resolvePlaceholders(environment, propertyValue, targetType, null);
+    }
+
+    public static <T> T resolvePlaceholders(Environment environment, String propertyValue, Class<T> targetType, T defaultValue) {
+        if (propertyValue == null) {
+            return defaultValue;
+        }
+        ConversionService conversionService = getConversionService(environment);
+        if (conversionService == null) {
+            return defaultValue;
+        }
+        final T targetValue;
+        String resolvedPropertyValue = environment.resolvePlaceholders(propertyValue);
+        if (conversionService.canConvert(String.class, targetType)) {
+            targetValue = conversionService.convert(resolvedPropertyValue, targetType);
+            logger.debug("The property value[origin : {} , resolved : {}] was converted to be {}(type :{})!", propertyValue, resolvedPropertyValue,
+                    targetValue, targetType);
+
+        } else {
+            targetValue = defaultValue;
+            logger.debug(
+                    "The property value[origin : {} , resolved : {}] can't be converted to be the target type[{}], take the default value({}) as result!",
+                    propertyValue, resolvedPropertyValue, targetValue, targetType);
+        }
+        return targetValue;
+    }
+
+    public static ConversionService getConversionService(Environment environment) {
+        ConversionService conversionService = null;
+        if (environment instanceof ConfigurablePropertyResolver) {
+            conversionService = ((ConfigurablePropertyResolver) environment).getConversionService();
+            if (conversionService == null) {
+                conversionService = DefaultConversionService.getSharedInstance();
+                logger.warn("ConversionService can't be resolved from Environment[class: {}], the shared ApplicationConversionService will be used!",
+                        environment.getClass().getName());
+            }
+        }
+        return conversionService;
+    }
+
+    public static Set<String> findPropertyNamesByPrefix(ConfigurableEnvironment environment, String propertyNamePrefix) {
+        return findPropertyNames(environment, propertyName -> propertyName.startsWith(propertyNamePrefix));
+    }
+
+    public static Set<String> findPropertyNames(ConfigurableEnvironment environment, Predicate<String> propertyNameFilter) {
+        Set<String> propertyNames = new LinkedHashSet<>();
+        for (PropertySource propertySource : environment.getPropertySources()) {
+            if (propertySource instanceof EnumerablePropertySource) {
+                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+                for (String propertyName : enumerablePropertySource.getPropertyNames()) {
+                    if (propertyNameFilter.test(propertyName)) {
+                        propertyNames.add(propertyName);
+                    }
+                }
+            }
+        }
+        return unmodifiableSet(propertyNames);
+    }
 
     /**
      * Get Sub {@link Properties}
