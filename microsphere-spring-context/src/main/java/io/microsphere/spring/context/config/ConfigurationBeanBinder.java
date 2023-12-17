@@ -17,6 +17,7 @@
 package io.microsphere.spring.context.config;
 
 import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
@@ -30,6 +31,51 @@ import java.util.Map;
  * @since 1.0.0
  */
 public interface ConfigurationBeanBinder {
+
+    String CONFIGURATION_PREFIX_ATTRIBUTE_NAME = "configurationPrefix";
+
+    String USING_MULTIPLE_CONFIGURATION_ATTRIBUTE_NAME = "multipleConfiguration";
+
+    String CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME = "configurationProperties";
+
+    String IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME = "ignoreUnknownFields";
+
+    String IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME = "ignoreInvalidFields";
+
+    String CONFIGURATION_BEAN_REFRESH_STRATEGY = "refreshStrategy";
+
+    /**
+     * Bind the properties in the {@link Environment} to Configuration bean under specified prefix.
+     *
+     * @param beanDefinition     bean definition
+     * @param configurationBean       the bean of configuration
+     */
+    default void bind(BeanDefinition beanDefinition, Object configurationBean) {
+        if (beanDefinition == null || configurationBean == null)
+            return;
+
+        Map<String, Object> configurationProperties = (Map<String, Object>) beanDefinition.getAttribute(CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME);
+
+        bind(configurationProperties, beanDefinition, configurationBean);
+    }
+
+    /**
+     * Bind the properties in the {@link Environment} to Configuration bean under specified prefix.
+     *
+     * @param configurationProperties the special configuration properties
+     * @param beanDefinition     bean definition
+     * @param configurationBean       the bean of configuration
+     */
+    default void bind(Map<String, Object> configurationProperties, BeanDefinition beanDefinition, Object configurationBean) {
+        if (beanDefinition == null || configurationBean == null)
+            return;
+
+        boolean ignoreUnknownFields = (Boolean) beanDefinition.getAttribute(IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME);
+
+        boolean ignoreInvalidFields = (Boolean) beanDefinition.getAttribute(IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME);
+
+        bind(configurationProperties, ignoreUnknownFields, ignoreInvalidFields, configurationBean);
+    }
 
     /**
      * Bind the properties in the {@link Environment} to Configuration bean under specified prefix.

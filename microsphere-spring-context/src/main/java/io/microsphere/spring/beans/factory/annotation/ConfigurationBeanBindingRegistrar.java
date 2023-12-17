@@ -25,10 +25,7 @@ import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.*;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -43,6 +40,7 @@ import static io.microsphere.spring.beans.factory.annotation.EnableConfiguration
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_MULTIPLE;
 import static io.microsphere.spring.util.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.util.AnnotationUtils.getRequiredAttribute;
+import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
 import static io.microsphere.spring.util.PropertySourcesUtils.normalizePrefix;
@@ -72,6 +70,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
         Map<String, Object> attributes = metadata.getAnnotationAttributes(ENABLE_CONFIGURATION_BINDING_CLASS_NAME);
 
         registerConfigurationBeanDefinitions(attributes, registry);
+        registerRefreshableConfigurationBeanRepository(registry);
     }
 
     public void registerConfigurationBeanDefinitions(Map<String, Object> attributes, BeanDefinitionRegistry registry) {
@@ -88,12 +87,15 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         boolean ignoreInvalidFields = getAttribute(attributes, "ignoreInvalidFields", valueOf(DEFAULT_IGNORE_INVALID_FIELDS));
 
-        registerConfigurationBeans(prefix, configClass, multiple, ignoreUnknownFields, ignoreInvalidFields, registry);
+        EnableConfigurationBeanBinding.ConfigurationBeanRefreshStrategy refreshStrategy = getRequiredAttribute(attributes, "refreshStrategy");
+
+        registerConfigurationBeans(prefix, configClass, multiple, ignoreUnknownFields, ignoreInvalidFields, refreshStrategy, registry);
     }
 
 
     private void registerConfigurationBeans(String prefix, Class<?> configClass, boolean multiple,
                                             boolean ignoreUnknownFields, boolean ignoreInvalidFields,
+                                            EnableConfigurationBeanBinding.ConfigurationBeanRefreshStrategy refreshStrategy,
                                             BeanDefinitionRegistry registry) {
 
         Map<String, Object> configurationProperties = PropertySourcesUtils.getSubProperties(environment.getPropertySources(), environment, prefix);
@@ -102,15 +104,16 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
                 singleton(resolveSingleBeanName(configurationProperties, configClass, registry));
 
         for (String beanName : beanNames) {
-            registerConfigurationBean(beanName, configClass, multiple, ignoreUnknownFields, ignoreInvalidFields,
+            registerConfigurationBean(beanName, configClass, multiple, prefix, ignoreUnknownFields, ignoreInvalidFields, refreshStrategy,
                     configurationProperties, registry);
         }
 
         registerConfigurationBindingBeanPostProcessor(registry);
     }
 
-    private void registerConfigurationBean(String beanName, Class<?> configClass, boolean multiple,
+    private void registerConfigurationBean(String beanName, Class<?> configClass, boolean multiple, String prefix,
                                            boolean ignoreUnknownFields, boolean ignoreInvalidFields,
+                                           EnableConfigurationBeanBinding.ConfigurationBeanRefreshStrategy refreshStrategy,
                                            Map<String, Object> configurationProperties,
                                            BeanDefinitionRegistry registry) {
 
@@ -120,9 +123,9 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         setSource(beanDefinition);
 
-        Map<String, Object> subProperties = resolveSubProperties(multiple, beanName, configurationProperties);
+        Map<String, Object> subProperties = resolveSubProperties(multiple, beanName, environment, configurationProperties);
 
-        initBeanMetadataAttributes(beanDefinition, subProperties, ignoreUnknownFields, ignoreInvalidFields);
+        initBeanMetadataAttributes(beanDefinition, multiple, prefix, subProperties, ignoreUnknownFields, ignoreInvalidFields, refreshStrategy);
 
         registry.registerBeanDefinition(beanName, beanDefinition);
 
@@ -132,7 +135,8 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
         }
     }
 
-    private Map<String, Object> resolveSubProperties(boolean multiple, String beanName,
+    static Map<String, Object> resolveSubProperties(boolean multiple, String beanName,
+                                                    PropertyResolver propertyResolver,
                                                      Map<String, Object> configurationProperties) {
         if (!multiple) {
             return configurationProperties;
@@ -142,7 +146,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         propertySources.addLast(new MapPropertySource("_", configurationProperties));
 
-        return getSubProperties(propertySources, environment, normalizePrefix(beanName));
+        return getSubProperties(propertySources, propertyResolver, normalizePrefix(beanName));
     }
 
     private void setSource(AbstractBeanDefinition beanDefinition) {
@@ -152,6 +156,11 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
     private void registerConfigurationBindingBeanPostProcessor(BeanDefinitionRegistry registry) {
         registerInfrastructureBean(registry, ConfigurationBeanBindingPostProcessor.BEAN_NAME,
                 ConfigurationBeanBindingPostProcessor.class);
+    }
+
+    protected void registerRefreshableConfigurationBeanRepository(BeanDefinitionRegistry registry) {
+        registerBeanDefinition(registry, RefreshableConfigurationBeans.BEAN_NAME,
+                RefreshableConfigurationBeans.class);
     }
 
     @Override

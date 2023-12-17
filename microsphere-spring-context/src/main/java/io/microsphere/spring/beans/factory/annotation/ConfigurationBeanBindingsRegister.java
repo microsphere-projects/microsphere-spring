@@ -46,6 +46,7 @@ public class ConfigurationBeanBindingsRegister implements ImportBeanDefinitionRe
         ConfigurationBeanBindingRegistrar registrar = new ConfigurationBeanBindingRegistrar();
 
         registrar.setEnvironment(environment);
+        registrar.registerRefreshableConfigurationBeanRepository(registry);
 
         for (AnnotationAttributes element : annotationAttributes) {
             registrar.registerConfigurationBeanDefinitions(element, registry);

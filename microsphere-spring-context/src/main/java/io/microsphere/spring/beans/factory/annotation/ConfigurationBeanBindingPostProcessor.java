@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingRegistrar.ENABLE_CONFIGURATION_BINDING_CLASS;
+import static io.microsphere.spring.context.config.ConfigurationBeanBinder.*;
 import static io.microsphere.spring.util.WrapperUtils.unwrap;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -59,12 +60,6 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
      */
     public static final String BEAN_NAME = "configurationBeanBindingPostProcessor";
 
-    static final String CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME = "configurationProperties";
-
-    static final String IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME = "ignoreUnknownFields";
-
-    static final String IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME = "ignoreInvalidFields";
-
     private final Log log = LogFactory.getLog(getClass());
 
     private ConfigurableListableBeanFactory beanFactory = null;
@@ -72,6 +67,8 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     private ConfigurationBeanBinder configurationBeanBinder = null;
 
     private List<ConfigurationBeanCustomizer> configurationBeanCustomizers = null;
+
+    private volatile RefreshableConfigurationBeans beanRepository = null;
 
     private int order = LOWEST_PRECEDENCE;
 
@@ -81,11 +78,16 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
         BeanDefinition beanDefinition = getNullableBeanDefinition(beanName);
 
         if (isConfigurationBean(bean, beanDefinition)) {
-            bindConfigurationBean(bean, beanDefinition);
+            bindConfigurationBean(beanDefinition, bean);
             customize(beanName, bean);
+            registerConfigurationBean(beanName, bean, beanDefinition);
         }
 
         return bean;
+    }
+
+    private void registerConfigurationBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        getConfigurationBeanRepository().registerConfigurationBean(beanName, bean, beanDefinition);
     }
 
     @Override
@@ -107,6 +109,13 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
             initConfigurationBeanBinder();
         }
         return configurationBeanBinder;
+    }
+
+    public RefreshableConfigurationBeans getConfigurationBeanRepository() {
+        if (this.beanRepository == null) {
+            initConfigurationBeanRepository();
+        }
+        return this.beanRepository;
     }
 
     public void setConfigurationBeanBinder(ConfigurationBeanBinder configurationBeanBinder) {
@@ -144,15 +153,9 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
         return getUserClass(bean.getClass()).getName();
     }
 
-    private void bindConfigurationBean(Object configurationBean, BeanDefinition beanDefinition) {
-
+    private void bindConfigurationBean(BeanDefinition beanDefinition, Object configurationBean) {
         Map<String, Object> configurationProperties = getConfigurationProperties(beanDefinition);
-
-        boolean ignoreUnknownFields = getIgnoreUnknownFields(beanDefinition);
-
-        boolean ignoreInvalidFields = getIgnoreInvalidFields(beanDefinition);
-
-        getConfigurationBeanBinder().bind(configurationProperties, ignoreUnknownFields, ignoreInvalidFields, configurationBean);
+        getConfigurationBeanBinder().bind(configurationProperties, beanDefinition, configurationBean);
 
         if (log.isInfoEnabled()) {
             log.info("The configuration bean [" + configurationBean + "] have been binding by the " + "configuration properties [" + configurationProperties + "]");
@@ -179,6 +182,22 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
         this.configurationBeanBinder = configurationBeanBinder;
     }
 
+    private void initConfigurationBeanRepository() {
+        RefreshableConfigurationBeans beanRepository = this.beanRepository;
+        if (beanRepository == null) {
+            try {
+                beanRepository = beanFactory.getBean(RefreshableConfigurationBeans.class);
+            } catch (BeansException ex) {
+                if (log.isInfoEnabled()) {
+                    log.info("refreshableConfigurationBeanRepository Bean can't be found in ApplicationContext.");
+                }
+                throw ex;
+            }
+        }
+
+        this.beanRepository = beanRepository;
+    }
+
     private void initBindConfigurationBeanCustomizers() {
         Collection<ConfigurationBeanCustomizer> customizers = beansOfTypeIncludingAncestors(beanFactory, ConfigurationBeanCustomizer.class).values();
         setConfigurationBeanCustomizers(customizers);
@@ -199,10 +218,16 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
         return new DefaultConfigurationBeanBinder();
     }
 
-    static void initBeanMetadataAttributes(AbstractBeanDefinition beanDefinition, Map<String, Object> configurationProperties, boolean ignoreUnknownFields, boolean ignoreInvalidFields) {
+    static void initBeanMetadataAttributes(AbstractBeanDefinition beanDefinition, boolean multiple, String prefix,
+                                           Map<String, Object> configurationProperties,
+                                           boolean ignoreUnknownFields, boolean ignoreInvalidFields,
+                                           EnableConfigurationBeanBinding.ConfigurationBeanRefreshStrategy refreshStrategy) {
+        beanDefinition.setAttribute(CONFIGURATION_PREFIX_ATTRIBUTE_NAME, prefix);
+        beanDefinition.setAttribute(USING_MULTIPLE_CONFIGURATION_ATTRIBUTE_NAME, multiple);
         beanDefinition.setAttribute(CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME, configurationProperties);
         beanDefinition.setAttribute(IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME, ignoreUnknownFields);
         beanDefinition.setAttribute(IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME, ignoreInvalidFields);
+        beanDefinition.setAttribute(CONFIGURATION_BEAN_REFRESH_STRATEGY, refreshStrategy);
     }
 
     private static <T> T getAttribute(BeanDefinition beanDefinition, String attributeName) {
@@ -211,14 +236,6 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
     private static Map<String, Object> getConfigurationProperties(BeanDefinition beanDefinition) {
         return getAttribute(beanDefinition, CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME);
-    }
-
-    private static boolean getIgnoreUnknownFields(BeanDefinition beanDefinition) {
-        return getAttribute(beanDefinition, IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME);
-    }
-
-    private static boolean getIgnoreInvalidFields(BeanDefinition beanDefinition) {
-        return getAttribute(beanDefinition, IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME);
     }
 
     @Override

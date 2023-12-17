@@ -105,4 +105,34 @@ public @interface EnableConfigurationBeanBinding {
      * @see #DEFAULT_IGNORE_INVALID_FIELDS
      */
     boolean ignoreInvalidFields() default DEFAULT_IGNORE_INVALID_FIELDS;
+
+    /**
+     * set the refresh strategy for target configuration
+     * @return the refresh strategy
+     * @see ConfigurationBeanRefreshStrategy
+     */
+    ConfigurationBeanRefreshStrategy refreshStrategy() default ConfigurationBeanRefreshStrategy.REBIND;
+
+    /**
+     * define refresh strategy for Configuration Bean
+     *
+     * @author <a href="mailto:maimengzzz@gmail.com">韩超</a>
+     * @see RefreshableConfigurationBeans
+     * @since 1.0.0
+     */
+    enum ConfigurationBeanRefreshStrategy {
+        /**
+         * disabled refresh, and the configuration bean will be immutable
+         */
+        DISABLED,
+
+        /**
+         * just rebind properties
+         */
+        REBIND,
+        /**
+         * destroy bean and reinitialize
+         */
+        REINITIALIZE;
+    }
 }
