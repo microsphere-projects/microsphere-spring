@@ -8,12 +8,16 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -38,12 +42,16 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.util.ClassLoaderUtils.isPresent;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
+import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 
 /**
  * Bean Utilities Class
@@ -57,6 +65,8 @@ public abstract class BeanUtils {
 
     private static final String[] EMPTY_BEAN_NAMES = new String[0];
 
+    private static final boolean APPLICATION_STARTUP_CLASS_PRESENT = isPresent("org.springframework.core.metrics.ApplicationStartup", null);
+
     /**
      * Is Bean Present or not?
      *
@@ -64,8 +74,7 @@ public abstract class BeanUtils {
      * @param beanClass   The  {@link Class} of Bean
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory,
-                                        Class<?> beanClass) {
+    public static boolean isBeanPresent(ListableBeanFactory beanFactory, Class<?> beanClass) {
 
         return isBeanPresent(beanFactory, beanClass, false);
 
@@ -80,9 +89,7 @@ public abstract class BeanUtils {
      * @param includingAncestors including ancestors or not
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory,
-                                        Class<?> beanClass,
-                                        boolean includingAncestors) {
+    public static boolean isBeanPresent(ListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
 
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
 
@@ -98,9 +105,7 @@ public abstract class BeanUtils {
      * @param includingAncestors including ancestors or not
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory,
-                                        String beanClassName,
-                                        boolean includingAncestors) {
+    public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName, boolean includingAncestors) {
 
         boolean present = false;
 
@@ -125,8 +130,7 @@ public abstract class BeanUtils {
      * @param beanClassName The  name of {@link Class} of Bean
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory,
-                                        String beanClassName) {
+    public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName) {
 
         return isBeanPresent(beanFactory, beanClassName, false);
 
@@ -141,8 +145,7 @@ public abstract class BeanUtils {
      * @return If present , return <code>true</code> , or <code>false</code>
      * @since 1.0.0
      */
-    public static boolean isBeanPresent(BeanFactory beanFactory, String beanName, Class<?> beanClass)
-            throws NullPointerException {
+    public static boolean isBeanPresent(BeanFactory beanFactory, String beanName, Class<?> beanClass) throws NullPointerException {
         return beanFactory.containsBean(beanName) && beanFactory.isTypeMatch(beanName, beanClass);
     }
 
@@ -165,8 +168,7 @@ public abstract class BeanUtils {
      * @param includingAncestors including ancestors or not
      * @return If found , return the array of Bean Names , or empty array.
      */
-    public static String[] getBeanNames(ListableBeanFactory beanFactory, Class<?> beanClass,
-                                        boolean includingAncestors) {
+    public static String[] getBeanNames(ListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
         // Issue : https://github.com/alibaba/spring-context-support/issues/22
         if (includingAncestors) {
             return beanNamesForTypeIncludingAncestors(beanFactory, beanClass, true, false);
@@ -194,8 +196,7 @@ public abstract class BeanUtils {
      * @param includingAncestors including ancestors or not
      * @return If found , return the array of Bean Names , or empty array.
      */
-    public static String[] getBeanNames(ConfigurableListableBeanFactory beanFactory, Class<?> beanClass,
-                                        boolean includingAncestors) {
+    public static String[] getBeanNames(ConfigurableListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
         return getBeanNames((ListableBeanFactory) beanFactory, beanClass, includingAncestors);
     }
 
@@ -244,8 +245,7 @@ public abstract class BeanUtils {
      * @throws NoUniqueBeanDefinitionException if more than one bean of the given type was found
      * @see BeanFactoryUtils#beanOfTypeIncludingAncestors(ListableBeanFactory, Class)
      */
-    public static <T> T getOptionalBean(ListableBeanFactory beanFactory, Class<T> beanClass,
-                                        boolean includingAncestors) throws BeansException {
+    public static <T> T getOptionalBean(ListableBeanFactory beanFactory, Class<T> beanClass, boolean includingAncestors) throws BeansException {
 
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
 
@@ -260,9 +260,7 @@ public abstract class BeanUtils {
 
         try {
 
-            bean = includingAncestors ?
-                    beanOfTypeIncludingAncestors(beanFactory, beanClass) :
-                    beanFactory.getBean(beanClass);
+            bean = includingAncestors ? beanOfTypeIncludingAncestors(beanFactory, beanClass) : beanFactory.getBean(beanClass);
 
         } catch (Exception e) {
 
@@ -302,15 +300,13 @@ public abstract class BeanUtils {
      * @throws BeansException in case of creation errors
      * @since 1.0.0
      */
-    public static <T> T getBeanIfAvailable(BeanFactory beanFactory, String beanName, Class<T> beanType)
-            throws BeansException {
+    public static <T> T getBeanIfAvailable(BeanFactory beanFactory, String beanName, Class<T> beanType) throws BeansException {
         if (isBeanPresent(beanFactory, beanName, beanType)) {
             return beanFactory.getBean(beanName, beanType);
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug(format("The bean[name : %s , type : %s] can't be found in Spring BeanFactory",
-                    beanName, beanType.getName()));
+            logger.debug(format("The bean[name : %s , type : %s] can't be found in Spring BeanFactory", beanName, beanType.getName()));
         }
         return null;
     }
@@ -331,24 +327,178 @@ public abstract class BeanUtils {
         return unmodifiableList(beansList);
     }
 
+    /**
+     * Invoke Spring Bean interfaces in order:
+     * <ul>
+     *     <li>{@link BeanNameAware}</li>
+     *     <li>{@link BeanClassLoaderAware}</li>
+     *     <li>{@link BeanFactoryAware}</li>
+     *     <li>{@link EnvironmentAware}</li>
+     *     <li>{@link EmbeddedValueResolverAware}</li>
+     *     <li>{@link ResourceLoaderAware}</li>
+     *     <li>{@link ApplicationEventPublisherAware}</li>
+     *     <li>{@link MessageSourceAware}</li>
+     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link ApplicationContextAware}</li>
+     *     <li>{@link InitializingBean}</li>
+     * </ul>
+     *
+     * @param bean    the bean
+     * @param context {@link ApplicationContext}
+     */
+    public static void invokeBeanInterfaces(Object bean, ApplicationContext context) {
+        ConfigurableApplicationContext configurableApplicationContext = asConfigurableApplicationContext(context);
+        invokeBeanInterfaces(bean, configurableApplicationContext);
+    }
 
+    /**
+     * Invoke Spring Bean interfaces in order:
+     * <ul>
+     *     <li>{@link BeanNameAware}</li>
+     *     <li>{@link BeanClassLoaderAware}</li>
+     *     <li>{@link BeanFactoryAware}</li>
+     *     <li>{@link EnvironmentAware}</li>
+     *     <li>{@link EmbeddedValueResolverAware}</li>
+     *     <li>{@link ResourceLoaderAware}</li>
+     *     <li>{@link ApplicationEventPublisherAware}</li>
+     *     <li>{@link MessageSourceAware}</li>
+     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link ApplicationContextAware}</li>
+     *     <li>{@link InitializingBean}</li>
+     * </ul>
+     *
+     * @param bean    the bean
+     * @param context {@link ConfigurableApplicationContext}
+     * @see #invokeBeanInterfaces(Object, ApplicationContext)
+     * @see #invokeAwareInterfaces(Object, ApplicationContext)
+     * @see #invokeInitializingBean(Object)
+     */
+    public static void invokeBeanInterfaces(Object bean, ConfigurableApplicationContext context) {
+        invokeAwareInterfaces(bean, context);
+        try {
+            invokeInitializingBean(bean);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void invokeInitializingBean(Object bean) throws Exception {
+        if (bean instanceof InitializingBean) {
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
+    }
+
+    /**
+     * Invoke the {@link Aware} interfaces in order :
+     * <ul>
+     *     <li>{@link BeanNameAware}</li>
+     *     <li>{@link BeanClassLoaderAware}</li>
+     *     <li>{@link BeanFactoryAware}</li>
+     * </ul>
+     * <p>
+     * if the argument <coode>beanFactory</coode> is an instance of {@link ApplicationContext}, the more {@link Aware} interfaces
+     * will be involved :
+     * <ul>
+     *     <li>{@link EnvironmentAware}</li>
+     *     <li>{@link EmbeddedValueResolverAware}</li>
+     *     <li>{@link ResourceLoaderAware}</li>
+     *     <li>{@link ApplicationEventPublisherAware}</li>
+     *     <li>{@link MessageSourceAware}</li>
+     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link ApplicationContextAware}</li>
+     * </ul>
+     *
+     * @param bean        the bean
+     * @param beanFactory {@link BeanFactory}
+     */
     public static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory) {
         invokeAwareInterfaces(bean, beanFactory, asConfigurableBeanFactory(beanFactory));
     }
 
+    /**
+     * Invoke the {@link Aware} interfaces in order :
+     * <ul>
+     *     <li>{@link BeanNameAware}</li>
+     *     <li>{@link BeanClassLoaderAware}</li>
+     *     <li>{@link BeanFactoryAware}</li>
+     * </ul>
+     * <p>
+     * if the argument <coode>beanFactory</coode> is an instance of {@link ApplicationContext}, the more {@link Aware} interfaces
+     * will be involved :
+     * <ul>
+     *     <li>{@link EnvironmentAware}</li>
+     *     <li>{@link EmbeddedValueResolverAware}</li>
+     *     <li>{@link ResourceLoaderAware}</li>
+     *     <li>{@link ApplicationEventPublisherAware}</li>
+     *     <li>{@link MessageSourceAware}</li>
+     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link ApplicationContextAware}</li>
+     * </ul>
+     *
+     * @param bean        the bean
+     * @param beanFactory {@link ConfigurableBeanFactory}
+     */
     public static void invokeAwareInterfaces(Object bean, ConfigurableBeanFactory beanFactory) {
         invokeAwareInterfaces(bean, beanFactory, beanFactory);
     }
 
-    static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory,
-                                      @Nullable ConfigurableBeanFactory configurableBeanFactory) {
-        if (bean == null || beanFactory == null) {
-            return;
+    /**
+     * Invoke the {@link Aware} interfaces in order :
+     * <ul>
+     *     <li>{@link BeanNameAware}</li>
+     *     <li>{@link BeanClassLoaderAware}</li>
+     *     <li>{@link BeanFactoryAware}</li>
+     * </ul>
+     * <p>
+     * if the argument <coode>beanFactory</coode> is an instance of {@link ApplicationContext}, the more {@link Aware} interfaces
+     * will be involved :
+     * <ul>
+     *     <li>{@link EnvironmentAware}</li>
+     *     <li>{@link EmbeddedValueResolverAware}</li>
+     *     <li>{@link ResourceLoaderAware}</li>
+     *     <li>{@link ApplicationEventPublisherAware}</li>
+     *     <li>{@link MessageSourceAware}</li>
+     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link ApplicationContextAware}</li>
+     * </ul>
+     *
+     * @param bean
+     * @param beanFactory
+     * @param configurableBeanFactory
+     */
+    static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
+        if (beanFactory instanceof ApplicationContext) {
+            invokeAwareInterfaces(bean, (ApplicationContext) beanFactory);
+        } else {
+            invokeBeanFactoryAwareInterfaces(bean, beanFactory, configurableBeanFactory);
         }
+    }
+
+    /**
+     * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
+     */
+    static void invokeBeanFactoryAwareInterfaces(Object bean, BeanFactory beanFactory, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
+        invokeBeanNameAware(bean, beanFactory);
+        invokeBeanClassLoaderAware(bean, configurableBeanFactory);
+        invokeBeanFactoryAware(bean, beanFactory);
+    }
+
+    static void invokeBeanNameAware(Object bean, BeanFactory beanFactory) {
+        if (bean instanceof BeanNameAware) {
+            BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
+            BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
+            String beanName = generateBeanName(beanDefinition, registry);
+            ((BeanNameAware) bean).setBeanName(beanName);
+        }
+    }
+
+    static void invokeBeanFactoryAware(Object bean, BeanFactory beanFactory) {
         if (bean instanceof BeanFactoryAware) {
             ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
         }
+    }
 
+    static void invokeBeanClassLoaderAware(Object bean, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         if (bean instanceof BeanClassLoaderAware && configurableBeanFactory != null) {
             ClassLoader classLoader = configurableBeanFactory.getBeanClassLoader();
             ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
@@ -358,7 +508,19 @@ public abstract class BeanUtils {
     /**
      * Invoke {@link Aware} interfaces if the given bean implements
      * <p>
-     * Current implementation keeps the order of invocation {@link Aware Aware interfaces}
+     * Current implementation keeps the order of invocation {@link Aware Aware interfaces}:
+     * <ul>
+     *     <li>{@link BeanNameAware}</li>
+     *     <li>{@link BeanClassLoaderAware}</li>
+     *     <li>{@link BeanFactoryAware}</li>
+     *     <li>{@link EnvironmentAware}</li>
+     *     <li>{@link EmbeddedValueResolverAware}</li>
+     *     <li>{@link ResourceLoaderAware}</li>
+     *     <li>{@link ApplicationEventPublisherAware}</li>
+     *     <li>{@link MessageSourceAware}</li>
+     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link ApplicationContextAware}</li>
+     * </ul>
      *
      * @param bean    the bean
      * @param context {@link ApplicationContext}
@@ -366,14 +528,26 @@ public abstract class BeanUtils {
      * @see org.springframework.context.support.ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    public static void invokeAwareInterfaces(Object bean, ApplicationContext context) {
+    static void invokeAwareInterfaces(Object bean, ApplicationContext context) {
         invokeAwareInterfaces(bean, context, asConfigurableApplicationContext(context));
     }
 
     /**
      * Invoke {@link Aware} interfaces if the given bean implements
      * <p>
-     * Current implementation keeps the order of invocation {@link Aware Aware interfaces}
+     * Current implementation keeps the order of invocation {@link Aware Aware interfaces}:
+     * <ul>
+     *     <li>{@link BeanNameAware}</li>
+     *     <li>{@link BeanClassLoaderAware}</li>
+     *     <li>{@link BeanFactoryAware}</li>
+     *     <li>{@link EnvironmentAware}</li>
+     *     <li>{@link EmbeddedValueResolverAware}</li>
+     *     <li>{@link ResourceLoaderAware}</li>
+     *     <li>{@link ApplicationEventPublisherAware}</li>
+     *     <li>{@link MessageSourceAware}</li>
+     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link ApplicationContextAware}</li>
+     * </ul>
      *
      * @param bean    the bean
      * @param context {@link ApplicationContext}
@@ -385,34 +559,40 @@ public abstract class BeanUtils {
         invokeAwareInterfaces(bean, context, context);
     }
 
-    static void invokeAwareInterfaces(Object bean, ApplicationContext context,
-                                      @Nullable ConfigurableApplicationContext applicationContext) {
+    static void invokeAwareInterfaces(Object bean, ApplicationContext context, @Nullable ConfigurableApplicationContext applicationContext) {
         if (bean == null || context == null) {
             return;
         }
 
         ConfigurableListableBeanFactory beanFactory = applicationContext != null ? applicationContext.getBeanFactory() : null;
 
-        invokeAwareInterfaces(bean, beanFactory);
+        invokeBeanFactoryAwareInterfaces(bean, beanFactory, beanFactory);
 
         if (bean instanceof EnvironmentAware) {
             ((EnvironmentAware) bean).setEnvironment(context.getEnvironment());
         }
+
         if (bean instanceof EmbeddedValueResolverAware && beanFactory != null) {
             StringValueResolver embeddedValueResolver = new EmbeddedValueResolver(beanFactory);
             ((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(embeddedValueResolver);
         }
+
         if (bean instanceof ResourceLoaderAware) {
             ((ResourceLoaderAware) bean).setResourceLoader(context);
         }
+
         if (bean instanceof ApplicationEventPublisherAware) {
             ((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(context);
         }
+
         if (bean instanceof MessageSourceAware) {
             ((MessageSourceAware) bean).setMessageSource(context);
         }
-        if (bean instanceof ApplicationStartupAware && applicationContext != null) {
-            ((ApplicationStartupAware) bean).setApplicationStartup(applicationContext.getApplicationStartup());
+
+        if (APPLICATION_STARTUP_CLASS_PRESENT) {
+            if (bean instanceof ApplicationStartupAware && applicationContext != null) {
+                ((ApplicationStartupAware) bean).setApplicationStartup(applicationContext.getApplicationStartup());
+            }
         }
         if (bean instanceof ApplicationContextAware) {
             ((ApplicationContextAware) bean).setApplicationContext(context);
