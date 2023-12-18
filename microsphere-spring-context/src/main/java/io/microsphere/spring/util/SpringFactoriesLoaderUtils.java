@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -23,7 +25,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.lang.NonNull;
+import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.microsphere.spring.util.ApplicationContextUtils.asApplicationContext;
@@ -33,9 +39,14 @@ import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFact
 import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
+import static io.microsphere.spring.util.BeanUtils.invokeBeanInterfaces;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static org.springframework.beans.BeanUtils.instantiateClass;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
+import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 
 /**
  * The utilities class for {@link SpringFactoriesLoader}
@@ -45,6 +56,8 @@ import static org.springframework.core.io.support.SpringFactoriesLoader.loadFact
  * @since 1.0.0
  */
 public abstract class SpringFactoriesLoaderUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpringFactoriesLoaderUtils.class);
 
     public static void registerFactories(Class<?> factoryType, BeanFactory bf) {
         BeanDefinitionRegistry registry = asBeanDefinitionRegistry(bf);
@@ -67,12 +80,15 @@ public abstract class SpringFactoriesLoaderUtils {
     }
 
     public static <T> List<T> loadFactories(Class<T> factoryType, ApplicationContext context) {
-        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
-        ClassLoader classLoader = applicationContext == null ? getDefaultClassLoader() : applicationContext.getClassLoader();
+        return loadFactories(factoryType, asConfigurableApplicationContext(context));
+    }
+
+    public static <T> List<T> loadFactories(Class<T> factoryType, ConfigurableApplicationContext context) {
+        ClassLoader classLoader = context == null ? getDefaultClassLoader() : context.getClassLoader();
         List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
         for (int i = 0; i < factories.size(); i++) {
             T factory = factories.get(i);
-            invokeAwareInterfaces(factory, context, applicationContext);
+            invokeBeanInterfaces(factory, context);
         }
         return factories;
     }
@@ -108,4 +124,70 @@ public abstract class SpringFactoriesLoaderUtils {
         }
         return factories;
     }
+
+    public static <T> List<T> loadSpringFactories(Class<T> factoryClass, ConfigurableApplicationContext context, Object... args) {
+        int argsLength = args == null ? 0 : args.length;
+        if (argsLength < 1) {
+            return loadSpringFactories(factoryClass, context);
+        }
+
+        ClassLoader classLoader = context.getClassLoader();
+        List<String> factoryClassNames = loadFactoryNames(factoryClass, classLoader);
+
+        int factorySize = factoryClassNames.size();
+
+        if (factorySize < 1) {
+            logger.debug("No factory class {} were loaded from SpringFactoriesLoader[{}]", factoryClass.getName(),
+                    SpringFactoriesLoader.FACTORIES_RESOURCE_LOCATION);
+            return emptyList();
+        }
+
+        List<T> factories = new ArrayList<>(factorySize);
+
+        for (String factoryClassName : factoryClassNames) {
+            Class<?> factoryImplClass = ClassUtils.resolveClassName(factoryClassName, classLoader);
+            Constructor<T> constructor = findConstructor(factoryImplClass, args, argsLength);
+            T factory = instantiateClass(constructor, args);
+            invokeBeanInterfaces(factory, context);
+            factories.add(factory);
+        }
+
+        return unmodifiableList(factories);
+    }
+
+
+    private static Constructor findConstructor(Class<?> factoryImplClass, Object[] args, int argsLength) {
+        Constructor targetConstructor = null;
+        Constructor[] constructors = factoryImplClass.getConstructors();
+        boolean matched = true;
+        for (Constructor constructor : constructors) {
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            int parameterCount = parameterTypes.length;
+
+            if (parameterCount != argsLength) {
+                continue;
+            }
+
+            for (int i = 0; i < argsLength; i++) {
+                Class<?> parameterType = parameterTypes[i];
+                Object arg = args[i];
+                if (!parameterType.isInstance(arg)) {
+                    matched = false;
+                    continue;
+                }
+            }
+
+            if (matched) {
+                targetConstructor = constructor;
+            }
+        }
+
+        if (targetConstructor == null) {
+            throw new IllegalArgumentException(String.format("No Constructor of Factory class[name : %s] was found for arguments : %s",
+                    factoryImplClass.getName(), arrayToCommaDelimitedString(args)));
+        }
+
+        return targetConstructor;
+    }
+
 }
