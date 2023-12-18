@@ -16,14 +16,8 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.spring.config.env.support.DefaultResourceComparator;
-import io.microsphere.spring.util.PropertySourcesUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.DefaultPropertySourceFactory;
-import org.springframework.core.io.support.PropertySourceFactory;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -31,7 +25,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Comparator;
 
 /**
  * The annotation declaring the multiple {@link DefaultPropertiesPropertySource @DefaultPropertiesPropertySource}

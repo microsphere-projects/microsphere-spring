@@ -17,18 +17,12 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
-import io.microsphere.spring.util.AnnotationUtils;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.core.type.StandardAnnotationMetadata;
 
-import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.ofSet;
