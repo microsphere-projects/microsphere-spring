@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.cache.redis;
 
-import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
 import org.springframework.data.redis.cache.CacheStatistics;
 import org.springframework.data.redis.cache.CacheStatisticsCollector;
 import org.springframework.data.redis.cache.RedisCacheWriter;
