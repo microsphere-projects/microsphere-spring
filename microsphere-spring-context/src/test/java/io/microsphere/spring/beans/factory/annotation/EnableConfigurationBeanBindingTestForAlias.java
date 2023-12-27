@@ -25,8 +25,8 @@ public class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableCo
 
     @Test
     public void test() {
-        testAlice("a", () -> ofList("UserA", "users-a", "users-a"));
-        testAlice("b", () -> ofList("UserB", "users-b", "users-b"));
+        testAlice("a", () -> ofList("UserA", "users-a", "users_a"));
+        testAlice("b", () -> ofList("UserB", "users-b", "users_b"));
 
     }
 
