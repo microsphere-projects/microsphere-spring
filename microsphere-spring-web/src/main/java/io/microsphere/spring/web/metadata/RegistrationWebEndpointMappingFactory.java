@@ -16,13 +16,10 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.springframework.lang.NonNull;
 
 import javax.servlet.Registration;
 import javax.servlet.ServletContext;
-
 import java.util.Collection;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;

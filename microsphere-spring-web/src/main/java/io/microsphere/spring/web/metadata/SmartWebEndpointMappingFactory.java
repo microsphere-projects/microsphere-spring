@@ -23,7 +23,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,9 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
-import static org.springframework.util.ClassUtils.getDefaultClassLoader;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * The smart {@link WebEndpointMappingFactory} class based on Spring's {@link WebEndpointMappingFactory} SPI
