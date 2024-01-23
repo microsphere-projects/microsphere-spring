@@ -1,3 +1,8 @@
 io.microsphere.spring.util.Bean=\
 io.microsphere.spring.util.TestBean,\
 io.microsphere.spring.util.TestBean2
+
+io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
+io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\
+io.microsphere.spring.beans.factory.support.HyphenAliasGenerator,\
+io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator
