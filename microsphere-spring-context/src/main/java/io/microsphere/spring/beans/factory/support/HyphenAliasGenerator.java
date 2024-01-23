@@ -5,7 +5,7 @@ package io.microsphere.spring.beans.factory.support;
  *
  * @since 1.0.0
  */
-public class LineJoinAliasGenerator extends JoinAliasGenerator {
+public class HyphenAliasGenerator extends JoinAliasGenerator {
 
     @Override
     protected String jointSymbol() {

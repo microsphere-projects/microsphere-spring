@@ -5,5 +5,5 @@ io.microsphere.spring.beans.factory.annotation.ResourceInjectionPointDependencyR
 
 io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
 io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\
-io.microsphere.spring.beans.factory.support.LineJoinAliasGenerator,\
+io.microsphere.spring.beans.factory.support.HyphenAliasGenerator,\
 io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator

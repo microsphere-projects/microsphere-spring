@@ -28,7 +28,7 @@ public class ConfigurationBeanAliasGeneratorTest {
 
     @Test
     public void testPrefixAndBeanNameConnectUseLine() {
-        JoinAliasGenerator generator = new LineJoinAliasGenerator();
+        JoinAliasGenerator generator = new HyphenAliasGenerator();
         Map<String, String> table = new HashMap<>();
         table.put("users", "users-bean");
         table.put("spring.users", "springUsers-bean");
