@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;

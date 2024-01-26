@@ -23,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 
-import static io.microsphere.util.ClassLoaderUtils.getClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 

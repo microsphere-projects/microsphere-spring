@@ -20,8 +20,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.Collection;
 
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
-
 /**
  * {@link WebEndpointMappingFactory} from {@link ServletRegistration}
  *

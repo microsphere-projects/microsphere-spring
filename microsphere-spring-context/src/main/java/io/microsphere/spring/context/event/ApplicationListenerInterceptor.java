@@ -19,7 +19,6 @@ package io.microsphere.spring.context.event;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
-import org.springframework.core.ResolvableType;
 
 /**
  * {@link ApplicationListener} Interceptor

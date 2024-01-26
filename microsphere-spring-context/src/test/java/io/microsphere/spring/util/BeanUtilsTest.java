@@ -2,6 +2,7 @@ package io.microsphere.spring.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -312,7 +313,8 @@ public class BeanUtilsTest {
         TestBean testBean = new TestBean();
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.refresh();
-        invokeAwareInterfaces(testBean, context);
+        BeanFactory beanFactory = context;
+        invokeAwareInterfaces(testBean, beanFactory);
         assertSame(testBean.getMessageSource(), context);
         assertSame(testBean.getApplicationContext(), context);
         assertSame(testBean.getApplicationEventPublisher(), context);

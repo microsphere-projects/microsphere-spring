@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.servlet;
 
 import javax.servlet.MultipartConfigElement;
-import javax.servlet.Servlet;
 import javax.servlet.ServletRegistration;
 import javax.servlet.ServletSecurityElement;
 import java.util.Collection;

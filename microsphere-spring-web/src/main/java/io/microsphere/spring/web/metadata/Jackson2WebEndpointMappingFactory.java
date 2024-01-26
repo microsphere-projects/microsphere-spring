@@ -19,8 +19,6 @@ package io.microsphere.spring.web.metadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.ClassUtils;
 
-import java.util.Optional;
-
 /**
  * The {@link WebEndpointMappingFactory} class based on Jackson2 for JSON
  *

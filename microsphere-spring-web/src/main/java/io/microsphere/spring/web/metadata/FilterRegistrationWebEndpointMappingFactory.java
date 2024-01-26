@@ -18,10 +18,7 @@ package io.microsphere.spring.web.metadata;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
-
 import java.util.Collection;
-
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
 /**
  * {@link WebEndpointMappingFactory} from {@link FilterRegistration}

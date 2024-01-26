@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.cache.annotation;
 
-import org.springframework.cache.annotation.CachingConfigurationSelector;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Import;

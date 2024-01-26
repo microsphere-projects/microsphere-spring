@@ -16,9 +16,13 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
 import io.microsphere.spring.util.PropertySourcesUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
@@ -31,6 +35,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +49,7 @@ import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
 import static io.microsphere.spring.util.PropertySourcesUtils.normalizePrefix;
+import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 import static java.lang.Boolean.valueOf;
 import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
@@ -54,7 +60,8 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware,
+        BeanFactoryAware {
 
     final static Class ENABLE_CONFIGURATION_BINDING_CLASS = EnableConfigurationBeanBinding.class;
 
@@ -63,6 +70,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
     private final Log log = LogFactory.getLog(getClass());
 
     private ConfigurableEnvironment environment;
+    private BeanFactory beanFactory;
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -106,12 +114,24 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
         for (String beanName : beanNames) {
             registerConfigurationBean(beanName, configClass, multiple, prefix, ignoreUnknownFields, ignoreInvalidFields, refreshStrategy,
                     configurationProperties, registry);
+
+            registerConfigurationBeanAlias(beanName, configClass, prefix, registry);
         }
 
         registerConfigurationBindingBeanPostProcessor(registry);
     }
 
-    private void registerConfigurationBean(String beanName, Class<?> configClass, boolean multiple, String prefix,
+
+    private void registerConfigurationBeanAlias(String beanName, Class<?> configClass, String prefix, BeanDefinitionRegistry registry) {
+        List<ConfigurationBeanAliasGenerator> configurationBeanAliasGenerators = loadFactories(ConfigurationBeanAliasGenerator.class, beanFactory);
+        configurationBeanAliasGenerators.forEach(aliasGenerator -> {
+            String alias = aliasGenerator.generateAlias(prefix, beanName, configClass);
+            registry.registerAlias(beanName, alias);
+        });
+
+    }
+
+    private void registerConfigurationBean(String beanName, Class<?> configClass, boolean multiple, String prefix,                                       
                                            boolean ignoreUnknownFields, boolean ignoreInvalidFields,
                                            EnableConfigurationBeanBinding.ConfigurationBeanRefreshStrategy refreshStrategy,
                                            Map<String, Object> configurationProperties,
@@ -205,5 +225,10 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         return beanName;
 
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 }
