@@ -19,6 +19,8 @@ package io.microsphere.spring.util;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -107,15 +109,25 @@ public abstract class BeanRegistrar {
         } else {
             BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(beanType).setRole(role);
             AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
-            registry.registerBeanDefinition(beanName, beanDefinition);
-            registered = true;
-
-            if (logger.isInfoEnabled()) {
-                logger.info("The bean[name : '{}' , role : {}] definition [{}] has been registered.", beanName, role, beanDefinition);
-            }
+            registered = registerBeanDefinition(registry, beanName, beanDefinition);
         }
 
         return registered;
+    }
+
+    static final boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, BeanDefinition beanDefinition) {
+        try {
+            registry.registerBeanDefinition(beanName, beanDefinition);
+            if (logger.isDebugEnabled()) {
+                logger.debug("The bean[name : '{}' , role : {}] definition [{}] has been registered.", beanName, beanDefinition.getRole(), beanDefinition);
+            }
+        } catch (BeanDefinitionStoreException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("The bean[name : '{}' , role : {}] definition [{}] can't be registered ", beanName, beanDefinition.getRole(), e);
+            }
+            return false;
+        }
+        return true;
     }
 
     public static void registerSingleton(SingletonBeanRegistry registry, String beanName, Object bean) {
@@ -136,7 +148,6 @@ public abstract class BeanRegistrar {
     public static boolean hasAlias(AliasRegistry registry, String beanName, String alias) {
         return hasText(beanName) && hasText(alias) && containsElement(registry.getAliases(beanName), alias);
     }
-
 
     /**
      * Register the beans from {@link SpringFactoriesLoader#loadFactoryNames(Class, ClassLoader) SpringFactoriesLoader}
@@ -170,29 +181,22 @@ public abstract class BeanRegistrar {
         return count;
     }
 
-
-    public static final void registerBeanInstance(String beanName, Object bean, BeanDefinitionRegistry registry) {
+    public static final void registerFactoryBean(BeanDefinitionRegistry registry, String beanName, Object bean) {
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(DelegatingFactoryBean.class)
                 .addConstructorArgValue(bean)
                 .getBeanDefinition();
         beanDefinition.setSource(bean);
-        registerBeanDefinition(beanName, beanDefinition, registry);
+        registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
-    public static void registerBean(String beanName, Object bean, BeanDefinitionRegistry registry) {
-        registerBean(beanName, bean, false, registry);
+    public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean) {
+        registerBean(registry, beanName, bean, false);
     }
 
-    public static void registerBean(String beanName, Object bean, boolean primary, BeanDefinitionRegistry registry) {
+    public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
         Class beanClass = AopUtils.getTargetClass(bean);
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass, () -> bean).getBeanDefinition();
         beanDefinition.setPrimary(primary);
-        registerBeanDefinition(beanName, beanDefinition, registry);
-    }
-
-    public static final void registerBeanDefinition(String beanName, BeanDefinition beanDefinition, BeanDefinitionRegistry registry) {
-        beanDefinition.setRole(ROLE_APPLICATION);
-        registry.registerBeanDefinition(beanName, beanDefinition);
-        logger.debug("The Bean[name : {}]'s BeanDefinition[{}] has been registered into BeanFactory", beanName, beanDefinition);
+        registerBeanDefinition(registry, beanName, beanDefinition);
     }
 }
