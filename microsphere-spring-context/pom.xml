@@ -46,6 +46,12 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <optional>true</optional>
+        </dependency>
+
 
         <!-- Spring Data Redis -->
         <dependency>
@@ -105,6 +111,7 @@
             <artifactId>lettuce-core</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
 </project>
