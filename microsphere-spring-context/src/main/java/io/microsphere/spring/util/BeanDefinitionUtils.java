@@ -17,14 +17,19 @@
 package io.microsphere.spring.util;
 
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static java.util.Collections.unmodifiableSet;
+import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
 /**
  * {@link BeanDefinition} Utilities class
@@ -58,5 +63,19 @@ public abstract class BeanDefinitionUtils {
         return beanClass;
     }
 
+    public static Set<String> findInfrastructureBeanNames(ConfigurableListableBeanFactory beanFactory) {
+        Set<String> infrastructureBeanNames = new LinkedHashSet<>();
+        String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
+        for (String beanDefinitionName : beanDefinitionNames) {
+            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
+            if (isInfrastructureBean(beanDefinition)) {
+                infrastructureBeanNames.add(beanDefinitionName);
+            }
+        }
+        return unmodifiableSet(infrastructureBeanNames);
+    }
 
+    public static boolean isInfrastructureBean(BeanDefinition beanDefinition) {
+        return beanDefinition != null && ROLE_INFRASTRUCTURE == beanDefinition.getRole();
+    }
 }
