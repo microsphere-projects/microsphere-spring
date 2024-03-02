@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -167,5 +168,31 @@ public abstract class BeanRegistrar {
         }
 
         return count;
+    }
+
+
+    public static final void registerBeanInstance(String beanName, Object bean, BeanDefinitionRegistry registry) {
+        AbstractBeanDefinition beanDefinition = genericBeanDefinition(DelegatingFactoryBean.class)
+                .addConstructorArgValue(bean)
+                .getBeanDefinition();
+        beanDefinition.setSource(bean);
+        registerBeanDefinition(beanName, beanDefinition, registry);
+    }
+
+    public static void registerBean(String beanName, Object bean, BeanDefinitionRegistry registry) {
+        registerBean(beanName, bean, false, registry);
+    }
+
+    public static void registerBean(String beanName, Object bean, boolean primary, BeanDefinitionRegistry registry) {
+        Class beanClass = AopUtils.getTargetClass(bean);
+        AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass, () -> bean).getBeanDefinition();
+        beanDefinition.setPrimary(primary);
+        registerBeanDefinition(beanName, beanDefinition, registry);
+    }
+
+    public static final void registerBeanDefinition(String beanName, BeanDefinition beanDefinition, BeanDefinitionRegistry registry) {
+        beanDefinition.setRole(ROLE_APPLICATION);
+        registry.registerBeanDefinition(beanName, beanDefinition);
+        logger.debug("The Bean[name : {}]'s BeanDefinition[{}] has been registered into BeanFactory", beanName, beanDefinition);
     }
 }
