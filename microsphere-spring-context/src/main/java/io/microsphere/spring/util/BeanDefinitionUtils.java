@@ -25,9 +25,11 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
@@ -64,15 +66,22 @@ public abstract class BeanDefinitionUtils {
     }
 
     public static Set<String> findInfrastructureBeanNames(ConfigurableListableBeanFactory beanFactory) {
-        Set<String> infrastructureBeanNames = new LinkedHashSet<>();
+        return findBeanNames(beanFactory, BeanDefinitionUtils::isInfrastructureBean);
+    }
+
+    public static Set<String> findBeanNames(ConfigurableListableBeanFactory beanFactory, Predicate<BeanDefinition> predicate) {
+        if (predicate == null) {
+            return emptySet();
+        }
+        Set<String> matchedBeanNames = new LinkedHashSet<>();
         String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
-            if (isInfrastructureBean(beanDefinition)) {
-                infrastructureBeanNames.add(beanDefinitionName);
+            if (predicate.test(beanDefinition)) {
+                matchedBeanNames.add(beanDefinitionName);
             }
         }
-        return unmodifiableSet(infrastructureBeanNames);
+        return unmodifiableSet(matchedBeanNames);
     }
 
     public static boolean isInfrastructureBean(BeanDefinition beanDefinition) {
