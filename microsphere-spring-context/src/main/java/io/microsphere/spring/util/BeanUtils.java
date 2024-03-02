@@ -492,6 +492,12 @@ public abstract class BeanUtils {
         }
     }
 
+    public static void invokeBeanNameAware(Object bean, String beanName) {
+        if (bean instanceof BeanNameAware) {
+            ((BeanNameAware) bean).setBeanName(beanName);
+        }
+    }
+
     static void invokeBeanFactoryAware(Object bean, BeanFactory beanFactory) {
         if (bean instanceof BeanFactoryAware) {
             ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
