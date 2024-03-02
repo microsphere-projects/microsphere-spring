@@ -26,13 +26,13 @@ import static io.microsphere.spring.util.PropertySourcesUtils.addDefaultProperti
 import static io.microsphere.spring.util.PropertySourcesUtils.findConfiguredPropertySource;
 import static io.microsphere.spring.util.PropertySourcesUtils.findConfiguredPropertySourceName;
 import static io.microsphere.spring.util.PropertySourcesUtils.findPropertyNamesByPrefix;
-import static io.microsphere.spring.util.PropertySourcesUtils.getConversionService;
+import static io.microsphere.spring.util.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultProperties;
 import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultPropertiesPropertySource;
 import static io.microsphere.spring.util.PropertySourcesUtils.getMapPropertySource;
 import static io.microsphere.spring.util.PropertySourcesUtils.getPropertySource;
 import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
-import static io.microsphere.spring.util.PropertySourcesUtils.resolveCommaDelimitedValueToList;
+import static io.microsphere.spring.util.EnvironmentUtils.resolveCommaDelimitedValueToList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
