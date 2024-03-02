@@ -24,6 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.util.BeanUtils.invokeBeanInterfaces;
 import static io.microsphere.spring.util.BeanUtils.invokeBeanNameAware;
 import static io.microsphere.spring.util.BeanUtils.invokeInitializingBean;
@@ -64,7 +65,7 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        invokeBeanInterfaces(delegate, context);
+        invokeAwareInterfaces(delegate, context);
     }
 
     @Override
