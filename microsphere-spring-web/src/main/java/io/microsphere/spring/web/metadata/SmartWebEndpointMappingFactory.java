@@ -85,7 +85,7 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
     }
 
     private List<WebEndpointMappingFactory> loadFactories(ConfigurableListableBeanFactory beanFactory) {
-        return SpringFactoriesLoaderUtils.loadFactories(FACTORY_CLASS, beanFactory);
+        return SpringFactoriesLoaderUtils.loadFactories(beanFactory, FACTORY_CLASS);
     }
 
     @Override
