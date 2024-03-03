@@ -49,7 +49,7 @@ public class SpringVersionUtilsTest {
         Version version = getSpringVersion(StringUtils.class);
         assertEquals(5, version.getMajor());
         assertEquals(3, version.getMinor());
-        assertEquals(27, version.getPatch());
+        assertEquals(31, version.getPatch());
         assertTrue(version.gt(Version.of(5, 3)));
         assertTrue(version.gt(Version.of(5)));
         assertTrue(version.gt(Version.of(4, 2)));
