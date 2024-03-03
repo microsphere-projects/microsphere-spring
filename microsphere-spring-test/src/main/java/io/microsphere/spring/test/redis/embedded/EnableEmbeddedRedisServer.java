@@ -24,33 +24,33 @@ import java.lang.annotation.Target;
 public @interface EnableEmbeddedRedisServer {
 
     /**
-     * 未定义
+     * No Definition
      */
     String NO_DEFINITION = "N/D";
 
     /**
-     * @return Redis 服务器 bean 名称
+     * @return Redis Server bean Name
      */
     String name() default "redisServer";
 
     /**
-     * @return Redis 服务器网络端口，默认：6379
+     * @return Redis Server port, default：6379
      */
     int port() default 6379;
 
     /**
-     * @return Redis 服务器 Slave 服务器地址
+     * @return Redis Server Slave addresses
      */
     String slaveOf() default NO_DEFINITION;
 
     /**
-     * @return Redis 服务器配置文件
+     * @return Redis Server config file
      */
     String configFile() default NO_DEFINITION;
 
 
     /**
-     * @return Redis 服务器设置参数
+     * @return Redis Server settings
      */
     String setting() default NO_DEFINITION;
 }
