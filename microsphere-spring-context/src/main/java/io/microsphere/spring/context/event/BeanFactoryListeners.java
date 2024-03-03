@@ -56,7 +56,7 @@ class BeanFactoryListeners implements BeanFactoryListener {
     }
 
     private List<NamedBeanHolder<BeanFactoryListener>> getBeanDefinitionListeners(ConfigurableListableBeanFactory beanFactory) {
-        registerFactories(BeanFactoryListener.class, beanFactory);
+        registerFactories(beanFactory, BeanFactoryListener.class);
         Map<String, BeanFactoryListener> beanDefinitionListenersMap = beanFactory.getBeansOfType(BeanFactoryListener.class);
         List<NamedBeanHolder<BeanFactoryListener>> namedListeners = new ArrayList<>(beanDefinitionListenersMap.size());
         for (Map.Entry<String, BeanFactoryListener> entry : beanDefinitionListenersMap.entrySet()) {
