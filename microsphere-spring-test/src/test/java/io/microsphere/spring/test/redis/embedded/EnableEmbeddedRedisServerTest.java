@@ -17,14 +17,14 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = EnableEmbeddedRedisServerTest.class)
-@EnableEmbeddedRedisServer
+@EnableEmbeddedRedisServer(port = 6380)
 public class EnableEmbeddedRedisServerTest {
 
     @Autowired
     private RedisServer redisServer;
 
     @Test
-    public void test(){
-       assertTrue(redisServer.isActive());
+    public void test() {
+        assertTrue(redisServer.isActive());
     }
 }
