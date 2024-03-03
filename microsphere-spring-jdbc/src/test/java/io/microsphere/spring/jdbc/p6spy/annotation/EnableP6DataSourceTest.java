@@ -46,7 +46,6 @@ import static org.junit.Assert.assertSame;
 })
 @EnableP6DataSource
 @EnableEmbeddedDatabase(dataSource = "testDataSource")
-@TestPropertySource
 public class EnableP6DataSourceTest extends LoggingEventListener {
 
     @Autowired
