@@ -25,7 +25,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
-import org.springframework.util.ClassUtils;
+import org.springframework.lang.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -45,6 +45,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
+import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 
 /**
@@ -58,7 +59,7 @@ public abstract class SpringFactoriesLoaderUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringFactoriesLoaderUtils.class);
 
-    public static void registerFactories(Class<?> factoryType, BeanFactory bf) {
+    public static void registerFactories(@Nullable BeanFactory bf, Class<?> factoryType) {
         BeanDefinitionRegistry registry = asBeanDefinitionRegistry(bf);
         if (registry == null) {
             return;
@@ -78,11 +79,11 @@ public abstract class SpringFactoriesLoaderUtils {
         }
     }
 
-    public static <T> List<T> loadFactories(Class<T> factoryType, ApplicationContext context) {
-        return loadFactories(factoryType, asConfigurableApplicationContext(context));
+    public static <T> List<T> loadFactories(@Nullable ApplicationContext context, Class<T> factoryType) {
+        return loadFactories(asConfigurableApplicationContext(context), factoryType);
     }
 
-    public static <T> List<T> loadFactories(Class<T> factoryType, ConfigurableApplicationContext context) {
+    public static <T> List<T> loadFactories(@Nullable ConfigurableApplicationContext context, Class<T> factoryType) {
         ClassLoader classLoader = context == null ? getDefaultClassLoader() : context.getClassLoader();
         List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
         for (int i = 0; i < factories.size(); i++) {
@@ -92,45 +93,13 @@ public abstract class SpringFactoriesLoaderUtils {
         return factories;
     }
 
-    public static <T> List<T> loadFactories(Class<T> factoryType, BeanFactory beanFactory) {
-        ApplicationContext context = asApplicationContext(beanFactory);
-        if (context != null) {
-            return loadFactories(factoryType, context);
-        }
-        ConfigurableBeanFactory cbf = asConfigurableBeanFactory(beanFactory);
-        if (cbf != null) {
-            return loadFactories(factoryType, cbf);
-        }
-        ClassLoader classLoader = getDefaultClassLoader();
-        List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
-        for (int i = 0; i < factories.size(); i++) {
-            T factory = factories.get(i);
-            invokeAwareInterfaces(factory, beanFactory);
-        }
-        return factories;
-    }
-
-    public static <T> List<T> loadFactories(Class<T> factoryType, ConfigurableBeanFactory beanFactory) {
-        ApplicationContext context = asApplicationContext(beanFactory);
-        if (context != null) {
-            return loadFactories(factoryType, context);
-        }
-        ClassLoader classLoader = beanFactory == null ? getDefaultClassLoader() : beanFactory.getBeanClassLoader();
-        List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
-        for (int i = 0; i < factories.size(); i++) {
-            T factory = factories.get(i);
-            invokeAwareInterfaces(factory, beanFactory, beanFactory);
-        }
-        return factories;
-    }
-
-    public static <T> List<T> loadSpringFactories(Class<T> factoryClass, ConfigurableApplicationContext context, Object... args) {
+    public static <T> List<T> loadFactories(@Nullable ConfigurableApplicationContext context, Class<T> factoryClass, Object... args) {
         int argsLength = args == null ? 0 : args.length;
         if (argsLength < 1) {
-            return loadSpringFactories(factoryClass, context);
+            return loadFactories(context, factoryClass);
         }
 
-        ClassLoader classLoader = context.getClassLoader();
+        ClassLoader classLoader = context == null ? getDefaultClassLoader() : context.getClassLoader();
         List<String> factoryClassNames = loadFactoryNames(factoryClass, classLoader);
 
         int factorySize = factoryClassNames.size();
@@ -144,7 +113,7 @@ public abstract class SpringFactoriesLoaderUtils {
         List<T> factories = new ArrayList<>(factorySize);
 
         for (String factoryClassName : factoryClassNames) {
-            Class<?> factoryImplClass = ClassUtils.resolveClassName(factoryClassName, classLoader);
+            Class<?> factoryImplClass = resolveClassName(factoryClassName, classLoader);
             Constructor<T> constructor = findConstructor(factoryImplClass, args, argsLength);
             T factory = instantiateClass(constructor, args);
             invokeBeanInterfaces(factory, context);
@@ -154,6 +123,22 @@ public abstract class SpringFactoriesLoaderUtils {
         return unmodifiableList(factories);
     }
 
+    public static <T> List<T> loadFactories(@Nullable BeanFactory beanFactory, Class<T> factoryType) {
+        ApplicationContext context = asApplicationContext(beanFactory);
+        if (context != null) {
+            return loadFactories(context, factoryType);
+        }
+
+        ConfigurableBeanFactory configurableBeanFactory = asConfigurableBeanFactory(beanFactory);
+
+        ClassLoader classLoader = configurableBeanFactory == null ? getDefaultClassLoader() : configurableBeanFactory.getBeanClassLoader();
+        List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
+        for (int i = 0; i < factories.size(); i++) {
+            T factory = factories.get(i);
+            invokeAwareInterfaces(factory, beanFactory, configurableBeanFactory);
+        }
+        return factories;
+    }
 
     private static Constructor findConstructor(Class<?> factoryImplClass, Object[] args, int argsLength) {
         Constructor targetConstructor = null;
