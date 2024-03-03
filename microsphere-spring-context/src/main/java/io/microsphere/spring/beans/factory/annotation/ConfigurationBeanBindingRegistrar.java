@@ -120,7 +120,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
     }
 
     private void registerConfigurationBeanAlias(String beanName, Class<?> configClass, String prefix, BeanDefinitionRegistry registry) {
-        List<ConfigurationBeanAliasGenerator> configurationBeanAliasGenerators = loadFactories(ConfigurationBeanAliasGenerator.class, beanFactory);
+        List<ConfigurationBeanAliasGenerator> configurationBeanAliasGenerators = loadFactories(beanFactory, ConfigurationBeanAliasGenerator.class);
         configurationBeanAliasGenerators.forEach(aliasGenerator -> {
             String alias = aliasGenerator.generateAlias(prefix, beanName, configClass);
             registry.registerAlias(beanName, alias);
