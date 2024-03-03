@@ -39,7 +39,7 @@ public @interface EnableEmbeddedDatabase {
     boolean primary() default false;
 
     /**
-     * @return JDBC Properties 配置，Key-value 字符串形式
+     * @return JDBC Properties Properties, Key-value
      */
     String[] properties() default {};
 }
