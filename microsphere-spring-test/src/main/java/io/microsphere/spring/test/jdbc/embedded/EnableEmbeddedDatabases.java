@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 public @interface EnableEmbeddedDatabases {
 
     /**
-     * @return 多个 {@link EnableEmbeddedDatabase} 配置
+     * @return Multiple {@link EnableEmbeddedDatabase}
      */
     EnableEmbeddedDatabase[] value();
 }
