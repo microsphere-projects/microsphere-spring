@@ -38,7 +38,7 @@ public class InjectionPointDependencyResolvers implements InjectionPointDependen
     private final Iterable<InjectionPointDependencyResolver> resolvers;
 
     public InjectionPointDependencyResolvers(BeanFactory beanFactory) {
-        this(loadFactories(InjectionPointDependencyResolver.class, beanFactory));
+        this(loadFactories(beanFactory, InjectionPointDependencyResolver.class));
     }
 
     public InjectionPointDependencyResolvers(Iterable<InjectionPointDependencyResolver> resolvers) {
