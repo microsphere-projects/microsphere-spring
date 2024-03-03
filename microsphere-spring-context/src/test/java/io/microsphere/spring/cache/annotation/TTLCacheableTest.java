@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.cache.annotation;
 
+import io.microsphere.spring.test.redis.EnableRedisTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ import static org.junit.Assert.assertNotEquals;
         TTLCacheableTest.class, TTLCacheableTest.CachingData.class
 })
 @EnableTTLCaching(proxyTargetClass = true)
+@EnableRedisTest
 public class TTLCacheableTest {
 
     @Bean
