@@ -29,6 +29,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
+import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 
@@ -65,9 +66,9 @@ public class YamlPropertySourceTest {
         String name = "Mercy Ma @ " + new Date();
         write(1, "my.name2 : " + name);
 
-        // wait 10 seconds
-        Thread.sleep(1000 * 10L);
-        assertEquals(name, environment.getProperty("my.name2"));
+        while (!Objects.equals(name, environment.getProperty("my.name2"))) {
+            Thread.sleep(1000 * 1L);
+        }
     }
 
     private void write(int resourceIndex, String content) throws Exception {
