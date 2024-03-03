@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -79,7 +80,7 @@ public class BeanCapableImportCandidateTest {
     }
 
 
-    static class MyImportSelector extends BeanCapableImportCandidate implements ApplicationContextAware {
+    static class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector, ApplicationContextAware {
 
         private ApplicationContext applicationContext;
 
@@ -87,6 +88,11 @@ public class BeanCapableImportCandidateTest {
         @Override
         public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
             this.applicationContext = applicationContext;
+        }
+
+        @Override
+        public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+            return new String[0];
         }
     }
 
