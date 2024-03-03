@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,7 +34,7 @@ import java.util.Objects;
 @Order(1)
 public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, EnvironmentAware,
         EmbeddedValueResolverAware, ResourceLoaderAware, ApplicationEventPublisherAware, MessageSourceAware,
-        ApplicationStartupAware, ApplicationContextAware {
+        ApplicationStartupAware, ApplicationContextAware, BeanNameAware {
 
     private ClassLoader classLoader;
 
@@ -52,6 +53,8 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
     private MessageSource messageSource;
 
     private ResourceLoader resourceLoader;
+
+    private String beanName;
 
     @Override
     public void setBeanClassLoader(ClassLoader classLoader) {
@@ -86,7 +89,6 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-
     }
 
     @Override
@@ -97,6 +99,11 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
     public ClassLoader getClassLoader() {
@@ -135,6 +142,10 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
         return resourceLoader;
     }
 
+    public String getBeanName() {
+        return beanName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -155,4 +166,5 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
     public int hashCode() {
         return Objects.hash(classLoader, beanFactory, applicationContext, applicationEventPublisher, applicationStartup, resolver, environment, messageSource, resourceLoader);
     }
+
 }
