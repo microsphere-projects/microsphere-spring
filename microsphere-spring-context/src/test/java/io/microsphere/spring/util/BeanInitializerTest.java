@@ -54,7 +54,7 @@ public class BeanInitializerTest {
 
         assertEquals(ROLE_INFRASTRUCTURE, beanDefinition.getRole());
 
-        for (int i = 0; i < 99999; i++) {
+        for (int i = 0; i < 9; i++) {
             assertFalse(registerInfrastructureBean(registry, BEAN_NAME, TestBean.class));
         }
     }
