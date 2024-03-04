@@ -12,6 +12,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static io.microsphere.spring.test.jdbc.embedded.EmbeddedDatabaseType.MARIADB;
+import static org.junit.Assert.assertTrue;
+
 /**
  * {@link EnableEmbeddedDatabase} Test
  *
@@ -22,6 +25,7 @@ import java.sql.Statement;
 @ContextConfiguration(classes = EnableEmbeddedDatabaseTest.class)
 @EnableEmbeddedDatabase(dataSource = "primary", primary = true)
 @EnableEmbeddedDatabase(dataSource = "secondary")
+@EnableEmbeddedDatabase(type = MARIADB, port = 3306, dataSource = "mariadbDataSource")
 public class EnableEmbeddedDatabaseTest {
 
     @Autowired
@@ -32,6 +36,10 @@ public class EnableEmbeddedDatabaseTest {
     @Qualifier("secondary")
     private DataSource dataSource2;
 
+    @Autowired
+    @Qualifier("mariadbDataSource")
+    private DataSource mariadbDataSource;
+
     @Test
     public void test() throws SQLException {
         Connection connection = dataSource.getConnection();
@@ -40,5 +48,13 @@ public class EnableEmbeddedDatabaseTest {
         connection.close();
     }
 
+    @Test
+    public void testMariadbDataSource() throws Exception {
+        Connection connection = mariadbDataSource.getConnection();
+        Statement statement = connection.createStatement();
+        assertTrue(statement.execute("SELECT 1"));
+        statement.close();
+        connection.close();
+    }
 }
 

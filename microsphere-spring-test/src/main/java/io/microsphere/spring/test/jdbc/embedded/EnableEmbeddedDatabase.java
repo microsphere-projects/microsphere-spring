@@ -29,6 +29,13 @@ public @interface EnableEmbeddedDatabase {
     EmbeddedDatabaseType type() default EmbeddedDatabaseType.SQLITE;
 
     /**
+     * JDBC connection port
+     *
+     * @return if not specified port, return <code>-1</code>
+     */
+    int port() default -1;
+
+    /**
      * @return {@link DataSource} Bean Name
      */
     String dataSource();

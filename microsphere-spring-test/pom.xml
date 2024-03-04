@@ -25,6 +25,12 @@
 
     <dependencies>
 
+        <!-- Microsphere -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-core</artifactId>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -103,6 +109,18 @@
             <groupId>com.wix</groupId>
             <artifactId>wix-embedded-mysql</artifactId>
             <version>${wix-embedded-mysql.version}</version>
+        </dependency>
+
+        <!-- MariaDB Connector/J-->
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+        </dependency>
+
+        <!-- MariaDB4j -->
+        <dependency>
+            <groupId>ch.vorburger.mariaDB4j</groupId>
+            <artifactId>mariaDB4j</artifactId>
         </dependency>
 
         <!-- MySQL JDBC Driver -->

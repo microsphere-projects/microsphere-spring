@@ -22,6 +22,8 @@
         <microsphere.version>${revision}</microsphere.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
+        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
+        <mariadb4j.version>2.5.3</mariadb4j.version>
         <embedded-redis.version>0.6</embedded-redis.version>
     </properties>
 
@@ -49,6 +51,20 @@
                 <groupId>org.xerial</groupId>
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>${sqlite-jdbc.version}</version>
+            </dependency>
+
+            <!-- MariaDB Connector/J-->
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb-java-client.version}</version>
+            </dependency>
+
+            <!-- MariaDB4j -->
+            <dependency>
+                <groupId>ch.vorburger.mariaDB4j</groupId>
+                <artifactId>mariaDB4j</artifactId>
+                <version>${mariadb4j.version}</version>
             </dependency>
 
             <dependency>
