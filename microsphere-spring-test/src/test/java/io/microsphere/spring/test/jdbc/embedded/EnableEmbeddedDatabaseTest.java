@@ -2,6 +2,8 @@ package io.microsphere.spring.test.jdbc.embedded;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -9,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -25,8 +28,18 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes = EnableEmbeddedDatabaseTest.class)
 @EnableEmbeddedDatabase(dataSource = "primary", primary = true)
 @EnableEmbeddedDatabase(dataSource = "secondary")
-@EnableEmbeddedDatabase(type = MARIADB, port = 3306, dataSource = "mariadbDataSource")
+@EnableEmbeddedDatabase(
+        type = MARIADB, port = 3306, dataSource = "mariadbDataSource",
+        properties = {
+                "charset=utf-8",
+                "useSSL=false",
+                "useUnicode=true",
+                "_sql.source=classpath:/META-INF/mysql/manual_schema.sql"
+        }
+)
 public class EnableEmbeddedDatabaseTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(EnableEmbeddedDatabaseTest.class);
 
     @Autowired
     @Qualifier("primary")
@@ -52,7 +65,11 @@ public class EnableEmbeddedDatabaseTest {
     public void testMariadbDataSource() throws Exception {
         Connection connection = mariadbDataSource.getConnection();
         Statement statement = connection.createStatement();
-        assertTrue(statement.execute("SELECT 1"));
+        ResultSet resultSet = statement.executeQuery("SHOW databases");
+        while (resultSet.next()) {
+            String databaseName = resultSet.getString(1);
+            logger.info("database : {}", databaseName);
+        }
         statement.close();
         connection.close();
     }
