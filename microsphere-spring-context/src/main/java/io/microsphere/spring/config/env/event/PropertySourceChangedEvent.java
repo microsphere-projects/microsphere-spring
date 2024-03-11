@@ -24,6 +24,8 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import static org.springframework.util.Assert.notNull;
+
 /**
  * The event raised when one single {@link PropertySource} is changed
  *
@@ -82,6 +84,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      * @return non-null
      */
     public static PropertySourceChangedEvent added(ApplicationContext source, @NonNull PropertySource newPropertySource) {
+        notNull(newPropertySource, "The 'newPropertySource' must not be null!");
         return new PropertySourceChangedEvent(source, Kind.ADDED, newPropertySource);
     }
 
@@ -94,6 +97,8 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      * @return non-null
      */
     public static PropertySourceChangedEvent replaced(ApplicationContext source, @NonNull PropertySource newPropertySource, @NonNull PropertySource oldPropertySource) {
+        notNull(newPropertySource, "The 'newPropertySource' must not be null!");
+        notNull(oldPropertySource, "The 'oldPropertySource' must not be null!");
         return new PropertySourceChangedEvent(source, Kind.REPLACED, newPropertySource, oldPropertySource);
     }
 
@@ -105,6 +110,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      * @return non-null
      */
     public static PropertySourceChangedEvent removed(ApplicationContext source, @NonNull PropertySource oldPropertySource) {
+        notNull(oldPropertySource, "The 'oldPropertySource' must not be null!");
         return new PropertySourceChangedEvent(source, Kind.REMOVED, null, oldPropertySource);
     }
 
