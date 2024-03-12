@@ -18,6 +18,8 @@ package io.microsphere.spring.util;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
@@ -27,19 +29,78 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
+import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
+import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
 /**
  * {@link BeanDefinition} Utilities class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see AbstractBeanDefinition
+ * @see BeanDefinition#ROLE_APPLICATION
+ * @see BeanDefinition#ROLE_INFRASTRUCTURE
  * @since 1.0.0
  */
 public abstract class BeanDefinitionUtils {
+
+    /**
+     * Build a generic instance of {@link AbstractBeanDefinition}
+     *
+     * @param beanType the type of bean
+     * @return an instance of {@link AbstractBeanDefinition}
+     */
+    public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType) {
+        return genericBeanDefinition(beanType, EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Build a generic instance of {@link AbstractBeanDefinition}
+     *
+     * @param beanType             the type of bean
+     * @param constructorArguments the arguments of Bean Classes' constructor
+     * @return an instance of {@link AbstractBeanDefinition}
+     */
+    public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType, Object... constructorArguments) {
+        return genericBeanDefinition(beanType, ROLE_APPLICATION, constructorArguments);
+    }
+
+    /**
+     * Build a generic instance of {@link AbstractBeanDefinition}
+     *
+     * @param beanType the type of bean
+     * @param role     the role of {@link BeanDefinition}
+     * @return an instance of {@link AbstractBeanDefinition}
+     */
+    public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType, int role) {
+        return genericBeanDefinition(beanType, role, EMPTY_OBJECT_ARRAY);
+    }
+
+    /**
+     * Build a generic instance of {@link AbstractBeanDefinition}
+     *
+     * @param beanType             the type of bean
+     * @param role                 the role of {@link BeanDefinition}
+     * @param constructorArguments the arguments of Bean Classes' constructor
+     * @return an instance of {@link AbstractBeanDefinition}
+     */
+    public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType, int role, Object... constructorArguments) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanType)
+                .setRole(role);
+        // Add the arguments of constructor if present
+        int length = length(constructorArguments);
+        for (int i = 0; i < length; i++) {
+            Object constructorArgument = constructorArguments[i];
+            beanDefinitionBuilder.addConstructorArgValue(constructorArgument);
+        }
+        AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+        return beanDefinition;
+    }
 
     public static Class<?> resolveBeanType(RootBeanDefinition beanDefinition) {
         return resolveBeanType(beanDefinition, getDefaultClassLoader());
