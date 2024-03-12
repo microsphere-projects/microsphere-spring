@@ -57,6 +57,18 @@ public abstract class BeanRegistrar {
      * Register Infrastructure Bean
      *
      * @param beanDefinitionRegistry {@link BeanDefinitionRegistry}
+     * @param beanType               the type of bean
+     * @return if it's a first time to register, return <code>true</code>, or <code>false</code>
+     */
+    public static boolean registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry, Class<?> beanType) {
+        String beanName = decapitalize(beanType.getSimpleName());
+        return registerBeanDefinition(beanDefinitionRegistry, beanName, beanType, ROLE_INFRASTRUCTURE);
+    }
+
+    /**
+     * Register Infrastructure Bean
+     *
+     * @param beanDefinitionRegistry {@link BeanDefinitionRegistry}
      * @param beanName               the name of bean
      * @param beanType               the type of bean
      * @return if it's a first time to register, return <code>true</code>, or <code>false</code>
