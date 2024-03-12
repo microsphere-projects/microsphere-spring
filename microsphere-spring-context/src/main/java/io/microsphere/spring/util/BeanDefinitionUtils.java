@@ -89,7 +89,7 @@ public abstract class BeanDefinitionUtils {
      * @param constructorArguments the arguments of Bean Classes' constructor
      * @return an instance of {@link AbstractBeanDefinition}
      */
-    public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType, int role, Object... constructorArguments) {
+    public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType, int role, Object[] constructorArguments) {
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanType)
                 .setRole(role);
         // Add the arguments of constructor if present
