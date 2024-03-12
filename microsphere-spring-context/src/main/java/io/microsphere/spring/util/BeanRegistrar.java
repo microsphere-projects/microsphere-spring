@@ -24,20 +24,17 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.AliasRegistry;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
 
-import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
-import static io.microsphere.util.ArrayUtils.length;
+import static io.microsphere.spring.util.BeanDefinitionUtils.genericBeanDefinition;
 import static java.beans.Introspector.decapitalize;
 import static java.lang.String.format;
-import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
+import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
 import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ClassUtils.resolveClassName;
@@ -56,25 +53,27 @@ public abstract class BeanRegistrar {
     /**
      * Register Infrastructure Bean
      *
-     * @param beanDefinitionRegistry {@link BeanDefinitionRegistry}
-     * @param beanType               the type of bean
+     * @param registry {@link BeanDefinitionRegistry}
+     * @param beanType the type of bean
      * @return if it's a first time to register, return <code>true</code>, or <code>false</code>
      */
-    public static boolean registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry, Class<?> beanType) {
-        String beanName = decapitalize(beanType.getSimpleName());
-        return registerBeanDefinition(beanDefinitionRegistry, beanName, beanType, ROLE_INFRASTRUCTURE);
+    public static boolean registerInfrastructureBean(BeanDefinitionRegistry registry, Class<?> beanType) {
+        BeanDefinition beanDefinition = genericBeanDefinition(beanType, ROLE_INFRASTRUCTURE);
+        String beanName = generateBeanName(beanDefinition, registry);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     /**
      * Register Infrastructure Bean
      *
-     * @param beanDefinitionRegistry {@link BeanDefinitionRegistry}
-     * @param beanName               the name of bean
-     * @param beanType               the type of bean
+     * @param registry {@link BeanDefinitionRegistry}
+     * @param beanName the name of bean
+     * @param beanType the type of bean
      * @return if it's a first time to register, return <code>true</code>, or <code>false</code>
      */
-    public static boolean registerInfrastructureBean(BeanDefinitionRegistry beanDefinitionRegistry, String beanName, Class<?> beanType) {
-        return registerBeanDefinition(beanDefinitionRegistry, beanName, beanType, ROLE_INFRASTRUCTURE);
+    public static boolean registerInfrastructureBean(BeanDefinitionRegistry registry, String beanName, Class<?> beanType) {
+        BeanDefinition beanDefinition = genericBeanDefinition(beanType, ROLE_INFRASTRUCTURE);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     /**
@@ -85,8 +84,9 @@ public abstract class BeanRegistrar {
      * @return if the named {@link BeanDefinition} is not registered, return <code>true</code>, or <code>false</code>
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType) {
-        String beanName = decapitalize(beanType.getSimpleName());
-        return registerBeanDefinition(registry, beanName, beanType, ROLE_APPLICATION);
+        BeanDefinition beanDefinition = genericBeanDefinition(beanType);
+        String beanName = generateBeanName(beanDefinition, registry);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     /**
@@ -98,7 +98,8 @@ public abstract class BeanRegistrar {
      * @return if the named {@link BeanDefinition} is not registered, return <code>true</code>, or <code>false</code>
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, Class<?> beanType) {
-        return registerBeanDefinition(registry, beanName, beanType, EMPTY_OBJECT_ARRAY);
+        BeanDefinition beanDefinition = genericBeanDefinition(beanType);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     /**
@@ -111,7 +112,8 @@ public abstract class BeanRegistrar {
      * @return if the named {@link BeanDefinition} is not registered, return <code>true</code>, or <code>false</code>
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, Class<?> beanType, Object... constructorArguments) {
-        return registerBeanDefinition(registry, beanName, beanType, ROLE_APPLICATION, constructorArguments);
+        BeanDefinition beanDefinition = genericBeanDefinition(beanType, constructorArguments);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     /**
@@ -124,57 +126,55 @@ public abstract class BeanRegistrar {
      * @return if the named {@link BeanDefinition} is not registered, return <code>true</code>, or <code>false</code>
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, Class<?> beanType, int role) {
-        return registerBeanDefinition(registry, beanName, beanType, role, EMPTY_OBJECT_ARRAY);
+        BeanDefinition beanDefinition = genericBeanDefinition(beanType, role);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     /**
-     * Register {@link BeanDefinition}
+     * Register a {@link BeanDefinition} with name if absent
      *
-     * @param registry             {@link BeanDefinitionRegistry}
-     * @param beanName             the name of bean
-     * @param beanType             the type of bean
-     * @param role                 the role hint for BeanDefinition
-     * @param constructorArguments the arguments of Bean Classes' constructor
-     * @return if the named {@link BeanDefinition} is not registered, return <code>true</code>, or <code>false</code>
+     * @param registry       {@link BeanDefinitionRegistry}
+     * @param beanName       the name of bean
+     * @param beanDefinition {@link BeanDefinition}
+     * @return <code>true</code> if registered, otherwise <code>false</code>
      */
-    static boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, Class<?> beanType, int role, Object... constructorArguments) {
+    public static final boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, BeanDefinition beanDefinition) {
+        return registerBeanDefinition(registry, beanName, beanDefinition, false);
+    }
+
+    /**
+     * Register a {@link BeanDefinition} with name
+     *
+     * @param registry                      {@link BeanDefinitionRegistry}
+     * @param beanName                      the name of bean
+     * @param beanDefinition                {@link BeanDefinition}
+     * @param allowBeanDefinitionOverriding the {@link BeanDefinition} is allowed to be overridden or not
+     * @return <code>true</code> if registered, otherwise <code>false</code>
+     */
+    public static final boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, BeanDefinition beanDefinition, boolean allowBeanDefinitionOverriding) {
 
         boolean registered = false;
 
-        if (registry.containsBeanDefinition(beanName)) {
+        if (!allowBeanDefinitionOverriding && registry.containsBeanDefinition(beanName)) {
             BeanDefinition oldBeanDefinition = registry.getBeanDefinition(beanName);
             if (logger.isWarnEnabled()) {
                 logger.warn("The bean[name : '{}'] definition [{}] was registered!", beanName, oldBeanDefinition);
             }
         } else {
-            BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(beanType)
-                    .setRole(role);
-            // Add the arguments of constructor if present
-            int length = length(constructorArguments);
-            for (int i = 0; i < length; i++) {
-                Object constructorArgument = constructorArguments[i];
-                beanDefinitionBuilder.addConstructorArgValue(constructorArgument);
+            try {
+                registry.registerBeanDefinition(beanName, beanDefinition);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("The bean[name : '{}' , role : {}] definition [{}] has been registered.", beanName, beanDefinition.getRole(), beanDefinition);
+                }
+                registered = true;
+            } catch (BeanDefinitionStoreException e) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("The bean[name : '{}' , role : {}] definition [{}] can't be registered ", beanName, beanDefinition.getRole(), e);
+                }
+                registered = false;
             }
-            AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
-            registered = registerBeanDefinition(registry, beanName, beanDefinition);
         }
-
         return registered;
-    }
-
-    public static final boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, BeanDefinition beanDefinition) {
-        try {
-            registry.registerBeanDefinition(beanName, beanDefinition);
-            if (logger.isDebugEnabled()) {
-                logger.debug("The bean[name : '{}' , role : {}] definition [{}] has been registered.", beanName, beanDefinition.getRole(), beanDefinition);
-            }
-        } catch (BeanDefinitionStoreException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error("The bean[name : '{}' , role : {}] definition [{}] can't be registered ", beanName, beanDefinition.getRole(), e);
-            }
-            return false;
-        }
-        return true;
     }
 
     public static void registerSingleton(SingletonBeanRegistry registry, String beanName, Object bean) {
@@ -229,9 +229,7 @@ public abstract class BeanRegistrar {
     }
 
     public static final void registerFactoryBean(BeanDefinitionRegistry registry, String beanName, Object bean) {
-        AbstractBeanDefinition beanDefinition = genericBeanDefinition(DelegatingFactoryBean.class)
-                .addConstructorArgValue(bean)
-                .getBeanDefinition();
+        AbstractBeanDefinition beanDefinition = genericBeanDefinition(DelegatingFactoryBean.class, bean);
         beanDefinition.setSource(bean);
         registerBeanDefinition(registry, beanName, beanDefinition);
     }
@@ -242,7 +240,8 @@ public abstract class BeanRegistrar {
 
     public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
         Class beanClass = AopUtils.getTargetClass(bean);
-        AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass, () -> bean).getBeanDefinition();
+        AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass);
+        beanDefinition.setInstanceSupplier(() -> bean);
         beanDefinition.setPrimary(primary);
         registerBeanDefinition(registry, beanName, beanDefinition);
     }
