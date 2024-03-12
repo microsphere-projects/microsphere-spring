@@ -53,7 +53,7 @@ public class BeanDefinitionUtilsTest {
         beanDefinition = genericBeanDefinition(User.class, "Mercy", 38);
         assertBeanDefinition(beanDefinition, ROLE_APPLICATION, "Mercy", 38);
 
-        beanDefinition = genericBeanDefinition(User.class, ROLE_INFRASTRUCTURE, "Mercy", 38);
+        beanDefinition = genericBeanDefinition(User.class, ROLE_INFRASTRUCTURE, new Object[]{"Mercy", 38});
         assertBeanDefinition(beanDefinition, ROLE_INFRASTRUCTURE, "Mercy", 38);
 
     }
