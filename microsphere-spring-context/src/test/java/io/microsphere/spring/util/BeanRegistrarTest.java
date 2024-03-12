@@ -20,6 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
+import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
+import static io.microsphere.spring.util.ObjectUtils.of;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * {@link BeanRegistrar} Test
  *
@@ -38,6 +43,19 @@ public class BeanRegistrarTest {
 
     @Test
     public void testRegisterInfrastructureBean() {
+        boolean registered = false;
+        String[] beanNames = null;
 
+        registered = registerInfrastructureBean(beanFactory, User.class);
+        beanNames = beanFactory.getBeanNamesForType(User.class);
+
+        assertTrue(registered);
+        assertArrayEquals(of("io.microsphere.spring.util.User#0"), beanNames);
+
+        registered = registerInfrastructureBean(beanFactory, User.class);
+        beanNames = beanFactory.getBeanNamesForType(User.class);
+
+        assertTrue(registered);
+        assertArrayEquals(of("io.microsphere.spring.util.User#0", "io.microsphere.spring.util.User#1"), beanNames);
     }
 }
