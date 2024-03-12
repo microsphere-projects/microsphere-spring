@@ -115,7 +115,7 @@ public abstract class BeanRegistrar {
         return registered;
     }
 
-    static final boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, BeanDefinition beanDefinition) {
+    public static final boolean registerBeanDefinition(BeanDefinitionRegistry registry, String beanName, BeanDefinition beanDefinition) {
         try {
             registry.registerBeanDefinition(beanName, beanDefinition);
             if (logger.isDebugEnabled()) {
