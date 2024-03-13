@@ -18,12 +18,17 @@ package io.microsphere.spring.util;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
+import java.util.function.Supplier;
+
+import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
-import static io.microsphere.spring.util.ObjectUtils.of;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
+import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
 /**
  * {@link BeanRegistrar} Test
@@ -43,19 +48,26 @@ public class BeanRegistrarTest {
 
     @Test
     public void testRegisterInfrastructureBean() {
-        boolean registered = false;
-        String[] beanNames = null;
+        assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.util.User#0");
+        assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.util.User#0", "io.microsphere.spring.util.User#1");
+    }
 
-        registered = registerInfrastructureBean(beanFactory, User.class);
-        beanNames = beanFactory.getBeanNamesForType(User.class);
+    @Test
+    public void testRegisterBeanDefinition() {
+        assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.util.User#0");
+        assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.util.User#0", "io.microsphere.spring.util.User#1");
+    }
 
-        assertTrue(registered);
-        assertArrayEquals(of("io.microsphere.spring.util.User#0"), beanNames);
+    private void assertBeanDefinitions(Supplier<Boolean> booleanSupplier, boolean expectedRegistered, int role, String... expectedBeanNames) {
+        boolean registered = booleanSupplier.get();
 
-        registered = registerInfrastructureBean(beanFactory, User.class);
-        beanNames = beanFactory.getBeanNamesForType(User.class);
+        String[] beanNames = beanFactory.getBeanNamesForType(User.class);
 
-        assertTrue(registered);
-        assertArrayEquals(of("io.microsphere.spring.util.User#0", "io.microsphere.spring.util.User#1"), beanNames);
+        assertEquals(expectedRegistered, registered);
+        assertArrayEquals(expectedBeanNames, beanNames);
+        for (String beanName : beanNames) {
+            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
+            assertEquals(role, beanDefinition.getRole());
+        }
     }
 }
