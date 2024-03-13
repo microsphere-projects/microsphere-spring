@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.spring.util.FieldUtils.getFieldValue;
-import static io.microsphere.spring.util.ObjectUtils.of;
+import static io.microsphere.util.ArrayUtils.of;
 import static io.microsphere.util.ClassUtils.cast;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
