@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.MIN_LOAD_FACTOR;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
-import static io.microsphere.spring.util.ObjectUtils.EMPTY_STRING_ARRAY;
+import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
