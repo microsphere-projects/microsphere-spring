@@ -23,7 +23,7 @@ import static io.microsphere.spring.util.AnnotationUtils.findAnnotations;
 import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.util.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.util.AnnotationUtils.getAttributes;
-import static io.microsphere.spring.util.ObjectUtils.of;
+import static io.microsphere.util.ArrayUtils.of;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
