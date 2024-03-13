@@ -34,7 +34,7 @@ import org.springframework.lang.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
-import static io.microsphere.spring.util.ObjectUtils.EMPTY_STRING_ARRAY;
+import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
