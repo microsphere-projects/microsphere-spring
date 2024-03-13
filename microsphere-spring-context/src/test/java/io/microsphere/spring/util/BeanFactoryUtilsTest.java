@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.util.ArrayUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,9 +26,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static io.microsphere.util.ArrayUtils.of;
 import static io.microsphere.spring.util.BeanFactoryUtils.getBeans;
 import static io.microsphere.spring.util.BeanFactoryUtils.getOptionalBean;
-import static io.microsphere.spring.util.ObjectUtils.of;
 import static org.junit.Assert.assertEquals;
 
 /**
