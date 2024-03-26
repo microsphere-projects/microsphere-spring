@@ -18,10 +18,16 @@
     <description>Microsphere Projects for Spring Framework</description>
     <url>https://github.com/microsphere-projects/microsphere-spring</url>
 
+    <organization>
+        <name>Microsphere</name>
+        <url>https://github.com/microsphere-projects</url>
+    </organization>
+
     <licenses>
         <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
