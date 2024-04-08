@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 @EnableEmbeddedDatabase(dataSource = "primary", primary = true)
 @EnableEmbeddedDatabase(dataSource = "secondary")
 @EnableEmbeddedDatabase(
-        type = MARIADB, port = 0, dataSource = "mariadbDataSource",
+        type = MARIADB, port = 13306, dataSource = "mariadbDataSource",
         properties = {
                 "charset=utf-8",
                 "useSSL=false",
