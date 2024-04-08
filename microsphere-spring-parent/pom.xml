@@ -19,7 +19,8 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere.version>${revision}</microsphere.version>
+        <microsphere.version>0.0.1</microsphere.version>
+        <microsphere-java-enterprise.version>0.0.1</microsphere-java-enterprise.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
