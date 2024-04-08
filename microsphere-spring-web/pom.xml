@@ -31,7 +31,7 @@
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-servlet</artifactId>
-            <version>${revision}</version>
+            <version>${microsphere-java-enterprise.version}</version>
         </dependency>
 
         <!-- Servlet API -->
