@@ -31,7 +31,6 @@
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-servlet</artifactId>
-            <version>${microsphere-java-enterprise.version}</version>
         </dependency>
 
         <!-- Servlet API -->
@@ -67,8 +66,7 @@
             <artifactId>jackson-databind</artifactId>
             <optional>true</optional>
         </dependency>
-
-
+        
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
