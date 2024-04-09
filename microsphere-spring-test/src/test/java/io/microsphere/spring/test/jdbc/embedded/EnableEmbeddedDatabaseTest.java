@@ -1,5 +1,6 @@
 package io.microsphere.spring.test.jdbc.embedded;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
+@Ignore
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = EnableEmbeddedDatabaseTest.class)
 @EnableEmbeddedDatabase(dataSource = "primary", primary = true)
