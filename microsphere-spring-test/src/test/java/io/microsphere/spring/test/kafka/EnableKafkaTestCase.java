@@ -35,7 +35,7 @@ import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasValue;
 })
 public class EnableKafkaTestCase {
 
-    private static final String TEMPLATE_TOPIC = "test-topic";
+    private static final String TEMPLATE_TOPIC = "topic-EnableKafkaTestCase";
 
     @Autowired
     private KafkaTemplate<Object, Object> kafkaTemplate;

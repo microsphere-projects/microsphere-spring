@@ -32,7 +32,7 @@ import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasValue;
  */
 public class KafkaTemplateTests {
 
-    private static final String TEMPLATE_TOPIC = "templateTopic";
+    private static final String TEMPLATE_TOPIC = "topic-KafkaTemplateTests";
 
     @ClassRule
     public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, true, TEMPLATE_TOPIC);

@@ -53,7 +53,7 @@ import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasValue;
         })
 public class EmbeddedKafkaTest {
 
-    private static final String TEMPLATE_TOPIC = "test-topic";
+    private static final String TEMPLATE_TOPIC = "topic-EmbeddedKafkaTest";
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafka;
