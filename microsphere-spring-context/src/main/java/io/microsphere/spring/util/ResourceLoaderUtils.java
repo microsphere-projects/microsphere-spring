@@ -22,9 +22,9 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -51,7 +51,7 @@ public abstract class ResourceLoaderUtils extends BaseUtils {
      *
      * @return non-null
      */
-    @Nonnull
+    @NonNull
     public static ResourceLoader getResourceLoader() {
         return getResourceLoader(getDefaultClassLoader());
     }
@@ -62,7 +62,7 @@ public abstract class ResourceLoaderUtils extends BaseUtils {
      * @param classLoader nullable {@link ClassLoader}
      * @return non-null
      */
-    @Nonnull
+    @NonNull
     public static ResourceLoader getResourceLoader(@Nullable ClassLoader classLoader) {
         ClassLoader targetClassLoader = classLoader == null ? getDefaultClassLoader() : classLoader;
         return resourceLoadersCache.computeIfAbsent(targetClassLoader, DefaultResourceLoader::new);
@@ -73,7 +73,7 @@ public abstract class ResourceLoaderUtils extends BaseUtils {
      *
      * @return non-null
      */
-    @Nonnull
+    @NonNull
     public static ResourcePatternResolver getResourcePatternResolver() {
         return getResourcePatternResolver(null);
     }
@@ -84,7 +84,7 @@ public abstract class ResourceLoaderUtils extends BaseUtils {
      * @param resourceLoader nullable {@link ResourceLoader}
      * @return non-null
      */
-    @Nonnull
+    @NonNull
     public static ResourcePatternResolver getResourcePatternResolver(@Nullable ResourceLoader resourceLoader) {
         ClassLoader classLoader = getClassLoader(resourceLoader);
         return (ResourcePatternResolver) resourceLoadersCache.computeIfAbsent(classLoader, cl -> {
