@@ -19,8 +19,8 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere.version>0.0.1</microsphere.version>
-        <microsphere-java-enterprise.version>0.0.1</microsphere-java-enterprise.version>
+        <microsphere-java.version>0.0.4</microsphere-java.version>
+        <microsphere-java-enterprise.version>0.0.2</microsphere-java-enterprise.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
@@ -42,8 +42,16 @@
             <!-- Microsphere Dependencies -->
             <dependency>
                 <groupId>io.github.microsphere-projects</groupId>
-                <artifactId>microsphere-dependencies</artifactId>
-                <version>${microsphere.version}</version>
+                <artifactId>microsphere-java-dependencies</artifactId>
+                <version>${microsphere-java.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.microsphere-projects</groupId>
+                <artifactId>microsphere-java-enterprise-dependencies</artifactId>
+                <version>${microsphere-java-enterprise.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
