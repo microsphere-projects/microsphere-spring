@@ -34,7 +34,6 @@ import java.util.function.Predicate;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static org.apache.commons.lang3.ArrayUtils.indexOf;
 
 /**
  * The event raised when the {@link PropertySources} is changed
@@ -118,6 +117,6 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     }
 
     private Predicate<PropertySourceChangedEvent.Kind> findAny(PropertySourceChangedEvent.Kind... kinds) {
-        return kind -> indexOf(kinds, kind) > -1;
+        return kind -> Arrays.binarySearch(kinds, kind) > -1;
     }
 }
