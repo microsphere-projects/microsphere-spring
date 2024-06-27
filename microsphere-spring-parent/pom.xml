@@ -19,7 +19,7 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.0.5</microsphere-java.version>
+        <microsphere-java.version>0.0.6-SNAPSHOT</microsphere-java.version>
         <microsphere-java-enterprise.version>0.0.3</microsphere-java-enterprise.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
@@ -151,6 +151,7 @@
         <profile>
             <id>spring-boot-3.0</id>
             <properties>
+                <java.version>17</java.version>
                 <spring-boot.version>3.0.13</spring-boot.version>
             </properties>
         </profile>
@@ -158,6 +159,7 @@
         <profile>
             <id>spring-boot-3.1</id>
             <properties>
+                <java.version>17</java.version>
                 <spring-boot.version>3.1.12</spring-boot.version>
             </properties>
         </profile>
@@ -165,6 +167,7 @@
         <profile>
             <id>spring-boot-3.2</id>
             <properties>
+                <java.version>17</java.version>
                 <spring-boot.version>3.2.7</spring-boot.version>
             </properties>
         </profile>
@@ -172,6 +175,7 @@
         <profile>
             <id>spring-boot-3.3</id>
             <properties>
+                <java.version>17</java.version>
                 <spring-boot.version>3.3.1</spring-boot.version>
             </properties>
         </profile>
