@@ -9,8 +9,6 @@
 name: Maven Publish
 
 on:
-  push:
-    branches: [ 'release' ]
   workflow_dispatch:
     inputs:
       revision:
