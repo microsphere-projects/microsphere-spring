@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.util.Arrays.binarySearch;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -117,6 +118,6 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     }
 
     private Predicate<PropertySourceChangedEvent.Kind> findAny(PropertySourceChangedEvent.Kind... kinds) {
-        return kind -> Arrays.binarySearch(kinds, kind) > -1;
+        return kind -> binarySearch(kinds, kind) > -1;
     }
 }

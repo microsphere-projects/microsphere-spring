@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.microsphere.collection.SetUtils.asSet;
+import static io.microsphere.collection.SetUtils.ofSet;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static java.util.Collections.emptySet;
@@ -54,7 +54,7 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
     }
 
     public WebRequestMethodsRule(String method, String... others) {
-        this.methods = ObjectUtils.isEmpty(others) ? singleton(method) : asSet(method, others);
+        this.methods = ObjectUtils.isEmpty(others) ? singleton(method) : ofSet(method, others);
     }
 
     @Override
