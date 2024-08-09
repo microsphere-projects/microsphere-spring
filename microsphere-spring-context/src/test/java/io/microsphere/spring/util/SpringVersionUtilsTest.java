@@ -21,9 +21,13 @@ import io.microsphere.util.Version;
 import org.junit.Test;
 import org.springframework.util.StringUtils;
 
+import static io.microsphere.spring.util.SpringVersionUtils.SPRING_AOP_VERSION;
+import static io.microsphere.spring.util.SpringVersionUtils.SPRING_BEANS_VERSION;
+import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_SUPPORT_VERSION;
+import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
+import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CORE_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link SpringVersionUtils} Test
@@ -43,15 +47,13 @@ public class SpringVersionUtilsTest {
         getSpringVersion(String.class);
     }
 
-
     @Test
     public void testGetSpringVersion() {
         Version version = getSpringVersion(StringUtils.class);
-        assertEquals(5, version.getMajor());
-        assertEquals(3, version.getMinor());
-        assertEquals(31, version.getPatch());
-        assertTrue(version.gt(Version.of(5, 3)));
-        assertTrue(version.gt(Version.of(5)));
-        assertTrue(version.gt(Version.of(4, 2)));
+        assertEquals(version,SPRING_AOP_VERSION);
+        assertEquals(SPRING_CORE_VERSION,SPRING_AOP_VERSION);
+        assertEquals(SPRING_AOP_VERSION, SPRING_BEANS_VERSION);
+        assertEquals(SPRING_BEANS_VERSION, SPRING_CONTEXT_VERSION);
+        assertEquals(SPRING_CONTEXT_VERSION, SPRING_CONTEXT_SUPPORT_VERSION);
     }
 }
