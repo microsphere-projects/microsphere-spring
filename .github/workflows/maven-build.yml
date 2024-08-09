@@ -32,4 +32,4 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots --file pom.xml -Drevision=0.0.1-SNAPSHOT -DargLine=${{ matrix.java >= 16 && '--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED' || '' }} clean install
+        run: mvn --batch-mode --update-snapshots --file pom.xml -Drevision=0.0.1-SNAPSHOT -DargLine="${{ matrix.java >= 16 && '--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED' || '' }}" clean install
