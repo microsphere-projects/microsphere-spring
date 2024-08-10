@@ -23,6 +23,7 @@ import io.microsphere.spring.web.metadata.FilterRegistrationWebEndpointMappingFa
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
+import io.microsphere.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.microsphere.enterprise.servlet.enumeration.ServletVersion.SERVLET_3_0;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
@@ -92,7 +92,8 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
 
         ServletContext servletContext = context.getServletContext();
 
-        if (SERVLET_3_0.le(servletContext)) { // Servlet 3.0+
+        Version servletVersion = Version.of(servletContext.getMajorVersion(), servletContext.getMinorVersion());
+        if (Version.of(3).le(servletVersion)) { // Servlet 3.0+
             collectFromServletContext(servletContext, context, webEndpointMappings);
         }
 
