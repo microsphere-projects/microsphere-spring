@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import io.microsphere.spring.util.BeanRegistrar;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       revision:
-        description: 'The version to release'
+        description: 'The version to publish for Spring 6+ and JDK 17+'
         required: true
         default: '0.0.1-SNAPSHOT'
 
@@ -29,7 +29,7 @@ jobs:
       - name: Setup Maven Central Repository
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           server-id: ossrh
           server-username: MAVEN_USERNAME
@@ -37,7 +37,16 @@ jobs:
           cache: maven
 
       - name: Publish package
-        run: mvn --batch-mode --update-snapshots -Drevision=${{ inputs.revision }} -Dgpg.skip=true -Prelease,ci clean deploy
+        run: mvn
+          --batch-mode
+          --update-snapshots
+          --file pom.xml
+          -Drevision=0.0.1-SNAPSHOT
+          -DargLine="--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
+          -Drevision=${{ inputs.revision }} 
+          -Dgpg.skip=true 
+          -Prelease,ci 
+          deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}

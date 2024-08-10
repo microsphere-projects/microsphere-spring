@@ -27,16 +27,10 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- MicroSphere Servlet -->
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-servlet</artifactId>
-        </dependency>
-
         <!-- Servlet API -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <optional>true</optional>
         </dependency>
 

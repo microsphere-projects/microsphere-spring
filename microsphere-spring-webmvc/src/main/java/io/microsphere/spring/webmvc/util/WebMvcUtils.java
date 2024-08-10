@@ -1,6 +1,10 @@
 package io.microsphere.spring.webmvc.util;
 
 import io.microsphere.spring.web.servlet.util.WebUtils;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.MethodParameter;
@@ -30,10 +34,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -376,9 +376,9 @@ public abstract class WebMvcUtils {
      */
     public static void appendInitParameters(ServletContext servletContext, String parameterName, String... parameterValues) {
 
-        Assert.notNull(servletContext);
-        Assert.hasLength(parameterName);
-        Assert.notNull(parameterValues);
+        Assert.notNull(servletContext, "The argument 'servletContext' must not be null!");
+        Assert.hasLength(parameterName, "The argument 'parameterName' must not be empty!");
+        Assert.notNull(parameterValues, "The argument 'parameterValues' must not be null!");
 
         String existedParameterValue = servletContext.getInitParameter(parameterName);
 

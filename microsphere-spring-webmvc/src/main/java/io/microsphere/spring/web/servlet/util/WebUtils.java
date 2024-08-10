@@ -1,14 +1,14 @@
 package io.microsphere.spring.web.servlet.util;
 
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.Registration;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.ClassUtils;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.Registration;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,9 +28,9 @@ public abstract class WebUtils {
     private static final boolean servlet3OrAbove;
 
     /**
-     * javax.servlet.ServletContainerInitializer @since 3.0
+     * jakarta.servlet.ServletContainerInitializer @since 3.0
      */
-    private static final String SERVLET_CONTAINER_INITIALIZER_CLASS_NAME = "javax.servlet.ServletContainerInitializer";
+    private static final String SERVLET_CONTAINER_INITIALIZER_CLASS_NAME = "jakarta.servlet.ServletContainerInitializer";
 
     static {
 

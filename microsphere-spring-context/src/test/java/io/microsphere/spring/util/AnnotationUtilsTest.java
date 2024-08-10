@@ -23,6 +23,7 @@ import static io.microsphere.spring.util.AnnotationUtils.findAnnotations;
 import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.util.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.util.AnnotationUtils.getAttributes;
+import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
 import static io.microsphere.util.ArrayUtils.of;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertArrayEquals;
@@ -152,14 +153,18 @@ public class AnnotationUtilsTest {
         Assert.assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
 
         attributes = getAttributes(annotation, false);
-        assertEquals(Autowire.NO, attributes.get("autowire"));
+        if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
+            assertEquals(Autowire.NO, attributes.get("autowire"));
+        }
         assertEquals("", attributes.get("initMethod"));
         assertEquals(AbstractBeanDefinition.INFER_METHOD, attributes.get("destroyMethod"));
 
         MockEnvironment environment = new MockEnvironment();
 
         attributes = getAttributes(annotation, environment, false);
-        assertEquals(Autowire.NO, attributes.get("autowire"));
+        if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
+            assertEquals(Autowire.NO, attributes.get("autowire"));
+        }
         assertEquals("", attributes.get("initMethod"));
         assertEquals(AbstractBeanDefinition.INFER_METHOD, attributes.get("destroyMethod"));
 
@@ -212,14 +217,18 @@ public class AnnotationUtilsTest {
         // case 4 : PropertyResolver(null) , ignoreDefaultValue(false) , ignoreAttributeName(empty)
         annotationAttributes = getAnnotationAttributes(annotation, false);
         assertArrayEquals(of("dummy-bean"), annotationAttributes.getStringArray("name"));
-        assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
+        if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
+            assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
+        }
         assertEquals("", annotationAttributes.getString("initMethod"));
         assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 
         // case 5 : PropertyResolver , ignoreDefaultValue(false) , ignoreAttributeName(empty)
         annotationAttributes = getAnnotationAttributes(annotation, environment, false);
         assertArrayEquals(of("dummy-bean"), annotationAttributes.getStringArray("name"));
-        assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
+        if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
+            assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
+        }
         assertEquals("", annotationAttributes.getString("initMethod"));
         assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 

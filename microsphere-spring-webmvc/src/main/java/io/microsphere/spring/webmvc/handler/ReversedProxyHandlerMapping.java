@@ -21,6 +21,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
 import io.microsphere.util.ArrayUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -36,7 +37,6 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.HashMap;

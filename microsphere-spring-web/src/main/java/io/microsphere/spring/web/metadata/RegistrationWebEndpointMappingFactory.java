@@ -18,8 +18,8 @@ package io.microsphere.spring.web.metadata;
 
 import org.springframework.lang.NonNull;
 
-import javax.servlet.Registration;
-import javax.servlet.ServletContext;
+import jakarta.servlet.Registration;
+import jakarta.servlet.ServletContext;
 import java.util.Collection;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;

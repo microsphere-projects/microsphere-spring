@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
@@ -35,7 +36,6 @@ import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -186,7 +186,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
     }
 
-    @Override
+
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
         if (candidateConstructors == null) {

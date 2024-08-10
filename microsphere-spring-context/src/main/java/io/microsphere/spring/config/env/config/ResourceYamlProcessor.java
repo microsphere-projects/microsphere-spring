@@ -63,8 +63,8 @@ public class ResourceYamlProcessor extends YamlProcessor {
         loaderOptions.setProcessComments(true);
         loaderOptions.setMaxAliasesForCollections(Integer.MAX_VALUE);
         loaderOptions.setAllowRecursiveKeys(true);
-        return new Yaml(new FilteringConstructor(loaderOptions), new Representer(),
-                new DumperOptions(), loaderOptions);
+        DumperOptions dumperOptions = new DumperOptions();
+        return new Yaml(new FilteringConstructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
     }
 
     private class FilteringConstructor extends Constructor {

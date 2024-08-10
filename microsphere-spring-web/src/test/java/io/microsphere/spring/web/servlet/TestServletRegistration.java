@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.web.servlet;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletRegistration;
-import javax.servlet.ServletSecurityElement;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.ServletSecurityElement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
