@@ -53,6 +53,7 @@
 
     <properties>
         <revision>0.0.3-SNAPSHOT</revision>
+        <java.version>17</java.version>
     </properties>
 
     <modules>

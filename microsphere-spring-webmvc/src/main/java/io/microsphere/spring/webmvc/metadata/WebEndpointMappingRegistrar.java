@@ -23,6 +23,9 @@ import io.microsphere.spring.web.metadata.FilterRegistrationWebEndpointMappingFa
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -32,9 +35,6 @@ import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.microsphere.enterprise.servlet.enumeration.ServletVersion.SERVLET_3_0;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
@@ -92,9 +91,7 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
 
         ServletContext servletContext = context.getServletContext();
 
-        if (SERVLET_3_0.le(servletContext)) { // Servlet 3.0+
-            collectFromServletContext(servletContext, context, webEndpointMappings);
-        }
+        collectFromServletContext(servletContext, context, webEndpointMappings);
 
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             collectFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);

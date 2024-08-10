@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.web.servlet;
 
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.http.HttpServlet;
 
 /**
  * {@link Servlet} for Testing

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * The configuration class for {@link EnableWebMvcExtension}
@@ -31,7 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
-public class WebMvcExtensionConfiguration extends WebMvcConfigurerAdapter {
+public class WebMvcExtensionConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private ObjectProvider<LazyCompositeHandlerInterceptor> lazyCompositeHandlerInterceptorProvider;
