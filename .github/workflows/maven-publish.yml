@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       revision:
-        description: 'The version to publish'
+        description: 'The version to publish for Spring 6+ and JDK 17+'
         required: true
         default: '0.0.1-SNAPSHOT'
 
