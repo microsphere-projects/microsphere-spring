@@ -10,9 +10,9 @@ name: Maven Build
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ 'dev-1.x' ]
   pull_request:
-    branches: [ "main" , "release" ]
+    branches: [ 'release-1.x' ]
 
 jobs:
   build:
