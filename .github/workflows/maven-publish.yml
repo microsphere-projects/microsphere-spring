@@ -42,7 +42,7 @@ jobs:
           --update-snapshots
           --file pom.xml
           -Drevision=0.0.1-SNAPSHOT
-          -DargLine="${{ matrix.java >= 16 && '--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED' || '' }}"
+          -DargLine="--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
           -Drevision=${{ inputs.revision }} 
           -Dgpg.skip=true 
           -Prelease,ci 
