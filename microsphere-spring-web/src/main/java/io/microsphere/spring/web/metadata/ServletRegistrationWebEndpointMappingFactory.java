@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.util.Collection;
 
 /**

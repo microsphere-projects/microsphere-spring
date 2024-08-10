@@ -19,9 +19,9 @@ package io.microsphere.spring.web.servlet;
 import org.springframework.lang.Nullable;
 import org.springframework.mock.web.MockServletContext;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.util.HashMap;
 import java.util.Map;
 

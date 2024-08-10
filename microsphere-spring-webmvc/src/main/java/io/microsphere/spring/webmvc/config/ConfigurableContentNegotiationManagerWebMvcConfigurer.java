@@ -8,7 +8,6 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.Field;
@@ -24,7 +23,7 @@ import java.util.Map;
  * @see WebMvcConfigurer
  * @since 2017.03.23
  */
-public class ConfigurableContentNegotiationManagerWebMvcConfigurer extends WebMvcConfigurerAdapter {
+public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements WebMvcConfigurer {
 
     /**
      * Property separator : "."
