@@ -21,7 +21,6 @@
     <properties>
         <microsphere-java.version>0.0.6</microsphere-java.version>
         <microsphere-java-enterprise.version>0.0.3</microsphere-java-enterprise.version>
-        <spring-boot.version>3.3.2</spring-boot.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
         <mariadb4j.version>2.5.3</mariadb4j.version>
@@ -78,72 +77,8 @@
 
     <profiles>
         <profile>
-            <id>spring-boot-1.5</id>
-            <properties>
-                <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.0</id>
-            <properties>
-                <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.1</id>
-            <properties>
-                <spring-boot.version>2.1.18.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.2</id>
-            <properties>
-                <spring-boot.version>2.2.13.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.3</id>
-            <properties>
-                <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.4</id>
-            <properties>
-                <spring-boot.version>2.4.13</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.5</id>
-            <properties>
-                <spring-boot.version>2.5.15</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.6</id>
-            <properties>
-                <spring-boot.version>2.6.15</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-2.7</id>
-            <properties>
-                <spring-boot.version>2.7.18</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
             <id>spring-boot-3.0</id>
             <properties>
-                <java.version>17</java.version>
                 <spring-boot.version>3.0.13</spring-boot.version>
             </properties>
         </profile>
@@ -151,7 +86,6 @@
         <profile>
             <id>spring-boot-3.1</id>
             <properties>
-                <java.version>17</java.version>
                 <spring-boot.version>3.1.12</spring-boot.version>
             </properties>
         </profile>
@@ -159,16 +93,17 @@
         <profile>
             <id>spring-boot-3.2</id>
             <properties>
-                <java.version>17</java.version>
-                <spring-boot.version>3.2.7</spring-boot.version>
+                <spring-boot.version>3.2.8</spring-boot.version>
             </properties>
         </profile>
 
         <profile>
             <id>spring-boot-3.3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <java.version>17</java.version>
-                <spring-boot.version>3.3.1</spring-boot.version>
+                <spring-boot.version>3.3.2</spring-boot.version>
             </properties>
         </profile>
     </profiles>

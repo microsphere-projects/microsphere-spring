@@ -20,6 +20,7 @@ jobs:
     strategy:
       matrix:
         java: [ '17' , '21' ]
+        maven-profile-spring-boot: [ 'spring-boot-3.0' , 'spring-boot-3.1' , 'spring-boot-3.2' , 'spring-boot-3.3' ]
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
@@ -38,4 +39,5 @@ jobs:
           --file pom.xml
           -Drevision=0.0.1-SNAPSHOT
           -DargLine="${{ matrix.java >= 16 && '--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED' || '' }}"
+          -P${{ matrix.maven-profile-spring-boot }}
           test
