@@ -21,7 +21,6 @@
     <properties>
         <microsphere-java.version>0.0.6</microsphere-java.version>
         <microsphere-java-enterprise.version>0.0.3</microsphere-java-enterprise.version>
-        <spring-boot.version>3.3.2</spring-boot.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
         <mariadb4j.version>2.5.3</mariadb4j.version>
@@ -94,15 +93,16 @@
         <profile>
             <id>spring-boot-3.2</id>
             <properties>
-
                 <spring-boot.version>3.2.8</spring-boot.version>
             </properties>
         </profile>
 
         <profile>
             <id>spring-boot-3.3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-
                 <spring-boot.version>3.3.2</spring-boot.version>
             </properties>
         </profile>
