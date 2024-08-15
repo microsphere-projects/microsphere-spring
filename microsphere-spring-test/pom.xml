@@ -155,6 +155,27 @@
                 <spring-boot.version>2.7.18</spring-boot.version>
             </properties>
         </profile>
+
+        <profile>
+            <id>spring-boot-2.2</id>
+            <properties>
+                <spring-boot.version>2.7.18</spring-boot.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>spring-boot-2.3</id>
+            <properties>
+                <spring-boot.version>2.7.18</spring-boot.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>spring-boot-2.4</id>
+            <properties>
+                <spring-boot.version>2.7.18</spring-boot.version>
+            </properties>
+        </profile>
     </profiles>
 
 </project>
