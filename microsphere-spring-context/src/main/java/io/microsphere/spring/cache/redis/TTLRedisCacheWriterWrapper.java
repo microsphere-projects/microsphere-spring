@@ -22,7 +22,9 @@ import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.lang.Nullable;
 
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
+import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.cache.TTLContext.doWithTTL;
 
 /**
@@ -46,10 +48,20 @@ public class TTLRedisCacheWriterWrapper implements RedisCacheWriter {
         }, ttl);
     }
 
+    public CompletableFuture<Void> store(String name, byte[] key, byte[] value, Duration ttl) {
+        // Compatible with Spring Data Redis < 3.2
+        return invokeMethod(delegate, "store", name, key, value, ttl);
+    }
+
     @Override
     @Nullable
     public byte[] get(String name, byte[] key) {
         return delegate.get(name, key);
+    }
+
+    public CompletableFuture<byte[]> retrieve(String name, byte[] key, Duration ttl) {
+        // Compatible with Spring Data Redis < 3.2
+        return invokeMethod(delegate, "retrieve", name, key, ttl);
     }
 
     @Override
