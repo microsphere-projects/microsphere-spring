@@ -20,22 +20,12 @@
 
     <properties>
         <microsphere-java.version>0.0.6</microsphere-java.version>
-        <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
-        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
-        <mariadb4j.version>2.5.3</mariadb4j.version>
-        <embedded-redis.version>0.6</embedded-redis.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <lettuce.version>6.1.10.RELEASE</lettuce.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot Dependencies -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Microsphere Dependencies -->
             <dependency>
@@ -46,77 +36,26 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Spring Boot Dependencies -->
             <dependency>
-                <groupId>org.xerial</groupId>
-                <artifactId>sqlite-jdbc</artifactId>
-                <version>${sqlite-jdbc.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-            <!-- MariaDB Connector/J-->
+            <!-- Lettuce -->
             <dependency>
-                <groupId>org.mariadb.jdbc</groupId>
-                <artifactId>mariadb-java-client</artifactId>
-                <version>${mariadb-java-client.version}</version>
+                <groupId>io.lettuce</groupId>
+                <artifactId>lettuce-core</artifactId>
+                <version>${lettuce.version}</version>
             </dependency>
 
-            <!-- MariaDB4j -->
-            <dependency>
-                <groupId>ch.vorburger.mariaDB4j</groupId>
-                <artifactId>mariaDB4j</artifactId>
-                <version>${mariadb4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.kstyrc</groupId>
-                <artifactId>embedded-redis</artifactId>
-                <version>${embedded-redis.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <profiles>
-        <profile>
-            <id>spring-boot-1.0</id>
-            <properties>
-                <spring-boot.version>1.0.2.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-1.1</id>
-            <properties>
-                <spring-boot.version>1.1.12.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-1.2</id>
-            <properties>
-                <spring-boot.version>1.2.8.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-1.3</id>
-            <properties>
-                <spring-boot.version>1.3.8.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-1.4</id>
-            <properties>
-                <spring-boot.version>1.4.7.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-1.5</id>
-            <properties>
-                <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
-            </properties>
-        </profile>
-
         <profile>
             <id>spring-boot-2.0</id>
             <properties>
@@ -168,9 +107,6 @@
 
         <profile>
             <id>spring-boot-2.7</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <spring-boot.version>2.7.18</spring-boot.version>
             </properties>
