@@ -20,7 +20,6 @@
 
     <properties>
         <zookeeper.version>3.8.1</zookeeper.version>
-        <wix-embedded-mysql.version>4.6.2</wix-embedded-mysql.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <mysql-connection-j.version>8.0.33</mysql-connection-j.version>
         <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
@@ -138,11 +137,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
         </dependency>
 
     </dependencies>
