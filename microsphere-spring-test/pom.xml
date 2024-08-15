@@ -51,6 +51,7 @@
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj</artifactId>
+            <version>${xmlunit.version}</version>
         </dependency>
 
         <!-- Spring Framework -->
