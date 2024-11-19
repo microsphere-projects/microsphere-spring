@@ -39,6 +39,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.PathMatcher;
 
@@ -306,7 +307,9 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             while (iterator.hasNext()) {
                 ResourcePropertySource resourcePropertySource = iterator.next();
                 // Remove the old ResourcePropertySource if exists
-                if (newResourcePropertySourceName.equals(resourcePropertySource.getName())) {
+                String newSourceName = handleSourceName(newResourcePropertySourceName);
+                String oldSourceName = handleSourceName(resourcePropertySource.getName());
+                if (newSourceName.equals(oldSourceName)) {
                     subEvents.add(replaced(this.context, newResourcePropertySource, resourcePropertySource));
                     addedSubEvent = true;
                     iterator.remove();
@@ -318,6 +321,11 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             // Add new ResourcePropertySource
             resourcePropertySources.add(newResourcePropertySource);
         }
+    }
+
+    private String handleSourceName(String resourcePropertySourceName) {
+        Assert.notNull(resourcePropertySourceName, "resourcePropertySourceName is null.");
+        return resourcePropertySourceName.substring(0, resourcePropertySourceName.lastIndexOf("@"));
     }
 
     private void updateResourcePropertySources(ResourcePropertySource newResourcePropertySource,
