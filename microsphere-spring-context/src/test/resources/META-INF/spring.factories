@@ -7,6 +7,8 @@ io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerat
 io.microsphere.spring.beans.factory.support.HyphenAliasGenerator,\
 io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator
 
-
 io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener=\
 io.microsphere.spring.beans.factory.support.LoggingAutowireCandidateResolvingListener
+
+io.microsphere.spring.core.env.PropertyResolverListener=\
+io.microsphere.spring.core.env.LoggingPropertyResolverListener
