@@ -334,7 +334,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
                 consumer.accept(listener);
             } catch (Throwable e) {
                 if (logger.isErrorEnabled()) {
-                    logger.error("Listener(type : {} , index : {}) execution is failed!", listener.getClass(), i, e);
+                    logger.error("Listener(type : '{}' , index : {}) execution is failed!", listener.getClass().getTypeName(), i, e);
                 }
             }
         }
