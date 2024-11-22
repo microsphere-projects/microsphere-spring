@@ -17,10 +17,13 @@
 package io.microsphere.spring.core.env;
 
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 
 /**
  * The interface listens the manipulation of {@link ConfigurableEnvironment Environment's} profiles including:
  * <ul>
+ *     <li>{@link Environment#getActiveProfiles()}</li>
+ *     <li>{@link Environment#getDefaultProfiles()}</li>
  *     <li>{@link ConfigurableEnvironment#setActiveProfiles(String...)}</li>
  *     <li>{@link ConfigurableEnvironment#addActiveProfile(String)}</li>
  *     <li>{@link ConfigurableEnvironment#setDefaultProfiles(String...)}</li>
@@ -31,6 +34,40 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @since 1.0.0
  */
 public interface ProfileListener {
+
+    /**
+     * Callback before {@link Environment#getActiveProfiles() get active profiles}
+     *
+     * @param environment {@link ConfigurableEnvironment the underling Environment}
+     */
+    default void beforeGetActiveProfiles(Environment environment) {
+    }
+
+    /**
+     * Callback after {@link Environment#getActiveProfiles() get active profiles}
+     *
+     * @param environment    {@link ConfigurableEnvironment the underling Environment}
+     * @param activeProfiles the active profiles
+     */
+    default void afterGetActiveProfiles(Environment environment, String[] activeProfiles) {
+    }
+
+    /**
+     * Callback before {@link Environment#getDefaultProfiles() get default profiles}
+     *
+     * @param environment {@link ConfigurableEnvironment the underling Environment}
+     */
+    default void beforeGetDefaultProfiles(Environment environment) {
+    }
+
+    /**
+     * Callback after {@link Environment#getDefaultProfiles() get default profiles}
+     *
+     * @param environment     {@link ConfigurableEnvironment the underling Environment}
+     * @param defaultProfiles the default profiles
+     */
+    default void afterGetDefaultProfiles(Environment environment, String[] defaultProfiles) {
+    }
 
     /**
      * Callback before {@link ConfigurableEnvironment#setActiveProfiles(String...) set active profiles}
