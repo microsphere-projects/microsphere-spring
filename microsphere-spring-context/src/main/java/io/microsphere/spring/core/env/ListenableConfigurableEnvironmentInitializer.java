@@ -16,9 +16,12 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.constants.PropertyConstants;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 
 /**
  * The Initializer of {@link ListenableConfigurableEnvironment} based on {@link ApplicationContextInitializer}
@@ -29,12 +32,23 @@ import org.springframework.core.env.ConfigurableEnvironment;
  */
 public class ListenableConfigurableEnvironmentInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
+    public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-environment.";
+
+    /**
+     * The property name of {@link ListenableConfigurableEnvironment} to be 'enabled'
+     */
+    public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
+
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        if (environment instanceof ListenableConfigurableEnvironment) {
+        if (!isEnabled(environment) && environment instanceof ListenableConfigurableEnvironment) {
             return;
         }
         applicationContext.setEnvironment(new ListenableConfigurableEnvironment(applicationContext));
+    }
+
+    public static boolean isEnabled(ConfigurableEnvironment environment) {
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, false);
     }
 }
