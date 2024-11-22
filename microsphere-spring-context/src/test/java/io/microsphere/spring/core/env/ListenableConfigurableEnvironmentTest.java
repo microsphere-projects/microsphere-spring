@@ -48,6 +48,7 @@ import static org.junit.Assert.assertTrue;
 )
 @TestPropertySource(
         properties = {
+                "microsphere.spring.listenable-environment.enabled=true",
                 "spring.profiles.active=test",
                 "user.name=Mercy",
                 "score=99"
