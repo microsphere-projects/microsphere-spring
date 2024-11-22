@@ -24,6 +24,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.util.LinkedList;
@@ -298,6 +299,16 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         forEachEnvironmentListener(listener -> listener.beforeValidateRequiredProperties(delegate));
         delegate.validateRequiredProperties();
         forEachEnvironmentListener(listener -> listener.afterValidateRequiredProperties(delegate));
+    }
+
+    /**
+     * Return {@link ConfigurableEnvironment the underlying ConfigurableEnvironment}
+     *
+     * @return {@link ConfigurableEnvironment the underlying ConfigurableEnvironment}
+     */
+    @NonNull
+    public ConfigurableEnvironment getDelegate() {
+        return this.delegate;
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {
