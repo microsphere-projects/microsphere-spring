@@ -93,7 +93,7 @@
         <profile>
             <id>spring-boot-3.2</id>
             <properties>
-                <spring-boot.version>3.2.8</spring-boot.version>
+                <spring-boot.version>3.2.11</spring-boot.version>
             </properties>
         </profile>
 
@@ -103,7 +103,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring-boot.version>3.3.2</spring-boot.version>
+                <spring-boot.version>3.3.5</spring-boot.version>
             </properties>
         </profile>
     </profiles>
