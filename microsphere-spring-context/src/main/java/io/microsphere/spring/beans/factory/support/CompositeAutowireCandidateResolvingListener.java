@@ -18,14 +18,11 @@ package io.microsphere.spring.beans.factory.support;
 
 import org.springframework.beans.factory.config.DependencyDescriptor;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.forEach;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
