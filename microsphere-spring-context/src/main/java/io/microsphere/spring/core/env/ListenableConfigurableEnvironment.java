@@ -16,11 +16,13 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
@@ -46,6 +49,16 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
 public class ListenableConfigurableEnvironment implements ConfigurableEnvironment {
 
     private final static Logger logger = LoggerFactory.getLogger(ListenableConfigurableEnvironment.class);
+
+    /**
+     * The prefix of the property name of {@link ListenableConfigurableEnvironment}
+     */
+    public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-environment.";
+
+    /**
+     * The property name of {@link ListenableConfigurableEnvironment} to be 'enabled'
+     */
+    public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
 
     private final ConfigurableEnvironment delegate;
 
@@ -309,6 +322,30 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     @NonNull
     public ConfigurableEnvironment getDelegate() {
         return this.delegate;
+    }
+
+    /**
+     * Set the {@link ListenableConfigurableEnvironment} into {@link ConfigurableApplicationContext} if
+     * {@link #isEnabled(Environment) enabled}
+     *
+     * @param applicationContext {@link ConfigurableApplicationContext}
+     */
+    public static void setEnvironmentIfEnabled(ConfigurableApplicationContext applicationContext) {
+        ConfigurableEnvironment environment = applicationContext.getEnvironment();
+        if (!isEnabled(environment) && environment instanceof ListenableConfigurableEnvironment) {
+            return;
+        }
+        applicationContext.setEnvironment(new ListenableConfigurableEnvironment(applicationContext));
+    }
+
+    /**
+     * Determine whether the {@link ListenableConfigurableEnvironment} is enabled
+     *
+     * @param environment {@link Environment the underlying Environment}
+     * @return <code>true</code> if enabled, <code>false</code> otherwise
+     */
+    public static boolean isEnabled(Environment environment) {
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, false);
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {

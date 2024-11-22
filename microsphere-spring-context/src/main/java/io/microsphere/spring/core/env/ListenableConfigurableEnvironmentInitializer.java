@@ -18,7 +18,8 @@ package io.microsphere.spring.core.env;
 
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
+
+import static io.microsphere.spring.core.env.ListenableConfigurableEnvironment.setEnvironmentIfEnabled;
 
 /**
  * The Initializer of {@link ListenableConfigurableEnvironment} based on {@link ApplicationContextInitializer}
@@ -31,10 +32,6 @@ public class ListenableConfigurableEnvironmentInitializer implements Application
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        if (environment instanceof ListenableConfigurableEnvironment) {
-            return;
-        }
-        applicationContext.setEnvironment(new ListenableConfigurableEnvironment(applicationContext));
+        setEnvironmentIfEnabled(applicationContext);
     }
 }
