@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 /**
  * {@link ConfigurationPropertyDescriptor} Test
