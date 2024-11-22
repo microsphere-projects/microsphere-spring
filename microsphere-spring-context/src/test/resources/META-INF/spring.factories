@@ -10,5 +10,6 @@ io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator
 io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener=\
 io.microsphere.spring.beans.factory.support.LoggingAutowireCandidateResolvingListener
 
-io.microsphere.spring.core.env.PropertyResolverListener=\
-io.microsphere.spring.core.env.LoggingPropertyResolverListener
+io.microsphere.spring.core.env.EnvironmentListener=\
+io.microsphere.spring.core.env.LoggingEnvironmentListener,\
+io.microsphere.spring.core.env.ThrowableErrorLoggingEnvironmentListener
