@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -29,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static io.microsphere.collection.ListUtils.forEach;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
@@ -42,6 +43,8 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  * @since 1.0.0
  */
 public class ListenableConfigurableEnvironment implements ConfigurableEnvironment {
+
+    private final static Logger logger = LoggerFactory.getLogger(ListenableConfigurableEnvironment.class);
 
     private final ConfigurableEnvironment delegate;
 
@@ -108,17 +111,26 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
 
     @Override
     public MutablePropertySources getPropertySources() {
-        return delegate.getPropertySources();
+        forEachEnvironmentListener(listener -> listener.beforeGetPropertySources(delegate));
+        MutablePropertySources propertySources = delegate.getPropertySources();
+        forEachEnvironmentListener(listener -> listener.afterGetPropertySources(delegate, propertySources));
+        return propertySources;
     }
 
     @Override
     public Map<String, Object> getSystemProperties() {
-        return delegate.getSystemProperties();
+        forEachEnvironmentListener(listener -> listener.beforeGetSystemProperties(delegate));
+        Map<String, Object> systemProperties = delegate.getSystemProperties();
+        forEachEnvironmentListener(listener -> listener.afterGetSystemProperties(delegate, systemProperties));
+        return systemProperties;
     }
 
     @Override
     public Map<String, Object> getSystemEnvironment() {
-        return delegate.getSystemEnvironment();
+        forEachEnvironmentListener(listener -> listener.beforeGetSystemEnvironment(delegate));
+        Map<String, Object> systemEnvironment = delegate.getSystemEnvironment();
+        forEachEnvironmentListener(listener -> listener.afterGetSystemEnvironment(delegate, systemEnvironment));
+        return systemEnvironment;
     }
 
     @Override
@@ -130,12 +142,18 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
 
     @Override
     public String[] getActiveProfiles() {
-        return delegate.getActiveProfiles();
+        forEachProfileListener(listener -> listener.beforeGetActiveProfiles(delegate));
+        String[] activeProfiles = delegate.getActiveProfiles();
+        forEachProfileListener(listener -> listener.afterGetActiveProfiles(delegate, activeProfiles));
+        return activeProfiles;
     }
 
     @Override
     public String[] getDefaultProfiles() {
-        return delegate.getDefaultProfiles();
+        forEachProfileListener(listener -> listener.beforeGetDefaultProfiles(delegate));
+        String[] defaultProfiles = delegate.getDefaultProfiles();
+        forEachProfileListener(listener -> listener.afterGetDefaultProfiles(delegate, defaultProfiles));
+        return defaultProfiles;
     }
 
     @Override
@@ -162,97 +180,152 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     @Nullable
     @Override
     public String getProperty(String key) {
-        forEachPropertyResolverListener(listener -> listener.beforeGetProperty(delegate, key, null));
+        forEachPropertyResolverListener(listener -> listener.beforeGetProperty(delegate, key, String.class, null));
         String value = delegate.getProperty(key);
-        forEachPropertyResolverListener(listener -> listener.afterGetProperty(delegate, key, value, null));
+        forEachPropertyResolverListener(listener -> listener.afterGetProperty(delegate, key, String.class, value, null));
         return value;
     }
 
     @Override
     public String getProperty(String key, String defaultValue) {
-        return delegate.getProperty(key, defaultValue);
+        forEachPropertyResolverListener(listener -> listener.beforeGetProperty(delegate, key, String.class, defaultValue));
+        String value = delegate.getProperty(key, defaultValue);
+        forEachPropertyResolverListener(listener -> listener.afterGetProperty(delegate, key, String.class, value, defaultValue));
+        return value;
     }
 
     @Nullable
     @Override
     public <T> T getProperty(String key, Class<T> targetType) {
-        return delegate.getProperty(key, targetType);
+        forEachPropertyResolverListener(listener -> listener.beforeGetProperty(delegate, key, targetType, null));
+        T value = delegate.getProperty(key, targetType);
+        forEachPropertyResolverListener(listener -> listener.afterGetProperty(delegate, key, targetType, value, null));
+        return value;
     }
 
     @Override
     public <T> T getProperty(String key, Class<T> targetType, T defaultValue) {
-        return delegate.getProperty(key, targetType, defaultValue);
+        forEachPropertyResolverListener(listener -> listener.beforeGetProperty(delegate, key, targetType, defaultValue));
+        T value = delegate.getProperty(key, targetType, defaultValue);
+        forEachPropertyResolverListener(listener -> listener.afterGetProperty(delegate, key, targetType, value, defaultValue));
+        return value;
     }
 
     @Override
     public String getRequiredProperty(String key) throws IllegalStateException {
-        return delegate.getRequiredProperty(key);
+        forEachPropertyResolverListener(listener -> listener.beforeGetRequiredProperty(delegate, key, String.class));
+        String value = delegate.getRequiredProperty(key);
+        forEachPropertyResolverListener(listener -> listener.afterGetRequiredProperty(delegate, key, String.class, value));
+        return value;
     }
 
     @Override
     public <T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException {
-        return delegate.getRequiredProperty(key, targetType);
+        forEachPropertyResolverListener(listener -> listener.beforeGetRequiredProperty(delegate, key, targetType));
+        T value = delegate.getRequiredProperty(key, targetType);
+        forEachPropertyResolverListener(listener -> listener.afterGetRequiredProperty(delegate, key, targetType, value));
+        return value;
     }
 
     @Override
     public String resolvePlaceholders(String text) {
-        return delegate.resolvePlaceholders(text);
+        forEachPropertyResolverListener(listener -> listener.beforeResolvePlaceholders(delegate, text));
+        String result = delegate.resolvePlaceholders(text);
+        forEachPropertyResolverListener(listener -> listener.afterResolvePlaceholders(delegate, text, result));
+        return result;
     }
 
     @Override
     public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
-        return delegate.resolveRequiredPlaceholders(text);
+        forEachPropertyResolverListener(listener -> listener.beforeResolveRequiredPlaceholders(delegate, text));
+        String result = delegate.resolveRequiredPlaceholders(text);
+        forEachPropertyResolverListener(listener -> listener.afterResolveRequiredPlaceholders(delegate, text, result));
+        return result;
     }
 
     @Override
     public ConfigurableConversionService getConversionService() {
-        return delegate.getConversionService();
+        forEachPropertyResolverListener(listener -> listener.beforeGetConversionService(delegate));
+        ConfigurableConversionService conversionService = delegate.getConversionService();
+        forEachPropertyResolverListener(listener -> listener.afterGetConversionService(delegate, conversionService));
+        return conversionService;
     }
 
     @Override
     public void setConversionService(ConfigurableConversionService conversionService) {
+        forEachPropertyResolverListener(listener -> listener.beforeSetConversionService(delegate, conversionService));
         delegate.setConversionService(conversionService);
+        forEachPropertyResolverListener(listener -> listener.afterSetConversionService(delegate, conversionService));
     }
 
     @Override
     public void setPlaceholderPrefix(String placeholderPrefix) {
+        forEachEnvironmentListener(listener -> listener.beforeSetPlaceholderPrefix(delegate, placeholderPrefix));
         delegate.setPlaceholderPrefix(placeholderPrefix);
+        forEachEnvironmentListener(listener -> listener.afterSetPlaceholderPrefix(delegate, placeholderPrefix));
     }
 
     @Override
     public void setPlaceholderSuffix(String placeholderSuffix) {
+        forEachEnvironmentListener(listener -> listener.beforeSetPlaceholderSuffix(delegate, placeholderSuffix));
         delegate.setPlaceholderSuffix(placeholderSuffix);
+        forEachEnvironmentListener(listener -> listener.afterSetPlaceholderSuffix(delegate, placeholderSuffix));
     }
 
     @Override
     public void setValueSeparator(String valueSeparator) {
+        forEachEnvironmentListener(listener -> listener.beforeSetValueSeparator(delegate, valueSeparator));
         delegate.setValueSeparator(valueSeparator);
+        forEachEnvironmentListener(listener -> listener.afterSetValueSeparator(delegate, valueSeparator));
     }
 
     @Override
     public void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders) {
+        forEachEnvironmentListener(listener -> listener.beforeSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
         delegate.setIgnoreUnresolvableNestedPlaceholders(ignoreUnresolvableNestedPlaceholders);
+        forEachEnvironmentListener(listener -> listener.afterSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
     }
 
     @Override
     public void setRequiredProperties(String... requiredProperties) {
+        forEachEnvironmentListener(listener -> listener.beforeSetRequiredProperties(delegate, requiredProperties));
         delegate.setRequiredProperties(requiredProperties);
+        forEachEnvironmentListener(listener -> listener.afterSetRequiredProperties(delegate, requiredProperties));
     }
 
     @Override
     public void validateRequiredProperties() throws MissingRequiredPropertiesException {
+        forEachEnvironmentListener(listener -> listener.beforeValidateRequiredProperties(delegate));
         delegate.validateRequiredProperties();
+        forEachEnvironmentListener(listener -> listener.afterValidateRequiredProperties(delegate));
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {
-        forEach(this.environmentListeners, listenerConsumer);
+        forEachListener(this.environmentListeners, listenerConsumer);
     }
 
     private void forEachProfileListener(Consumer<ProfileListener> listenerConsumer) {
-        forEach(this.profileListeners, listenerConsumer);
+        forEachListener(this.profileListeners, listenerConsumer);
     }
 
     private void forEachPropertyResolverListener(Consumer<PropertyResolverListener> listenerConsumer) {
-        forEach(this.propertyResolverListeners, listenerConsumer);
+        forEachListener(this.propertyResolverListeners, listenerConsumer);
+    }
+
+    private <T> void forEachListener(List<T> listeners, Consumer<T> consumer) {
+        int size = listeners.size();
+        if (size < 1) {
+            return;
+        }
+        for (int i = 0; i < size; i++) {
+            T listener = listeners.get(i);
+            try {
+                consumer.accept(listener);
+            } catch (Throwable e) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("Listener(type : {} , index : {}) execution is failed!", listener.getClass(), i, e);
+                }
+            }
+        }
     }
 }
