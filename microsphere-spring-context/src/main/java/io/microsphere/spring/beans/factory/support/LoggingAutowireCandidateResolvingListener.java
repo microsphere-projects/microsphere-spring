@@ -35,27 +35,27 @@ public class LoggingAutowireCandidateResolvingListener implements AutowireCandid
     @Override
     public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
         if (suggestedValue != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("The suggested value for {} was resolved : {}", descriptor, suggestedValue);
-            }
+            log("The suggested value for {} was resolved : {}", descriptor, suggestedValue);
         }
     }
 
     @Override
     public void lazyProxyResolved(DependencyDescriptor descriptor, String beanName, Object proxy) {
         if (proxy != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("The lazy proxy[descriptor : {} , bean name : '{}'] was resolved : {}", descriptor, beanName, proxy);
-            }
+            log("The lazy proxy[descriptor : {} , bean name : '{}'] was resolved : {}", descriptor, beanName, proxy);
         }
     }
 
     @Override
     public void lazyProxyClassResolved(DependencyDescriptor descriptor, String beanName, Class<?> proxyClass) {
         if (proxyClass != null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("The lazy proxy class [descriptor : {} , bean name : '{}'] was resolved : {}", descriptor, beanName, proxyClass);
-            }
+            log("The lazy proxy class [descriptor : {} , bean name : '{}'] was resolved : {}", descriptor, beanName, proxyClass);
+        }
+    }
+
+    protected void log(String messagePattern, Object... args) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(messagePattern, args);
         }
     }
 
