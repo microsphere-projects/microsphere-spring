@@ -109,22 +109,22 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
 
     @Override
     public void beforeAddActiveProfile(ConfigurableEnvironment environment, String profile) {
-        log("beforeAddActiveProfile(profile : '{}')");
+        log("beforeAddActiveProfile(profile : '{}')", profile);
     }
 
     @Override
     public void afterAddActiveProfile(ConfigurableEnvironment environment, String profile) {
-        log("afterAddActiveProfile(profile : '{}')");
+        log("afterAddActiveProfile(profile : '{}')", profile);
     }
 
     @Override
     public void beforeSetDefaultProfiles(ConfigurableEnvironment environment, String[] profiles) {
-        log("beforeSetDefaultProfiles(profiles : '{}')", Arrays.toString(profiles));
+        log("beforeSetDefaultProfiles(profiles : {})", Arrays.toString(profiles));
     }
 
     @Override
     public void afterSetDefaultProfiles(ConfigurableEnvironment environment, String[] profiles) {
-        log("afterSetDefaultProfiles(profiles : '{}')", Arrays.toString(profiles));
+        log("afterSetDefaultProfiles(profiles : {})", Arrays.toString(profiles));
     }
 
     @Override
@@ -154,7 +154,7 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
 
     @Override
     public void afterResolvePlaceholders(ConfigurablePropertyResolver propertyResolver, String text, String result) {
-        log("afterResolvePlaceholders(text : '{}') : '{}'", text);
+        log("afterResolvePlaceholders(text : '{}') : '{}'", text, result);
     }
 
     @Override
@@ -164,17 +164,17 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
 
     @Override
     public void afterResolveRequiredPlaceholders(ConfigurablePropertyResolver propertyResolver, String text, String result) {
-        log("afterResolveRequiredPlaceholders(text : '{}') : '{}'", text);
+        log("afterResolveRequiredPlaceholders(text : '{}') : '{}'", text, result);
     }
 
     @Override
     public void beforeSetRequiredProperties(ConfigurablePropertyResolver propertyResolver, String[] properties) {
-        log("beforeSetRequiredProperties(properties : '{}')", Arrays.toString(properties));
+        log("beforeSetRequiredProperties(properties : {})", Arrays.toString(properties));
     }
 
     @Override
     public void afterSetRequiredProperties(ConfigurablePropertyResolver propertyResolver, String[] properties) {
-        log("afterSetRequiredProperties(properties : '{}')", Arrays.toString(properties));
+        log("afterSetRequiredProperties(properties : {})", Arrays.toString(properties));
     }
 
     @Override
