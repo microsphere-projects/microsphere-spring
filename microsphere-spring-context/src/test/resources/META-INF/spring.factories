@@ -13,3 +13,6 @@ io.microsphere.spring.beans.factory.support.LoggingAutowireCandidateResolvingLis
 io.microsphere.spring.core.env.EnvironmentListener=\
 io.microsphere.spring.core.env.LoggingEnvironmentListener,\
 io.microsphere.spring.core.env.ThrowableErrorLoggingEnvironmentListener
+
+io.microsphere.spring.core.env.PropertyResolverListener=\
+io.microsphere.spring.config.CollectingConfigurationPropertyListener
