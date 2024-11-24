@@ -68,8 +68,8 @@ public class ConfigurationProperty {
     /**
      * The metadata of the property
      */
-    @Nullable
-    private Metadata metadata;
+    @NonNull
+    private final Metadata metadata;
 
     public ConfigurationProperty(String name) {
         this(name, String.class);
@@ -79,6 +79,7 @@ public class ConfigurationProperty {
         notNull(name, () -> "the property name must not null");
         this.name = name;
         setType(type);
+        this.metadata = new Metadata();
     }
 
     @NonNull
@@ -122,13 +123,9 @@ public class ConfigurationProperty {
         this.required = required;
     }
 
-    @Nullable
+    @NonNull
     public Metadata getMetadata() {
         return metadata;
-    }
-
-    public void setMetadata(@Nullable Metadata metadata) {
-        this.metadata = metadata;
     }
 
     @Override
