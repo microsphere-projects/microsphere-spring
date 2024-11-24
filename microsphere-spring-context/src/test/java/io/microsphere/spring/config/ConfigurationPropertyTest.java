@@ -18,6 +18,8 @@ package io.microsphere.spring.config;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,17 +38,18 @@ public class ConfigurationPropertyTest {
         String value = "test-value";
         String defaultValue = "default-value";
         Class<?> type = String.class;
-        ConfigurationProperty descriptor = new ConfigurationProperty(name);
-        descriptor.setValue(value);
-        descriptor.setDefaultValue(defaultValue);
-        descriptor.setType(type);
+        ConfigurationProperty property = new ConfigurationProperty(name);
+        property.setValue(value);
+        property.setDefaultValue(defaultValue);
+        property.setType(type);
 
-        assertEquals(descriptor, descriptor);
-        assertEquals(name, descriptor.getName());
-        assertEquals(value, descriptor.getValue());
-        assertEquals(defaultValue, descriptor.getDefaultValue());
-        assertEquals(type, descriptor.getType());
-
+        assertEquals(property, property);
+        assertEquals(name, property.getName());
+        assertEquals(type, property.getType());
+        assertEquals(value, property.getValue());
+        assertEquals(defaultValue, property.getDefaultValue());
+        assertFalse(property.isRequired());
+        assertNotNull(property.getMetadata());
     }
 
     @Test
