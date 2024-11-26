@@ -4,8 +4,6 @@ package io.microsphere.spring.beans.factory.support;
 import io.microsphere.spring.util.TestBean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.Extensions;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.DependencyDescriptor;
