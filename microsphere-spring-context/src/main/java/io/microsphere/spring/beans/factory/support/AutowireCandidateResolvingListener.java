@@ -37,7 +37,6 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  * <ul>
  *     <li>{@link AutowireCandidateResolver#getSuggestedValue(DependencyDescriptor) resolving suggested value}</li>
  *     <li>{@link AutowireCandidateResolver#getLazyResolutionProxyIfNecessary(DependencyDescriptor, String) resolving lazy proxy}</li>
- *     <li>{@link AutowireCandidateResolver#getLazyResolutionProxyClass(DependencyDescriptor, String) resolving lazy proxy class}</li>
  * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
@@ -63,8 +62,8 @@ public interface AutowireCandidateResolvingListener {
         // Add all Spring SPI with extension
         listeners.addAll(loadFactories(beanFactory, AutowireCandidateResolvingListener.class));
         // Add all Spring Beans if BeanFactory is available
-        if (beanFactory instanceof ListableBeanFactory lbf) {
-            listeners.addAll(getSortedBeans(lbf, AutowireCandidateResolvingListener.class));
+        if (beanFactory instanceof ListableBeanFactory) {
+            listeners.addAll(getSortedBeans((ListableBeanFactory) beanFactory, AutowireCandidateResolvingListener.class));
         }
         // Sort
         sort(listeners);
@@ -89,17 +88,5 @@ public interface AutowireCandidateResolvingListener {
      *                   or {@code null} if straight resolution is to be performed
      */
     default void lazyProxyResolved(DependencyDescriptor descriptor, @Nullable String beanName, @Nullable Object proxy) {
-    }
-
-    /**
-     * The event raised after {@link AutowireCandidateResolver#getLazyResolutionProxyClass(DependencyDescriptor, String)}
-     * called
-     *
-     * @param descriptor the descriptor for the target method parameter or field
-     * @param beanName   the name of the bean that contains the injection point
-     * @param proxyClass the lazy resolution proxy class for the dependency target
-     * @see AutowireCandidateResolver#getLazyResolutionProxyClass(DependencyDescriptor, String)
-     */
-    default void lazyProxyClassResolved(DependencyDescriptor descriptor, @Nullable String beanName, @Nullable Class<?> proxyClass) {
     }
 }
