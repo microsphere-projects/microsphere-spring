@@ -19,7 +19,7 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.0.6</microsphere-java.version>
+        <microsphere-java.version>0.0.7</microsphere-java.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <lettuce.version>6.1.10.RELEASE</lettuce.version>
     </properties>
