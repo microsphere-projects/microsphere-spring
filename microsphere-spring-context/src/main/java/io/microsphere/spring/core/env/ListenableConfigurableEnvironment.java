@@ -29,11 +29,14 @@ import org.springframework.core.env.Profiles;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static io.microsphere.reflect.MethodUtils.findMethod;
+import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -64,6 +67,12 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
      */
     public static final boolean ENABLED_PROPERTY_VALUE = false;
+
+    /**
+     * The {@link Method} of {@link Environment#matchesProfiles(String...)} since Spring Framework 5.3.8
+     */
+    @Nullable
+    private static final Method matchesProfilesMethod = findMethod(Environment.class, "matchesProfiles", String[].class);
 
     private final ConfigurableEnvironment delegate;
 
@@ -175,9 +184,12 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return defaultProfiles;
     }
 
-    @Override
     public boolean matchesProfiles(String... profileExpressions) {
-        return delegate.matchesProfiles(profileExpressions);
+        if (matchesProfilesMethod != null) {
+            Object arg = profileExpressions;
+            return invokeMethod(delegate, matchesProfilesMethod, arg);
+        }
+        return acceptsProfiles(profileExpressions);
     }
 
     @Deprecated
