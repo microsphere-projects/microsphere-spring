@@ -14,31 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.event;
+package io.microsphere.spring.core.env;
 
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.PriorityOrdered;
+
+import static io.microsphere.spring.core.env.ListenableConfigurableEnvironment.setEnvironmentIfEnabled;
 
 /**
- * {@link ApplicationContextInitializer} for Publishing Bean Event with the highest priority
+ * The Initializer of {@link ListenableConfigurableEnvironment} based on {@link ApplicationContextInitializer}
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see ApplicationContextInitializer
  * @since 1.0.0
  */
-public class EventPublishingBeanInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>, PriorityOrdered {
+public class ListenableConfigurableEnvironmentInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
-    public void initialize(ConfigurableApplicationContext context) {
-        addBeanBeforeEventPublishingProcessor(context);
-    }
-
-    private void addBeanBeforeEventPublishingProcessor(ConfigurableApplicationContext context) {
-        context.addBeanFactoryPostProcessor(new EventPublishingBeanBeforeProcessor());
-    }
-
-    @Override
-    public int getOrder() {
-        return HIGHEST_PRECEDENCE;
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        setEnvironmentIfEnabled(applicationContext);
     }
 }

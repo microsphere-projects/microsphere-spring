@@ -14,28 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.event;
-
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+package io.microsphere.spring.core.env;
 
 /**
- * The {@link BeanFactoryListener} Adapter
+ * {@link EnvironmentListener} with random error to be thrown
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see EnvironmentListener
  * @since 1.0.0
  */
-public interface BeanFactoryListenerAdapter extends BeanFactoryListener {
+public class ThrowableErrorLoggingEnvironmentListener extends LoggingEnvironmentListener {
 
     @Override
-    default void onBeanDefinitionRegistryReady(BeanDefinitionRegistry registry) {
+    protected void log(String message) {
+        throw new RuntimeException("For Testing");
     }
 
     @Override
-    default void onBeanFactoryReady(ConfigurableListableBeanFactory beanFactory) {
-    }
-
-    @Override
-    default void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory beanFactory) {
+    protected void log(String messagePattern, Object... args) {
+        this.log(messagePattern);
     }
 }
