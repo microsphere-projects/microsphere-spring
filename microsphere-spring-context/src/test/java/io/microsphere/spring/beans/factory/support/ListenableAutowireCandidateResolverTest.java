@@ -27,14 +27,18 @@ import static org.junit.Assert.assertNotNull;
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(properties = {
-        "test.name=test_value"
-})
+@TestPropertySource(
+        properties = {
+                "microsphere.spring.listenable-autowire-candidate-resolver.enabled=true",
+                "test.name=test_value"
+        })
 @ContextConfiguration(
         classes = {
                 TestBean.class,
-                ListenableAutowireCandidateResolver.class,
                 ListenableAutowireCandidateResolverTest.class
+        },
+        initializers = {
+                ListenableAutowireCandidateResolverInitializer.class
         }
 )
 public class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolvingListener, EnvironmentAware {

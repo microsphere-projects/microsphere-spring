@@ -52,7 +52,7 @@ import static org.springframework.util.CollectionUtils.containsAny;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanFactoryListenerAdapter implements
+public class ParallelPreInstantiationSingletonsBeanFactoryListener implements BeanFactoryListenerAdapter,
         EnvironmentAware, BeanFactoryAware {
 
     public static final String THREADS_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.threads";

@@ -14,47 +14,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.config.metadata;
+package io.microsphere.spring.config;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Type;
-
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * {@link ConfigurationPropertyDescriptor} Test
+ * {@link ConfigurationProperty} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see ConfigurationPropertyDescriptor
+ * @see ConfigurationProperty
  * @since 1.0.0
  */
-public class ConfigurationPropertyDescriptorTest {
+public class ConfigurationPropertyTest {
 
     @Test
     public void test() {
         String name = "test-name";
         String value = "test-value";
         String defaultValue = "default-value";
-        Type type = String.class;
-        ConfigurationPropertyDescriptor descriptor = new ConfigurationPropertyDescriptor();
-        descriptor.setName(name);
-        descriptor.setValue(value);
-        descriptor.setDefaultValue(defaultValue);
-        descriptor.setType(type);
+        Class<?> type = String.class;
+        ConfigurationProperty property = new ConfigurationProperty(name);
+        property.setValue(value);
+        property.setDefaultValue(defaultValue);
+        property.setType(type);
 
-        assertEquals(name, descriptor.getName());
-        assertEquals(value, descriptor.getValue());
-        assertEquals(defaultValue, descriptor.getDefaultValue());
-        assertEquals(type, descriptor.getType());
-
+        assertEquals(property, property);
+        assertEquals(name, property.getName());
+        assertEquals(type, property.getType());
+        assertEquals(value, property.getValue());
+        assertEquals(defaultValue, property.getDefaultValue());
+        assertFalse(property.isRequired());
+        assertNotNull(property.getMetadata());
     }
 
     @Test
     public void testNull() {
-        ConfigurationPropertyDescriptor descriptor = new ConfigurationPropertyDescriptor();
-        assertThrows(IllegalArgumentException.class, () -> descriptor.setName(null));
-        assertThrows(IllegalArgumentException.class, () -> descriptor.setType(null));
+        assertThrows(IllegalArgumentException.class, () -> new ConfigurationProperty(null));
+        assertThrows(IllegalArgumentException.class, () -> new ConfigurationProperty("test").setType(null));
     }
 }

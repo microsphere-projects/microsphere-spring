@@ -60,6 +60,11 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      */
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
 
+    /**
+     * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
+     */
+    public static final boolean ENABLED_PROPERTY_VALUE = false;
+
     private final ConfigurableEnvironment delegate;
 
     private List<EnvironmentListener> environmentListeners;
@@ -345,7 +350,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * @return <code>true</code> if enabled, <code>false</code> otherwise
      */
     public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, false);
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, ENABLED_PROPERTY_VALUE);
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {

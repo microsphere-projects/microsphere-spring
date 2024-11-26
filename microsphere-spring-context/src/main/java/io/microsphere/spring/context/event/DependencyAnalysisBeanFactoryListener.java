@@ -67,7 +67,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAdapter {
+public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(DependencyAnalysisBeanFactoryListener.class);
 

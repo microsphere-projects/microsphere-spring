@@ -25,17 +25,17 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class BeanFactoryListenerAdapter implements BeanFactoryListener {
+public interface BeanFactoryListenerAdapter extends BeanFactoryListener {
 
     @Override
-    public void onBeanDefinitionRegistryReady(BeanDefinitionRegistry registry) {
+    default void onBeanDefinitionRegistryReady(BeanDefinitionRegistry registry) {
     }
 
     @Override
-    public void onBeanFactoryReady(ConfigurableListableBeanFactory beanFactory) {
+    default void onBeanFactoryReady(ConfigurableListableBeanFactory beanFactory) {
     }
 
     @Override
-    public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory beanFactory) {
+    default void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory beanFactory) {
     }
 }

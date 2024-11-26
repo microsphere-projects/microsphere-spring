@@ -14,31 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.event;
+package io.microsphere.spring.config;
 
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.PriorityOrdered;
 
 /**
- * {@link ApplicationContextInitializer} for Publishing Bean Event with the highest priority
+ * The Initializer for Collecting Configuration Property
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see CollectingConfigurationPropertyListener
+ * @see ConfigurationProperty
+ * @see ApplicationContextInitializer
  * @since 1.0.0
  */
-public class EventPublishingBeanInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>, PriorityOrdered {
+public class CollectingConfigurationPropertyInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
-    public void initialize(ConfigurableApplicationContext context) {
-        addBeanBeforeEventPublishingProcessor(context);
-    }
+    public void initialize(ConfigurableApplicationContext applicationContext) {
 
-    private void addBeanBeforeEventPublishingProcessor(ConfigurableApplicationContext context) {
-        context.addBeanFactoryPostProcessor(new EventPublishingBeanBeforeProcessor());
-    }
-
-    @Override
-    public int getOrder() {
-        return HIGHEST_PRECEDENCE;
     }
 }
