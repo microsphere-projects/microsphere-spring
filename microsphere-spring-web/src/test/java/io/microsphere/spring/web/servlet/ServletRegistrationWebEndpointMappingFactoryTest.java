@@ -22,8 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockServletConfig;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRegistration;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import java.util.Optional;
 
 import static io.microsphere.util.ArrayUtils.of;
