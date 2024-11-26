@@ -130,7 +130,9 @@ public class ConfigurationProperty {
 
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof ConfigurationProperty that)) return false;
+        if (!(o instanceof ConfigurationProperty)) return false;
+
+        ConfigurationProperty that = (ConfigurationProperty) o;
 
         return isRequired() == that.isRequired()
                 && getName().equals(that.getName())
@@ -196,7 +198,9 @@ public class ConfigurationProperty {
 
         @Override
         public final boolean equals(Object o) {
-            if (!(o instanceof Metadata metadata)) return false;
+            if (!(o instanceof Metadata)) return false;
+
+            Metadata metadata = (Metadata) o;
 
             return Objects.equals(description, metadata.description)
                     && Objects.equals(targets, metadata.targets);
