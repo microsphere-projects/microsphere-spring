@@ -127,14 +127,6 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return proxy;
     }
 
-    @Nullable
-    @Override
-    public Class<?> getLazyResolutionProxyClass(DependencyDescriptor descriptor, String beanName) {
-        Class<?> proxyClass = delegate.getLazyResolutionProxyClass(descriptor, beanName);
-        compositeListener.lazyProxyClassResolved(descriptor, beanName, proxyClass);
-        return proxyClass;
-    }
-
     @Override
     public AutowireCandidateResolver cloneIfNecessary() {
         return delegate.cloneIfNecessary();
