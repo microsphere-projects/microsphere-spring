@@ -62,9 +62,9 @@ public class ListenableAutowireCandidateResolverTest implements AutowireCandidat
 
     @Override
     public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
-        if (descriptor.getAnnotation(Value.class) != null && suggestedValue instanceof String rawValue) {
+        if (descriptor.getAnnotation(Value.class) != null && suggestedValue instanceof String) {
             if ("testName".equals(descriptor.getField().getName())) {
-                resolvedTestName = environment.resolvePlaceholders(rawValue);
+                resolvedTestName = environment.resolvePlaceholders((String) suggestedValue);
             }
         }
     }
