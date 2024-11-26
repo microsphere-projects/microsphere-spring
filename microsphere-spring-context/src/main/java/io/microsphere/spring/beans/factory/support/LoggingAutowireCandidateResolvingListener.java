@@ -46,13 +46,6 @@ public class LoggingAutowireCandidateResolvingListener implements AutowireCandid
         }
     }
 
-    @Override
-    public void lazyProxyClassResolved(DependencyDescriptor descriptor, String beanName, Class<?> proxyClass) {
-        if (proxyClass != null) {
-            log("The lazy proxy class [descriptor : {} , bean name : '{}'] was resolved : {}", descriptor, beanName, proxyClass);
-        }
-    }
-
     protected void log(String messagePattern, Object... args) {
         if (logger.isDebugEnabled()) {
             logger.debug(messagePattern, args);
