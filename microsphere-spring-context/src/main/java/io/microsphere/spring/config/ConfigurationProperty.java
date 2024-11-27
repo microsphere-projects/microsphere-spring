@@ -21,8 +21,9 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.springframework.util.Assert.notNull;
 
@@ -176,7 +177,7 @@ public class ConfigurationProperty {
         /**
          * The targets of the property
          */
-        private List<String> targets;
+        private Set<String> targets = new LinkedHashSet<>(8);
 
         public String getDescription() {
             return description;
@@ -186,12 +187,8 @@ public class ConfigurationProperty {
             this.description = description;
         }
 
-        public List<String> getTargets() {
+        public Set<String> getTargets() {
             return targets;
-        }
-
-        public void setTargets(List<String> targets) {
-            this.targets = targets;
         }
 
         @Override
