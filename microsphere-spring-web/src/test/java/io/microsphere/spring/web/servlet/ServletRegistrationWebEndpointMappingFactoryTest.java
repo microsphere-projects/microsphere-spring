@@ -18,8 +18,8 @@ package io.microsphere.spring.web.servlet;
 
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockServletConfig;
 
 import javax.servlet.ServletException;
@@ -27,8 +27,8 @@ import javax.servlet.ServletRegistration;
 import java.util.Optional;
 
 import static io.microsphere.util.ArrayUtils.of;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link ServletRegistrationWebEndpointMappingFactory} Test
@@ -50,7 +50,7 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
 
     private TestServlet testServlet;
 
-    @BeforeEach
+    @Before
     public void init() throws ServletException {
         servletName = "test-servlet";
         url = "/test";

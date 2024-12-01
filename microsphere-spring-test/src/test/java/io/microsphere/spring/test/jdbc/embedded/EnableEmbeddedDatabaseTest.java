@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import static io.microsphere.spring.test.jdbc.embedded.EmbeddedDatabaseType.MARIADB;
-import static org.junit.Assert.assertTrue;
 
 /**
  * {@link EnableEmbeddedDatabase} Test

@@ -1,11 +1,11 @@
 package io.microsphere.spring.util;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class WrapperUtilsTest {
@@ -20,7 +20,7 @@ public class WrapperUtilsTest {
         ConfigurableListableBeanFactory result = WrapperUtils.unwrap(beanFactory);
 
         // Assert
-        assertEquals(configurableListableBeanFactoryMock, result, "The unwrap method should return the same instance when passed a ConfigurableListableBeanFactory.");
+        assertEquals("The unwrap method should return the same instance when passed a ConfigurableListableBeanFactory.", configurableListableBeanFactoryMock, result);
     }
 
     @Test
@@ -29,8 +29,8 @@ public class WrapperUtilsTest {
         BeanFactory nonConfigurableBeanFactoryMock = mock(BeanFactory.class);
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> WrapperUtils.unwrap(nonConfigurableBeanFactoryMock),
-                "The unwrap method should throw an IllegalArgumentException when the bean factory is not an instance of ConfigurableListableBeanFactory.");
+        assertThrows("The unwrap method should throw an IllegalArgumentException when the bean factory is not an instance of ConfigurableListableBeanFactory.",
+                IllegalArgumentException.class, () -> WrapperUtils.unwrap(nonConfigurableBeanFactoryMock));
     }
 
 }
