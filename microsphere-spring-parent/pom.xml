@@ -20,8 +20,13 @@
 
     <properties>
         <microsphere-java.version>0.0.7</microsphere-java.version>
-        <spring-boot.version>2.7.18</spring-boot.version>
+        <servlet-api.version>4.0.1</servlet-api.version>
+        <jackson.version>2.18.2</jackson.version>
+        <snakeyaml.version>2.3</snakeyaml.version>
         <lettuce.version>6.1.10.RELEASE</lettuce.version>
+        <logback.version>1.5.12</logback.version>
+        <junit.version>4.13.2</junit.version>
+        <mockito.version>5.14.2</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -36,11 +41,20 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Spring Boot Dependencies -->
+            <!-- Spring Framework BOM -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Jackson BOM -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -52,95 +66,110 @@
                 <version>${lettuce.version}</version>
             </dependency>
 
+            <!-- YAML -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+
+            <!-- Servlet API -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- JUnit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+
+            <!-- Mockito Bom -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-bom</artifactId>
+                <version>${mockito.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <profiles>
         <profile>
-            <id>spring-boot-2.0</id>
+            <id>spring-framework-3.2</id>
             <properties>
-                <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
+                <spring.version>3.2.18.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-2.1</id>
+            <id>spring-framework-4.0</id>
             <properties>
-                <spring-boot.version>2.1.18.RELEASE</spring-boot.version>
+                <spring.version>4.0.9.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-2.2</id>
+            <id>spring-framework-4.1</id>
             <properties>
-                <spring-boot.version>2.2.13.RELEASE</spring-boot.version>
+                <spring.version>4.1.9.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-2.3</id>
+            <id>spring-framework-4.2</id>
             <properties>
-                <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
+                <spring.version>4.2.9.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-2.4</id>
+            <id>spring-framework-4.3</id>
             <properties>
-                <spring-boot.version>2.4.13</spring-boot.version>
+                <spring.version>4.3.30.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-2.5</id>
+            <id>spring-framework-5.0</id>
             <properties>
-                <spring-boot.version>2.5.15</spring-boot.version>
+                <spring.version>5.0.20.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-2.6</id>
+            <id>spring-framework-5.1</id>
             <properties>
-                <spring-boot.version>2.6.15</spring-boot.version>
+                <spring.version>5.1.20.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-2.7</id>
+            <id>spring-framework-5.2</id>
             <properties>
-                <spring-boot.version>2.7.18</spring-boot.version>
+                <spring.version>5.2.25.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-3.0</id>
+            <id>spring-framework-5.3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <java.version>17</java.version>
-                <spring-boot.version>3.0.13</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-3.1</id>
-            <properties>
-                <java.version>17</java.version>
-                <spring-boot.version>3.1.12</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-3.2</id>
-            <properties>
-                <spring-boot.version>3.2.11</spring-boot.version>
-                <java.version>17</java.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-3.3</id>
-            <properties>
-                <spring-boot.version>3.3.5</spring-boot.version>
-                <java.version>17</java.version>
+                <spring.version>5.3.39</spring.version>
             </properties>
         </profile>
     </profiles>

@@ -69,7 +69,7 @@ public abstract class SpringVersionUtils extends BaseUtils {
     public static final Version SPRING_CONTEXT_VERSION = getSpringVersion(ApplicationContext.class);
 
     /**
-     * The version of "spring-context" module
+     * The version of "spring-context-support" module
      */
     @Nullable
     public static final Version SPRING_CONTEXT_SUPPORT_VERSION = getSpringVersion("org.springframework.mail.MailSender");

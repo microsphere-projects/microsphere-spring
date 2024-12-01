@@ -19,6 +19,8 @@
     <description>Microsphere Spring Test</description>
 
     <properties>
+        <spring-data-redis.version>2.7.18</spring-data-redis.version>
+        <spring-kafka.version>2.9.13</spring-kafka.version>
         <zookeeper.version>3.8.1</zookeeper.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <mysql-connection-j.version>8.0.33</mysql-connection-j.version>
@@ -112,6 +114,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
+            <version>${spring-data-redis.version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -125,18 +128,14 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+            <version>${spring-kafka.version}</version>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
-        </dependency>
-
-        <!-- Metrics -->
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
+            <version>${spring-kafka.version}</version>
         </dependency>
 
         <!-- Logging -->
