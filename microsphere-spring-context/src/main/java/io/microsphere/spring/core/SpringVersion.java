@@ -411,38 +411,36 @@ public enum SpringVersion {
 
     SPRING_5_3_29,
 
-    SPRING_6,
+    SPRING_5_3_30,
 
-    SPRING_6_0,
+    SPRING_5_3_31,
 
-    SPRING_6_0_0,
+    SPRING_5_3_32,
 
-    SPRING_6_0_1,
+    SPRING_5_3_33,
 
-    SPRING_6_0_2,
+    SPRING_5_3_34,
 
-    SPRING_6_0_3,
+    SPRING_5_3_35,
 
-    SPRING_6_0_4,
+    SPRING_5_3_36,
 
-    SPRING_6_0_5,
+    SPRING_5_3_37,
 
-    SPRING_6_0_6,
+    SPRING_5_3_38,
 
-    SPRING_6_0_7,
+    SPRING_5_3_39,
 
-    SPRING_6_0_8,
-
-    SPRING_6_0_9,
-
-    SPRING_6_0_10,
-
-    SPRING_6_0_11;
+    CURRENT(Version.of(org.springframework.core.SpringVersion.getVersion()));;
 
     private final Version version;
 
     SpringVersion() {
         this.version = resolveVersion(name());
+    }
+
+    SpringVersion(Version version) {
+        this.version = version;
     }
 
     static Version resolveVersion(String name) {
