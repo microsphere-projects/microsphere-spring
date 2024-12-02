@@ -64,7 +64,6 @@
         <module>microsphere-spring-webmvc</module>
         <module>microsphere-spring-webflux</module>
         <module>microsphere-spring-guice</module>
-        <module>microsphere-spring-test</module>
     </modules>
 
     <distributionManagement>
