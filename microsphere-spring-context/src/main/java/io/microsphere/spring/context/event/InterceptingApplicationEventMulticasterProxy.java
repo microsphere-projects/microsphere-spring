@@ -29,10 +29,13 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
+import static io.microsphere.reflect.MethodUtils.findDeclaredMethod;
+import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
 import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
@@ -61,6 +64,18 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
      * @see AbstractApplicationContext#APPLICATION_EVENT_MULTICASTER_BEAN_NAME
      */
     public static final String DEFAULT_RESET_BEAN_NAME = APPLICATION_EVENT_MULTICASTER_BEAN_NAME + "_ORIGINAL";
+
+    /**
+     * The method name of {@link ApplicationEventMulticaster#removeApplicationListeners(Predicate)}
+     * since Spring Framework 5.3.5
+     */
+    private static final Method removeApplicationListenersMethod = findDeclaredMethod(ApplicationEventMulticaster.class, "removeApplicationListeners", Predicate.class);
+
+    /**
+     * The method name of {@link ApplicationEventMulticaster#removeApplicationListenerBeans(Predicate)}
+     * since Spring Framework 5.3.5
+     */
+    private static final Method removeApplicationListenerBeansMethod = findDeclaredMethod(ApplicationEventMulticaster.class, "removeApplicationListenerBeans", Predicate.class);
 
     private final String delegateBeanName;
 
@@ -100,14 +115,12 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
         delegate.removeApplicationListenerBean(listenerBeanName);
     }
 
-    @Override
     public void removeApplicationListeners(Predicate<ApplicationListener<?>> predicate) {
-        delegate.removeApplicationListeners(predicate);
+        invokeMethod(this.delegate, removeApplicationListenersMethod, predicate);
     }
 
-    @Override
     public void removeApplicationListenerBeans(Predicate<String> predicate) {
-        delegate.removeApplicationListenerBeans(predicate);
+        invokeMethod(this.delegate, removeApplicationListenerBeansMethod, predicate);
     }
 
     @Override
