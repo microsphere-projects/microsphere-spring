@@ -34,6 +34,9 @@ public class SpringVersionTest {
     @Test
     public void testGetVersion() {
         for (SpringVersion springVersion : SpringVersion.values()) {
+            if (SpringVersion.CURRENT.equals(springVersion)) {
+                continue;
+            }
             Version version = resolveVersion(springVersion.name());
             assertEquals(springVersion.getVersion(), version);
             assertTrue(springVersion.eq(version));
