@@ -17,9 +17,18 @@
 package io.microsphere.spring.util;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.SpringVersion;
+import org.springframework.lang.NonNull;
 
+import java.util.List;
+
+import static io.microsphere.spring.util.BeanFactoryUtils.getBeanPostProcessors;
+import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static io.microsphere.util.ClassUtils.cast;
 
 /**
@@ -30,6 +39,19 @@ import static io.microsphere.util.ClassUtils.cast;
  */
 public abstract class ApplicationContextUtils {
 
+    /**
+     * The {@link org.springframework.context.support.ApplicationContextAwareProcessor} Class Name (Internal).
+     *
+     * @see org.springframework.context.support.ApplicationContextAwareProcessor
+     */
+    public static final String APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME = "org.springframework.context.support.ApplicationContextAwareProcessor";
+    /**
+     * The {@link org.springframework.context.support.ApplicationContextAwareProcessor} Class (Internal).
+     *
+     * @see org.springframework.context.support.ApplicationContextAwareProcessor
+     */
+    private static final Class<?> APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS = resolveClass(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME);
+
     public static ConfigurableApplicationContext asConfigurableApplicationContext(ApplicationContext context) {
         return cast(context, ConfigurableApplicationContext.class);
     }
@@ -37,4 +59,41 @@ public abstract class ApplicationContextUtils {
     public static ApplicationContext asApplicationContext(BeanFactory beanFactory) {
         return cast(beanFactory, ApplicationContext.class);
     }
+
+    /**
+     * Get the {@link org.springframework.context.support.ApplicationContextAwareProcessor}
+     *
+     * @return the {@link org.springframework.context.support.ApplicationContextAwareProcessor}
+     */
+    @NonNull
+    public static BeanPostProcessor getApplicationContextAwareProcessor(ConfigurableApplicationContext context) {
+        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+        return getApplicationContextAwareProcessor(beanFactory);
+    }
+
+    /**
+     * Get the {@link org.springframework.context.support.ApplicationContextAwareProcessor}
+     *
+     * @return the {@link org.springframework.context.support.ApplicationContextAwareProcessor}
+     */
+    @NonNull
+    public static BeanPostProcessor getApplicationContextAwareProcessor(BeanFactory beanFactory) {
+        List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(beanFactory);
+        BeanPostProcessor applicationContextAwareProcessor = null;
+        for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
+            if (beanPostProcessor.getClass().equals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS)) {
+                applicationContextAwareProcessor = beanPostProcessor;
+                break;
+            }
+        }
+        if (applicationContextAwareProcessor == null) {
+            String message = format("The BeanPostProcessor[class : '{}' , present : {}] was not added in the BeanFactory[{}] @ Spring Framework '{}'",
+                    APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME,
+                    APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS != null,
+                    SpringVersion.getVersion());
+            throw new IllegalStateException(message);
+        }
+        return applicationContextAwareProcessor;
+    }
+
 }
