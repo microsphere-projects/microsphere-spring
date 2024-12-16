@@ -20,7 +20,11 @@ jobs:
     strategy:
       matrix:
         java: [ '8', '11' , '17' , '21' ]
-        maven-profile-spring-boot: [ 'spring-boot-2.7' , 'spring-boot-2.6', 'spring-boot-2.5' ]
+        maven-profile-spring-boot: [
+          'spring-framework-5.3' , 'spring-framework-5.2', 'spring-framework-5.1' , 'spring-framework-5.0' ,
+          'spring-framework-4.3' , 'spring-framework-4.2' , 'spring-framework-4.1', 'spring-framework-4.0' ,
+          'spring-framework-3.2'
+        ]
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
