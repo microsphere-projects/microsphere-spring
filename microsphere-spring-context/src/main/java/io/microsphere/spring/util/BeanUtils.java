@@ -13,6 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
@@ -42,9 +43,11 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.spring.util.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.util.ClassLoaderUtils.isPresent;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
@@ -65,7 +68,7 @@ public abstract class BeanUtils {
 
     private static final String[] EMPTY_BEAN_NAMES = new String[0];
 
-    private static final boolean APPLICATION_STARTUP_CLASS_PRESENT = isPresent("org.springframework.core.metrics.ApplicationStartup", null);
+    private static final Class<?> APPLICATION_STARTUP_CLASS = resolveClass("org.springframework.core.metrics.ApplicationStartup");
 
     /**
      * Is Bean Present or not?
@@ -75,11 +78,8 @@ public abstract class BeanUtils {
      * @return If present , return <code>true</code> , or <code>false</code>
      */
     public static boolean isBeanPresent(ListableBeanFactory beanFactory, Class<?> beanClass) {
-
         return isBeanPresent(beanFactory, beanClass, false);
-
     }
-
 
     /**
      * Is Bean Present or not?
@@ -574,35 +574,9 @@ public abstract class BeanUtils {
 
         invokeBeanFactoryAwareInterfaces(bean, beanFactory, beanFactory);
 
-        if (bean instanceof EnvironmentAware) {
-            ((EnvironmentAware) bean).setEnvironment(context.getEnvironment());
-        }
+        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
 
-        if (bean instanceof EmbeddedValueResolverAware && beanFactory != null) {
-            StringValueResolver embeddedValueResolver = new EmbeddedValueResolver(beanFactory);
-            ((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(embeddedValueResolver);
-        }
-
-        if (bean instanceof ResourceLoaderAware) {
-            ((ResourceLoaderAware) bean).setResourceLoader(context);
-        }
-
-        if (bean instanceof ApplicationEventPublisherAware) {
-            ((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(context);
-        }
-
-        if (bean instanceof MessageSourceAware) {
-            ((MessageSourceAware) bean).setMessageSource(context);
-        }
-
-        if (APPLICATION_STARTUP_CLASS_PRESENT) {
-            if (bean instanceof ApplicationStartupAware && applicationContext != null) {
-                ((ApplicationStartupAware) bean).setApplicationStartup(applicationContext.getApplicationStartup());
-            }
-        }
-        if (bean instanceof ApplicationContextAware) {
-            ((ApplicationContextAware) bean).setApplicationContext(context);
-        }
+        beanPostProcessor.postProcessBeforeInitialization(bean, "");
     }
 
     /**
