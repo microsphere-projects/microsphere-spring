@@ -20,10 +20,13 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,6 +172,23 @@ public abstract class BeanFactoryUtils {
     public static Set<Class<?>> getResolvableDependencyTypes(DefaultListableBeanFactory beanFactory) {
         Map resolvableDependencies = getFieldValue(beanFactory, "resolvableDependencies", Map.class);
         return resolvableDependencies == null ? emptySet() : resolvableDependencies.keySet();
+    }
+
+    /**
+     * Get all instances of {@link BeanPostProcessor} in the specified {@link BeanFactory}
+     *
+     * @param beanFactory {@link BeanFactory}
+     * @return non-null {@link List}
+     */
+    public static List<BeanPostProcessor> getBeanPostProcessors(@Nullable BeanFactory beanFactory) {
+        final List<BeanPostProcessor> beanPostProcessors;
+        if (beanFactory instanceof AbstractBeanFactory) {
+            AbstractBeanFactory abf = (AbstractBeanFactory) beanFactory;
+            beanPostProcessors = unmodifiableList(abf.getBeanPostProcessors());
+        } else {
+            beanPostProcessors = emptyList();
+        }
+        return beanPostProcessors;
     }
 
 }
