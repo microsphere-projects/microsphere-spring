@@ -34,6 +34,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Spring Web -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Spring WebMVC -->
         <dependency>
             <groupId>org.springframework</groupId>
