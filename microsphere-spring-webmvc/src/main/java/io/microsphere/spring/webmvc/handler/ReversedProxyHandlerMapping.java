@@ -28,7 +28,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.function.HandlerFunction;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMethodMapping;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
@@ -52,7 +51,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC
  * The request must have a header named {@link WebEndpointMapping#ID_HEADER_NAME "microsphere_wem_id"},
  * which is a string presenting {@link WebEndpointMapping#getId() the id of endpoint}, used to
  * locate the actual {@link WebEndpointMapping#getEndpoint() endpoint} easily, such as {@link HandlerMethod},
- * {@link HandlerFunction} and {@link Controller}.
+ * {@link org.springframework.web.servlet.function.HandlerFunction} and {@link Controller}.
  * <p>
  * As a result, {@link ReversedProxyHandlerMapping} has the higher precedence than others, which ensures that it
  * prioritizes {@link HandlerMapping#getHandler(HttpServletRequest) getting the handler} and avoid the duplication

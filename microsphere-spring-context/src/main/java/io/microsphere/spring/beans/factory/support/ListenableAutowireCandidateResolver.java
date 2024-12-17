@@ -17,8 +17,10 @@
 package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.constants.PropertyConstants;
+import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -34,15 +36,19 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 
+import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.util.ArrayUtils.combine;
+import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
  * The decorator class of {@link AutowireCandidateResolver} to listen to the resolving process of autowire candidate by
@@ -60,6 +66,20 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         EnvironmentAware, BeanNameAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ListenableAutowireCandidateResolver.class);
+
+    /**
+     * The name of the method name of {@link AutowireCandidateResolver#cloneIfNecessary()}
+     *
+     * @since Spring Framework 5.2.7
+     */
+    private static final String CLONE_IF_NECESSARY_METHOD_NAME = "cloneIfNecessary";
+
+    /**
+     * The {@link MethodHandle} of {@link AutowireCandidateResolver#cloneIfNecessary()}
+     *
+     * @since Spring Framework 5.2.7
+     */
+    private static final MethodHandle CLONE_IF_NECESSARY_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, CLONE_IF_NECESSARY_METHOD_NAME);
 
     /**
      * The prefix of the property name of {@link ListenableAutowireCandidateResolver}
@@ -127,9 +147,18 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return proxy;
     }
 
-    @Override
+    /**
+     * Clone the delegate {@link AutowireCandidateResolver} if necessary
+     * No {@link Override} was marked in order to be compatible with the Spring 4.x
+     *
+     * @return {@link AutowireCandidateResolver}
+     * @since Spring Framework 5.2.7
+     */
     public AutowireCandidateResolver cloneIfNecessary() {
-        return delegate.cloneIfNecessary();
+        if (CLONE_IF_NECESSARY_METHOD_HANDLE != null) {
+            return execute(() -> (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invoke(delegate));
+        }
+        return instantiateClass(delegate.getClass());
     }
 
     @Override
