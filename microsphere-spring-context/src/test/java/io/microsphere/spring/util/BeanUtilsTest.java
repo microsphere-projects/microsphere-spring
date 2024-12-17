@@ -321,7 +321,6 @@ public class BeanUtilsTest {
         assertSame(testBean.getBeanFactory(), context.getBeanFactory());
         assertSame(testBean.getClassLoader(), context.getClassLoader());
         assertSame(testBean.getEnvironment(), context.getEnvironment());
-        assertSame(testBean.getApplicationStartup(), context.getApplicationStartup());
         assertSame(testBean.getResourceLoader(), context);
         assertNotNull(testBean.getResolver());
         context.close();

@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.context.ApplicationStartupAware;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.MessageSource;
@@ -18,7 +17,6 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringValueResolver;
 
@@ -34,7 +32,7 @@ import java.util.Objects;
 @Order(1)
 public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, EnvironmentAware,
         EmbeddedValueResolverAware, ResourceLoaderAware, ApplicationEventPublisherAware, MessageSourceAware,
-        ApplicationStartupAware, ApplicationContextAware, BeanNameAware {
+        ApplicationContextAware, BeanNameAware {
 
     private ClassLoader classLoader;
 
@@ -43,8 +41,6 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
     private ApplicationContext applicationContext;
 
     private ApplicationEventPublisher applicationEventPublisher;
-
-    private ApplicationStartup applicationStartup;
 
     private StringValueResolver resolver;
 
@@ -74,11 +70,6 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
-    }
-
-    @Override
-    public void setApplicationStartup(ApplicationStartup applicationStartup) {
-        this.applicationStartup = applicationStartup;
     }
 
     @Override
@@ -122,10 +113,6 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
         return applicationEventPublisher;
     }
 
-    public ApplicationStartup getApplicationStartup() {
-        return applicationStartup;
-    }
-
     public StringValueResolver getResolver() {
         return resolver;
     }
@@ -155,7 +142,6 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
                 Objects.equals(beanFactory, testBean.beanFactory) &&
                 Objects.equals(applicationContext, testBean.applicationContext) &&
                 Objects.equals(applicationEventPublisher, testBean.applicationEventPublisher) &&
-                Objects.equals(applicationStartup, testBean.applicationStartup) &&
                 Objects.equals(resolver, testBean.resolver) &&
                 Objects.equals(environment, testBean.environment) &&
                 Objects.equals(messageSource, testBean.messageSource) &&
@@ -164,7 +150,7 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
 
     @Override
     public int hashCode() {
-        return Objects.hash(classLoader, beanFactory, applicationContext, applicationEventPublisher, applicationStartup, resolver, environment, messageSource, resourceLoader);
+        return Objects.hash(classLoader, beanFactory, applicationContext, applicationEventPublisher, resolver, environment, messageSource, resourceLoader);
     }
 
 }

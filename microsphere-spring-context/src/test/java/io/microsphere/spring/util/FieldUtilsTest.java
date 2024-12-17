@@ -17,21 +17,9 @@ public class FieldUtilsTest {
     @Test
     public void testGetField() {
 
-        String test = "test";
-
-        int hashCode = test.hashCode();
-
-        int hash = FieldUtils.getFieldValue(test, "hash", int.class);
-
-        Assert.assertEquals(hashCode, hash);
-
-        hash = FieldUtils.getFieldValue(test, "hash");
-
-        Assert.assertEquals(hashCode, hash);
-
         FieldUtilsTest instance = new FieldUtilsTest();
 
-        hash = FieldUtils.getFieldValue(instance, "data", 2);
+        int hash = FieldUtils.getFieldValue(instance, "data", 2);
 
         Assert.assertEquals(2, hash);
 

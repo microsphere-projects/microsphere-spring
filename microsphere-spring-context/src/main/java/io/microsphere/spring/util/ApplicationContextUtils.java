@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -23,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -38,6 +41,8 @@ import static io.microsphere.util.ClassUtils.cast;
  * @since 1.0.0
  */
 public abstract class ApplicationContextUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationContextUtils.class);
 
     /**
      * The {@link org.springframework.context.support.ApplicationContextAwareProcessor} Class Name (Internal).
@@ -76,7 +81,7 @@ public abstract class ApplicationContextUtils {
      *
      * @return the {@link org.springframework.context.support.ApplicationContextAwareProcessor}
      */
-    @NonNull
+    @Nullable
     public static BeanPostProcessor getApplicationContextAwareProcessor(BeanFactory beanFactory) {
         List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(beanFactory);
         BeanPostProcessor applicationContextAwareProcessor = null;
@@ -87,11 +92,13 @@ public abstract class ApplicationContextUtils {
             }
         }
         if (applicationContextAwareProcessor == null) {
-            String message = format("The BeanPostProcessor[class : '{}' , present : {}] was not added in the BeanFactory[{}] @ Spring Framework '{}'",
-                    APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME,
-                    APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS != null,
-                    SpringVersion.getVersion());
-            throw new IllegalStateException(message);
+            if (logger.isWarnEnabled()) {
+                logger.warn("The BeanPostProcessor[class : '{}' , present : {}] was not added in the BeanFactory[{}] @ Spring Framework '{}'",
+                        APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME,
+                        APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS != null,
+                        beanFactory,
+                        SpringVersion.getVersion());
+            }
         }
         return applicationContextAwareProcessor;
     }

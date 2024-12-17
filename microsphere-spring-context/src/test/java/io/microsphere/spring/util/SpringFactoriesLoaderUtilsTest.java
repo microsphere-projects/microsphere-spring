@@ -49,6 +49,7 @@ public class SpringFactoriesLoaderUtilsTest {
     public void before() {
         context = new GenericApplicationContext();
         beanFactory = context.getDefaultListableBeanFactory();
+        context.refresh();
     }
 
     @Test
@@ -65,7 +66,6 @@ public class SpringFactoriesLoaderUtilsTest {
         TestBean testBean = (TestBean) beans.get(0);
         assertNull(testBean.getApplicationContext());
         assertNull(testBean.getApplicationEventPublisher());
-        assertNull(testBean.getApplicationStartup());
         assertNull(testBean.getResourceLoader());
         assertNull(testBean.getMessageSource());
         assertNull(testBean.getEnvironment());
@@ -85,7 +85,6 @@ public class SpringFactoriesLoaderUtilsTest {
 
         assertNotNull(testBean);
         assertNotNull(testBean.getResolver());
-        assertNotNull(testBean.getApplicationStartup());
 
         assertSame(context, testBean.getApplicationContext());
         assertSame(context, testBean.getApplicationEventPublisher());

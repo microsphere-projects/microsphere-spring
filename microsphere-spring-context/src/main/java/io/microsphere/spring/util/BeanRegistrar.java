@@ -229,8 +229,13 @@ public abstract class BeanRegistrar {
     }
 
     public static final void registerFactoryBean(BeanDefinitionRegistry registry, String beanName, Object bean) {
+        registerFactoryBean(registry, beanName, bean, false);
+    }
+
+    public static final void registerFactoryBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(DelegatingFactoryBean.class, bean);
         beanDefinition.setSource(bean);
+        beanDefinition.setPrimary(primary);
         registerBeanDefinition(registry, beanName, beanDefinition);
     }
 

@@ -16,13 +16,11 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.context.ApplicationStartupAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.EnvironmentAware;
@@ -34,7 +32,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.util.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +43,6 @@ import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableA
 import static io.microsphere.spring.util.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
-import static io.microsphere.util.ClassLoaderUtils.isPresent;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
@@ -576,7 +572,9 @@ public abstract class BeanUtils {
 
         BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
 
-        beanPostProcessor.postProcessBeforeInitialization(bean, "");
+        if (beanPostProcessor != null) {
+            beanPostProcessor.postProcessBeforeInitialization(bean, "");
+        }
     }
 
     /**

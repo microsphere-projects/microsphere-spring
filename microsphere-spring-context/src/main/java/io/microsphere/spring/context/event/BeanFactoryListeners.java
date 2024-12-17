@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static io.microsphere.spring.util.BeanRegistrar.registerFactoryBean;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 
@@ -97,9 +98,10 @@ class BeanFactoryListeners implements BeanFactoryListener {
     }
 
     void registerBean(BeanDefinitionRegistry registry) {
-        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanFactoryListeners.class, () -> this);
-        beanDefinitionBuilder.setPrimary(true);
-        registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
+//        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanFactoryListeners.class, () -> this);
+//        beanDefinitionBuilder.setPrimary(true);
+//        registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
+        registerFactoryBean(registry, BEAN_NAME, this);
     }
 
     static BeanFactoryListeners getBean(BeanFactory beanFactory) {

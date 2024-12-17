@@ -1,0 +1,17 @@
+[
+  {
+    "org.springframework.beans.factory.SmartInitializingSingleton": {
+      "since": "4.1"
+    }
+  },
+  {
+    "org.springframework.core.metrics.ApplicationStartup": {
+      "since": "5.3"
+    }
+  },
+  {
+    "org.springframework.context.ApplicationStartupAware": {
+      "since": "5.3"
+    }
+  }
+]

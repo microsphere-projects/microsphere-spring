@@ -14,19 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc;
+package io.microsphere.spring.webmvc.controller;
 
 import io.microsphere.spring.webmvc.annotation.Idempotent;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * {@link RuntimeException} for {@link Idempotent}
+ * Test {@link Controller}
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see TestController
  * @since 1.0.0
  */
-public class IdempotentException extends RuntimeException {
+@RestController
+public class TestController {
 
-    public IdempotentException(String s) {
-        super(s);
+    @RequestMapping(value = "/echo/{message}", method = {GET, POST})
+    @Idempotent
+    public String echo(@PathVariable String message) {
+        return "[ECHO] : " + message;
     }
 }
