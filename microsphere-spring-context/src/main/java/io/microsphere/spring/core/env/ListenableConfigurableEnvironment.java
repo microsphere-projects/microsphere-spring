@@ -198,7 +198,6 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return delegate.acceptsProfiles(profiles);
     }
 
-    @Override
     public boolean acceptsProfiles(Profiles profiles) {
         return delegate.acceptsProfiles(profiles);
     }
