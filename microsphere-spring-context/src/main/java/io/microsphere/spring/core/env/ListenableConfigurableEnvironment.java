@@ -184,6 +184,11 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return defaultProfiles;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.3.28
+     */
     public boolean matchesProfiles(String... profileExpressions) {
         if (matchesProfilesMethod != null) {
             Object arg = profileExpressions;
@@ -198,6 +203,11 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return delegate.acceptsProfiles(profiles);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.1
+     */
     public boolean acceptsProfiles(Profiles profiles) {
         return delegate.acceptsProfiles(profiles);
     }
