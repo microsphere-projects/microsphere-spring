@@ -17,9 +17,9 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.filter.Filter;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;

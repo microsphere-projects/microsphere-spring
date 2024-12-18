@@ -30,7 +30,6 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 
 import static io.microsphere.spring.util.BeanFactoryUtils.getBeanPostProcessors;
-import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static io.microsphere.util.ClassUtils.cast;
 

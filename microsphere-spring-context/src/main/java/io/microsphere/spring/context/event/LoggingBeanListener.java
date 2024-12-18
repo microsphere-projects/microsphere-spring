@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 

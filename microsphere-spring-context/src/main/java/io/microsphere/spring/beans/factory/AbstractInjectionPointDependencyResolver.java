@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

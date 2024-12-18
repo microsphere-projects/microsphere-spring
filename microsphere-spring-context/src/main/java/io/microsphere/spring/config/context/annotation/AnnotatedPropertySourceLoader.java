@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;

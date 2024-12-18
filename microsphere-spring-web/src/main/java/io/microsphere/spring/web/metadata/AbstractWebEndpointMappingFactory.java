@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.lang.Nullable;
 
 import java.util.Optional;

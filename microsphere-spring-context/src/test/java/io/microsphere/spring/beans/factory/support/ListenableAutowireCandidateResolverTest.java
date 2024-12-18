@@ -4,6 +4,7 @@ package io.microsphere.spring.beans.factory.support;
 import io.microsphere.spring.util.TestBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.DependencyDescriptor;
@@ -48,6 +49,9 @@ public class ListenableAutowireCandidateResolverTest implements AutowireCandidat
     @Lazy
     private TestBean testBean;
 
+    @Autowired
+    private ObjectProvider<ListenableAutowireCandidateResolver> resolverProvider;
+
     private Environment environment;
 
     private static Object resolvedTestName;
@@ -56,6 +60,9 @@ public class ListenableAutowireCandidateResolverTest implements AutowireCandidat
     public void test() {
         assertEquals(testName, resolvedTestName);
         assertNotNull(testBean.getResolver());
+
+        ListenableAutowireCandidateResolver resolver = resolverProvider.getIfAvailable();
+        assertNotNull(resolver.cloneIfNecessary());
     }
 
     @Override

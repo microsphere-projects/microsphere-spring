@@ -16,14 +16,13 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.config.NamedBeanHolderComparator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.NamedBeanHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
@@ -39,7 +38,6 @@ import java.util.function.Consumer;
 
 import static io.microsphere.spring.util.BeanRegistrar.registerFactoryBean;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 
 /**
  * The composite {@link BeanListener}

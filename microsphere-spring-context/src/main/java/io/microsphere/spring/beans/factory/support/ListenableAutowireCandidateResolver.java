@@ -17,10 +17,8 @@
 package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.constants.PropertyConstants;
-import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -156,7 +154,10 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      */
     public AutowireCandidateResolver cloneIfNecessary() {
         if (CLONE_IF_NECESSARY_METHOD_HANDLE != null) {
-            return execute(() -> (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invoke(delegate));
+            return execute(() -> (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invokeExact(delegate));
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("The method AutowireCandidateResolver#cloneIfNecessary() was not found, the clone instance will be created on default way.");
         }
         return instantiateClass(delegate.getClass());
     }
