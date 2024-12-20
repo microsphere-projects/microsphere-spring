@@ -38,7 +38,8 @@ public class WebMvcExtensionConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        for (LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor : lazyCompositeHandlerInterceptorProvider) {
+        LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor = lazyCompositeHandlerInterceptorProvider.getIfAvailable();
+        if (lazyCompositeHandlerInterceptor != null) {
             registry.addInterceptor(lazyCompositeHandlerInterceptor);
         }
     }
