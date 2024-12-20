@@ -58,6 +58,7 @@ import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.reflect.MemberUtils.isStatic;
+import static io.microsphere.spring.util.BeanDefinitionUtils.getResolvableType;
 import static io.microsphere.spring.util.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.util.ClassLoaderUtils.loadClass;
 import static java.lang.InheritableThreadLocal.withInitial;
@@ -325,7 +326,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         Class beanClass = resolveBeanClass(beanDefinition, classLoader);
         if (beanClass == null) {
-            ResolvableType resolvableType = beanDefinition.getResolvableType();
+            ResolvableType resolvableType = getResolvableType(beanDefinition);
             beanClass = resolvableType.resolve();
         }
 

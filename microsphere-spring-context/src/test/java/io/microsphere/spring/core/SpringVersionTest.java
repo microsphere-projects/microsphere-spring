@@ -39,7 +39,7 @@ public class SpringVersionTest {
             }
             Version version = resolveVersion(springVersion.name());
             assertEquals(springVersion.getVersion(), version);
-            assertTrue(springVersion.eq(version));
+            assertTrue(springVersion.getVersion().eq(version));
         }
     }
 }

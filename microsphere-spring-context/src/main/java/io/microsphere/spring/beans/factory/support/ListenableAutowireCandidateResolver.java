@@ -40,6 +40,7 @@ import java.util.List;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
+import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
@@ -124,9 +125,13 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return delegate.isRequired(descriptor);
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.1
+     */
     public boolean hasQualifier(DependencyDescriptor descriptor) {
-        return delegate.hasQualifier(descriptor);
+        return invokeMethod(descriptor, "hasQualifier", descriptor);
     }
 
     @Nullable
