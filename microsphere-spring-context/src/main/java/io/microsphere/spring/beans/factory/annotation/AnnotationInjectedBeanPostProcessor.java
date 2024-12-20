@@ -17,8 +17,8 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -80,7 +80,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
     private final static PropertyDescriptor[] EMPTY_PROPERTY_DESCRIPTOR_ARRAY = new PropertyDescriptor[0];
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Class<A> annotationType;
 

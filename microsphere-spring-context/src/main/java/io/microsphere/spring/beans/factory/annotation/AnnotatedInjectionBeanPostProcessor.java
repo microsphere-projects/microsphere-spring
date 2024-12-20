@@ -17,7 +17,8 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.apache.commons.logging.Log;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -107,7 +108,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Collection<Class<? extends Annotation>> annotationTypes;
 

@@ -20,8 +20,8 @@ import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
 import io.microsphere.spring.core.convert.support.ConversionServiceResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -65,7 +65,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
     static final String IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME = "ignoreInvalidFields";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private ConfigurableListableBeanFactory beanFactory = null;
 
@@ -154,8 +154,8 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
         getConfigurationBeanBinder().bind(configurationProperties, ignoreUnknownFields, ignoreInvalidFields, configurationBean);
 
-        if (log.isInfoEnabled()) {
-            log.info("The configuration bean [" + configurationBean + "] have been binding by the " + "configuration properties [" + configurationProperties + "]");
+        if (logger.isInfoEnabled()) {
+            logger.info("The configuration bean [" + configurationBean + "] have been binding by the " + "configuration properties [" + configurationProperties + "]");
         }
     }
 
@@ -165,8 +165,8 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
             try {
                 configurationBeanBinder = beanFactory.getBean(ConfigurationBeanBinder.class);
             } catch (BeansException ignored) {
-                if (log.isInfoEnabled()) {
-                    log.info("configurationBeanBinder Bean can't be found in ApplicationContext.");
+                if (logger.isInfoEnabled()) {
+                    logger.info("configurationBeanBinder Bean can't be found in ApplicationContext.");
                 }
                 // Use Default implementation
                 configurationBeanBinder = defaultConfigurationBeanBinder();

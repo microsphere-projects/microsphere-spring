@@ -15,8 +15,8 @@
  */
 package io.microsphere.spring.core.convert.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -46,7 +46,7 @@ public class ConversionServiceResolver {
      */
     public static final String RESOLVED_CONVERSION_SERVICE_BEAN_NAME = "resolved-" + CONVERSION_SERVICE_BEAN_NAME;
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final ConfigurableBeanFactory beanFactory;
 

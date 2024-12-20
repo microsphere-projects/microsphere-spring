@@ -1,7 +1,7 @@
 package io.microsphere.spring.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.Aware;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -60,7 +60,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionReaderUtil
  */
 public abstract class BeanUtils {
 
-    private static final Log logger = LogFactory.getLog(BeanUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
 
     private static final String[] EMPTY_BEAN_NAMES = new String[0];
 

@@ -18,8 +18,8 @@ package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
 import io.microsphere.spring.util.PropertySourcesUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -69,7 +69,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     private final static String ENABLE_CONFIGURATION_BINDING_CLASS_NAME = ENABLE_CONFIGURATION_BINDING_CLASS.getName();
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private ConfigurableEnvironment environment;
     private BeanFactory beanFactory;
@@ -145,8 +145,8 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         registry.registerBeanDefinition(beanName, beanDefinition);
 
-        if (log.isInfoEnabled()) {
-            log.info("The configuration bean definition [name : " + beanName + ", content : " + beanDefinition
+        if (logger.isInfoEnabled()) {
+            logger.info("The configuration bean definition [name : " + beanName + ", content : " + beanDefinition
                     + "] has been registered.");
         }
     }

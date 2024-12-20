@@ -17,8 +17,8 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
@@ -79,7 +79,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,
         BeanFactoryAware, EnvironmentAware, ResourceLoaderAware, BeanClassLoaderAware {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Set<Class<? extends Annotation>> supportedAnnotationTypes;
 
