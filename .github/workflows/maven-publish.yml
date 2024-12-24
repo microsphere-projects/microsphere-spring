@@ -41,11 +41,10 @@ jobs:
           --batch-mode
           --update-snapshots
           --file pom.xml
-          -DargLine="--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED"
           -Drevision=${{ inputs.revision }} 
           -Dgpg.skip=true 
-          -Prelease,ci 
           deploy
+          --activate-profiles release,ci
         env:
           MAVEN_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}
