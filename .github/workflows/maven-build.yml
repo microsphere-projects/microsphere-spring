@@ -42,6 +42,11 @@ jobs:
           --update-snapshots
           --file pom.xml
           -Drevision=0.0.1-SNAPSHOT
-          -DargLine="${{ matrix.java >= 16 && '--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED' || '' }}"
-          -P${{ matrix.maven-profile-spring-boot }}
           test
+          --activate-profiles test,coverage,${{ matrix.maven-profile-spring-boot }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: microsphere-projects/microsphere-spring
