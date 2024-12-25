@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.util;
+package io.microsphere.spring.beans.factory;
 
 import io.microsphere.util.BaseUtils;
 import io.microsphere.util.Version;
@@ -29,7 +29,5 @@ import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
  * @since 1.0.0
  */
 public abstract class ObjectProviderUtils extends BaseUtils {
-
-    private static final Version SPRING_VERSION = getSpringVersion(ObjectProvider.class);
 
 }
