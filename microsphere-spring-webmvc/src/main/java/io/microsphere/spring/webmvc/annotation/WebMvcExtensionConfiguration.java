@@ -34,12 +34,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class WebMvcExtensionConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
-    private ObjectProvider<LazyCompositeHandlerInterceptor> lazyCompositeHandlerInterceptorProvider;
+    private ObjectProvider<LazyCompositeHandlerInterceptor[]> lazyCompositeHandlerInterceptorProvider;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor = lazyCompositeHandlerInterceptorProvider.getIfAvailable();
-        if (lazyCompositeHandlerInterceptor != null) {
+        LazyCompositeHandlerInterceptor[] lazyCompositeHandlerInterceptors = lazyCompositeHandlerInterceptorProvider.getIfAvailable();
+        for (LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor : lazyCompositeHandlerInterceptors) {
             registry.addInterceptor(lazyCompositeHandlerInterceptor);
         }
     }
