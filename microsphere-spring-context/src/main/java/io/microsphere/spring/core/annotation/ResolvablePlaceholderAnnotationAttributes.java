@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.shallowCloneMap;
-import static io.microsphere.spring.util.AnnotationUtils.findAnnotationType;
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.emptySet;
 
 /**

@@ -1,4 +1,4 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.annotation;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,10 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.spring.util.AnnotationUtils.findAnnotations;
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.spring.util.AnnotationUtils.getAttribute;
-import static io.microsphere.spring.util.AnnotationUtils.getAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotations;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttributes;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
 import static io.microsphere.util.ArrayUtils.of;
 import static junit.framework.TestCase.assertNull;

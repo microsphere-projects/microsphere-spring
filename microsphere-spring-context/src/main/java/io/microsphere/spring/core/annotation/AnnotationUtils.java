@@ -1,6 +1,5 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.annotation;
 
-import io.microsphere.spring.core.annotation.GenericAnnotationAttributes;
 import io.microsphere.util.ClassLoaderUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;

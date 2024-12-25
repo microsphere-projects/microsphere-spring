@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.time.Duration.ofMillis;
 import static java.util.Collections.emptyList;
 

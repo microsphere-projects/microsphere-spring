@@ -27,7 +27,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
 
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultProperties;
 

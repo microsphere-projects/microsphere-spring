@@ -26,7 +26,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Set;
 
 import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.ofSet;
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 
 /**
  * The loader of {@link PropertySource} for {@link DefaultPropertiesPropertySources}
