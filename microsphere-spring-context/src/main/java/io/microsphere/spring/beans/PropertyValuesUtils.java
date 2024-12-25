@@ -1,4 +1,4 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.beans;
 
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;

@@ -1,4 +1,4 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.beans;
 
 import org.junit.Assert;
 import org.junit.Test;
