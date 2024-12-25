@@ -1,5 +1,7 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.context.annotation;
 
+import io.microsphere.spring.util.TestBean;
+import io.microsphere.spring.util.TestBean2;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

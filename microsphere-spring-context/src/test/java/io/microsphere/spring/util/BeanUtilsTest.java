@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
+import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 import static io.microsphere.spring.util.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.util.BeanUtils.getBeanNames;
 import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
