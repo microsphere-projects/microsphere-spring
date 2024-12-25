@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.config;
 
+import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -53,7 +54,7 @@ import static org.springframework.core.ResolvableType.forMethodReturnType;
  * @see BeanDefinition#ROLE_INFRASTRUCTURE
  * @since 1.0.0
  */
-public abstract class BeanDefinitionUtils {
+public abstract class BeanDefinitionUtils extends BaseUtils {
 
     /**
      * The name of getResolvableType() method.
