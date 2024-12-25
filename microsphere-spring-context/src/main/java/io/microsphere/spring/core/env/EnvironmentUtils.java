@@ -25,6 +25,8 @@ import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +54,14 @@ public abstract class EnvironmentUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(EnvironmentUtils.class);
 
+    /**
+     * Get the properties from the specified {@link Environment} and property names
+     *
+     * @param environment   {@link Environment}
+     * @param propertyNames the property names
+     * @return non-null
+     */
+    @Nonnull
     public static Map<String, String> getProperties(Environment environment, String... propertyNames) {
         int length = propertyNames == null ? 0 : propertyNames.length;
         if (length < 1) {
@@ -63,6 +73,14 @@ public abstract class EnvironmentUtils extends BaseUtils {
         return getProperties(environment, asList(propertyNames));
     }
 
+    /**
+     * Get the properties from the specified {@link Environment} and property names
+     *
+     * @param environment   {@link Environment}
+     * @param propertyNames the property names
+     * @return non-null
+     */
+    @Nonnull
     public static Map<String, String> getProperties(Environment environment, Iterable<String> propertyNames) {
         Set<String> propertyNamesSet = propertyNames instanceof Set ? (Set) propertyNames :
                 propertyNames instanceof Collection ? new HashSet<>((Collection) propertyNames) :
@@ -70,6 +88,14 @@ public abstract class EnvironmentUtils extends BaseUtils {
         return getProperties(environment, propertyNamesSet);
     }
 
+    /**
+     * Get the properties from the specified {@link Environment} and property names
+     *
+     * @param environment   {@link Environment}
+     * @param propertyNames the property names
+     * @return non-null
+     */
+    @Nonnull
     public static Map<String, String> getProperties(Environment environment, Set<String> propertyNames) {
         Map<String, String> properties = new HashMap<>(propertyNames.size());
         propertyNames.stream().filter(StringUtils::hasText).forEach(name -> {
@@ -78,6 +104,13 @@ public abstract class EnvironmentUtils extends BaseUtils {
         return unmodifiableMap(properties);
     }
 
+    /**
+     * Get the {@link ConversionService} from the specified {@link Environment}
+     *
+     * @param environment {@link Environment}
+     * @return {@link ConversionService} if found, or <code>null</code>
+     */
+    @Nullable
     public static ConversionService getConversionService(Environment environment) {
         ConversionService conversionService = null;
         if (environment instanceof ConfigurablePropertyResolver) {
@@ -91,15 +124,44 @@ public abstract class EnvironmentUtils extends BaseUtils {
         return conversionService;
     }
 
+    /**
+     * Resolve the comma delimited value to {@link List}
+     *
+     * @param environment         {@link Environment}
+     * @param commaDelimitedValue the comma delimited value
+     * @return non-null
+     */
+    @Nonnull
     public static List<String> resolveCommaDelimitedValueToList(Environment environment, String commaDelimitedValue) {
         List<String> values = resolvePlaceholders(environment, commaDelimitedValue, List.class);
         return values == null ? emptyList() : unmodifiableList(values);
     }
 
+    /**
+     * Resolve the placeholders
+     *
+     * @param environment   {@link Environment}
+     * @param propertyValue the property value
+     * @param targetType    the target type
+     * @param <T>           the target type
+     * @return the resolved value
+     */
+    @Nullable
     public static <T> T resolvePlaceholders(Environment environment, String propertyValue, Class<T> targetType) {
         return resolvePlaceholders(environment, propertyValue, targetType, null);
     }
 
+    /**
+     * Resolve the placeholders
+     *
+     * @param environment   {@link Environment}
+     * @param propertyValue the property value
+     * @param targetType    the target type
+     * @param defaultValue  the default value
+     * @param <T>           the target type
+     * @return the resolved value
+     */
+    @Nullable
     public static <T> T resolvePlaceholders(Environment environment, String propertyValue, Class<T> targetType, T defaultValue) {
         if (propertyValue == null) {
             return defaultValue;
