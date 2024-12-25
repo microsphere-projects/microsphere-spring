@@ -18,6 +18,7 @@ package io.microsphere.spring.core.env;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.util.BaseUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.ConfigurablePropertyResolver;
@@ -47,13 +48,9 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
-public abstract class EnvironmentUtils {
+public abstract class EnvironmentUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(EnvironmentUtils.class);
-
-    private EnvironmentUtils() throws InstantiationException {
-        throw new InstantiationException();
-    }
 
     public static Map<String, String> getProperties(Environment environment, String... propertyNames) {
         int length = propertyNames == null ? 0 : propertyNames.length;
