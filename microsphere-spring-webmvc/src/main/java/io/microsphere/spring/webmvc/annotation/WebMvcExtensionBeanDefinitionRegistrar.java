@@ -32,7 +32,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 

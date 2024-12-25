@@ -17,7 +17,7 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import io.microsphere.spring.util.BeanRegistrar;
+import io.microsphere.spring.beans.factory.support.BeanRegistrar;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;

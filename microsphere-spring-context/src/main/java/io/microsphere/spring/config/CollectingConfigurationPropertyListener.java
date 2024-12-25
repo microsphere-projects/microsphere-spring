@@ -27,8 +27,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
-import static io.microsphere.spring.util.BeanRegistrar.registerBean;
-import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_PREFIX;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_SUFFIX;
 

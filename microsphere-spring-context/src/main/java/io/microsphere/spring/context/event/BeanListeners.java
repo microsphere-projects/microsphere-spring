@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static io.microsphere.spring.util.BeanRegistrar.registerFactoryBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
 
 /**

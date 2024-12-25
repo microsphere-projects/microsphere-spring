@@ -44,8 +44,8 @@ import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
-import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.util.ArrayUtils.combine;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 
