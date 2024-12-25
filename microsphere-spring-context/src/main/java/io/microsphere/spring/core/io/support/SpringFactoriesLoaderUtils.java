@@ -18,6 +18,7 @@ package io.microsphere.spring.core.io.support;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -55,7 +56,7 @@ import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
  * @see SpringFactoriesLoader
  * @since 1.0.0
  */
-public abstract class SpringFactoriesLoaderUtils {
+public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringFactoriesLoaderUtils.class);
 
