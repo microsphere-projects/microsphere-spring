@@ -38,8 +38,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingRegistrar.ENABLE_CONFIGURATION_BINDING_CLASS;
-import static io.microsphere.spring.util.WrapperUtils.unwrap;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 import static org.springframework.util.ClassUtils.getUserClass;
@@ -223,7 +223,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = unwrap(beanFactory);
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     @Override
