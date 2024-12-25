@@ -31,8 +31,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.microsphere.spring.util.ApplicationContextUtils.asApplicationContext;
-import static io.microsphere.spring.util.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
+import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableListableBeanFactory;

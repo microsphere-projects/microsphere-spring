@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.util;
+package io.microsphere.spring.context;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -39,7 +40,7 @@ import static io.microsphere.util.ClassUtils.cast;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class ApplicationContextUtils {
+public abstract class ApplicationContextUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationContextUtils.class);
 
