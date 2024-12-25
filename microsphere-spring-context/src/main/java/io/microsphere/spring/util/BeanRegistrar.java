@@ -30,7 +30,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanDefinitionUtils.genericBeanDefinition;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static java.beans.Introspector.decapitalize;
 import static java.lang.String.format;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
