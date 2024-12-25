@@ -51,7 +51,7 @@ import java.util.Set;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
-import static io.microsphere.spring.util.WrapperUtils.unwrap;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.util.ClassUtils.resolveClassName;
@@ -320,7 +320,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
 
     @Override
     public void setEnvironment(Environment environment) {
-        this.environment = unwrap(environment);
+        this.environment = asConfigurableEnvironment(environment);
     }
 
     public ResourceLoader getResourceLoader() {
