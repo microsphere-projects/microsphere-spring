@@ -24,9 +24,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
-import static io.microsphere.spring.util.BeanUtils.invokeBeanNameAware;
-import static io.microsphere.spring.util.BeanUtils.invokeInitializingBean;
+import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
+import static io.microsphere.spring.beans.BeanUtils.invokeBeanNameAware;
+import static io.microsphere.spring.beans.BeanUtils.invokeInitializingBean;
 
 /**
  * {@link FactoryBean} implementation based on delegate object that was instantiated

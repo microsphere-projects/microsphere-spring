@@ -1,4 +1,4 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.beans;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;

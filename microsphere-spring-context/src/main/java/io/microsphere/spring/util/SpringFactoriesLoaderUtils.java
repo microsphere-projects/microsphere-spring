@@ -37,8 +37,8 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
-import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
-import static io.microsphere.spring.util.BeanUtils.invokeBeanInterfaces;
+import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
+import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptyList;

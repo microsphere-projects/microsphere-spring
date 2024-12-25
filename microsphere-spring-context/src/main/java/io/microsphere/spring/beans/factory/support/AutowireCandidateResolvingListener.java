@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;

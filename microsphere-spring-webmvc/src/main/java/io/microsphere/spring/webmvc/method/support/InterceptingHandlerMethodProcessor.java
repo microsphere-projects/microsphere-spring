@@ -49,8 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.spring.util.BeanUtils.getOptionalBean;
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.getHandlerMethodArguments;
 import static java.util.Collections.emptyList;
 

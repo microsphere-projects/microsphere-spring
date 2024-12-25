@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 
 /**
  * Intercepting {@link ApplicationEventMulticaster} based on {@link SimpleApplicationEventMulticaster}

@@ -27,7 +27,7 @@ import org.springframework.web.method.HandlerMethod;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static java.util.Collections.emptyList;
 
 /**
