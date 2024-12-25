@@ -34,8 +34,9 @@ import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import javax.annotation.Nonnull;
 import org.springframework.util.Assert;
+
+import javax.annotation.Nonnull;
 
 import static io.microsphere.text.FormatUtils.format;
 

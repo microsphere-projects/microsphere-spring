@@ -16,13 +16,13 @@
  */
 package io.microsphere.spring.context.annotation;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.event.ApplicationEventInterceptor;
 import io.microsphere.spring.context.event.ApplicationListenerInterceptor;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;

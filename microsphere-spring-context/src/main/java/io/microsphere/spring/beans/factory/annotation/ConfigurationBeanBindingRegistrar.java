@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
-import io.microsphere.spring.util.PropertySourcesUtils;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
+import io.microsphere.spring.util.PropertySourcesUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

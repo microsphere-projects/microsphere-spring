@@ -22,8 +22,8 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 

@@ -17,15 +17,10 @@
 package io.microsphere.spring.util;
 
 import io.microsphere.util.BaseUtils;
-import javax.annotation.Nullable;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeType;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
+import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import static io.microsphere.collection.CollectionUtils.isEmpty;
 

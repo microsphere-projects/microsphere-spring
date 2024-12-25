@@ -32,8 +32,8 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.List;

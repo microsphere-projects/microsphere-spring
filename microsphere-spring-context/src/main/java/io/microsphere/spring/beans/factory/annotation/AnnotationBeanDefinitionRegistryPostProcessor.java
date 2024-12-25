@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
@@ -48,8 +48,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static io.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
+import static io.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.util.WrapperUtils.unwrap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;

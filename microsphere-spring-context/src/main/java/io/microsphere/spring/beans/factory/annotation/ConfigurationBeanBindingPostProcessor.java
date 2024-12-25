@@ -16,12 +16,12 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
 import io.microsphere.spring.core.convert.support.ConversionServiceResolver;
-import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

@@ -31,8 +31,8 @@ import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 

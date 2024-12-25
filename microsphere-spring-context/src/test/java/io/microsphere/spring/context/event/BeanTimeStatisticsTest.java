@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.StopWatch;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;

@@ -19,9 +19,6 @@ package io.microsphere.spring.util;
 import org.junit.Test;
 import org.springframework.util.MimeType;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL;
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL_VALUE;
 import static io.microsphere.spring.util.MimeTypeUtils.equalsTypeAndSubtype;

@@ -19,6 +19,7 @@ package io.microsphere.spring.context.event;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.context.event.SmartApplicationListener;
+
 import javax.annotation.Nullable;
 
 import static org.springframework.core.ResolvableType.forClass;

@@ -30,8 +30,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
-import static io.microsphere.spring.core.SpringVersion.SPRING_5_3_28;
-import static io.microsphere.spring.core.SpringVersion.SPRING_5_3_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

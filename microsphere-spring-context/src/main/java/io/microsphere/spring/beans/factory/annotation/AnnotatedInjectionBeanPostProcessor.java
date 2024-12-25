@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -46,12 +46,12 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-import javax.annotation.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
