@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 import static io.microsphere.reflect.TypeUtils.asClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
-import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static org.springframework.core.MethodParameter.forParameter;
 
 /**

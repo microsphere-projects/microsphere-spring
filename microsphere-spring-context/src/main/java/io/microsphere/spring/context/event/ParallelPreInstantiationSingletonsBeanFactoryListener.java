@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
-import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.springframework.util.CollectionUtils.containsAny;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.util;
+package io.microsphere.spring.beans.factory;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanFactoryUtils.getBeans;
-import static io.microsphere.spring.util.BeanFactoryUtils.getOptionalBean;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeans;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getOptionalBean;
 import static io.microsphere.util.ArrayUtils.of;
 import static org.junit.Assert.assertEquals;
 
