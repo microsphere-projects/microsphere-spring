@@ -24,6 +24,7 @@ import org.springframework.mock.env.MockEnvironment;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getProperties;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
@@ -31,6 +32,7 @@ import static io.microsphere.spring.core.env.EnvironmentUtils.resolvePlaceholder
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 /**
  * {@link EnvironmentUtils} Test
@@ -100,6 +102,12 @@ public class EnvironmentUtilsTest {
 
         value = resolvePlaceholders(environment, "${d}", String.class, "default-value");
         assertEquals("${d}", value);
+    }
+
+    @Test
+    public void testAsConfigurableEnvironment() {
+        ConfigurableEnvironment configurableEnvironment = asConfigurableEnvironment(environment);
+        assertSame(environment, configurableEnvironment);
     }
 }
 

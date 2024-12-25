@@ -21,8 +21,10 @@ import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -53,6 +55,20 @@ import static org.springframework.util.StringUtils.hasText;
 public abstract class EnvironmentUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(EnvironmentUtils.class);
+
+    /**
+     * Cast {@link Environment} to {@link ConfigurableEnvironment}
+     *
+     * @param environment {@link Environment}
+     * @return {@link ConfigurableEnvironment}
+     * @throws IllegalArgumentException If <code>environment</code> argument is not an instance of {@link ConfigurableEnvironment}
+     */
+    public static ConfigurableEnvironment asConfigurableEnvironment(Environment environment) throws IllegalArgumentException {
+        Assert.isInstanceOf(ConfigurableEnvironment.class, environment,
+                "The 'environment' argument is not a instance of ConfigurableEnvironment, " +
+                        "is it running in Spring container?");
+        return (ConfigurableEnvironment) environment;
+    }
 
     /**
      * Get the properties from the specified {@link Environment} and property names
