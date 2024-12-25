@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -45,6 +46,11 @@ public class ApplicationContextUtilsTest {
     public void init() {
         context = new GenericApplicationContext();
         context.refresh();
+    }
+
+    @After
+    public void destroy() {
+        context.close();
     }
 
     @Test
