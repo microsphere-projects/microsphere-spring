@@ -17,7 +17,7 @@
 package io.microsphere.spring.config.context.annotation;
 
 import org.springframework.context.annotation.Import;
-import org.springframework.lang.NonNull;
+import javax.annotation.Nonnull;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -43,6 +43,6 @@ public @interface ResourcePropertySources {
     /**
      * The several {@link ResourcePropertySource} annotations.
      */
-    @NonNull
+    @Nonnull
     ResourcePropertySource[] value();
 }

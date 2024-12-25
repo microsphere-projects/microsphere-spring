@@ -18,7 +18,7 @@ package io.microsphere.spring.beans.factory;
 
 import io.microsphere.collection.CollectionUtils;
 import io.microsphere.util.ArrayUtils;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;

@@ -33,7 +33,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

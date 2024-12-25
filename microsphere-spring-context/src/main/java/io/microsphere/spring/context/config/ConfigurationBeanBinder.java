@@ -19,7 +19,7 @@ package io.microsphere.spring.context.config;
 import io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.Map;
 

@@ -21,7 +21,7 @@ import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;

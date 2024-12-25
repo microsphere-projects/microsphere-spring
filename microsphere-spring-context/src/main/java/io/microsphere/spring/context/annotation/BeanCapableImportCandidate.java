@@ -34,7 +34,7 @@ import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.lang.NonNull;
+import javax.annotation.Nonnull;
 import org.springframework.util.Assert;
 
 import static io.microsphere.text.FormatUtils.format;
@@ -115,7 +115,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ClassLoader getClassLoader() {
         return classLoader;
     }
@@ -125,7 +125,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
     }
@@ -136,7 +136,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ConfigurableEnvironment getEnvironment() {
         return environment;
     }
@@ -146,7 +146,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ResourceLoader getResourceLoader() {
         return resourceLoader;
     }

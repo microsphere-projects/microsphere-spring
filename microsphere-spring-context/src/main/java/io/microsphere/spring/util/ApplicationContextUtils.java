@@ -24,8 +24,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public abstract class ApplicationContextUtils {
      *
      * @return the {@link org.springframework.context.support.ApplicationContextAwareProcessor}
      */
-    @NonNull
+    @Nonnull
     public static BeanPostProcessor getApplicationContextAwareProcessor(ConfigurableApplicationContext context) {
         ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
         return getApplicationContextAwareProcessor(beanFactory);

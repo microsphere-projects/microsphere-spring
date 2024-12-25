@@ -21,7 +21,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertySourceFactory;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Comparator;

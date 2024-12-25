@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.core;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import static io.microsphere.spring.core.SpringVersion.SPRING_4_1;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_3;

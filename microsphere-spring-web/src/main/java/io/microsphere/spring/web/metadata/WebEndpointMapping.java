@@ -17,8 +17,8 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.util.ArrayUtils;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 
@@ -326,7 +326,7 @@ public class WebEndpointMapping<E> {
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public Kind getKind() {
         return kind;
     }
@@ -355,7 +355,7 @@ public class WebEndpointMapping<E> {
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public E getEndpoint() {
         return endpoint;
     }
@@ -378,17 +378,17 @@ public class WebEndpointMapping<E> {
      * </ul>, or it's {@link #NON_SOURCE non-source}
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public Object getSource() {
         return this.source;
     }
 
-    @NonNull
+    @Nonnull
     public String[] getPatterns() {
         return patterns;
     }
 
-    @NonNull
+    @Nonnull
 
     public String[] getMethods() {
         if (methods == null) {
@@ -397,7 +397,7 @@ public class WebEndpointMapping<E> {
         return methods;
     }
 
-    @NonNull
+    @Nonnull
 
     public String[] getParams() {
         if (params == null) {
@@ -406,7 +406,7 @@ public class WebEndpointMapping<E> {
         return params;
     }
 
-    @NonNull
+    @Nonnull
     public String[] getHeaders() {
         if (headers == null) {
             return EMPTY_STRING_ARRAY;
@@ -414,7 +414,7 @@ public class WebEndpointMapping<E> {
         return headers;
     }
 
-    @NonNull
+    @Nonnull
     public String[] getConsumes() {
         if (consumes == null) {
             return EMPTY_STRING_ARRAY;
@@ -422,7 +422,7 @@ public class WebEndpointMapping<E> {
         return consumes;
     }
 
-    @NonNull
+    @Nonnull
     public String[] getProduces() {
         if (produces == null) {
             return EMPTY_STRING_ARRAY;

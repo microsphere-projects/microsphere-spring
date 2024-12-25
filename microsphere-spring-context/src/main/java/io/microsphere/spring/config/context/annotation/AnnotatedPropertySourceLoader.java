@@ -28,8 +28,8 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -97,7 +97,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
      * @param metadata   {@link AnnotationMetadata}
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     protected final String resolvePropertySourceName(AnnotationAttributes attributes, AnnotationMetadata metadata) {
         String name = buildPropertySourceName(attributes, metadata);
         if (!hasText(name)) {
@@ -129,7 +129,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
      * @param metadata   {@link AnnotationMetadata}
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     protected String buildDefaultPropertySourceName(AnnotationAttributes attributes, AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
         String introspectedClassName = metadata.getClassName();
@@ -154,7 +154,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final Class<A> getAnnotationType() {
         return annotationType;
     }

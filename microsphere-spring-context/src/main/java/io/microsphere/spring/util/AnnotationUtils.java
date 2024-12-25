@@ -6,7 +6,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;

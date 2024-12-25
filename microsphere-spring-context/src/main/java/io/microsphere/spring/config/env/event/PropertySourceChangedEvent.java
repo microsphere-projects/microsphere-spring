@@ -21,8 +21,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static org.springframework.util.Assert.notNull;
 
@@ -83,7 +83,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      * @param newPropertySource the new {@link PropertySource}
      * @return non-null
      */
-    public static PropertySourceChangedEvent added(ApplicationContext source, @NonNull PropertySource newPropertySource) {
+    public static PropertySourceChangedEvent added(ApplicationContext source, @Nonnull PropertySource newPropertySource) {
         notNull(newPropertySource, "The 'newPropertySource' must not be null!");
         return new PropertySourceChangedEvent(source, Kind.ADDED, newPropertySource);
     }
@@ -96,7 +96,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      * @param oldPropertySource the old {@link PropertySource}
      * @return non-null
      */
-    public static PropertySourceChangedEvent replaced(ApplicationContext source, @NonNull PropertySource newPropertySource, @NonNull PropertySource oldPropertySource) {
+    public static PropertySourceChangedEvent replaced(ApplicationContext source, @Nonnull PropertySource newPropertySource, @Nonnull PropertySource oldPropertySource) {
         notNull(newPropertySource, "The 'newPropertySource' must not be null!");
         notNull(oldPropertySource, "The 'oldPropertySource' must not be null!");
         return new PropertySourceChangedEvent(source, Kind.REPLACED, newPropertySource, oldPropertySource);
@@ -109,7 +109,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      * @param oldPropertySource the old {@link PropertySource}
      * @return non-null
      */
-    public static PropertySourceChangedEvent removed(ApplicationContext source, @NonNull PropertySource oldPropertySource) {
+    public static PropertySourceChangedEvent removed(ApplicationContext source, @Nonnull PropertySource oldPropertySource) {
         notNull(oldPropertySource, "The 'oldPropertySource' must not be null!");
         return new PropertySourceChangedEvent(source, Kind.REMOVED, null, oldPropertySource);
     }

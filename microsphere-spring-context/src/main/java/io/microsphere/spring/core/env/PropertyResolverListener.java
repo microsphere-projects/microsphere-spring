@@ -19,7 +19,7 @@ package io.microsphere.spring.core.env;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.PropertyResolver;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * The interface listens the manipulation of {@link ConfigurablePropertyResolver PropertyResolvers'} profiles including:

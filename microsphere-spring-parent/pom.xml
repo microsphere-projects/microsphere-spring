@@ -20,6 +20,7 @@
 
     <properties>
         <microsphere-java.version>0.0.9</microsphere-java.version>
+        <spring.version>5.3.39</spring.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
@@ -166,9 +167,6 @@
 
         <profile>
             <id>spring-framework-5.3</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <spring.version>5.3.39</spring.version>
             </properties>

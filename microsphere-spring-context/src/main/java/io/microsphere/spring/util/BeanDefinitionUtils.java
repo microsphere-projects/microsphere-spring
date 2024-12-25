@@ -22,7 +22,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.util.StringUtils;
 
 import java.lang.invoke.MethodHandle;

@@ -26,8 +26,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
@@ -365,7 +365,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      *
      * @return {@link ConfigurableEnvironment the underlying ConfigurableEnvironment}
      */
-    @NonNull
+    @Nonnull
     public ConfigurableEnvironment getDelegate() {
         return this.delegate;
     }

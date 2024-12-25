@@ -24,7 +24,7 @@ import io.microsphere.util.ArrayUtils;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
 import org.springframework.context.ApplicationListener;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;

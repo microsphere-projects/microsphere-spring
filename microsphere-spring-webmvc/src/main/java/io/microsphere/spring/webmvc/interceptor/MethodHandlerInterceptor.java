@@ -1,7 +1,7 @@
 package io.microsphere.spring.webmvc.interceptor;
 
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

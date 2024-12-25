@@ -35,7 +35,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Constructor;

@@ -17,8 +17,8 @@
 package io.microsphere.spring.core.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -117,8 +117,8 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @param <A>        the {@link Class class} of {@link Annotation annotation}
      * @return non-null
      */
-    @NonNull
-    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull A annotation) {
+    @Nonnull
+    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@Nonnull A annotation) {
         return new GenericAnnotationAttributes(annotation);
     }
 
@@ -129,8 +129,8 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @param <A>        the {@link Class class} of {@link Annotation annotation}
      * @return non-null
      */
-    @NonNull
-    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes) {
+    @Nonnull
+    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@Nonnull AnnotationAttributes attributes) {
         if (attributes instanceof GenericAnnotationAttributes) {
             return (GenericAnnotationAttributes) attributes;
         }
@@ -143,7 +143,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @param attributesArray
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes... attributesArray) {
         int length = attributesArray == null ? 0 : attributesArray.length;
 

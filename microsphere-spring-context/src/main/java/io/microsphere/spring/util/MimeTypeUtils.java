@@ -17,7 +17,7 @@
 package io.microsphere.spring.util;
 
 import io.microsphere.util.BaseUtils;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeType;
 import org.springframework.util.StringUtils;

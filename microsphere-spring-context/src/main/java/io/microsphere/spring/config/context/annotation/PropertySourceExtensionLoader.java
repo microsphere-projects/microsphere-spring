@@ -36,8 +36,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -441,7 +441,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @see PropertySourceExtension#factory()
      * @see PropertySourceFactory
      */
-    @NonNull
+    @Nonnull
     protected PropertySourceFactory createPropertySourceFactory(EA extensionAttributes) {
         return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getPropertySourceFactoryClass);
     }
@@ -455,7 +455,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @see PropertySourceExtension#resourceComparator()
      * @see Comparator
      */
-    @NonNull
+    @Nonnull
     protected Comparator<Resource> createResourceComparator(EA extensionAttributes, String propertySourceName) {
         return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getResourceComparatorClass);
     }

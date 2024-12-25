@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.web.servlet;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.mock.web.MockServletContext;
 
 import javax.servlet.Servlet;

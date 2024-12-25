@@ -27,7 +27,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.List;

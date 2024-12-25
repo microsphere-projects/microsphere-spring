@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.ResolvableType;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.List;
 import java.util.concurrent.Executor;

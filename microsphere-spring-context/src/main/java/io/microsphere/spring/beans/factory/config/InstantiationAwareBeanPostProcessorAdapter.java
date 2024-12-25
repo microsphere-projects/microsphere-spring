@@ -22,7 +22,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;

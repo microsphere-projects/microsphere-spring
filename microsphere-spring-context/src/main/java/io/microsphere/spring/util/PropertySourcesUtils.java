@@ -11,7 +11,7 @@ import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
-import org.springframework.lang.NonNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -250,7 +250,7 @@ public abstract class PropertySourcesUtils {
      * @return non-null
      * @since 1.0.0
      */
-    @NonNull
+    @Nonnull
     public static String[] getPropertyNames(PropertySource propertySource) {
         String[] propertyNames = propertySource instanceof EnumerablePropertySource ? ((EnumerablePropertySource) propertySource).getPropertyNames() : null;
 
@@ -267,7 +267,7 @@ public abstract class PropertySourcesUtils {
      * @param propertySource the specified {@link PropertySource}
      * @return non-null read-only {@link Map}
      */
-    @NonNull
+    @Nonnull
     public static Map<String, Object> getProperties(PropertySource propertySource) {
         String[] propertyNames = getPropertyNames(propertySource);
         int length = propertyNames.length;

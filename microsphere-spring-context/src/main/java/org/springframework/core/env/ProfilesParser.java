@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 

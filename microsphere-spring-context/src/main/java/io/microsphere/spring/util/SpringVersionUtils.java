@@ -21,8 +21,8 @@ import io.microsphere.util.BaseUtils;
 import io.microsphere.util.Version;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.springframework.util.StringUtils;
 
 import static io.microsphere.text.FormatUtils.format;
@@ -47,7 +47,7 @@ public abstract class SpringVersionUtils extends BaseUtils {
     /**
      * The version of "spring-core" module
      */
-    @NonNull
+    @Nonnull
     public static final Version SPRING_CORE_VERSION = getSpringVersion(StringUtils.class);
 
     /**
@@ -59,13 +59,13 @@ public abstract class SpringVersionUtils extends BaseUtils {
     /**
      * The version of "spring-beans" module
      */
-    @NonNull
+    @Nonnull
     public static final Version SPRING_BEANS_VERSION = getSpringVersion(BeanFactory.class);
 
     /**
      * The version of "spring-context" module
      */
-    @NonNull
+    @Nonnull
     public static final Version SPRING_CONTEXT_VERSION = getSpringVersion(ApplicationContext.class);
 
     /**
@@ -99,7 +99,7 @@ public abstract class SpringVersionUtils extends BaseUtils {
      * @throws IllegalArgumentException if the package name of <code>springClass</code> does not start with "org.springframework"
      * @throws IllegalStateException    if the "Implementation-Version" attribute is absent in the "META-INF/MANIFEST.MF" resource
      */
-    @NonNull
+    @Nonnull
     public static Version getSpringVersion(Class<?> springClass) throws NullPointerException, IllegalArgumentException {
         Package classPackage = springClass.getPackage();
         String classPackageName = classPackage.getName();

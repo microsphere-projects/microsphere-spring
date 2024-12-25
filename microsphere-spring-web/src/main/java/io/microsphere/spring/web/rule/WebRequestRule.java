@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.web.context.request.NativeWebRequest;
 
 /**
