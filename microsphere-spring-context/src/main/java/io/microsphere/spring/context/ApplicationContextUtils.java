@@ -50,12 +50,13 @@ public abstract class ApplicationContextUtils extends BaseUtils {
      * @see org.springframework.context.support.ApplicationContextAwareProcessor
      */
     public static final String APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME = "org.springframework.context.support.ApplicationContextAwareProcessor";
+
     /**
      * The {@link org.springframework.context.support.ApplicationContextAwareProcessor} Class (Internal).
      *
      * @see org.springframework.context.support.ApplicationContextAwareProcessor
      */
-    private static final Class<?> APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS = resolveClass(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME);
+    public static final Class<?> APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS = resolveClass(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME);
 
     public static ConfigurableApplicationContext asConfigurableApplicationContext(ApplicationContext context) {
         return cast(context, ConfigurableApplicationContext.class);
