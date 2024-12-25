@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourcePatternResolver;
+import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
@@ -37,7 +38,7 @@ public class ResourceLoaderUtilsTest {
     public void testGetResourceLoader() {
         assertNotNull(getResourceLoader());
         assertSame(getResourceLoader(), getResourceLoader(null));
-        assertSame(getResourceLoader(), getResourceLoader(ClassLoaderUtils.getDefaultClassLoader()));
+        assertSame(getResourceLoader(), getResourceLoader(getDefaultClassLoader()));
         assertSame(getResourceLoader(), getResourceLoader(Thread.currentThread().getContextClassLoader()));
     }
 
