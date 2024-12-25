@@ -31,11 +31,11 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
-import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
-import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
-import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.util.BeanUtils.invokeBeanInterfaces;

@@ -39,10 +39,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
-import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
-import static io.microsphere.spring.util.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;

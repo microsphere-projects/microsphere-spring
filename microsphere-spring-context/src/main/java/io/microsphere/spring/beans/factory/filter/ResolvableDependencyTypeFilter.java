@@ -24,7 +24,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.Set;
 
-import static io.microsphere.spring.util.BeanFactoryUtils.getResolvableDependencyTypes;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvableDependencyTypes;
 import static io.microsphere.spring.util.BeanRegistrar.registerSingleton;
 
 /**
