@@ -1,4 +1,4 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.env;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,16 +23,16 @@ import java.util.Set;
 
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
-import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
-import static io.microsphere.spring.util.PropertySourcesUtils.addDefaultProperties;
-import static io.microsphere.spring.util.PropertySourcesUtils.findConfiguredPropertySource;
-import static io.microsphere.spring.util.PropertySourcesUtils.findConfiguredPropertySourceName;
-import static io.microsphere.spring.util.PropertySourcesUtils.findPropertyNamesByPrefix;
-import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultProperties;
-import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultPropertiesPropertySource;
-import static io.microsphere.spring.util.PropertySourcesUtils.getMapPropertySource;
-import static io.microsphere.spring.util.PropertySourcesUtils.getPropertySource;
-import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.addDefaultProperties;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.findConfiguredPropertySource;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.findConfiguredPropertySourceName;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.findPropertyNamesByPrefix;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProperties;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultPropertiesPropertySource;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getMapPropertySource;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getPropertySource;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

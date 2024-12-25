@@ -1,7 +1,8 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.env;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.util.BaseUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -37,7 +38,7 @@ import static java.util.Collections.unmodifiableSet;
  * @see PropertySources
  * @since 1.0.0
  */
-public abstract class PropertySourcesUtils {
+public abstract class PropertySourcesUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(PropertySourcesUtils.class);
 

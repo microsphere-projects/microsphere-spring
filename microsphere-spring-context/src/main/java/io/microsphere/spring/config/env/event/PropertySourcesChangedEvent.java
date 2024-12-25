@@ -17,7 +17,7 @@
 package io.microsphere.spring.config.env.event;
 
 
-import io.microsphere.spring.util.PropertySourcesUtils;
+import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.PropertySource;

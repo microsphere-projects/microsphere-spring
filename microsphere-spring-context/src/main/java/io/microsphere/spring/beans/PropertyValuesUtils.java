@@ -7,7 +7,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.Map;
 
-import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 
 /**
  * {@link PropertyValues} Utilities
