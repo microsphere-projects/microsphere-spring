@@ -1,5 +1,6 @@
 package io.microsphere.spring.beans;
 
+import io.microsphere.util.BaseUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -15,7 +16,7 @@ import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
  * @see PropertyValues
  * @since 2017.01.19
  */
-public abstract class PropertyValuesUtils {
+public abstract class PropertyValuesUtils extends BaseUtils {
 
     /**
      * Get Sub {@link PropertyValues} from {@link ConfigurableEnvironment}
