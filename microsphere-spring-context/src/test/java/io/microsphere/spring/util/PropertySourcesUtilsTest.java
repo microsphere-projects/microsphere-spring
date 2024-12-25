@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static io.microsphere.spring.util.EnvironmentUtils.getConversionService;
-import static io.microsphere.spring.util.EnvironmentUtils.resolveCommaDelimitedValueToList;
+import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
+import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
 import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static io.microsphere.spring.util.PropertySourcesUtils.addDefaultProperties;
 import static io.microsphere.spring.util.PropertySourcesUtils.findConfiguredPropertySource;

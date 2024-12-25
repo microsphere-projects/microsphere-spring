@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.env;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
@@ -42,7 +42,7 @@ import static java.util.stream.StreamSupport.stream;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * {@link Environment} 工具类
+ * {@link Environment} Utilities class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
