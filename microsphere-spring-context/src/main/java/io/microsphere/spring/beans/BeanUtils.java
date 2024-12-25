@@ -2,6 +2,7 @@ package io.microsphere.spring.beans;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.util.BaseUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.Aware;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -58,7 +59,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionReaderUtil
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 2017.01.13
  */
-public abstract class BeanUtils {
+public abstract class BeanUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
 
