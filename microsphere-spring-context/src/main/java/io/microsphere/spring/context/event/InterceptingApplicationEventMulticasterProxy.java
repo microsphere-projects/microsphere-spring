@@ -36,8 +36,8 @@ import java.util.function.Predicate;
 
 import static io.microsphere.reflect.MethodUtils.findDeclaredMethod;
 import static io.microsphere.reflect.MethodUtils.invokeMethod;
-import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
 /**
