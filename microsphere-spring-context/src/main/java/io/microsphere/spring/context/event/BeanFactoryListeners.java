@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.registerFactories;
 
 /**
  * The Composite {@link BeanFactoryListener}

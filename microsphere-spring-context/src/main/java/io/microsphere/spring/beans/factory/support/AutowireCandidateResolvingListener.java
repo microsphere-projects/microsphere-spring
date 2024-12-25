@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
-import io.microsphere.spring.util.SpringFactoriesLoaderUtils;
+import io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
