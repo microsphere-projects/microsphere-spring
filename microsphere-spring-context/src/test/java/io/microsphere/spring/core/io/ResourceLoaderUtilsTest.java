@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.core.io;
 
-import io.microsphere.util.ClassLoaderUtils;
 import org.junit.Test;
 
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
