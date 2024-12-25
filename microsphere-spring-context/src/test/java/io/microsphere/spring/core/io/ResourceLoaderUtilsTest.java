@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.io;
 
 import io.microsphere.util.ClassLoaderUtils;
 import org.junit.Test;
 
-import static io.microsphere.spring.util.ResourceLoaderUtils.getResourceLoader;
-import static io.microsphere.spring.util.ResourceLoaderUtils.getResourcePatternResolver;
+import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
+import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourcePatternResolver;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
