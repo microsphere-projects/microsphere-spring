@@ -48,6 +48,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
 import static io.microsphere.spring.util.WrapperUtils.unwrap;
@@ -310,7 +311,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = unwrap(beanFactory);
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     public ConfigurableEnvironment getEnvironment() {
