@@ -18,6 +18,7 @@ package io.microsphere.spring.core.io.support;
 
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
@@ -52,6 +53,11 @@ public class SpringFactoriesLoaderUtilsTest {
         context = new GenericApplicationContext();
         beanFactory = context.getDefaultListableBeanFactory();
         context.refresh();
+    }
+
+    @After
+    public void after() {
+        context.close();
     }
 
     @Test
