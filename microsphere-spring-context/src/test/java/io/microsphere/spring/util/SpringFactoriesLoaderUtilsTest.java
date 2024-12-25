@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.spring.test.Bean;
+import io.microsphere.spring.test.TestBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
@@ -73,7 +75,7 @@ public class SpringFactoriesLoaderUtilsTest {
 
         assertSame(beanFactory, testBean.getBeanFactory());
 
-        assertEquals("io.microsphere.spring.util.TestBean#0", testBean.getBeanName());
+        assertEquals("io.microsphere.spring.test.TestBean#0", testBean.getBeanName());
     }
 
     private void testLoadFactoriesFromContext(ConfigurableBeanFactory beanFactory, ApplicationContext context) {
@@ -95,6 +97,6 @@ public class SpringFactoriesLoaderUtilsTest {
         assertSame(beanFactory, testBean.getBeanFactory());
         assertSame(beanFactory.getBeanClassLoader(), testBean.getClassLoader());
 
-        assertEquals("io.microsphere.spring.util.TestBean#0", testBean.getBeanName());
+        assertEquals("io.microsphere.spring.test.TestBean#0", testBean.getBeanName());
     }
 }

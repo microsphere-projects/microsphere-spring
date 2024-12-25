@@ -1,4 +1,4 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.test;
 
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;

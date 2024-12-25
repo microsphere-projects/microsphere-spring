@@ -1,4 +1,4 @@
-package io.microsphere.spring.util;
+package io.microsphere.spring.test;
 
 /**
  * Bean Interface

@@ -1,13 +1,17 @@
 package io.microsphere.spring.context.annotation;
 
-import io.microsphere.spring.util.TestBean;
-import io.microsphere.spring.util.TestBean2;
+import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.test.TestBean2;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.annotation.AnnotationConfigUtils;
-import org.springframework.util.ObjectUtils;
+
+import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
+import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.scanBasePackages;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * {@link AnnotatedBeanDefinitionRegistryUtils} Test
@@ -24,46 +28,46 @@ public class AnnotatedBeanDefinitionRegistryUtilsTest {
     public void init() {
         registry = new DefaultListableBeanFactory();
         registry.setAllowBeanDefinitionOverriding(false);
-        AnnotationConfigUtils.registerAnnotationConfigProcessors(registry);
+        registerAnnotationConfigProcessors(registry);
     }
 
     @Test
     public void testRegisterBeans() {
 
-        for(int i=0;i<100;i++) {
-            AnnotatedBeanDefinitionRegistryUtils.registerBeans(registry, this.getClass());
+        for (int i = 0; i < 100; i++) {
+            registerBeans(registry, this.getClass());
         }
 
         String[] beanNames = registry.getBeanNamesForType(this.getClass());
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
         beanNames = registry.getBeanNamesForType(AnnotatedBeanDefinitionRegistryUtils.class);
 
-        Assert.assertTrue(ObjectUtils.isEmpty(beanNames));
+        Assert.assertTrue(isEmpty(beanNames));
 
-        AnnotatedBeanDefinitionRegistryUtils.registerBeans(registry);
+        registerBeans(registry);
 
     }
 
     @Test
     public void testScanBasePackages() {
 
-        int count = AnnotatedBeanDefinitionRegistryUtils.scanBasePackages(registry, getClass().getPackage().getName());
+        int count = scanBasePackages(registry, TestBean.class.getPackage().getName());
 
-        Assert.assertEquals(5, count);
+        assertEquals(2, count);
 
         String[] beanNames = registry.getBeanNamesForType(TestBean.class);
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
         beanNames = registry.getBeanNamesForType(TestBean2.class);
 
-        Assert.assertEquals(1, beanNames.length);
+        assertEquals(1, beanNames.length);
 
-        count = AnnotatedBeanDefinitionRegistryUtils.scanBasePackages(registry);
+        count = scanBasePackages(registry);
 
-        Assert.assertEquals(0, count);
+        assertEquals(0, count);
     }
 
 }

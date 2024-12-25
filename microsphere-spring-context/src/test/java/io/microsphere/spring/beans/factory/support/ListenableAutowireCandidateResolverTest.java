@@ -1,7 +1,7 @@
 package io.microsphere.spring.beans.factory.support;
 
 
-import io.microsphere.spring.util.TestBean;
+import io.microsphere.spring.test.TestBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.ObjectProvider;
