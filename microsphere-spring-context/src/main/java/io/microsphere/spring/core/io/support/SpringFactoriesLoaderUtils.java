@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.io.support;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;

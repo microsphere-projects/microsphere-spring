@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.util.SpringFactoriesLoaderUtils;
+import io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

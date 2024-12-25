@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.util;
+package io.microsphere.spring.core.io.support;
 
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
@@ -28,7 +28,7 @@ import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
