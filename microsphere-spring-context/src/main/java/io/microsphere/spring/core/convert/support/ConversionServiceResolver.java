@@ -24,8 +24,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
-import static io.microsphere.spring.util.BeanUtils.getBeanIfAvailable;
-import static io.microsphere.spring.util.BeanUtils.isBeanPresent;
+import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
+import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static java.lang.String.format;
 import static org.springframework.context.ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME;
 import static org.springframework.context.ConfigurableApplicationContext.ENVIRONMENT_BEAN_NAME;
