@@ -462,7 +462,7 @@ public abstract class BeanUtils {
      * @param beanFactory
      * @param configurableBeanFactory
      */
-    static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
+    public static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         if (beanFactory instanceof ApplicationContext) {
             invokeAwareInterfaces(bean, (ApplicationContext) beanFactory);
         } else {
