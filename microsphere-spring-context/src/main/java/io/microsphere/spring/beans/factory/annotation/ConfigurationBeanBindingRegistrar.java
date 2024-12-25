@@ -46,9 +46,9 @@ import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBi
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_UNKNOWN_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_MULTIPLE;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getRequiredAttribute;
-import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
 import static io.microsphere.spring.util.PropertySourcesUtils.normalizePrefix;
 import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;

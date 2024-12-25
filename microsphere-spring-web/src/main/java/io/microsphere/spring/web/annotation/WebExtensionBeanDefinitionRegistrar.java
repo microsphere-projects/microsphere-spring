@@ -25,7 +25,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.spring.util.BeanRegistrar.registerBeanDefinition;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 
 /**
  * {@link ImportBeanDefinitionRegistrar} for Spring Web Extension
