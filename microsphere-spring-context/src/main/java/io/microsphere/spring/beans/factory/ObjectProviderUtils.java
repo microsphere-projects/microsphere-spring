@@ -17,10 +17,7 @@
 package io.microsphere.spring.beans.factory;
 
 import io.microsphere.util.BaseUtils;
-import io.microsphere.util.Version;
 import org.springframework.beans.factory.ObjectProvider;
-
-import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
 
 /**
  * The utilities class for {@link ObjectProvider}
