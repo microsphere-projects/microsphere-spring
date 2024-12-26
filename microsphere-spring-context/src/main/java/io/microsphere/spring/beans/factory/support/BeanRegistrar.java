@@ -19,6 +19,7 @@ package io.microsphere.spring.beans.factory.support;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
+import io.microsphere.spring.beans.factory.config.BeanDefinitionUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -31,6 +32,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 import java.util.List;
 
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
 import static java.beans.Introspector.decapitalize;
 import static java.lang.String.format;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
@@ -246,8 +248,11 @@ public abstract class BeanRegistrar {
     public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
         Class beanClass = AopUtils.getTargetClass(bean);
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass);
-        beanDefinition.setInstanceSupplier(() -> bean);
-        beanDefinition.setPrimary(primary);
-        registerBeanDefinition(registry, beanName, beanDefinition);
+        if (setInstanceSupplier(beanDefinition, () -> bean)) {
+            beanDefinition.setPrimary(primary);
+            registerBeanDefinition(registry, beanName, beanDefinition);
+        } else {
+            registerFactoryBean(registry, beanName, bean, primary);
+        }
     }
 }
