@@ -42,9 +42,16 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
 
     private final Class<?> objectType;
 
+    private final boolean singleton;
+
     public DelegatingFactoryBean(Object delegate) {
+        this(delegate, true);
+    }
+
+    public DelegatingFactoryBean(Object delegate, boolean singleton) {
         this.delegate = delegate;
         this.objectType = delegate.getClass();
+        this.singleton = singleton;
     }
 
     @Override
@@ -70,6 +77,11 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     @Override
     public void setBeanName(String name) {
         invokeBeanNameAware(delegate, name);
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return singleton;
     }
 
     @Override
