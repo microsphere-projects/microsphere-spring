@@ -18,6 +18,7 @@ package io.microsphere.spring.core.io;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
@@ -26,10 +27,7 @@ import java.net.URL;
 import java.util.function.Function;
 
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
-import static io.microsphere.spring.core.io.ResourceUtils.FILE_URL_RESOURCE_CLASS;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * {@link ResourceUtils} Test
@@ -63,6 +61,7 @@ public class ResourceUtilsTest {
     public void testIsFileBasedResource() throws IOException {
         assertResource(this.classPathResource, ResourceUtils::isFileBasedResource, false);
         assertResource(this.urlResource, ResourceUtils::isFileBasedResource, true);
+        assertResource(new FileSystemResource(this.urlResource.getFile()), ResourceUtils::isFileBasedResource, true);
     }
 
     private void assertResource(Resource resource, Function<Resource, Boolean> isFunction, boolean expected) {
