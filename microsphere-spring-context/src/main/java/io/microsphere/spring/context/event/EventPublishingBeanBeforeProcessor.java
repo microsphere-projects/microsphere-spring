@@ -110,6 +110,15 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
         this.beanEventListeners.onBeforeBeanDestroy(beanName, bean);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 4.3
+     */
+    public boolean requiresDestruction(Object object) {
+        return true;
+    }
+
     private void prepareBeanDefinitions(BeanDefinitionRegistry registry) {
         String[] beanNames = registry.getBeanDefinitionNames();
         int length = beanNames.length;
