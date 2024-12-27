@@ -55,7 +55,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
-import static org.springframework.core.ResolvableType.forClass;
 
 /**
  * {@link BeanDefinitionUtils} Test
