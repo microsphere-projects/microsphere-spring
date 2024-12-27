@@ -47,11 +47,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
@@ -415,7 +417,8 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
                 && !beanDefinition.isLazyInit()
                 && beanDefinition instanceof RootBeanDefinition) {
             RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
-            return rootBeanDefinition.getInstanceSupplier() == null;
+            Supplier<?> instanceSupplier = getInstanceSupplier(rootBeanDefinition);
+            return instanceSupplier == null || instanceSupplier.get() == null;
         }
         return false;
     }
