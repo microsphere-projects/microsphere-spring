@@ -24,7 +24,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-import static org.springframework.util.Assert.notNull;
+import static io.microsphere.util.Assert.assertNotNull;
+
 
 /**
  * The Spring Configuration Property class
@@ -76,7 +77,7 @@ public class ConfigurationProperty {
     }
 
     public ConfigurationProperty(String name, Class<?> type) {
-        notNull(name, () -> "the property name must not null");
+        assertNotNull(name, () -> "the property name must not null");
         this.name = name;
         setType(type);
         this.metadata = new Metadata();
@@ -93,7 +94,7 @@ public class ConfigurationProperty {
     }
 
     public void setType(@Nonnull Class<?> type) {
-        notNull(type, () -> "the property type must not null");
+        assertNotNull(type, () -> "the property type must not null");
         this.type = type;
     }
 
