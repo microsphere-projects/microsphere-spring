@@ -50,6 +50,7 @@ import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtilsTest
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -63,7 +64,6 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @see BeanDefinitionUtils
  * @since 1.0.0
  */
-@Component(BEAN_NAME)
 public class BeanDefinitionUtilsTest {
 
     private static final boolean isGESpring5 = CURRENT.gt(SPRING_5_0);
@@ -74,7 +74,7 @@ public class BeanDefinitionUtilsTest {
 
     private static final String USERS_BEAN_NAME = "users";
 
-    static final String BEAN_NAME = "beanDefinitionUtilsTest";
+    static final String BEAN_NAME = "config";
 
     private AbstractBeanDefinition beanDefinition;
 
@@ -118,7 +118,7 @@ public class BeanDefinitionUtilsTest {
             assertEquals(List.class, resolveBeanType(beanDefinition));
 
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
-            assertEquals(this.getClass(), resolveBeanType(beanDefinition));
+            assertEquals(Config.class, resolveBeanType(beanDefinition));
         });
     }
 
@@ -145,7 +145,7 @@ public class BeanDefinitionUtilsTest {
 
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
             resolvableType = getResolvableType(beanDefinition);
-            assertEquals(getClass(), resolvableType.getRawClass());
+            assertEquals(Config.class, resolvableType.getRawClass());
         });
     }
 
@@ -195,19 +195,24 @@ public class BeanDefinitionUtilsTest {
         }
     }
 
-    @Bean(name = USER_BEAN_NAME)
-    @Role(ROLE_INFRASTRUCTURE)
-    public User user() {
-        return new User();
+    @Component(BEAN_NAME)
+    static class Config {
+
+        @Bean(name = USER_BEAN_NAME)
+        @Role(ROLE_INFRASTRUCTURE)
+        public User user() {
+            return new User();
+        }
+
+        @Bean(name = USERS_BEAN_NAME)
+        public List<User> users() {
+            return asList(new User());
+        }
     }
 
-    @Bean(name = USERS_BEAN_NAME)
-    public List<User> users() {
-        return Arrays.asList(new User());
-    }
 
     private void testInSpringContainer(BiConsumer<ConfigurableApplicationContext, ConfigurableListableBeanFactory> contextConsumer) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanDefinitionUtilsTest.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
         contextConsumer.accept(context, context.getBeanFactory());
         context.close();
     }
