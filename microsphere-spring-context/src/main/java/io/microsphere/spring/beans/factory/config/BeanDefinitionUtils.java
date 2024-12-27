@@ -217,7 +217,16 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
         if (GET_RESOLVABLE_TYPE_METHOD_HANDLE == null) {
             return doGetResolvableType(rootBeanDefinition);
         }
-        return execute(() -> (ResolvableType) GET_RESOLVABLE_TYPE_METHOD_HANDLE.invokeExact(rootBeanDefinition));
+        ResolvableType resolvableType = null;
+        try {
+            resolvableType = (ResolvableType) GET_RESOLVABLE_TYPE_METHOD_HANDLE.invokeExact(rootBeanDefinition);
+        } catch (Throwable e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to invokeExact on {} from {}", GET_RESOLVABLE_TYPE_METHOD_HANDLE, rootBeanDefinition);
+            }
+            resolvableType = doGetResolvableType(rootBeanDefinition);
+        }
+        return resolvableType;
     }
 
     /**
