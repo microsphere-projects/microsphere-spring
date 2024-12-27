@@ -65,7 +65,7 @@ public abstract class ResourceLoaderUtils extends BaseUtils {
     @Nonnull
     public static ResourceLoader getResourceLoader(@Nullable ClassLoader classLoader) {
         ClassLoader targetClassLoader = classLoader == null ? getDefaultClassLoader() : classLoader;
-        return resourceLoadersCache.computeIfAbsent(targetClassLoader, DefaultResourceLoader::new);
+        return resourceLoadersCache.computeIfAbsent(targetClassLoader, PathMatchingResourcePatternResolver::new);
     }
 
     /**
