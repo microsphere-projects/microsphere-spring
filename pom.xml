@@ -58,6 +58,7 @@
     <modules>
         <module>microsphere-spring-parent</module>
         <module>microsphere-spring-dependencies</module>
+        <module>microsphere-spring-compatible</module>
         <module>microsphere-spring-context</module>
         <module>microsphere-spring-jdbc</module>
         <module>microsphere-spring-web</module>

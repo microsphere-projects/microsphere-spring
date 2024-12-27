@@ -16,10 +16,6 @@
 
 package org.springframework.core.env;
 
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,8 +25,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
 
-import static io.microsphere.util.Assert.assertNotEmpty;
-import static io.microsphere.util.Assert.assertTrue;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Internal parser used by {@link Profiles#of}.
@@ -44,8 +41,9 @@ final class ProfilesParser {
     private ProfilesParser() {
     }
 
+
     static Profiles parse(String... expressions) {
-        assertNotEmpty(expressions, "Must specify at least one profile expression");
+        Assert.notEmpty(expressions, "Must specify at least one profile expression");
         Profiles[] parsed = new Profiles[expressions.length];
         for (int i = 0; i < expressions.length; i++) {
             parsed[i] = parseExpression(expressions[i]);
@@ -54,7 +52,7 @@ final class ProfilesParser {
     }
 
     private static Profiles parseExpression(String expression) {
-        assertNotEmpty(expression, () -> "Invalid profile expression [" + expression + "]: must contain text");
+        Assert.hasText(expression, () -> "Invalid profile expression [" + expression + "]: must contain text");
         StringTokenizer tokens = new StringTokenizer(expression, "()&|!", true);
         return parseTokens(expression, tokens);
     }
@@ -120,7 +118,7 @@ final class ProfilesParser {
     }
 
     private static void assertWellFormed(String expression, boolean wellFormed) {
-        assertTrue(wellFormed, () -> "Malformed profile expression [" + expression + "]");
+        Assert.isTrue(wellFormed, () -> "Malformed profile expression [" + expression + "]");
     }
 
     private static Profiles or(Profiles... profiles) {
@@ -144,9 +142,9 @@ final class ProfilesParser {
     }
 
 
-    private enum Operator {AND, OR}
+    private enum Operator { AND, OR }
 
-    private enum Context {NONE, NEGATE, PARENTHESIS}
+    private enum Context { NONE, NEGATE, PARENTHESIS }
 
 
     private static class ParsedProfiles implements Profiles {
