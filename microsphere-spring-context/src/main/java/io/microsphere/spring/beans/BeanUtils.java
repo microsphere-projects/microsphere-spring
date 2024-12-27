@@ -480,7 +480,7 @@ public abstract class BeanUtils extends BaseUtils {
             constructor = (Constructor<T>) FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE.invokeExact(clazz);
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
-                logger.warn("It's failed to execute invokeExact on {} from the {}", FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
+                logger.warn("Failed to execute invokeExact on {} with arg : {}", FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz, e);
             }
         }
         return constructor;
