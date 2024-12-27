@@ -15,21 +15,25 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
-import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
+import static io.microsphere.spring.beans.BeanUtils.resolveBeanType;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
+import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.util.ClassUtils.isAssignable;
@@ -56,48 +60,55 @@ public class BeanUtilsTest {
     }
 
     @Test
-    public void testResolveBeanType() {
+    public void testIsBeanPresent() {
 
-        ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+        DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
-        Class<?> beanType = BeanUtils.resolveBeanType(this.getClass().getName(), classLoader);
+        assertFalse(isBeanPresent(registry, TestBean.class.getName(), true));
+        assertFalse(isBeanPresent(registry, TestBean.class.getName()));
 
-        assertEquals(beanType, this.getClass());
+        registerBeans(registry, TestBean.class, TestBean2.class);
 
-        beanType = BeanUtils.resolveBeanType("", classLoader);
 
-        Assert.assertNull(beanType);
+        assertTrue(isBeanPresent(registry, TestBean.class.getName(), true));
+        assertTrue(isBeanPresent(registry, TestBean.class.getName()));
 
-        beanType = BeanUtils.resolveBeanType("     ", classLoader);
+        assertTrue(isBeanPresent(registry, TestBean.class, true));
+        assertTrue(isBeanPresent(registry, TestBean.class));
 
-        Assert.assertNull(beanType);
+        assertTrue(isBeanPresent(registry, TestBean2.class.getName(), true));
+        assertTrue(isBeanPresent(registry, TestBean2.class.getName()));
 
-        beanType = BeanUtils.resolveBeanType("java.lang.Abc", classLoader);
+        assertTrue(isBeanPresent(registry, TestBean2.class, true));
+        assertTrue(isBeanPresent(registry, TestBean2.class));
 
-        Assert.assertNull(beanType);
+        assertFalse(isBeanPresent(registry, BeanUtils.class.getName(), true));
+        assertFalse(isBeanPresent(registry, BeanUtils.class.getName()));
 
+        assertFalse(isBeanPresent(registry, BeanUtils.class, true));
+        assertFalse(isBeanPresent(registry, BeanUtils.class));
+
+        assertTrue(isBeanPresent(registry, "testBean", TestBean.class));
+        assertTrue(isBeanPresent(registry, "testBean2", TestBean2.class));
+        assertFalse(isBeanPresent(registry, "beanUtils", BeanUtils.class));
     }
 
     @Test
     public void testGetBeanNamesOnAnnotationBean() {
 
-        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
-
-        registerBeans(applicationContext, Config.class);
-
-        applicationContext.refresh();
+        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);
 
         String[] beanNames = getBeanNames(applicationContext, String.class);
 
         assertTrue(Arrays.asList(beanNames).contains("testString"));
 
-
+        applicationContext.close();
     }
 
     @Test
     public void testGetBeanNamesOnXmlBean() {
 
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"spring-context.xml"});
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-context.xml");
 
         String[] beanNames = getBeanNames(context, User.class);
 
@@ -172,7 +183,6 @@ public class BeanUtilsTest {
 
         assertEquals("testBean", beanName);
 
-
         beanNames = getBeanNames(beanFactory, io.microsphere.spring.test.Bean.class, true);
 
         assertEquals(2, beanNames.length);
@@ -192,45 +202,25 @@ public class BeanUtilsTest {
         beanName = beanNames[0];
 
         assertEquals("testBean2", beanName);
-
-
     }
-
 
     @Test
-    public void testIsBeanPresent() {
+    public void testResolveBeanType() {
+        ClassLoader classLoader = getDefaultClassLoader();
 
-        DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
+        Class<?> beanType = resolveBeanType(this.getClass().getName(), classLoader);
+        assertEquals(beanType, this.getClass());
 
-        assertFalse(isBeanPresent(registry, TestBean.class.getName(), true));
-        assertFalse(isBeanPresent(registry, TestBean.class.getName()));
+        beanType = resolveBeanType("", classLoader);
+        assertNull(beanType);
 
-        registerBeans(registry, TestBean.class, TestBean2.class);
+        beanType = resolveBeanType("     ", classLoader);
+        assertNull(beanType);
 
-
-        assertTrue(isBeanPresent(registry, TestBean.class.getName(), true));
-        assertTrue(isBeanPresent(registry, TestBean.class.getName()));
-
-        assertTrue(isBeanPresent(registry, TestBean.class, true));
-        assertTrue(isBeanPresent(registry, TestBean.class));
-
-        assertTrue(isBeanPresent(registry, TestBean2.class.getName(), true));
-        assertTrue(isBeanPresent(registry, TestBean2.class.getName()));
-
-        assertTrue(isBeanPresent(registry, TestBean2.class, true));
-        assertTrue(isBeanPresent(registry, TestBean2.class));
-
-        assertFalse(isBeanPresent(registry, BeanUtils.class.getName(), true));
-        assertFalse(isBeanPresent(registry, BeanUtils.class.getName()));
-
-        assertFalse(isBeanPresent(registry, BeanUtils.class, true));
-        assertFalse(isBeanPresent(registry, BeanUtils.class));
-
-        assertTrue(isBeanPresent(registry, "testBean", TestBean.class));
-        assertTrue(isBeanPresent(registry, "testBean2", TestBean2.class));
-        assertFalse(isBeanPresent(registry, "beanUtils", BeanUtils.class));
-
+        beanType = resolveBeanType("java.lang.Abc", classLoader);
+        assertNull(beanType);
     }
+
 
     @Test
     public void testGetOptionalBean() {
@@ -239,11 +229,11 @@ public class BeanUtilsTest {
 
         TestBean testBean = BeanUtils.getOptionalBean(registry, TestBean.class, true);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
 
         testBean = BeanUtils.getOptionalBean(registry, TestBean.class);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
 
         registerBeans(registry, TestBean.class);
 
@@ -380,7 +370,12 @@ public class BeanUtilsTest {
 
         assertEquals(-1, namingBean.compareTo(namingBean2));
 
+    }
 
+    @Test
+    public void testFindPrimaryConstructor() {
+        Constructor<BeanUtilsTest> constructor = findPrimaryConstructor(BeanUtilsTest.class);
+        assertNull(constructor);
     }
 
 }

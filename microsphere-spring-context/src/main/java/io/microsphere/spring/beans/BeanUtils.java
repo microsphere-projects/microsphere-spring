@@ -29,29 +29,36 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.invoke.MethodHandleUtils.findStatic;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
+import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.util.ClassLoaderUtils.getClassLoader;
+import static io.microsphere.util.ClassLoaderUtils.isPresent;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
+import static org.springframework.aop.support.AopUtils.getTargetClass;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
+import static org.springframework.util.ClassUtils.resolveClassName;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Bean Utilities Class
@@ -66,6 +73,13 @@ public abstract class BeanUtils extends BaseUtils {
     private static final String[] EMPTY_BEAN_NAMES = new String[0];
 
     private static final Class<?> APPLICATION_STARTUP_CLASS = resolveClass("org.springframework.core.metrics.ApplicationStartup");
+
+    /**
+     * The {@link MethodHandle} of {@linkplain org.springframework.beans.BeanUtils#findPrimaryConstructor(Class)}
+     *
+     * @since Spring Framework 5.0
+     */
+    private static final MethodHandle FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE = findStatic(org.springframework.beans.BeanUtils.class, "findPrimaryConstructor", Class.class);
 
     /**
      * Is Bean Present or not?
@@ -87,11 +101,19 @@ public abstract class BeanUtils extends BaseUtils {
      * @return If present , return <code>true</code> , or <code>false</code>
      */
     public static boolean isBeanPresent(ListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
-
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
-
         return !ObjectUtils.isEmpty(beanNames);
+    }
 
+    /**
+     * Is Bean Present or not?
+     *
+     * @param beanFactory   {@link ListableBeanFactory}
+     * @param beanClassName The  name of {@link Class} of Bean
+     * @return If present , return <code>true</code> , or <code>false</code>
+     */
+    public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName) {
+        return isBeanPresent(beanFactory, beanClassName, false);
     }
 
     /**
@@ -103,35 +125,21 @@ public abstract class BeanUtils extends BaseUtils {
      * @return If present , return <code>true</code> , or <code>false</code>
      */
     public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName, boolean includingAncestors) {
-
         boolean present = false;
-
-        ClassLoader classLoader = beanFactory.getClass().getClassLoader();
-
-        if (ClassUtils.isPresent(beanClassName, classLoader)) {
-
-            Class beanClass = ClassUtils.resolveClassName(beanClassName, classLoader);
-
+        ClassLoader classLoader = null;
+        if (beanFactory instanceof ConfigurableBeanFactory) {
+            ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+            classLoader = configurableBeanFactory.getBeanClassLoader();
+        } else {
+            classLoader = getClassLoader(beanFactory.getClass());
+        }
+        if (isPresent(beanClassName, classLoader)) {
+            Class beanClass = resolveClassName(beanClassName, classLoader);
             present = isBeanPresent(beanFactory, beanClass, includingAncestors);
         }
-
-
         return present;
-
     }
 
-    /**
-     * Is Bean Present or not?
-     *
-     * @param beanFactory   {@link ListableBeanFactory}
-     * @param beanClassName The  name of {@link Class} of Bean
-     * @return If present , return <code>true</code> , or <code>false</code>
-     */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName) {
-
-        return isBeanPresent(beanFactory, beanClassName, false);
-
-    }
 
     /**
      * Is Bean Present or not by the specified name and class
@@ -140,7 +148,6 @@ public abstract class BeanUtils extends BaseUtils {
      * @param beanName    The bean name
      * @param beanClass   The bean class
      * @return If present , return <code>true</code> , or <code>false</code>
-     * @since 1.0.0
      */
     public static boolean isBeanPresent(BeanFactory beanFactory, String beanName, Class<?> beanClass) throws NullPointerException {
         return beanFactory.containsBean(beanName) && beanFactory.isTypeMatch(beanName, beanClass);
@@ -206,29 +213,20 @@ public abstract class BeanUtils extends BaseUtils {
      * @return Bean type if can be resolved , or return <code>null</code>.
      */
     public static Class<?> resolveBeanType(String beanClassName, ClassLoader classLoader) {
-
-        if (!StringUtils.hasText(beanClassName)) {
+        if (!hasText(beanClassName)) {
             return null;
         }
 
         Class<?> beanType = null;
-
         try {
-
-            beanType = ClassUtils.resolveClassName(beanClassName, classLoader);
-
-            beanType = ClassUtils.getUserClass(beanType);
-
+            beanType = resolveClassName(beanClassName, classLoader);
+            beanType = getTargetClass(beanType);
         } catch (Exception e) {
-
             if (logger.isErrorEnabled()) {
                 logger.error(e.getMessage(), e);
             }
-
         }
-
         return beanType;
-
     }
 
     /**
@@ -243,10 +241,8 @@ public abstract class BeanUtils extends BaseUtils {
      * @see BeanFactoryUtils#beanOfTypeIncludingAncestors(ListableBeanFactory, Class)
      */
     public static <T> T getOptionalBean(ListableBeanFactory beanFactory, Class<T> beanClass, boolean includingAncestors) throws BeansException {
-
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
-
-        if (ObjectUtils.isEmpty(beanNames)) {
+        if (isEmpty(beanNames)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("The bean [ class : " + beanClass.getName() + " ] can't be found ");
             }
@@ -256,19 +252,14 @@ public abstract class BeanUtils extends BaseUtils {
         T bean = null;
 
         try {
-
             bean = includingAncestors ? beanOfTypeIncludingAncestors(beanFactory, beanClass) : beanFactory.getBean(beanClass);
-
         } catch (Exception e) {
-
             if (logger.isErrorEnabled()) {
                 logger.error(e.getMessage(), e);
             }
-
         }
 
         return bean;
-
     }
 
     /**
@@ -281,9 +272,7 @@ public abstract class BeanUtils extends BaseUtils {
      * @throws NoUniqueBeanDefinitionException if more than one bean of the given type was found
      */
     public static <T> T getOptionalBean(ListableBeanFactory beanFactory, Class<T> beanClass) throws BeansException {
-
         return getOptionalBean(beanFactory, beanClass, false);
-
     }
 
     /**
@@ -469,6 +458,32 @@ public abstract class BeanUtils extends BaseUtils {
         } else {
             invokeBeanFactoryAwareInterfaces(bean, beanFactory, configurableBeanFactory);
         }
+    }
+
+    /**
+     * Return the primary constructor of the provided class. For Kotlin classes, this
+     * returns the Java constructor corresponding to the Kotlin primary constructor
+     * (as defined in the Kotlin specification). Otherwise, in particular for non-Kotlin
+     * classes, this simply returns {@code null}.
+     *
+     * @param clazz the class to check
+     * @see <a href="https://kotlinlang.org/docs/reference/classes.html#constructors">Kotlin docs</a>
+     * @see org.springframework.beans.BeanUtils#findPrimaryConstructor(Class)
+     * @since Spring Framework 5.0
+     */
+    public static <T> Constructor<T> findPrimaryConstructor(Class<T> clazz) {
+        if (FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE == null) {
+            return null;
+        }
+        Constructor<T> constructor = null;
+        try {
+            constructor = (Constructor<T>) FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE.invokeExact(clazz);
+        } catch (Throwable e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("It's failed to execute invokeExact on {} from the {}", FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
+            }
+        }
+        return constructor;
     }
 
     /**
