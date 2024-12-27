@@ -223,7 +223,7 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
             resolvableType = (ResolvableType) GET_RESOLVABLE_TYPE_METHOD_HANDLE.invokeExact(rootBeanDefinition);
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : {}", GET_RESOLVABLE_TYPE_METHOD_HANDLE, rootBeanDefinition, e);
+                logger.warn("Failed to invokeExact on {} with arg : '{}'", GET_RESOLVABLE_TYPE_METHOD_HANDLE, rootBeanDefinition, e);
             }
             resolvableType = doGetResolvableType(rootBeanDefinition);
         }
@@ -292,7 +292,7 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
             SET_INSTANCE_SUPPLIER_METHOD_HANDLE.invokeExact(beanDefinition, instanceSupplier);
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : {}", SET_INSTANCE_SUPPLIER_METHOD_HANDLE,
+                logger.warn("Failed to invokeExact on {} with args : '{}'", SET_INSTANCE_SUPPLIER_METHOD_HANDLE,
                         Arrays.asList(beanDefinition, instanceSupplier), e);
             }
         }
@@ -315,7 +315,7 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
             supplier = (Supplier<?>) GET_INSTANCE_SUPPLIER_METHOD_HANDLE.invokeExact(beanDefinition);
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : {}", GET_INSTANCE_SUPPLIER_METHOD_HANDLE, beanDefinition, e);
+                logger.warn("Failed to invokeExact on {} with arg : '{}'", GET_INSTANCE_SUPPLIER_METHOD_HANDLE, beanDefinition, e);
             }
         }
         return supplier;
