@@ -128,11 +128,30 @@
     <profiles>
 
         <profile>
+            <id>spring-framework-4.3</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.microsphere-projects</groupId>
+                    <artifactId>microsphere-spring-compatible</artifactId>
+                    <version>${revision}</version>
+                    <optional>true</optional>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <id>spring-framework-5.0</id>
             <dependencies>
                 <dependency>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-context-indexer</artifactId>
+                    <optional>true</optional>
+                </dependency>
+
+                <dependency>
+                    <groupId>io.github.microsphere-projects</groupId>
+                    <artifactId>microsphere-spring-compatible</artifactId>
+                    <version>${revision}</version>
                     <optional>true</optional>
                 </dependency>
             </dependencies>
