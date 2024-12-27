@@ -110,34 +110,6 @@
 
     <profiles>
         <profile>
-            <id>spring-framework-3.2</id>
-            <properties>
-                <spring.version>3.2.18.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-framework-4.0</id>
-            <properties>
-                <spring.version>4.0.9.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-framework-4.1</id>
-            <properties>
-                <spring.version>4.1.9.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-framework-4.2</id>
-            <properties>
-                <spring.version>4.2.9.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
             <id>spring-framework-4.3</id>
             <properties>
                 <spring.version>4.3.30.RELEASE</spring.version>

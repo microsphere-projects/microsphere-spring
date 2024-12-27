@@ -22,8 +22,7 @@ jobs:
         java: [ '8', '11' , '17' , '21' ]
         maven-profile-spring-boot: [
           'spring-framework-5.3' , 'spring-framework-5.2', 'spring-framework-5.1' , 'spring-framework-5.0' ,
-#          'spring-framework-4.3' , 'spring-framework-4.2' , 'spring-framework-4.1', 'spring-framework-4.0' ,
-#          'spring-framework-3.2'
+          'spring-framework-4.3'
         ]
     steps:
       - name: Checkout Source

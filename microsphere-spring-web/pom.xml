@@ -98,27 +98,6 @@
 
     <profiles>
         <profile>
-            <id>spring-framework-4.0</id>
-            <properties>
-                <spring.version>5.0.20.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-framework-4.1</id>
-            <properties>
-                <spring.version>5.0.20.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-framework-4.2</id>
-            <properties>
-                <spring.version>5.0.20.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
             <id>spring-framework-4.3</id>
             <properties>
                 <spring.version>5.0.20.RELEASE</spring.version>
