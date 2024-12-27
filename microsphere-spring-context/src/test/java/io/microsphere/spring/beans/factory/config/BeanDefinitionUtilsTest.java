@@ -207,7 +207,7 @@ public class BeanDefinitionUtilsTest {
     }
 
     private void testInSpringContainer(BiConsumer<ConfigurableApplicationContext, ConfigurableListableBeanFactory> contextConsumer) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanDefinitionUtils.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanDefinitionUtilsTest.class);
         contextConsumer.accept(context, context.getBeanFactory());
         context.close();
     }
