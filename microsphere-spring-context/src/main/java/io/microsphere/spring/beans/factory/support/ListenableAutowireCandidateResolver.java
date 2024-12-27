@@ -67,18 +67,25 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
     private static final Logger logger = LoggerFactory.getLogger(ListenableAutowireCandidateResolver.class);
 
     /**
-     * The name of the method name of {@link AutowireCandidateResolver#cloneIfNecessary()}
+     * The {@link MethodHandle} of {@link AutowireCandidateResolver#isRequired(DependencyDescriptor)}
      *
-     * @since Spring Framework 5.2.7
+     * @since Spring Framework 5.0
      */
-    private static final String CLONE_IF_NECESSARY_METHOD_NAME = "cloneIfNecessary";
+    private static final MethodHandle IS_REQUIRED_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, "isRequired", DependencyDescriptor.class);
+
+    /**
+     * The {@link MethodHandle} of {@link AutowireCandidateResolver#hasQualifier(DependencyDescriptor)}
+     *
+     * @since Spring Framework 5.1
+     */
+    private static final MethodHandle HAS_QUALIFIER_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, "hasQualifier", DependencyDescriptor.class);
 
     /**
      * The {@link MethodHandle} of {@link AutowireCandidateResolver#cloneIfNecessary()}
      *
      * @since Spring Framework 5.2.7
      */
-    private static final MethodHandle CLONE_IF_NECESSARY_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, CLONE_IF_NECESSARY_METHOD_NAME);
+    private static final MethodHandle CLONE_IF_NECESSARY_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, "cloneIfNecessary");
 
     /**
      * The prefix of the property name of {@link ListenableAutowireCandidateResolver}
@@ -120,9 +127,25 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return delegate.isAutowireCandidate(bdHolder, descriptor);
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.0
+     */
     public boolean isRequired(DependencyDescriptor descriptor) {
-        return delegate.isRequired(descriptor);
+        if (IS_REQUIRED_METHOD_HANDLE == null) {
+            return descriptor.isRequired();
+        }
+        boolean required = false;
+        try {
+            required = (boolean) IS_REQUIRED_METHOD_HANDLE.invokeExact(delegate, descriptor);
+        } catch (Throwable e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to invokeExact on {} from {}", IS_REQUIRED_METHOD_HANDLE, descriptor);
+            }
+            required = descriptor.isRequired();
+        }
+        return required;
     }
 
     /**
@@ -131,7 +154,18 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.1
      */
     public boolean hasQualifier(DependencyDescriptor descriptor) {
-        return invokeMethod(descriptor, "hasQualifier", descriptor);
+        if (HAS_QUALIFIER_METHOD_HANDLE == null) {
+            return false;
+        }
+        boolean hasQualifier = false;
+        try {
+            hasQualifier = (boolean) HAS_QUALIFIER_METHOD_HANDLE.invokeExact(delegate, descriptor);
+        } catch (Throwable e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to invokeExact on {} from {}", HAS_QUALIFIER_METHOD_HANDLE, descriptor);
+            }
+        }
+        return hasQualifier;
     }
 
     @Nullable
@@ -158,13 +192,21 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.2.7
      */
     public AutowireCandidateResolver cloneIfNecessary() {
-        if (CLONE_IF_NECESSARY_METHOD_HANDLE != null) {
-            return execute(() -> (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invokeExact(delegate));
+        if (CLONE_IF_NECESSARY_METHOD_HANDLE == null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("The method AutowireCandidateResolver#cloneIfNecessary() was not found, the clone instance will be created on default way.");
+            }
+            return instantiateClass(delegate.getClass());
         }
-        if (logger.isTraceEnabled()) {
-            logger.trace("The method AutowireCandidateResolver#cloneIfNecessary() was not found, the clone instance will be created on default way.");
+        AutowireCandidateResolver autowireCandidateResolver = null;
+        try {
+            autowireCandidateResolver = (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invokeExact(delegate);
+        } catch (Throwable e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to invokeExact on {} from {}", CLONE_IF_NECESSARY_METHOD_HANDLE);
+            }
         }
-        return instantiateClass(delegate.getClass());
+        return autowireCandidateResolver;
     }
 
     @Override
