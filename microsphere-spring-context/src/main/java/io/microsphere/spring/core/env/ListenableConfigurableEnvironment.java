@@ -26,6 +26,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
+import org.springframework.core.env.PropertyResolver;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -69,16 +70,22 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     public static final boolean ENABLED_PROPERTY_VALUE = false;
 
     /**
+     * The {@link MethodHandle} of {@linkplain PropertyResolver#getPropertyAsClass(String, Class)} was removed from Spring Framework 5.0
+     */
+    @Nullable
+    private static final MethodHandle GET_PROPERTY_AS_CLASS_METHOD_HANDLE = findVirtual(PropertyResolver.class, "getPropertyAsClass", String.class, Class.class);
+
+    /**
      * The {@link MethodHandle} of {@link Environment#acceptsProfiles(Profiles)} since Spring Framework 5.1
      */
     @Nullable
-    private static final MethodHandle acceptsProfilesMethodHandle = findVirtual(Environment.class, "acceptsProfiles", Profiles.class);
+    private static final MethodHandle ACCEPTS_PROFILES_METHOD_HANDLE = findVirtual(Environment.class, "acceptsProfiles", Profiles.class);
 
     /**
      * The {@link MethodHandle} of {@link Environment#matchesProfiles(String...)} since Spring Framework 5.3.8
      */
     @Nullable
-    private static final MethodHandle matchesProfilesMethodHandle = findVirtual(Environment.class, "matchesProfiles", String[].class);
+    private static final MethodHandle MATCHES_PROFILES_METHOD_HANDLE = findVirtual(Environment.class, "matchesProfiles", String[].class);
 
     private final ConfigurableEnvironment delegate;
 
@@ -196,12 +203,12 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * @since Spring Framework 5.3.28
      */
     public boolean matchesProfiles(String... profileExpressions) {
-        if (matchesProfilesMethodHandle != null) {
+        if (MATCHES_PROFILES_METHOD_HANDLE != null) {
             try {
-                return (boolean) matchesProfilesMethodHandle.invokeExact((Environment) delegate, profileExpressions);
+                return (boolean) MATCHES_PROFILES_METHOD_HANDLE.invokeExact((Environment) delegate, profileExpressions);
             } catch (Throwable e) {
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Failed to invoke {} with args : '{}'", matchesProfilesMethodHandle, Arrays.toString(profileExpressions), e);
+                    logger.warn("Failed to invoke {} with args : '{}'", MATCHES_PROFILES_METHOD_HANDLE, Arrays.toString(profileExpressions), e);
                 }
             }
         }
@@ -220,12 +227,13 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * @since Spring Framework 5.1
      */
     public boolean acceptsProfiles(Profiles profiles) {
-        if (acceptsProfilesMethodHandle != null) {
+        if (ACCEPTS_PROFILES_METHOD_HANDLE != null) {
             try {
-                return (boolean) acceptsProfilesMethodHandle.invokeExact((Environment) delegate, profiles);
+                return (boolean) ACCEPTS_PROFILES_METHOD_HANDLE.invokeExact((Environment) delegate, profiles);
             } catch (Throwable e) {
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Failed to invoke {} with args : '{}'", acceptsProfilesMethodHandle, profiles, e);
+                    logger.warn("Failed to invokeExact on {} with args : '{}'", ACCEPTS_PROFILES_METHOD_HANDLE,
+                            Arrays.asList(delegate, profiles), e);
                 }
             }
         }
@@ -368,6 +376,23 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     @Nonnull
     public ConfigurableEnvironment getDelegate() {
         return this.delegate;
+    }
+
+    public <T> T getPropertyAsClass(String key, Class<T> targetType) {
+        if (GET_PROPERTY_AS_CLASS_METHOD_HANDLE == null) {
+            return delegate.getProperty(key, targetType);
+        }
+        T value = null;
+        try {
+            value = (T) GET_PROPERTY_AS_CLASS_METHOD_HANDLE.invokeExact(delegate, key, targetType);
+        } catch (Throwable e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to invokeExact on {} with args : '{}'", GET_PROPERTY_AS_CLASS_METHOD_HANDLE,
+                        Arrays.asList(key, targetType), e);
+            }
+            value = delegate.getProperty(key, targetType);
+        }
+        return value;
     }
 
     /**
