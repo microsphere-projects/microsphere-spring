@@ -163,7 +163,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
             hasQualifier = (boolean) HAS_QUALIFIER_METHOD_HANDLE.invokeExact(delegate, descriptor);
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : {}", HAS_QUALIFIER_METHOD_HANDLE,
+                logger.warn("Failed to invokeExact on {} with args : '{}'", HAS_QUALIFIER_METHOD_HANDLE,
                         Arrays.asList(delegate, descriptor), e);
             }
         }
@@ -205,7 +205,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
             autowireCandidateResolver = (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invokeExact(delegate);
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : {}", CLONE_IF_NECESSARY_METHOD_HANDLE, delegate, e);
+                logger.warn("Failed to invokeExact on {} with arg : '{}'", CLONE_IF_NECESSARY_METHOD_HANDLE, delegate, e);
             }
         }
         return autowireCandidateResolver;
