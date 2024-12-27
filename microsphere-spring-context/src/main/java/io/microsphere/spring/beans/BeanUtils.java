@@ -51,12 +51,12 @@ import static io.microsphere.util.ClassLoaderUtils.isPresent;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
-import static org.springframework.aop.support.AopUtils.getTargetClass;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
+import static org.springframework.util.ClassUtils.getUserClass;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -220,7 +220,7 @@ public abstract class BeanUtils extends BaseUtils {
         Class<?> beanType = null;
         try {
             beanType = resolveClassName(beanClassName, classLoader);
-            beanType = getTargetClass(beanType);
+            beanType = getUserClass(beanType);
         } catch (Exception e) {
             if (logger.isErrorEnabled()) {
                 logger.error(e.getMessage(), e);
