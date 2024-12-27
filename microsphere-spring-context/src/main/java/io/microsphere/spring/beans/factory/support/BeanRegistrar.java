@@ -19,7 +19,6 @@ package io.microsphere.spring.beans.factory.support;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
-import io.microsphere.spring.beans.factory.config.BeanDefinitionUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
