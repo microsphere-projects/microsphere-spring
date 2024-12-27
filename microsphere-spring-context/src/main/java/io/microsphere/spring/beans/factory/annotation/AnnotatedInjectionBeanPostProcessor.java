@@ -72,6 +72,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
@@ -205,7 +206,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                     List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
                     Constructor<?> requiredConstructor = null;
                     Constructor<?> defaultConstructor = null;
-                    Constructor<?> primaryConstructor = BeanUtils.findPrimaryConstructor(beanClass);
+                    Constructor<?> primaryConstructor = findPrimaryConstructor(beanClass);
                     int nonSyntheticConstructors = 0;
                     for (Constructor<?> candidate : rawCandidates) {
                         if (!candidate.isSynthetic()) {
