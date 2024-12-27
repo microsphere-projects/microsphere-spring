@@ -378,19 +378,18 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return this.delegate;
     }
 
-    public <T> T getPropertyAsClass(String key, Class<T> targetType) {
+    public <T> Class<T> getPropertyAsClass(String key, Class<T> targetType) {
         if (GET_PROPERTY_AS_CLASS_METHOD_HANDLE == null) {
-            return delegate.getProperty(key, targetType);
+            return null;
         }
-        T value = null;
+        Class<T> value = null;
         try {
-            value = (T) GET_PROPERTY_AS_CLASS_METHOD_HANDLE.invokeExact(delegate, key, targetType);
+            value = (Class<T>) GET_PROPERTY_AS_CLASS_METHOD_HANDLE.invokeExact(delegate, key, targetType);
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Failed to invokeExact on {} with args : '{}'", GET_PROPERTY_AS_CLASS_METHOD_HANDLE,
                         Arrays.asList(key, targetType), e);
             }
-            value = delegate.getProperty(key, targetType);
         }
         return value;
     }
