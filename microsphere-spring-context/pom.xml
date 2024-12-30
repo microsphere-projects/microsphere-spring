@@ -123,14 +123,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-test</artifactId>
-            <version>${revision}</version>
-            <scope>test</scope>
-        </dependency>
-
-
     </dependencies>
 
 </project>
