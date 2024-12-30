@@ -56,7 +56,7 @@
                 <artifactId>microsphere-spring-webflux</artifactId>
                 <version>${revision}</version>
             </dependency>
-            
+
         </dependencies>
     </dependencyManagement>
 </project>
