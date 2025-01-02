@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -39,8 +39,8 @@ import java.util.function.Supplier;
 import static io.microsphere.reflect.TypeUtils.asClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
-import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
-import static org.springframework.core.MethodParameter.forParameter;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 
 /**
  * Abstract {@link InjectionPointDependencyResolver}

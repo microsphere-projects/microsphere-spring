@@ -21,7 +21,7 @@ import com.p6spy.engine.spy.P6ModuleManager;
 import com.p6spy.engine.spy.option.P6OptionChangedListener;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.CompoundJdbcEventListenerFactory;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.config.P6DataSourceBeanPostProcessor;
-import io.microsphere.spring.util.BeanRegistrar;
+import io.microsphere.spring.beans.factory.support.BeanRegistrar;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -33,7 +33,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} class to register {@link BeanDefinition BeanDefinitions}

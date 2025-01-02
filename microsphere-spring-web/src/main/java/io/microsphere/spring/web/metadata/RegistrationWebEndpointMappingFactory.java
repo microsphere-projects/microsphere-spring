@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import org.springframework.lang.NonNull;
+import javax.annotation.Nonnull;
 
-import jakarta.servlet.Registration;
-import jakarta.servlet.ServletContext;
+import javax.servlet.Registration;
+import javax.servlet.ServletContext;
 import java.util.Collection;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
@@ -61,7 +61,7 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
      * @param servletContext {@link ServletContext}
      * @return The {@link R Registration}
      */
-    @NonNull
+    @Nonnull
     protected abstract R getRegistration(String name, ServletContext servletContext);
 
     /**
@@ -70,7 +70,7 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
      * @param registration {@link R Registration}
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     protected abstract Collection<String> getPatterns(R registration);
 
     /**

@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.context.annotation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -34,8 +34,9 @@ import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
+
+import javax.annotation.Nonnull;
 
 import static io.microsphere.text.FormatUtils.format;
 
@@ -115,7 +116,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ClassLoader getClassLoader() {
         return classLoader;
     }
@@ -125,7 +126,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
     }
@@ -136,7 +137,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ConfigurableEnvironment getEnvironment() {
         return environment;
     }
@@ -146,7 +147,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final ResourceLoader getResourceLoader() {
         return resourceLoader;
     }

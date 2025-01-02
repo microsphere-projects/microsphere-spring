@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -46,12 +46,12 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -72,7 +72,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
@@ -107,7 +108,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Collection<Class<? extends Annotation>> annotationTypes;
 
@@ -205,7 +206,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                     List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
                     Constructor<?> requiredConstructor = null;
                     Constructor<?> defaultConstructor = null;
-                    Constructor<?> primaryConstructor = BeanUtils.findPrimaryConstructor(beanClass);
+                    Constructor<?> primaryConstructor = findPrimaryConstructor(beanClass);
                     int nonSyntheticConstructors = 0;
                     for (Constructor<?> candidate : rawCandidates) {
                         if (!candidate.isSynthetic()) {

@@ -27,7 +27,7 @@ import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_SUPPO
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CORE_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link SpringVersionUtils} Test

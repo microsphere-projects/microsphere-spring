@@ -17,7 +17,7 @@
 package io.microsphere.spring.net;
 
 import io.microsphere.net.SubProtocolURLConnectionFactory;
-import io.microsphere.spring.util.BeanUtils;
+import io.microsphere.spring.beans.BeanUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 
 import java.io.IOException;

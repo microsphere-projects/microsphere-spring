@@ -17,7 +17,7 @@
 package io.microsphere.spring.webmvc.method.support;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;

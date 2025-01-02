@@ -17,7 +17,7 @@
 package io.microsphere.spring.web.method.support;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;

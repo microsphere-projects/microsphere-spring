@@ -19,24 +19,20 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.0.6</microsphere-java.version>
-        <microsphere-java-enterprise.version>0.0.3</microsphere-java-enterprise.version>
-        <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
-        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
-        <mariadb4j.version>2.5.3</mariadb4j.version>
-        <embedded-redis.version>0.6</embedded-redis.version>
+        <microsphere-java.version>0.0.9</microsphere-java.version>
+        <spring.version>5.3.39</spring.version>
+        <servlet-api.version>4.0.1</servlet-api.version>
+        <jackson.version>2.18.2</jackson.version>
+        <snakeyaml.version>2.3</snakeyaml.version>
+        <lettuce.version>6.1.10.RELEASE</lettuce.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <logback.version>1.2.12</logback.version>
+        <junit.version>4.13.2</junit.version>
+        <mockito.version>4.11.0</mockito.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot Dependencies -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Microsphere Dependencies -->
             <dependency>
@@ -47,63 +43,104 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Spring Framework BOM -->
             <dependency>
-                <groupId>org.xerial</groupId>
-                <artifactId>sqlite-jdbc</artifactId>
-                <version>${sqlite-jdbc.version}</version>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-            <!-- MariaDB Connector/J-->
+            <!-- Jackson BOM -->
             <dependency>
-                <groupId>org.mariadb.jdbc</groupId>
-                <artifactId>mariadb-java-client</artifactId>
-                <version>${mariadb-java-client.version}</version>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-            <!-- MariaDB4j -->
+            <!-- Lettuce -->
             <dependency>
-                <groupId>ch.vorburger.mariaDB4j</groupId>
-                <artifactId>mariaDB4j</artifactId>
-                <version>${mariadb4j.version}</version>
+                <groupId>io.lettuce</groupId>
+                <artifactId>lettuce-core</artifactId>
+                <version>${lettuce.version}</version>
+            </dependency>
+
+            <!-- YAML -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+
+            <!-- Servlet API -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- JUnit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+
+            <!-- Mockito Bom -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-bom</artifactId>
+                <version>${mockito.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
-                <groupId>com.github.kstyrc</groupId>
-                <artifactId>embedded-redis</artifactId>
-                <version>${embedded-redis.version}</version>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <profiles>
         <profile>
-            <id>spring-boot-3.0</id>
+            <id>spring-framework-4.3</id>
             <properties>
-                <spring-boot.version>3.0.13</spring-boot.version>
+                <spring.version>4.3.30.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-3.1</id>
+            <id>spring-framework-5.0</id>
             <properties>
-                <spring-boot.version>3.1.12</spring-boot.version>
+                <spring.version>5.0.20.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-3.2</id>
+            <id>spring-framework-5.1</id>
             <properties>
-                <spring-boot.version>3.2.11</spring-boot.version>
+                <spring.version>5.1.20.RELEASE</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-3.3</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>spring-framework-5.2</id>
             <properties>
-                <spring-boot.version>3.3.5</spring-boot.version>
+                <spring.version>5.2.25.RELEASE</spring.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>spring-framework-5.3</id>
+            <properties>
+                <spring.version>5.3.39</spring.version>
             </properties>
         </profile>
     </profiles>

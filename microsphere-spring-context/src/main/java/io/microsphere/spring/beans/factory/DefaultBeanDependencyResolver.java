@@ -19,9 +19,9 @@ package io.microsphere.spring.beans.factory;
 import io.microsphere.collection.CollectionUtils;
 import io.microsphere.collection.SetUtils;
 import io.microsphere.lang.function.ThrowableAction;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
@@ -35,9 +35,9 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
-import org.springframework.lang.Nullable;
 import org.springframework.util.StopWatch;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -52,13 +52,16 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.reflect.MemberUtils.isStatic;
-import static io.microsphere.spring.util.BeanDefinitionUtils.resolveBeanType;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getResolvableType;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.util.ClassLoaderUtils.loadClass;
 import static java.lang.InheritableThreadLocal.withInitial;
 import static java.util.Arrays.asList;
@@ -325,7 +328,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         Class beanClass = resolveBeanClass(beanDefinition, classLoader);
         if (beanClass == null) {
-            ResolvableType resolvableType = beanDefinition.getResolvableType();
+            ResolvableType resolvableType = getResolvableType(beanDefinition);
             beanClass = resolvableType.resolve();
         }
 
@@ -583,9 +586,11 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
      * @return <code>true</code> if the given {@link BeanDefinition} must be
      */
     private RootBeanDefinition getEligibleBeanDefinition(BeanDefinition beanDefinition) {
-        if (beanDefinition != null && !beanDefinition.isAbstract() && beanDefinition.isSingleton() && !beanDefinition.isLazyInit() && beanDefinition instanceof RootBeanDefinition) {
+        if (beanDefinition != null && !beanDefinition.isAbstract() && beanDefinition.isSingleton()
+                && !beanDefinition.isLazyInit() && beanDefinition instanceof RootBeanDefinition) {
             RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
-            return rootBeanDefinition.getInstanceSupplier() == null ? rootBeanDefinition : null;
+            Supplier<?> instanceSupplier = getInstanceSupplier(rootBeanDefinition);
+            return instanceSupplier == null ? rootBeanDefinition : null;
         }
         return null;
     }

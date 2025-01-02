@@ -1,7 +1,7 @@
 package io.microsphere.spring.beans.factory.config;
 
-import io.microsphere.spring.util.Bean;
-import io.microsphere.spring.util.TestBean;
+import io.microsphere.spring.test.Bean;
+import io.microsphere.spring.test.TestBean;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.BeansException;

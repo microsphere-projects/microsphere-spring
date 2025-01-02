@@ -16,12 +16,12 @@
  */
 package io.microsphere.spring.web.servlet;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 import org.springframework.mock.web.MockServletContext;
 
-import jakarta.servlet.Servlet;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletRegistration;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 import java.util.HashMap;
 import java.util.Map;
 

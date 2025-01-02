@@ -16,14 +16,18 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.spring.beans.factory.support.BeanRegistrar;
+import io.microsphere.spring.test.Bean;
+import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.test.TestBean2;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
-import static io.microsphere.spring.util.BeanRegistrar.hasAlias;
-import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
-import static io.microsphere.spring.util.BeanRegistrar.registerSpringFactoriesBeans;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Set;
 
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 
 /**
  * Composite {@link InjectionPointDependencyResolver}

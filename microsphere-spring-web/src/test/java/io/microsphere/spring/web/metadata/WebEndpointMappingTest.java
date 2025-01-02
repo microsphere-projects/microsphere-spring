@@ -16,21 +16,19 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.util.StreamUtils.copyToString;
 
 /**
@@ -39,8 +37,7 @@ import static org.springframework.util.StreamUtils.copyToString;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Execution(ExecutionMode.SAME_THREAD)
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = WebEndpointMappingTest.class)
 public class WebEndpointMappingTest {
 
@@ -49,7 +46,7 @@ public class WebEndpointMappingTest {
 
     private String fullJson;
 
-    @BeforeEach
+    @Before
     public void init() throws Throwable {
         this.fullJson = copyToString(this.fullJsonResource.getInputStream(), UTF_8);
     }

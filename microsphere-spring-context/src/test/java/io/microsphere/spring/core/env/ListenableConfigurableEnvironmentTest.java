@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.core.env;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -26,8 +26,10 @@ import org.springframework.core.env.Profiles;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.spring.core.SpringVersion.CURRENT;
+import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -41,7 +43,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(
         classes = ListenableConfigurableEnvironmentTest.class,
         initializers = ListenableConfigurableEnvironmentInitializer.class
@@ -144,6 +146,7 @@ public class ListenableConfigurableEnvironmentTest {
     public void testMatchesProfiles() {
         assertTrue(environment.matchesProfiles("test"));
         assertFalse(environment.matchesProfiles("!test"));
+
     }
 
     /**
@@ -156,7 +159,9 @@ public class ListenableConfigurableEnvironmentTest {
     @Test
     public void testAcceptsProfiles() {
         assertTrue(environment.acceptsProfiles("test"));
-        assertTrue(environment.acceptsProfiles(profile -> true));
+        if (CURRENT.ge(SPRING_5_1)) {
+            assertTrue(environment.acceptsProfiles(profile -> true));
+        }
     }
 
     /**

@@ -26,16 +26,20 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import org.springframework.core.env.PropertyResolver;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandle;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
@@ -64,6 +68,24 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
      */
     public static final boolean ENABLED_PROPERTY_VALUE = false;
+
+    /**
+     * The {@link MethodHandle} of {@linkplain PropertyResolver#getPropertyAsClass(String, Class)} was removed from Spring Framework 5.0
+     */
+    @Nullable
+    private static final MethodHandle GET_PROPERTY_AS_CLASS_METHOD_HANDLE = findVirtual(PropertyResolver.class, "getPropertyAsClass", String.class, Class.class);
+
+    /**
+     * The {@link MethodHandle} of {@link Environment#acceptsProfiles(Profiles)} since Spring Framework 5.1
+     */
+    @Nullable
+    private static final MethodHandle ACCEPTS_PROFILES_METHOD_HANDLE = findVirtual(Environment.class, "acceptsProfiles", Profiles.class);
+
+    /**
+     * The {@link MethodHandle} of {@link Environment#matchesProfiles(String...)} since Spring Framework 5.3.8
+     */
+    @Nullable
+    private static final MethodHandle MATCHES_PROFILES_METHOD_HANDLE = findVirtual(Environment.class, "matchesProfiles", String[].class);
 
     private final ConfigurableEnvironment delegate;
 
@@ -175,9 +197,22 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return defaultProfiles;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.3.28
+     */
     public boolean matchesProfiles(String... profileExpressions) {
-        return delegate.matchesProfiles(profileExpressions);
+        if (MATCHES_PROFILES_METHOD_HANDLE != null) {
+            try {
+                return (boolean) MATCHES_PROFILES_METHOD_HANDLE.invokeExact((Environment) delegate, profileExpressions);
+            } catch (Throwable e) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to invoke {} with args : '{}'", MATCHES_PROFILES_METHOD_HANDLE, Arrays.toString(profileExpressions), e);
+                }
+            }
+        }
+        return acceptsProfiles(profileExpressions);
     }
 
     @Deprecated
@@ -186,9 +221,23 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return delegate.acceptsProfiles(profiles);
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.1
+     */
     public boolean acceptsProfiles(Profiles profiles) {
-        return delegate.acceptsProfiles(profiles);
+        if (ACCEPTS_PROFILES_METHOD_HANDLE != null) {
+            try {
+                return (boolean) ACCEPTS_PROFILES_METHOD_HANDLE.invokeExact((Environment) delegate, profiles);
+            } catch (Throwable e) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to invokeExact on {} with args : '{}'", ACCEPTS_PROFILES_METHOD_HANDLE,
+                            Arrays.asList(delegate, profiles), e);
+                }
+            }
+        }
+        throw new UnsupportedOperationException("The method acceptsProfiles(Profiles) is not supported before Spring Framework 5.1");
     }
 
     @Override
@@ -324,9 +373,25 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      *
      * @return {@link ConfigurableEnvironment the underlying ConfigurableEnvironment}
      */
-    @NonNull
+    @Nonnull
     public ConfigurableEnvironment getDelegate() {
         return this.delegate;
+    }
+
+    public <T> Class<T> getPropertyAsClass(String key, Class<T> targetType) {
+        if (GET_PROPERTY_AS_CLASS_METHOD_HANDLE == null) {
+            return null;
+        }
+        Class<T> value = null;
+        try {
+            value = (Class<T>) GET_PROPERTY_AS_CLASS_METHOD_HANDLE.invokeExact(delegate, key, targetType);
+        } catch (Throwable e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Failed to invokeExact on {} with args : '{}'", GET_PROPERTY_AS_CLASS_METHOD_HANDLE,
+                        Arrays.asList(key, targetType), e);
+            }
+        }
+        return value;
     }
 
     /**

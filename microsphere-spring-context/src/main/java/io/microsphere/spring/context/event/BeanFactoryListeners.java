@@ -16,13 +16,12 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.config.NamedBeanHolderComparator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.NamedBeanHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.registerFactories;
 
 /**
  * The Composite {@link BeanFactoryListener}
@@ -97,9 +96,10 @@ class BeanFactoryListeners implements BeanFactoryListener {
     }
 
     void registerBean(BeanDefinitionRegistry registry) {
-        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanFactoryListeners.class, () -> this);
-        beanDefinitionBuilder.setPrimary(true);
-        registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
+//        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanFactoryListeners.class, () -> this);
+//        beanDefinitionBuilder.setPrimary(true);
+//        registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
+        registerFactoryBean(registry, BEAN_NAME, this);
     }
 
     static BeanFactoryListeners getBean(BeanFactory beanFactory) {

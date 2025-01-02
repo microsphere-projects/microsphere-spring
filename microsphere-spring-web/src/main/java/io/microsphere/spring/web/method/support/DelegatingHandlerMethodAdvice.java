@@ -17,8 +17,8 @@
 package io.microsphere.spring.web.method.support;
 
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.MethodParameter;
@@ -27,7 +27,7 @@ import org.springframework.web.method.HandlerMethod;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static java.util.Collections.emptyList;
 
 /**

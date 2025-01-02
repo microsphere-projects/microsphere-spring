@@ -17,9 +17,9 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.filter.Filter;
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,8 +33,8 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -47,18 +47,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
+import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
-import static org.springframework.core.MethodParameter.forParameter;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -415,7 +417,8 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
                 && !beanDefinition.isLazyInit()
                 && beanDefinition instanceof RootBeanDefinition) {
             RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
-            return rootBeanDefinition.getInstanceSupplier() == null;
+            Supplier<?> instanceSupplier = getInstanceSupplier(rootBeanDefinition);
+            return instanceSupplier == null || instanceSupplier.get() == null;
         }
         return false;
     }

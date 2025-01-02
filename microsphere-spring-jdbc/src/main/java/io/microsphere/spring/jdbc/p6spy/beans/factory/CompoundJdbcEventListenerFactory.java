@@ -26,7 +26,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 
 /**
  * The {@link P6Factory} class to create {@link CompoundJdbcEventListener}

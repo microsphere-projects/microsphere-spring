@@ -18,14 +18,15 @@ package io.microsphere.spring.config;
 
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.util.LinkedHashSet;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.springframework.util.Assert.notNull;
+import static io.microsphere.util.Assert.assertNotNull;
+
 
 /**
  * The Spring Configuration Property class
@@ -40,13 +41,13 @@ public class ConfigurationProperty {
     /**
      * The name of the property
      */
-    @NonNull
+    @Nonnull
     private final String name;
 
     /**
      * The type of the property
      */
-    @NonNull
+    @Nonnull
     private Class<?> type;
 
     /**
@@ -69,7 +70,7 @@ public class ConfigurationProperty {
     /**
      * The metadata of the property
      */
-    @NonNull
+    @Nonnull
     private final Metadata metadata;
 
     public ConfigurationProperty(String name) {
@@ -77,24 +78,24 @@ public class ConfigurationProperty {
     }
 
     public ConfigurationProperty(String name, Class<?> type) {
-        notNull(name, () -> "the property name must not null");
+        assertNotNull(name, () -> "the property name must not null");
         this.name = name;
         setType(type);
         this.metadata = new Metadata();
     }
 
-    @NonNull
+    @Nonnull
     public String getName() {
         return name;
     }
 
-    @NonNull
+    @Nonnull
     public Class<?> getType() {
         return type;
     }
 
-    public void setType(@NonNull Class<?> type) {
-        notNull(type, () -> "the property type must not null");
+    public void setType(@Nonnull Class<?> type) {
+        assertNotNull(type, () -> "the property type must not null");
         this.type = type;
     }
 
@@ -124,14 +125,16 @@ public class ConfigurationProperty {
         this.required = required;
     }
 
-    @NonNull
+    @Nonnull
     public Metadata getMetadata() {
         return metadata;
     }
 
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof ConfigurationProperty that)) return false;
+        if (!(o instanceof ConfigurationProperty)) return false;
+
+        ConfigurationProperty that = (ConfigurationProperty) o;
 
         return isRequired() == that.isRequired()
                 && getName().equals(that.getName())
@@ -193,7 +196,9 @@ public class ConfigurationProperty {
 
         @Override
         public final boolean equals(Object o) {
-            if (!(o instanceof Metadata metadata)) return false;
+            if (!(o instanceof Metadata)) return false;
+
+            Metadata metadata = (Metadata) o;
 
             return Objects.equals(description, metadata.description)
                     && Objects.equals(targets, metadata.targets);
