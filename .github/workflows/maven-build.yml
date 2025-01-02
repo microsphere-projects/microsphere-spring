@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         java: [ '8', '11' , '17' , '21' ]
-        maven-profile-spring-boot: [
+        maven-profile-spring-framework: [
           'spring-framework-5.3' , 'spring-framework-5.2', 'spring-framework-5.1' , 'spring-framework-5.0' ,
           'spring-framework-4.3'
         ]
@@ -42,7 +42,7 @@ jobs:
           --file pom.xml
           -Drevision=0.0.1-SNAPSHOT
           test
-          --activate-profiles test,coverage,${{ matrix.maven-profile-spring-boot }}
+          --activate-profiles test,coverage,${{ matrix.maven-profile-spring-framework }}
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
