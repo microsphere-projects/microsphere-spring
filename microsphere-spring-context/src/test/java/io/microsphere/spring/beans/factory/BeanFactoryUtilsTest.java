@@ -16,10 +16,9 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +27,10 @@ import java.util.List;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getOptionalBean;
 import static io.microsphere.util.ArrayUtils.of;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link BeanFactoryUtils} Test
@@ -39,12 +41,12 @@ public class BeanFactoryUtilsTest {
 
     private AnnotationConfigApplicationContext applicationContext;
 
-    @Before
+    @BeforeEach
     public void init() {
         applicationContext = new AnnotationConfigApplicationContext();
     }
 
-    @After
+    @AfterEach
     public void afterTest() {
         applicationContext.close();
     }
@@ -58,7 +60,7 @@ public class BeanFactoryUtilsTest {
 
         BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
 
-        Assert.assertNotNull(testBean);
+        assertNotNull(testBean);
 
         assertEquals("Hello,World", testBean.getName());
 
@@ -71,15 +73,15 @@ public class BeanFactoryUtilsTest {
 
         BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
 
         testBean = getOptionalBean(applicationContext, "1", BaseTestBean.class);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
 
         testBean = getOptionalBean(applicationContext, null, BaseTestBean.class);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
     }
 
     @Test
@@ -115,7 +117,7 @@ public class BeanFactoryUtilsTest {
 
         List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
-        Assert.assertTrue(testBeans.isEmpty());
+        assertTrue(testBeans.isEmpty());
 
     }
 

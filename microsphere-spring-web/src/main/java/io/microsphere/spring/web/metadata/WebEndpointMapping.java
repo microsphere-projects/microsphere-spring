@@ -35,7 +35,7 @@ import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
-import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.isTrue;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**

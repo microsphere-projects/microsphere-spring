@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeType;
 
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL;
@@ -26,10 +26,10 @@ import static io.microsphere.spring.util.MimeTypeUtils.getSubtypeSuffix;
 import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link MimeTypeUtils} Test

@@ -65,6 +65,12 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-indexer</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- SLF4j API -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -94,8 +100,8 @@
 
         <!-- Testing -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -117,30 +123,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <profiles>
 
         <profile>
-            <id>spring-framework-4.3</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.github.microsphere-projects</groupId>
-                    <artifactId>microsphere-spring-compatible</artifactId>
-                    <version>${revision}</version>
-                    <optional>true</optional>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>spring-framework-5.0</id>
+            <id>spring-framework-6.0</id>
             <dependencies>
                 <dependency>
                     <groupId>org.springframework</groupId>
@@ -171,11 +159,7 @@
         <profile>
             <id>spring-framework-5.2</id>
             <dependencies>
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context-indexer</artifactId>
-                    <optional>true</optional>
-                </dependency>
+
             </dependencies>
         </profile>
 

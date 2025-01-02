@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.context;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -28,8 +28,8 @@ import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * {@link ApplicationContextUtils} Test
@@ -42,13 +42,13 @@ public class ApplicationContextUtilsTest {
 
     private GenericApplicationContext context;
 
-    @Before
+    @BeforeEach
     public void init() {
         context = new GenericApplicationContext();
         context.refresh();
     }
 
-    @After
+    @AfterEach
     public void destroy() {
         context.close();
     }

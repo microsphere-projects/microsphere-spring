@@ -3,8 +3,7 @@ package io.microsphere.spring.beans;
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.test.TestBean2;
 import io.microsphere.spring.util.User;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -30,12 +29,13 @@ import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.spring.beans.BeanUtils.resolveBeanType;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.util.ClassUtils.isAssignable;
 
 /**
@@ -112,7 +112,7 @@ public class BeanUtilsTest {
 
         String[] beanNames = getBeanNames(context, User.class);
 
-        Assert.assertTrue(Arrays.asList(beanNames).contains("user"));
+        assertTrue(Arrays.asList(beanNames).contains("user"));
 
         context.close();
 
@@ -297,7 +297,7 @@ public class BeanUtilsTest {
 
         Map<String, OrderedBean> sortedBeansMap = BeanUtils.sort(orderedBeansMap);
 
-        Assert.assertArrayEquals(expectedBeansMap.values().toArray(), sortedBeansMap.values().toArray());
+        assertArrayEquals(expectedBeansMap.values().toArray(), sortedBeansMap.values().toArray());
 
     }
 

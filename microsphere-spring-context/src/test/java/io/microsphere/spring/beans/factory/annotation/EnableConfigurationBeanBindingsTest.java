@@ -17,10 +17,10 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.util.User;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link EnableConfigurationBeanBindings} Test cases

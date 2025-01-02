@@ -34,7 +34,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashSet;
@@ -55,6 +54,7 @@ import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.l
 import static java.lang.Boolean.valueOf;
 import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static org.springframework.util.Assert.isInstanceOf;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} implementation for {@link EnableConfigurationBeanBinding @EnableConfigurationBinding}
@@ -175,11 +175,8 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     @Override
     public void setEnvironment(Environment environment) {
-
-        Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
-
+        isInstanceOf(ConfigurableEnvironment.class, environment);
         this.environment = (ConfigurableEnvironment) environment;
-
     }
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {

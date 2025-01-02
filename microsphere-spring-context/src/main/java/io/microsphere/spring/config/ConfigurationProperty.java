@@ -19,9 +19,9 @@ package io.microsphere.spring.config;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import java.util.LinkedHashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 

@@ -19,19 +19,19 @@
 //import com.p6spy.engine.common.ConnectionInformation;
 //import com.p6spy.engine.logging.LoggingEventListener;
 //import io.microsphere.spring.test.jdbc.embedded.EnableEmbeddedDatabase;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.extension.ExtendWith;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Qualifier;
 //import org.springframework.test.context.ContextConfiguration;
-//import org.springframework.test.context.junit4.SpringRunner;
+//import org.springframework.test.context.junit.jupiter.SpringExtension;
 //
 //import javax.sql.DataSource;
 //import java.sql.Connection;
 //import java.sql.SQLException;
 //
-//import static org.junit.Assert.assertNotNull;
-//import static org.junit.Assert.assertSame;
+//import static org.junit.jupiter.api.Assertions.assertNotNull;
+//import static org.junit.jupiter.api.Assertions.assertSame;
 //
 ///**
 // * {@link EnableP6DataSource} Test
@@ -39,7 +39,7 @@
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
 // * @since 1.0.0
 // */
-//@RunWith(SpringRunner.class)
+//@ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = {
 //        EnableP6DataSourceTest.class
 //})

@@ -18,13 +18,13 @@ package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.controller.TestController;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -34,9 +34,9 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link RequestMappingMetadataWebEndpointMappingFactory} Test
@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
         TestController.class,
@@ -71,7 +71,7 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
         this.handlerMethods = requestMappingInfoHandlerMapping.getHandlerMethods();

@@ -18,9 +18,9 @@ package io.microsphere.spring.core.io.support;
 
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -30,10 +30,10 @@ import org.springframework.context.support.GenericApplicationContext;
 import java.util.List;
 
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * {@link SpringFactoriesLoaderUtils} Test
@@ -48,14 +48,14 @@ public class SpringFactoriesLoaderUtilsTest {
 
     private DefaultListableBeanFactory beanFactory;
 
-    @Before
+    @BeforeEach
     public void before() {
         context = new GenericApplicationContext();
         beanFactory = context.getDefaultListableBeanFactory();
         context.refresh();
     }
 
-    @After
+    @AfterEach
     public void after() {
         context.close();
     }

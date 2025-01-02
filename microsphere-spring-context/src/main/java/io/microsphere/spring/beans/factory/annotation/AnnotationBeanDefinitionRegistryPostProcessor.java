@@ -36,7 +36,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -54,6 +53,8 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMerged
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
+import static org.springframework.util.Assert.noNullElements;
+import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -116,8 +117,8 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public void addSupportedAnnotationType(Class<? extends Annotation>... annotationTypes) {
-        Assert.notEmpty(annotationTypes, "The argument of annotation types can't be empty");
-        Assert.noNullElements(annotationTypes, "Any element of annotation types can't be null");
+        notEmpty(annotationTypes, "The argument of annotation types can't be empty");
+        noNullElements(annotationTypes, "Any element of annotation types can't be null");
         this.supportedAnnotationTypes.addAll(asList(annotationTypes));
     }
 

@@ -16,19 +16,19 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.util.StreamUtils.copyToString;
 
 /**
@@ -38,7 +38,7 @@ import static org.springframework.util.StreamUtils.copyToString;
  * @since 1.0.0
  */
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
 public class SmartWebEndpointMappingFactoryTest {
 
@@ -49,7 +49,7 @@ public class SmartWebEndpointMappingFactoryTest {
 
     private String fullJson;
 
-    @Before
+    @BeforeEach
     public void init() throws Throwable {
         this.fullJson = copyToString(this.fullJsonResource.getInputStream(), UTF_8);
     }

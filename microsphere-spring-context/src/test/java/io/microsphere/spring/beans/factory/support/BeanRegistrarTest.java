@@ -20,9 +20,9 @@ import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.test.TestBean2;
 import io.microsphere.spring.util.User;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
@@ -37,11 +37,11 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSingleton;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 import static java.beans.Introspector.decapitalize;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
@@ -56,12 +56,12 @@ public class BeanRegistrarTest {
 
     private DefaultListableBeanFactory beanFactory;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.beanFactory = new DefaultListableBeanFactory();
     }
 
-    @After
+    @AfterEach
     public void destroy() {
         this.beanFactory.destroySingletons();
     }

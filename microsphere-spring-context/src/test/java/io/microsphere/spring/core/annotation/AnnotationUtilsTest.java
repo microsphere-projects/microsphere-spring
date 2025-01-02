@@ -1,7 +1,6 @@
 package io.microsphere.spring.core.annotation;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +24,10 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttributes;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
 import static io.microsphere.util.ArrayUtils.of;
-import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
 /**
@@ -125,7 +125,7 @@ public class AnnotationUtilsTest {
 
         annotationsList = annotationsMap.get(ElementType.PACKAGE);
 
-        Assert.assertNull(annotationsList);
+        assertNull(annotationsList);
 
 
         method = findMethod(ClassAnnotationHandler.class, "handle",
@@ -133,12 +133,12 @@ public class AnnotationUtilsTest {
 
         annotationsMap = findAnnotations(method, RuntimeAnnotation.class);
 
-        Assert.assertTrue(annotationsMap.isEmpty());
+        assertTrue(annotationsMap.isEmpty());
 
         Map<ElementType, List<ClassAnnotation>> classAnnotationsMap = findAnnotations(method,
                 ClassAnnotation.class);
 
-        Assert.assertTrue(classAnnotationsMap.isEmpty());
+        assertTrue(classAnnotationsMap.isEmpty());
     }
 
     @Test
@@ -147,10 +147,10 @@ public class AnnotationUtilsTest {
         Bean annotation = getAnnotation("dummyBean", Bean.class);
 
         Map<String, Object> attributes = getAttributes(annotation, true);
-        Assert.assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
 
         attributes = getAttributes(annotation, true);
-        Assert.assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
 
         attributes = getAttributes(annotation, false);
         if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
@@ -171,16 +171,16 @@ public class AnnotationUtilsTest {
         annotation = getAnnotation("dummyBean2", Bean.class);
 
         attributes = getAttributes(annotation, true);
-        Assert.assertTrue(attributes.isEmpty());
+        assertTrue(attributes.isEmpty());
 
         attributes = getAttributes(annotation, environment, true);
-        Assert.assertTrue(attributes.isEmpty());
+        assertTrue(attributes.isEmpty());
 
         environment.setProperty("beanName", "Your Bean Name");
 
         annotation = getAnnotation("dummyBean3", Bean.class);
         attributes = getAttributes(annotation, environment, true);
-        Assert.assertTrue(Arrays.deepEquals(of(environment.getProperty("beanName")), (String[]) attributes.get("name")));
+        assertTrue(Arrays.deepEquals(of(environment.getProperty("beanName")), (String[]) attributes.get("name")));
 
     }
 

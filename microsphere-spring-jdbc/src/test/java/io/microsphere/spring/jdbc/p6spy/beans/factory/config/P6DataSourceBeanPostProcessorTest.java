@@ -18,18 +18,18 @@
 //
 //import com.p6spy.engine.spy.P6DataSource;
 //import io.microsphere.spring.test.jdbc.embedded.EnableEmbeddedDatabase;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.extension.ExtendWith;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Qualifier;
 //import org.springframework.jdbc.datasource.DriverManagerDataSource;
 //import org.springframework.test.context.ContextConfiguration;
 //import org.springframework.test.context.TestPropertySource;
-//import org.springframework.test.context.junit4.SpringRunner;
+//import org.springframework.test.context.junit.jupiter.SpringExtension;
 //
 //import javax.sql.DataSource;
 //
-//import static org.junit.Assert.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
 //
 ///**
 // * {@link P6DataSourceBeanPostProcessor} Test
@@ -37,7 +37,7 @@
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
 // * @since 1.0.0
 // */
-//@RunWith(SpringRunner.class)
+//@ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = {P6DataSourceBeanPostProcessor.class, P6DataSourceBeanPostProcessorTest.class})
 //@TestPropertySource(properties = {"microsphere.jdbc.p6spy.excluded-datasource-beans=nonWrappedDataSource"})
 //@EnableEmbeddedDatabase(dataSource = "nonWrappedDataSource")

@@ -17,8 +17,8 @@
 //package io.microsphere.spring.cache.annotation;
 //
 //import io.microsphere.spring.test.redis.EnableRedisTest;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.extension.ExtendWith;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.cache.Cache;
 //import org.springframework.cache.CacheManager;
@@ -31,14 +31,14 @@
 //import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 //import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 //import org.springframework.test.context.ContextConfiguration;
-//import org.springframework.test.context.junit4.SpringRunner;
+//import org.springframework.test.context.junit.jupiter.SpringExtension;
 //
 //import java.util.Collection;
 //import java.util.concurrent.ThreadLocalRandom;
 //
 //import static java.util.Collections.singletonList;
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertNotEquals;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertNotEquals;
 //
 ///**
 // * {@link TTLCacheable} Test
@@ -46,7 +46,7 @@
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
 // * @since 1.0.0
 // */
-//@RunWith(SpringRunner.class)
+//@ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = {
 //        TTLCacheableTest.class, TTLCacheableTest.CachingData.class
 //})

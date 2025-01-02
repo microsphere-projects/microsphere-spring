@@ -24,19 +24,13 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.ConfigurablePropertyResolver;
-import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
 
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_PREFIX;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_SUFFIX;
-import static org.springframework.util.SystemPropertyUtils.VALUE_SEPARATOR;
 
 /**
  * The listener class for collecting the {@link ConfigurationProperty}

@@ -24,7 +24,6 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -44,6 +43,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
+import static org.springframework.util.Assert.isInstanceOf;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -64,7 +64,7 @@ public abstract class EnvironmentUtils extends BaseUtils {
      * @throws IllegalArgumentException If <code>environment</code> argument is not an instance of {@link ConfigurableEnvironment}
      */
     public static ConfigurableEnvironment asConfigurableEnvironment(Environment environment) throws IllegalArgumentException {
-        Assert.isInstanceOf(ConfigurableEnvironment.class, environment,
+        isInstanceOf(ConfigurableEnvironment.class, environment,
                 "The 'environment' argument is not a instance of ConfigurableEnvironment, " +
                         "is it running in Spring container?");
         return (ConfigurableEnvironment) environment;

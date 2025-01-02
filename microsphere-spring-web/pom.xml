@@ -36,8 +36,8 @@
 
         <!-- Servlet API -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <optional>true</optional>
         </dependency>
 
@@ -67,7 +67,7 @@
             <artifactId>jackson-databind</artifactId>
             <optional>true</optional>
         </dependency>
-        
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -77,8 +77,8 @@
 
         <!-- Testing -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -16,18 +16,18 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link DefaultPropertiesPropertySources} Test
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  * @see DefaultPropertiesPropertySources
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DefaultPropertiesPropertySourcesTest.class})
 @DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/a.properties"})
 @DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/b.properties"})
@@ -47,7 +47,7 @@ public class DefaultPropertiesPropertySourcesTest {
 
     private MutablePropertySources propertySources;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.propertySources = environment.getPropertySources();
     }

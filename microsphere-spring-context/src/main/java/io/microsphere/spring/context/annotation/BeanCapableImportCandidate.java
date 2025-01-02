@@ -34,11 +34,13 @@ import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.Assert;
 
 import javax.annotation.Nonnull;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
+import static org.springframework.util.Assert.isInstanceOf;
 
 /**
  * The {@link Import @Import} candidate is an instance of {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}
@@ -88,18 +90,14 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     @Override
     public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         if (this.beanFactory == null) {
-            Class<ConfigurableListableBeanFactory> targetType = ConfigurableListableBeanFactory.class;
-            Assert.isInstanceOf(targetType, beanFactory, "The 'beanFactory' argument must be an instance of class " + targetType.getName());
-            this.beanFactory = targetType.cast(beanFactory);
+            this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
         }
     }
 
     @Override
     public final void setEnvironment(Environment environment) {
         if (this.environment == null) {
-            Class<ConfigurableEnvironment> targetType = ConfigurableEnvironment.class;
-            Assert.isInstanceOf(targetType, environment, "The 'environment' argument must be an instance of class " + targetType.getName());
-            this.environment = targetType.cast(environment);
+            this.environment = asConfigurableEnvironment(environment);
         }
     }
 

@@ -22,6 +22,7 @@ import io.microsphere.logging.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
@@ -86,6 +87,13 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      */
     @Nullable
     private static final MethodHandle MATCHES_PROFILES_METHOD_HANDLE = findVirtual(Environment.class, "matchesProfiles", String[].class);
+
+    /**
+     * The {@link MethodHandle} of {@link ConfigurablePropertyResolver#setEscapeCharacter(Character)} since Spring Framework 6.2
+     */
+    @Nullable
+    private static final MethodHandle SET_ESCAPE_CHARACTER_METHOD_HANDLE = findVirtual(ConfigurablePropertyResolver.class, "setEscapeCharacter", Character.class);
+
 
     private final ConfigurableEnvironment delegate;
 
@@ -345,6 +353,25 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         forEachEnvironmentListener(listener -> listener.beforeSetValueSeparator(delegate, valueSeparator));
         delegate.setValueSeparator(valueSeparator);
         forEachEnvironmentListener(listener -> listener.afterSetValueSeparator(delegate, valueSeparator));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 6.2
+     */
+    public void setEscapeCharacter(Character escapeCharacter) {
+        if (SET_ESCAPE_CHARACTER_METHOD_HANDLE != null) {
+            try {
+                SET_ESCAPE_CHARACTER_METHOD_HANDLE.invokeExact(delegate, escapeCharacter);
+            } catch (Throwable e) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to invokeExact on {} with arg : '{}'", SET_ESCAPE_CHARACTER_METHOD_HANDLE,
+                            escapeCharacter, e);
+                }
+            }
+        }
+        throw new UnsupportedOperationException("The method setEscapeCharacter(Character) is not supported before Spring Framework 6.2");
     }
 
     @Override

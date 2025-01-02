@@ -17,8 +17,8 @@
 package io.microsphere.spring.beans.factory.config;
 
 import io.microsphere.spring.util.User;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -46,14 +45,13 @@ import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isI
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isSetInstanceSupplierMethodPresent;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtilsTest.BEAN_NAME;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
@@ -78,7 +76,7 @@ public class BeanDefinitionUtilsTest {
 
     private AbstractBeanDefinition beanDefinition;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.beanDefinition = genericBeanDefinition(User.class);
     }

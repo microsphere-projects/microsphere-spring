@@ -37,7 +37,6 @@ import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.PathMatcher;
 
@@ -61,6 +60,7 @@ import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.sort;
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -324,7 +324,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     }
 
     private String handleSourceName(String resourcePropertySourceName) {
-        Assert.notNull(resourcePropertySourceName, "resourcePropertySourceName is null.");
+        notNull(resourcePropertySourceName, "resourcePropertySourceName is null.");
         return resourcePropertySourceName.substring(0, resourcePropertySourceName.lastIndexOf("@"));
     }
 

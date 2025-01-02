@@ -16,13 +16,13 @@
  */
 package io.microsphere.spring.core.io;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourcePatternResolver;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * {@link ResourceLoaderUtils} Test

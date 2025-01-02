@@ -376,9 +376,9 @@ public abstract class WebMvcUtils {
      */
     public static void appendInitParameters(ServletContext servletContext, String parameterName, String... parameterValues) {
 
-        Assert.notNull(servletContext);
-        Assert.hasLength(parameterName);
-        Assert.notNull(parameterValues);
+        notNull(servletContext);
+        hasLength(parameterName);
+        notNull(parameterValues);
 
         String existedParameterValue = servletContext.getInitParameter(parameterName);
 

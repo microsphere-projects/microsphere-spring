@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.core.io;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceUtils.FILE_URL_RESOURCE_CLASS;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link ResourceUtils} Test
@@ -45,7 +45,7 @@ public class ResourceUtilsTest {
 
     private Resource urlResource;
 
-    @Before
+    @BeforeEach
     public void init() throws IOException {
         this.classPathResource = resourceLoader.getResource("classpath:/META-INF/spring.factories");
         URL url = this.classPathResource.getURL();

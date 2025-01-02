@@ -20,15 +20,13 @@
 
     <properties>
         <microsphere-java.version>0.0.9</microsphere-java.version>
-        <spring.version>5.3.39</spring.version>
-        <servlet-api.version>4.0.1</servlet-api.version>
+        <servlet-api.version>6.1.0</servlet-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
-        <lettuce.version>6.1.10.RELEASE</lettuce.version>
-        <slf4j.version>1.7.36</slf4j.version>
-        <logback.version>1.2.12</logback.version>
-        <junit.version>4.13.2</junit.version>
-        <mockito.version>4.11.0</mockito.version>
+        <slf4j.version>2.0.16</slf4j.version>
+        <logback.version>1.5.15</logback.version>
+        <junit.version>5.11.4</junit.version>
+        <mockito.version>5.14.2</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -61,13 +59,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Lettuce -->
-            <dependency>
-                <groupId>io.lettuce</groupId>
-                <artifactId>lettuce-core</artifactId>
-                <version>${lettuce.version}</version>
-            </dependency>
-
             <!-- YAML -->
             <dependency>
                 <groupId>org.yaml</groupId>
@@ -75,22 +66,23 @@
                 <version>${snakeyaml.version}</version>
             </dependency>
 
-            <!-- Servlet API -->
+            <!-- Jakarta Servlet API -->
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet-api.version}</version>
-                <scope>provided</scope>
             </dependency>
 
-            <!-- JUnit -->
+            <!-- JUnit BOM -->
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-            <!-- Mockito Bom -->
+            <!-- Mockito BOM -->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-bom</artifactId>
@@ -110,37 +102,26 @@
 
     <profiles>
         <profile>
-            <id>spring-framework-4.3</id>
+            <id>spring-framework-6.0</id>
             <properties>
-                <spring.version>4.3.30.RELEASE</spring.version>
+                <spring.version>6.0.23</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-framework-5.0</id>
+            <id>spring-framework-6.1</id>
             <properties>
-                <spring.version>5.0.20.RELEASE</spring.version>
+                <spring.version>6.1.16</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-framework-5.1</id>
+            <id>spring-framework-6.2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <spring.version>5.1.20.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-framework-5.2</id>
-            <properties>
-                <spring.version>5.2.25.RELEASE</spring.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-framework-5.3</id>
-            <properties>
-                <spring.version>5.3.39</spring.version>
+                <spring.version>6.2.1</spring.version>
             </properties>
         </profile>
     </profiles>

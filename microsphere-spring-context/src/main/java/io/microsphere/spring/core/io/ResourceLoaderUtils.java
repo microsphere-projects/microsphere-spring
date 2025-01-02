@@ -18,7 +18,6 @@ package io.microsphere.spring.core.io;
 
 import io.microsphere.util.BaseUtils;
 import io.microsphere.util.ClassLoaderUtils;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
