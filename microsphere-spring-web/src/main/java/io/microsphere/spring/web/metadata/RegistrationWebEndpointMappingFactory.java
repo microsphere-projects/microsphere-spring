@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import javax.annotation.Nonnull;
+import jakarta.servlet.Registration;
+import jakarta.servlet.ServletContext;
 
-import javax.servlet.Registration;
-import javax.servlet.ServletContext;
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;

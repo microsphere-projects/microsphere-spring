@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
-import org.springframework.util.Assert;
-
 import java.util.Objects;
+
+import static org.springframework.util.Assert.notNull;
 
 /**
  * The metadata class for Spring WebMVC's Handler

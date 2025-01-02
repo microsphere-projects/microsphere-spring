@@ -17,10 +17,10 @@
 package io.microsphere.spring.web.rule;
 
 import org.springframework.http.MediaType;
-import javax.annotation.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;

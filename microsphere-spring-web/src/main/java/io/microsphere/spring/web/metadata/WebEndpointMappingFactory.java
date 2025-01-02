@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.metadata;
 
 import javax.annotation.Nonnull;
-
 import java.util.Optional;
 
 import static org.springframework.core.ResolvableType.forClass;
@@ -36,8 +35,8 @@ public interface WebEndpointMappingFactory<E> {
      *
      * @param endpoint could be one of these :
      *                 <ul>
-     *                 <li>{@link javax.servlet.ServletRegistration}</li>
-     *                 <li>{@link javax.servlet.FilterRegistration}</li>
+     *                 <li>{@link jakarta.servlet.ServletRegistration}</li>
+     *                 <li>{@link jakarta.servlet.FilterRegistration}</li>
      *                 <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
      *                 <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
      *                 </ul>
@@ -52,8 +51,8 @@ public interface WebEndpointMappingFactory<E> {
      *
      * @param endpoint could be one of these :
      *                 <ul>
-     *                 <li>{@link javax.servlet.ServletRegistration}</li>
-     *                 <li>{@link javax.servlet.FilterRegistration}</li>
+     *                 <li>{@link jakarta.servlet.ServletRegistration}</li>
+     *                 <li>{@link jakarta.servlet.FilterRegistration}</li>
      *                 <li>{@link org.springframework.web.servlet.mvc.method.RequestMappingInfo}</li>
      *                 <li>{@link org.springframework.web.reactive.result.method.RequestMappingInfo}</li>
      *                 </ul>
