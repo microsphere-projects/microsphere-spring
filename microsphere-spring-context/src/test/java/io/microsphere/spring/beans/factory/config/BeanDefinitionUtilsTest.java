@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -46,7 +45,6 @@ import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isI
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isSetInstanceSupplierMethodPresent;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtilsTest.BEAN_NAME;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;

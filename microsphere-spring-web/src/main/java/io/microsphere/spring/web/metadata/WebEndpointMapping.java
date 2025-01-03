@@ -17,11 +17,11 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.util.ArrayUtils;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;

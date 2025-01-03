@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.collection.SetUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -16,13 +16,13 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;

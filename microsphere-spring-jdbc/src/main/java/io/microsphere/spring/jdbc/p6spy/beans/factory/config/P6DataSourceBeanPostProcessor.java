@@ -17,9 +17,9 @@
 package io.microsphere.spring.jdbc.p6spy.beans.factory.config;
 
 import com.p6spy.engine.spy.P6DataSource;
-import io.microsphere.spring.beans.factory.config.GenericBeanPostProcessorAdapter;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.spring.beans.factory.config.GenericBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.EnvironmentAware;
