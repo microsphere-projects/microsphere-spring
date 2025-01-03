@@ -192,7 +192,10 @@ public abstract class BeanFactoryUtils extends BaseUtils {
         return beanPostProcessors;
     }
 
-    private static <T> T cast(Object beanFactory, Class<T> extendedBeanFactoryType) {
+    private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
+        if (beanFactory == null) {
+            return null;
+        }
         if (beanFactory instanceof ApplicationContext) {
             beanFactory = ((ApplicationContext) beanFactory).getAutowireCapableBeanFactory();
         }
