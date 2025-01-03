@@ -34,7 +34,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -55,6 +54,7 @@ import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.l
 import static java.lang.Boolean.valueOf;
 import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} implementation for {@link EnableConfigurationBeanBinding @EnableConfigurationBinding}
@@ -205,7 +205,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         String beanName = (String) properties.get("id");
 
-        if (!StringUtils.hasText(beanName)) {
+        if (!hasText(beanName)) {
             BeanDefinitionBuilder builder = rootBeanDefinition(configClass);
             beanName = BeanDefinitionReaderUtils.generateBeanName(builder.getRawBeanDefinition(), registry);
         }

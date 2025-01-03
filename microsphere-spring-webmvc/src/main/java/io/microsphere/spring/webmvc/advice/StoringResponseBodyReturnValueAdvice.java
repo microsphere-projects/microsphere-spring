@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
+import static io.microsphere.spring.webmvc.util.WebMvcUtils.setHandlerMethodReturnValue;
+import static io.microsphere.spring.webmvc.util.WebMvcUtils.supportedConverterTypes;
+
 /**
  * Store {@ link HandlerMethod} return value {@ link ResponseBodyAdviceAdapter}
  *
@@ -23,7 +26,7 @@ public class StoringResponseBodyReturnValueAdvice extends ResponseBodyAdviceAdap
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return WebMvcUtils.supportedConverterTypes.contains(converterType);
+        return supportedConverterTypes.contains(converterType);
     }
 
     @Override
@@ -34,7 +37,7 @@ public class StoringResponseBodyReturnValueAdvice extends ResponseBodyAdviceAdap
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest serverHttpRequest = (ServletServerHttpRequest) request;
             HttpServletRequest httpServletRequest = serverHttpRequest.getServletRequest();
-            WebMvcUtils.setHandlerMethodReturnValue(httpServletRequest, method, body);
+            setHandlerMethodReturnValue(httpServletRequest, method, body);
         }
         return body;
     }

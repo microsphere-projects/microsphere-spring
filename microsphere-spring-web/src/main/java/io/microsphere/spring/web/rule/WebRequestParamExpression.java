@@ -16,17 +16,17 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.util.WebUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.util.ArrayUtils.isEmpty;
 import static java.util.Collections.emptyList;
 import static org.springframework.util.ObjectUtils.containsElement;
+import static org.springframework.web.util.WebUtils.SUBMIT_IMAGE_SUFFIXES;
 
 /**
  * {@link NativeWebRequest WebRequest} Parameter {@link NameValueExpression}
@@ -37,12 +37,12 @@ import static org.springframework.util.ObjectUtils.containsElement;
  */
 public class WebRequestParamExpression extends AbstractNameValueExpression<String> {
 
-    private final Set<String> namesToMatch = new HashSet<>(WebUtils.SUBMIT_IMAGE_SUFFIXES.length + 1);
+    private final Set<String> namesToMatch = new HashSet<>(SUBMIT_IMAGE_SUFFIXES.length + 1);
 
     public WebRequestParamExpression(String expression) {
         super(expression);
         this.namesToMatch.add(getName());
-        for (String suffix : WebUtils.SUBMIT_IMAGE_SUFFIXES) {
+        for (String suffix : SUBMIT_IMAGE_SUFFIXES) {
             this.namesToMatch.add(getName() + suffix);
         }
     }
@@ -74,7 +74,7 @@ public class WebRequestParamExpression extends AbstractNameValueExpression<Strin
     }
 
     protected static List<WebRequestParamExpression> parseExpressions(String... params) {
-        if (ObjectUtils.isEmpty(params)) {
+        if (isEmpty(params)) {
             return emptyList();
         }
         int length = params.length;

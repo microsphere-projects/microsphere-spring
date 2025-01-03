@@ -16,7 +16,6 @@
 
 package io.microsphere.spring.web.rule;
 
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.annotation.Nullable;
@@ -24,6 +23,7 @@ import javax.annotation.Nullable;
 import static io.microsphere.constants.SymbolConstants.EQUAL_CHAR;
 import static io.microsphere.constants.SymbolConstants.EXCLAMATION;
 import static io.microsphere.constants.SymbolConstants.EXCLAMATION_CHAR;
+import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
  * Supports "name=value" style expressions as described in:
@@ -103,7 +103,7 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
         }
         AbstractNameValueExpression<?> that = (AbstractNameValueExpression<?>) other;
         return ((isCaseSensitiveName() ? this.name.equals(that.name) : this.name.equalsIgnoreCase(that.name)) &&
-                ObjectUtils.nullSafeEquals(this.value, that.value) && this.isNegated == that.isNegated);
+                nullSafeEquals(this.value, that.value) && this.isNegated == that.isNegated);
     }
 
     @Override

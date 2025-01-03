@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.beans.Introspector;
@@ -25,6 +24,8 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.Set;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * {@link AnnotatedInjectionPointDependencyResolver} for {@link Resource}
@@ -64,7 +65,7 @@ public class ResourceInjectionPointDependencyResolver extends AnnotatedInjection
 
     private String resolveBeanName(Field field, Resource resource, ConfigurableListableBeanFactory beanFactory) {
         String name = resource.name();
-        if (StringUtils.hasText(name)) {
+        if (hasText(name)) {
             return name;
         } else {
             return field.getName();
@@ -73,7 +74,7 @@ public class ResourceInjectionPointDependencyResolver extends AnnotatedInjection
 
     private String resolveBeanName(Parameter parameter, Resource resource, ConfigurableListableBeanFactory beanFactory) {
         String name = resource.name();
-        if (!StringUtils.hasText(name)) {
+        if (!hasText(name)) {
             Executable executable = parameter.getDeclaringExecutable();
             String methodName = executable.getName();
             if (methodName.startsWith("set")) {

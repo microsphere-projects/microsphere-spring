@@ -34,6 +34,7 @@ import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
+import static io.microsphere.util.ArrayUtils.asArray;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -277,7 +278,7 @@ public class WebEndpointMapping<E> {
     }
 
     public static <E> Builder<E> of(@Nullable Kind kind, @Nullable E endpoint, Collection<String> patterns) {
-        return of(kind, endpoint, ArrayUtils.asArray(patterns, String.class));
+        return of(kind, endpoint, asArray(patterns, String.class));
     }
 
     public static <E> Builder of(@Nullable Kind kind, @Nullable E endpoint, String... patterns) {

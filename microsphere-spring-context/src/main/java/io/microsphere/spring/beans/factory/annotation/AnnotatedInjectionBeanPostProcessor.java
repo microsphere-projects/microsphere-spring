@@ -46,9 +46,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
@@ -79,6 +77,9 @@ import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 import static org.springframework.util.Assert.notEmpty;
+import static org.springframework.util.ClassUtils.getMostSpecificMethod;
+import static org.springframework.util.ClassUtils.getUserClass;
+import static org.springframework.util.StringUtils.hasLength;
 
 /**
  * The generic {@link BeanPostProcessor} implementation to support the dependency injection for the customized annotations.
@@ -215,7 +216,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                         }
                         AnnotationAttributes ann = findInjectionAnnotationAttributes(candidate);
                         if (ann == null) {
-                            Class<?> userClass = ClassUtils.getUserClass(beanClass);
+                            Class<?> userClass = getUserClass(beanClass);
                             if (userClass != beanClass) {
                                 try {
                                     Constructor<?> superCtor = userClass.getDeclaredConstructor(candidate.getParameterTypes());
@@ -366,7 +367,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
                     AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
 
-                    if (attributes != null && method.equals(ClassUtils.getMostSpecificMethod(method, beanClass))) {
+                    if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
                         if (Modifier.isStatic(method.getModifiers())) {
                             if (logger.isWarnEnabled()) {
                                 logger.warn("@" + annotationType.getName() + " annotation is not supported on static methods: " + method);
@@ -419,7 +420,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private InjectionMetadata findInjectionMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
-        String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
+        String cacheKey = (hasLength(beanName) ? beanName : clazz.getName());
         // Quick check on the concurrent map first, with minimal locking.
         AnnotatedInjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
         if (InjectionMetadata.needsRefresh(metadata, clazz)) {
