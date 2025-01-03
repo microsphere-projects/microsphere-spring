@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
 
 /**
  * Intercepting {@link ApplicationEventMulticaster} based on {@link SimpleApplicationEventMulticaster}
@@ -78,7 +79,7 @@ public class InterceptingApplicationEventMulticaster extends SimpleApplicationEv
     @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         super.setBeanFactory(beanFactory);
-        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
+        ListableBeanFactory listableBeanFactory = asListableBeanFactory(beanFactory);
         this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
         this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);
     }
