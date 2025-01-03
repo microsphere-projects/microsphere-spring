@@ -14,6 +14,8 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.springframework.util.ReflectionUtils.doWithFields;
+
 
 /**
  * Configurable {@link ContentNegotiationManager} {@link WebMvcConfigurer}
@@ -41,7 +43,7 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
 
     public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
 
-        ReflectionUtils.doWithFields(configurer.getClass(), new ReflectionUtils.FieldCallback() {
+        doWithFields(configurer.getClass(), new ReflectionUtils.FieldCallback() {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
 

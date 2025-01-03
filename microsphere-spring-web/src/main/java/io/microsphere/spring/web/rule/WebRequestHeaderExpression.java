@@ -16,19 +16,19 @@
  */
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.util.ArrayUtils;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.util.WebUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.util.ArrayUtils.size;
 import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.util.ObjectUtils.containsElement;
+import static org.springframework.web.util.WebUtils.SUBMIT_IMAGE_SUFFIXES;
 
 /**
  * {@link NativeWebRequest WebRequest} Header {@link NameValueExpression}
@@ -41,12 +41,12 @@ import static org.springframework.util.ObjectUtils.containsElement;
  */
 public class WebRequestHeaderExpression extends AbstractNameValueExpression<String> {
 
-    private final Set<String> namesToMatch = new HashSet<>(WebUtils.SUBMIT_IMAGE_SUFFIXES.length + 1);
+    private final Set<String> namesToMatch = new HashSet<>(SUBMIT_IMAGE_SUFFIXES.length + 1);
 
     public WebRequestHeaderExpression(String expression) {
         super(expression);
         this.namesToMatch.add(getName());
-        for (String suffix : WebUtils.SUBMIT_IMAGE_SUFFIXES) {
+        for (String suffix : SUBMIT_IMAGE_SUFFIXES) {
             this.namesToMatch.add(getName() + suffix);
         }
     }
@@ -74,7 +74,7 @@ public class WebRequestHeaderExpression extends AbstractNameValueExpression<Stri
 
     protected static List<WebRequestHeaderExpression> parseExpressions(String... headers) {
         List<WebRequestHeaderExpression> expressions = emptyList();
-        int size = ArrayUtils.size(headers);
+        int size = size(headers);
         if (size > 0) {
             expressions = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {

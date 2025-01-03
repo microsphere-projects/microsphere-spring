@@ -27,6 +27,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -36,11 +37,11 @@ import java.util.Set;
 
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.of;
-import static io.microsphere.util.ClassUtils.cast;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
+import static org.springframework.util.Assert.isInstanceOf;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.containsElement;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -92,7 +93,6 @@ public abstract class BeanFactoryUtils extends BaseUtils {
             return emptyList();
         }
 
-        // Issue : https://github.com/alibaba/spring-context-support/issues/20
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType, true, false);
 
         List<T> beans = new ArrayList<T>(beanNames.length);
@@ -156,11 +156,7 @@ public abstract class BeanFactoryUtils extends BaseUtils {
      * @return non-null read-only {@link Set}
      */
     public static Set<Class<?>> getResolvableDependencyTypes(ConfigurableListableBeanFactory beanFactory) {
-        DefaultListableBeanFactory defaultListableBeanFactory = asDefaultListableBeanFactory(beanFactory);
-        if (defaultListableBeanFactory == null) {
-            return emptySet();
-        }
-        return getResolvableDependencyTypes((DefaultListableBeanFactory) beanFactory);
+        return getResolvableDependencyTypes(asDefaultListableBeanFactory(beanFactory));
     }
 
     /**
@@ -190,6 +186,19 @@ public abstract class BeanFactoryUtils extends BaseUtils {
             beanPostProcessors = emptyList();
         }
         return beanPostProcessors;
+    }
+
+    private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
+        if (beanFactory == null) {
+            return null;
+        }
+        if (beanFactory instanceof ApplicationContext) {
+            beanFactory = ((ApplicationContext) beanFactory).getAutowireCapableBeanFactory();
+        }
+        isInstanceOf(extendedBeanFactoryType, beanFactory,
+                "The 'beanFactory' argument is not a instance of " + extendedBeanFactoryType +
+                        ", is it running in Spring container?");
+        return extendedBeanFactoryType.cast(beanFactory);
     }
 
 }

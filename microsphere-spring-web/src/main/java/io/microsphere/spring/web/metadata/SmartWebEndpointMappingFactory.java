@@ -18,7 +18,6 @@ package io.microsphere.spring.web.metadata;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
-import io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.emptyList;
 
 /**
@@ -56,7 +56,7 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
 
     private Map<Class<?>, List<WebEndpointMappingFactory>> loadDelegates(@Nullable ConfigurableListableBeanFactory beanFactory) {
 
-        List<WebEndpointMappingFactory> factories = loadFactories(beanFactory);
+        List<WebEndpointMappingFactory> factories = doLoadFactories(beanFactory);
         Collection<WebEndpointMappingFactory> factoryBeans = getFactoryBeans(beanFactory);
 
         int size = factories.size() + factoryBeans.size();
@@ -84,8 +84,8 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
         }
     }
 
-    private List<WebEndpointMappingFactory> loadFactories(ConfigurableListableBeanFactory beanFactory) {
-        return SpringFactoriesLoaderUtils.loadFactories(beanFactory, FACTORY_CLASS);
+    private List<WebEndpointMappingFactory> doLoadFactories(ConfigurableListableBeanFactory beanFactory) {
+        return loadFactories(beanFactory, FACTORY_CLASS);
     }
 
     @Override

@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.util.ArrayUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 
@@ -34,6 +33,8 @@ import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
+import static io.microsphere.util.ArrayUtils.size;
+import static io.microsphere.util.ArrayUtils.asArray;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -277,7 +278,7 @@ public class WebEndpointMapping<E> {
     }
 
     public static <E> Builder<E> of(@Nullable Kind kind, @Nullable E endpoint, Collection<String> patterns) {
-        return of(kind, endpoint, ArrayUtils.asArray(patterns, String.class));
+        return of(kind, endpoint, asArray(patterns, String.class));
     }
 
     public static <E> Builder of(@Nullable Kind kind, @Nullable E endpoint, String... patterns) {
@@ -376,6 +377,7 @@ public class WebEndpointMapping<E> {
      *     <li>Spring WebMVC {@link org.springframework.web.servlet.HandlerMapping}</li>
      *     <li>Spring WebFlux {@link org.springframework.web.reactive.HandlerMapping}</li>
      * </ul>, or it's {@link #NON_SOURCE non-source}
+     *
      * @return non-null
      */
     @Nonnull
@@ -524,7 +526,7 @@ public class WebEndpointMapping<E> {
 
     private void append(StringBuilder appendable, String name, String[] values, String... prefixes) {
 
-        int size = ArrayUtils.size(values);
+        int size = size(values);
         if (size < 1) {
             return;
         }

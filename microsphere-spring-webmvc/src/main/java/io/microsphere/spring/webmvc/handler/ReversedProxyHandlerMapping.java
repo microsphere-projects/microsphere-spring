@@ -22,7 +22,6 @@ import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
-import io.microsphere.util.ArrayUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationListener;
 import org.springframework.web.method.HandlerMethod;
@@ -44,6 +43,7 @@ import java.util.Map;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
+import static io.microsphere.util.ArrayUtils.of;
 
 /**
  * The performance optimization {@link HandlerMapping} to process the forwarded request
@@ -86,7 +86,7 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         Class<?> declaredClass = AbstractHandlerMapping.class;
         String methodName = getHandlerExecutionChainMethodName;
         MethodHandle methodHandle = null;
-        Class<?>[] parameterTypes = ArrayUtils.of(Object.class, HttpServletRequest.class);
+        Class<?>[] parameterTypes = of(Object.class, HttpServletRequest.class);
         try {
             methodHandle = findVirtual(RequestMappingHandlerMapping.class, methodName, parameterTypes);
         } catch (Throwable e) {

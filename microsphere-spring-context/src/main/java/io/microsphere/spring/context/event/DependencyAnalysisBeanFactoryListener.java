@@ -53,6 +53,7 @@ import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
@@ -75,11 +76,8 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
-        if (!(bf instanceof DefaultListableBeanFactory)) {
-            logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
-            return;
-        }
-        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) bf;
+
+        DefaultListableBeanFactory beanFactory = asDefaultListableBeanFactory(bf);
 
         Filter<Class<?>> resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
 

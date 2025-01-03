@@ -37,7 +37,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -57,6 +56,7 @@ import static org.springframework.util.Assert.noNullElements;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * An abstract class for the extension to {@link BeanDefinitionRegistryPostProcessor}, which will execute two main registration
@@ -267,7 +267,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     protected String[] resolveBasePackages(Set<String> packagesToScan) {
         Set<String> resolvedPackagesToScan = new LinkedHashSet<String>(packagesToScan.size());
         for (String packageToScan : packagesToScan) {
-            if (StringUtils.hasText(packageToScan)) {
+            if (hasText(packageToScan)) {
                 String resolvedPackageToScan = getEnvironment().resolvePlaceholders(packageToScan.trim());
                 resolvedPackagesToScan.add(resolvedPackageToScan);
             }

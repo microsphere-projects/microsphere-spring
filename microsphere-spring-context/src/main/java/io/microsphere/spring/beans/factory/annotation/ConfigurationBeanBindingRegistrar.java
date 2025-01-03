@@ -34,7 +34,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,13 +47,14 @@ import static io.microsphere.spring.beans.factory.annotation.EnableConfiguration
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getRequiredAttribute;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefix;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.lang.Boolean.valueOf;
 import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
-import static org.springframework.util.Assert.isInstanceOf;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} implementation for {@link EnableConfigurationBeanBinding @EnableConfigurationBinding}
@@ -72,6 +72,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private ConfigurableEnvironment environment;
+
     private BeanFactory beanFactory;
 
     @Override
@@ -175,8 +176,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     @Override
     public void setEnvironment(Environment environment) {
-        isInstanceOf(ConfigurableEnvironment.class, environment);
-        this.environment = (ConfigurableEnvironment) environment;
+        this.environment = asConfigurableEnvironment(environment);
     }
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
@@ -205,7 +205,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         String beanName = (String) properties.get("id");
 
-        if (!StringUtils.hasText(beanName)) {
+        if (!hasText(beanName)) {
             BeanDefinitionBuilder builder = rootBeanDefinition(configClass);
             beanName = BeanDefinitionReaderUtils.generateBeanName(builder.getRawBeanDefinition(), registry);
         }
