@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 import static io.microsphere.reflect.MethodUtils.findDeclaredMethod;
 import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
@@ -174,7 +175,7 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
+        ListableBeanFactory listableBeanFactory = asListableBeanFactory(beanFactory);
         this.delegate = beanFactory.getBean(this.delegateBeanName, ApplicationEventMulticaster.class);
         this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
         this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);
