@@ -112,7 +112,7 @@ public class BeanUtilsTest {
 
         String[] beanNames = getBeanNames(context, User.class);
 
-        Assert.assertTrue(Arrays.asList(beanNames).contains("user"));
+        assertTrue(Arrays.asList(beanNames).contains("user"));
 
         context.close();
 
