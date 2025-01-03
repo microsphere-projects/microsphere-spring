@@ -59,6 +59,7 @@ import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.reflect.MemberUtils.isStatic;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getResolvableType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
@@ -101,8 +102,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
     private final ExecutorService executorService;
 
     public DefaultBeanDependencyResolver(BeanFactory bf, ExecutorService executorService) {
-        isInstanceOf(DefaultListableBeanFactory.class, bf, "The BeanFactory is not an instance of DefaultListableBeanFactory");
-        this.beanFactory = (DefaultListableBeanFactory) bf;
+        this.beanFactory = asDefaultListableBeanFactory(bf);
         this.classLoader = this.beanFactory.getBeanClassLoader();
         this.resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
         this.resolvers = new InjectionPointDependencyResolvers(beanFactory);
