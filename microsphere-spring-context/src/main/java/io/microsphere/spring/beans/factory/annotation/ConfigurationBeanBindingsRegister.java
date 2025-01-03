@@ -26,7 +26,6 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
-import static org.springframework.util.Assert.isInstanceOf;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar Registrar class} for {@link EnableConfigurationBeanBindings}
