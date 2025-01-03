@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
+
 /**
  * Bean Before-Event Publishing Processor
  *
@@ -133,7 +135,7 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
         }
 
         // register BeanAfterEventPublishingProcessor.Installer ensuring it's the first bean definition
-        BeanRegistrar.registerBeanDefinition(registry, EventPublishingBeanAfterProcessor.Initializer.class);
+        registerBeanDefinition(registry, EventPublishingBeanAfterProcessor.Initializer.class);
 
         // re-register previous bean definitions
         beanDefinitionHolders.forEach(beanDefinitionHolder -> {
