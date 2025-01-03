@@ -27,6 +27,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -36,7 +37,6 @@ import java.util.Set;
 
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.of;
-import static io.microsphere.util.ClassUtils.cast;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
@@ -92,7 +92,6 @@ public abstract class BeanFactoryUtils extends BaseUtils {
             return emptyList();
         }
 
-        // Issue : https://github.com/alibaba/spring-context-support/issues/20
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType, true, false);
 
         List<T> beans = new ArrayList<T>(beanNames.length);
@@ -190,6 +189,13 @@ public abstract class BeanFactoryUtils extends BaseUtils {
             beanPostProcessors = emptyList();
         }
         return beanPostProcessors;
+    }
+
+    private static <T> T cast(Object beanFactory, Class<T> extendedBeanFactoryType) {
+        Assert.isInstanceOf(extendedBeanFactoryType, beanFactory,
+                "The 'beanFactory' argument is not a instance of " + extendedBeanFactoryType +
+                        ", is it running in Spring container?");
+        return extendedBeanFactoryType.cast(beanFactory);
     }
 
 }
