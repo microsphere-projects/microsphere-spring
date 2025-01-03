@@ -1,0 +1,108 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.microsphere.spring.core.io.support;
+
+import io.microsphere.spring.test.Bean;
+import io.microsphere.spring.test.TestBean;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+
+import java.util.List;
+
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+/**
+ * {@link SpringFactoriesLoaderUtils} Test
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see SpringFactoriesLoaderUtils
+ * @since 1.0.0
+ */
+public class SpringFactoriesLoaderUtilsTest {
+
+    private GenericApplicationContext context;
+
+    private DefaultListableBeanFactory beanFactory;
+
+    @BeforeEach
+    public void before() {
+        context = new GenericApplicationContext();
+        beanFactory = context.getDefaultListableBeanFactory();
+        context.refresh();
+    }
+
+    @AfterEach
+    public void after() {
+        context.close();
+    }
+
+    @Test
+    public void testLoadFactories() {
+        testLoadFactoriesFromContext(beanFactory, context);
+        testLoadFactoriesFromBeanFactory(beanFactory);
+    }
+
+    private void testLoadFactoriesFromBeanFactory(BeanFactory beanFactory) {
+        List<Bean> beans = loadFactories(beanFactory, Bean.class);
+
+        assertEquals(2, beans.size());
+
+        TestBean testBean = (TestBean) beans.get(0);
+        assertNull(testBean.getApplicationContext());
+        assertNull(testBean.getApplicationEventPublisher());
+        assertNull(testBean.getResourceLoader());
+        assertNull(testBean.getMessageSource());
+        assertNull(testBean.getEnvironment());
+        assertNull(testBean.getResolver());
+
+        assertSame(beanFactory, testBean.getBeanFactory());
+
+        assertEquals("io.microsphere.spring.test.TestBean#0", testBean.getBeanName());
+    }
+
+    private void testLoadFactoriesFromContext(ConfigurableBeanFactory beanFactory, ApplicationContext context) {
+        List<Bean> beans = loadFactories(context, Bean.class);
+
+        assertEquals(2, beans.size());
+
+        TestBean testBean = (TestBean) beans.get(0);
+
+        assertNotNull(testBean);
+        assertNotNull(testBean.getResolver());
+
+        assertSame(context, testBean.getApplicationContext());
+        assertSame(context, testBean.getApplicationEventPublisher());
+        assertSame(context, testBean.getResourceLoader());
+        assertSame(context, testBean.getMessageSource());
+        assertSame(context.getEnvironment(), testBean.getEnvironment());
+
+        assertSame(beanFactory, testBean.getBeanFactory());
+        assertSame(beanFactory.getBeanClassLoader(), testBean.getClassLoader());
+
+        assertEquals("io.microsphere.spring.test.TestBean#0", testBean.getBeanName());
+    }
+}

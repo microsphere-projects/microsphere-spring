@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.core.convert;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 
@@ -26,9 +26,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import static io.microsphere.spring.core.convert.SpringConverterAdapter.buildConvertiblePair;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.core.convert.TypeDescriptor.forObject;
 import static org.springframework.core.convert.TypeDescriptor.valueOf;
 

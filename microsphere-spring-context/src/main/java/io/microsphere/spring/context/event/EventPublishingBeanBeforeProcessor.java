@@ -17,7 +17,7 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import io.microsphere.spring.util.BeanRegistrar;
+import io.microsphere.spring.beans.factory.support.BeanRegistrar;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
@@ -108,6 +108,15 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
     @Override
     public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException {
         this.beanEventListeners.onBeforeBeanDestroy(beanName, bean);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 4.3
+     */
+    public boolean requiresDestruction(Object object) {
+        return true;
     }
 
     private void prepareBeanDefinitions(BeanDefinitionRegistry registry) {

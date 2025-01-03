@@ -36,13 +36,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.PathMatcher;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -61,6 +60,7 @@ import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.sort;
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -324,7 +324,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     }
 
     private String handleSourceName(String resourcePropertySourceName) {
-        Assert.notNull(resourcePropertySourceName, "resourcePropertySourceName is null.");
+        notNull(resourcePropertySourceName, "resourcePropertySourceName is null.");
         return resourcePropertySourceName.substring(0, resourcePropertySourceName.lastIndexOf("@"));
     }
 
@@ -441,7 +441,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @see PropertySourceExtension#factory()
      * @see PropertySourceFactory
      */
-    @NonNull
+    @Nonnull
     protected PropertySourceFactory createPropertySourceFactory(EA extensionAttributes) {
         return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getPropertySourceFactoryClass);
     }
@@ -455,7 +455,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @see PropertySourceExtension#resourceComparator()
      * @see Comparator
      */
-    @NonNull
+    @Nonnull
     protected Comparator<Resource> createResourceComparator(EA extensionAttributes, String propertySourceName) {
         return createInstance(extensionAttributes, PropertySourceExtensionAttributes::getResourceComparatorClass);
     }

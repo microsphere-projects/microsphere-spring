@@ -16,14 +16,14 @@
  */
 package io.microsphere.spring.core.annotation;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.of;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link GenericAnnotationAttributes} Test
@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {GenericAnnotationAttributesTest.class})
 public class GenericAnnotationAttributesTest {
 
@@ -48,7 +48,7 @@ public class GenericAnnotationAttributesTest {
         assertEquals(contextConfiguration.loader(), annotationAttributes.getClass("loader"));
         assertEquals(contextConfiguration.inheritInitializers(), annotationAttributes.getBoolean("inheritInitializers"));
         assertEquals(contextConfiguration.inheritLocations(), annotationAttributes.getBoolean("inheritLocations"));
-        assertEquals(contextConfiguration.value(), annotationAttributes.getStringArray("value"));
+        assertArrayEquals(contextConfiguration.value(), annotationAttributes.getStringArray("value"));
 
     }
 }

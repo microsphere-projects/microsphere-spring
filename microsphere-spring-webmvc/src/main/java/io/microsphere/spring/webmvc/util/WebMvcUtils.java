@@ -12,7 +12,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -43,8 +42,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM;
 import static org.springframework.web.context.ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM;
 
@@ -350,7 +352,7 @@ public abstract class WebMvcUtils {
 
     protected static String appendInitParameter(String existedParameterValue, String... parameterValues) {
 
-        String[] existedParameterValues = StringUtils.hasLength(existedParameterValue) ?
+        String[] existedParameterValues = hasLength(existedParameterValue) ?
                 existedParameterValue.split(INIT_PARAM_DELIMITERS) :
                 new String[0];
 
@@ -376,15 +378,14 @@ public abstract class WebMvcUtils {
      */
     public static void appendInitParameters(ServletContext servletContext, String parameterName, String... parameterValues) {
 
-        Assert.notNull(servletContext, "The argument 'servletContext' must not be null!");
-        Assert.hasLength(parameterName, "The argument 'parameterName' must not be empty!");
-        Assert.notNull(parameterValues, "The argument 'parameterValues' must not be null!");
+        notNull(servletContext, "The argument 'servletContext' must not be null!");
+        notNull(parameterValues, "The argument 'parameterValues' must not be null!");
 
         String existedParameterValue = servletContext.getInitParameter(parameterName);
 
         String newParameterValue = appendInitParameter(existedParameterValue, parameterValues);
 
-        if (StringUtils.hasLength(newParameterValue)) {
+        if (hasLength(newParameterValue)) {
             servletContext.setInitParameter(parameterName, newParameterValue);
         }
 
@@ -453,17 +454,11 @@ public abstract class WebMvcUtils {
      * @return If current request is for page render , return <code>true</code> , or <code>false</code>.
      */
     public static boolean isPageRenderRequest(ModelAndView modelAndView) {
-
         if (modelAndView != null) {
-
             String viewName = modelAndView.getViewName();
-
-            return StringUtils.hasText(viewName);
-
+            return hasText(viewName);
         }
-
         return false;
-
     }
 
     private static String getHandlerMethodRequestBodyArgumentAttributeName(Method method) {

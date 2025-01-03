@@ -27,7 +27,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -40,6 +39,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
 
 /**
  * The {@link PropertySourceExtensionLoader} Class for {@link ResourcePropertySource}
@@ -82,7 +83,7 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
         for (int i = 0; i < size; i++) {
             PropertySourceResource propertySourceResource = propertySourceResources.get(i);
             Resource resource = propertySourceResource.getResource();
-            if (isFileSystemBasedResource(resource)) {
+            if (isFileBasedResource(resource)) {
                 File resourceFile = resource.getFile();
                 listenerAdapter.register(resourceFile, propertySourceResource.getResourceValue());
                 fileWatchService.watch(resourceFile, listenerAdapter, FileChangedEvent.Kind.MODIFIED);
@@ -157,11 +158,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
                 logger.error("TODO message", e);
             }
         }
-    }
-
-    private boolean isFileSystemBasedResource(Resource resource) {
-        return resource instanceof FileSystemResource ||
-                resource instanceof FileUrlResource;
     }
 
     @Override

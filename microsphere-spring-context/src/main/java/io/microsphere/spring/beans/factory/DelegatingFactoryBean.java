@@ -24,9 +24,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import static io.microsphere.spring.util.BeanUtils.invokeAwareInterfaces;
-import static io.microsphere.spring.util.BeanUtils.invokeBeanNameAware;
-import static io.microsphere.spring.util.BeanUtils.invokeInitializingBean;
+import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
+import static io.microsphere.spring.beans.BeanUtils.invokeBeanNameAware;
+import static io.microsphere.spring.beans.BeanUtils.invokeInitializingBean;
+import static org.springframework.aop.support.AopUtils.getTargetClass;
 
 /**
  * {@link FactoryBean} implementation based on delegate object that was instantiated
@@ -42,9 +43,16 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
 
     private final Class<?> objectType;
 
+    private final boolean singleton;
+
     public DelegatingFactoryBean(Object delegate) {
+        this(delegate, true);
+    }
+
+    public DelegatingFactoryBean(Object delegate, boolean singleton) {
         this.delegate = delegate;
-        this.objectType = delegate.getClass();
+        this.objectType = getTargetClass(delegate);
+        this.singleton = singleton;
     }
 
     @Override
@@ -70,6 +78,11 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     @Override
     public void setBeanName(String name) {
         invokeBeanNameAware(delegate, name);
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return singleton;
     }
 
     @Override

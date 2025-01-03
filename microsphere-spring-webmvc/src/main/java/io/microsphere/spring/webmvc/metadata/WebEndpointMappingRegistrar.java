@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.lifecycle.AbstractSmartLifecycle;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
@@ -23,11 +25,10 @@ import io.microsphere.spring.web.metadata.FilterRegistrationWebEndpointMappingFa
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
+import io.microsphere.util.Version;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
@@ -91,7 +92,10 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
 
         ServletContext servletContext = context.getServletContext();
 
-        collectFromServletContext(servletContext, context, webEndpointMappings);
+        Version servletVersion = Version.of(servletContext.getMajorVersion(), servletContext.getMinorVersion());
+        if (Version.of(3).le(servletVersion)) { // Servlet 3.0+
+            collectFromServletContext(servletContext, context, webEndpointMappings);
+        }
 
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             collectFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);

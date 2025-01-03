@@ -17,16 +17,19 @@
 package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.webmvc.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Map;
 import java.util.Optional;
@@ -42,11 +45,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {
-        RequestMappingInfoWebEndpointMappingFactoryTest.class
-},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableAutoConfiguration
+@WebAppConfiguration
+@ContextConfiguration(classes = {
+        TestController.class,
+        RequestMappingInfoWebEndpointMappingFactoryTest.class,
+        RequestMappingInfoWebEndpointMappingFactoryTest.Config.class
+})
 public class RequestMappingInfoWebEndpointMappingFactoryTest {
 
     private Map<RequestMappingInfo, HandlerMethod> handlerMethods;
@@ -55,6 +59,17 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
 
     @Autowired
     private RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping;
+
+    @Autowired
+    private TestController testController;
+
+    static class Config {
+
+        @Bean
+        public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+            return new RequestMappingHandlerMapping();
+        }
+    }
 
     @BeforeEach
     public void init() {

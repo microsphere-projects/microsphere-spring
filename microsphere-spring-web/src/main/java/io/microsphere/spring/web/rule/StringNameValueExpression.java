@@ -16,8 +16,9 @@
 
 package io.microsphere.spring.web.rule;
 
-import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
+
+import javax.annotation.Nullable;
 
 /**
  * String {@link NameValueExpression}

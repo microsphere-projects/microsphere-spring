@@ -22,9 +22,9 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
 import static io.microsphere.spring.config.ConfigurationPropertyRepository.BEAN_NAME;
-import static io.microsphere.spring.util.BeanRegistrar.registerBean;
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.registerFactories;
 
 /**
  * The Initializer for Collecting Configuration Property

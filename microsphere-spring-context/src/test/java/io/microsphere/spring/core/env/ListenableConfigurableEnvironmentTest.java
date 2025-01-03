@@ -28,12 +28,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static io.microsphere.spring.core.SpringVersion.CURRENT;
+import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link ListenableConfigurableEnvironment} Test
@@ -144,6 +146,7 @@ public class ListenableConfigurableEnvironmentTest {
     public void testMatchesProfiles() {
         assertTrue(environment.matchesProfiles("test"));
         assertFalse(environment.matchesProfiles("!test"));
+
     }
 
     /**
@@ -156,7 +159,9 @@ public class ListenableConfigurableEnvironmentTest {
     @Test
     public void testAcceptsProfiles() {
         assertTrue(environment.acceptsProfiles("test"));
-        assertTrue(environment.acceptsProfiles(profile -> true));
+        if (CURRENT.ge(SPRING_5_1)) {
+            assertTrue(environment.acceptsProfiles(profile -> true));
+        }
     }
 
     /**

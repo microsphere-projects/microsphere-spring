@@ -18,7 +18,6 @@ package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
@@ -28,15 +27,17 @@ import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
 import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 import org.springframework.web.servlet.mvc.condition.NameValueExpression;
 import org.springframework.web.servlet.mvc.condition.ParamsRequestCondition;
-import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
+import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 import java.util.Set;
 
+import static io.microsphere.invoke.MethodHandleUtils.NOT_FOUND_METHOD_HANDLE;
+import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -49,9 +50,19 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMappingWebEndpointMappingFactory<HandlerMethod, RequestMappingInfo> {
 
-    private static final String CLASS_NAME = "org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition";
+    /**
+     * The method name of {@link RequestMappingInfo#getPatternValues()}
+     *
+     * @since Spring Framework 5.3
+     */
+    private static final String GET_PATTERNS_VALUES_METHOD_NAME = "getPatternValues";
 
-    private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
+    /**
+     * The {@link MethodHandle} of {@link RequestMappingInfo#getPatternValues()}
+     *
+     * @since Spring Framework 5.3
+     */
+    private static final MethodHandle GET_PATTERNS_VALUES_METHOD_HANDLE = findVirtual(RequestMappingInfo.class, GET_PATTERNS_VALUES_METHOD_NAME);
 
     public RequestMappingMetadataWebEndpointMappingFactory(HandlerMapping handlerMapping) {
         super(handlerMapping);
@@ -87,10 +98,11 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
 
     private Set<String> getPatterns(RequestMappingInfo source) {
         Set<String> patterns = null;
-        if (PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT) {
-            PathPatternsRequestCondition pathPatternsCondition = source.getPathPatternsCondition();
-            if (pathPatternsCondition != null) {
-                patterns = pathPatternsCondition.getPatternValues();
+        if (GET_PATTERNS_VALUES_METHOD_HANDLE != NOT_FOUND_METHOD_HANDLE) {
+            try {
+                patterns = (Set<String>) GET_PATTERNS_VALUES_METHOD_HANDLE.invokeExact(source);
+            } catch (Throwable e) {
+                logger.error("RequestMappingInfo.getPatternValues() can't be invoked by {}", GET_PATTERNS_VALUES_METHOD_HANDLE, e);
             }
         }
         if (isEmpty(patterns)) {
@@ -101,6 +113,5 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
         }
         return patterns;
     }
-
 
 }

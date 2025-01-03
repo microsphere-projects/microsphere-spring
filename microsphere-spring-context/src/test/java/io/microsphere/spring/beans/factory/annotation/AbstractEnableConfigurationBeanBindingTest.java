@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.MutablePropertySources;
@@ -36,7 +36,7 @@ public abstract class AbstractEnableConfigurationBeanBindingTest {
 
     protected AnnotationConfigApplicationContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = new AnnotationConfigApplicationContext();
         context.register(getClass());
@@ -56,7 +56,7 @@ public abstract class AbstractEnableConfigurationBeanBindingTest {
         context.refresh();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         context.close();
     }

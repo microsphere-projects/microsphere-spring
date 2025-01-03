@@ -20,6 +20,13 @@
 
     <dependencies>
 
+        <!-- JSR 305 -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- MicroSphere Spring Context -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
@@ -60,7 +67,7 @@
             <artifactId>jackson-databind</artifactId>
             <optional>true</optional>
         </dependency>
-        
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -88,5 +95,14 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>spring-framework-4.3</id>
+            <properties>
+                <spring.version>5.0.20.RELEASE</spring.version>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

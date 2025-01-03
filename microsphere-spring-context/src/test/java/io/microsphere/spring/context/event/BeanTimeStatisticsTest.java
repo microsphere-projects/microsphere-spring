@@ -16,21 +16,21 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.StopWatch;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {BeanTimeStatistics.class, BeanTimeStatisticsTest.class},
         initializers = {EventPublishingBeanInitializer.class})
 public class BeanTimeStatisticsTest {
