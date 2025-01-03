@@ -62,9 +62,7 @@ public interface AutowireCandidateResolvingListener {
         // Add all Spring SPI with extension
         listeners.addAll(loadFactories(beanFactory, AutowireCandidateResolvingListener.class));
         // Add all Spring Beans if BeanFactory is available
-        if (beanFactory instanceof ListableBeanFactory) {
-            listeners.addAll(getSortedBeans((ListableBeanFactory) beanFactory, AutowireCandidateResolvingListener.class));
-        }
+        listeners.addAll(getSortedBeans(beanFactory, AutowireCandidateResolvingListener.class));
         // Sort
         sort(listeners);
         return unmodifiableList(listeners);
