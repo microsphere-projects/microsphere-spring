@@ -34,6 +34,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.List;
 
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} class to register {@link BeanDefinition BeanDefinitions}
@@ -50,7 +51,7 @@ class P6DataSourceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistr
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        initP6ModuleManager((ConfigurableListableBeanFactory) beanFactory);
+        initP6ModuleManager(asConfigurableListableBeanFactory(beanFactory));
     }
 
     private void initP6ModuleManager(ConfigurableListableBeanFactory beanFactory) {
