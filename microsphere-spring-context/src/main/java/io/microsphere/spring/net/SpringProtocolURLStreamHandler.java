@@ -42,6 +42,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.List;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 
 /**
@@ -117,8 +118,7 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "The 'beanFactory' argument must be an instance of " + ConfigurableListableBeanFactory.class.getName());
-        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     @Override
