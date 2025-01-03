@@ -96,13 +96,4 @@
 
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>spring-framework-4.3</id>
-            <properties>
-                <spring.version>5.0.20.RELEASE</spring.version>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>

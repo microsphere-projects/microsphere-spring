@@ -132,16 +132,9 @@
     </dependencies>
 
     <profiles>
-
         <profile>
             <id>spring-framework-6.0</id>
             <dependencies>
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context-indexer</artifactId>
-                    <optional>true</optional>
-                </dependency>
-
                 <dependency>
                     <groupId>io.github.microsphere-projects</groupId>
                     <artifactId>microsphere-spring-compatible</artifactId>
@@ -152,33 +145,30 @@
         </profile>
 
         <profile>
-            <id>spring-framework-5.1</id>
+            <id>spring-framework-6.1</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context-indexer</artifactId>
+                    <groupId>io.github.microsphere-projects</groupId>
+                    <artifactId>microsphere-spring-compatible</artifactId>
+                    <version>${revision}</version>
                     <optional>true</optional>
                 </dependency>
             </dependencies>
         </profile>
 
         <profile>
-            <id>spring-framework-5.2</id>
-            <dependencies>
-
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>spring-framework-5.3</id>
+            <id>spring-framework-6.2</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context-indexer</artifactId>
+                    <groupId>io.github.microsphere-projects</groupId>
+                    <artifactId>microsphere-spring-compatible</artifactId>
+                    <version>${revision}</version>
                     <optional>true</optional>
                 </dependency>
             </dependencies>
         </profile>
+
+
     </profiles>
 
 </project>
