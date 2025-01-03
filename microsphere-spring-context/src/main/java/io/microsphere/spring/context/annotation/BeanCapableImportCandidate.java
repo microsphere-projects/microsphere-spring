@@ -38,6 +38,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Nonnull;
 
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
 
 /**
@@ -97,9 +98,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     @Override
     public final void setEnvironment(Environment environment) {
         if (this.environment == null) {
-            Class<ConfigurableEnvironment> targetType = ConfigurableEnvironment.class;
-            Assert.isInstanceOf(targetType, environment, "The 'environment' argument must be an instance of class " + targetType.getName());
-            this.environment = targetType.cast(environment);
+            this.environment = asConfigurableEnvironment(environment);
         }
     }
 
