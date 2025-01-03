@@ -50,6 +50,7 @@ import static io.microsphere.util.ClassLoaderUtils.getClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.isPresent;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
@@ -173,7 +174,6 @@ public abstract class BeanUtils extends BaseUtils {
      * @return If found , return the array of Bean Names , or empty array.
      */
     public static String[] getBeanNames(ListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
-        // Issue : https://github.com/alibaba/spring-context-support/issues/22
         if (includingAncestors) {
             return beanNamesForTypeIncludingAncestors(beanFactory, beanClass, true, false);
         } else {
@@ -203,7 +203,6 @@ public abstract class BeanUtils extends BaseUtils {
     public static String[] getBeanNames(ConfigurableListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
         return getBeanNames((ListableBeanFactory) beanFactory, beanClass, includingAncestors);
     }
-
 
     /**
      * Resolve Bean Type
@@ -297,6 +296,20 @@ public abstract class BeanUtils extends BaseUtils {
         return null;
     }
 
+    /**
+     * Get all sorted Beans of {@link BeanFactory} in specified bean type.
+     *
+     * @param beanFactory {@link BeanFactory}
+     * @param type        bean type
+     * @param <T>         bean type
+     * @return all sorted Beans
+     */
+    public static <T> List<T> getSortedBeans(BeanFactory beanFactory, Class<T> type) {
+        if (beanFactory instanceof ListableBeanFactory) {
+            return getSortedBeans((ListableBeanFactory) beanFactory, type);
+        }
+        return emptyList();
+    }
 
     /**
      * Get all sorted Beans of {@link ListableBeanFactory} in specified bean type.
