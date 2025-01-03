@@ -2,7 +2,6 @@ package io.microsphere.spring.context.annotation;
 
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.test.TestBean2;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.scanBasePackages;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -44,7 +44,7 @@ public class AnnotatedBeanDefinitionRegistryUtilsTest {
 
         beanNames = registry.getBeanNamesForType(AnnotatedBeanDefinitionRegistryUtils.class);
 
-        Assert.assertTrue(isEmpty(beanNames));
+        assertTrue(isEmpty(beanNames));
 
         registerBeans(registry);
 

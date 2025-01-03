@@ -71,7 +71,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
-import static org.springframework.util.Assert.isInstanceOf;
 import static org.springframework.util.ClassUtils.getMostSpecificMethod;
 import static org.springframework.util.ObjectUtils.isEmpty;
 import static org.springframework.util.ReflectionUtils.doWithLocalFields;

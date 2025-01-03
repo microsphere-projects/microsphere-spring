@@ -32,7 +32,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

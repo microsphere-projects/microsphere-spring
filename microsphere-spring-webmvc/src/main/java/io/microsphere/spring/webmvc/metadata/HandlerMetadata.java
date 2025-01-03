@@ -20,6 +20,8 @@ import org.springframework.util.Assert;
 
 import java.util.Objects;
 
+import static org.springframework.util.Assert.notNull;
+
 /**
  * The metadata class for Spring WebMVC's Handler
  *
@@ -35,8 +37,8 @@ public class HandlerMetadata<H, M> {
     private final M metadata;
 
     public HandlerMetadata(H handler, M metadata) {
-        Assert.notNull(handler, "The 'handler' must not be null!");
-        Assert.notNull(metadata, "The 'metadata' must not be null!");
+        notNull(handler, "The 'handler' must not be null!");
+        notNull(metadata, "The 'metadata' must not be null!");
         this.handler = handler;
         this.metadata = metadata;
     }

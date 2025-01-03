@@ -43,8 +43,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
+import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.web.context.ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM;
 import static org.springframework.web.context.ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM;
 
@@ -350,7 +352,7 @@ public abstract class WebMvcUtils {
 
     protected static String appendInitParameter(String existedParameterValue, String... parameterValues) {
 
-        String[] existedParameterValues = StringUtils.hasLength(existedParameterValue) ?
+        String[] existedParameterValues = hasLength(existedParameterValue) ?
                 existedParameterValue.split(INIT_PARAM_DELIMITERS) :
                 new String[0];
 
@@ -376,15 +378,14 @@ public abstract class WebMvcUtils {
      */
     public static void appendInitParameters(ServletContext servletContext, String parameterName, String... parameterValues) {
 
-        Assert.notNull(servletContext);
-        Assert.hasLength(parameterName);
-        Assert.notNull(parameterValues);
+        notNull(servletContext);
+        notNull(parameterValues);
 
         String existedParameterValue = servletContext.getInitParameter(parameterName);
 
         String newParameterValue = appendInitParameter(existedParameterValue, parameterValues);
 
-        if (StringUtils.hasLength(newParameterValue)) {
+        if (hasLength(newParameterValue)) {
             servletContext.setInitParameter(parameterName, newParameterValue);
         }
 

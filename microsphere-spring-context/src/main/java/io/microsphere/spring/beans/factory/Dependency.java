@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory;
 
 import io.microsphere.collection.CollectionUtils;
 import io.microsphere.util.ArrayUtils;
-import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -30,6 +29,7 @@ import java.util.Objects;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static java.util.Collections.emptyList;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * Spring Bean Dependency
@@ -63,7 +63,7 @@ public class Dependency {
     }
 
     protected Dependency(String beanName, Dependency parent, Collection<Dependency> children) {
-        Assert.hasText(beanName, "The bean name of dependency must not be blank");
+        hasText(beanName, "The bean name of dependency must not be blank");
         this.beanName = beanName;
         this.parent = parent;
         this.doAddChildren(children);

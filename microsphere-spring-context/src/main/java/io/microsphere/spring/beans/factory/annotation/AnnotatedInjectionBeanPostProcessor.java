@@ -46,7 +46,6 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -79,6 +78,7 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
+import static org.springframework.util.Assert.notEmpty;
 
 /**
  * The generic {@link BeanPostProcessor} implementation to support the dependency injection for the customized annotations.
@@ -166,7 +166,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * @param annotationTypes the multiple types of {@link Annotation annotations}
      */
     public AnnotatedInjectionBeanPostProcessor(Collection<Class<? extends Annotation>> annotationTypes) {
-        Assert.notEmpty(annotationTypes, "The argument of annotations' types must not empty");
+        notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
     }
 

@@ -28,7 +28,6 @@ import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
+import static org.springframework.util.Assert.isInstanceOf;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.containsElement;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -195,7 +195,7 @@ public abstract class BeanFactoryUtils extends BaseUtils {
         if (beanFactory instanceof ApplicationContext) {
             beanFactory = ((ApplicationContext) beanFactory).getAutowireCapableBeanFactory();
         }
-        Assert.isInstanceOf(extendedBeanFactoryType, beanFactory,
+        isInstanceOf(extendedBeanFactoryType, beanFactory,
                 "The 'beanFactory' argument is not a instance of " + extendedBeanFactoryType +
                         ", is it running in Spring container?");
         return extendedBeanFactoryType.cast(beanFactory);
