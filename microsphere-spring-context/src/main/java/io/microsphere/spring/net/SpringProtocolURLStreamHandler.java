@@ -42,6 +42,8 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.List;
 
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
+
 /**
  * The Spring {@link URLStreamHandler} component supports supports the "spring" sub-protocols,
  * like "spring:{sub-protocol}:{ext-1}: ... :{ext-n}://...",
@@ -121,7 +123,6 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
 
     @Override
     public void setEnvironment(Environment environment) {
-        Assert.isInstanceOf(ConfigurableEnvironment.class, environment, "The 'environment' argument must be an instance of " + ConfigurableEnvironment.class.getName());
-        this.environment = (ConfigurableEnvironment) environment;
+        this.environment = asConfigurableEnvironment(environment);
     }
 }
