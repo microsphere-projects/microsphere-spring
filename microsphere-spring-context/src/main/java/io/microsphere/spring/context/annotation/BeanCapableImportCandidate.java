@@ -38,6 +38,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Nonnull;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
 
@@ -89,9 +90,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     @Override
     public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         if (this.beanFactory == null) {
-            Class<ConfigurableListableBeanFactory> targetType = ConfigurableListableBeanFactory.class;
-            Assert.isInstanceOf(targetType, beanFactory, "The 'beanFactory' argument must be an instance of class " + targetType.getName());
-            this.beanFactory = targetType.cast(beanFactory);
+            this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
         }
     }
 
