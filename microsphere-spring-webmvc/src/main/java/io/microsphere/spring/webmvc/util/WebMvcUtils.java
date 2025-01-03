@@ -12,7 +12,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,7 +23,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -42,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.util.ClassLoaderUtils.isPresent;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
@@ -49,6 +48,7 @@ import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM;
 import static org.springframework.web.context.ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM;
+import static org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext;
 
 /**
  * Spring Web MVC Utilities Class
@@ -76,8 +76,7 @@ public abstract class WebMvcUtils {
     /**
      * Indicates current version of Spring Framework is 4.1 or above
      */
-    private final static boolean ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_PRESENT =
-            ClassUtils.isPresent(ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_CLASS_NAME, WebMvcUtils.class.getClassLoader());
+    private final static boolean ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_PRESENT = isPresent(ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_CLASS_NAME, WebMvcUtils.class.getClassLoader());
 
     /**
      * {@link RequestMappingHandlerMapping} Context name
@@ -147,7 +146,7 @@ public abstract class WebMvcUtils {
             throw new IllegalStateException("Use it in your Servlet Web application!");
         }
         ServletContext servletContext = request.getServletContext();
-        return WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+        return getRequiredWebApplicationContext(servletContext);
     }
 
     /**
