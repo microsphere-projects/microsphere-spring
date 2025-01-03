@@ -49,6 +49,7 @@ import static io.microsphere.spring.beans.factory.annotation.EnableConfiguration
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getRequiredAttribute;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefix;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
@@ -175,11 +176,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     @Override
     public void setEnvironment(Environment environment) {
-
-        Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
-
-        this.environment = (ConfigurableEnvironment) environment;
-
+        this.environment = asConfigurableEnvironment(environment);
     }
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
