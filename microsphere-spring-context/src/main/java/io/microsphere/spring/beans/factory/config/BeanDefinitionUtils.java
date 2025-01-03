@@ -36,7 +36,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
-import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.length;
