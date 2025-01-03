@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.rule;
 
 import org.springframework.http.MediaType;
-import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.util.ArrayUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.parseMediaTypes;
 
@@ -56,7 +56,7 @@ public class ConsumeMediaTypeExpression extends GenericMediaTypeExpression {
 
     public static List<ConsumeMediaTypeExpression> parseExpressions(String[] consumes, @Nullable String[] headers) {
         Set<ConsumeMediaTypeExpression> result = null;
-        if (!ObjectUtils.isEmpty(headers)) {
+        if (!isEmpty(headers)) {
             for (String header : headers) {
                 WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
                 if (CONTENT_TYPE.equalsIgnoreCase(expression.name) && expression.value != null) {
@@ -68,7 +68,7 @@ public class ConsumeMediaTypeExpression extends GenericMediaTypeExpression {
                 }
             }
         }
-        if (!ObjectUtils.isEmpty(consumes)) {
+        if (!isEmpty(consumes)) {
             result = (result != null ? result : new LinkedHashSet<>());
             for (String consume : consumes) {
                 result.add(new ConsumeMediaTypeExpression(consume));
