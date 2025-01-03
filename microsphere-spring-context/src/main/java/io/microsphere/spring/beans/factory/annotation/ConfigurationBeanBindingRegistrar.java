@@ -72,6 +72,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private ConfigurableEnvironment environment;
+
     private BeanFactory beanFactory;
 
     @Override
