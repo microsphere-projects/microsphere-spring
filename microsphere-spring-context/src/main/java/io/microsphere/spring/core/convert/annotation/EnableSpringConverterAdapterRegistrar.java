@@ -28,6 +28,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.type.AnnotationMetadata;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+
 /**
  * {@link EnableSpringConverterAdapter} {@link Configuration} class
  *
@@ -45,7 +47,7 @@ class EnableSpringConverterAdapterRegistrar implements ImportSelector, BeanFacto
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+        ConfigurableBeanFactory configurableBeanFactory = asConfigurableBeanFactory(beanFactory);
         addSpringConverterAdapter(configurableBeanFactory);
     }
 
