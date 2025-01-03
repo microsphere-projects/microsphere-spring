@@ -73,6 +73,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
@@ -183,10 +184,8 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     @Override
     public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
-        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
-
 
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
