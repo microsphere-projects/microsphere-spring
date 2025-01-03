@@ -525,7 +525,7 @@ public class WebEndpointMapping<E> {
 
     private void append(StringBuilder appendable, String name, String[] values, String... prefixes) {
 
-        int size = ArrayUtils.size(values);
+        int size = size(values);
         if (size < 1) {
             return;
         }

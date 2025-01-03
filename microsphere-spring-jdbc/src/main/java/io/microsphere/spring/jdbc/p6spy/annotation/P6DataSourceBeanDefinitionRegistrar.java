@@ -35,6 +35,7 @@ import java.util.List;
 
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} class to register {@link BeanDefinition BeanDefinitions}
@@ -46,7 +47,7 @@ class P6DataSourceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistr
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        BeanRegistrar.registerBeanDefinition(registry, P6DataSourceBeanPostProcessor.class);
+        registerBeanDefinition(registry, P6DataSourceBeanPostProcessor.class);
     }
 
     @Override
