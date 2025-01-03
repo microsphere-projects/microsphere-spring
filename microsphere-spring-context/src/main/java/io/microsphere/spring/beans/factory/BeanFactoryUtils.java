@@ -156,11 +156,7 @@ public abstract class BeanFactoryUtils extends BaseUtils {
      * @return non-null read-only {@link Set}
      */
     public static Set<Class<?>> getResolvableDependencyTypes(ConfigurableListableBeanFactory beanFactory) {
-        DefaultListableBeanFactory defaultListableBeanFactory = asDefaultListableBeanFactory(beanFactory);
-        if (defaultListableBeanFactory == null) {
-            return emptySet();
-        }
-        return getResolvableDependencyTypes((DefaultListableBeanFactory) beanFactory);
+        return getResolvableDependencyTypes(asDefaultListableBeanFactory(beanFactory));
     }
 
     /**
