@@ -116,6 +116,7 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
      *
      * @since Spring Framework 4.3
      */
+    @Override
     public boolean requiresDestruction(Object object) {
         return true;
     }
