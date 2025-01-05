@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 /**
- * The classes in this package or sub-packages are forked from the Spring Framework 5.3.x(latest),
- * which will be used to be compatible with the lower versions of Spring Framework.
+ * The classes in this package or sub-packages are forked from the Spring Framework 6.2.x(latest),
+ * which will be used to be compatible with the Spring Framework 6 and above.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
