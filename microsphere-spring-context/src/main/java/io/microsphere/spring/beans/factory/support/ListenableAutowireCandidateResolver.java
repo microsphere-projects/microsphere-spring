@@ -34,18 +34,15 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
-import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.util.ArrayUtils.combine;
-import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
  * The decorator class of {@link AutowireCandidateResolver} to listen to the resolving process of autowire candidate by
@@ -63,27 +60,6 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         EnvironmentAware, BeanNameAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ListenableAutowireCandidateResolver.class);
-
-    /**
-     * The {@link MethodHandle} of {@link AutowireCandidateResolver#isRequired(DependencyDescriptor)}
-     *
-     * @since Spring Framework 5.0
-     */
-    private static final MethodHandle IS_REQUIRED_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, "isRequired", DependencyDescriptor.class);
-
-    /**
-     * The {@link MethodHandle} of {@link AutowireCandidateResolver#hasQualifier(DependencyDescriptor)}
-     *
-     * @since Spring Framework 5.1
-     */
-    private static final MethodHandle HAS_QUALIFIER_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, "hasQualifier", DependencyDescriptor.class);
-
-    /**
-     * The {@link MethodHandle} of {@link AutowireCandidateResolver#cloneIfNecessary()}
-     *
-     * @since Spring Framework 5.2.7
-     */
-    private static final MethodHandle CLONE_IF_NECESSARY_METHOD_HANDLE = findVirtual(AutowireCandidateResolver.class, "cloneIfNecessary");
 
     /**
      * The prefix of the property name of {@link ListenableAutowireCandidateResolver}
@@ -131,20 +107,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.0
      */
     public boolean isRequired(DependencyDescriptor descriptor) {
-        if (IS_REQUIRED_METHOD_HANDLE == null) {
-            return descriptor.isRequired();
-        }
-        boolean required = false;
-        try {
-            required = (boolean) IS_REQUIRED_METHOD_HANDLE.invokeExact(delegate, descriptor);
-        } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : '{}'", IS_REQUIRED_METHOD_HANDLE,
-                        Arrays.asList(delegate, descriptor), e);
-            }
-            required = descriptor.isRequired();
-        }
-        return required;
+        return delegate.isRequired(descriptor);
     }
 
     /**
@@ -152,20 +115,9 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      *
      * @since Spring Framework 5.1
      */
+    @Override
     public boolean hasQualifier(DependencyDescriptor descriptor) {
-        if (HAS_QUALIFIER_METHOD_HANDLE == null) {
-            return false;
-        }
-        boolean hasQualifier = false;
-        try {
-            hasQualifier = (boolean) HAS_QUALIFIER_METHOD_HANDLE.invokeExact(delegate, descriptor);
-        } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : '{}'", HAS_QUALIFIER_METHOD_HANDLE,
-                        Arrays.asList(delegate, descriptor), e);
-            }
-        }
-        return hasQualifier;
+        return delegate.hasQualifier(descriptor);
     }
 
     @Nullable
@@ -185,28 +137,13 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
     }
 
     /**
-     * Clone the delegate {@link AutowireCandidateResolver} if necessary
-     * No {@link Override} was marked in order to be compatible with the Spring 4.x
+     * {@inheritDoc}
      *
-     * @return {@link AutowireCandidateResolver}
      * @since Spring Framework 5.2.7
      */
+    @Override
     public AutowireCandidateResolver cloneIfNecessary() {
-        if (CLONE_IF_NECESSARY_METHOD_HANDLE == null) {
-            if (logger.isTraceEnabled()) {
-                logger.trace("The method AutowireCandidateResolver#cloneIfNecessary() was not found, the clone instance will be created on default way.");
-            }
-            return instantiateClass(delegate.getClass());
-        }
-        AutowireCandidateResolver autowireCandidateResolver = null;
-        try {
-            autowireCandidateResolver = (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invokeExact(delegate);
-        } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : '{}'", CLONE_IF_NECESSARY_METHOD_HANDLE, delegate, e);
-            }
-        }
-        return autowireCandidateResolver;
+        return delegate.cloneIfNecessary();
     }
 
     @Override
