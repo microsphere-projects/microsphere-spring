@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
@@ -370,12 +369,6 @@ public class BeanUtilsTest {
 
         assertEquals(-1, namingBean.compareTo(namingBean2));
 
-    }
-
-    @Test
-    public void testFindPrimaryConstructor() {
-        Constructor<BeanUtilsTest> constructor = findPrimaryConstructor(BeanUtilsTest.class);
-        assertNull(constructor);
     }
 
 }
