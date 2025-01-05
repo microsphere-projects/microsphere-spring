@@ -93,62 +93,37 @@ public abstract class AnnotationUtils {
             List<A> annotationsList = new LinkedList<A>();
 
             switch (elementType) {
-
                 case PARAMETER:
-
                     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-
                     for (Annotation[] annotations : parameterAnnotations) {
-
                         for (Annotation annotation : annotations) {
-
                             if (annotationClass.equals(annotation.annotationType())) {
-
                                 annotationsList.add((A) annotation);
-
                             }
-
                         }
-
                     }
-
                     break;
 
                 case METHOD:
-
                     A annotation = findAnnotation(method, annotationClass);
-
                     if (annotation != null) {
-
                         annotationsList.add(annotation);
-
                     }
-
                     break;
 
                 case TYPE:
-
                     Class<?> beanType = method.getDeclaringClass();
-
                     A annotation2 = findAnnotation(beanType, annotationClass);
-
                     if (annotation2 != null) {
-
                         annotationsList.add(annotation2);
-
                     }
-
                     break;
 
             }
 
             if (!annotationsList.isEmpty()) {
-
                 annotationsMap.put(elementType, annotationsList);
-
             }
-
-
         }
 
         return Collections.unmodifiableMap(annotationsMap);
