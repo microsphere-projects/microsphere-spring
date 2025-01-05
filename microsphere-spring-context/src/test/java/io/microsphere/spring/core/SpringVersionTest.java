@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.microsphere.spring.core.SpringVersion.resolveVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -30,6 +31,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 public class SpringVersionTest {
+
+    @Test
+    public void testVersionRange() {
+        // Spring Framework 6.0 -> [6.0.0, 6.0.23]
+        testVersionRange(SpringVersion.SPRING_6_0, 0, 23);
+        // Spring Framework 6.1 -> [6.1.0, 6.0.16]
+        testVersionRange(SpringVersion.SPRING_6_1, 0, 16);
+        // Spring Framework 6.2 -> [6.2.0, 6.2.1]
+        testVersionRange(SpringVersion.SPRING_6_2, 0, 1);
+
+    }
+
+    private void testVersionRange(SpringVersion baseVersion, int start, int end) {
+        for (int i = start; i <= end; i++) {
+            SpringVersion springVersion = SpringVersion.valueOf(baseVersion.name() + "_" + i);
+            Version version = springVersion.getVersion();
+            assertNotNull(version);
+            assertEquals(baseVersion.getMajor(), version.getMajor());
+            assertEquals(baseVersion.getMinor(), version.getMinor());
+            assertEquals(i, version.getPatch());
+        }
+    }
 
     @Test
     public void testGetVersion() {

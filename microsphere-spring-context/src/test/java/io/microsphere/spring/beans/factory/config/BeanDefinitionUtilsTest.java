@@ -37,9 +37,6 @@ import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.fin
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isInfrastructureBean;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
-import static io.microsphere.spring.core.SpringVersion.CURRENT;
-import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
-import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -55,10 +52,6 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @since 1.0.0
  */
 public class BeanDefinitionUtilsTest {
-
-    private static final boolean isGESpring5 = CURRENT.gt(SPRING_5_0);
-
-    private static final boolean isGESpring5_1 = CURRENT.gt(SPRING_5_1);
 
     private static final String USER_BEAN_NAME = "user";
 
