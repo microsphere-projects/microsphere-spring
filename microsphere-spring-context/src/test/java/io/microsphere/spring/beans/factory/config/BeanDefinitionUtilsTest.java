@@ -27,7 +27,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Role;
-import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -38,7 +37,6 @@ import java.util.function.Supplier;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getResolvableType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isGetInstanceSupplierMethodPresent;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isGetResolvableTypeMethodPresent;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isInfrastructureBean;
@@ -128,7 +126,7 @@ public class BeanDefinitionUtilsTest {
             assertFalse(infrastructureBeanNames.contains(USERS_BEAN_NAME));
         });
     }
-    
+
     @Test
     public void testIsInfrastructureBean() {
         AbstractBeanDefinition beanDefinition = this.beanDefinition;
