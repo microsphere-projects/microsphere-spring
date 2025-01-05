@@ -60,17 +60,7 @@ import static org.springframework.core.ResolvableType.forMethodReturnType;
 public abstract class BeanDefinitionUtils extends BaseUtils {
 
     private static final Logger logger = getLogger(BeanDefinitionUtils.class);
-
-    /**
-     * The name of getResolvableType() method.
-     *
-     * <ul>
-     *     <li>{@link RootBeanDefinition#getResolvableType()} since Spring Framework 5.1</li>
-     *     <li>{@link AbstractBeanDefinition#getResolvableType()} Spring Framework 5.2</li>
-     * </ul>
-     */
-    private static final String GET_RESOLVABLE_TYPE_METHOD_NAME = "getResolvableType";
-
+    
     /**
      * The method name of {@linkplain AbstractBeanDefinition#setInstanceSupplier(Supplier)}
      *
@@ -84,13 +74,6 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
      * @since Spring Framework 5.0
      */
     private static final String GET_INSTANCE_SUPPLIER_METHOD_NAME = "getInstanceSupplier";
-
-    /**
-     * The {@link MethodHandle} of {@linkplain RootBeanDefinition#getResolvableType()}
-     *
-     * @since Spring Framework 5.1
-     */
-    private static final MethodHandle GET_RESOLVABLE_TYPE_METHOD_HANDLE = findVirtual(RootBeanDefinition.class, GET_RESOLVABLE_TYPE_METHOD_NAME);
 
     /**
      * The {@link MethodHandle} of {@linkplain AbstractBeanDefinition#setInstanceSupplier(Supplier)}
@@ -214,33 +197,18 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
      * @see RootBeanDefinition#getResolvableType()
      */
     public static ResolvableType getResolvableType(RootBeanDefinition rootBeanDefinition) {
-        if (GET_RESOLVABLE_TYPE_METHOD_HANDLE == null) {
-            return doGetResolvableType(rootBeanDefinition);
-        }
-        ResolvableType resolvableType = null;
-        try {
-            resolvableType = (ResolvableType) GET_RESOLVABLE_TYPE_METHOD_HANDLE.invokeExact(rootBeanDefinition);
-        } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : '{}'", GET_RESOLVABLE_TYPE_METHOD_HANDLE, rootBeanDefinition, e);
-            }
-            resolvableType = doGetResolvableType(rootBeanDefinition);
-        }
-        return resolvableType;
+        return rootBeanDefinition.getResolvableType();
     }
 
     /**
-     * Get {@link ResolvableType} from {@link AbstractBeanDefinition}
+     * Get {@link ResolvableType} from {@link BeanDefinition}
      *
-     * @param beanDefinition {@link AbstractBeanDefinition}
+     * @param beanDefinition {@link BeanDefinition}
      * @return {@link ResolvableType#NONE} if can't be resolved
-     * @see AbstractBeanDefinition#getResolvableType()
+     * @see BeanDefinition#getResolvableType()
      */
-    public static ResolvableType getResolvableType(AbstractBeanDefinition beanDefinition) {
-        if (beanDefinition instanceof RootBeanDefinition) {
-            return getResolvableType((RootBeanDefinition) beanDefinition);
-        }
-        return doGetResolvableType(beanDefinition);
+    public static ResolvableType getResolvableType(BeanDefinition beanDefinition) {
+        return beanDefinition.getResolvableType();
     }
 
     /**
@@ -272,8 +240,9 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
      * <code>false</code> otherwise
      * @see #GET_RESOLVABLE_TYPE_METHOD_HANDLE
      */
+    @Deprecated
     public static boolean isGetResolvableTypeMethodPresent() {
-        return GET_RESOLVABLE_TYPE_METHOD_HANDLE != null;
+        return true;
     }
 
     /**
@@ -318,29 +287,5 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
             }
         }
         return supplier;
-    }
-
-    /**
-     * Compatible with {@link RootBeanDefinition#getResolvableType()) since Spring Framework 5.1
-     *
-     * @param rootBeanDefinition {@link RootBeanDefinition}
-     * @return
-     */
-    protected static ResolvableType doGetResolvableType(RootBeanDefinition rootBeanDefinition) {
-        Method factoryMethod = rootBeanDefinition.getResolvedFactoryMethod();
-        if (factoryMethod != null) {
-            return forMethodReturnType(factoryMethod);
-        }
-        return doGetResolvableType((AbstractBeanDefinition) rootBeanDefinition);
-    }
-
-    /**
-     * Compatible with {@link AbstractBeanDefinition#getResolvableType()) since Spring Framework 5.2
-     *
-     * @param beanDefinition {@link AbstractBeanDefinition}
-     * @return {@link ResolvableType#NONE} if can't be resolved
-     */
-    protected static ResolvableType doGetResolvableType(AbstractBeanDefinition beanDefinition) {
-        return beanDefinition.hasBeanClass() ? forClass(beanDefinition.getBeanClass()) : ResolvableType.NONE;
     }
 }
