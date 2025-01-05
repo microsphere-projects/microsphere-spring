@@ -69,11 +69,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
+import static org.springframework.beans.BeanUtils.findPrimaryConstructor;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 import static org.springframework.util.Assert.notEmpty;
