@@ -21,6 +21,7 @@ import io.microsphere.collection.SetUtils;
 import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
 import io.microsphere.logging.LoggerFactory;
+import io.microsphere.spring.beans.factory.config.BeanDefinitionUtils;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
@@ -60,8 +61,6 @@ import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.reflect.MemberUtils.isStatic;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getResolvableType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.util.ClassLoaderUtils.loadClass;
 import static java.lang.InheritableThreadLocal.withInitial;
@@ -327,7 +326,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         Class beanClass = resolveBeanClass(beanDefinition, classLoader);
         if (beanClass == null) {
-            ResolvableType resolvableType = getResolvableType(beanDefinition);
+            ResolvableType resolvableType = beanDefinition.getResolvableType();
             beanClass = resolvableType.resolve();
         }
 
@@ -588,7 +587,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         if (beanDefinition != null && !beanDefinition.isAbstract() && beanDefinition.isSingleton()
                 && !beanDefinition.isLazyInit() && beanDefinition instanceof RootBeanDefinition) {
             RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
-            Supplier<?> instanceSupplier = getInstanceSupplier(rootBeanDefinition);
+            Supplier<?> instanceSupplier = rootBeanDefinition.getInstanceSupplier();
             return instanceSupplier == null ? rootBeanDefinition : null;
         }
         return null;

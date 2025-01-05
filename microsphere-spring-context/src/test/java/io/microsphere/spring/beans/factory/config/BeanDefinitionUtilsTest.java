@@ -32,17 +32,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isGetInstanceSupplierMethodPresent;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isGetResolvableTypeMethodPresent;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isInfrastructureBean;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isSetInstanceSupplierMethodPresent;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
@@ -134,31 +128,6 @@ public class BeanDefinitionUtilsTest {
 
         beanDefinition.setRole(ROLE_INFRASTRUCTURE);
         assertTrue(isInfrastructureBean(beanDefinition));
-    }
-
-    @Test
-    public void testMethodsPresent() {
-        assertEquals(isGESpring5, isSetInstanceSupplierMethodPresent());
-        assertEquals(isGESpring5, isGetInstanceSupplierMethodPresent());
-
-        assertEquals(isGESpring5_1, isGetResolvableTypeMethodPresent());
-    }
-
-    @Test
-    public void testSetAndGetInstanceSupplier() {
-        AbstractBeanDefinition beanDefinition = this.beanDefinition;
-
-        User user = new User();
-
-        // setInstanceSupplier
-        assertFalse(setInstanceSupplier(beanDefinition, null));
-        assertEquals(isGESpring5, setInstanceSupplier(beanDefinition, () -> null));
-        assertEquals(isGESpring5, setInstanceSupplier(beanDefinition, () -> user));
-
-        // getInstanceSupplier
-        Supplier<?> instanceSupplier = getInstanceSupplier(beanDefinition);
-        Object instance = instanceSupplier == null ? null : instanceSupplier.get();
-        assertEquals(isGESpring5 ? user : null, instance);
     }
 
     private void assertBeanDefinition(AbstractBeanDefinition beanDefinition, int role, Object... constructorArguments) {
