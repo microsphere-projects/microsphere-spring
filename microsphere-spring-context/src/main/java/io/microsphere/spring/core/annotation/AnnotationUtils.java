@@ -5,7 +5,6 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
@@ -55,10 +54,6 @@ public abstract class AnnotationUtils {
      */
     public static final Class<?> ANNOTATED_ELEMENT_UTILS_CLASS = ClassLoaderUtils.resolveClass(ANNOTATED_ELEMENT_UTILS_CLASS_NAME);
 
-    /**
-     * The {@link Method} object of {@link AnnotationAttributes#annotationType()} is introduced since Spring Framework 4.2
-     */
-    public static final Method ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD = ReflectionUtils.findMethod(AnnotationAttributes.class, "annotationType");
 
     /**
      * Is specified {@link Annotation} present on {@link Method}'s declaring class or parameters or itself.
@@ -662,17 +657,7 @@ public abstract class AnnotationUtils {
         if (annotationAttributes == null) {
             return null;
         }
-
-        if (annotationAttributes instanceof GenericAnnotationAttributes) {
-            return ((GenericAnnotationAttributes) annotationAttributes).annotationType();
-        }
-
-        if (ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD == null) {// If AnnotationAttributes#annotionType() method was not found
-            return null;
-        }
-
-        // Reflection call to the target method in order to resolve the complication issue before Spring Framework 4.2
-        return (Class<A>) invokeMethod(ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD, annotationAttributes);
+        return (Class<A>) annotationAttributes.annotationType();
     }
 
 }
