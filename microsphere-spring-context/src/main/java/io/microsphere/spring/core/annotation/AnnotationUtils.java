@@ -1,7 +1,5 @@
 package io.microsphere.spring.core.annotation;
 
-import io.microsphere.util.ClassLoaderUtils;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
@@ -33,9 +31,7 @@ import static org.springframework.core.annotation.AnnotationUtils.getDefaultValu
 import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnnotation;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
-import static org.springframework.util.ReflectionUtils.findMethod;
-import static org.springframework.util.ReflectionUtils.invokeMethod;
-import static org.springframework.util.StringUtils.trimWhitespace;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * {@link Annotation} Utilities
@@ -82,7 +78,7 @@ public abstract class AnnotationUtils {
             return Collections.emptyMap();
         }
 
-        Map<ElementType, List<A>> annotationsMap = new LinkedHashMap<ElementType, List<A>>();
+        Map<ElementType, List<A>> annotationsMap = new LinkedHashMap<>();
 
         Target target = annotationClass.getAnnotation(Target.class);
 
@@ -91,7 +87,7 @@ public abstract class AnnotationUtils {
 
         for (ElementType elementType : elementTypes) {
 
-            List<A> annotationsList = new LinkedList<A>();
+            List<A> annotationsList = new LinkedList<>();
 
             switch (elementType) {
 
@@ -196,7 +192,7 @@ public abstract class AnnotationUtils {
 
         Set<String> ignoreAttributeNamesSet = new HashSet<>(Arrays.asList(ignoreAttributeNames));
 
-        Map<String, Object> actualAttributes = new LinkedHashMap<String, Object>();
+        Map<String, Object> actualAttributes = new LinkedHashMap<>();
 
         for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
 
@@ -210,8 +206,7 @@ public abstract class AnnotationUtils {
 
             if (attributeValue instanceof String) {
                 attributeValue = resolvePlaceholders(valueOf(attributeValue), propertyResolver);
-            } else if (attributeValue instanceof String[]) {
-                String[] values = (String[]) attributeValue;
+            } else if (attributeValue instanceof String[] values) {
                 for (int i = 0; i < values.length; i++) {
                     values[i] = resolvePlaceholders(values[i], propertyResolver);
                 }
@@ -234,7 +229,7 @@ public abstract class AnnotationUtils {
      *                               Annotation instances
      * @param ignoreDefaultValue     whether ignore default value or not
      * @param ignoreAttributeNames   the attribute names of annotation should be ignored
-     * @return
+     * @return non-null
      */
     public static Map<String, Object> getAttributes(Annotation annotation,
                                                     PropertyResolver propertyResolver,
@@ -249,7 +244,7 @@ public abstract class AnnotationUtils {
 
         if (ignoreDefaultValue && !isEmpty(annotationAttributes)) {
 
-            List<String> attributeNamesToIgnore = new LinkedList<String>(asList(ignoreAttributeNames));
+            List<String> attributeNamesToIgnore = new LinkedList<>(asList(ignoreAttributeNames));
 
             for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
                 String attributeName = annotationAttribute.getKey();
@@ -259,7 +254,7 @@ public abstract class AnnotationUtils {
                 }
             }
             // extends the ignored list
-            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(new String[attributeNamesToIgnore.size()]);
+            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(new String[0]);
         }
 
         return getAttributes(annotationAttributes, propertyResolver, actualIgnoreAttributeNames);
@@ -269,7 +264,7 @@ public abstract class AnnotationUtils {
         String resolvedValue = attributeValue;
         if (propertyResolver != null) {
             resolvedValue = propertyResolver.resolvePlaceholders(resolvedValue);
-            resolvedValue = trimWhitespace(resolvedValue);
+            resolvedValue = hasText(resolvedValue) ? resolvedValue.strip() : resolvedValue;
         }
         return resolvedValue;
     }
@@ -619,8 +614,7 @@ public abstract class AnnotationUtils {
      * @return non-null
      */
     public static AnnotationAttributes getAnnotationAttributes(AnnotationMetadata metadata, String annotationClassName) {
-        AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
-        return annotationAttributes;
+        return fromMap(metadata.getAnnotationAttributes(annotationClassName));
     }
 
     /**
