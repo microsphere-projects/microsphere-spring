@@ -29,7 +29,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
-import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -159,9 +158,7 @@ public class ListenableConfigurableEnvironmentTest {
     @Test
     public void testAcceptsProfiles() {
         assertTrue(environment.acceptsProfiles("test"));
-        if (CURRENT.ge(SPRING_5_1)) {
-            assertTrue(environment.acceptsProfiles(profile -> true));
-        }
+        assertTrue(environment.acceptsProfiles(profile -> true));
     }
 
     /**

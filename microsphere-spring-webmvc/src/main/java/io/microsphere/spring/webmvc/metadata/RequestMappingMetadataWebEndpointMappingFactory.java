@@ -50,20 +50,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMappingWebEndpointMappingFactory<HandlerMethod, RequestMappingInfo> {
 
-    /**
-     * The method name of {@link RequestMappingInfo#getPatternValues()}
-     *
-     * @since Spring Framework 5.3
-     */
-    private static final String GET_PATTERNS_VALUES_METHOD_NAME = "getPatternValues";
-
-    /**
-     * The {@link MethodHandle} of {@link RequestMappingInfo#getPatternValues()}
-     *
-     * @since Spring Framework 5.3
-     */
-    private static final MethodHandle GET_PATTERNS_VALUES_METHOD_HANDLE = findVirtual(RequestMappingInfo.class, GET_PATTERNS_VALUES_METHOD_NAME);
-
     public RequestMappingMetadataWebEndpointMappingFactory(HandlerMapping handlerMapping) {
         super(handlerMapping);
     }
@@ -97,21 +83,7 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     }
 
     private Set<String> getPatterns(RequestMappingInfo source) {
-        Set<String> patterns = null;
-        if (GET_PATTERNS_VALUES_METHOD_HANDLE != NOT_FOUND_METHOD_HANDLE) {
-            try {
-                patterns = (Set<String>) GET_PATTERNS_VALUES_METHOD_HANDLE.invokeExact(source);
-            } catch (Throwable e) {
-                logger.error("RequestMappingInfo.getPatternValues() can't be invoked by {}", GET_PATTERNS_VALUES_METHOD_HANDLE, e);
-            }
-        }
-        if (isEmpty(patterns)) {
-            PatternsRequestCondition patternsCondition = source.getPatternsCondition();
-            if (patternsCondition != null) {
-                patterns = patternsCondition.getPatterns();
-            }
-        }
-        return patterns;
+        return source.getPatternValues();
     }
 
 }

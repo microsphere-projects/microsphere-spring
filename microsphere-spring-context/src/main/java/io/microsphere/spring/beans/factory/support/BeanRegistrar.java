@@ -31,7 +31,6 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 import java.util.List;
 
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
-import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
 import static java.beans.Introspector.decapitalize;
 import static java.lang.String.format;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
@@ -247,11 +246,7 @@ public abstract class BeanRegistrar {
     public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
         Class beanClass = AopUtils.getTargetClass(bean);
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass);
-        if (setInstanceSupplier(beanDefinition, () -> bean)) {
-            beanDefinition.setPrimary(primary);
-            registerBeanDefinition(registry, beanName, beanDefinition);
-        } else {
-            registerFactoryBean(registry, beanName, bean, primary);
-        }
+        beanDefinition.setInstanceSupplier(() -> bean);
+        registerBeanDefinition(registry, beanName, beanDefinition);
     }
 }

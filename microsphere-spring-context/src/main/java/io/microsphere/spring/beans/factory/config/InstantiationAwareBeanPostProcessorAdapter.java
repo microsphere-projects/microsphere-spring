@@ -50,6 +50,7 @@ public abstract class InstantiationAwareBeanPostProcessorAdapter implements Smar
      *
      * @since Spring Framework 6.0
      */
+    @Override
     public Class<?> determineBeanType(Class<?> beanClass, String beanName) throws BeansException {
         return beanClass;
     }
@@ -98,6 +99,7 @@ public abstract class InstantiationAwareBeanPostProcessorAdapter implements Smar
      *
      * @since Spring Framework 5.1
      */
+    @Override
     public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
             throws BeansException {
         return pvs;

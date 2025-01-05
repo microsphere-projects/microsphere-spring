@@ -22,10 +22,12 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotati
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.isPresent;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
 import static io.microsphere.util.ArrayUtils.of;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.util.ReflectionUtils.findMethod;
@@ -60,27 +62,21 @@ public class AnnotationUtilsTest {
         Method method = findMethod(RuntimeAnnotationHandler.class, "handle",
                 String.class, String.class);
 
-        AnnotationUtils.isPresent(method, RuntimeAnnotation.class);
+        assertTrue(isPresent(method, RuntimeAnnotation.class));
 
         method = findMethod(RuntimeAnnotationHandler.class, "handle",
                 String.class);
 
-        AnnotationUtils.isPresent(method, RuntimeAnnotation.class);
+        assertTrue(isPresent(method, RuntimeAnnotation.class));
 
         method = findMethod(RuntimeAnnotationHandler.class, "handle");
 
-        AnnotationUtils.isPresent(method, RuntimeAnnotation.class);
-
-        method = findMethod(RuntimeAnnotationHandler.class, "handle");
-
-        AnnotationUtils.isPresent(method, RuntimeAnnotation.class);
-
+        assertTrue(isPresent(method, RuntimeAnnotation.class));
 
         method = findMethod(ClassAnnotationHandler.class, "echo",
                 String.class);
 
-        AnnotationUtils.isPresent(method, ClassAnnotation.class);
-
+        assertFalse(isPresent(method, ClassAnnotation.class));
     }
 
     @Test

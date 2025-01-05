@@ -22,6 +22,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.ApplicationStartupAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.EnvironmentAware;
@@ -32,15 +33,12 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Nullable;
-import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.invoke.MethodHandleUtils.findStatic;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
@@ -74,13 +72,6 @@ public abstract class BeanUtils extends BaseUtils {
     private static final String[] EMPTY_BEAN_NAMES = new String[0];
 
     private static final Class<?> APPLICATION_STARTUP_CLASS = resolveClass("org.springframework.core.metrics.ApplicationStartup");
-
-    /**
-     * The {@link MethodHandle} of {@linkplain org.springframework.beans.BeanUtils#findPrimaryConstructor(Class)}
-     *
-     * @since Spring Framework 5.0
-     */
-    private static final MethodHandle FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE = findStatic(org.springframework.beans.BeanUtils.class, "findPrimaryConstructor", Class.class);
 
     /**
      * Is Bean Present or not?
@@ -471,32 +462,6 @@ public abstract class BeanUtils extends BaseUtils {
         } else {
             invokeBeanFactoryAwareInterfaces(bean, beanFactory, configurableBeanFactory);
         }
-    }
-
-    /**
-     * Return the primary constructor of the provided class. For Kotlin classes, this
-     * returns the Java constructor corresponding to the Kotlin primary constructor
-     * (as defined in the Kotlin specification). Otherwise, in particular for non-Kotlin
-     * classes, this simply returns {@code null}.
-     *
-     * @param clazz the class to check
-     * @see <a href="https://kotlinlang.org/docs/reference/classes.html#constructors">Kotlin docs</a>
-     * @see org.springframework.beans.BeanUtils#findPrimaryConstructor(Class)
-     * @since Spring Framework 5.0
-     */
-    public static <T> Constructor<T> findPrimaryConstructor(Class<T> clazz) {
-        if (FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE == null) {
-            return null;
-        }
-        Constructor<T> constructor = null;
-        try {
-            constructor = (Constructor<T>) FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE.invokeExact(clazz);
-        } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to execute invokeExact on {} with arg : '{}'", FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz, e);
-            }
-        }
-        return constructor;
     }
 
     /**
