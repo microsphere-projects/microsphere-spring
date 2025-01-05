@@ -188,28 +188,6 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
     }
 
     /**
-     * Get {@link ResolvableType} from {@link RootBeanDefinition}
-     *
-     * @param rootBeanDefinition {@link RootBeanDefinition}
-     * @return non-null
-     * @see RootBeanDefinition#getResolvableType()
-     */
-    public static ResolvableType getResolvableType(RootBeanDefinition rootBeanDefinition) {
-        return rootBeanDefinition.getResolvableType();
-    }
-
-    /**
-     * Get {@link ResolvableType} from {@link BeanDefinition}
-     *
-     * @param beanDefinition {@link BeanDefinition}
-     * @return {@link ResolvableType#NONE} if can't be resolved
-     * @see BeanDefinition#getResolvableType()
-     */
-    public static ResolvableType getResolvableType(BeanDefinition beanDefinition) {
-        return beanDefinition.getResolvableType();
-    }
-
-    /**
      * Determine whether the {@link AbstractBeanDefinition#setInstanceSupplier(Supplier)} method is present
      *
      * @return <code>true</code> if the {@link AbstractBeanDefinition#setInstanceSupplier(Supplier)} method is present,

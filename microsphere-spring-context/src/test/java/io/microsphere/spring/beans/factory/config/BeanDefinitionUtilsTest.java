@@ -128,26 +128,7 @@ public class BeanDefinitionUtilsTest {
             assertFalse(infrastructureBeanNames.contains(USERS_BEAN_NAME));
         });
     }
-
-    @Test
-    public void testGetResolvableType() {
-        testInSpringContainer((context, beanFactory) -> {
-            RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
-            ResolvableType resolvableType = getResolvableType(beanDefinition);
-            assertEquals(User.class, resolvableType.getRawClass());
-
-            beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USERS_BEAN_NAME);
-            resolvableType = getResolvableType(beanDefinition);
-            assertEquals(List.class, resolvableType.getRawClass());
-            assertEquals(User.class, resolvableType.getGeneric(0).getRawClass());
-
-            beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
-            resolvableType = getResolvableType(beanDefinition);
-            assertEquals(Config.class, resolvableType.getRawClass());
-        });
-    }
-
-
+    
     @Test
     public void testIsInfrastructureBean() {
         AbstractBeanDefinition beanDefinition = this.beanDefinition;
