@@ -106,6 +106,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      *
      * @since Spring Framework 5.0
      */
+    @Override
     public boolean isRequired(DependencyDescriptor descriptor) {
         return delegate.isRequired(descriptor);
     }
