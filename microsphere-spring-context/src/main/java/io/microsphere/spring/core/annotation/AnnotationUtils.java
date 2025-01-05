@@ -1,11 +1,9 @@
 package io.microsphere.spring.core.annotation;
 
-import io.microsphere.util.ClassLoaderUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
@@ -26,13 +24,13 @@ import java.util.Set;
 
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
+import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnnotation;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
-import static org.springframework.util.ReflectionUtils.findMethod;
-import static org.springframework.util.ReflectionUtils.invokeMethod;
 import static org.springframework.util.StringUtils.trimWhitespace;
 
 /**
@@ -44,21 +42,6 @@ import static org.springframework.util.StringUtils.trimWhitespace;
  */
 @SuppressWarnings("unchecked")
 public abstract class AnnotationUtils {
-
-    /**
-     * The class name of {@link org.springframework.core.annotation.AnnotatedElementUtils that is introduced since Spring Framework 4
-     */
-    public static final String ANNOTATED_ELEMENT_UTILS_CLASS_NAME = "org.springframework.core.annotation.AnnotatedElementUtils";
-
-    /**
-     * The {@link Class} of {@link org.springframework.core.annotation.AnnotatedElementUtils} that is introduced since Spring Framework 4
-     */
-    public static final Class<?> ANNOTATED_ELEMENT_UTILS_CLASS = ClassLoaderUtils.resolveClass(ANNOTATED_ELEMENT_UTILS_CLASS_NAME);
-
-    /**
-     * The {@link Method} object of {@link AnnotationAttributes#annotationType()} is introduced since Spring Framework 4.2
-     */
-    public static final Method ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD = ReflectionUtils.findMethod(AnnotationAttributes.class, "annotationType");
 
     /**
      * Is specified {@link Annotation} present on {@link Method}'s declaring class or parameters or itself.
@@ -212,7 +195,7 @@ public abstract class AnnotationUtils {
 
         Set<String> ignoreAttributeNamesSet = new HashSet<>(Arrays.asList(ignoreAttributeNames));
 
-        Map<String, Object> actualAttributes = new LinkedHashMap<String, Object>();
+        Map<String, Object> actualAttributes = new LinkedHashMap<>();
 
         for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
 
@@ -250,7 +233,7 @@ public abstract class AnnotationUtils {
      *                               Annotation instances
      * @param ignoreDefaultValue     whether ignore default value or not
      * @param ignoreAttributeNames   the attribute names of annotation should be ignored
-     * @return
+     * @return non-null
      */
     public static Map<String, Object> getAttributes(Annotation annotation,
                                                     PropertyResolver propertyResolver,
@@ -265,7 +248,7 @@ public abstract class AnnotationUtils {
 
         if (ignoreDefaultValue && !isEmpty(annotationAttributes)) {
 
-            List<String> attributeNamesToIgnore = new LinkedList<String>(asList(ignoreAttributeNames));
+            List<String> attributeNamesToIgnore = new LinkedList<>(asList(ignoreAttributeNames));
 
             for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
                 String attributeName = annotationAttribute.getKey();
@@ -275,7 +258,7 @@ public abstract class AnnotationUtils {
                 }
             }
             // extends the ignored list
-            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(new String[attributeNamesToIgnore.size()]);
+            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(new String[0]);
         }
 
         return getAttributes(annotationAttributes, propertyResolver, actualIgnoreAttributeNames);
@@ -534,8 +517,9 @@ public abstract class AnnotationUtils {
      *
      * @param annotatedElement {@link AnnotatedElement the annotated element}
      * @param annotationType   the {@link Class tyoe} pf {@link Annotation annotation}
-     * @return If current version of Spring Framework is below 4.2, return <code>null</code>
+     * @return <code>null</code> If not found
      */
+    @Nullable
     public static Annotation tryGetMergedAnnotation(AnnotatedElement annotatedElement,
                                                     Class<? extends Annotation> annotationType) {
         return tryGetMergedAnnotation(annotatedElement, annotationType, false, false);
@@ -553,28 +537,16 @@ public abstract class AnnotationUtils {
      *                               {@link AnnotationAttributes} maps (for compatibility with
      *                               {@link org.springframework.core.type.AnnotationMetadata} or to preserve them as
      *                               Annotation instances
-     * @return If current version of Spring Framework is below 4.2, return <code>null</code>
+     * @return <code>null</code> If not found
      */
+    @Nullable
     public static Annotation tryGetMergedAnnotation(AnnotatedElement annotatedElement,
                                                     Class<? extends Annotation> annotationType,
                                                     boolean classValuesAsString,
                                                     boolean nestedAnnotationsAsMap) {
-
-        Annotation mergedAnnotation = null;
-
-        Class<?> annotatedElementUtilsClass = ANNOTATED_ELEMENT_UTILS_CLASS;
-
-        if (annotatedElementUtilsClass != null) {
-            // getMergedAnnotation method appears in the Spring Framework 4.2
-            Method getMergedAnnotationMethod = findMethod(annotatedElementUtilsClass, "getMergedAnnotation",
-                    AnnotatedElement.class, Class.class, boolean.class, boolean.class);
-            if (getMergedAnnotationMethod != null) {
-                mergedAnnotation = (Annotation) invokeMethod(getMergedAnnotationMethod, null,
-                        annotatedElement, annotationType, classValuesAsString, nestedAnnotationsAsMap);
-            }
-        }
-
-        return mergedAnnotation;
+        AnnotationAttributes annotationAttributes = getMergedAnnotationAttributes(annotatedElement,
+                annotationType.getName(), classValuesAsString, nestedAnnotationsAsMap);
+        return annotationAttributes == null ? null : synthesizeAnnotation(annotationAttributes, annotationType, annotatedElement);
     }
 
     /**
@@ -646,8 +618,7 @@ public abstract class AnnotationUtils {
      * @return non-null
      */
     public static AnnotationAttributes getAnnotationAttributes(AnnotationMetadata metadata, String annotationClassName) {
-        AnnotationAttributes annotationAttributes = fromMap(metadata.getAnnotationAttributes(annotationClassName));
-        return annotationAttributes;
+        return fromMap(metadata.getAnnotationAttributes(annotationClassName));
     }
 
     /**
@@ -662,17 +633,7 @@ public abstract class AnnotationUtils {
         if (annotationAttributes == null) {
             return null;
         }
-
-        if (annotationAttributes instanceof GenericAnnotationAttributes) {
-            return ((GenericAnnotationAttributes) annotationAttributes).annotationType();
-        }
-
-        if (ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD == null) {// If AnnotationAttributes#annotionType() method was not found
-            return null;
-        }
-
-        // Reflection call to the target method in order to resolve the complication issue before Spring Framework 4.2
-        return (Class<A>) invokeMethod(ANNOTATION_ATTRIBUTES_ANNOTATION_TYPE_METHOD, annotationAttributes);
+        return (Class<A>) annotationAttributes.annotationType();
     }
 
 }
