@@ -19,7 +19,6 @@ package io.microsphere.spring.jdbc.p6spy.annotation;
 import com.p6spy.engine.spy.P6Factory;
 import com.p6spy.engine.spy.P6ModuleManager;
 import com.p6spy.engine.spy.option.P6OptionChangedListener;
-import io.microsphere.spring.beans.factory.support.BeanRegistrar;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.CompoundJdbcEventListenerFactory;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.config.P6DataSourceBeanPostProcessor;
 import org.springframework.beans.BeansException;

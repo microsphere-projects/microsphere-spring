@@ -1,7 +1,5 @@
 package io.microsphere.spring.web.servlet.util;
 
-import org.springframework.util.ClassUtils;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.Registration;
