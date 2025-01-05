@@ -1,6 +1,7 @@
 package io.microsphere.spring.core.annotation;
 
 import io.microsphere.util.ClassLoaderUtils;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
@@ -25,9 +26,11 @@ import java.util.Set;
 
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
+import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnnotation;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 import static org.springframework.util.ReflectionUtils.findMethod;
@@ -45,17 +48,6 @@ import static org.springframework.util.StringUtils.trimWhitespace;
 public abstract class AnnotationUtils {
 
     /**
-     * The class name of {@link org.springframework.core.annotation.AnnotatedElementUtils that is introduced since Spring Framework 4
-     */
-    public static final String ANNOTATED_ELEMENT_UTILS_CLASS_NAME = "org.springframework.core.annotation.AnnotatedElementUtils";
-
-    /**
-     * The {@link Class} of {@link org.springframework.core.annotation.AnnotatedElementUtils} that is introduced since Spring Framework 4
-     */
-    public static final Class<?> ANNOTATED_ELEMENT_UTILS_CLASS = ClassLoaderUtils.resolveClass(ANNOTATED_ELEMENT_UTILS_CLASS_NAME);
-
-
-    /**
      * Is specified {@link Annotation} present on {@link Method}'s declaring class or parameters or itself.
      *
      * @param method          {@link Method}
@@ -64,11 +56,8 @@ public abstract class AnnotationUtils {
      * @return If present , return <code>true</code> , or <code>false</code>
      */
     public static <A extends Annotation> boolean isPresent(Method method, Class<A> annotationClass) {
-
         Map<ElementType, List<A>> annotationsMap = findAnnotations(method, annotationClass);
-
         return !annotationsMap.isEmpty();
-
     }
 
     /**
@@ -529,8 +518,9 @@ public abstract class AnnotationUtils {
      *
      * @param annotatedElement {@link AnnotatedElement the annotated element}
      * @param annotationType   the {@link Class tyoe} pf {@link Annotation annotation}
-     * @return If current version of Spring Framework is below 4.2, return <code>null</code>
+     * @return <code>null</code> If not found
      */
+    @Nullable
     public static Annotation tryGetMergedAnnotation(AnnotatedElement annotatedElement,
                                                     Class<? extends Annotation> annotationType) {
         return tryGetMergedAnnotation(annotatedElement, annotationType, false, false);
@@ -548,28 +538,16 @@ public abstract class AnnotationUtils {
      *                               {@link AnnotationAttributes} maps (for compatibility with
      *                               {@link org.springframework.core.type.AnnotationMetadata} or to preserve them as
      *                               Annotation instances
-     * @return If current version of Spring Framework is below 4.2, return <code>null</code>
+     * @return <code>null</code> If not found
      */
+    @Nullable
     public static Annotation tryGetMergedAnnotation(AnnotatedElement annotatedElement,
                                                     Class<? extends Annotation> annotationType,
                                                     boolean classValuesAsString,
                                                     boolean nestedAnnotationsAsMap) {
-
-        Annotation mergedAnnotation = null;
-
-        Class<?> annotatedElementUtilsClass = ANNOTATED_ELEMENT_UTILS_CLASS;
-
-        if (annotatedElementUtilsClass != null) {
-            // getMergedAnnotation method appears in the Spring Framework 4.2
-            Method getMergedAnnotationMethod = findMethod(annotatedElementUtilsClass, "getMergedAnnotation",
-                    AnnotatedElement.class, Class.class, boolean.class, boolean.class);
-            if (getMergedAnnotationMethod != null) {
-                mergedAnnotation = (Annotation) invokeMethod(getMergedAnnotationMethod, null,
-                        annotatedElement, annotationType, classValuesAsString, nestedAnnotationsAsMap);
-            }
-        }
-
-        return mergedAnnotation;
+        AnnotationAttributes annotationAttributes = getMergedAnnotationAttributes(annotatedElement,
+                annotationType.getName(), classValuesAsString, nestedAnnotationsAsMap);
+        return annotationAttributes == null ? null : synthesizeAnnotation(annotationAttributes, annotationType, annotatedElement);
     }
 
     /**
