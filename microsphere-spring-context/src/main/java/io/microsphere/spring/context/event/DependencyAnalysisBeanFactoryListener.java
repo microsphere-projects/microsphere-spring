@@ -54,13 +54,13 @@ import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
-import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
+import static org.springframework.core.MethodParameter.forParameter;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
