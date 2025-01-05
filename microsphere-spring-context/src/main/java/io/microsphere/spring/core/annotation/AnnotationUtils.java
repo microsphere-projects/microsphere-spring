@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -24,6 +23,8 @@ import java.util.Set;
 
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
@@ -75,7 +76,7 @@ public abstract class AnnotationUtils {
         RetentionPolicy retentionPolicy = retention.value();
 
         if (!RetentionPolicy.RUNTIME.equals(retentionPolicy)) {
-            return Collections.emptyMap();
+            return emptyMap();
         }
 
         Map<ElementType, List<A>> annotationsMap = new LinkedHashMap<>();
@@ -91,64 +92,38 @@ public abstract class AnnotationUtils {
 
             switch (elementType) {
 
-                case PARAMETER:
-
+                case PARAMETER -> {
                     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-
                     for (Annotation[] annotations : parameterAnnotations) {
-
                         for (Annotation annotation : annotations) {
-
                             if (annotationClass.equals(annotation.annotationType())) {
-
                                 annotationsList.add((A) annotation);
-
                             }
-
                         }
-
                     }
+                }
 
-                    break;
-
-                case METHOD:
-
+                case METHOD -> {
                     A annotation = findAnnotation(method, annotationClass);
-
                     if (annotation != null) {
-
                         annotationsList.add(annotation);
-
                     }
+                }
 
-                    break;
-
-                case TYPE:
-
+                case TYPE -> {
                     Class<?> beanType = method.getDeclaringClass();
-
                     A annotation2 = findAnnotation(beanType, annotationClass);
-
                     if (annotation2 != null) {
-
                         annotationsList.add(annotation2);
-
                     }
-
-                    break;
-
+                }
             }
 
             if (!annotationsList.isEmpty()) {
-
                 annotationsMap.put(elementType, annotationsList);
-
             }
-
-
         }
-
-        return Collections.unmodifiableMap(annotationsMap);
+        return unmodifiableMap(annotationsMap);
 
     }
 
