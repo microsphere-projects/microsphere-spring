@@ -45,8 +45,6 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
-import static org.springframework.core.ResolvableType.forClass;
-import static org.springframework.core.ResolvableType.forMethodReturnType;
 
 /**
  * {@link BeanDefinition} Utilities class
