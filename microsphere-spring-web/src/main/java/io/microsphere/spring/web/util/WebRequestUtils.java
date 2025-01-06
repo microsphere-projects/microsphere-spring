@@ -36,14 +36,6 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
  */
 public abstract class WebRequestUtils {
 
-    /**
-     * Name of Servlet request attribute that holds a
-     * {@link UrlPathHelper#getLookupPathForRequest resolved} lookupPath.
-     *
-     * @since Spring Framework 5.3
-     */
-    public static final String PATH_ATTRIBUTE = UrlPathHelper.class.getName() + ".PATH";
-
     public static String getMethod(NativeWebRequest request) {
         String method = request.getHeader(":METHOD:");
         return method;
@@ -79,7 +71,7 @@ public abstract class WebRequestUtils {
      * @throws IllegalArgumentException if the lookup path is not found
      */
     public static String getResolvedLookupPath(NativeWebRequest request) {
-        String lookupPath = (String) request.getAttribute(PATH_ATTRIBUTE, SCOPE_REQUEST);
+        String lookupPath = (String) request.getAttribute(UrlPathHelper.PATH_ATTRIBUTE, SCOPE_REQUEST);
         return lookupPath;
     }
 
