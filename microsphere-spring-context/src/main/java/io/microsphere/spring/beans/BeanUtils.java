@@ -46,9 +46,6 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static io.microsphere.util.ArrayUtils.isEmpty;
-import static io.microsphere.util.ClassLoaderUtils.getClassLoader;
-import static io.microsphere.util.ClassLoaderUtils.isPresent;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -122,19 +119,17 @@ public abstract class BeanUtils extends BaseUtils {
      * @return If present , return <code>true</code> , or <code>false</code>
      */
     public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName, boolean includingAncestors) {
-        boolean present = false;
         ClassLoader classLoader = null;
         if (beanFactory instanceof ConfigurableBeanFactory) {
             ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
             classLoader = configurableBeanFactory.getBeanClassLoader();
-        } else {
-            classLoader = getClassLoader(beanFactory.getClass());
         }
-        if (isPresent(beanClassName, classLoader)) {
-            Class beanClass = resolveClassName(beanClassName, classLoader);
-            present = isBeanPresent(beanFactory, beanClass, includingAncestors);
+
+        Class beanClass = resolveClassName(beanClassName, classLoader);
+        if (beanClass == null) {
+            return false;
         }
-        return present;
+        return isBeanPresent(beanFactory, beanClass, includingAncestors);
     }
 
 
