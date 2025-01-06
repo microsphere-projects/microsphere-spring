@@ -68,7 +68,7 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
     public void resolve(Method method, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         int parametersCount = method.getParameterCount();
         if (parametersCount < 1) {
-            logger.debug("The no-argument method[{}] will be ignored", method);
+            logger.trace("The no-argument method[{}] will be ignored", method);
             return;
         }
         Parameter[] parameters = method.getParameters();
@@ -82,7 +82,7 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
     public void resolve(Constructor constructor, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         int parametersCount = constructor.getParameterCount();
         if (parametersCount < 1) {
-            logger.debug("The no-argument constructor[{}] will be ignored", constructor);
+            logger.trace("The no-argument constructor[{}] will be ignored", constructor);
             return;
         }
         Parameter[] parameters = constructor.getParameters();

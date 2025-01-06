@@ -47,8 +47,8 @@ public class LoggingAutowireCandidateResolvingListener implements AutowireCandid
     }
 
     protected void log(String messagePattern, Object... args) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(messagePattern, args);
+        if (logger.isTraceEnabled()) {
+            logger.trace(messagePattern, args);
         }
     }
 

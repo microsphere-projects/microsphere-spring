@@ -233,8 +233,8 @@ public abstract class BeanUtils extends BaseUtils {
     public static <T> T getOptionalBean(ListableBeanFactory beanFactory, Class<T> beanClass, boolean includingAncestors) throws BeansException {
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
         if (isEmpty(beanNames)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("The bean [ class : " + beanClass.getName() + " ] can't be found ");
+            if (logger.isTraceEnabled()) {
+                logger.trace("The bean [ class : " + beanClass.getName() + " ] can't be found ");
             }
             return null;
         }
@@ -280,8 +280,8 @@ public abstract class BeanUtils extends BaseUtils {
             return beanFactory.getBean(beanName, beanType);
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(format("The bean[name : %s , type : %s] can't be found in Spring BeanFactory", beanName, beanType.getName()));
+        if (logger.isTraceEnabled()) {
+            logger.trace(format("The bean[name : %s , type : %s] can't be found in Spring BeanFactory", beanName, beanType.getName()));
         }
         return null;
     }

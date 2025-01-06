@@ -106,7 +106,7 @@ public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
         int factorySize = factoryClassNames.size();
 
         if (factorySize < 1) {
-            logger.debug("No factory class {} were loaded from SpringFactoriesLoader[{}]", factoryClass.getName(),
+            logger.trace("No factory class {} were loaded from SpringFactoriesLoader[{}]", factoryClass.getName(),
                     SpringFactoriesLoader.FACTORIES_RESOURCE_LOCATION);
             return emptyList();
         }

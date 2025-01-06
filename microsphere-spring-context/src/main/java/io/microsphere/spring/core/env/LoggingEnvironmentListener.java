@@ -248,14 +248,14 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
     }
 
     protected void log(String message) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(message);
+        if (logger.isTraceEnabled()) {
+            logger.trace(message);
         }
     }
 
     protected void log(String messagePattern, Object... args) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(messagePattern, args);
+        if (logger.isTraceEnabled()) {
+            logger.trace(messagePattern, args);
         }
     }
 }

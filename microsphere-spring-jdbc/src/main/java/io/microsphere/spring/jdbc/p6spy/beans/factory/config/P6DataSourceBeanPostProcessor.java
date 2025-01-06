@@ -51,17 +51,17 @@ public class P6DataSourceBeanPostProcessor extends GenericBeanPostProcessorAdapt
         DataSource targetDataSource = bean;
 
         if (excludedDataSourceBeanNames.contains(beanName)) {
-            logger.debug("The DataSource bean[name : '{}'] is excluded, it caused by Spring property[name : '{}']", beanName, EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME);
+            logger.trace("The DataSource bean[name : '{}'] is excluded, it caused by Spring property[name : '{}']", beanName, EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME);
         } else {
             try {
                 DataSource datasource = bean.unwrap(DataSource.class);
                 targetDataSource = new P6DataSource(datasource);
             } catch (SQLException e) {
-                logger.debug("The DataSource bean[name : '{}' , class : '{}'] can't unwrap to be an instance DataSource", beanName, bean.getClass().getName());
+                logger.trace("The DataSource bean[name : '{}' , class : '{}'] can't unwrap to be an instance DataSource", beanName, bean.getClass().getName());
             }
         }
 
-        logger.debug("The DataSource bean[name : '{}'] {} -> {}", beanName, bean, targetDataSource);
+        logger.trace("The DataSource bean[name : '{}'] {} -> {}", beanName, bean, targetDataSource);
 
         return targetDataSource;
     }

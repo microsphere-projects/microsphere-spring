@@ -127,7 +127,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         MethodParameterContext methodParameterContext = getParameterContext(parameter);
         if (methodParameterContext == null) {
-            logger.debug("The MethodParameterContext can't be found by the MethodParameter[{}]", parameter);
+            logger.trace("The MethodParameterContext can't be found by the MethodParameter[{}]", parameter);
             return null;
         }
 
@@ -149,7 +149,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                                   NativeWebRequest webRequest) throws Exception {
         ReturnTypeContext context = getReturnTypeContext(returnType);
         if (context == null) {
-            logger.debug("The ReturnTypeContext can't be found by the return type[{}]", returnType);
+            logger.trace("The ReturnTypeContext can't be found by the return type[{}]", returnType);
             return;
         }
 

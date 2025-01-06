@@ -121,16 +121,16 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
 
     private void logDependenciesTrace(String dependentBeanName, Map.Entry<String, Set<String>> dependencies) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
+        if (logger.isTraceEnabled()) {
+            logger.trace("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
         }
     }
 
 
     private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isTraceEnabled()) {
             for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
-                logger.debug("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
+                logger.trace("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
             }
         }
     }
@@ -347,7 +347,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {
-                logger.debug("The Bean[name : '{}'] is ready", beanName);
+                logger.trace("The Bean[name : '{}'] is ready", beanName);
                 continue;
             }
             BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);

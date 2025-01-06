@@ -571,8 +571,8 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 if (this.beanFactory.containsBean(injectedBeanName)) {
                     this.beanFactory.registerDependentBean(injectedBeanName, beanName);
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Injected by type from bean name '" + beanName +
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Injected by type from bean name '" + beanName +
                             "' to bean named '" + injectedBeanName + "'");
                 }
             }
