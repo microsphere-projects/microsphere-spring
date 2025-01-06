@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -36,7 +35,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -46,10 +44,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.util.Assert.noNullElements;
@@ -81,7 +81,7 @@ import static org.springframework.util.StringUtils.hasText;
 public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,
         BeanFactoryAware, EnvironmentAware, ResourceLoaderAware, BeanClassLoaderAware {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = getLogger(getClass());
 
     private final Set<Class<? extends Annotation>> supportedAnnotationTypes;
 
@@ -144,7 +144,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
 
         String[] basePackages = resolveBasePackages(getPackagesToScan());
 
-        if (!ObjectUtils.isEmpty(basePackages)) {
+        if (isNotEmpty(basePackages)) {
             registerBeanDefinitions(registry, basePackages);
         } else {
             if (logger.isWarnEnabled()) {
@@ -217,7 +217,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     private void putPrimaryBeanDefinition(Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
                                           AnnotatedBeanDefinition annotatedBeanDefinition,
                                           String... keys) {
-        if (!ObjectUtils.isEmpty(keys)) {
+        if (isNotEmpty(keys)) {
             for (String key : keys) {
                 primaryBeanDefinitions.put(key, annotatedBeanDefinition);
             }

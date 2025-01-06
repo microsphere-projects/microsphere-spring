@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -46,7 +45,6 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
@@ -69,6 +67,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.singleton;
@@ -79,6 +78,9 @@ import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMe
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.ClassUtils.getMostSpecificMethod;
 import static org.springframework.util.ClassUtils.getUserClass;
+import static org.springframework.util.ReflectionUtils.doWithFields;
+import static org.springframework.util.ReflectionUtils.doWithMethods;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.StringUtils.hasLength;
 
 /**
@@ -110,7 +112,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private final Collection<Class<? extends Annotation>> annotationTypes;
 
@@ -304,27 +306,24 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
         final List<AnnotatedFieldElement> elements = new LinkedList<AnnotatedFieldElement>();
 
-        ReflectionUtils.doWithFields(beanClass, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+        doWithFields(beanClass, field -> {
 
-                for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
+            for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
 
-                    AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
+                AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
 
-                    if (attributes != null) {
+                if (attributes != null) {
 
-                        if (Modifier.isStatic(field.getModifiers())) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn("@" + annotationType.getName() + " is not supported on static fields: " + field);
-                            }
-                            return;
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@" + annotationType.getName() + " is not supported on static fields: " + field);
                         }
-
-                        boolean required = determineRequiredStatus(attributes);
-
-                        elements.add(new AnnotatedFieldElement(field, attributes, required));
+                        return;
                     }
+
+                    boolean required = determineRequiredStatus(attributes);
+
+                    elements.add(new AnnotatedFieldElement(field, attributes, required));
                 }
             }
         });
@@ -353,36 +352,33 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
         final List<AnnotatedMethodElement> elements = new LinkedList<AnnotatedMethodElement>();
 
-        ReflectionUtils.doWithMethods(beanClass, new ReflectionUtils.MethodCallback() {
-            @Override
-            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+        doWithMethods(beanClass, method -> {
 
-                Method bridgedMethod = findBridgedMethod(method);
+            Method bridgedMethod = findBridgedMethod(method);
 
-                if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
-                    return;
-                }
+            if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
+                return;
+            }
 
-                for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
+            for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
 
-                    AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
+                AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
 
-                    if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
-                        if (Modifier.isStatic(method.getModifiers())) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn("@" + annotationType.getName() + " annotation is not supported on static methods: " + method);
-                            }
-                            return;
+                if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
+                    if (Modifier.isStatic(method.getModifiers())) {
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@" + annotationType.getName() + " annotation is not supported on static methods: " + method);
                         }
-                        if (method.getParameterTypes().length == 0) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
-                            }
-                        }
-                        PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
-                        boolean required = determineRequiredStatus(attributes);
-                        elements.add(new AnnotatedMethodElement(method, pd, attributes, required));
+                        return;
                     }
+                    if (method.getParameterTypes().length == 0) {
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
+                        }
+                    }
+                    PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
+                    boolean required = determineRequiredStatus(attributes);
+                    elements.add(new AnnotatedMethodElement(method, pd, attributes, required));
                 }
             }
         });
@@ -693,7 +689,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 value = resolveFieldValue(field, bean, beanName, pvs);
             }
             if (value != null) {
-                ReflectionUtils.makeAccessible(field);
+                makeAccessible(field);
                 field.set(bean, value);
             }
         }
@@ -767,7 +763,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             }
             if (arguments != null) {
                 try {
-                    ReflectionUtils.makeAccessible(method);
+                    makeAccessible(method);
                     method.invoke(bean, arguments);
                 } catch (InvocationTargetException ex) {
                     throw ex.getTargetException();

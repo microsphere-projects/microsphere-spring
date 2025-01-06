@@ -17,11 +17,12 @@
 package io.microsphere.spring.webmvc.config;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
 import org.springframework.context.event.EventListener;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * {@link Idempotent} Configuration
@@ -32,7 +33,7 @@ import org.springframework.context.event.EventListener;
  */
 public class IdempotentConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(IdempotentConfig.class);
+    private static final Logger logger = getLogger(IdempotentConfig.class);
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onEvent(WebEndpointMappingsReadyEvent event) {

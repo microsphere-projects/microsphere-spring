@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.rule;
 
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.util.UrlPathHelper;
@@ -33,6 +32,7 @@ import java.util.Set;
 
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -232,7 +232,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
     }
 
     private static boolean hasPattern(String[] patterns) {
-        if (!ObjectUtils.isEmpty(patterns)) {
+        if (isNotEmpty(patterns)) {
             for (String pattern : patterns) {
                 if (hasText(pattern)) {
                     return true;

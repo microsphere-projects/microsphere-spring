@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.collection.CollectionUtils;
-
 import java.util.Iterator;
 import java.util.List;
+
+import static io.microsphere.collection.CollectionUtils.isEmpty;
 
 /**
  * {@link Dependency} Tree Walker
@@ -54,7 +54,7 @@ public class DependencyTreeWalker {
     }
 
     private void walk(Dependency child, List<Dependency> siblings) {
-        if (CollectionUtils.isEmpty(siblings)) {
+        if (isEmpty(siblings)) {
             return;
         }
         if (siblings.contains(child)) {

@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +31,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.util.StreamUtils.copyToString;
 
 /**
  * {@link SpringProtocolURLStreamHandler} Test
@@ -64,7 +64,7 @@ public class SpringProtocolURLStreamHandlerTest {
     private void assertContent(URL url) throws Throwable {
         String content = null;
         try (InputStream inputStream = url.openStream()) {
-            content = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
+            content = copyToString(inputStream, Charset.defaultCharset());
         }
         assertNotNull(content);
     }

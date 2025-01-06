@@ -17,11 +17,11 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -33,7 +33,7 @@ import static java.util.Optional.ofNullable;
  */
 public abstract class AbstractWebEndpointMappingFactory<E> implements WebEndpointMappingFactory<E> {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = getLogger(getClass());
 
     @Override
     public final Optional<WebEndpointMapping<E>> create(E endpoint) {

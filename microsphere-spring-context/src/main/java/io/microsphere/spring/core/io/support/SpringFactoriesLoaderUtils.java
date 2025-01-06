@@ -17,7 +17,6 @@
 package io.microsphere.spring.core.io.support;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -32,6 +31,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
@@ -58,7 +58,7 @@ import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
  */
 public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(SpringFactoriesLoaderUtils.class);
+    private static final Logger logger = getLogger(SpringFactoriesLoaderUtils.class);
 
     public static void registerFactories(@Nullable BeanFactory bf, Class<?> factoryType) {
         BeanDefinitionRegistry registry = asBeanDefinitionRegistry(bf);

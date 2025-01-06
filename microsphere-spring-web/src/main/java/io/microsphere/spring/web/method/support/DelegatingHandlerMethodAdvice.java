@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.method.support;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -27,6 +26,7 @@ import org.springframework.web.method.HandlerMethod;
 
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static java.util.Collections.emptyList;
 
@@ -44,7 +44,7 @@ public class DelegatingHandlerMethodAdvice extends OnceApplicationContextEventLi
 
     public static final String BEAN_NAME = "delegatingHandlerMethodAdvice";
 
-    private static final Logger logger = LoggerFactory.getLogger(DelegatingHandlerMethodAdvice.class);
+    private static final Logger logger = getLogger(DelegatingHandlerMethodAdvice.class);
 
     private List<HandlerMethodArgumentInterceptor> argumentInterceptors = emptyList();
 

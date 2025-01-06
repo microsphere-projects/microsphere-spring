@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.rule;
 
 import org.springframework.http.MediaType;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.accept.ContentNegotiationManager;
@@ -30,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static org.springframework.util.MimeTypeUtils.ALL;
@@ -110,7 +110,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
             return false;
         }
         List<ProduceMediaTypeExpression> result = getMatchingExpressions(acceptedMediaTypes);
-        if (!CollectionUtils.isEmpty(result)) {
+        if (isNotEmpty(result)) {
             return false;
         } else if (ALL.isPresentIn(acceptedMediaTypes)) {
             return false;

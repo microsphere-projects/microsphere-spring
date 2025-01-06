@@ -17,7 +17,6 @@
 package io.microsphere.spring.core.env;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -54,7 +54,7 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public abstract class EnvironmentUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(EnvironmentUtils.class);
+    private static final Logger logger = getLogger(EnvironmentUtils.class);
 
     /**
      * Cast {@link Environment} to {@link ConfigurableEnvironment}

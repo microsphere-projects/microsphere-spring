@@ -19,13 +19,14 @@ package io.microsphere.spring.jdbc.p6spy.net;
 import io.microsphere.net.SubProtocolURLConnectionFactory;
 import io.microsphere.spring.net.SpringEnvironmentURLConnectionFactory;
 import io.microsphere.spring.net.SpringSubProtocolURLConnectionFactory;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Spring P6Spy {@link SubProtocolURLConnectionFactory} class delegates {@link SpringEnvironmentURLConnectionFactory}
@@ -50,6 +51,6 @@ public class SpringP6SpyURLConnectionFactory extends SpringSubProtocolURLConnect
 
     private String getPrefix(URL url) {
         String authority = url.getAuthority();
-        return StringUtils.hasText(authority) ? authority : "microsphere.jdbc.p6spy";
+        return hasText(authority) ? authority : "microsphere.jdbc.p6spy";
     }
 }

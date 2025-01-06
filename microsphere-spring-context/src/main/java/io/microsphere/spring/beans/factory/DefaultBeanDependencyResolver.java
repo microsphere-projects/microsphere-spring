@@ -16,11 +16,9 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.collection.CollectionUtils;
 import io.microsphere.collection.SetUtils;
 import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
@@ -54,10 +52,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.MemberUtils.isStatic;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
@@ -82,7 +82,7 @@ import static org.springframework.util.ReflectionUtils.doWithLocalMethods;
  */
 public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultBeanDependencyResolver.class);
+    private static final Logger logger = getLogger(DefaultBeanDependencyResolver.class);
 
     private static final ThreadLocal<Set<Member>> resolvedBeanMembersHolder = withInitial(SetUtils::newLinkedHashSet);
 
@@ -250,7 +250,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             Set<String> dependentBeanNames = entry.getValue();
             for (String dependentBeanName : dependentBeanNames) {
                 Set<String> nestedDependentBeanNames = dependentBeanNamesMap.get(dependentBeanName);
-                if (CollectionUtils.isNotEmpty(nestedDependentBeanNames) && !dependentBeanNames.containsAll(nestedDependentBeanNames)) {
+                if (isNotEmpty(nestedDependentBeanNames) && !dependentBeanNames.containsAll(nestedDependentBeanNames)) {
                     nonRootBeanNames.add(beanName);
                     break;
                 }

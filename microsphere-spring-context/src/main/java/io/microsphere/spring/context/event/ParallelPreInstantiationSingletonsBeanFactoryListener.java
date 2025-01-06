@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.BeanDependencyResolver;
 import io.microsphere.spring.beans.factory.DefaultBeanDependencyResolver;
 import org.springframework.beans.BeansException;
@@ -40,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -59,7 +59,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
     public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.thread.name-prefix";
     public static final String DEFAULT_THREAD_NAME_PREFIX = "Parallel-Pre-Instantiation-Singletons-Thread-";
 
-    private static final Logger logger = LoggerFactory.getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
+    private static final Logger logger = getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
 
     private Environment environment;
 

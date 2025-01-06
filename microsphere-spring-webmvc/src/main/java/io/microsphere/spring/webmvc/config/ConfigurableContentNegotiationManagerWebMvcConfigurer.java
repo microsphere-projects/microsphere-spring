@@ -2,7 +2,6 @@ package io.microsphere.spring.webmvc.config;
 
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.http.MediaType;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
@@ -10,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.beans.PropertyEditorSupport;
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,37 +41,31 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
 
     public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
 
-        doWithFields(configurer.getClass(), new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+        doWithFields(configurer.getClass(), field -> {
 
-                boolean accessible = field.isAccessible();
+            boolean accessible = field.isAccessible();
 
-                try {
+            try {
 
-                    if (!accessible) {
-                        field.setAccessible(true);
-                    }
+                if (!accessible) {
+                    field.setAccessible(true);
+                }
 
-                    ContentNegotiationManagerFactoryBean factoryBean = (ContentNegotiationManagerFactoryBean) field.get(configurer);
+                ContentNegotiationManagerFactoryBean factoryBean = (ContentNegotiationManagerFactoryBean) field.get(configurer);
 
-                    configureContentNegotiationManagerFactoryBean(factoryBean);
+                configureContentNegotiationManagerFactoryBean(factoryBean);
 
-                } finally {
+            } finally {
 
-                    if (!accessible) {
-                        field.setAccessible(accessible);
-                    }
-
+                if (!accessible) {
+                    field.setAccessible(accessible);
                 }
 
             }
-        }, new ReflectionUtils.FieldFilter() {
-            @Override
-            public boolean matches(Field field) {
-                Class<?> fieldType = field.getType();
-                return FACTORY_BEAN_FIELD_CLASS.isAssignableFrom(fieldType);
-            }
+
+        }, field -> {
+            Class<?> fieldType = field.getType();
+            return FACTORY_BEAN_FIELD_CLASS.isAssignableFrom(fieldType);
         });
 
     }

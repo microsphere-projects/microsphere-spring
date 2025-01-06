@@ -17,13 +17,14 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * Logging {@link BeanListener} implementation
@@ -33,7 +34,7 @@ import java.util.Arrays;
  */
 public class LoggingBeanListener implements BeanListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanListener.class);
+    private static final Logger logger = getLogger(LoggingBeanListener.class);
 
     @Override
     public boolean supports(String beanName) {
