@@ -92,8 +92,8 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
     @Nonnull
     public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@Nonnull AnnotationAttributes attributes,
                                                                                          @Nullable PropertyResolver propertyResolver) {
-        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes) {
-            return (ResolvablePlaceholderAnnotationAttributes) attributes;
+        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes resolvablePlaceholderAnnotationAttributes) {
+            return resolvablePlaceholderAnnotationAttributes;
         }
         return new ResolvablePlaceholderAnnotationAttributes(attributes, propertyResolver);
     }
