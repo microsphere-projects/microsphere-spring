@@ -19,17 +19,38 @@ package io.microsphere.spring.beans.factory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static io.microsphere.collection.SetUtils.ofSet;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asAutowireCapableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asHierarchicalBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanPostProcessors;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getOptionalBean;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvableDependencyTypes;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isDefaultListableBeanFactory;
+import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME;
 import static io.microsphere.util.ArrayUtils.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -41,22 +62,25 @@ public class BeanFactoryUtilsTest {
 
     private AnnotationConfigApplicationContext applicationContext;
 
+    private ConfigurableListableBeanFactory beanFactory;
+
     @BeforeEach
     public void init() {
-        applicationContext = new AnnotationConfigApplicationContext();
+        this.applicationContext = new AnnotationConfigApplicationContext();
+        this.beanFactory = this.applicationContext.getBeanFactory();
     }
 
     @AfterEach
     public void afterTest() {
-        applicationContext.close();
+        this.applicationContext.close();
     }
 
     @Test
     public void testGetOptionalBean() {
 
-        applicationContext.register(BaseTestBean.class);
+        this.applicationContext.register(BaseTestBean.class);
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
 
@@ -69,7 +93,7 @@ public class BeanFactoryUtilsTest {
     @Test
     public void testGetOptionalBeanIfAbsent() {
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
 
@@ -87,9 +111,9 @@ public class BeanFactoryUtilsTest {
     @Test
     public void testGetBeans() {
 
-        applicationContext.register(BaseTestBean.class, BaseTestBean2.class);
+        this.applicationContext.register(BaseTestBean.class, BaseTestBean2.class);
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
@@ -113,12 +137,44 @@ public class BeanFactoryUtilsTest {
     @Test
     public void testGetBeansIfAbsent() {
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
         assertTrue(testBeans.isEmpty());
 
+    }
+
+    @Test
+    public void testIsMethods() {
+        assertTrue(isDefaultListableBeanFactory(this.beanFactory));
+        assertTrue(isBeanDefinitionRegistry(this.beanFactory));
+    }
+
+    @Test
+    public void testAsMethods() {
+        assertSame(this.beanFactory, asBeanDefinitionRegistry(this.beanFactory));
+        assertSame(this.beanFactory, asListableBeanFactory(this.beanFactory));
+        assertSame(this.beanFactory, asHierarchicalBeanFactory(this.beanFactory));
+        assertSame(this.beanFactory, asConfigurableBeanFactory(this.beanFactory));
+        assertSame(this.beanFactory, asAutowireCapableBeanFactory(this.beanFactory));
+        assertSame(this.beanFactory, asConfigurableListableBeanFactory(this.beanFactory));
+        assertSame(this.beanFactory, asDefaultListableBeanFactory(this.beanFactory));
+    }
+
+    @Test
+    public void testGetResolvableDependencyTypes() {
+        this.applicationContext.refresh();
+        assertEquals(ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
+                getResolvableDependencyTypes(this.beanFactory));
+    }
+
+    @Test
+    public void testGetBeanPostProcessors() {
+        this.applicationContext.refresh();
+        List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(this.beanFactory);
+        assertFalse(beanPostProcessors.isEmpty());
+        assertEquals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME, beanPostProcessors.get(0).getClass().getName());
     }
 
 
