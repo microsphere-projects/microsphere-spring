@@ -118,8 +118,8 @@ public class ConversionServiceResolver {
     }
 
     private void debug(String message, Object... args) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(args.length < 1 ? message : format(message, args));
+        if (logger.isTraceEnabled()) {
+            logger.trace(args.length < 1 ? message : format(message, args));
         }
     }
 }

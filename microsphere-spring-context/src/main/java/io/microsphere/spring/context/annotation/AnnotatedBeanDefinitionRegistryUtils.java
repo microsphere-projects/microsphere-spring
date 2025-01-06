@@ -68,8 +68,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
                 Class<?> targetClass = resolveClassName(className, classLoader);
                 present = nullSafeEquals(targetClass, annotatedClass);
                 if (present) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(format("The annotatedClass[class : %s , bean name : %s] was present in registry[%s]",
+                    if (logger.isTraceEnabled()) {
+                        logger.trace(format("The annotatedClass[class : %s , bean name : %s] was present in registry[%s]",
                                 className, beanName, registry));
                     }
                     break;
@@ -106,8 +106,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
         AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(registry);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(registry.getClass().getSimpleName() + " will register annotated classes : " + asList(annotatedClasses) + " .");
+        if (logger.isTraceEnabled()) {
+            logger.trace(registry.getClass().getSimpleName() + " will register annotated classes : " + asList(annotatedClasses) + " .");
         }
 
         reader.register(classesToRegister.toArray(EMPTY_CLASS_ARRAY));
@@ -127,10 +127,10 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
         if (!ObjectUtils.isEmpty(basePackages)) {
 
-            boolean debugEnabled = logger.isDebugEnabled();
+            boolean traceEnabled = logger.isTraceEnabled();
 
-            if (debugEnabled) {
-                logger.debug(registry.getClass().getSimpleName() + " will scan base packages " + Arrays.asList(basePackages) + ".");
+            if (traceEnabled) {
+                logger.trace(registry.getClass().getSimpleName() + " will scan base packages " + Arrays.asList(basePackages) + ".");
             }
 
             List<String> registeredBeanNames = Arrays.asList(registry.getBeanDefinitionNames());
@@ -142,14 +142,14 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
             scannedBeanNames.addAll(Arrays.asList(registry.getBeanDefinitionNames()));
             scannedBeanNames.removeAll(registeredBeanNames);
 
-            if (debugEnabled) {
-                logger.debug("The Scanned Components[ count : " + count + "] under base packages " + Arrays.asList(basePackages) + " : ");
+            if (traceEnabled) {
+                logger.trace("The Scanned Components[ count : " + count + "] under base packages " + Arrays.asList(basePackages) + " : ");
             }
 
             for (String scannedBeanName : scannedBeanNames) {
                 BeanDefinition scannedBeanDefinition = registry.getBeanDefinition(scannedBeanName);
-                if (debugEnabled) {
-                    logger.debug("Component [ name : " + scannedBeanName + " , class : " + scannedBeanDefinition.getBeanClassName() + " ]");
+                if (traceEnabled) {
+                    logger.trace("Component [ name : " + scannedBeanName + " , class : " + scannedBeanDefinition.getBeanClassName() + " ]");
                 }
             }
         }

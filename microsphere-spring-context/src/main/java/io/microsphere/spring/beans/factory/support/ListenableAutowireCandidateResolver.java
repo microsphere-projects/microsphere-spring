@@ -176,8 +176,8 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
             }
             return;
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("The ListenableAutowireCandidateResolver bean[name : '{}'] is enabled.", this.beanName);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The ListenableAutowireCandidateResolver bean[name : '{}'] is enabled.", this.beanName);
         }
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
         AutowireCandidateResolver autowireCandidateResolver = dbf.getAutowireCandidateResolver();

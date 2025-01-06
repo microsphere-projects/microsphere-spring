@@ -72,8 +72,8 @@ public abstract class OnceApplicationContextEventListener<E extends ApplicationC
         boolean originalEventSource = nullSafeEquals(getApplicationContext(), event.getSource());
 
         if (!originalEventSource) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("The source of event[" + event.getSource() + "] is not original!");
+            if (logger.isTraceEnabled()) {
+                logger.trace("The source of event[" + event.getSource() + "] is not original!");
             }
         }
 
