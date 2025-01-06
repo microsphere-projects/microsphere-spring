@@ -121,7 +121,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
             executorService.submit(() -> {
                 for (String beanName : beanNamesInDependencyPath) {
                     Object bean = beanFactory.getBean(beanName);
-                    logger.debug("The bean[name : '{}'] was created : {}", beanName, bean);
+                    logger.trace("The bean[name : '{}'] was created : {}", beanName, bean);
                 }
                 return null;
             });

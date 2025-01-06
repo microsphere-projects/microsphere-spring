@@ -190,12 +190,12 @@ public abstract class EnvironmentUtils extends BaseUtils {
         String resolvedPropertyValue = environment.resolvePlaceholders(propertyValue);
         if (conversionService.canConvert(String.class, targetType)) {
             targetValue = conversionService.convert(resolvedPropertyValue, targetType);
-            logger.debug("The property value[origin : {} , resolved : {}] was converted to be {}(type :{})!", propertyValue, resolvedPropertyValue,
+            logger.trace("The property value[origin : {} , resolved : {}] was converted to be {}(type :{})!", propertyValue, resolvedPropertyValue,
                     targetValue, targetType);
 
         } else {
             targetValue = defaultValue;
-            logger.debug("The property value[origin : {} , resolved : {}] can't be converted to be the target type[{}], take the default value({}) as result!",
+            logger.trace("The property value[origin : {} , resolved : {}] can't be converted to be the target type[{}], take the default value({}) as result!",
                     propertyValue, resolvedPropertyValue, targetValue, targetType);
         }
         return targetValue;

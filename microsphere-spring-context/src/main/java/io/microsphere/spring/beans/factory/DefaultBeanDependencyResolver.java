@@ -203,8 +203,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             executorService.execute(() -> {
                 Class beanClass = loadClass(beanClassName, classLoader, true);
                 beanDefinition.setBeanClass(beanClass);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("The bean[name : '{}'] class[name : '{}'] was loaded", beanName, beanClassName);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("The bean[name : '{}'] class[name : '{}'] was loaded", beanName, beanClassName);
                 }
             });
         }
@@ -259,7 +259,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         for (String nonRootBeanName : nonRootBeanNames) {
             if (dependentBeanNamesMap.remove(nonRootBeanName) != null) {
-                logger.debug("Non Root Bean name was removed : {}", nonRootBeanName);
+                logger.trace("Non Root Bean name was removed : {}", nonRootBeanName);
             }
         }
 
@@ -269,9 +269,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
     }
 
     private void logDependentBeanNames(Map<String, Set<String>> dependentBeanNamesMap) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isTraceEnabled()) {
             for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
-                logger.debug("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
+                logger.trace("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
             }
         }
     }
@@ -332,7 +332,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         boolean isInterfaceBean = beanClass.isInterface();
 
         if (isInterfaceBean) {
-            logger.debug("The resolved type of BeanDefinition : {}", beanClass.getName());
+            logger.trace("The resolved type of BeanDefinition : {}", beanClass.getName());
             return;
         }
 
@@ -348,8 +348,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         do {
             doWithLocalMethods(targetClass, method -> {
                 if (isStatic(method)) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("The Injection Point[bean : '{}' , class : {}] is not supported on static method : {}", beanName, method.getDeclaringClass().getName(), method);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("The Injection Point[bean : '{}' , class : {}] is not supported on static method : {}", beanName, method.getDeclaringClass().getName(), method);
                     }
                     return;
                 }
@@ -363,7 +363,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
                     if (method.equals(getMostSpecificMethod(method, beanClass))) {
                         if (isBeanMemberResolved(method)) {
-                            logger.debug("The beans'[name : '{}'] method has been resolved : {}", beanName, method);
+                            logger.trace("The beans'[name : '{}'] method has been resolved : {}", beanName, method);
                         } else {
                             resolvers.resolve(method, beanFactory, dependentBeanNames);
                             addResolvedBeanMember(method);
@@ -383,13 +383,13 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         do {
             doWithLocalFields(targetClass, field -> {
                 if (isStatic(field)) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("The Injection Point[bean : '{}' , class : {}] is not supported on static field : {}", beanName, field.getDeclaringClass().getName(), field);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("The Injection Point[bean : '{}' , class : {}] is not supported on static field : {}", beanName, field.getDeclaringClass().getName(), field);
                     }
                     return;
                 }
                 if (isBeanMemberResolved(field)) {
-                    logger.debug("The beans'[name : '{}'] field has been resolved : {}", beanName, field);
+                    logger.trace("The beans'[name : '{}'] field has been resolved : {}", beanName, field);
                 } else {
                     resolvers.resolve(field, beanFactory, dependentBeanNames);
                     addResolvedBeanMember(field);
@@ -410,7 +410,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         while (iterator.hasNext()) {
             String dependentBeanName = iterator.next();
             if (isBeanReady(dependentBeanName, beanFactory)) {
-                logger.debug("The dependent bean name['{}'] is removed since it's ready!", dependentBeanName);
+                logger.trace("The dependent bean name['{}'] is removed since it's ready!", dependentBeanName);
                 iterator.remove();
             }
         }
@@ -481,7 +481,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             } else {
                 Constructor constructor = constructors[0];
                 if (isBeanMemberResolved(constructor)) {
-                    logger.debug("The beans'[name : '{}'] constructor has been resolved : {}", beanName, constructor);
+                    logger.trace("The beans'[name : '{}'] constructor has been resolved : {}", beanName, constructor);
                 } else {
                     resolvers.resolve(constructor, beanFactory, dependentBeanNames);
                     addResolvedBeanMember(constructor);
@@ -489,7 +489,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             }
         } else { // the @Bean or customized Method Definition
             if (isBeanMemberResolved(factoryMethod)) {
-                logger.debug("The beans'[name : '{}'] factory-method has been resolved : {}", beanName, factoryMethod);
+                logger.trace("The beans'[name : '{}'] factory-method has been resolved : {}", beanName, factoryMethod);
             } else {
                 resolvers.resolve(factoryMethod, beanFactory, dependentBeanNames);
                 addResolvedBeanMember(factoryMethod);
@@ -547,7 +547,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                 continue;
             }
             if (beanFactory.isCurrentlyInCreation(beanName)) {
-                logger.debug("The Bean[name : '{}'] is creating currently", beanName);
+                logger.trace("The Bean[name : '{}'] is creating currently", beanName);
                 continue;
             }
 
@@ -594,8 +594,8 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private boolean isBeanReady(String beanName, DefaultListableBeanFactory beanFactory) {
         boolean ready = beanFactory.containsSingleton(beanName);
-        if (ready && logger.isDebugEnabled()) {
-            logger.debug("The Bean[name : '{}'] is ready in the BeanFactory[id : '{}']", beanName, beanFactory.getSerializationId());
+        if (ready && logger.isTraceEnabled()) {
+            logger.trace("The Bean[name : '{}'] is ready in the BeanFactory[id : '{}']", beanName, beanFactory.getSerializationId());
         }
         return ready;
     }

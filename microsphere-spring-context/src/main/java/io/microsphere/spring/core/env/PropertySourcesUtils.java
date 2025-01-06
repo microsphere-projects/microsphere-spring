@@ -77,16 +77,16 @@ public abstract class PropertySourcesUtils extends BaseUtils {
         PropertySource propertySource = propertySources.get(propertySourceName);
         T targetPropertySource = null;
         if (propertySource == null) {
-            logger.debug("The '{}' PropertySource can't be found!", propertySourceName);
+            logger.trace("The '{}' PropertySource can't be found!", propertySourceName);
             if (propertySourceSupplierIfAbsent != null) {
                 targetPropertySource = propertySourceSupplierIfAbsent.get();
                 if (targetPropertySource != null) {
-                    logger.debug("A new PropertySource[{}] will be created.", targetPropertySource);
+                    logger.trace("A new PropertySource[{}] will be created.", targetPropertySource);
                     propertySources.addLast(targetPropertySource);
                 }
             }
         } else if (propertySourceType.isInstance(propertySource)) {
-            logger.debug("The '{}' PropertySource[type: {}] was found!", propertySourceName, propertySource.getClass().getName());
+            logger.trace("The '{}' PropertySource[type: {}] was found!", propertySourceName, propertySource.getClass().getName());
             targetPropertySource = propertySourceType.cast(propertySource);
         } else {
             logger.warn("The '{}' PropertySource is not a {} instance, actual type : {}", propertySource.getClass().getName(),
@@ -322,7 +322,7 @@ public abstract class PropertySourcesUtils extends BaseUtils {
         MapPropertySource defaultPropertiesPropertySource = getDefaultPropertiesPropertySource(environment, createIfAbsent);
         if (defaultPropertiesPropertySource != null) {
             defaultProperties = defaultPropertiesPropertySource.getSource();
-            logger.debug("The 'defaultProperties' property was obtained successfully, and the current content is: {}", defaultProperties);
+            logger.trace("The 'defaultProperties' property was obtained successfully, and the current content is: {}", defaultProperties);
         }
         return defaultProperties;
     }
@@ -356,7 +356,7 @@ public abstract class PropertySourcesUtils extends BaseUtils {
             defaultPropertiesPropertySource = new MapPropertySource(name, new HashMap<>());
             propertySources.addLast(defaultPropertiesPropertySource);
         } else if (propertySource instanceof MapPropertySource) {
-            logger.debug("The 'defaultProperties' property was initialized");
+            logger.trace("The 'defaultProperties' property was initialized");
             defaultPropertiesPropertySource = (MapPropertySource) propertySource;
         } else {
             logger.warn("'defaultProperties' PropertySource[name: {}] is not an MapPropertySource instance; it is actually: {}", name, propertySource.getClass().getName());

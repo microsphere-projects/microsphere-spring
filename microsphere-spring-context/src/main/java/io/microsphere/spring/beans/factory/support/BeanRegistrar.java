@@ -163,8 +163,8 @@ public abstract class BeanRegistrar {
         } else {
             try {
                 registry.registerBeanDefinition(beanName, beanDefinition);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("The bean[name : '{}' , role : {}] definition [{}] has been registered.", beanName, beanDefinition.getRole(), beanDefinition);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("The bean[name : '{}' , role : {}] definition [{}] has been registered.", beanName, beanDefinition.getRole(), beanDefinition);
                 }
                 registered = true;
             } catch (BeanDefinitionStoreException e) {
