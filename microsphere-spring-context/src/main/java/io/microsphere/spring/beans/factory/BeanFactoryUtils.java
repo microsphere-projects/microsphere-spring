@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.util.ArrayUtils;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
@@ -37,6 +38,7 @@ import java.util.Set;
 
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.of;
+import static io.microsphere.util.ArrayUtils.size;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
@@ -65,7 +67,6 @@ public abstract class BeanFactoryUtils extends BaseUtils {
      * @return A bean if present , or <code>null</code>
      */
     public static <T> T getOptionalBean(ListableBeanFactory beanFactory, String beanName, Class<T> beanType) {
-
         if (!hasText(beanName)) {
             return null;
         }
@@ -88,21 +89,19 @@ public abstract class BeanFactoryUtils extends BaseUtils {
      * @return the read-only and non-null {@link List} of Bean names
      */
     public static <T> List<T> getBeans(ListableBeanFactory beanFactory, String[] beanNames, Class<T> beanType) {
-
-        if (isEmpty(beanNames)) {
+        int size = size(beanNames);
+        if (size < 1) {
             return emptyList();
         }
 
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType, true, false);
-
-        List<T> beans = new ArrayList<T>(beanNames.length);
-
-        for (String beanName : beanNames) {
+        List<T> beans = new ArrayList<T>(size);
+        for (int i = 0; i < size; i++) {
+            String beanName = beanNames[i];
             if (containsElement(allBeanNames, beanName)) {
                 beans.add(beanFactory.getBean(beanName, beanType));
             }
         }
-
         return unmodifiableList(beans);
     }
 
