@@ -30,9 +30,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static org.springframework.util.MimeTypeUtils.ALL;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 
@@ -112,7 +112,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
         List<ProduceMediaTypeExpression> result = getMatchingExpressions(acceptedMediaTypes);
         if (!CollectionUtils.isEmpty(result)) {
             return false;
-        } else if (isPresentIn(MediaType.ALL, acceptedMediaTypes)) {
+        } else if (ALL.isPresentIn(acceptedMediaTypes)) {
             return false;
         }
         return true;
