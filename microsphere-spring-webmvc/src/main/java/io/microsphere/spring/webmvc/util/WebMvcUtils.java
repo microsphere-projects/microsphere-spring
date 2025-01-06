@@ -68,17 +68,6 @@ public abstract class WebMvcUtils {
     public static final Set<Class<? extends HttpMessageConverter<?>>> supportedConverterTypes;
 
     /**
-     * The name of AbstractJsonpResponseBodyAdvice class which was present in Spring Framework since 4.1
-     */
-    public static final String ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_CLASS_NAME =
-            "org.springframework.web.servlet.mvc.findWebApplicationContextMethod.annotation.AbstractJsonpResponseBodyAdvice";
-
-    /**
-     * Indicates current version of Spring Framework is 4.1 or above
-     */
-    private final static boolean ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_PRESENT = isPresent(ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_CLASS_NAME, WebMvcUtils.class.getClassLoader());
-
-    /**
      * {@link RequestMappingHandlerMapping} Context name
      */
     private final static String REQUEST_MAPPING_HANDLER_MAPPING_CONTEXT_NAME = RequestMappingHandlerMapping.class.getName();
