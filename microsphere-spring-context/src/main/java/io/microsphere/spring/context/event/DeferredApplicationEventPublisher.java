@@ -91,7 +91,7 @@ public class DeferredApplicationEventPublisher implements ApplicationEventPublis
     public DeferredApplicationEventPublisher(ApplicationEventPublisher delegate) {
         notNull(delegate, "The ApplicationEventPublisher argument must not be null");
         this.delegate = delegate;
-        this.context = delegate instanceof ConfigurableApplicationContext ? (ConfigurableApplicationContext) delegate : null;
+        this.context = delegate instanceof ConfigurableApplicationContext context ? context : null;
         if (this.context != null) {
             this.context.addApplicationListener(this);
         }

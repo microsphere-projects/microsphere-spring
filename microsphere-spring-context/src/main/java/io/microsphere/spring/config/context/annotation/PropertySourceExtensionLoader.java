@@ -364,8 +364,8 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     private CompositePropertySource getPropertySource(String propertySourceName) {
         MutablePropertySources propertySources = getPropertySources();
         PropertySource propertySource = propertySources.get(propertySourceName);
-        if (propertySource instanceof CompositePropertySource) {
-            return (CompositePropertySource) propertySource;
+        if (propertySource instanceof CompositePropertySource compositePropertySource) {
+            return compositePropertySource;
         } else {
             logger.warn("The CompositePropertySource can't be found by the name : {} , actual : {}", propertySourceName, propertySource);
         }
@@ -577,7 +577,8 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             super(original.getName(), original.getSource());
             this.propertySourceResource = propertySourceResource;
             this.original = original;
-            this.enumerablePropertySource = original instanceof EnumerablePropertySource ? (EnumerablePropertySource<T>) original : null;
+            this.enumerablePropertySource = original instanceof EnumerablePropertySource enumerablePropertySource ?
+                    enumerablePropertySource : null;
         }
 
         @Override

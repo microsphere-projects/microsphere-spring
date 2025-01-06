@@ -459,8 +459,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         for (int i = 0; i < propertyValuesLength; i++) {
             PropertyValue propertyValue = propertyValues[i];
             Object value = propertyValue.getValue();
-            if (value instanceof BeanReference) {
-                BeanReference beanReference = (BeanReference) value;
+            if (value instanceof BeanReference beanReference) {
                 String beanName = beanReference.getBeanName();
                 dependentBeanNames.add(beanName);
             }
@@ -515,13 +514,12 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
     }
 
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-        if (beanFactory instanceof DefaultListableBeanFactory) {
-            DefaultListableBeanFactory dbf = (DefaultListableBeanFactory) beanFactory;
+        if (beanFactory instanceof DefaultListableBeanFactory dbf) {
             List<SmartInstantiationAwareBeanPostProcessor> processors = new LinkedList<>();
             List<BeanPostProcessor> beanPostProcessors = dbf.getBeanPostProcessors();
             for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
-                if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor) {
-                    processors.add((SmartInstantiationAwareBeanPostProcessor) beanPostProcessor);
+                if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor siaBeanProcessor) {
+                    processors.add(siaBeanProcessor);
                 }
             }
             return processors;
@@ -584,8 +582,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
      */
     private RootBeanDefinition getEligibleBeanDefinition(BeanDefinition beanDefinition) {
         if (beanDefinition != null && !beanDefinition.isAbstract() && beanDefinition.isSingleton()
-                && !beanDefinition.isLazyInit() && beanDefinition instanceof RootBeanDefinition) {
-            RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
+                && !beanDefinition.isLazyInit() && beanDefinition instanceof RootBeanDefinition rootBeanDefinition) {
             Supplier<?> instanceSupplier = rootBeanDefinition.getInstanceSupplier();
             return instanceSupplier == null ? rootBeanDefinition : null;
         }

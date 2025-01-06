@@ -204,8 +204,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
                                            BeanDefinitionHolder beanDefinitionHolder) {
         BeanDefinition beanDefinition = beanDefinitionHolder.getBeanDefinition();
 
-        if (beanDefinition instanceof AnnotatedBeanDefinition) {
-            AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
+        if (beanDefinition instanceof AnnotatedBeanDefinition annotatedBeanDefinition) {
             putPrimaryBeanDefinition(primaryBeanDefinitions, annotatedBeanDefinition, beanDefinitionHolder.getBeanName());
             putPrimaryBeanDefinition(primaryBeanDefinitions, annotatedBeanDefinition, beanDefinitionHolder.getAliases());
         } else {

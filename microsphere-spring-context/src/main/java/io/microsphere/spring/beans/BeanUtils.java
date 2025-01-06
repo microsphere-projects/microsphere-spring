@@ -110,8 +110,7 @@ public abstract class BeanUtils extends BaseUtils {
      */
     public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName, boolean includingAncestors) {
         ClassLoader classLoader = null;
-        if (beanFactory instanceof ConfigurableBeanFactory) {
-            ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
+        if (beanFactory instanceof ConfigurableBeanFactory configurableBeanFactory) {
             classLoader = configurableBeanFactory.getBeanClassLoader();
         }
 
@@ -286,8 +285,8 @@ public abstract class BeanUtils extends BaseUtils {
      * @return all sorted Beans
      */
     public static <T> List<T> getSortedBeans(BeanFactory beanFactory, Class<T> type) {
-        if (beanFactory instanceof ListableBeanFactory) {
-            return getSortedBeans((ListableBeanFactory) beanFactory, type);
+        if (beanFactory instanceof ListableBeanFactory lbf) {
+            return getSortedBeans(lbf, type);
         }
         return emptyList();
     }
@@ -363,8 +362,8 @@ public abstract class BeanUtils extends BaseUtils {
     }
 
     public static void invokeInitializingBean(Object bean) throws Exception {
-        if (bean instanceof InitializingBean) {
-            ((InitializingBean) bean).afterPropertiesSet();
+        if (bean instanceof InitializingBean initializingBean) {
+            initializingBean.afterPropertiesSet();
         }
     }
 
@@ -447,8 +446,8 @@ public abstract class BeanUtils extends BaseUtils {
      * @param configurableBeanFactory
      */
     public static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
-        if (beanFactory instanceof ApplicationContext) {
-            invokeAwareInterfaces(bean, (ApplicationContext) beanFactory);
+        if (beanFactory instanceof ApplicationContext context) {
+            invokeAwareInterfaces(bean, context);
         } else {
             invokeBeanFactoryAwareInterfaces(bean, beanFactory, configurableBeanFactory);
         }
@@ -464,30 +463,30 @@ public abstract class BeanUtils extends BaseUtils {
     }
 
     static void invokeBeanNameAware(Object bean, BeanFactory beanFactory) {
-        if (bean instanceof BeanNameAware) {
+        if (bean instanceof BeanNameAware beanNameAware) {
             BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
             BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
             String beanName = generateBeanName(beanDefinition, registry);
-            ((BeanNameAware) bean).setBeanName(beanName);
+            beanNameAware.setBeanName(beanName);
         }
     }
 
     public static void invokeBeanNameAware(Object bean, String beanName) {
-        if (bean instanceof BeanNameAware) {
-            ((BeanNameAware) bean).setBeanName(beanName);
+        if (bean instanceof BeanNameAware beanNameAware) {
+            beanNameAware.setBeanName(beanName);
         }
     }
 
     static void invokeBeanFactoryAware(Object bean, BeanFactory beanFactory) {
-        if (bean instanceof BeanFactoryAware) {
-            ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
+        if (bean instanceof BeanFactoryAware beanFactoryAware) {
+            beanFactoryAware.setBeanFactory(beanFactory);
         }
     }
 
     static void invokeBeanClassLoaderAware(Object bean, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
-        if (bean instanceof BeanClassLoaderAware && configurableBeanFactory != null) {
+        if (bean instanceof BeanClassLoaderAware beanClassLoaderAware && configurableBeanFactory != null) {
             ClassLoader classLoader = configurableBeanFactory.getBeanClassLoader();
-            ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
+            beanClassLoaderAware.setBeanClassLoader(classLoader);
         }
     }
 

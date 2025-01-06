@@ -34,8 +34,7 @@ public class StoringResponseBodyReturnValueAdvice extends ResponseBodyAdviceAdap
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
                                   ServerHttpResponse response) {
         Method method = returnType.getMethod();
-        if (request instanceof ServletServerHttpRequest) {
-            ServletServerHttpRequest serverHttpRequest = (ServletServerHttpRequest) request;
+        if (request instanceof ServletServerHttpRequest serverHttpRequest) {
             HttpServletRequest httpServletRequest = serverHttpRequest.getServletRequest();
             setHandlerMethodReturnValue(httpServletRequest, method, body);
         }

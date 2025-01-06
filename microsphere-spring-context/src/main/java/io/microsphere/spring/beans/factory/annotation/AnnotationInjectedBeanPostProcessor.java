@@ -281,8 +281,8 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
                 logger.info(object + " was destroying!");
             }
 
-            if (object instanceof DisposableBean) {
-                ((DisposableBean) object).destroy();
+            if (object instanceof DisposableBean disposableBean) {
+                disposableBean.destroy();
             }
         }
 

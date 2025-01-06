@@ -71,11 +71,9 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof AnnotationAttributes)) {
+        if (!(o instanceof AnnotationAttributes that)) {
             return false;
         }
-
-        AnnotationAttributes that = (AnnotationAttributes) o;
 
         if (this.size() == that.size()) {
             for (Map.Entry<String, Object> entry : this.entrySet()) {
@@ -131,8 +129,8 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      */
     @Nonnull
     public static <A extends Annotation> GenericAnnotationAttributes<A> of(@Nonnull AnnotationAttributes attributes) {
-        if (attributes instanceof GenericAnnotationAttributes) {
-            return (GenericAnnotationAttributes) attributes;
+        if (attributes instanceof GenericAnnotationAttributes genericAnnotationAttributes) {
+            return genericAnnotationAttributes;
         }
         return new GenericAnnotationAttributes(attributes);
     }

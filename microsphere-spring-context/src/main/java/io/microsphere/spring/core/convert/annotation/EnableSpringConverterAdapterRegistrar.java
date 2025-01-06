@@ -54,8 +54,7 @@ class EnableSpringConverterAdapterRegistrar implements ImportSelector, BeanFacto
     private void addSpringConverterAdapter(ConfigurableBeanFactory beanFactory) {
         ConversionServiceResolver conversionServiceResolver = new ConversionServiceResolver(beanFactory);
         ConversionService conversionService = conversionServiceResolver.resolve();
-        if (conversionService instanceof ConverterRegistry) {
-            ConverterRegistry registry = (ConverterRegistry) conversionService;
+        if (conversionService instanceof ConverterRegistry registry) {
             registry.addConverter(SpringConverterAdapter.INSTANCE);
         }
     }

@@ -178,8 +178,7 @@ public abstract class BeanFactoryUtils extends BaseUtils {
      */
     public static List<BeanPostProcessor> getBeanPostProcessors(@Nullable BeanFactory beanFactory) {
         final List<BeanPostProcessor> beanPostProcessors;
-        if (beanFactory instanceof AbstractBeanFactory) {
-            AbstractBeanFactory abf = (AbstractBeanFactory) beanFactory;
+        if (beanFactory instanceof AbstractBeanFactory abf) {
             beanPostProcessors = unmodifiableList(abf.getBeanPostProcessors());
         } else {
             beanPostProcessors = emptyList();
@@ -191,8 +190,8 @@ public abstract class BeanFactoryUtils extends BaseUtils {
         if (beanFactory == null) {
             return null;
         }
-        if (beanFactory instanceof ApplicationContext) {
-            beanFactory = ((ApplicationContext) beanFactory).getAutowireCapableBeanFactory();
+        if (beanFactory instanceof ApplicationContext context) {
+            beanFactory = context.getAutowireCapableBeanFactory();
         }
         isInstanceOf(extendedBeanFactoryType, beanFactory,
                 "The 'beanFactory' argument is not a instance of " + extendedBeanFactoryType +

@@ -87,8 +87,8 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
 
     @Override
     public void destroy() throws Exception {
-        if (delegate instanceof DisposableBean) {
-            ((DisposableBean) delegate).destroy();
+        if (delegate instanceof DisposableBean disposableBean) {
+            disposableBean.destroy();
         }
     }
 }

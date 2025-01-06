@@ -61,10 +61,10 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
         Map<String, Object> copy = shallowCloneMap(source);
         for (Map.Entry<String, Object> entry : copy.entrySet()) {
             Object value = entry.getValue();
-            if (value instanceof String) {
-                entry.setValue(resolvePlaceholder((String) value, propertyResolver));
-            } else if (value instanceof String[]) {
-                entry.setValue(resolvePlaceholders((String[]) value, propertyResolver));
+            if (value instanceof String stringValue) {
+                entry.setValue(resolvePlaceholder(stringValue, propertyResolver));
+            } else if (value instanceof String[] values) {
+                entry.setValue(resolvePlaceholders(values, propertyResolver));
             }
         }
         return copy;

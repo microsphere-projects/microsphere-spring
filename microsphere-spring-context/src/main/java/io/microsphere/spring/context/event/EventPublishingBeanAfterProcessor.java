@@ -79,10 +79,10 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
         if (!Objects.equals(context, event.getSource())) {
             return;
         }
-        if (event instanceof ContextRefreshedEvent) {
-            onContextRefreshedEvent((ContextRefreshedEvent) event);
-        } else if (event instanceof ContextClosedEvent) {
-            onContextClosedEvent((ContextClosedEvent) event);
+        if (event instanceof ContextRefreshedEvent contextRefreshedEvent) {
+            onContextRefreshedEvent(contextRefreshedEvent);
+        } else if (event instanceof ContextClosedEvent contextClosedEvent) {
+            onContextClosedEvent(contextClosedEvent);
         }
     }
 
@@ -161,8 +161,8 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
             beanEventListeners.setReadyBeanNames(readyBeanNames);
             for (String beanName : beanNames) {
                 BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);
-                if (beanDefinition instanceof RootBeanDefinition) {
-                    beanEventListeners.onBeanDefinitionReady(beanName, (RootBeanDefinition) beanDefinition);
+                if (beanDefinition instanceof RootBeanDefinition rootBeanDefinition) {
+                    beanEventListeners.onBeanDefinitionReady(beanName, rootBeanDefinition);
                 }
             }
         }

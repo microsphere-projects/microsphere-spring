@@ -47,8 +47,7 @@ public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurat
 
             @Override
             public void customize(String beanName, Object configurationBean) {
-                if ("m".equals(beanName) && configurationBean instanceof User) {
-                    User user = (User) configurationBean;
+                if ("m".equals(beanName) && configurationBean instanceof User user) {
                     user.setAge(19);
                 }
             }

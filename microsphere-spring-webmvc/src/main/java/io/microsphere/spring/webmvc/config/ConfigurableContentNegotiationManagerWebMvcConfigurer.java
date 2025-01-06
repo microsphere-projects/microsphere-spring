@@ -122,21 +122,17 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
 
                 Object value = entry.getValue();
 
-                if (value instanceof Map) {
-                    Map<String, String> subProperties = extraProperties((Map) value);
+                if (value instanceof Map mapValue) {
+                    Map<String, String> subProperties = extraProperties(mapValue);
                     for (Map.Entry<String, String> e : subProperties.entrySet()) {
                         String subKey = e.getKey();
                         String subValue = e.getValue();
                         properties.put(key + PROPERTY_SEPARATOR + subKey, subValue);
                     }
                 } else if (value instanceof String) {
-
                     properties.put(key, value.toString());
-
                 }
-
             }
-
         }
 
         return properties;
@@ -187,9 +183,9 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
 
                 }
 
-                if (actualPropertyValue instanceof Map) {
+                if (actualPropertyValue instanceof Map mapValue) {
 
-                    Map<String, Object> nestedProperties = (Map<String, Object>) actualPropertyValue;
+                    Map<String, Object> nestedProperties = mapValue;
 
                     Map<String, String> subProperties = extraProperties(nestedProperties);
 

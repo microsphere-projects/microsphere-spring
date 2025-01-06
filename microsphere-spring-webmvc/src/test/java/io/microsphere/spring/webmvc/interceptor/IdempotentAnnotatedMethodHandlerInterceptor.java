@@ -56,8 +56,7 @@ public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethod
         Object[] args = event.getArguments();
         System.out.println("method : " + method + " , args : " + Arrays.asList(args));
         WebRequest webRequest = event.getWebRequest();
-        if (webRequest instanceof ServletWebRequest) {
-            ServletWebRequest servletWebRequest = (ServletWebRequest) webRequest;
+        if (webRequest instanceof ServletWebRequest servletWebRequest) {
             HttpServletRequest request = servletWebRequest.getNativeRequest(HttpServletRequest.class);
             // HttpSession based on Spring Redis
             // Spring Session

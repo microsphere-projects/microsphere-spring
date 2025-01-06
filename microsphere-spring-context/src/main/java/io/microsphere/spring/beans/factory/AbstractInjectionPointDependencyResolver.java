@@ -126,7 +126,7 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             return null;
         }
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
-        return suggestedValue instanceof String ? (String) suggestedValue : null;
+        return suggestedValue instanceof String value ? value : null;
     }
 
     protected void resolveDependentBeanNamesByType(Supplier<Type> typeSupplier, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
