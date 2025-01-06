@@ -27,18 +27,12 @@ import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
 import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 import org.springframework.web.servlet.mvc.condition.NameValueExpression;
 import org.springframework.web.servlet.mvc.condition.ParamsRequestCondition;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
-import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 import java.util.Set;
-
-import static io.microsphere.invoke.MethodHandleUtils.NOT_FOUND_METHOD_HANDLE;
-import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link WebEndpointMappingFactory} based on Spring WebMVC {@link RequestMappingInfo}
