@@ -69,10 +69,6 @@ public abstract class BeanUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
 
-    private static final String[] EMPTY_BEAN_NAMES = new String[0];
-
-    private static final Class<?> APPLICATION_STARTUP_CLASS = resolveClass("org.springframework.core.metrics.ApplicationStartup");
-
     /**
      * Is Bean Present or not?
      *
