@@ -18,9 +18,8 @@ package io.microsphere.spring.core.io;
 
 import io.microsphere.util.BaseUtils;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
-
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 
 /**
  * The utilities class for {@link Resource}
@@ -32,27 +31,13 @@ import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 public abstract class ResourceUtils extends BaseUtils {
 
     /**
-     * The class name of {@linkplain org.springframework.core.io.FileUrlResource}
-     *
-     * @since Spring Framework 5.0.2
-     */
-    public static final String FILE_URL_RESOURCE_CLASS_NAME = "org.springframework.core.io.FileUrlResource";
-
-    /**
-     * The {@link Class} of {@linkplain org.springframework.core.io.FileUrlResource}
-     *
-     * @since Spring Framework 5.0.2
-     */
-    public static final Class FILE_URL_RESOURCE_CLASS = resolveClass(FILE_URL_RESOURCE_CLASS_NAME, ResourceUtils.class.getClassLoader());
-
-    /**
      * Determine whether the specified {@link Resource} is a {@linkplain org.springframework.core.io.FileUrlResource}
      *
      * @param resource {@link Resource}
      * @return <code>true</code> if the specified {@link Resource} is a {@linkplain org.springframework.core.io.FileUrlResource}
      */
     public static boolean isFileUrlResource(Resource resource) {
-        return FILE_URL_RESOURCE_CLASS != null && FILE_URL_RESOURCE_CLASS.isInstance(resource);
+        return resource instanceof FileUrlResource;
     }
 
     /**

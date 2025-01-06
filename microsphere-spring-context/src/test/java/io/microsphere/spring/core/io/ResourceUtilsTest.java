@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.function.Function;
 
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
-import static io.microsphere.spring.core.io.ResourceUtils.FILE_URL_RESOURCE_CLASS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -55,13 +54,13 @@ public class ResourceUtilsTest {
     @Test
     public void testIsFileUrlResource() {
         assertResource(this.classPathResource, ResourceUtils::isFileUrlResource, false);
-        assertResource(this.urlResource, ResourceUtils::isFileUrlResource, FILE_URL_RESOURCE_CLASS != null);
+        assertResource(this.urlResource, ResourceUtils::isFileUrlResource, true);
     }
 
     @Test
     public void testIsFileBasedResource() throws IOException {
         assertResource(this.classPathResource, ResourceUtils::isFileBasedResource, false);
-        assertResource(this.urlResource, ResourceUtils::isFileBasedResource, FILE_URL_RESOURCE_CLASS != null);
+        assertResource(this.urlResource, ResourceUtils::isFileBasedResource, true);
         assertResource(new FileSystemResource(this.urlResource.getFile()), ResourceUtils::isFileBasedResource, true);
     }
 
