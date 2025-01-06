@@ -28,7 +28,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.util.Map;
@@ -38,6 +37,7 @@ import java.util.function.BiConsumer;
 
 import static io.microsphere.spring.context.event.BeanListeners.getBean;
 import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanNames;
+import static org.springframework.util.ClassUtils.resolveClassName;
 
 /**
  * Bean After-Event Publishing Processor
@@ -47,7 +47,7 @@ import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanName
  */
 class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements GenericApplicationListenerAdapter {
 
-    private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = ClassUtils.resolveClassName("org.springframework.beans.factory.support.DisposableBeanAdapter", null);
+    private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = resolveClassName("org.springframework.beans.factory.support.DisposableBeanAdapter", null);
 
     private final ConfigurableApplicationContext context;
 
