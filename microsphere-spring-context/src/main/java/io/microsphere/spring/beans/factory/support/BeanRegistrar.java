@@ -17,9 +17,7 @@
 package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
@@ -30,9 +28,11 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static java.beans.Introspector.decapitalize;
 import static java.lang.String.format;
+import static org.springframework.aop.support.AopUtils.getTargetClass;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
@@ -48,7 +48,7 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public abstract class BeanRegistrar {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeanRegistrar.class);
+    private static final Logger logger = getLogger(BeanRegistrar.class);
 
     /**
      * Register Infrastructure Bean
@@ -244,7 +244,7 @@ public abstract class BeanRegistrar {
     }
 
     public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
-        Class beanClass = AopUtils.getTargetClass(bean);
+        Class beanClass = getTargetClass(bean);
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass);
         beanDefinition.setInstanceSupplier(() -> bean);
         registerBeanDefinition(registry, beanName, beanDefinition);

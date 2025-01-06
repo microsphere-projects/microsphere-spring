@@ -17,15 +17,15 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.util.ClassUtils;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
@@ -37,7 +37,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
 public abstract class OnceApplicationContextEventListener<E extends ApplicationContextEvent> implements ApplicationListener<E>,
         ApplicationContextAware {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = getLogger(getClass());
 
     private ApplicationContext applicationContext;
 
@@ -89,7 +89,7 @@ public abstract class OnceApplicationContextEventListener<E extends ApplicationC
         if (applicationContext == null) {
             throw new NullPointerException("applicationContext must be not null, it has to invoke " +
                     "setApplicationContext(ApplicationContext) method first if "
-                    + ClassUtils.getShortName(getClass()) + " instance is not a Spring Bean");
+                    + getShortName(getClass()) + " instance is not a Spring Bean");
         }
         return applicationContext;
     }

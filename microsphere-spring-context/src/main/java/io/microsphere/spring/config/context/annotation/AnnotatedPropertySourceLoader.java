@@ -17,7 +17,6 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.BeanCreationException;
@@ -34,6 +33,7 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -55,7 +55,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
 
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = getLogger(this.getClass());
 
     private final Class<A> annotationType;
 

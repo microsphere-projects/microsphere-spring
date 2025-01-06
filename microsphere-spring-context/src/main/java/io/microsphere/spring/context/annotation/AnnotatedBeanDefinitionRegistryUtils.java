@@ -1,7 +1,6 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -16,7 +15,6 @@ import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -26,7 +24,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
+import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.springframework.context.annotation.AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR;
@@ -42,7 +43,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  */
 public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(AnnotatedBeanDefinitionRegistryUtils.class);
+    private static final Logger logger = getLogger(AnnotatedBeanDefinitionRegistryUtils.class);
 
     /**
      * Is present bean that was registered by the specified {@link Annotation annotated} {@link Class class}
@@ -88,7 +89,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
      */
     public static void registerBeans(BeanDefinitionRegistry registry, Class<?>... annotatedClasses) {
 
-        if (ObjectUtils.isEmpty(annotatedClasses)) {
+        if (isEmpty(annotatedClasses)) {
             return;
         }
 
@@ -125,7 +126,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
         int count = 0;
 
-        if (!ObjectUtils.isEmpty(basePackages)) {
+        if (isNotEmpty(basePackages)) {
 
             boolean traceEnabled = logger.isTraceEnabled();
 

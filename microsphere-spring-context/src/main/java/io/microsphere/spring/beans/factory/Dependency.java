@@ -16,9 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.collection.CollectionUtils;
-import io.microsphere.util.ArrayUtils;
-
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,8 +23,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import static io.microsphere.collection.CollectionUtils.size;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Collections.emptyList;
 import static org.springframework.util.Assert.hasText;
 
@@ -149,7 +148,7 @@ public class Dependency {
     }
 
     private static List<Dependency> createList(Iterable<String> beanNames) {
-        int length = CollectionUtils.size(beanNames);
+        int length = size(beanNames);
         if (length < 1) {
             return emptyList();
         }
@@ -163,7 +162,7 @@ public class Dependency {
     }
 
     private static List<Dependency> createList(String[] beanNames) {
-        int length = ArrayUtils.length(beanNames);
+        int length = length(beanNames);
         if (length < 1) {
             return emptyList();
         }

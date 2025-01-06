@@ -1,6 +1,5 @@
 package io.microsphere.spring.webmvc.util;
 
-import io.microsphere.spring.web.servlet.util.WebUtils;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.ServletRequest;
@@ -8,12 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.MethodParameter;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.ContextLoader;
@@ -40,15 +36,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.microsphere.util.ClassLoaderUtils.isPresent;
+import static io.microsphere.spring.web.servlet.util.WebUtils.findServletRegistrations;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
+import static org.springframework.util.StringUtils.arrayToDelimitedString;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM;
 import static org.springframework.web.context.ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM;
 import static org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext;
+import static org.springframework.web.servlet.support.RequestContextUtils.findWebApplicationContext;
 
 /**
  * Spring Web MVC Utilities Class
@@ -208,7 +208,7 @@ public abstract class WebMvcUtils {
         HttpServletRequest request = getHttpServletRequest(webRequest);
         final Object[] arguments;
         if (request != null) {
-            arguments = WebMvcUtils.getHandlerMethodArguments(request, method);
+            arguments = getHandlerMethodArguments(request, method);
         } else {
             arguments = new Object[method.getParameterCount()];
         }
@@ -298,7 +298,7 @@ public abstract class WebMvcUtils {
      * @return If {@link ControllerAdvice} bean type is present , return <code>true</code> , or <code>false</code>.
      */
     public static boolean isControllerAdviceBeanType(Class<?> beanType) {
-        return AnnotationUtils.findAnnotation(beanType, ControllerAdvice.class) != null;
+        return findAnnotation(beanType, ControllerAdvice.class) != null;
     }
 
     /**
@@ -330,7 +330,7 @@ public abstract class WebMvcUtils {
 
         if (webApplicationContext == null) {
 
-            webApplicationContext = RequestContextUtils.findWebApplicationContext(request, servletContext);
+            webApplicationContext = findWebApplicationContext(request, servletContext);
 
         }
 
@@ -346,13 +346,13 @@ public abstract class WebMvcUtils {
 
         List<String> parameterValuesList = new ArrayList<String>();
 
-        if (!ObjectUtils.isEmpty(existedParameterValues)) {
+        if (isNotEmpty(existedParameterValues)) {
             parameterValuesList.addAll(Arrays.asList(existedParameterValues));
         }
 
         parameterValuesList.addAll(Arrays.asList(parameterValues));
 
-        String newParameterValue = StringUtils.arrayToDelimitedString(parameterValuesList.toArray(), ",");
+        String newParameterValue = arrayToDelimitedString(parameterValuesList.toArray(), ",");
 
         return newParameterValue;
     }
@@ -425,7 +425,7 @@ public abstract class WebMvcUtils {
             Class<? extends ApplicationContextInitializer> contextInitializerClass) {
 
         Collection<? extends ServletRegistration> servletRegistrations =
-                WebUtils.findServletRegistrations(servletContext, FrameworkServlet.class).values();
+                findServletRegistrations(servletContext, FrameworkServlet.class).values();
 
         for (ServletRegistration servletRegistration : servletRegistrations) {
             String contextInitializerClassName = servletRegistration.getInitParameter(CONTEXT_INITIALIZER_CLASSES_PARAM);

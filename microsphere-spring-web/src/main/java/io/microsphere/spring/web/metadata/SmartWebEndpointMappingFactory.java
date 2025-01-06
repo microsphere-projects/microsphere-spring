@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.emptyList;
 
@@ -42,7 +42,7 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
 
     private static final Class<WebEndpointMappingFactory> FACTORY_CLASS = WebEndpointMappingFactory.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(FACTORY_CLASS);
+    private final static Logger logger = getLogger(FACTORY_CLASS);
 
     private final Map<Class<?>, List<WebEndpointMappingFactory>> delegates;
 

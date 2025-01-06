@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -36,7 +35,6 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.Environment;
-import org.springframework.util.ReflectionUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -53,6 +51,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
@@ -60,6 +59,9 @@ import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMe
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
 import static org.springframework.util.ClassUtils.getMostSpecificMethod;
+import static org.springframework.util.ReflectionUtils.doWithFields;
+import static org.springframework.util.ReflectionUtils.doWithMethods;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.StringUtils.hasLength;
 
 /**
@@ -80,7 +82,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
     private final static PropertyDescriptor[] EMPTY_PROPERTY_DESCRIPTOR_ARRAY = new PropertyDescriptor[0];
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private final Class<A> annotationType;
 
@@ -153,25 +155,22 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
         final List<AnnotatedFieldElement> elements = new LinkedList<AnnotatedFieldElement>();
 
-        ReflectionUtils.doWithFields(beanClass, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+        doWithFields(beanClass, field -> {
 
-                A annotation = getAnnotation(field, getAnnotationType());
+            A annotation = getAnnotation(field, getAnnotationType());
 
-                if (annotation != null) {
+            if (annotation != null) {
 
-                    if (Modifier.isStatic(field.getModifiers())) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + getAnnotationType().getName() + " is not supported on static fields: " + field);
-                        }
-                        return;
+                if (Modifier.isStatic(field.getModifiers())) {
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("@" + getAnnotationType().getName() + " is not supported on static fields: " + field);
                     }
-
-                    elements.add(new AnnotatedFieldElement(field, annotation));
+                    return;
                 }
 
+                elements.add(new AnnotatedFieldElement(field, annotation));
             }
+
         });
 
         return elements;
@@ -188,34 +187,31 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
         final List<AnnotatedMethodElement> elements = new LinkedList<AnnotatedMethodElement>();
 
-        ReflectionUtils.doWithMethods(beanClass, new ReflectionUtils.MethodCallback() {
-            @Override
-            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+        doWithMethods(beanClass, method -> {
 
-                Method bridgedMethod = findBridgedMethod(method);
+            Method bridgedMethod = findBridgedMethod(method);
 
-                if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
+            if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
+                return;
+            }
+
+            A annotation = findAnnotation(bridgedMethod, getAnnotationType());
+
+            if (annotation != null && method.equals(getMostSpecificMethod(method, beanClass))) {
+                if (Modifier.isStatic(method.getModifiers())) {
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("@" + getAnnotationType().getSimpleName() + " annotation is not supported on static methods: " + method);
+                    }
                     return;
                 }
-
-                A annotation = findAnnotation(bridgedMethod, getAnnotationType());
-
-                if (annotation != null && method.equals(getMostSpecificMethod(method, beanClass))) {
-                    if (Modifier.isStatic(method.getModifiers())) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + getAnnotationType().getSimpleName() + " annotation is not supported on static methods: " + method);
-                        }
-                        return;
+                if (method.getParameterTypes().length == 0) {
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("@" + getAnnotationType().getSimpleName() + " annotation should only be used on methods with parameters: " +
+                                method);
                     }
-                    if (method.getParameterTypes().length == 0) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + getAnnotationType().getSimpleName() + " annotation should only be used on methods with parameters: " +
-                                    method);
-                        }
-                    }
-                    PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
-                    elements.add(new AnnotatedMethodElement(method, pd, annotation));
                 }
+                PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
+                elements.add(new AnnotatedMethodElement(method, pd, annotation));
             }
         });
 
@@ -494,7 +490,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
             Object injectedObject = getInjectedObject(annotation, bean, beanName, injectedType, this);
 
-            ReflectionUtils.makeAccessible(method);
+            makeAccessible(method);
 
             method.invoke(bean, injectedObject);
 
@@ -526,7 +522,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
             Object injectedObject = getInjectedObject(annotation, bean, beanName, injectedType, this);
 
-            ReflectionUtils.makeAccessible(field);
+            makeAccessible(field);
 
             field.set(bean, injectedObject);
 

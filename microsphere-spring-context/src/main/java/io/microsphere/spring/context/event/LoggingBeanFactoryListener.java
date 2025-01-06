@@ -17,9 +17,10 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * Logging {@link BeanFactoryListener}
@@ -30,7 +31,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  */
 public class LoggingBeanFactoryListener implements BeanFactoryListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanFactoryListener.class);
+    private static final Logger logger = getLogger(LoggingBeanFactoryListener.class);
 
     @Override
     public void onBeanDefinitionRegistryReady(BeanDefinitionRegistry registry) {

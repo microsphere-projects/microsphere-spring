@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
@@ -38,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingRegistrar.ENABLE_CONFIGURATION_BINDING_CLASS;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
@@ -65,7 +65,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
     static final String IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME = "ignoreInvalidFields";
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private ConfigurableListableBeanFactory beanFactory = null;
 

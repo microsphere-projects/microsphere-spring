@@ -18,7 +18,6 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.config.env.event.PropertySourceChangedEvent;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +36,6 @@ import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.PathMatcher;
 
 import javax.annotation.Nonnull;
@@ -56,10 +54,12 @@ import java.util.function.Function;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.added;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.replaced;
 import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.sort;
+import static org.springframework.beans.BeanUtils.instantiateClass;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -378,7 +378,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
         boolean ignoreResourceNotFound = extensionAttributes.isIgnoreResourceNotFound();
 
-        if (ObjectUtils.isEmpty(resourceValues)) {
+        if (isEmpty(resourceValues)) {
             if (ignoreResourceNotFound) {
                 return emptyList();
             }
@@ -523,7 +523,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
     protected <T> T createInstance(EA extensionAttributes, Function<EA, Class<T>> classFunction) {
         Class<T> type = classFunction.apply(extensionAttributes);
-        return BeanUtils.instantiateClass(type);
+        return instantiateClass(type);
     }
 
     @Override

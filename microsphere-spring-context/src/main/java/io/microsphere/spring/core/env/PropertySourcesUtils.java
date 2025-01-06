@@ -1,7 +1,6 @@
 package io.microsphere.spring.core.env;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -26,6 +25,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.MIN_LOAD_FACTOR;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
@@ -40,7 +40,7 @@ import static java.util.Collections.unmodifiableSet;
  */
 public abstract class PropertySourcesUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(PropertySourcesUtils.class);
+    private static final Logger logger = getLogger(PropertySourcesUtils.class);
 
     /**
      * The {@link PropertySource#getName() PropertySource name} of {@link org.springframework.boot.SpringApplication#setDefaultProperties Spring Boot default poperties}

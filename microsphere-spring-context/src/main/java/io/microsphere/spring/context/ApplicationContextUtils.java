@@ -17,7 +17,6 @@
 package io.microsphere.spring.context;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -30,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanPostProcessors;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static io.microsphere.util.ClassUtils.cast;
@@ -42,7 +42,7 @@ import static io.microsphere.util.ClassUtils.cast;
  */
 public abstract class ApplicationContextUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationContextUtils.class);
+    private static final Logger logger = getLogger(ApplicationContextUtils.class);
 
     /**
      * The {@link org.springframework.context.support.ApplicationContextAwareProcessor} Class Name (Internal).

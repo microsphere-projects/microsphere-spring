@@ -17,7 +17,6 @@
 package io.microsphere.spring.webmvc.handler;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
@@ -41,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.util.ArrayUtils.of;
@@ -74,7 +74,7 @@ import static io.microsphere.util.ArrayUtils.of;
  */
 public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implements ApplicationListener<WebEndpointMappingsReadyEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReversedProxyHandlerMapping.class);
+    private static final Logger logger = getLogger(ReversedProxyHandlerMapping.class);
 
     public static final int DEFAULT_ORDER = HIGHEST_PRECEDENCE + 1;
 

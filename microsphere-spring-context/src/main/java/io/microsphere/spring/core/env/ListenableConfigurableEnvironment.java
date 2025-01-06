@@ -18,7 +18,6 @@ package io.microsphere.spring.core.env;
 
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -37,6 +36,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -51,7 +51,7 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  */
 public class ListenableConfigurableEnvironment implements ConfigurableEnvironment {
 
-    private final static Logger logger = LoggerFactory.getLogger(ListenableConfigurableEnvironment.class);
+    private final static Logger logger = getLogger(ListenableConfigurableEnvironment.class);
 
     /**
      * The prefix of the property name of {@link ListenableConfigurableEnvironment}

@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +24,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -35,7 +36,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         initializers = {EventPublishingBeanInitializer.class})
 public class BeanTimeStatisticsTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeanTimeStatisticsTest.class);
+    private static final Logger logger = getLogger(BeanTimeStatisticsTest.class);
 
     @Autowired
     private BeanFactory beanFactory;

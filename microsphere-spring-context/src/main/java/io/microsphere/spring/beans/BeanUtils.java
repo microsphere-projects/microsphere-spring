@@ -1,7 +1,6 @@
 package io.microsphere.spring.beans;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.Aware;
@@ -38,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
@@ -63,7 +63,7 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public abstract class BeanUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeanUtils.class);
+    private static final Logger logger = getLogger(BeanUtils.class);
 
     /**
      * Is Bean Present or not?

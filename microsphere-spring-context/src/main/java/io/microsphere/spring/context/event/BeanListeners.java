@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.config.NamedBeanHolderComparator;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
@@ -36,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.registerFactories;
 
@@ -47,7 +47,7 @@ import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.r
  */
 class BeanListeners implements BeanListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeanListeners.class);
+    private static final Logger logger = getLogger(BeanListeners.class);
 
     private static final String BEAN_NAME = "beanEventListeners";
 

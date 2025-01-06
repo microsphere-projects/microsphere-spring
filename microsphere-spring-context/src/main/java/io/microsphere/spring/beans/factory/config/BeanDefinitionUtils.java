@@ -23,7 +23,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -40,6 +39,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * {@link BeanDefinition} Utilities class
@@ -120,7 +120,7 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
                 beanClass = beanDefinition.getBeanClass();
             } else {
                 String beanClassName = beanDefinition.getBeanClassName();
-                if (StringUtils.hasText(beanClassName)) {
+                if (hasText(beanClassName)) {
                     ClassLoader targetClassLoader = classLoader == null ? getDefaultClassLoader() : classLoader;
                     beanClass = resolveClass(beanClassName, targetClassLoader, true);
                 }

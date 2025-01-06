@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -37,6 +36,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import javax.annotation.Nonnull;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
@@ -67,7 +67,7 @@ import static io.microsphere.text.FormatUtils.format;
 public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware,
         ResourceLoaderAware {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = getLogger(this.getClass());
 
     protected ClassLoader classLoader;
 
