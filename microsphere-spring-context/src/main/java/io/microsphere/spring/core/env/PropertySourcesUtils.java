@@ -139,8 +139,7 @@ public abstract class PropertySourcesUtils extends BaseUtils {
     public static Set<String> findPropertyNames(ConfigurableEnvironment environment, Predicate<String> propertyNameFilter) {
         Set<String> propertyNames = new LinkedHashSet<>();
         for (PropertySource propertySource : environment.getPropertySources()) {
-            if (propertySource instanceof EnumerablePropertySource) {
-                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+            if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
                 for (String propertyName : enumerablePropertySource.getPropertyNames()) {
                     if (propertyNameFilter.test(propertyName)) {
                         propertyNames.add(propertyName);
@@ -231,9 +230,9 @@ public abstract class PropertySourcesUtils extends BaseUtils {
                     String subName = name.substring(normalizedPrefix.length());
                     if (!subProperties.containsKey(subName)) { // take first one
                         Object value = source.getProperty(name);
-                        if (value instanceof String) {
+                        if (value instanceof String propertyValue) {
                             // Resolve placeholder
-                            value = propertyResolver.resolvePlaceholders((String) value);
+                            value = propertyResolver.resolvePlaceholders(propertyValue);
                         }
                         subProperties.put(subName, value);
                     }
@@ -253,7 +252,8 @@ public abstract class PropertySourcesUtils extends BaseUtils {
      */
     @Nonnull
     public static String[] getPropertyNames(PropertySource propertySource) {
-        String[] propertyNames = propertySource instanceof EnumerablePropertySource ? ((EnumerablePropertySource) propertySource).getPropertyNames() : null;
+        String[] propertyNames = propertySource instanceof EnumerablePropertySource enumerablePropertySource ?
+                enumerablePropertySource.getPropertyNames() : null;
 
         if (propertyNames == null) {
             propertyNames = EMPTY_STRING_ARRAY;
@@ -355,9 +355,9 @@ public abstract class PropertySourcesUtils extends BaseUtils {
             logger.warn("The 'defaultProperties' property will create an MapPropertySource[name:{}] by default", name);
             defaultPropertiesPropertySource = new MapPropertySource(name, new HashMap<>());
             propertySources.addLast(defaultPropertiesPropertySource);
-        } else if (propertySource instanceof MapPropertySource) {
+        } else if (propertySource instanceof MapPropertySource mapPropertySource) {
             logger.trace("The 'defaultProperties' property was initialized");
-            defaultPropertiesPropertySource = (MapPropertySource) propertySource;
+            defaultPropertiesPropertySource = mapPropertySource;
         } else {
             logger.warn("'defaultProperties' PropertySource[name: {}] is not an MapPropertySource instance; it is actually: {}", name, propertySource.getClass().getName());
         }

@@ -98,8 +98,8 @@ public abstract class EnvironmentUtils extends BaseUtils {
      */
     @Nonnull
     public static Map<String, String> getProperties(Environment environment, Iterable<String> propertyNames) {
-        Set<String> propertyNamesSet = propertyNames instanceof Set ? (Set) propertyNames :
-                propertyNames instanceof Collection ? new HashSet<>((Collection) propertyNames) :
+        Set<String> propertyNamesSet = propertyNames instanceof Set names ? names :
+                propertyNames instanceof Collection names ? new HashSet<>(names) :
                         stream(propertyNames.spliterator(), false).collect(toSet());
         return getProperties(environment, propertyNamesSet);
     }
@@ -129,8 +129,8 @@ public abstract class EnvironmentUtils extends BaseUtils {
     @Nullable
     public static ConversionService getConversionService(Environment environment) {
         ConversionService conversionService = null;
-        if (environment instanceof ConfigurablePropertyResolver) {
-            conversionService = ((ConfigurablePropertyResolver) environment).getConversionService();
+        if (environment instanceof ConfigurablePropertyResolver resolver) {
+            conversionService = resolver.getConversionService();
             if (conversionService == null) {
                 conversionService = DefaultConversionService.getSharedInstance();
                 logger.warn("ConversionService can't be resolved from Environment[class: {}], the shared ApplicationConversionService will be used!",

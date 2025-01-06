@@ -142,8 +142,7 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
     }
 
     private void collectFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
-        if (handlerMapping instanceof AbstractUrlHandlerMapping) {
-            AbstractUrlHandlerMapping urlHandlerMapping = (AbstractUrlHandlerMapping) handlerMapping;
+        if (handlerMapping instanceof AbstractUrlHandlerMapping urlHandlerMapping) {
             Map<String, Object> handlerMap = urlHandlerMapping.getHandlerMap();
             if (handlerMap.isEmpty()) {
                 return;
@@ -161,8 +160,7 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
     private void collectFromRequestMappingInfoHandlerMapping(HandlerMapping handlerMapping,
                                                              Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods,
                                                              List<WebEndpointMapping> webEndpointMappings) {
-        if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
-            RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
+        if (handlerMapping instanceof RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping) {
             Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
             if (handlerMethodsMap.isEmpty()) {
                 return;

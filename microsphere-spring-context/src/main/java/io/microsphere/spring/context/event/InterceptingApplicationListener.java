@@ -40,8 +40,8 @@ class InterceptingApplicationListener implements GenericApplicationListenerAdapt
 
     InterceptingApplicationListener(ApplicationListener<?> delegate, List<ApplicationListenerInterceptor> interceptors) {
         this.delegate = delegate;
-        this.smartListener = (delegate instanceof GenericApplicationListener ?
-                (GenericApplicationListener) delegate : new org.springframework.context.event.GenericApplicationListenerAdapter(delegate));
+        this.smartListener = (delegate instanceof GenericApplicationListener genericApplicationListener ?
+                genericApplicationListener : new org.springframework.context.event.GenericApplicationListenerAdapter(delegate));
         this.interceptors = interceptors;
     }
 
@@ -62,8 +62,8 @@ class InterceptingApplicationListener implements GenericApplicationListenerAdapt
 
     public ApplicationListener<?> getDelegate() {
         ApplicationListener delegate = this.delegate;
-        while (delegate instanceof InterceptingApplicationListener) {
-            delegate = ((InterceptingApplicationListener) delegate).delegate;
+        while (delegate instanceof InterceptingApplicationListener interceptingApplicationListener) {
+            delegate = interceptingApplicationListener.delegate;
         }
         return delegate;
     }
@@ -71,8 +71,7 @@ class InterceptingApplicationListener implements GenericApplicationListenerAdapt
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InterceptingApplicationListener that = (InterceptingApplicationListener) o;
+        if (!(o instanceof InterceptingApplicationListener that)) return false;
         return getDelegate().equals(that.getDelegate());
     }
 

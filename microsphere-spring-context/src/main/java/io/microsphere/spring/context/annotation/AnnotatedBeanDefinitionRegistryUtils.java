@@ -62,8 +62,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
         for (String beanName : beanNames) {
             BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
-            if (beanDefinition instanceof AnnotatedBeanDefinition) {
-                AnnotationMetadata annotationMetadata = ((AnnotatedBeanDefinition) beanDefinition).getMetadata();
+            if (beanDefinition instanceof AnnotatedBeanDefinition annotatedBeanDefinition) {
+                AnnotationMetadata annotationMetadata = (annotatedBeanDefinition).getMetadata();
                 String className = annotationMetadata.getClassName();
                 Class<?> targetClass = resolveClassName(className, classLoader);
                 present = nullSafeEquals(targetClass, annotatedClass);
@@ -174,8 +174,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
     public static BeanNameGenerator resolveAnnotatedBeanNameGenerator(BeanDefinitionRegistry registry) {
         BeanNameGenerator beanNameGenerator = null;
 
-        if (registry instanceof SingletonBeanRegistry) {
-            SingletonBeanRegistry singletonBeanRegistry = SingletonBeanRegistry.class.cast(registry);
+        if (registry instanceof SingletonBeanRegistry singletonBeanRegistry) {
             beanNameGenerator = (BeanNameGenerator) singletonBeanRegistry.getSingleton(CONFIGURATION_BEAN_NAME_GENERATOR);
         }
 

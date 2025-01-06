@@ -48,9 +48,7 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
+        if (!(o instanceof User user)) return false;
 
         if (getAge() != user.getAge()) return false;
         return getName() != null ? getName().equals(user.getName()) : user.getName() == null;

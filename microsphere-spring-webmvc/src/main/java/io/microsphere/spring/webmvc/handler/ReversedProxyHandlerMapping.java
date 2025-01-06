@@ -121,9 +121,8 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
                                                                      webEndpointMapping, HttpServletRequest request) {
         HandlerExecutionChain handlerExecutionChain = null;
         Object source = webEndpointMapping.getSource();
-        if (source instanceof RequestMappingHandlerMapping) {
+        if (source instanceof RequestMappingHandlerMapping handlerMapping) {
             HandlerMethod handlerMethod = (HandlerMethod) webEndpointMapping.getEndpoint();
-            RequestMappingHandlerMapping handlerMapping = (RequestMappingHandlerMapping) source;
             Object handler = handlerMethod;
             MethodHandle methodHandle = getHandlerExecutionChainMethodHandle;
             if (methodHandle != null) {

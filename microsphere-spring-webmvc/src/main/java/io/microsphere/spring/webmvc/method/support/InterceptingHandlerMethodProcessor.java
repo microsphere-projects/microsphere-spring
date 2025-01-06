@@ -203,8 +203,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         List<HandlerMethodReturnValueHandler> handlers = adapter.getReturnValueHandlers();
         for (WebEndpointMapping webEndpointMapping : webEndpointMappings) {
             Object endpoint = webEndpointMapping.getEndpoint();
-            if (endpoint instanceof HandlerMethod) {
-                HandlerMethod handlerMethod = (HandlerMethod) endpoint;
+            if (endpoint instanceof HandlerMethod handlerMethod) {
                 MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
                 Method method = handlerMethod.getMethod();
                 int parameterCount = method.getParameterCount();
@@ -263,7 +262,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private HandlerMethod resolveHandlerMethod(Object handler) {
-        return handler instanceof HandlerMethod ? (HandlerMethod) handler : null;
+        return handler instanceof HandlerMethod handlerMethod ? handlerMethod : null;
     }
 
     private void beforeResolveArgument(MethodParameter parameter, MethodParameterContext methodParameterContext,

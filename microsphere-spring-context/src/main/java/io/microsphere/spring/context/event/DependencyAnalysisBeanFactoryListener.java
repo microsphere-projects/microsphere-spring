@@ -245,8 +245,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         for (int i = 0; i < propertyValuesLength; i++) {
             PropertyValue propertyValue = propertyValues[i];
             Object value = propertyValue.getValue();
-            if (value instanceof BeanReference) {
-                BeanReference beanReference = (BeanReference) value;
+            if (value instanceof BeanReference beanReference) {
                 String beanName = beanReference.getBeanName();
                 dependentBeanNames.add(beanName);
             }
@@ -298,7 +297,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         }
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
-        return suggestedValue instanceof String ? (String) suggestedValue : null;
+        return suggestedValue instanceof String value ? value : null;
     }
 
     private Class<?> resolveDependentType(Parameter parameter) {
@@ -376,13 +375,12 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     }
 
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-        if (beanFactory instanceof DefaultListableBeanFactory) {
-            DefaultListableBeanFactory dbf = (DefaultListableBeanFactory) beanFactory;
+        if (beanFactory instanceof DefaultListableBeanFactory dbf) {
             List<SmartInstantiationAwareBeanPostProcessor> processors = new LinkedList<>();
             List<BeanPostProcessor> beanPostProcessors = dbf.getBeanPostProcessors();
             for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
-                if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor) {
-                    processors.add((SmartInstantiationAwareBeanPostProcessor) beanPostProcessor);
+                if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor siaBeanProcessor) {
+                    processors.add(siaBeanProcessor);
                 }
             }
             return processors;
@@ -412,8 +410,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         if (beanDefinition != null
                 && beanDefinition.isSingleton()
                 && !beanDefinition.isLazyInit()
-                && beanDefinition instanceof RootBeanDefinition) {
-            RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
+                && beanDefinition instanceof RootBeanDefinition rootBeanDefinition) {
             Supplier<?> instanceSupplier = rootBeanDefinition.getInstanceSupplier();
             return instanceSupplier == null || instanceSupplier.get() == null;
         }

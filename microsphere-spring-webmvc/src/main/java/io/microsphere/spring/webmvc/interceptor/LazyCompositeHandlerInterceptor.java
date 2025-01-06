@@ -108,8 +108,8 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
                     return Boolean.FALSE;
                 }
             } catch (Throwable e) {
-                if (e instanceof Exception) {
-                    throw (Exception) e;
+                if (e instanceof Exception ex) {
+                    throw ex;
                 } else {
                     throw new RuntimeException(e);
                 }

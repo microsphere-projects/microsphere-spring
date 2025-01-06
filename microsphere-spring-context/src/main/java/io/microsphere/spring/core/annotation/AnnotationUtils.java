@@ -179,8 +179,8 @@ public abstract class AnnotationUtils {
                 continue;
             }
 
-            if (attributeValue instanceof String) {
-                attributeValue = resolvePlaceholders(valueOf(attributeValue), propertyResolver);
+            if (attributeValue instanceof String value) {
+                attributeValue = resolvePlaceholders(value, propertyResolver);
             } else if (attributeValue instanceof String[] values) {
                 for (int i = 0; i < values.length; i++) {
                     values[i] = resolvePlaceholders(values[i], propertyResolver);

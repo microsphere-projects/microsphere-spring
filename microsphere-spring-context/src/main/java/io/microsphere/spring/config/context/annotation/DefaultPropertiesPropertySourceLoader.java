@@ -67,8 +67,7 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
         PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes = buildExtensionAttributes(attributes);
         try {
             PropertySource<?> propertySource = delegate.loadPropertySource(extensionAttributes, propertySourceName);
-            if (propertySource instanceof EnumerablePropertySource) {
-                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+            if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
                 for (String propertyName : enumerablePropertySource.getPropertyNames()) {
                     Object propertyValue = propertySource.getProperty(propertyName);
                     defaultProperties.put(propertyName, propertyValue);

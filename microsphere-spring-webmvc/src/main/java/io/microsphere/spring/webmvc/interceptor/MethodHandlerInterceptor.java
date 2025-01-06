@@ -22,8 +22,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        if (handler instanceof HandlerMethod handlerMethod) {
             if (supports(request, response, handlerMethod)) {
                 return preHandle(request, response, handlerMethod);
             }
@@ -35,8 +34,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public final void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        if (handler instanceof HandlerMethod handlerMethod) {
             if (supports(request, response, handlerMethod)) {
                 postHandle(request, response, handlerMethod, modelAndView);
             }
@@ -47,8 +45,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public final void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        if (handler instanceof HandlerMethod handlerMethod) {
             if (supports(request, response, handlerMethod)) {
                 afterCompletion(request, response, handlerMethod, ex);
             }

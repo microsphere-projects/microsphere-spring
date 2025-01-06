@@ -152,8 +152,7 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
     }
 
     private void registerBeanFactoryListeners(BeanDefinitionRegistry registry) {
-        if (registry instanceof ConfigurableListableBeanFactory) {
-            ConfigurableListableBeanFactory beanFactory = (ConfigurableListableBeanFactory) registry;
+        if (registry instanceof ConfigurableListableBeanFactory beanFactory) {
             BeanFactoryListeners beanFactoryListeners = new BeanFactoryListeners(beanFactory);
             beanFactoryListeners.registerBean(registry);
             this.beanFactoryListeners = beanFactoryListeners;
@@ -167,10 +166,9 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
     }
 
     private void decorateInstantiationStrategy(ConfigurableListableBeanFactory beanFactory) {
-        if (beanFactory instanceof AbstractAutowireCapableBeanFactory) {
+        if (beanFactory instanceof AbstractAutowireCapableBeanFactory autowireCapableBeanFactory) {
             this.instantiationStrategyDelegate = getInstantiationStrategyDelegate(beanFactory);
             if (instantiationStrategyDelegate != this) {
-                AbstractAutowireCapableBeanFactory autowireCapableBeanFactory = (AbstractAutowireCapableBeanFactory) beanFactory;
                 autowireCapableBeanFactory.setInstantiationStrategy(this);
             }
         }

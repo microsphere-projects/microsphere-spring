@@ -88,8 +88,8 @@ public abstract class ResourceLoaderUtils extends BaseUtils {
         ClassLoader classLoader = getClassLoader(resourceLoader);
         return (ResourcePatternResolver) resourceLoadersCache.computeIfAbsent(classLoader, cl -> {
             ResourcePatternResolver resourcePatternResolver = null;
-            if (resourceLoader instanceof ResourcePatternResolver) {
-                resourcePatternResolver = (ResourcePatternResolver) resourceLoader;
+            if (resourceLoader instanceof ResourcePatternResolver resolver) {
+                resourcePatternResolver = resolver;
             } else {
                 resourcePatternResolver = new PathMatchingResourcePatternResolver(cl);
             }

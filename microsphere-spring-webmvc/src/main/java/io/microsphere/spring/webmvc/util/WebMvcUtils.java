@@ -118,8 +118,8 @@ public abstract class WebMvcUtils {
     public static HttpServletRequest getHttpServletRequest() throws IllegalStateException {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = null;
-        if (requestAttributes instanceof ServletRequestAttributes) {
-            request = ((ServletRequestAttributes) requestAttributes).getRequest();
+        if (requestAttributes instanceof ServletRequestAttributes servletRequestAttributes) {
+            request = servletRequestAttributes.getRequest();
         }
         return request;
     }
@@ -127,8 +127,8 @@ public abstract class WebMvcUtils {
 
     public static HttpServletRequest getHttpServletRequest(WebRequest webRequest) {
         HttpServletRequest request = null;
-        if (webRequest instanceof ServletWebRequest) {
-            request = ((ServletWebRequest) webRequest).getRequest();
+        if (webRequest instanceof ServletWebRequest servletWebRequest) {
+            request = servletWebRequest.getRequest();
         }
         return request;
     }

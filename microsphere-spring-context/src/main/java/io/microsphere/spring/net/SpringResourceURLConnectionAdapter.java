@@ -55,7 +55,7 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
     protected SpringResourceURLConnectionAdapter(URL url, Resource resource) {
         super(url);
         this.resource = resource;
-        this.writableResource = resource instanceof WritableResource ? (WritableResource) resource : null;
+        this.writableResource = resource instanceof WritableResource writableResource ? writableResource : null;
     }
 
     @Override

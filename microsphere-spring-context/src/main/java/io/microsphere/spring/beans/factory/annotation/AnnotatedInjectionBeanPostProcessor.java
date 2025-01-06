@@ -583,12 +583,11 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * Resolve the specified cached method argument or field value.
      */
     private Object resolvedCachedArgument(String beanName, Object cachedArgument) {
-        if (cachedArgument instanceof DependencyDescriptor) {
-            DependencyDescriptor descriptor = (DependencyDescriptor) cachedArgument;
+        if (cachedArgument instanceof DependencyDescriptor descriptor) {
             TypeConverter typeConverter = this.beanFactory.getTypeConverter();
             return this.beanFactory.resolveDependency(descriptor, beanName, null, typeConverter);
-        } else if (cachedArgument instanceof RuntimeBeanReference) {
-            return this.beanFactory.getBean(((RuntimeBeanReference) cachedArgument).getBeanName());
+        } else if (cachedArgument instanceof RuntimeBeanReference runtimeBeanReference) {
+            return this.beanFactory.getBean(runtimeBeanReference.getBeanName());
         } else {
             return cachedArgument;
         }
