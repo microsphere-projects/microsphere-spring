@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.util.ArrayUtils;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
@@ -46,7 +45,6 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTyp
 import static org.springframework.util.Assert.isInstanceOf;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.containsElement;
-import static org.springframework.util.ObjectUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 
 /**

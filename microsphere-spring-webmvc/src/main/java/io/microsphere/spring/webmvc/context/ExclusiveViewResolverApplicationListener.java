@@ -1,6 +1,5 @@
 package io.microsphere.spring.webmvc.context;
 
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;

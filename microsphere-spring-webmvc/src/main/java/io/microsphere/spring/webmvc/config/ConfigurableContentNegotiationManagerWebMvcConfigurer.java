@@ -129,8 +129,8 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
                         String subValue = e.getValue();
                         properties.put(key + PROPERTY_SEPARATOR + subKey, subValue);
                     }
-                } else if (value instanceof String) {
-                    properties.put(key, value.toString());
+                } else if (value instanceof String stringValue) {
+                    properties.put(key, stringValue);
                 }
             }
         }
