@@ -16,17 +16,15 @@
  */
 package io.microsphere.spring.webmvc.method.support;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -40,6 +38,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -49,8 +48,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.spring.util.BeanUtils.getOptionalBean;
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.getHandlerMethodArguments;
 import static java.util.Collections.emptyList;
 
@@ -73,7 +73,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
 
-    private static final Logger logger = LoggerFactory.getLogger(InterceptingHandlerMethodProcessor.class);
+    private static final Logger logger = getLogger(InterceptingHandlerMethodProcessor.class);
 
     private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = new HashMap<>(256);
 
@@ -127,7 +127,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         MethodParameterContext methodParameterContext = getParameterContext(parameter);
         if (methodParameterContext == null) {
-            logger.debug("The MethodParameterContext can't be found by the MethodParameter[{}]", parameter);
+            logger.trace("The MethodParameterContext can't be found by the MethodParameter[{}]", parameter);
             return null;
         }
 
@@ -149,7 +149,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                                   NativeWebRequest webRequest) throws Exception {
         ReturnTypeContext context = getReturnTypeContext(returnType);
         if (context == null) {
-            logger.debug("The ReturnTypeContext can't be found by the return type[{}]", returnType);
+            logger.trace("The ReturnTypeContext can't be found by the return type[{}]", returnType);
             return;
         }
 

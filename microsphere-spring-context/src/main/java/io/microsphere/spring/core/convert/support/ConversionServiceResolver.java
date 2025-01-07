@@ -15,8 +15,7 @@
  */
 package io.microsphere.spring.core.convert.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -24,9 +23,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
-import static io.microsphere.spring.util.BeanUtils.getBeanIfAvailable;
-import static io.microsphere.spring.util.BeanUtils.isBeanPresent;
-import static java.lang.String.format;
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
+import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
+import static io.microsphere.text.FormatUtils.format;
 import static org.springframework.context.ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME;
 import static org.springframework.context.ConfigurableApplicationContext.ENVIRONMENT_BEAN_NAME;
 
@@ -46,7 +46,7 @@ public class ConversionServiceResolver {
      */
     public static final String RESOLVED_CONVERSION_SERVICE_BEAN_NAME = "resolved-" + CONVERSION_SERVICE_BEAN_NAME;
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private final ConfigurableBeanFactory beanFactory;
 
@@ -67,12 +67,12 @@ public class ConversionServiceResolver {
         }
 
         if (conversionService == null) { // If not found, try to get the bean from BeanFactory
-            debug("The conversionService instance can't be found in Spring ConfigurableBeanFactory.getConversionService()");
+            trace("The conversionService instance can't be found in Spring ConfigurableBeanFactory.getConversionService()");
             conversionService = getFromEnvironment();
         }
 
         if (conversionService == null) {  // If not found, try to get the bean from ConfigurableEnvironment
-            debug("The conversionService instance can't be found in Spring ConfigurableEnvironment.getConversionService()");
+            trace("The conversionService instance can't be found in Spring ConfigurableEnvironment.getConversionService()");
             conversionService = getIfAvailable();
         }
         if (conversionService == null) { // If not found, will create an instance of ConversionService as default
@@ -117,9 +117,9 @@ public class ConversionServiceResolver {
         return new DefaultFormattingConversionService();
     }
 
-    private void debug(String message, Object... args) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(args.length < 1 ? message : format(message, args));
+    private void trace(String message, Object... args) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(args.length < 1 ? message : format(message, args));
         }
     }
 }

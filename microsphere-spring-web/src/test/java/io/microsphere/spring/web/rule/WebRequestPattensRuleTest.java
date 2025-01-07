@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link WebRequestPattensRule} Test

@@ -16,19 +16,15 @@
  */
 package io.microsphere.spring.webmvc.handler;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory;
 import io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory;
-import io.microsphere.util.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
-import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.function.HandlerFunction;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.AbstractHandlerMethodMapping;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
@@ -36,6 +32,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
@@ -43,8 +40,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
+import static io.microsphere.util.ArrayUtils.of;
 
 /**
  * The performance optimization {@link HandlerMapping} to process the forwarded request
@@ -52,7 +51,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC
  * The request must have a header named {@link WebEndpointMapping#ID_HEADER_NAME "microsphere_wem_id"},
  * which is a string presenting {@link WebEndpointMapping#getId() the id of endpoint}, used to
  * locate the actual {@link WebEndpointMapping#getEndpoint() endpoint} easily, such as {@link HandlerMethod},
- * {@link HandlerFunction} and {@link Controller}.
+ * {@link org.springframework.web.servlet.function.HandlerFunction} and {@link Controller}.
  * <p>
  * As a result, {@link ReversedProxyHandlerMapping} has the higher precedence than others, which ensures that it
  * prioritizes {@link HandlerMapping#getHandler(HttpServletRequest) getting the handler} and avoid the duplication
@@ -75,7 +74,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC
  */
 public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implements ApplicationListener<WebEndpointMappingsReadyEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReversedProxyHandlerMapping.class);
+    private static final Logger logger = getLogger(ReversedProxyHandlerMapping.class);
 
     public static final int DEFAULT_ORDER = HIGHEST_PRECEDENCE + 1;
 
@@ -87,7 +86,7 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         Class<?> declaredClass = AbstractHandlerMapping.class;
         String methodName = getHandlerExecutionChainMethodName;
         MethodHandle methodHandle = null;
-        Class<?>[] parameterTypes = ArrayUtils.of(Object.class, HttpServletRequest.class);
+        Class<?>[] parameterTypes = of(Object.class, HttpServletRequest.class);
         try {
             methodHandle = findVirtual(RequestMappingHandlerMapping.class, methodName, parameterTypes);
         } catch (Throwable e) {

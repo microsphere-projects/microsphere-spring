@@ -20,7 +20,10 @@ jobs:
     strategy:
       matrix:
         java: [ '8', '11' , '17' , '21' ]
-        maven-profile-spring-boot: [ 'spring-boot-2.7' ]
+        maven-profile-spring-framework: [
+          'spring-framework-5.3' , 'spring-framework-5.2', 'spring-framework-5.1' , 'spring-framework-5.0' ,
+          'spring-framework-4.3'
+        ]
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
@@ -38,6 +41,11 @@ jobs:
           --update-snapshots
           --file pom.xml
           -Drevision=0.0.1-SNAPSHOT
-          -DargLine="${{ matrix.java >= 16 && '--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED' || '' }}"
-          -P${{ matrix.maven-profile-spring-boot }}
           test
+          --activate-profiles test,coverage,${{ matrix.maven-profile-spring-framework }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: microsphere-projects/microsphere-spring

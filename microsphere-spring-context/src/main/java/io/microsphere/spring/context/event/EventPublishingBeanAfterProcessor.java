@@ -27,8 +27,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.SmartApplicationListener;
-import org.springframework.util.ClassUtils;
+import org.springframework.core.ResolvableType;
 import org.springframework.util.ReflectionUtils;
 
 import java.util.Map;
@@ -38,6 +37,7 @@ import java.util.function.BiConsumer;
 
 import static io.microsphere.spring.context.event.BeanListeners.getBean;
 import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanNames;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 
 /**
  * Bean After-Event Publishing Processor
@@ -45,9 +45,9 @@ import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanName
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements SmartApplicationListener {
+class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements GenericApplicationListenerAdapter {
 
-    private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = ClassUtils.resolveClassName("org.springframework.beans.factory.support.DisposableBeanAdapter", null);
+    private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = resolveClass("org.springframework.beans.factory.support.DisposableBeanAdapter");
 
     private final ConfigurableApplicationContext context;
 
@@ -67,6 +67,11 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
     @Override
     public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
         return ContextRefreshedEvent.class.isAssignableFrom(eventType) || ContextClosedEvent.class.isAssignableFrom(eventType);
+    }
+
+    @Override
+    public boolean supportsEventType(ResolvableType eventType) {
+        return eventType.isAssignableFrom(ContextRefreshedEvent.class) || eventType.isAssignableFrom(ContextClosedEvent.class);
     }
 
     @Override

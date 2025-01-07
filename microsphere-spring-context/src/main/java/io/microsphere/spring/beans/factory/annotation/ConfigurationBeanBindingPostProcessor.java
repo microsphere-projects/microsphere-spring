@@ -16,12 +16,11 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
 import io.microsphere.spring.core.convert.support.ConversionServiceResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -38,8 +37,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingRegistrar.ENABLE_CONFIGURATION_BINDING_CLASS;
-import static io.microsphere.spring.util.WrapperUtils.unwrap;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 import static org.springframework.util.ClassUtils.getUserClass;
@@ -65,7 +65,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
     static final String IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME = "ignoreInvalidFields";
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private ConfigurableListableBeanFactory beanFactory = null;
 
@@ -154,8 +154,8 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
         getConfigurationBeanBinder().bind(configurationProperties, ignoreUnknownFields, ignoreInvalidFields, configurationBean);
 
-        if (log.isInfoEnabled()) {
-            log.info("The configuration bean [" + configurationBean + "] have been binding by the " + "configuration properties [" + configurationProperties + "]");
+        if (logger.isInfoEnabled()) {
+            logger.info("The configuration bean [" + configurationBean + "] have been binding by the " + "configuration properties [" + configurationProperties + "]");
         }
     }
 
@@ -165,8 +165,8 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
             try {
                 configurationBeanBinder = beanFactory.getBean(ConfigurationBeanBinder.class);
             } catch (BeansException ignored) {
-                if (log.isInfoEnabled()) {
-                    log.info("configurationBeanBinder Bean can't be found in ApplicationContext.");
+                if (logger.isInfoEnabled()) {
+                    logger.info("configurationBeanBinder Bean can't be found in ApplicationContext.");
                 }
                 // Use Default implementation
                 configurationBeanBinder = defaultConfigurationBeanBinder();
@@ -223,7 +223,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = unwrap(beanFactory);
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     @Override

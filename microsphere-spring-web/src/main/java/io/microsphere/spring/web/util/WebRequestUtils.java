@@ -18,16 +18,15 @@ package io.microsphere.spring.web.util;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.util.UrlPathHelper;
 
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.ORIGIN;
+import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
-import static org.springframework.web.util.UrlPathHelper.PATH_ATTRIBUTE;
 
 /**
  * {@link WebRequest} Utilities class
@@ -36,6 +35,14 @@ import static org.springframework.web.util.UrlPathHelper.PATH_ATTRIBUTE;
  * @since 1.0.0
  */
 public abstract class WebRequestUtils {
+
+    /**
+     * Name of Servlet request attribute that holds a
+     * {@link UrlPathHelper#getLookupPathForRequest resolved} lookupPath.
+     *
+     * @since Spring Framework 5.3
+     */
+    public static final String PATH_ATTRIBUTE = UrlPathHelper.class.getName() + ".PATH";
 
     public static String getMethod(NativeWebRequest request) {
         String method = request.getHeader(":METHOD:");
@@ -60,12 +67,12 @@ public abstract class WebRequestUtils {
     public static boolean hasBody(NativeWebRequest request) {
         String contentLength = request.getHeader(HttpHeaders.CONTENT_LENGTH);
         String transferEncoding = request.getHeader(HttpHeaders.TRANSFER_ENCODING);
-        return StringUtils.hasText(transferEncoding) ||
-                (StringUtils.hasText(contentLength) && !contentLength.trim().equals("0"));
+        return hasText(transferEncoding) ||
+                (hasText(contentLength) && !contentLength.trim().equals("0"));
     }
 
     /**
-     * Return a previously {@link #getLookupPathForRequest resolved} lookupPath.
+     * Return a previously {@link UrlPathHelper#getLookupPathForRequest resolved} lookupPath.
      *
      * @param request the current request
      * @return the previously resolved lookupPath
@@ -73,7 +80,6 @@ public abstract class WebRequestUtils {
      */
     public static String getResolvedLookupPath(NativeWebRequest request) {
         String lookupPath = (String) request.getAttribute(PATH_ATTRIBUTE, SCOPE_REQUEST);
-        Assert.notNull(lookupPath, () -> "Expected lookupPath in request attribute \"" + PATH_ATTRIBUTE + "\".");
         return lookupPath;
     }
 

@@ -1,8 +1,18 @@
-io.microsphere.spring.util.Bean=\
-io.microsphere.spring.util.TestBean,\
-io.microsphere.spring.util.TestBean2
+io.microsphere.spring.test.Bean=\
+io.microsphere.spring.test.TestBean,\
+io.microsphere.spring.test.TestBean2
 
 io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
 io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\
 io.microsphere.spring.beans.factory.support.HyphenAliasGenerator,\
 io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator
+
+io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener=\
+io.microsphere.spring.beans.factory.support.LoggingAutowireCandidateResolvingListener
+
+io.microsphere.spring.core.env.EnvironmentListener=\
+io.microsphere.spring.core.env.LoggingEnvironmentListener,\
+io.microsphere.spring.core.env.ThrowableErrorLoggingEnvironmentListener
+
+io.microsphere.spring.core.env.PropertyResolverListener=\
+io.microsphere.spring.config.CollectingConfigurationPropertyListener

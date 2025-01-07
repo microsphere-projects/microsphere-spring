@@ -16,9 +16,8 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -36,10 +35,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -56,11 +52,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
+import static org.springframework.util.ClassUtils.getMostSpecificMethod;
+import static org.springframework.util.StringUtils.hasLength;
 
 /**
  * Abstract generic {@link BeanPostProcessor} implementation for customized annotation that annotated injected-object.
@@ -80,7 +80,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
     private final static PropertyDescriptor[] EMPTY_PROPERTY_DESCRIPTOR_ARRAY = new PropertyDescriptor[0];
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private final Class<A> annotationType;
 
@@ -119,9 +119,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
     }
 
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
-                "AnnotationInjectedBeanPostProcessor requires a ConfigurableListableBeanFactory");
-        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     @Override
@@ -202,7 +200,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
                 A annotation = findAnnotation(bridgedMethod, getAnnotationType());
 
-                if (annotation != null && method.equals(ClassUtils.getMostSpecificMethod(method, beanClass))) {
+                if (annotation != null && method.equals(getMostSpecificMethod(method, beanClass))) {
                     if (Modifier.isStatic(method.getModifiers())) {
                         if (logger.isWarnEnabled()) {
                             logger.warn("@" + getAnnotationType().getSimpleName() + " annotation is not supported on static methods: " + method);
@@ -235,7 +233,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
 
     private InjectionMetadata findInjectionMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
-        String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
+        String cacheKey = (hasLength(beanName) ? beanName : clazz.getName());
         // Quick check on the concurrent map first, with minimal locking.
         AnnotatedInjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
         if (InjectionMetadata.needsRefresh(metadata, clazz)) {

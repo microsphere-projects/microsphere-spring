@@ -411,38 +411,36 @@ public enum SpringVersion {
 
     SPRING_5_3_29,
 
-    SPRING_6,
+    SPRING_5_3_30,
 
-    SPRING_6_0,
+    SPRING_5_3_31,
 
-    SPRING_6_0_0,
+    SPRING_5_3_32,
 
-    SPRING_6_0_1,
+    SPRING_5_3_33,
 
-    SPRING_6_0_2,
+    SPRING_5_3_34,
 
-    SPRING_6_0_3,
+    SPRING_5_3_35,
 
-    SPRING_6_0_4,
+    SPRING_5_3_36,
 
-    SPRING_6_0_5,
+    SPRING_5_3_37,
 
-    SPRING_6_0_6,
+    SPRING_5_3_38,
 
-    SPRING_6_0_7,
+    SPRING_5_3_39,
 
-    SPRING_6_0_8,
-
-    SPRING_6_0_9,
-
-    SPRING_6_0_10,
-
-    SPRING_6_0_11;
+    CURRENT(Version.of(org.springframework.core.SpringVersion.getVersion()));;
 
     private final Version version;
 
     SpringVersion() {
         this.version = resolveVersion(name());
+    }
+
+    SpringVersion(Version version) {
+        this.version = version;
     }
 
     static Version resolveVersion(String name) {
@@ -466,43 +464,43 @@ public enum SpringVersion {
         return version.getPatch();
     }
 
-    public boolean gt(Version that) {
-        return version.gt(that);
+    public boolean gt(SpringVersion that) {
+        return version.gt(that.version);
     }
 
-    public boolean isGreaterThan(Version that) {
-        return version.isGreaterThan(that);
+    public boolean isGreaterThan(SpringVersion that) {
+        return version.isGreaterThan(that.version);
     }
 
-    public boolean ge(Version that) {
-        return version.ge(that);
+    public boolean ge(SpringVersion that) {
+        return version.ge(that.version);
     }
 
-    public boolean isGreaterOrEqual(Version that) {
-        return version.isGreaterOrEqual(that);
+    public boolean isGreaterOrEqual(SpringVersion that) {
+        return version.isGreaterOrEqual(that.version);
     }
 
-    public boolean lt(Version that) {
-        return version.lt(that);
+    public boolean lt(SpringVersion that) {
+        return version.lt(that.version);
     }
 
-    public boolean isLessThan(Version that) {
-        return version.isLessThan(that);
+    public boolean isLessThan(SpringVersion that) {
+        return version.isLessThan(that.version);
     }
 
-    public boolean le(Version that) {
-        return version.le(that);
+    public boolean le(SpringVersion that) {
+        return version.le(that.version);
     }
 
-    public boolean isLessOrEqual(Version that) {
-        return version.isLessOrEqual(that);
+    public boolean isLessOrEqual(SpringVersion that) {
+        return version.isLessOrEqual(that.version);
     }
 
-    public boolean eq(Version that) {
-        return version.eq(that);
+    public boolean eq(SpringVersion that) {
+        return version.eq(that.version);
     }
 
-    public boolean equals(Version that) {
-        return version.equals(that);
+    public boolean equals(SpringVersion that) {
+        return version.equals(that.version);
     }
 }

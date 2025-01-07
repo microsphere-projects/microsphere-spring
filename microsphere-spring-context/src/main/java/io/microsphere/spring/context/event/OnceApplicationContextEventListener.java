@@ -16,8 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import io.microsphere.logging.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,6 +25,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.util.ClassUtils;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
@@ -37,7 +37,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
 public abstract class OnceApplicationContextEventListener<E extends ApplicationContextEvent> implements ApplicationListener<E>,
         ApplicationContextAware {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger logger = getLogger(getClass());
 
     private ApplicationContext applicationContext;
 
@@ -72,8 +72,8 @@ public abstract class OnceApplicationContextEventListener<E extends ApplicationC
         boolean originalEventSource = nullSafeEquals(getApplicationContext(), event.getSource());
 
         if (!originalEventSource) {
-            if (log.isDebugEnabled()) {
-                log.debug("The source of event[" + event.getSource() + "] is not original!");
+            if (logger.isTraceEnabled()) {
+                logger.trace("The source of event[" + event.getSource() + "] is not original!");
             }
         }
 

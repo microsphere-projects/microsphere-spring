@@ -17,18 +17,18 @@
 package io.microsphere.spring.web.rule;
 
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.util.ArrayUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.parseMediaTypes;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Parses and matches a single media type expression to a request's 'Accept' header.
@@ -66,7 +66,7 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
         for (String name : getMediaType().getParameters().keySet()) {
             String s1 = getMediaType().getParameter(name);
             String s2 = acceptedMediaType.getParameter(name);
-            if (StringUtils.hasText(s1) && StringUtils.hasText(s2) && !s1.equalsIgnoreCase(s2)) {
+            if (hasText(s1) && hasText(s2) && !s1.equalsIgnoreCase(s2)) {
                 return false;
             }
         }
@@ -75,7 +75,7 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
 
     public static List<ProduceMediaTypeExpression> parseExpressions(String[] produces, @Nullable String[] headers) {
         Set<ProduceMediaTypeExpression> result = null;
-        if (!ObjectUtils.isEmpty(headers)) {
+        if (!isEmpty(headers)) {
             for (String header : headers) {
                 WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
                 if (ACCEPT.equalsIgnoreCase(expression.name) && expression.value != null) {
@@ -87,7 +87,7 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
                 }
             }
         }
-        if (!ObjectUtils.isEmpty(produces)) {
+        if (!isEmpty(produces)) {
             for (String produce : produces) {
                 result = (result != null ? result : new LinkedHashSet<>());
                 result.add(new ProduceMediaTypeExpression(produce));

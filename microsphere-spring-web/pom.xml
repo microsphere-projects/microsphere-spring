@@ -20,6 +20,13 @@
 
     <dependencies>
 
+        <!-- JSR 305 -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- MicroSphere Spring Context -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
@@ -70,8 +77,8 @@
 
         <!-- Testing -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -88,5 +95,14 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>spring-framework-4.3</id>
+            <properties>
+                <spring.version>5.0.20.RELEASE</spring.version>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

@@ -21,7 +21,6 @@ import com.p6spy.engine.spy.P6ModuleManager;
 import com.p6spy.engine.spy.option.P6OptionChangedListener;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.CompoundJdbcEventListenerFactory;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.config.P6DataSourceBeanPostProcessor;
-import io.microsphere.spring.util.BeanRegistrar;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -33,7 +32,9 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
 
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} class to register {@link BeanDefinition BeanDefinitions}
@@ -45,12 +46,12 @@ class P6DataSourceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistr
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        BeanRegistrar.registerBeanDefinition(registry, P6DataSourceBeanPostProcessor.class);
+        registerBeanDefinition(registry, P6DataSourceBeanPostProcessor.class);
     }
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        initP6ModuleManager((ConfigurableListableBeanFactory) beanFactory);
+        initP6ModuleManager(asConfigurableListableBeanFactory(beanFactory));
     }
 
     private void initP6ModuleManager(ConfigurableListableBeanFactory beanFactory) {

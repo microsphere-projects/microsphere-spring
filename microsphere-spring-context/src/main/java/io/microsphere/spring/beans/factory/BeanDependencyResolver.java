@@ -19,8 +19,8 @@ package io.microsphere.spring.beans.factory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.lang.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +41,7 @@ public interface BeanDependencyResolver {
      * @param beanFactory {@link ConfigurableListableBeanFactory}
      * @return non-null read-only {@link Map}
      */
-    @NonNull
+    @Nonnull
     Map<String, Set<String>> resolve(ConfigurableListableBeanFactory beanFactory);
 
     /**
@@ -52,6 +52,6 @@ public interface BeanDependencyResolver {
      * @param beanFactory          {@link ConfigurableListableBeanFactory}
      * @return non-null read-only {@link Set}
      */
-    @NonNull
+    @Nonnull
     Set<String> resolve(String beanName, RootBeanDefinition mergedBeanDefinition, ConfigurableListableBeanFactory beanFactory);
 }

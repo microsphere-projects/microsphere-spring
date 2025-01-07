@@ -23,9 +23,9 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.Assert;
 
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar Registrar class} for {@link EnableConfigurationBeanBindings}
@@ -54,7 +54,6 @@ public class ConfigurationBeanBindingsRegister implements ImportBeanDefinitionRe
 
     @Override
     public void setEnvironment(Environment environment) {
-        Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
-        this.environment = (ConfigurableEnvironment) environment;
+        this.environment = asConfigurableEnvironment(environment);
     }
 }

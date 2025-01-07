@@ -28,54 +28,54 @@ import java.lang.reflect.Method;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class BeanListenerAdapter implements BeanListener {
+public interface BeanListenerAdapter extends BeanListener {
 
     @Override
-    public boolean supports(String beanName) {
+    default boolean supports(String beanName) {
         return true;
     }
 
     @Override
-    public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
+    default void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
     }
 
     @Override
-    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
+    default void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
     }
 
     @Override
-    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Constructor<?> constructor, Object[] args) {
+    default void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Constructor<?> constructor, Object[] args) {
     }
 
     @Override
-    public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Object factoryBean, Method factoryMethod, Object[] args) {
+    default void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Object factoryBean, Method factoryMethod, Object[] args) {
     }
 
     @Override
-    public void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
+    default void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
     }
 
     @Override
-    public void onBeanPropertyValuesReady(String beanName, Object bean, PropertyValues pvs) {
+    default void onBeanPropertyValuesReady(String beanName, Object bean, PropertyValues pvs) {
     }
 
     @Override
-    public void onBeforeBeanInitialize(String beanName, Object bean) {
+    default void onBeforeBeanInitialize(String beanName, Object bean) {
     }
 
     @Override
-    public void onAfterBeanInitialized(String beanName, Object bean) {
+    default void onAfterBeanInitialized(String beanName, Object bean) {
     }
 
     @Override
-    public void onBeanReady(String beanName, Object bean) {
+    default void onBeanReady(String beanName, Object bean) {
     }
 
     @Override
-    public void onBeforeBeanDestroy(String beanName, Object bean) {
+    default void onBeforeBeanDestroy(String beanName, Object bean) {
     }
 
     @Override
-    public void onAfterBeanDestroy(String beanName, Object bean) {
+    default void onAfterBeanDestroy(String beanName, Object bean) {
     }
 }

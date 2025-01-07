@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.microsphere-projects</groupId>
         <artifactId>microsphere-build</artifactId>
-        <version>0.0.21</version>
+        <version>0.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -52,19 +52,19 @@
     </scm>
 
     <properties>
-        <revision>0.0.4-SNAPSHOT</revision>
+        <revision>0.1.0-SNAPSHOT</revision>
     </properties>
 
     <modules>
         <module>microsphere-spring-parent</module>
         <module>microsphere-spring-dependencies</module>
+        <module>microsphere-spring-compatible</module>
         <module>microsphere-spring-context</module>
         <module>microsphere-spring-jdbc</module>
         <module>microsphere-spring-web</module>
         <module>microsphere-spring-webmvc</module>
         <module>microsphere-spring-webflux</module>
         <module>microsphere-spring-guice</module>
-        <module>microsphere-spring-test</module>
     </modules>
 
     <distributionManagement>

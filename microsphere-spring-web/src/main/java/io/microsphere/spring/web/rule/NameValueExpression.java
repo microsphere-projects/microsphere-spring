@@ -16,8 +16,9 @@
 
 package io.microsphere.spring.web.rule;
 
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Nullable;
 
 /**
  * A contract for {@code "name!=value"} style expression used to specify request

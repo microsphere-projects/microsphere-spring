@@ -17,8 +17,8 @@
 //package io.microsphere.spring.web.servlet;
 //
 //import io.microsphere.spring.web.metadata.WebEndpointMapping;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
+//import org.junit.Before;
+//import org.junit.Test;
 //
 //import javax.servlet.DispatcherType;
 //import javax.servlet.FilterRegistration;
@@ -28,8 +28,8 @@
 //
 //import static io.microsphere.util.ArrayUtils.of;
 //import static io.microsphere.util.ArrayUtils.size;
-//import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.Assert.assertArrayEquals;
+//import static org.junit.Assert.assertEquals;
 //
 ///**
 // * {@link FilterRegistrationWebEndpointMappingFactory} Test
@@ -47,7 +47,7 @@
 //
 //    private FilterRegistration.Dynamic registration;
 //
-//    @BeforeEach
+//    @Before
 //    public void init() throws ServletException {
 //        filterName = "test-filter";
 //        url = "/test-filter";

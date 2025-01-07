@@ -17,9 +17,8 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.filter.Filter;
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,8 +32,8 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -47,18 +46,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
+import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
-import static org.springframework.core.MethodParameter.forParameter;
+import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -67,17 +70,14 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAdapter {
+public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListenerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(DependencyAnalysisBeanFactoryListener.class);
+    private static final Logger logger = getLogger(DependencyAnalysisBeanFactoryListener.class);
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
-        if (!(bf instanceof DefaultListableBeanFactory)) {
-            logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
-            return;
-        }
-        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) bf;
+
+        DefaultListableBeanFactory beanFactory = asDefaultListableBeanFactory(bf);
 
         Filter<Class<?>> resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
 
@@ -121,16 +121,16 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
 
 
     private void logDependenciesTrace(String dependentBeanName, Map.Entry<String, Set<String>> dependencies) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
+        if (logger.isTraceEnabled()) {
+            logger.trace("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
         }
     }
 
 
     private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isTraceEnabled()) {
             for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
-                logger.debug("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
+                logger.trace("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
             }
         }
     }
@@ -347,7 +347,7 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {
-                logger.debug("The Bean[name : '{}'] is ready", beanName);
+                logger.trace("The Bean[name : '{}'] is ready", beanName);
                 continue;
             }
             BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);
@@ -395,7 +395,7 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
 
     private Class<?> getBeanClass(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
         return beanDefinition.hasBeanClass() ? beanDefinition.getBeanClass() :
-                resolveClass(beanDefinition.getBeanClassName(), classLoader);
+                resolveClassName(beanDefinition.getBeanClassName(), classLoader);
     }
 
     /**
@@ -415,7 +415,8 @@ public class DependencyAnalysisBeanFactoryListener extends BeanFactoryListenerAd
                 && !beanDefinition.isLazyInit()
                 && beanDefinition instanceof RootBeanDefinition) {
             RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
-            return rootBeanDefinition.getInstanceSupplier() == null;
+            Supplier<?> instanceSupplier = getInstanceSupplier(rootBeanDefinition);
+            return instanceSupplier == null || instanceSupplier.get() == null;
         }
         return false;
     }

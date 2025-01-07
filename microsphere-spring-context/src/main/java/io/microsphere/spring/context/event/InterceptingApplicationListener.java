@@ -19,7 +19,6 @@ package io.microsphere.spring.context.event;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.GenericApplicationListener;
-import org.springframework.context.event.GenericApplicationListenerAdapter;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.Objects;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class InterceptingApplicationListener implements GenericApplicationListener {
+class InterceptingApplicationListener implements GenericApplicationListenerAdapter {
 
     private final ApplicationListener<?> delegate;
 
@@ -42,7 +41,7 @@ class InterceptingApplicationListener implements GenericApplicationListener {
     InterceptingApplicationListener(ApplicationListener<?> delegate, List<ApplicationListenerInterceptor> interceptors) {
         this.delegate = delegate;
         this.smartListener = (delegate instanceof GenericApplicationListener ?
-                (GenericApplicationListener) delegate : new GenericApplicationListenerAdapter(delegate));
+                (GenericApplicationListener) delegate : new org.springframework.context.event.GenericApplicationListenerAdapter(delegate));
         this.interceptors = interceptors;
     }
 

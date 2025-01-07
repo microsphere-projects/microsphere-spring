@@ -16,8 +16,9 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import javax.annotation.Nullable;
 
 /**
  * {@link NativeWebRequest} Rule was inspired by {@linkplain org.springframework.web.servlet.mvc.condition.RequestCondition}

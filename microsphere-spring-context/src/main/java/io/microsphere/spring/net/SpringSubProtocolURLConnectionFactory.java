@@ -17,10 +17,11 @@
 package io.microsphere.spring.net;
 
 import io.microsphere.net.SubProtocolURLConnectionFactory;
-import org.springframework.util.Assert;
 
 import java.net.URL;
 import java.util.List;
+
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Spring Abstract {@link SubProtocolURLConnectionFactory}
@@ -36,7 +37,7 @@ public abstract class SpringSubProtocolURLConnectionFactory implements SubProtoc
     public final boolean supports(URL url, List<String> subProtocols) {
         String actualSubProtocol = getActualSubProtocol(subProtocols);
         String subProtocol = getSubProtocol();
-        Assert.notNull(subProtocol, "The 'subProtocol' argument must not be null");
+        notNull(subProtocol, "The 'subProtocol' argument must not be null");
         return subProtocol.equals(actualSubProtocol);
     }
 

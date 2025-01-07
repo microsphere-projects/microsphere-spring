@@ -17,7 +17,7 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.config.env.support.DefaultResourceComparator;
-import io.microsphere.spring.util.PropertySourcesUtils;
+import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;

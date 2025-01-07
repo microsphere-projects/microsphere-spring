@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.lifecycle.AbstractSmartLifecycle;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
@@ -24,8 +25,6 @@ import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingF
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.util.Version;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
@@ -43,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
@@ -58,7 +58,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  */
 public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebEndpointMappingRegistrar.class);
+    private static final Logger logger = getLogger(WebEndpointMappingRegistrar.class);
 
     private final WebApplicationContext context;
 

@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import io.microsphere.spring.util.BeanRegistrar;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
@@ -38,6 +37,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 
 /**
  * Bean Before-Event Publishing Processor
@@ -110,6 +111,15 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
         this.beanEventListeners.onBeforeBeanDestroy(beanName, bean);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 4.3
+     */
+    public boolean requiresDestruction(Object object) {
+        return true;
+    }
+
     private void prepareBeanDefinitions(BeanDefinitionRegistry registry) {
         String[] beanNames = registry.getBeanDefinitionNames();
         int length = beanNames.length;
@@ -124,7 +134,7 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
         }
 
         // register BeanAfterEventPublishingProcessor.Installer ensuring it's the first bean definition
-        BeanRegistrar.registerBeanDefinition(registry, EventPublishingBeanAfterProcessor.Initializer.class);
+        registerBeanDefinition(registry, EventPublishingBeanAfterProcessor.Initializer.class);
 
         // re-register previous bean definitions
         beanDefinitionHolders.forEach(beanDefinitionHolder -> {

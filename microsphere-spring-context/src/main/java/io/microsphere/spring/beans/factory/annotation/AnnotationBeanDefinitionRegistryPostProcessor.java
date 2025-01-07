@@ -16,9 +16,8 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
@@ -36,9 +35,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -48,13 +45,18 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static io.microsphere.spring.util.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
-import static io.microsphere.spring.util.AnnotationUtils.tryGetMergedAnnotation;
-import static io.microsphere.spring.util.WrapperUtils.unwrap;
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
+import static org.springframework.util.Assert.noNullElements;
+import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * An abstract class for the extension to {@link BeanDefinitionRegistryPostProcessor}, which will execute two main registration
@@ -79,7 +81,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,
         BeanFactoryAware, EnvironmentAware, ResourceLoaderAware, BeanClassLoaderAware {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = getLogger(getClass());
 
     private final Set<Class<? extends Annotation>> supportedAnnotationTypes;
 
@@ -115,8 +117,8 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public void addSupportedAnnotationType(Class<? extends Annotation>... annotationTypes) {
-        Assert.notEmpty(annotationTypes, "The argument of annotation types can't be empty");
-        Assert.noNullElements(annotationTypes, "Any element of annotation types can't be null");
+        notEmpty(annotationTypes, "The argument of annotation types can't be empty");
+        noNullElements(annotationTypes, "Any element of annotation types can't be null");
         this.supportedAnnotationTypes.addAll(asList(annotationTypes));
     }
 
@@ -265,7 +267,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     protected String[] resolveBasePackages(Set<String> packagesToScan) {
         Set<String> resolvedPackagesToScan = new LinkedHashSet<String>(packagesToScan.size());
         for (String packageToScan : packagesToScan) {
-            if (StringUtils.hasText(packageToScan)) {
+            if (hasText(packageToScan)) {
                 String resolvedPackageToScan = getEnvironment().resolvePlaceholders(packageToScan.trim());
                 resolvedPackagesToScan.add(resolvedPackageToScan);
             }
@@ -310,7 +312,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = unwrap(beanFactory);
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     public ConfigurableEnvironment getEnvironment() {
@@ -319,7 +321,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
 
     @Override
     public void setEnvironment(Environment environment) {
-        this.environment = unwrap(environment);
+        this.environment = asConfigurableEnvironment(environment);
     }
 
     public ResourceLoader getResourceLoader() {
