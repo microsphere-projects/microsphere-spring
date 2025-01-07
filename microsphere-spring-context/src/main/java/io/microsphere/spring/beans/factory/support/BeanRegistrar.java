@@ -21,6 +21,7 @@ import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -30,9 +31,11 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
 
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
 import static java.beans.Introspector.decapitalize;
+import static java.lang.String.format;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
@@ -199,18 +202,27 @@ public abstract class BeanRegistrar {
     /**
      * Register the beans from {@link SpringFactoriesLoader#loadFactoryNames(Class, ClassLoader) SpringFactoriesLoader}
      *
+     * @param beanFactory    {@link BeanFactory}
+     * @param factoryClasses The factory classes to register
+     * @return the count of beans that are succeeded to be registered
+     */
+    public static int registerSpringFactoriesBeans(BeanFactory beanFactory, Class<?>... factoryClasses) {
+        return registerSpringFactoriesBeans(asBeanDefinitionRegistry(beanFactory), factoryClasses);
+    }
+
+    /**
+     * Register the beans from {@link SpringFactoriesLoader#loadFactoryNames(Class, ClassLoader) SpringFactoriesLoader}
+     *
      * @param registry       {@link BeanDefinitionRegistry}
      * @param factoryClasses The factory classes to register
      * @return the count of beans that are succeeded to be registered
-     * @since 1.0.0
      */
     public static int registerSpringFactoriesBeans(BeanDefinitionRegistry registry, Class<?>... factoryClasses) {
         int count = 0;
 
-        ClassLoader classLoader = registry.getClass().getClassLoader();
-
         for (int i = 0; i < factoryClasses.length; i++) {
             Class<?> factoryClass = factoryClasses[i];
+            ClassLoader classLoader = factoryClass.getClassLoader();
             List<String> factoryImplClassNames = loadFactoryNames(factoryClass, classLoader);
             for (String factoryImplClassName : factoryImplClassNames) {
                 Class<?> factoryImplClass = resolveClassName(factoryImplClassName, classLoader);
@@ -219,7 +231,7 @@ public abstract class BeanRegistrar {
                     count++;
                 } else {
                     if (logger.isWarnEnabled()) {
-                        logger.warn("The Factory bean[class : '{}'] has been registered with bean name '{}'", factoryImplClassName, beanName);
+                        logger.warn(format("The Factory Class bean[%s] has been registered with bean name[%s]", factoryImplClassName, beanName));
                     }
                 }
             }

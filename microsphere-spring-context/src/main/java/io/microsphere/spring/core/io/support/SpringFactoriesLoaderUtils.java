@@ -59,26 +59,6 @@ public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringFactoriesLoaderUtils.class);
 
-    public static void registerFactories(@Nullable BeanFactory bf, Class<?> factoryType) {
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(bf);
-        if (registry == null) {
-            return;
-        }
-
-        ConfigurableListableBeanFactory beanFactory = asConfigurableListableBeanFactory(bf);
-        if (beanFactory == null) {
-            return;
-        }
-
-        ClassLoader beanClassLoader = beanFactory.getBeanClassLoader();
-        ClassLoader classLoader = beanClassLoader == null ? getDefaultClassLoader() : beanClassLoader;
-        List<String> factoryNames = loadFactoryNames(factoryType, classLoader);
-        for (String factoryName : factoryNames) {
-            Class<?> beanClass = resolveClassName(factoryName, classLoader);
-            registerBeanDefinition(registry, beanClass);
-        }
-    }
-
     public static <T> List<T> loadFactories(@Nullable ApplicationContext context, Class<T> factoryType) {
         return loadFactories(asConfigurableApplicationContext(context), factoryType);
     }
