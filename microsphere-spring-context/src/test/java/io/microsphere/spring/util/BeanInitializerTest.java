@@ -23,10 +23,12 @@ import io.microsphere.spring.test.TestBean2;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -71,11 +73,11 @@ public class BeanInitializerTest {
 
     @Test
     public void testRegisterSpringFactoriesBeans() {
-        assertEquals(2, registerSpringFactoriesBeans(registry, Bean.class));
+        assertEquals(2, registerSpringFactoriesBeans((BeanDefinitionRegistry) registry, Bean.class));
         assertTrue(registry.containsBeanDefinition("testBean"));
         assertTrue(registry.containsBeanDefinition("testBean2"));
-        assertEquals(TestBean.class,registry.getBean("testBean").getClass());
-        assertEquals(TestBean2.class,registry.getBean("testBean2").getClass());
+        assertEquals(TestBean.class, registry.getBean("testBean").getClass());
+        assertEquals(TestBean2.class, registry.getBean("testBean2").getClass());
     }
 
 }
