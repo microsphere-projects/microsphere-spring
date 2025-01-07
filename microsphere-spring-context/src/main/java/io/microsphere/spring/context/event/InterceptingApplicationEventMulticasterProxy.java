@@ -27,14 +27,15 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
-import static io.microsphere.spring.util.BeanUtils.getSortedBeans;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
 /**
@@ -100,14 +101,12 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
         delegate.removeApplicationListenerBean(listenerBeanName);
     }
 
-    @Override
     public void removeApplicationListeners(Predicate<ApplicationListener<?>> predicate) {
-        delegate.removeApplicationListeners(predicate);
+        this.delegate.removeApplicationListeners(predicate);
     }
 
-    @Override
     public void removeApplicationListenerBeans(Predicate<String> predicate) {
-        delegate.removeApplicationListenerBeans(predicate);
+        this.delegate.removeApplicationListenerBeans(predicate);
     }
 
     @Override
@@ -161,7 +160,7 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
+        ListableBeanFactory listableBeanFactory = asListableBeanFactory(beanFactory);
         this.delegate = beanFactory.getBean(this.delegateBeanName, ApplicationEventMulticaster.class);
         this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
         this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);

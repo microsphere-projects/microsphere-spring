@@ -17,7 +17,6 @@
 package io.microsphere.spring.net;
 
 import io.microsphere.net.SubProtocolURLConnectionFactory;
-import io.microsphere.spring.util.BeanUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 
 import java.io.IOException;
@@ -25,6 +24,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 
 /**
  * Spring delegating Beans of {@link SubProtocolURLConnectionFactory}
@@ -72,6 +73,6 @@ public class SpringDelegatingBeanProtocolURLConnectionFactory implements SubProt
     }
 
     private List<SubProtocolURLConnectionFactory> getDelegatingBeans() {
-        return BeanUtils.getSortedBeans(beanFactory, SubProtocolURLConnectionFactory.class);
+        return getSortedBeans(beanFactory, SubProtocolURLConnectionFactory.class);
     }
 }

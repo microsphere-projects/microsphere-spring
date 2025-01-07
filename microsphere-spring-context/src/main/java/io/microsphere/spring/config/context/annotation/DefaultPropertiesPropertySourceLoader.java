@@ -17,7 +17,7 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
-import io.microsphere.spring.util.PropertySourcesUtils;
+import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -27,9 +27,9 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
 
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.spring.util.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
-import static io.microsphere.spring.util.PropertySourcesUtils.getDefaultProperties;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProperties;
 
 /**
  * The Loader class for {@link DefaultPropertiesPropertySource @DefaultPropertiesPropertySource}
@@ -67,8 +67,7 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
         PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes = buildExtensionAttributes(attributes);
         try {
             PropertySource<?> propertySource = delegate.loadPropertySource(extensionAttributes, propertySourceName);
-            if (propertySource instanceof EnumerablePropertySource) {
-                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+            if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
                 for (String propertyName : enumerablePropertySource.getPropertyNames()) {
                     Object propertyValue = propertySource.getProperty(propertyName);
                     defaultProperties.put(propertyName, propertyValue);

@@ -19,8 +19,6 @@ package io.microsphere.spring.web.metadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,7 +37,7 @@ import static org.springframework.util.StreamUtils.copyToString;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Execution(ExecutionMode.SAME_THREAD)
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
 public class SmartWebEndpointMappingFactoryTest {

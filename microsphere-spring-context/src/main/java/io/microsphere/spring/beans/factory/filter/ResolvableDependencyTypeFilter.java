@@ -24,8 +24,9 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.Set;
 
-import static io.microsphere.spring.util.BeanFactoryUtils.getResolvableDependencyTypes;
-import static io.microsphere.spring.util.BeanRegistrar.registerSingleton;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvableDependencyTypes;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSingleton;
 
 /**
  * A class to filter {@link ConfigurableListableBeanFactory#registerResolvableDependency(Class, Object) Resolvable Dependency Type}
@@ -40,7 +41,7 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
     private final Set<Class<?>> resolvableDependencyTypes;
 
     public ResolvableDependencyTypeFilter(ConfigurableListableBeanFactory beanFactory) {
-        this((DefaultListableBeanFactory) beanFactory);
+        this(asDefaultListableBeanFactory(beanFactory));
     }
 
     public ResolvableDependencyTypeFilter(DefaultListableBeanFactory beanFactory) {

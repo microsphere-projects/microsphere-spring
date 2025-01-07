@@ -16,17 +16,22 @@
  */
 package io.microsphere.spring.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import io.microsphere.spring.beans.factory.support.BeanRegistrar;
+import io.microsphere.spring.test.Bean;
+import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.test.TestBean2;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
-import static io.microsphere.spring.util.BeanRegistrar.hasAlias;
-import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
-import static io.microsphere.spring.util.BeanRegistrar.registerSpringFactoriesBeans;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
 /**
@@ -40,7 +45,7 @@ public class BeanInitializerTest {
 
     private DefaultListableBeanFactory registry;
 
-    @Before
+    @BeforeEach
     public void init() {
         registry = new DefaultListableBeanFactory();
     }
@@ -68,7 +73,7 @@ public class BeanInitializerTest {
 
     @Test
     public void testRegisterSpringFactoriesBeans() {
-        assertEquals(2, registerSpringFactoriesBeans(registry, Bean.class));
+        assertEquals(2, registerSpringFactoriesBeans((BeanDefinitionRegistry) registry, Bean.class));
         assertTrue(registry.containsBeanDefinition("testBean"));
         assertTrue(registry.containsBeanDefinition("testBean2"));
         assertEquals(TestBean.class,registry.getBean("testBean").getClass());

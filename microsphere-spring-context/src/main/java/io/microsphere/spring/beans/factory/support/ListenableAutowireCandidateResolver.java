@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -32,16 +31,17 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
-import static io.microsphere.spring.util.BeanFactoryUtils.asBeanDefinitionRegistry;
-import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
-import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.util.ArrayUtils.combine;
 
 /**
@@ -59,7 +59,7 @@ import static io.microsphere.util.ArrayUtils.combine;
 public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor,
         EnvironmentAware, BeanNameAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(ListenableAutowireCandidateResolver.class);
+    private static final Logger logger = getLogger(ListenableAutowireCandidateResolver.class);
 
     /**
      * The prefix of the property name of {@link ListenableAutowireCandidateResolver}
@@ -101,11 +101,21 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return delegate.isAutowireCandidate(bdHolder, descriptor);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.0
+     */
     @Override
     public boolean isRequired(DependencyDescriptor descriptor) {
         return delegate.isRequired(descriptor);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.1
+     */
     @Override
     public boolean hasQualifier(DependencyDescriptor descriptor) {
         return delegate.hasQualifier(descriptor);
@@ -127,14 +137,11 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return proxy;
     }
 
-    @Nullable
-    @Override
-    public Class<?> getLazyResolutionProxyClass(DependencyDescriptor descriptor, String beanName) {
-        Class<?> proxyClass = delegate.getLazyResolutionProxyClass(descriptor, beanName);
-        compositeListener.lazyProxyClassResolved(descriptor, beanName, proxyClass);
-        return proxyClass;
-    }
-
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.2.7
+     */
     @Override
     public AutowireCandidateResolver cloneIfNecessary() {
         return delegate.cloneIfNecessary();
@@ -169,8 +176,8 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
             }
             return;
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("The ListenableAutowireCandidateResolver bean[name : '{}'] is enabled.", this.beanName);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The ListenableAutowireCandidateResolver bean[name : '{}'] is enabled.", this.beanName);
         }
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
         AutowireCandidateResolver autowireCandidateResolver = dbf.getAutowireCandidateResolver();

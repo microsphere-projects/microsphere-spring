@@ -16,13 +16,11 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.util.SpringFactoriesLoaderUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.microsphere.logging.Logger;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.emptyList;
 
 /**
@@ -42,7 +42,7 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
 
     private static final Class<WebEndpointMappingFactory> FACTORY_CLASS = WebEndpointMappingFactory.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(FACTORY_CLASS);
+    private final static Logger logger = getLogger(FACTORY_CLASS);
 
     private final Map<Class<?>, List<WebEndpointMappingFactory>> delegates;
 
@@ -56,7 +56,7 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
 
     private Map<Class<?>, List<WebEndpointMappingFactory>> loadDelegates(@Nullable ConfigurableListableBeanFactory beanFactory) {
 
-        List<WebEndpointMappingFactory> factories = loadFactories(beanFactory);
+        List<WebEndpointMappingFactory> factories = doLoadFactories(beanFactory);
         Collection<WebEndpointMappingFactory> factoryBeans = getFactoryBeans(beanFactory);
 
         int size = factories.size() + factoryBeans.size();
@@ -84,8 +84,8 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
         }
     }
 
-    private List<WebEndpointMappingFactory> loadFactories(ConfigurableListableBeanFactory beanFactory) {
-        return SpringFactoriesLoaderUtils.loadFactories(beanFactory, FACTORY_CLASS);
+    private List<WebEndpointMappingFactory> doLoadFactories(ConfigurableListableBeanFactory beanFactory) {
+        return loadFactories(beanFactory, FACTORY_CLASS);
     }
 
     @Override

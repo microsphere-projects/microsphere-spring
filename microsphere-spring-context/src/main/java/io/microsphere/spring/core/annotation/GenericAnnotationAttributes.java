@@ -17,9 +17,9 @@
 package io.microsphere.spring.core.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static io.microsphere.spring.util.AnnotationUtils.findAnnotationType;
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.emptySet;
 
 /**
@@ -71,11 +71,9 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof AnnotationAttributes)) {
+        if (!(o instanceof AnnotationAttributes that)) {
             return false;
         }
-
-        AnnotationAttributes that = (AnnotationAttributes) o;
 
         if (this.size() == that.size()) {
             for (Map.Entry<String, Object> entry : this.entrySet()) {
@@ -117,8 +115,8 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @param <A>        the {@link Class class} of {@link Annotation annotation}
      * @return non-null
      */
-    @NonNull
-    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull A annotation) {
+    @Nonnull
+    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@Nonnull A annotation) {
         return new GenericAnnotationAttributes(annotation);
     }
 
@@ -129,10 +127,10 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @param <A>        the {@link Class class} of {@link Annotation annotation}
      * @return non-null
      */
-    @NonNull
-    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes) {
-        if (attributes instanceof GenericAnnotationAttributes) {
-            return (GenericAnnotationAttributes) attributes;
+    @Nonnull
+    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@Nonnull AnnotationAttributes attributes) {
+        if (attributes instanceof GenericAnnotationAttributes genericAnnotationAttributes) {
+            return genericAnnotationAttributes;
         }
         return new GenericAnnotationAttributes(attributes);
     }
@@ -143,7 +141,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @param attributesArray
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes... attributesArray) {
         int length = attributesArray == null ? 0 : attributesArray.length;
 

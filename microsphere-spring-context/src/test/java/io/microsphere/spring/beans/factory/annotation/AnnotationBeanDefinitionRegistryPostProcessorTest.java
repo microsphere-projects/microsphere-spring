@@ -17,14 +17,14 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -35,8 +35,8 @@ import java.lang.annotation.Target;
 import java.util.Map;
 
 import static io.microsphere.spring.beans.factory.annotation.AnnotationBeanDefinitionRegistryPostProcessor.getAnnotation;
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * {@link AnnotationBeanDefinitionRegistryPostProcessor} Test
@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         AnnotationBeanDefinitionRegistryPostProcessorTest.ServiceAnnotationBeanDefinitionRegistryPostProcessor.class,
         AnnotationBeanDefinitionRegistryPostProcessorTest.class

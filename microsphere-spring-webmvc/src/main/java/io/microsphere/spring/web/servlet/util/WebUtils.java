@@ -7,11 +7,14 @@ import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.util.ClassUtils;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static io.microsphere.util.ClassLoaderUtils.isPresent;
+import static org.springframework.util.ClassUtils.isAssignable;
+import static org.springframework.util.ClassUtils.resolveClassName;
 
 /**
  * Web Utilities Class
@@ -36,7 +39,7 @@ public abstract class WebUtils {
 
         ClassLoader classLoader = WebUtils.class.getClassLoader();
 
-        servlet3OrAbove = ClassUtils.isPresent(SERVLET_CONTAINER_INITIALIZER_CLASS_NAME, classLoader);
+        servlet3OrAbove = isPresent(SERVLET_CONTAINER_INITIALIZER_CLASS_NAME, classLoader);
 
     }
 
@@ -117,8 +120,8 @@ public abstract class WebUtils {
         for (Map.Entry<String, R> entry : registrationsMap.entrySet()) {
             R registration = entry.getValue();
             String className = registration.getClassName();
-            Class<?> registeredRegistrationClass = ClassUtils.resolveClassName(className, classLoader);
-            if (ClassUtils.isAssignable(targetClass, registeredRegistrationClass)) {
+            Class<?> registeredRegistrationClass = resolveClassName(className, classLoader);
+            if (isAssignable(targetClass, registeredRegistrationClass)) {
                 String servletName = entry.getKey();
                 foundRegistrationsMap.put(servletName, registration);
             }

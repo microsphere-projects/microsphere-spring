@@ -24,7 +24,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -33,6 +32,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findField;
 import static org.springframework.util.ReflectionUtils.findMethod;
+import static org.springframework.util.ReflectionUtils.invokeMethod;
 
 /**
  * Before Spring Framework 4.2, {@link AbstractApplicationContext} is an implementation of {@link ApplicationEventPublisher}
@@ -91,7 +91,7 @@ public class DeferredApplicationEventPublisher implements ApplicationEventPublis
     public DeferredApplicationEventPublisher(ApplicationEventPublisher delegate) {
         notNull(delegate, "The ApplicationEventPublisher argument must not be null");
         this.delegate = delegate;
-        this.context = delegate instanceof ConfigurableApplicationContext ? (ConfigurableApplicationContext) delegate : null;
+        this.context = delegate instanceof ConfigurableApplicationContext context ? context : null;
         if (this.context != null) {
             this.context.addApplicationListener(this);
         }
@@ -132,7 +132,7 @@ public class DeferredApplicationEventPublisher implements ApplicationEventPublis
     public void publishEvent(Object event) {
         if (supportsEarlyApplicationEvents() && supportsPublishEventMethod()) {
             // invoke by reflection to resolve the compilation issue
-            ReflectionUtils.invokeMethod(PUBLISH_EVENT_METHOD, delegate, event);
+            invokeMethod(PUBLISH_EVENT_METHOD, delegate, event);
         } else { // before Spring 4.2
             // DO NOTHING, just resolve the compilation issue in Spring 4.2 and above
         }

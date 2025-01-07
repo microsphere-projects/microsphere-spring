@@ -1,5 +1,6 @@
 package io.microsphere.spring.web.servlet.filter;
 
+import io.microsphere.logging.Logger;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,12 +8,12 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * Content Caching {@link Filter}
@@ -23,7 +24,7 @@ import java.io.IOException;
  */
 public class ContentCachingFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContentCachingFilter.class);
+    private static final Logger logger = getLogger(ContentCachingFilter.class);
 
     public static final String RESPONSE_CONTENT_REQUEST_ATTRIBUTE_NAME = "_ContentCachingFilter_";
 

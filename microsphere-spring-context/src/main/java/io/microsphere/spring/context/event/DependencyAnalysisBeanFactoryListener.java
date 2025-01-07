@@ -17,9 +17,8 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.filter.Filter;
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,8 +32,8 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -47,11 +46,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
@@ -69,15 +71,12 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  */
 public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListenerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(DependencyAnalysisBeanFactoryListener.class);
+    private static final Logger logger = getLogger(DependencyAnalysisBeanFactoryListener.class);
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
-        if (!(bf instanceof DefaultListableBeanFactory)) {
-            logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
-            return;
-        }
-        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) bf;
+
+        DefaultListableBeanFactory beanFactory = asDefaultListableBeanFactory(bf);
 
         Filter<Class<?>> resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
 
@@ -121,16 +120,16 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
 
     private void logDependenciesTrace(String dependentBeanName, Map.Entry<String, Set<String>> dependencies) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
+        if (logger.isTraceEnabled()) {
+            logger.trace("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
         }
     }
 
 
     private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isTraceEnabled()) {
             for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
-                logger.debug("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
+                logger.trace("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
             }
         }
     }
@@ -246,8 +245,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         for (int i = 0; i < propertyValuesLength; i++) {
             PropertyValue propertyValue = propertyValues[i];
             Object value = propertyValue.getValue();
-            if (value instanceof BeanReference) {
-                BeanReference beanReference = (BeanReference) value;
+            if (value instanceof BeanReference beanReference) {
                 String beanName = beanReference.getBeanName();
                 dependentBeanNames.add(beanName);
             }
@@ -299,7 +297,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         }
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
-        return suggestedValue instanceof String ? (String) suggestedValue : null;
+        return suggestedValue instanceof String value ? value : null;
     }
 
     private Class<?> resolveDependentType(Parameter parameter) {
@@ -347,7 +345,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {
-                logger.debug("The Bean[name : '{}'] is ready", beanName);
+                logger.trace("The Bean[name : '{}'] is ready", beanName);
                 continue;
             }
             BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);
@@ -377,13 +375,12 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     }
 
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-        if (beanFactory instanceof DefaultListableBeanFactory) {
-            DefaultListableBeanFactory dbf = (DefaultListableBeanFactory) beanFactory;
+        if (beanFactory instanceof DefaultListableBeanFactory dbf) {
             List<SmartInstantiationAwareBeanPostProcessor> processors = new LinkedList<>();
             List<BeanPostProcessor> beanPostProcessors = dbf.getBeanPostProcessors();
             for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
-                if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor) {
-                    processors.add((SmartInstantiationAwareBeanPostProcessor) beanPostProcessor);
+                if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor siaBeanProcessor) {
+                    processors.add(siaBeanProcessor);
                 }
             }
             return processors;
@@ -413,9 +410,9 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         if (beanDefinition != null
                 && beanDefinition.isSingleton()
                 && !beanDefinition.isLazyInit()
-                && beanDefinition instanceof RootBeanDefinition) {
-            RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
-            return rootBeanDefinition.getInstanceSupplier() == null;
+                && beanDefinition instanceof RootBeanDefinition rootBeanDefinition) {
+            Supplier<?> instanceSupplier = rootBeanDefinition.getInstanceSupplier();
+            return instanceSupplier == null || instanceSupplier.get() == null;
         }
         return false;
     }

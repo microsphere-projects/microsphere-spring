@@ -2,7 +2,6 @@ package io.microsphere.spring.webmvc.config;
 
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.http.MediaType;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
@@ -10,9 +9,10 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.beans.PropertyEditorSupport;
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.springframework.util.ReflectionUtils.doWithFields;
 
 
 /**
@@ -41,37 +41,31 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
 
     public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
 
-        ReflectionUtils.doWithFields(configurer.getClass(), new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+        doWithFields(configurer.getClass(), field -> {
 
-                boolean accessible = field.isAccessible();
+            boolean accessible = field.isAccessible();
 
-                try {
+            try {
 
-                    if (!accessible) {
-                        field.setAccessible(true);
-                    }
+                if (!accessible) {
+                    field.setAccessible(true);
+                }
 
-                    ContentNegotiationManagerFactoryBean factoryBean = (ContentNegotiationManagerFactoryBean) field.get(configurer);
+                ContentNegotiationManagerFactoryBean factoryBean = (ContentNegotiationManagerFactoryBean) field.get(configurer);
 
-                    configureContentNegotiationManagerFactoryBean(factoryBean);
+                configureContentNegotiationManagerFactoryBean(factoryBean);
 
-                } finally {
+            } finally {
 
-                    if (!accessible) {
-                        field.setAccessible(accessible);
-                    }
-
+                if (!accessible) {
+                    field.setAccessible(accessible);
                 }
 
             }
-        }, new ReflectionUtils.FieldFilter() {
-            @Override
-            public boolean matches(Field field) {
-                Class<?> fieldType = field.getType();
-                return FACTORY_BEAN_FIELD_CLASS.isAssignableFrom(fieldType);
-            }
+
+        }, field -> {
+            Class<?> fieldType = field.getType();
+            return FACTORY_BEAN_FIELD_CLASS.isAssignableFrom(fieldType);
         });
 
     }
@@ -120,21 +114,17 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
 
                 Object value = entry.getValue();
 
-                if (value instanceof Map) {
-                    Map<String, String> subProperties = extraProperties((Map) value);
+                if (value instanceof Map mapValue) {
+                    Map<String, String> subProperties = extraProperties(mapValue);
                     for (Map.Entry<String, String> e : subProperties.entrySet()) {
                         String subKey = e.getKey();
                         String subValue = e.getValue();
                         properties.put(key + PROPERTY_SEPARATOR + subKey, subValue);
                     }
-                } else if (value instanceof String) {
-
-                    properties.put(key, value.toString());
-
+                } else if (value instanceof String stringValue) {
+                    properties.put(key, stringValue);
                 }
-
             }
-
         }
 
         return properties;
@@ -185,9 +175,9 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements We
 
                 }
 
-                if (actualPropertyValue instanceof Map) {
+                if (actualPropertyValue instanceof Map mapValue) {
 
-                    Map<String, Object> nestedProperties = (Map<String, Object>) actualPropertyValue;
+                    Map<String, Object> nestedProperties = mapValue;
 
                     Map<String, String> subProperties = extraProperties(nestedProperties);
 

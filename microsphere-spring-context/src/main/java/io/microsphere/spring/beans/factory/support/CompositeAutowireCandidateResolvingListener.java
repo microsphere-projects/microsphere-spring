@@ -60,9 +60,4 @@ public class CompositeAutowireCandidateResolvingListener implements AutowireCand
     public void lazyProxyResolved(DependencyDescriptor descriptor, String beanName, Object proxy) {
         forEach(listeners, listener -> listener.lazyProxyResolved(descriptor, beanName, proxy));
     }
-
-    @Override
-    public void lazyProxyClassResolved(DependencyDescriptor descriptor, String beanName, Class<?> proxyClass) {
-        forEach(listeners, listener -> listener.lazyProxyClassResolved(descriptor, beanName, proxyClass));
-    }
 }

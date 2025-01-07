@@ -27,9 +27,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.SmartApplicationListener;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
+import org.springframework.core.ResolvableType;
 
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +36,8 @@ import java.util.function.BiConsumer;
 
 import static io.microsphere.spring.context.event.BeanListeners.getBean;
 import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanNames;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static org.springframework.util.ReflectionUtils.doWithFields;
 
 /**
  * Bean After-Event Publishing Processor
@@ -45,9 +45,9 @@ import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanName
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements SmartApplicationListener {
+class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements GenericApplicationListenerAdapter {
 
-    private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = ClassUtils.resolveClassName("org.springframework.beans.factory.support.DisposableBeanAdapter", null);
+    private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = resolveClass("org.springframework.beans.factory.support.DisposableBeanAdapter");
 
     private final ConfigurableApplicationContext context;
 
@@ -70,14 +70,19 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
     }
 
     @Override
+    public boolean supportsEventType(ResolvableType eventType) {
+        return eventType.isAssignableFrom(ContextRefreshedEvent.class) || eventType.isAssignableFrom(ContextClosedEvent.class);
+    }
+
+    @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (!Objects.equals(context, event.getSource())) {
             return;
         }
-        if (event instanceof ContextRefreshedEvent) {
-            onContextRefreshedEvent((ContextRefreshedEvent) event);
-        } else if (event instanceof ContextClosedEvent) {
-            onContextClosedEvent((ContextClosedEvent) event);
+        if (event instanceof ContextRefreshedEvent contextRefreshedEvent) {
+            onContextRefreshedEvent(contextRefreshedEvent);
+        } else if (event instanceof ContextClosedEvent contextClosedEvent) {
+            onContextClosedEvent(contextClosedEvent);
         }
     }
 
@@ -106,7 +111,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
     private void decorateDisposableBeans() {
         ConfigurableListableBeanFactory beanFactory = this.context.getBeanFactory();
         if (beanFactory instanceof DefaultSingletonBeanRegistry) {
-            ReflectionUtils.doWithFields(DefaultSingletonBeanRegistry.class, field -> {
+            doWithFields(DefaultSingletonBeanRegistry.class, field -> {
                 field.setAccessible(true);
                 Map<String, Object> disposableBeans = (Map<String, Object>) field.get(beanFactory);
                 for (Map.Entry<String, Object> entry : disposableBeans.entrySet()) {
@@ -156,8 +161,8 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
             beanEventListeners.setReadyBeanNames(readyBeanNames);
             for (String beanName : beanNames) {
                 BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);
-                if (beanDefinition instanceof RootBeanDefinition) {
-                    beanEventListeners.onBeanDefinitionReady(beanName, (RootBeanDefinition) beanDefinition);
+                if (beanDefinition instanceof RootBeanDefinition rootBeanDefinition) {
+                    beanEventListeners.onBeanDefinitionReady(beanName, rootBeanDefinition);
                 }
             }
         }
@@ -180,7 +185,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
         @Override
         public void destroy() throws Exception {
             this.delegate.destroy();
-            ReflectionUtils.doWithFields(DISPOSABLE_BEAN_ADAPTER_CLASS, field -> {
+            doWithFields(DISPOSABLE_BEAN_ADAPTER_CLASS, field -> {
                 field.setAccessible(true);
                 Object bean = field.get(this.delegate);
                 this.destroyedCallback.accept(this.beanName, bean);

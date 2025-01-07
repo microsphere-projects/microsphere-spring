@@ -16,11 +16,13 @@
  */
 package io.microsphere.spring.webmvc;
 
+import io.microsphere.spring.webmvc.annotation.Idempotent;
+
 /**
- * TODO Comment
+ * {@link RuntimeException} for {@link Idempotent}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since TODO
+ * @since 1.0.0
  */
 public class IdempotentException extends RuntimeException {
 

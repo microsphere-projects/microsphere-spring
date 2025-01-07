@@ -22,7 +22,7 @@ import org.springframework.core.env.PropertySources;
 
 import java.util.Map;
 
-import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 
 /**
  * {@link PropertySources} {@link P6LoadableOptions} Adapter

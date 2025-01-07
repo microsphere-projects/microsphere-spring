@@ -17,8 +17,9 @@
 package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * {@link Logger logging} {@link AutowireCandidateResolvingListener}
@@ -30,7 +31,7 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
  */
 public class LoggingAutowireCandidateResolvingListener implements AutowireCandidateResolvingListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingAutowireCandidateResolvingListener.class);
+    private static final Logger logger = getLogger(LoggingAutowireCandidateResolvingListener.class);
 
     @Override
     public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
@@ -46,16 +47,9 @@ public class LoggingAutowireCandidateResolvingListener implements AutowireCandid
         }
     }
 
-    @Override
-    public void lazyProxyClassResolved(DependencyDescriptor descriptor, String beanName, Class<?> proxyClass) {
-        if (proxyClass != null) {
-            log("The lazy proxy class [descriptor : {} , bean name : '{}'] was resolved : {}", descriptor, beanName, proxyClass);
-        }
-    }
-
     protected void log(String messagePattern, Object... args) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(messagePattern, args);
+        if (logger.isTraceEnabled()) {
+            logger.trace(messagePattern, args);
         }
     }
 

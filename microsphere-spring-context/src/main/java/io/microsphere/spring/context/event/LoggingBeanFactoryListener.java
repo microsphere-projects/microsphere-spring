@@ -16,10 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.microsphere.logging.Logger;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * Logging {@link BeanFactoryListener}
@@ -30,7 +31,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  */
 public class LoggingBeanFactoryListener implements BeanFactoryListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanFactoryListener.class);
+    private static final Logger logger = getLogger(LoggingBeanFactoryListener.class);
 
     @Override
     public void onBeanDefinitionRegistryReady(BeanDefinitionRegistry registry) {

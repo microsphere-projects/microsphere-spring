@@ -32,7 +32,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -41,6 +40,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.List;
+
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 
 /**
  * The Spring {@link URLStreamHandler} component supports supports the "spring" sub-protocols,
@@ -115,13 +117,11 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory, "The 'beanFactory' argument must be an instance of " + ConfigurableListableBeanFactory.class.getName());
-        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     @Override
     public void setEnvironment(Environment environment) {
-        Assert.isInstanceOf(ConfigurableEnvironment.class, environment, "The 'environment' argument must be an instance of " + ConfigurableEnvironment.class.getName());
-        this.environment = (ConfigurableEnvironment) environment;
+        this.environment = asConfigurableEnvironment(environment);
     }
 }

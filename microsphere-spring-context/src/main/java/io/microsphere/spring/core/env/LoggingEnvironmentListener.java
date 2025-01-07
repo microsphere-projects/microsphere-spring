@@ -17,7 +17,6 @@
 package io.microsphere.spring.core.env;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.ConfigurablePropertyResolver;
@@ -27,6 +26,8 @@ import org.springframework.core.env.MutablePropertySources;
 import java.util.Arrays;
 import java.util.Map;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
+
 /**
  * {@link PropertyResolverListener} class for logging
  *
@@ -35,7 +36,7 @@ import java.util.Map;
  */
 public class LoggingEnvironmentListener implements EnvironmentListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingEnvironmentListener.class);
+    private static final Logger logger = getLogger(LoggingEnvironmentListener.class);
 
     @Override
     public void beforeGetPropertySources(ConfigurableEnvironment environment) {
@@ -248,14 +249,14 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
     }
 
     protected void log(String message) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(message);
+        if (logger.isTraceEnabled()) {
+            logger.trace(message);
         }
     }
 
     protected void log(String messagePattern, Object... args) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(messagePattern, args);
+        if (logger.isTraceEnabled()) {
+            logger.trace(messagePattern, args);
         }
     }
 }
