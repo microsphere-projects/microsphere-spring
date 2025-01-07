@@ -53,7 +53,6 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.ClassUtils.getUserClass;
-import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 

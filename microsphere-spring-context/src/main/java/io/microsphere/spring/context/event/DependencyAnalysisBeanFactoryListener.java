@@ -57,11 +57,11 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultList
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
+import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -395,7 +395,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private Class<?> getBeanClass(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
         return beanDefinition.hasBeanClass() ? beanDefinition.getBeanClass() :
-                resolveClass(beanDefinition.getBeanClassName(), classLoader);
+                resolveClassName(beanDefinition.getBeanClassName(), classLoader);
     }
 
     /**
