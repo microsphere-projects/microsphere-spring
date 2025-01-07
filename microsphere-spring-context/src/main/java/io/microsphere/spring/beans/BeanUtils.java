@@ -44,6 +44,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinit
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
@@ -123,7 +124,7 @@ public abstract class BeanUtils extends BaseUtils {
             classLoader = configurableBeanFactory.getBeanClassLoader();
         }
 
-        Class beanClass = resolveClassName(beanClassName, classLoader);
+        Class beanClass = resolveClass(beanClassName, classLoader);
         if (beanClass == null) {
             return false;
         }
@@ -207,7 +208,7 @@ public abstract class BeanUtils extends BaseUtils {
 
         Class<?> beanType = null;
         try {
-            beanType = resolveClassName(beanClassName, classLoader);
+            beanType = resolveClass(beanClassName, classLoader);
             beanType = getUserClass(beanType);
         } catch (Exception e) {
             if (logger.isErrorEnabled()) {

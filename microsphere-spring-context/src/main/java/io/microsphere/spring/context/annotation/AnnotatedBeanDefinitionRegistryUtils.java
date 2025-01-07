@@ -16,7 +16,6 @@ import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -27,9 +26,11 @@ import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
+import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static org.springframework.context.annotation.AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR;
-import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
@@ -49,7 +50,6 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
      * @param registry       {@link BeanDefinitionRegistry}
      * @param annotatedClass the {@link Annotation annotated} {@link Class class}
      * @return if present, return <code>true</code>, or <code>false</code>
-     * @since 1.0.0
      */
     public static boolean isPresentBean(BeanDefinitionRegistry registry, Class<?> annotatedClass) {
 
@@ -64,7 +64,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
             if (beanDefinition instanceof AnnotatedBeanDefinition) {
                 AnnotationMetadata annotationMetadata = ((AnnotatedBeanDefinition) beanDefinition).getMetadata();
                 String className = annotationMetadata.getClassName();
-                Class<?> targetClass = resolveClassName(className, classLoader);
+                Class<?> targetClass = resolveClass(className, classLoader);
                 present = nullSafeEquals(targetClass, annotatedClass);
                 if (present) {
                     if (logger.isTraceEnabled()) {
@@ -87,7 +87,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
      */
     public static void registerBeans(BeanDefinitionRegistry registry, Class<?>... annotatedClasses) {
 
-        if (ObjectUtils.isEmpty(annotatedClasses)) {
+        if (isEmpty(annotatedClasses)) {
             return;
         }
 
@@ -124,7 +124,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
         int count = 0;
 
-        if (!ObjectUtils.isEmpty(basePackages)) {
+        if (isNotEmpty(basePackages)) {
 
             boolean traceEnabled = logger.isTraceEnabled();
 
@@ -168,7 +168,6 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
      * @see SingletonBeanRegistry
      * @see AnnotationConfigUtils#CONFIGURATION_BEAN_NAME_GENERATOR
      * @see ConfigurationClassPostProcessor#processConfigBeanDefinitions
-     * @since 1.0.0
      */
     public static BeanNameGenerator resolveAnnotatedBeanNameGenerator(BeanDefinitionRegistry registry) {
         BeanNameGenerator beanNameGenerator = null;
