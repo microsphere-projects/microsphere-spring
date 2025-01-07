@@ -20,8 +20,6 @@ import io.microsphere.logging.Logger;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -34,14 +32,10 @@ import java.util.List;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
-import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.BeanUtils.instantiateClass;
@@ -59,26 +53,6 @@ import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
 
     private static final Logger logger = getLogger(SpringFactoriesLoaderUtils.class);
-
-    public static void registerFactories(@Nullable BeanFactory bf, Class<?> factoryType) {
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(bf);
-        if (registry == null) {
-            return;
-        }
-
-        ConfigurableListableBeanFactory beanFactory = asConfigurableListableBeanFactory(bf);
-        if (beanFactory == null) {
-            return;
-        }
-
-        ClassLoader beanClassLoader = beanFactory.getBeanClassLoader();
-        ClassLoader classLoader = beanClassLoader == null ? getDefaultClassLoader() : beanClassLoader;
-        List<String> factoryNames = loadFactoryNames(factoryType, classLoader);
-        for (String factoryName : factoryNames) {
-            Class<?> beanClass = resolveClassName(factoryName, classLoader);
-            registerBeanDefinition(registry, beanClass);
-        }
-    }
 
     public static <T> List<T> loadFactories(@Nullable ApplicationContext context, Class<T> factoryType) {
         return loadFactories(asConfigurableApplicationContext(context), factoryType);

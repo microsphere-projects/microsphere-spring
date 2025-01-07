@@ -34,7 +34,6 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
