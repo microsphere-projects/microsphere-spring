@@ -75,7 +75,7 @@ public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
         ClassLoader classLoader = beanClassLoader == null ? getDefaultClassLoader() : beanClassLoader;
         List<String> factoryNames = loadFactoryNames(factoryType, classLoader);
         for (String factoryName : factoryNames) {
-            Class<?> beanClass = resolveClass(factoryName, classLoader);
+            Class<?> beanClass = resolveClassName(factoryName, classLoader);
             registerBeanDefinition(registry, beanClass);
         }
     }

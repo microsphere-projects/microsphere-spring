@@ -43,6 +43,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -114,7 +115,7 @@ public abstract class BeanUtils extends BaseUtils {
             classLoader = configurableBeanFactory.getBeanClassLoader();
         }
 
-        Class beanClass = resolveClassName(beanClassName, classLoader);
+        Class beanClass = resolveClass(beanClassName, classLoader);
         if (beanClass == null) {
             return false;
         }
