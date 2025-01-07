@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
-import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.registerFactories;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 
 /**
  * The composite {@link BeanListener}
@@ -76,7 +76,7 @@ class BeanListeners implements BeanListener {
     }
 
     private List<NamedBeanHolder<BeanListener>> getBeanListeners(ConfigurableListableBeanFactory beanFactory) {
-        registerFactories(beanFactory, BeanListener.class);
+        registerSpringFactoriesBeans(beanFactory, BeanListener.class);
         Map<String, BeanListener> beanEventListenersMap = beanFactory.getBeansOfType(BeanListener.class);
         List<NamedBeanHolder<BeanListener>> namedListeners = new ArrayList<>(beanEventListenersMap.size());
         for (Map.Entry<String, BeanListener> entry : beanEventListenersMap.entrySet()) {

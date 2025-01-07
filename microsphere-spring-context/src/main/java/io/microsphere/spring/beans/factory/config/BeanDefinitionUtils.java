@@ -34,11 +34,11 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -121,8 +121,7 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
             } else {
                 String beanClassName = beanDefinition.getBeanClassName();
                 if (hasText(beanClassName)) {
-                    ClassLoader targetClassLoader = classLoader == null ? getDefaultClassLoader() : classLoader;
-                    beanClass = resolveClass(beanClassName, targetClassLoader, true);
+                    beanClass = resolveClassName(beanClassName, classLoader);
                 }
             }
         } else {

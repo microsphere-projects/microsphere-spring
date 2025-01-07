@@ -23,8 +23,8 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 import static io.microsphere.spring.config.ConfigurationPropertyRepository.BEAN_NAME;
-import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.registerFactories;
 
 /**
  * The Initializer for Collecting Configuration Property
@@ -41,7 +41,7 @@ public class CollectingConfigurationPropertyInitializer implements ApplicationCo
     public void initialize(ConfigurableApplicationContext applicationContext) {
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
         // Load PropertyResolverListener SPI and then be registered as the bean
-        registerFactories(beanFactory, PropertyResolverListener.class);
+        registerSpringFactoriesBeans(beanFactory, PropertyResolverListener.class);
         // Register ConfigurationPropertyRepository
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
         registerBean(registry, BEAN_NAME, ConfigurationPropertyRepository.class);

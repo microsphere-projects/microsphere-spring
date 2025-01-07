@@ -23,6 +23,7 @@ import io.microsphere.spring.test.TestBean2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
@@ -72,7 +73,7 @@ public class BeanInitializerTest {
 
     @Test
     public void testRegisterSpringFactoriesBeans() {
-        assertEquals(2, registerSpringFactoriesBeans(registry, Bean.class));
+        assertEquals(2, registerSpringFactoriesBeans((BeanDefinitionRegistry) registry, Bean.class));
         assertTrue(registry.containsBeanDefinition("testBean"));
         assertTrue(registry.containsBeanDefinition("testBean2"));
         assertEquals(TestBean.class,registry.getBean("testBean").getClass());

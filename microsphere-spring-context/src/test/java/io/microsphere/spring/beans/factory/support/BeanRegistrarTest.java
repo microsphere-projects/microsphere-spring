@@ -23,6 +23,7 @@ import io.microsphere.spring.util.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
@@ -95,7 +96,7 @@ public class BeanRegistrarTest {
 
     @Test
     public void testRegisterSpringFactoriesBeans() {
-        int beansCount = registerSpringFactoriesBeans(this.beanFactory, Bean.class);
+        int beansCount = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
         assertEquals(2, beansCount);
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean.class.getSimpleName())));
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean2.class.getSimpleName())));
