@@ -18,7 +18,6 @@ package io.microsphere.spring.cache.intereptor;
 
 import io.microsphere.collection.MapUtils;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.cache.TTLContext;
 import io.microsphere.spring.cache.annotation.TTLCachePut;
 import io.microsphere.spring.cache.annotation.TTLCacheable;
@@ -47,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.time.Duration.ofMillis;
 import static java.util.Collections.emptyList;
@@ -61,7 +61,7 @@ public class TTLCacheResolver extends OnceApplicationContextEventListener<Contex
 
     public static final String BEAN_NAME = "ttlCacheResolver";
 
-    private static final Logger logger = LoggerFactory.getLogger(TTLCacheResolver.class);
+    private static final Logger logger = getLogger(TTLCacheResolver.class);
 
     private static final Map<Class<? extends CacheOperation>, Class<? extends Annotation>> ttlAnnotationTypes = MapUtils.of(
             CacheableOperation.class, TTLCacheable.class,

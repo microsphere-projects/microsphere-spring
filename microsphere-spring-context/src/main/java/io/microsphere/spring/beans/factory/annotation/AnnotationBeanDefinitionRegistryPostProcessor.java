@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -46,6 +45,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
@@ -81,7 +81,7 @@ import static org.springframework.util.StringUtils.hasText;
 public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor,
         BeanFactoryAware, EnvironmentAware, ResourceLoaderAware, BeanClassLoaderAware {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = getLogger(getClass());
 
     private final Set<Class<? extends Annotation>> supportedAnnotationTypes;
 

@@ -1,7 +1,6 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -25,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
@@ -41,7 +41,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  */
 public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(AnnotatedBeanDefinitionRegistryUtils.class);
+    private static final Logger logger = getLogger(AnnotatedBeanDefinitionRegistryUtils.class);
 
     /**
      * Is present bean that was registered by the specified {@link Annotation annotated} {@link Class class}

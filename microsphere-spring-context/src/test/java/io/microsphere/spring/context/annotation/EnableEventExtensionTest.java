@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.event.ApplicationEventInterceptor;
 import io.microsphere.spring.context.event.ApplicationListenerInterceptor;
 import org.junit.After;
@@ -39,6 +38,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
@@ -58,7 +58,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
 )
 public class EnableEventExtensionTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(EnableEventExtensionTest.class);
+    private static final Logger logger = getLogger(EnableEventExtensionTest.class);
 
     private static AtomicInteger eventValueRef = new AtomicInteger();
 

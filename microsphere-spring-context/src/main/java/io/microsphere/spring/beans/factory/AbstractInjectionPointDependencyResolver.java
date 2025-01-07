@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -36,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.asClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
@@ -50,7 +50,7 @@ import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
  */
 public abstract class AbstractInjectionPointDependencyResolver implements InjectionPointDependencyResolver, BeanFactoryAware {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
 

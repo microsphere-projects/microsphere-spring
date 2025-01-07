@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -31,6 +30,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
@@ -51,7 +51,7 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public abstract class BeanRegistrar {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeanRegistrar.class);
+    private static final Logger logger = getLogger(BeanRegistrar.class);
 
     /**
      * Register Infrastructure Bean

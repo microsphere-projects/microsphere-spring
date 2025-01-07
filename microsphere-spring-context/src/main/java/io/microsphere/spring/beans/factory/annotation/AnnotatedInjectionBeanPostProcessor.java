@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -69,9 +68,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static java.lang.Integer.getInteger;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
@@ -108,9 +109,9 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
-    private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
+    private final static int CACHE_SIZE = getInteger("microsphere.spring.injection.metadata.cache.size", 32);
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private final Collection<Class<? extends Annotation>> annotationTypes;
 

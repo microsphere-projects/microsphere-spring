@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -39,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
@@ -62,7 +62,7 @@ import static org.springframework.beans.BeanUtils.instantiateClass;
 public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor,
         EnvironmentAware, BeanNameAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(ListenableAutowireCandidateResolver.class);
+    private static final Logger logger = getLogger(ListenableAutowireCandidateResolver.class);
 
     /**
      * The {@link MethodHandle} of {@link AutowireCandidateResolver#isRequired(DependencyDescriptor)}

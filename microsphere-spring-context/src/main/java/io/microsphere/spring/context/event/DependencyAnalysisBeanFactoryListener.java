@@ -18,7 +18,6 @@ package io.microsphere.spring.context.event;
 
 import io.microsphere.filter.Filter;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
@@ -51,6 +50,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
@@ -72,7 +72,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  */
 public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListenerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(DependencyAnalysisBeanFactoryListener.class);
+    private static final Logger logger = getLogger(DependencyAnalysisBeanFactoryListener.class);
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
