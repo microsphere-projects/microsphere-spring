@@ -30,6 +30,7 @@ import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.util.Arrays.asList;
 import static org.springframework.context.annotation.AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR;
+import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
