@@ -41,7 +41,6 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.BeanUtils.instantiateClass;
@@ -75,7 +74,7 @@ public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
         ClassLoader classLoader = beanClassLoader == null ? getDefaultClassLoader() : beanClassLoader;
         List<String> factoryNames = loadFactoryNames(factoryType, classLoader);
         for (String factoryName : factoryNames) {
-            Class<?> beanClass = resolveClass(factoryName, classLoader);
+            Class<?> beanClass = resolveClassName(factoryName, classLoader);
             registerBeanDefinition(registry, beanClass);
         }
     }

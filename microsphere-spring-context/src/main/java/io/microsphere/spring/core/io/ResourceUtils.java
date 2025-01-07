@@ -43,7 +43,7 @@ public abstract class ResourceUtils extends BaseUtils {
      *
      * @since Spring Framework 5.0.2
      */
-    public static final Class FILE_URL_RESOURCE_CLASS = resolveClass(FILE_URL_RESOURCE_CLASS_NAME, ResourceUtils.class.getClassLoader());
+    public static final Class FILE_URL_RESOURCE_CLASS = resolveClass(FILE_URL_RESOURCE_CLASS_NAME);
 
     /**
      * Determine whether the specified {@link Resource} is a {@linkplain org.springframework.core.io.FileUrlResource}
