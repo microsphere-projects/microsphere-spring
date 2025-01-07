@@ -35,7 +35,6 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSingleton;
-import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 import static java.beans.Introspector.decapitalize;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

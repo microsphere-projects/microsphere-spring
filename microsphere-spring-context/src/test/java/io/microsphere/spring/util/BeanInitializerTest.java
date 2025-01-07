@@ -27,7 +27,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
-import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

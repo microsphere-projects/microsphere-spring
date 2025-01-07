@@ -17,12 +17,9 @@
 package io.microsphere.spring.core.io.support;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -32,12 +29,10 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
-import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
@@ -57,7 +52,7 @@ import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
  */
 public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(SpringFactoriesLoaderUtils.class);
+    private static final Logger logger = getLogger(SpringFactoriesLoaderUtils.class);
 
     public static <T> List<T> loadFactories(@Nullable ApplicationContext context, Class<T> factoryType) {
         return loadFactories(asConfigurableApplicationContext(context), factoryType);
