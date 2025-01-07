@@ -29,7 +29,6 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
@@ -45,8 +44,6 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinit
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
-import static io.microsphere.util.ArrayUtils.isEmpty;
-import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
@@ -56,6 +53,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.ClassUtils.getUserClass;
 import static org.springframework.util.ClassUtils.resolveClassName;
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -96,7 +94,7 @@ public abstract class BeanUtils extends BaseUtils {
      */
     public static boolean isBeanPresent(ListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
-        return !ObjectUtils.isEmpty(beanNames);
+        return !isEmpty(beanNames);
     }
 
     /**
@@ -281,7 +279,7 @@ public abstract class BeanUtils extends BaseUtils {
         }
 
         if (logger.isTraceEnabled()) {
-            logger.trace(format("The bean[name : %s , type : %s] can't be found in Spring BeanFactory", beanName, beanType.getName()));
+            logger.trace("The bean[name : '{}' , type : {}] can't be found in Spring BeanFactory", beanName, beanType.getName());
         }
         return null;
     }
