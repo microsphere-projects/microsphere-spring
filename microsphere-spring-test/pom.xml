@@ -19,7 +19,7 @@
     <description>Microsphere Spring Test</description>
 
     <properties>
-        <zookeeper.version>3.8.1</zookeeper.version>
+        <zookeeper.version>3.8.4</zookeeper.version>
         <wix-embedded-mysql.version>4.6.2</wix-embedded-mysql.version>
     </properties>
 
