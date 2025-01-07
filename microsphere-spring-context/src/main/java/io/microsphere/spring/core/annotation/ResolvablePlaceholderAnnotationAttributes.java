@@ -18,17 +18,17 @@ package io.microsphere.spring.core.annotation;
 
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.shallowCloneMap;
-import static io.microsphere.spring.util.AnnotationUtils.findAnnotationType;
-import static io.microsphere.spring.util.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.util.Collections.emptySet;
 
 /**
@@ -61,10 +61,10 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
         Map<String, Object> copy = shallowCloneMap(source);
         for (Map.Entry<String, Object> entry : copy.entrySet()) {
             Object value = entry.getValue();
-            if (value instanceof String) {
-                entry.setValue(resolvePlaceholder((String) value, propertyResolver));
-            } else if (value instanceof String[]) {
-                entry.setValue(resolvePlaceholders((String[]) value, propertyResolver));
+            if (value instanceof String stringValue) {
+                entry.setValue(resolvePlaceholder(stringValue, propertyResolver));
+            } else if (value instanceof String[] values) {
+                entry.setValue(resolvePlaceholders(values, propertyResolver));
             }
         }
         return copy;
@@ -89,11 +89,11 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      * @param <A>              the {@link Class class} of {@link Annotation annotation}
      * @return non-null
      */
-    @NonNull
-    public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@NonNull AnnotationAttributes attributes,
+    @Nonnull
+    public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@Nonnull AnnotationAttributes attributes,
                                                                                          @Nullable PropertyResolver propertyResolver) {
-        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes) {
-            return (ResolvablePlaceholderAnnotationAttributes) attributes;
+        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes resolvablePlaceholderAnnotationAttributes) {
+            return resolvablePlaceholderAnnotationAttributes;
         }
         return new ResolvablePlaceholderAnnotationAttributes(attributes, propertyResolver);
     }
@@ -106,8 +106,8 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      * @param <A>              the {@link Class class} of {@link Annotation annotation}
      * @return non-null
      */
-    @NonNull
-    public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@NonNull A annotation,
+    @Nonnull
+    public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@Nonnull A annotation,
                                                                                          @Nullable PropertyResolver propertyResolver) {
         return new ResolvablePlaceholderAnnotationAttributes(annotation, propertyResolver);
     }
@@ -120,7 +120,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      * @param <A>              the {@link Class class} of {@link Annotation annotation}
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(Map<String, Object> attributes,
                                                                                          Class<A> annotationType,
                                                                                          @Nullable PropertyResolver propertyResolver) {
@@ -134,7 +134,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      * @param propertyResolver
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes[] attributesArray, @Nullable PropertyResolver propertyResolver) {
         int length = attributesArray == null ? 0 : attributesArray.length;
 

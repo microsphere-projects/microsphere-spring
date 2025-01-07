@@ -24,17 +24,17 @@ package io.microsphere.spring.beans.factory.annotation;
  */
 
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
-import io.microsphere.spring.util.BeanUtils;
 import io.microsphere.spring.util.User;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Collection;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableConfigurationBeanBinding(prefix = "users", type = User.class, multiple = true, ignoreUnknownFields = false,
         ignoreInvalidFields = false)
@@ -57,11 +57,11 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
 
     private ConfigurationBeanBindingPostProcessor configurationBeanBindingPostProcessor;
 
-    @Before
+    @BeforeEach
     public void init() {
         aUser = context.getBean("a", User.class);
         bUser = context.getBean("b", User.class);
-        users = BeanUtils.getSortedBeans(context, User.class);
+        users = getSortedBeans(context, User.class);
         configurationBeanBindingPostProcessor = context.getBean("configurationBeanBindingPostProcessor", ConfigurationBeanBindingPostProcessor.class);
     }
 

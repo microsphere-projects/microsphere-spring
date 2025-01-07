@@ -30,7 +30,7 @@ import java.util.Properties;
 import static io.microsphere.constants.PathConstants.SLASH_CHAR;
 import static io.microsphere.net.URLUtils.resolveAuthority;
 import static io.microsphere.net.URLUtils.resolvePath;
-import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 
 /**
  * The {@link URLConnection} adapter class is based on the Spring {@link PropertySources}

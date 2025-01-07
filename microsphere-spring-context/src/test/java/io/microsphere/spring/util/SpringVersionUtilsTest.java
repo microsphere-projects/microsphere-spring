@@ -18,7 +18,7 @@ package io.microsphere.spring.util;
 
 
 import io.microsphere.util.Version;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
 
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_AOP_VERSION;
@@ -28,6 +28,7 @@ import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSI
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CORE_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link SpringVersionUtils} Test
@@ -37,21 +38,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class SpringVersionUtilsTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetSpringVersionOnNPE() {
-        getSpringVersion((Class) null);
+        assertThrows(NullPointerException.class, () -> {
+            getSpringVersion((Class) null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetSpringVersionOnIAE() {
-        getSpringVersion(String.class);
+        assertThrows(IllegalArgumentException.class, () -> {
+            getSpringVersion(String.class);
+        });
     }
 
     @Test
     public void testGetSpringVersion() {
         Version version = getSpringVersion(StringUtils.class);
-        assertEquals(version,SPRING_AOP_VERSION);
-        assertEquals(SPRING_CORE_VERSION,SPRING_AOP_VERSION);
+        assertEquals(version, SPRING_AOP_VERSION);
+        assertEquals(SPRING_CORE_VERSION, SPRING_AOP_VERSION);
         assertEquals(SPRING_AOP_VERSION, SPRING_BEANS_VERSION);
         assertEquals(SPRING_BEANS_VERSION, SPRING_CONTEXT_VERSION);
         assertEquals(SPRING_CONTEXT_VERSION, SPRING_CONTEXT_SUPPORT_VERSION);

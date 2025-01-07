@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.lifecycle.AbstractSmartLifecycle;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
@@ -23,11 +24,10 @@ import io.microsphere.spring.web.metadata.FilterRegistrationWebEndpointMappingFa
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
+import io.microsphere.util.Version;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
@@ -57,7 +58,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  */
 public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebEndpointMappingRegistrar.class);
+    private static final Logger logger = getLogger(WebEndpointMappingRegistrar.class);
 
     private final WebApplicationContext context;
 
@@ -91,7 +92,10 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
 
         ServletContext servletContext = context.getServletContext();
 
-        collectFromServletContext(servletContext, context, webEndpointMappings);
+        Version servletVersion = Version.of(servletContext.getMajorVersion(), servletContext.getMinorVersion());
+        if (Version.of(3).le(servletVersion)) { // Servlet 3.0+
+            collectFromServletContext(servletContext, context, webEndpointMappings);
+        }
 
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             collectFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);
@@ -138,8 +142,7 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
     }
 
     private void collectFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
-        if (handlerMapping instanceof AbstractUrlHandlerMapping) {
-            AbstractUrlHandlerMapping urlHandlerMapping = (AbstractUrlHandlerMapping) handlerMapping;
+        if (handlerMapping instanceof AbstractUrlHandlerMapping urlHandlerMapping) {
             Map<String, Object> handlerMap = urlHandlerMapping.getHandlerMap();
             if (handlerMap.isEmpty()) {
                 return;
@@ -157,8 +160,7 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
     private void collectFromRequestMappingInfoHandlerMapping(HandlerMapping handlerMapping,
                                                              Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods,
                                                              List<WebEndpointMapping> webEndpointMappings) {
-        if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
-            RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
+        if (handlerMapping instanceof RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping) {
             Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
             if (handlerMethodsMap.isEmpty()) {
                 return;

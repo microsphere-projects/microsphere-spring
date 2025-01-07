@@ -16,10 +16,9 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
@@ -28,12 +27,13 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -55,7 +55,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
 
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = getLogger(this.getClass());
 
     private final Class<A> annotationType;
 
@@ -97,7 +97,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
      * @param metadata   {@link AnnotationMetadata}
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     protected final String resolvePropertySourceName(AnnotationAttributes attributes, AnnotationMetadata metadata) {
         String name = buildPropertySourceName(attributes, metadata);
         if (!hasText(name)) {
@@ -129,7 +129,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
      * @param metadata   {@link AnnotationMetadata}
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     protected String buildDefaultPropertySourceName(AnnotationAttributes attributes, AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
         String introspectedClassName = metadata.getClassName();
@@ -154,7 +154,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     public final Class<A> getAnnotationType() {
         return annotationType;
     }

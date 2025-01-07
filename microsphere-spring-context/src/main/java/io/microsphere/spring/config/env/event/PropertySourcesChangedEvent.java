@@ -17,13 +17,13 @@
 package io.microsphere.spring.config.env.event;
 
 
-import io.microsphere.spring.util.PropertySourcesUtils;
+import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
-import org.springframework.lang.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,7 +66,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     /**
      * @return Get the changed properties
      */
-    @NonNull
+    @Nonnull
     public Map<String, Object> getChangedProperties() {
         return getProperties(PropertySourceChangedEvent::getNewPropertySource, PropertySourcesUtils::getProperties,
                 PropertySourceChangedEvent.Kind.ADDED, PropertySourceChangedEvent.Kind.REPLACED);
@@ -75,7 +75,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     /**
      * @return Get the added properties
      */
-    @NonNull
+    @Nonnull
     public Map<String, Object> getAddedProperties() {
         return getProperties(PropertySourceChangedEvent::getNewPropertySource, PropertySourcesUtils::getProperties,
                 PropertySourceChangedEvent.Kind.ADDED);
@@ -84,7 +84,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     /**
      * @return Get the removed properties
      */
-    @NonNull
+    @Nonnull
     public Map<String, Object> getRemovedProperties() {
         return getProperties(PropertySourceChangedEvent::getOldPropertySource, PropertySourcesUtils::getProperties,
                 PropertySourceChangedEvent.Kind.REMOVED);

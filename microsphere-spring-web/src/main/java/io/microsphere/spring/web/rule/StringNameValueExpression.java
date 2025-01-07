@@ -16,8 +16,9 @@
 
 package io.microsphere.spring.web.rule;
 
-import org.springframework.lang.Nullable;
-import org.springframework.util.ObjectUtils;
+import javax.annotation.Nullable;
+
+import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
  * String {@link NameValueExpression}
@@ -89,7 +90,7 @@ public class StringNameValueExpression implements NameValueExpression<String> {
         }
         NameValueExpression that = (NameValueExpression) other;
         return ((isCaseSensitiveName() ? this.name.equals(that.getName()) : this.name.equalsIgnoreCase(that.getName())) &&
-                ObjectUtils.nullSafeEquals(this.value, that.getValue()) && this.isNegated == that.isNegated());
+                nullSafeEquals(this.value, that.getValue()) && this.isNegated == that.isNegated());
     }
 
     @Override

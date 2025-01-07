@@ -16,8 +16,7 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import org.springframework.lang.NonNull;
-
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -79,6 +78,6 @@ public interface WebEndpointMappingRegistry {
      *
      * @return non-null
      */
-    @NonNull
+    @Nonnull
     Collection<WebEndpointMapping> getWebEndpointMappings();
 }

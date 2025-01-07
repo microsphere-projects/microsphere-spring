@@ -16,12 +16,11 @@
  */
 package io.microsphere.spring.net;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.StreamUtils;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +30,8 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.util.StreamUtils.copyToString;
 
 /**
  * {@link SpringProtocolURLStreamHandler} Test
@@ -41,7 +41,7 @@ import static org.junit.Assert.assertNotNull;
  * @see SpringEnvironmentURLConnectionFactory
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpringProtocolURLStreamHandler.class, SpringTestURLConnectionFactory.class})
 @TestPropertySource(properties = {"microsphere.net.a=1", "microsphere.net.b=2", "microsphere.net.c=3",})
 public class SpringProtocolURLStreamHandlerTest {
@@ -64,7 +64,7 @@ public class SpringProtocolURLStreamHandlerTest {
     private void assertContent(URL url) throws Throwable {
         String content = null;
         try (InputStream inputStream = url.openStream()) {
-            content = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
+            content = copyToString(inputStream, Charset.defaultCharset());
         }
         assertNotNull(content);
     }

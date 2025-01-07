@@ -18,16 +18,15 @@ package io.microsphere.spring.web.util;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.util.UrlPathHelper;
 
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.ORIGIN;
+import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
-import static org.springframework.web.util.UrlPathHelper.PATH_ATTRIBUTE;
 
 /**
  * {@link WebRequest} Utilities class
@@ -60,20 +59,19 @@ public abstract class WebRequestUtils {
     public static boolean hasBody(NativeWebRequest request) {
         String contentLength = request.getHeader(HttpHeaders.CONTENT_LENGTH);
         String transferEncoding = request.getHeader(HttpHeaders.TRANSFER_ENCODING);
-        return StringUtils.hasText(transferEncoding) ||
-                (StringUtils.hasText(contentLength) && !contentLength.trim().equals("0"));
+        return hasText(transferEncoding) ||
+                (hasText(contentLength) && !contentLength.trim().equals("0"));
     }
 
     /**
-     * Return a previously {@link #getLookupPathForRequest resolved} lookupPath.
+     * Return a previously {@link UrlPathHelper#getLookupPathForRequest resolved} lookupPath.
      *
      * @param request the current request
      * @return the previously resolved lookupPath
      * @throws IllegalArgumentException if the lookup path is not found
      */
     public static String getResolvedLookupPath(NativeWebRequest request) {
-        String lookupPath = (String) request.getAttribute(PATH_ATTRIBUTE, SCOPE_REQUEST);
-        Assert.notNull(lookupPath, () -> "Expected lookupPath in request attribute \"" + PATH_ATTRIBUTE + "\".");
+        String lookupPath = (String) request.getAttribute(UrlPathHelper.PATH_ATTRIBUTE, SCOPE_REQUEST);
         return lookupPath;
     }
 

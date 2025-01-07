@@ -27,10 +27,10 @@ import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
 import io.microsphere.spring.util.User;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
@@ -47,8 +47,7 @@ public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurat
 
             @Override
             public void customize(String beanName, Object configurationBean) {
-                if ("m".equals(beanName) && configurationBean instanceof User) {
-                    User user = (User) configurationBean;
+                if ("m".equals(beanName) && configurationBean instanceof User user) {
                     user.setAge(19);
                 }
             }

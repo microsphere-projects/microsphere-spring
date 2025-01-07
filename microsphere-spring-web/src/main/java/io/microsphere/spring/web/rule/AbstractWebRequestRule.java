@@ -16,8 +16,7 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.lang.Nullable;
-
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.StringJoiner;
 

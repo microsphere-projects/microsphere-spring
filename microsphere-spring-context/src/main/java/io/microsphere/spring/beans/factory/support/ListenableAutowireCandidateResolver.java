@@ -16,21 +16,32 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.constants.PropertyConstants;
+import io.microsphere.logging.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.lang.Nullable;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
-import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.util.ArrayUtils.combine;
 
 /**
@@ -45,16 +56,33 @@ import static io.microsphere.util.ArrayUtils.combine;
  * @see BeanFactoryPostProcessor
  * @since 1.0.0
  */
-public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor {
+public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor,
+        EnvironmentAware, BeanNameAware {
+
+    private static final Logger logger = getLogger(ListenableAutowireCandidateResolver.class);
+
+    /**
+     * The prefix of the property name of {@link ListenableAutowireCandidateResolver}
+     */
+    public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-autowire-candidate-resolver.";
+
+    /**
+     * The property name of {@link ListenableAutowireCandidateResolver} to be 'enabled'
+     */
+    public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
+
+    /**
+     * The default property value of {@link ListenableAutowireCandidateResolver} to be 'enabled'
+     */
+    public static final boolean ENABLED_PROPERTY_VALUE = false;
 
     private AutowireCandidateResolver delegate;
 
     private CompositeAutowireCandidateResolvingListener compositeListener;
 
-    private ConfigurableListableBeanFactory beanFactory;
+    private Environment environment;
 
-    public ListenableAutowireCandidateResolver() {
-    }
+    private String beanName;
 
     public void addListener(AutowireCandidateResolvingListener one, AutowireCandidateResolvingListener... more) {
         addListeners(combine(one, more));
@@ -73,11 +101,21 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return delegate.isAutowireCandidate(bdHolder, descriptor);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.0
+     */
     @Override
     public boolean isRequired(DependencyDescriptor descriptor) {
         return delegate.isRequired(descriptor);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.1
+     */
     @Override
     public boolean hasQualifier(DependencyDescriptor descriptor) {
         return delegate.hasQualifier(descriptor);
@@ -99,14 +137,11 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return proxy;
     }
 
-    @Nullable
-    @Override
-    public Class<?> getLazyResolutionProxyClass(DependencyDescriptor descriptor, String beanName) {
-        Class<?> proxyClass = delegate.getLazyResolutionProxyClass(descriptor, beanName);
-        compositeListener.lazyProxyClassResolved(descriptor, beanName, proxyClass);
-        return proxyClass;
-    }
-
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.2.7
+     */
     @Override
     public AutowireCandidateResolver cloneIfNecessary() {
         return delegate.cloneIfNecessary();
@@ -117,6 +152,16 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         wrap(beanFactory);
     }
 
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
+
     /**
      * Wraps {@link AutowireCandidateResolver} as the {@link ListenableAutowireCandidateResolver} and then register to
      * the given {@link DefaultListableBeanFactory}
@@ -124,6 +169,16 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @param beanFactory {@link DefaultListableBeanFactory}
      */
     public void wrap(BeanFactory beanFactory) {
+        if (!isEnabled(this.environment)) {
+            if (logger.isInfoEnabled()) {
+                logger.info("The ListenableAutowireCandidateResolver bean[name : '{}'] is disabled.", this.beanName);
+                logger.info("Setting the configuration property '{} = true' to enable it if requires.", ENABLED_PROPERTY_NAME);
+            }
+            return;
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("The ListenableAutowireCandidateResolver bean[name : '{}'] is enabled.", this.beanName);
+        }
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
         AutowireCandidateResolver autowireCandidateResolver = dbf.getAutowireCandidateResolver();
         if (autowireCandidateResolver != null) {
@@ -134,4 +189,26 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
             dbf.setAutowireCandidateResolver(this);
         }
     }
+
+    /**
+     * Determine whether the {@link ListenableAutowireCandidateResolver} is enabled or not
+     *
+     * @param environment {@link Environment}
+     * @return <code>true</code> if enabled, otherwise <code>false</code>
+     */
+    public static boolean isEnabled(Environment environment) {
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, ENABLED_PROPERTY_VALUE);
+    }
+
+    /**
+     * Register the {@link ListenableAutowireCandidateResolver} as the infrastructure bean
+     *
+     * @param applicationContext {@link ConfigurableApplicationContext}
+     */
+    public static void register(ConfigurableApplicationContext applicationContext) {
+        ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+        BeanDefinitionRegistry beanDefinitionRegistry = asBeanDefinitionRegistry(beanFactory);
+        registerInfrastructureBean(beanDefinitionRegistry, ListenableAutowireCandidateResolver.class);
+    }
+
 }

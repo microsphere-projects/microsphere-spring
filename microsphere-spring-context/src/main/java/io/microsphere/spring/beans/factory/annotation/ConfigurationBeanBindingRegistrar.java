@@ -16,16 +16,13 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
-import io.microsphere.spring.util.PropertySourcesUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -34,27 +31,29 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.initBeanMetadataAttributes;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_UNKNOWN_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_MULTIPLE;
-import static io.microsphere.spring.util.AnnotationUtils.getAttribute;
-import static io.microsphere.spring.util.AnnotationUtils.getRequiredAttribute;
-import static io.microsphere.spring.util.BeanRegistrar.registerInfrastructureBean;
-import static io.microsphere.spring.util.PropertySourcesUtils.getSubProperties;
-import static io.microsphere.spring.util.PropertySourcesUtils.normalizePrefix;
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getRequiredAttribute;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefix;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.lang.Boolean.valueOf;
 import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} implementation for {@link EnableConfigurationBeanBinding @EnableConfigurationBinding}
@@ -69,9 +68,10 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     private final static String ENABLE_CONFIGURATION_BINDING_CLASS_NAME = ENABLE_CONFIGURATION_BINDING_CLASS.getName();
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger logger = getLogger(getClass());
 
     private ConfigurableEnvironment environment;
+
     private BeanFactory beanFactory;
 
     @Override
@@ -104,7 +104,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
                                             boolean ignoreUnknownFields, boolean ignoreInvalidFields,
                                             BeanDefinitionRegistry registry) {
 
-        Map<String, Object> configurationProperties = PropertySourcesUtils.getSubProperties(environment.getPropertySources(), environment, prefix);
+        Map<String, Object> configurationProperties = getSubProperties(environment.getPropertySources(), environment, prefix);
 
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(configurationProperties) :
                 singleton(resolveSingleBeanName(configurationProperties, configClass, registry));
@@ -145,8 +145,8 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         registry.registerBeanDefinition(beanName, beanDefinition);
 
-        if (log.isInfoEnabled()) {
-            log.info("The configuration bean definition [name : " + beanName + ", content : " + beanDefinition
+        if (logger.isInfoEnabled()) {
+            logger.info("The configuration bean definition [name : " + beanName + ", content : " + beanDefinition
                     + "] has been registered.");
         }
     }
@@ -175,11 +175,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     @Override
     public void setEnvironment(Environment environment) {
-
-        Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
-
-        this.environment = (ConfigurableEnvironment) environment;
-
+        this.environment = asConfigurableEnvironment(environment);
     }
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
@@ -208,9 +204,9 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         String beanName = (String) properties.get("id");
 
-        if (!StringUtils.hasText(beanName)) {
+        if (!hasText(beanName)) {
             BeanDefinitionBuilder builder = rootBeanDefinition(configClass);
-            beanName = BeanDefinitionReaderUtils.generateBeanName(builder.getRawBeanDefinition(), registry);
+            beanName = generateBeanName(builder.getRawBeanDefinition(), registry);
         }
 
         return beanName;

@@ -1,6 +1,5 @@
 package io.microsphere.spring.webmvc.context;
 
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -10,6 +9,8 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
 import java.util.Arrays;
 import java.util.Map;
+
+import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
  * Exclusive {@link ViewResolver} {@link ApplicationListener} on {@link ContextRefreshedEvent}
@@ -47,8 +48,7 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
      */
     private void configureExclusiveViewResolver(ApplicationContext applicationContext) {
 
-        Map<String, ViewResolver> viewResolversMap =
-                BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, VIEW_RESOLVER_CLASS);
+        Map<String, ViewResolver> viewResolversMap = beansOfTypeIncludingAncestors(applicationContext, VIEW_RESOLVER_CLASS);
 
         int size = viewResolversMap.size();
 

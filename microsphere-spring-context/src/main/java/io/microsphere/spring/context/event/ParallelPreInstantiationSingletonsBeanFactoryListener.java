@@ -16,10 +16,9 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.BeanDependencyResolver;
 import io.microsphere.spring.beans.factory.DefaultBeanDependencyResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -40,7 +39,8 @@ import java.util.concurrent.TimeUnit;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
-import static io.microsphere.spring.util.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.springframework.util.CollectionUtils.containsAny;
@@ -52,14 +52,14 @@ import static org.springframework.util.CollectionUtils.containsAny;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanFactoryListenerAdapter implements
+public class ParallelPreInstantiationSingletonsBeanFactoryListener implements BeanFactoryListenerAdapter,
         EnvironmentAware, BeanFactoryAware {
 
     public static final String THREADS_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.threads";
     public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.thread.name-prefix";
     public static final String DEFAULT_THREAD_NAME_PREFIX = "Parallel-Pre-Instantiation-Singletons-Thread-";
 
-    private static final Logger logger = LoggerFactory.getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
+    private static final Logger logger = getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
 
     private Environment environment;
 
@@ -121,7 +121,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener extends BeanF
             executorService.submit(() -> {
                 for (String beanName : beanNamesInDependencyPath) {
                     Object bean = beanFactory.getBean(beanName);
-                    logger.debug("The bean[name : '{}'] was created : {}", beanName, bean);
+                    logger.trace("The bean[name : '{}'] was created : {}", beanName, bean);
                 }
                 return null;
             });

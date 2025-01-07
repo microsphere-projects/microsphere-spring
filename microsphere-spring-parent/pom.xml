@@ -19,23 +19,81 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.0.6</microsphere-java.version>
-        <microsphere-java-enterprise.version>0.0.3</microsphere-java-enterprise.version>
-        <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
-        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
-        <mariadb4j.version>2.5.3</mariadb4j.version>
-        <embedded-redis.version>0.6</embedded-redis.version>
+        <microsphere-java.version>0.0.9</microsphere-java.version>
+        <servlet-api.version>6.1.0</servlet-api.version>
+        <jackson.version>2.18.2</jackson.version>
+        <snakeyaml.version>2.3</snakeyaml.version>
+        <slf4j.version>2.0.16</slf4j.version>
+        <logback.version>1.5.15</logback.version>
+        <junit.version>5.11.4</junit.version>
+        <mockito.version>5.14.2</mockito.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot Dependencies -->
+
+            <!-- Spring Framework BOM -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Jackson BOM -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- YAML -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+
+            <!-- Jakarta Servlet API -->
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+            </dependency>
+
+            <!-- JUnit BOM -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Mockito BOM -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-bom</artifactId>
+                <version>${mockito.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Slf4j -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Logback -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
             </dependency>
 
             <!-- Microsphere Dependencies -->
@@ -47,63 +105,31 @@
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.xerial</groupId>
-                <artifactId>sqlite-jdbc</artifactId>
-                <version>${sqlite-jdbc.version}</version>
-            </dependency>
-
-            <!-- MariaDB Connector/J-->
-            <dependency>
-                <groupId>org.mariadb.jdbc</groupId>
-                <artifactId>mariadb-java-client</artifactId>
-                <version>${mariadb-java-client.version}</version>
-            </dependency>
-
-            <!-- MariaDB4j -->
-            <dependency>
-                <groupId>ch.vorburger.mariaDB4j</groupId>
-                <artifactId>mariaDB4j</artifactId>
-                <version>${mariadb4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.kstyrc</groupId>
-                <artifactId>embedded-redis</artifactId>
-                <version>${embedded-redis.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <profiles>
         <profile>
-            <id>spring-boot-3.0</id>
+            <id>spring-framework-6.0</id>
             <properties>
-                <spring-boot.version>3.0.13</spring-boot.version>
+                <spring.version>6.0.23</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-3.1</id>
+            <id>spring-framework-6.1</id>
             <properties>
-                <spring-boot.version>3.1.12</spring-boot.version>
+                <spring.version>6.1.16</spring.version>
             </properties>
         </profile>
 
         <profile>
-            <id>spring-boot-3.2</id>
-            <properties>
-                <spring-boot.version>3.2.11</spring-boot.version>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>spring-boot-3.3</id>
+            <id>spring-framework-6.2</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring-boot.version>3.3.5</spring-boot.version>
+                <spring.version>6.2.1</spring.version>
             </properties>
         </profile>
     </profiles>

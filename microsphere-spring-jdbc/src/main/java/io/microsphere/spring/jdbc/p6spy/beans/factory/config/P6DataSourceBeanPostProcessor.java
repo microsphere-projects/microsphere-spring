@@ -17,9 +17,8 @@
 package io.microsphere.spring.jdbc.p6spy.beans.factory.config;
 
 import com.p6spy.engine.spy.P6DataSource;
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.config.GenericBeanPostProcessorAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.EnvironmentAware;
@@ -30,6 +29,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Set;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
+
 /**
  * {@link P6DataSource} {@link BeanPostProcessor}
  *
@@ -39,7 +40,7 @@ import java.util.Set;
  */
 public class P6DataSourceBeanPostProcessor extends GenericBeanPostProcessorAdapter<DataSource> implements EnvironmentAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(P6DataSourceBeanPostProcessor.class);
+    private static final Logger logger = getLogger(P6DataSourceBeanPostProcessor.class);
 
     public static final String EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME = "microsphere.jdbc.p6spy.excluded-datasource-beans";
 
@@ -51,17 +52,17 @@ public class P6DataSourceBeanPostProcessor extends GenericBeanPostProcessorAdapt
         DataSource targetDataSource = bean;
 
         if (excludedDataSourceBeanNames.contains(beanName)) {
-            logger.debug("The DataSource bean[name : '{}'] is excluded, it caused by Spring property[name : '{}']", beanName, EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME);
+            logger.trace("The DataSource bean[name : '{}'] is excluded, it caused by Spring property[name : '{}']", beanName, EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME);
         } else {
             try {
                 DataSource datasource = bean.unwrap(DataSource.class);
                 targetDataSource = new P6DataSource(datasource);
             } catch (SQLException e) {
-                logger.debug("The DataSource bean[name : '{}' , class : '{}'] can't unwrap to be an instance DataSource", beanName, bean.getClass().getName());
+                logger.trace("The DataSource bean[name : '{}' , class : '{}'] can't unwrap to be an instance DataSource", beanName, bean.getClass().getName());
             }
         }
 
-        logger.debug("The DataSource bean[name : '{}'] {} -> {}", beanName, bean, targetDataSource);
+        logger.trace("The DataSource bean[name : '{}'] {} -> {}", beanName, bean, targetDataSource);
 
         return targetDataSource;
     }

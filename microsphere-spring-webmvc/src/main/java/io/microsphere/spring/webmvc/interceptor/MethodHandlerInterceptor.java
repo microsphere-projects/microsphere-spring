@@ -4,11 +4,12 @@ import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Nullable;
 
 /**
  *
@@ -21,8 +22,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        if (handler instanceof HandlerMethod handlerMethod) {
             if (supports(request, response, handlerMethod)) {
                 return preHandle(request, response, handlerMethod);
             }
@@ -34,8 +34,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public final void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        if (handler instanceof HandlerMethod handlerMethod) {
             if (supports(request, response, handlerMethod)) {
                 postHandle(request, response, handlerMethod, modelAndView);
             }
@@ -46,8 +45,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public final void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        if (handler instanceof HandlerMethod handlerMethod) {
             if (supports(request, response, handlerMethod)) {
                 afterCompletion(request, response, handlerMethod, ex);
             }

@@ -16,14 +16,12 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.config.NamedBeanHolderComparator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.NamedBeanHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
@@ -37,8 +35,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.registerFactories;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 
 /**
  * The composite {@link BeanListener}
@@ -48,7 +47,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  */
 class BeanListeners implements BeanListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeanListeners.class);
+    private static final Logger logger = getLogger(BeanListeners.class);
 
     private static final String BEAN_NAME = "beanEventListeners";
 
@@ -77,7 +76,7 @@ class BeanListeners implements BeanListener {
     }
 
     private List<NamedBeanHolder<BeanListener>> getBeanListeners(ConfigurableListableBeanFactory beanFactory) {
-        registerFactories(beanFactory, BeanListener.class);
+        registerSpringFactoriesBeans(beanFactory, BeanListener.class);
         Map<String, BeanListener> beanEventListenersMap = beanFactory.getBeansOfType(BeanListener.class);
         List<NamedBeanHolder<BeanListener>> namedListeners = new ArrayList<>(beanEventListenersMap.size());
         for (Map.Entry<String, BeanListener> entry : beanEventListenersMap.entrySet()) {
@@ -173,9 +172,10 @@ class BeanListeners implements BeanListener {
     }
 
     void registerBean(BeanDefinitionRegistry registry) {
-        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanListeners.class, () -> this);
-        beanDefinitionBuilder.setPrimary(true);
-        registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
+//        BeanDefinitionBuilder beanDefinitionBuilder = rootBeanDefinition(BeanListeners.class, () -> this);
+//        beanDefinitionBuilder.setPrimary(true);
+//        registry.registerBeanDefinition(BEAN_NAME, beanDefinitionBuilder.getBeanDefinition());
+        registerFactoryBean(registry, BEAN_NAME, this);
     }
 
     static BeanListeners getBean(BeanFactory beanFactory) {

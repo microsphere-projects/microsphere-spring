@@ -18,7 +18,6 @@ package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
@@ -28,16 +27,12 @@ import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition;
 import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 import org.springframework.web.servlet.mvc.condition.NameValueExpression;
 import org.springframework.web.servlet.mvc.condition.ParamsRequestCondition;
-import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.Collection;
 import java.util.Set;
-
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link WebEndpointMappingFactory} based on Spring WebMVC {@link RequestMappingInfo}
@@ -48,10 +43,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @since 1.0.0
  */
 public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMappingWebEndpointMappingFactory<HandlerMethod, RequestMappingInfo> {
-
-    private static final String CLASS_NAME = "org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition";
-
-    private static final boolean PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT = ClassUtils.isPresent(CLASS_NAME, null);
 
     public RequestMappingMetadataWebEndpointMappingFactory(HandlerMapping handlerMapping) {
         super(handlerMapping);
@@ -86,21 +77,7 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     }
 
     private Set<String> getPatterns(RequestMappingInfo source) {
-        Set<String> patterns = null;
-        if (PATH_PATTERNS_REQUEST_CONDITION_CLASS_PRESENT) {
-            PathPatternsRequestCondition pathPatternsCondition = source.getPathPatternsCondition();
-            if (pathPatternsCondition != null) {
-                patterns = pathPatternsCondition.getPatternValues();
-            }
-        }
-        if (isEmpty(patterns)) {
-            PatternsRequestCondition patternsCondition = source.getPatternsCondition();
-            if (patternsCondition != null) {
-                patterns = patternsCondition.getPatterns();
-            }
-        }
-        return patterns;
+        return source.getPatternValues();
     }
-
 
 }

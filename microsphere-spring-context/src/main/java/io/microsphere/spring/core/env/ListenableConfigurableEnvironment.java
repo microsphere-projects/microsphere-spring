@@ -18,24 +18,27 @@ package io.microsphere.spring.core.env;
 
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandle;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
-import static io.microsphere.spring.util.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
@@ -48,7 +51,7 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  */
 public class ListenableConfigurableEnvironment implements ConfigurableEnvironment {
 
-    private final static Logger logger = LoggerFactory.getLogger(ListenableConfigurableEnvironment.class);
+    private final static Logger logger = getLogger(ListenableConfigurableEnvironment.class);
 
     /**
      * The prefix of the property name of {@link ListenableConfigurableEnvironment}
@@ -59,6 +62,17 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * The property name of {@link ListenableConfigurableEnvironment} to be 'enabled'
      */
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
+
+    /**
+     * The {@link MethodHandle} of {@link ConfigurablePropertyResolver#setEscapeCharacter(Character)} since Spring Framework 6.2
+     */
+    @Nullable
+    private static final MethodHandle SET_ESCAPE_CHARACTER_METHOD_HANDLE = findVirtual(ConfigurablePropertyResolver.class, "setEscapeCharacter", Character.class);
+
+    /**
+     * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
+     */
+    public static final boolean ENABLED_PROPERTY_VALUE = false;
 
     private final ConfigurableEnvironment delegate;
 
@@ -170,7 +184,11 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return defaultProfiles;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.3.28
+     */
     public boolean matchesProfiles(String... profileExpressions) {
         return delegate.matchesProfiles(profileExpressions);
     }
@@ -181,7 +199,11 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return delegate.acceptsProfiles(profiles);
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 5.1
+     */
     public boolean acceptsProfiles(Profiles profiles) {
         return delegate.acceptsProfiles(profiles);
     }
@@ -293,6 +315,25 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         forEachEnvironmentListener(listener -> listener.afterSetValueSeparator(delegate, valueSeparator));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 6.2
+     */
+    public void setEscapeCharacter(Character escapeCharacter) {
+        if (SET_ESCAPE_CHARACTER_METHOD_HANDLE != null) {
+            try {
+                SET_ESCAPE_CHARACTER_METHOD_HANDLE.invokeExact(delegate, escapeCharacter);
+            } catch (Throwable e) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to invokeExact on {} with arg : '{}'", SET_ESCAPE_CHARACTER_METHOD_HANDLE,
+                            escapeCharacter, e);
+                }
+            }
+        }
+        throw new UnsupportedOperationException("The method setEscapeCharacter(Character) is not supported before Spring Framework 6.2");
+    }
+
     @Override
     public void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders) {
         forEachEnvironmentListener(listener -> listener.beforeSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
@@ -319,9 +360,13 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      *
      * @return {@link ConfigurableEnvironment the underlying ConfigurableEnvironment}
      */
-    @NonNull
+    @Nonnull
     public ConfigurableEnvironment getDelegate() {
         return this.delegate;
+    }
+
+    public <T> Class<T> getPropertyAsClass(String key, Class<T> targetType) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -345,7 +390,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * @return <code>true</code> if enabled, <code>false</code> otherwise
      */
     public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, false);
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, ENABLED_PROPERTY_VALUE);
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {
