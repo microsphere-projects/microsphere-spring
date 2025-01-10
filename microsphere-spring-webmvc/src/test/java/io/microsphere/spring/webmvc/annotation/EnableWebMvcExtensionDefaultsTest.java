@@ -16,17 +16,7 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * {@link EnableWebMvcExtension} Test with defaults
@@ -35,27 +25,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionDefaultTest.class
+        EnableWebMvcExtensionDefaultsTest.class
 })
-@EnableWebMvc
 @EnableWebMvcExtension
-public class EnableWebMvcExtensionDefaultTest {
-
-    @Autowired
-    private WebApplicationContext wac;
-
-    private MockMvc mockMvc;
-
-    @Before
-    public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-    }
-
-    @Test
-    public void test() {
-
-    }
+public class EnableWebMvcExtensionDefaultsTest extends AbstractEnableWebMvcExtensionTest {
 }

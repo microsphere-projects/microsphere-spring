@@ -19,19 +19,19 @@ package io.microsphere.spring.webmvc.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebMvcExtension} Test
+ * {@link EnableWebMvcExtension} Test with disable features
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionTest.class
+        EnableWebMvcExtensionDisableTest.class
 })
 @EnableWebMvcExtension(
-        registerHandlerInterceptors = true,
-        storeRequestBodyArgument = true,
-        storeResponseBodyReturnValue = true
+        registerWebEndpointMappings = false,
+        interceptHandlerMethods = false,
+        publishEvents = false
 )
-public class EnableWebMvcExtensionTest extends AbstractEnableWebMvcExtensionTest {
+public class EnableWebMvcExtensionDisableTest extends AbstractEnableWebMvcExtensionTest {
 }
