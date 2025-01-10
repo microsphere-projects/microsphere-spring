@@ -121,6 +121,8 @@ abstract class AbstractEnableWebMvcExtensionTest {
      */
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
+        assertTrue(publishEvents);
+
         // Only TestController
         Collection<WebEndpointMapping> mappings = event.getMappings();
         assertEquals(1, mappings.size());
@@ -137,6 +139,8 @@ abstract class AbstractEnableWebMvcExtensionTest {
      */
     @EventListener(HandlerMethodArgumentsResolvedEvent.class)
     public void onHandlerMethodArgumentsResolvedEvent(HandlerMethodArgumentsResolvedEvent event) {
+        assertTrue(publishEvents);
+
         Method method = event.getMethod();
         assertEquals("echo", method.getName());
         assertEquals(String.class, method.getReturnType());
@@ -156,5 +160,6 @@ abstract class AbstractEnableWebMvcExtensionTest {
         Object[] arguments = event.getArguments();
         assertEquals(1, arguments.length);
         assertEquals("hello", arguments[0]);
+
     }
 }
