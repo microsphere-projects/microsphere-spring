@@ -22,6 +22,7 @@ import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
+import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.controller.TestController;
@@ -35,10 +36,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.MethodParameter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -67,7 +70,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @EnableWebMvc
 @Ignore
 @Import(TestController.class)
-abstract class AbstractEnableWebMvcExtensionTest {
+abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumentInterceptor {
 
     @Autowired
     protected ConfigurableWebApplicationContext wac;
@@ -148,24 +151,79 @@ abstract class AbstractEnableWebMvcExtensionTest {
     @EventListener(HandlerMethodArgumentsResolvedEvent.class)
     public void onHandlerMethodArgumentsResolvedEvent(HandlerMethodArgumentsResolvedEvent event) {
         Method method = event.getMethod();
+        assertMethod(method);
+
+        HandlerMethod handlerMethod = event.getHandlerMethod();
+        assertEquals(method, handlerMethod.getMethod());
+
+        assertHandlerMethod(handlerMethod);
+
+        Object[] arguments = event.getArguments();
+        assertArguments(arguments);
+    }
+
+    /**
+     * callback before the {@link MethodParameter} being resolved
+     *
+     * @param parameter     the method parameter to resolve.
+     * @param handlerMethod the method to handle
+     * @param webRequest    the current request
+     * @throws Exception in case of errors with the preparation of argument values
+     */
+    @Override
+    public void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
+        assertMethodParameter(parameter);
+        assertHandlerMethod(handlerMethod);
+        assertNativeWebRequest(webRequest);
+    }
+
+    /**
+     * callback after the {@link MethodParameter} being resolved
+     *
+     * @param parameter        the method parameter to resolve.
+     * @param resolvedArgument the resolved argument
+     * @param handlerMethod    the method to handle
+     * @param webRequest       the current request
+     * @return the resolved argument value, or {@code null} if not resolvable
+     * @throws Exception in case of errors with the preparation of argument values
+     */
+    @Override
+    public void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
+        // Reuse
+        beforeResolveArgument(parameter, handlerMethod, webRequest);
+        assertEquals("hello", resolvedArgument);
+    }
+
+    private void assertMethod(Method method) {
         assertEquals("echo", method.getName());
         assertEquals(String.class, method.getReturnType());
 
         Class<?>[] parameterTypes = method.getParameterTypes();
         assertEquals(1, parameterTypes.length);
         assertEquals(String.class, parameterTypes[0]);
+    }
 
-        HandlerMethod handlerMethod = event.getHandlerMethod();
+    private void assertHandlerMethod(HandlerMethod handlerMethod) {
         assertNotNull(handlerMethod);
-
         Object bean = handlerMethod.getBean();
         assertNotNull(bean);
         assertEquals(TestController.class, bean.getClass());
-        assertEquals(method, handlerMethod.getMethod());
+        assertMethod(handlerMethod.getMethod());
+    }
 
-        Object[] arguments = event.getArguments();
+    private void assertArguments(Object[] arguments) {
         assertEquals(1, arguments.length);
         assertEquals("hello", arguments[0]);
-
     }
+
+    private void assertMethodParameter(MethodParameter parameter) {
+        assertNotNull(parameter);
+        assertEquals(0, parameter.getParameterIndex());
+        assertEquals(String.class, parameter.getParameterType());
+    }
+
+    private void assertNativeWebRequest(NativeWebRequest webRequest) {
+    }
+
+
 }
