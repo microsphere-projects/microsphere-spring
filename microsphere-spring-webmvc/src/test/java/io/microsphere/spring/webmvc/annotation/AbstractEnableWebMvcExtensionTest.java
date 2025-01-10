@@ -18,7 +18,10 @@ package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.event.WebEventPublisher;
+import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.controller.TestController;
@@ -99,7 +102,14 @@ abstract class AbstractEnableWebMvcExtensionTest {
     @Test
     public void testRegisteredBeans() {
         assertTrue(isBeanPresent(this.wac, WebMvcExtensionConfiguration.class));
+        // From @EnableWebExtension
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, SimpleWebEndpointMappingRegistry.class));
+        assertEquals(this.interceptHandlerMethods, this.wac.containsBean(DelegatingHandlerMethodAdvice.BEAN_NAME));
+        assertEquals(this.publishEvents, isBeanPresent(this.wac, WebEventPublisher.class));
+
+        // From @EnableWebMvcExtension
         assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, WebEndpointMappingRegistrar.class));
+        assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, DelegatingHandlerMethodAdvice.class));
         assertEquals(this.interceptHandlerMethods, this.wac.containsBean(InterceptingHandlerMethodProcessor.BEAN_NAME));
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, InterceptingHandlerMethodProcessor.class));
         assertEquals(this.registerHandlerInterceptors, isBeanPresent(this.wac, LazyCompositeHandlerInterceptor.class));
