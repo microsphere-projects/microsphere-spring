@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -89,7 +90,8 @@ abstract class AbstractEnableWebMvcExtensionTest {
         this.registerWebEndpointMappings = enableWebMvcExtension.registerWebEndpointMappings();
         this.interceptHandlerMethods = enableWebMvcExtension.interceptHandlerMethods();
         this.publishEvents = enableWebMvcExtension.publishEvents();
-        this.registerHandlerInterceptors = enableWebMvcExtension.registerHandlerInterceptors();
+        this.registerHandlerInterceptors = enableWebMvcExtension.registerHandlerInterceptors() ? true :
+                isNotEmpty(enableWebMvcExtension.handlerInterceptors());
         this.storeRequestBodyArgument = enableWebMvcExtension.storeRequestBodyArgument();
         this.storeResponseBodyReturnValue = enableWebMvcExtension.storeResponseBodyReturnValue();
     }
