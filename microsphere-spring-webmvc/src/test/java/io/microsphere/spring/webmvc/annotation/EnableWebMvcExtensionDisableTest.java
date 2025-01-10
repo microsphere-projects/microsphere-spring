@@ -16,30 +16,7 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
-import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
-import io.microsphere.spring.webmvc.controller.TestController;
-import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
-import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
-import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * {@link EnableWebMvcExtension} Test with disable features
