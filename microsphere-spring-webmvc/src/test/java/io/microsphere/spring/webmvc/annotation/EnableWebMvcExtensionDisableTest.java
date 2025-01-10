@@ -16,6 +16,12 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
+import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
+import io.microsphere.spring.webmvc.controller.TestController;
+import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
+import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
+import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,38 +30,31 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 /**
- * {@link EnableWebMvcExtension} Test with defaults
+ * {@link EnableWebMvcExtension} Test with disable features
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionDefaultTest.class
+        EnableWebMvcExtensionDisableTest.class
 })
-@EnableWebMvc
-@EnableWebMvcExtension
-public class EnableWebMvcExtensionDefaultTest {
-
-    @Autowired
-    private WebApplicationContext wac;
-
-    private MockMvc mockMvc;
-
-    @Before
-    public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-    }
-
-    @Test
-    public void test() {
-
-    }
+@EnableWebMvcExtension(
+        registerWebEndpointMappings = false,
+        interceptHandlerMethods = false,
+        publishEvents = false
+)
+public class EnableWebMvcExtensionDisableTest extends AbstractEnableWebMvcExtensionTest {
 }
