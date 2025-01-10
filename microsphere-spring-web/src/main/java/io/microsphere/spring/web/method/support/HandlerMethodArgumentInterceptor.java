@@ -20,7 +20,6 @@ import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
-
 /**
  * The interceptor interface for the resolvable {@link HandlerMethod HandlerMethods'} {@link MethodParameter}
  *
@@ -39,8 +38,9 @@ public interface HandlerMethodArgumentInterceptor {
      * @param webRequest    the current request
      * @throws Exception in case of errors with the preparation of argument values
      */
-    void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest)
-            throws Exception;
+    default void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest)
+            throws Exception {
+    }
 
     /**
      * callback after the {@link MethodParameter} being resolved
@@ -52,8 +52,8 @@ public interface HandlerMethodArgumentInterceptor {
      * @return the resolved argument value, or {@code null} if not resolvable
      * @throws Exception in case of errors with the preparation of argument values
      */
-    void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod,
-                              NativeWebRequest webRequest) throws Exception;
-
+    default void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod,
+                                      NativeWebRequest webRequest) throws Exception {
+    }
 
 }
