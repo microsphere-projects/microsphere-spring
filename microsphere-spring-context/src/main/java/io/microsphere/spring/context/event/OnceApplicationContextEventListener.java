@@ -23,9 +23,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.util.ClassUtils;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
@@ -89,7 +89,7 @@ public abstract class OnceApplicationContextEventListener<E extends ApplicationC
         if (applicationContext == null) {
             throw new NullPointerException("applicationContext must be not null, it has to invoke " +
                     "setApplicationContext(ApplicationContext) method first if "
-                    + ClassUtils.getShortName(getClass()) + " instance is not a Spring Bean");
+                    + getShortName(getClass()) + " instance is not a Spring Bean");
         }
         return applicationContext;
     }

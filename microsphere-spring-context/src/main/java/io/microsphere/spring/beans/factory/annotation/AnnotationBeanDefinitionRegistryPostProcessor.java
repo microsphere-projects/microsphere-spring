@@ -35,7 +35,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -50,6 +49,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.util.Assert.noNullElements;
@@ -144,7 +144,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
 
         String[] basePackages = resolveBasePackages(getPackagesToScan());
 
-        if (!ObjectUtils.isEmpty(basePackages)) {
+        if (isNotEmpty(basePackages)) {
             registerBeanDefinitions(registry, basePackages);
         } else {
             if (logger.isWarnEnabled()) {
@@ -218,7 +218,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     private void putPrimaryBeanDefinition(Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
                                           AnnotatedBeanDefinition annotatedBeanDefinition,
                                           String... keys) {
-        if (!ObjectUtils.isEmpty(keys)) {
+        if (isNotEmpty(keys)) {
             for (String key : keys) {
                 primaryBeanDefinitions.put(key, annotatedBeanDefinition);
             }

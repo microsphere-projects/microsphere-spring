@@ -44,6 +44,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinit
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
+import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -53,7 +54,6 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.ClassUtils.getUserClass;
-import static org.springframework.util.ObjectUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
