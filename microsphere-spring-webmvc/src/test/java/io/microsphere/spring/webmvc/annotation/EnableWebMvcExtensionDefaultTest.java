@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
- * {@link EnableWebMvcExtension} Test
+ * {@link EnableWebMvcExtension} Test with defaults
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see EnableWebMvcExtension
@@ -38,15 +38,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionTest.class
+        EnableWebMvcExtensionDefaultTest.class
 })
 @EnableWebMvc
-@EnableWebMvcExtension(
-        registerHandlerInterceptors = true,
-        storeRequestBodyArgument = true,
-        storeResponseBodyReturnValue = true
-)
-public class EnableWebMvcExtensionTest {
+@EnableWebMvcExtension
+public class EnableWebMvcExtensionDefaultTest {
 
     @Autowired
     private WebApplicationContext wac;
