@@ -17,7 +17,6 @@
 package io.microsphere.spring.beans.factory;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
@@ -49,6 +48,8 @@ import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_
 import static io.microsphere.util.ArrayUtils.of;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -79,11 +80,11 @@ public class BeanFactoryUtilsTest {
 
         applicationContext.register(BaseTestBean.class);
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
 
-        Assert.assertNotNull(testBean);
+        assertNotNull(testBean);
 
         assertEquals("Hello,World", testBean.getName());
 
@@ -92,27 +93,27 @@ public class BeanFactoryUtilsTest {
     @Test
     public void testGetOptionalBeanIfAbsent() {
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
 
         testBean = getOptionalBean(applicationContext, "1", BaseTestBean.class);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
 
         testBean = getOptionalBean(applicationContext, null, BaseTestBean.class);
 
-        Assert.assertNull(testBean);
+        assertNull(testBean);
     }
 
     @Test
     public void testGetBeans() {
 
-        applicationContext.register(BaseTestBean.class, BaseTestBean2.class);
+        this.applicationContext.register(BaseTestBean.class, BaseTestBean2.class);
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
@@ -136,7 +137,7 @@ public class BeanFactoryUtilsTest {
     @Test
     public void testGetBeansIfAbsent() {
 
-        applicationContext.refresh();
+        this.applicationContext.refresh();
 
         List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 

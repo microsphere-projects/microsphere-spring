@@ -1,6 +1,5 @@
 package io.microsphere.spring.webmvc.interceptor;
 
-import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -8,6 +7,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static io.microsphere.spring.webmvc.util.WebMvcUtils.isPageRenderRequest;
 
 /**
  * Abstract Page Render Context {@link HandlerInterceptor}
@@ -22,17 +23,9 @@ public abstract class AbstractPageRenderContextHandlerInterceptor extends Handle
     public final void postHandle(
             HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
             throws Exception {
-
-        if (WebMvcUtils.isPageRenderRequest(modelAndView)) {
-
+        if (isPageRenderRequest(modelAndView)) {
             postHandleOnPageRenderContext(request, response, handler, modelAndView);
-
-        } else {
-
-            super.postHandle(request, response, handler, modelAndView);
-
         }
-
     }
 
     /**
