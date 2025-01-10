@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.interceptor;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.webmvc.IdempotentException;
 import io.microsphere.spring.webmvc.annotation.Idempotent;
@@ -28,7 +29,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Objects;
+import java.util.UUID;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static java.util.Arrays.asList;
 
 /**
  * {@link AnnotatedMethodHandlerInterceptor} for {@link Idempotent} annotation
@@ -36,15 +41,18 @@ import java.util.Arrays;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethodHandlerInterceptor<Idempotent> implements ApplicationListener<HandlerMethodArgumentsResolvedEvent> {
+public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethodHandlerInterceptor<Idempotent>
+        implements ApplicationListener<HandlerMethodArgumentsResolvedEvent> {
+
+    private static final Logger logger = getLogger(IdempotentAnnotatedMethodHandlerInterceptor.class);
+
+    public static final String TOKEN_HEADER_NAME = "_token_";
+
+    public static final String MOCK_TOKEN_VALUE = UUID.randomUUID().toString();
 
     @Override
     protected boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
                                 Idempotent idempotent) throws Exception {
-
-        System.out.println(handlerMethod);
-        System.out.println(idempotent);
-
         return true;
     }
 
@@ -54,18 +62,14 @@ public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethod
     public void onApplicationEvent(HandlerMethodArgumentsResolvedEvent event) {
         Method method = event.getMethod();
         Object[] args = event.getArguments();
-        System.out.println("method : " + method + " , args : " + Arrays.asList(args));
         WebRequest webRequest = event.getWebRequest();
-        if (webRequest instanceof ServletWebRequest servletWebRequest) {
+        logger.trace("The method : {} , args : {} , webRequest : {}", method, asList(args), webRequest);
+        if (webRequest instanceof ServletWebRequest) {
+            ServletWebRequest servletWebRequest = (ServletWebRequest) webRequest;
             HttpServletRequest request = servletWebRequest.getNativeRequest(HttpServletRequest.class);
-            // HttpSession based on Spring Redis
-            // Spring Session
-            HttpSession httpSession = request.getSession();
-            String token = request.getHeader("token");
-            Object tokenValue = httpSession.getAttribute(token);
-            if (tokenValue != null) {
-                //
-                throw new IdempotentException("");
+            String token = request.getHeader(TOKEN_HEADER_NAME);
+            if (!Objects.equals(MOCK_TOKEN_VALUE, token)) {
+                throw new IdempotentException("Illegal token");
             }
         }
     }

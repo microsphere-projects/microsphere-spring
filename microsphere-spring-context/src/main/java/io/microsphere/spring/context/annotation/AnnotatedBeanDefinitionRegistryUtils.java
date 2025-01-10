@@ -28,7 +28,6 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.springframework.context.annotation.AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR;
 import static org.springframework.util.ClassUtils.resolveClassName;
@@ -51,7 +50,6 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
      * @param registry       {@link BeanDefinitionRegistry}
      * @param annotatedClass the {@link Annotation annotated} {@link Class class}
      * @return if present, return <code>true</code>, or <code>false</code>
-     * @since 1.0.0
      */
     public static boolean isPresentBean(BeanDefinitionRegistry registry, Class<?> annotatedClass) {
 
@@ -70,8 +68,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
                 present = nullSafeEquals(targetClass, annotatedClass);
                 if (present) {
                     if (logger.isTraceEnabled()) {
-                        logger.trace(format("The annotatedClass[class : %s , bean name : %s] was present in registry[%s]",
-                                className, beanName, registry));
+                        logger.trace("The annotatedClass[class : '{}' , bean name : '{}'] was present in registry : {}",
+                                className, beanName, registry);
                     }
                     break;
                 }
@@ -170,7 +168,6 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
      * @see SingletonBeanRegistry
      * @see AnnotationConfigUtils#CONFIGURATION_BEAN_NAME_GENERATOR
      * @see ConfigurationClassPostProcessor#processConfigBeanDefinitions
-     * @since 1.0.0
      */
     public static BeanNameGenerator resolveAnnotatedBeanNameGenerator(BeanDefinitionRegistry registry) {
         BeanNameGenerator beanNameGenerator = null;

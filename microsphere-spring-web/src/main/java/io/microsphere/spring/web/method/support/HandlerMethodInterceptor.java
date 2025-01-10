@@ -37,7 +37,8 @@ public interface HandlerMethodInterceptor {
      * @param request       {@link WebRequest}
      * @throws Exception if any error caused
      */
-    void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception;
+    default void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
+    }
 
     /**
      * Interception point after successful execution of a {@link HandlerMethod}.
@@ -50,7 +51,8 @@ public interface HandlerMethodInterceptor {
      * @param request       {@link WebRequest}
      * @throws Exception if any error caused
      */
-    void afterExecute(HandlerMethod handlerMethod, Object[] args, @Nullable Object returnValue, @Nullable Throwable error,
-                      NativeWebRequest request) throws Exception;
+    default void afterExecute(HandlerMethod handlerMethod, Object[] args, @Nullable Object returnValue, @Nullable Throwable error,
+                              NativeWebRequest request) throws Exception {
+    }
 
 }
