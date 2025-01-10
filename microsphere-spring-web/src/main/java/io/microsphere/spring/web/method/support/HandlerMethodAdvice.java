@@ -41,8 +41,9 @@ public interface HandlerMethodAdvice {
      * @param webRequest    the current request
      * @throws Exception in case of errors with the preparation of argument values
      */
-    void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest)
-            throws Exception;
+    default void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest)
+            throws Exception {
+    }
 
     /**
      * callback after the {@link MethodParameter} being resolved
@@ -54,8 +55,9 @@ public interface HandlerMethodAdvice {
      * @return the resolved argument value, or {@code null} if not resolvable
      * @throws Exception in case of errors with the preparation of argument values
      */
-    void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod,
-                              NativeWebRequest webRequest) throws Exception;
+    default void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod,
+                                      NativeWebRequest webRequest) throws Exception {
+    }
 
     /**
      * Interception point before the execution of a {@link HandlerMethod}. Called after
@@ -67,7 +69,8 @@ public interface HandlerMethodAdvice {
      * @param request       {@link WebRequest}
      * @throws Exception if any error caused
      */
-    void beforeExecuteMethod(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception;
+    default void beforeExecuteMethod(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
+    }
 
     /**
      * Interception point after successful execution of a {@link HandlerMethod}.
@@ -80,7 +83,8 @@ public interface HandlerMethodAdvice {
      * @param request       {@link WebRequest}
      * @throws Exception if any error caused
      */
-    void afterExecuteMethod(HandlerMethod handlerMethod, Object[] args, @Nullable Object returnValue, @Nullable Throwable error,
-                            NativeWebRequest request) throws Exception;
+    default void afterExecuteMethod(HandlerMethod handlerMethod, Object[] args, @Nullable Object returnValue, @Nullable Throwable error,
+                                    NativeWebRequest request) throws Exception {
+    }
 
 }
