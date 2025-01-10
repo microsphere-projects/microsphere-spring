@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
@@ -23,7 +24,6 @@ import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
-import io.microsphere.util.ArrayUtils;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -31,6 +31,9 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Arrays;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
@@ -49,9 +52,13 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  */
 public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
 
+    private static final Logger logger = getLogger(WebMvcExtensionBeanDefinitionRegistrar.class);
+
     public static final Class<EnableWebMvcExtension> ANNOTATION_CLASS = EnableWebMvcExtension.class;
 
     public static final String ANNOTATION_CLASS_NAME = ANNOTATION_CLASS.getName();
+
+    private static final Class<? extends HandlerInterceptor>[] ALL_HANDLER_INTERCEPTOR_CLASSES = of(HandlerInterceptor.class);
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -75,6 +82,9 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         if (registerWebEndpointMappings) {
             registerBeanDefinition(registry, WebEndpointMappingRegistrar.class);
         }
+        if (logger.isTraceEnabled()) {
+            logger.trace("@EnableWebMvcExtension.registerWebEndpointMappings = {}", registerWebEndpointMappings);
+        }
     }
 
     private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
@@ -82,6 +92,9 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         if (interceptHandlerMethods) {
             String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
             registerBeanDefinition(registry, beanName, InterceptingHandlerMethodProcessor.class);
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("@EnableWebMvcExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
         }
     }
 
@@ -99,7 +112,15 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
     private Class<? extends HandlerInterceptor>[] resolveHandlerInterceptorClasses(AnnotationAttributes attributes) {
         boolean registerHandlerInterceptors = attributes.getBoolean("registerHandlerInterceptors");
-        return registerHandlerInterceptors ? of(HandlerInterceptor.class) : (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("handlerInterceptors");
+        Class<? extends HandlerInterceptor>[] handlerInterceptors =
+                (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("handlerInterceptors");
+        Class<? extends HandlerInterceptor>[] handlerInterceptorClasses = registerHandlerInterceptors ?
+                ALL_HANDLER_INTERCEPTOR_CLASSES : handlerInterceptors;
+        if (logger.isTraceEnabled()) {
+            logger.trace("@EnableWebMvcExtension.registerHandlerInterceptors() = {} , handlerInterceptors() = {} , handlerInterceptorClasses = {}",
+                    registerHandlerInterceptors, handlerInterceptors, handlerInterceptorClasses);
+        }
+        return handlerInterceptorClasses;
     }
 
     private void registerLazyCompositeHandlerInterceptor(BeanDefinitionRegistry registry, Class<? extends HandlerInterceptor>... interceptorClasses) {
@@ -110,6 +131,9 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     }
 
     private void registerInterceptors(BeanDefinitionRegistry registry, Class<? extends HandlerInterceptor>[] interceptorClasses) {
+        if (Arrays.equals(ALL_HANDLER_INTERCEPTOR_CLASSES, interceptorClasses)) {
+            return;
+        }
         for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {
             registerInterceptor(registry, interceptorClass);
         }
@@ -124,12 +148,18 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         if (storeRequestBodyArgument) {
             registerBeanDefinition(registry, StoringRequestBodyArgumentAdvice.class);
         }
+        if (logger.isTraceEnabled()) {
+            logger.trace("@EnableWebMvcExtension.storeRequestBodyArgument() = {}", storeRequestBodyArgument);
+        }
     }
 
     private void registerStoringResponseBodyReturnValueAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         boolean storeResponseBodyReturnValue = attributes.getBoolean("storeResponseBodyReturnValue");
         if (storeResponseBodyReturnValue) {
             registerBeanDefinition(registry, StoringResponseBodyReturnValueAdvice.class);
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("@EnableWebMvcExtension.storeResponseBodyReturnValue() = {}", storeResponseBodyReturnValue);
         }
     }
 }

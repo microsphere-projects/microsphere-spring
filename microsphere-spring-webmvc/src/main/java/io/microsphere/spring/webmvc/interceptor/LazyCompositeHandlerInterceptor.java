@@ -85,7 +85,12 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
         List<HandlerInterceptor> allInterceptors = new LinkedList<>();
         for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {
             Collection<? extends HandlerInterceptor> interceptors = context.getBeansOfType(interceptorClass).values();
-            allInterceptors.addAll(interceptors);
+            for (HandlerInterceptor interceptor : interceptors) {
+                if (interceptor == this) {
+                    continue;
+                }
+                allInterceptors.add(interceptor);
+            }
         }
         sort(allInterceptors);
         this.interceptors = allInterceptors;
