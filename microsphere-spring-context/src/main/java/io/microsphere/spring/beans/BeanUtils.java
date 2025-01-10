@@ -54,6 +54,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.ClassUtils.getUserClass;
+import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -207,7 +208,7 @@ public abstract class BeanUtils extends BaseUtils {
 
         Class<?> beanType = null;
         try {
-            beanType = resolveClass(beanClassName, classLoader);
+            beanType = resolveClassName(beanClassName, classLoader);
             beanType = getUserClass(beanType);
         } catch (Exception e) {
             if (logger.isErrorEnabled()) {

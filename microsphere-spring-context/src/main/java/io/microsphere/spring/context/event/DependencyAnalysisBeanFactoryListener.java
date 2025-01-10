@@ -57,7 +57,6 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultList
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;

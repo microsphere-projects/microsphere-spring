@@ -48,7 +48,7 @@ public class GenericAnnotationAttributesTest {
         assertEquals(contextConfiguration.loader(), annotationAttributes.getClass("loader"));
         assertEquals(contextConfiguration.inheritInitializers(), annotationAttributes.getBoolean("inheritInitializers"));
         assertEquals(contextConfiguration.inheritLocations(), annotationAttributes.getBoolean("inheritLocations"));
-        assertEquals(contextConfiguration.value(), annotationAttributes.getStringArray("value"));
+        assertArrayEquals(contextConfiguration.value(), annotationAttributes.getStringArray("value"));
 
     }
 }

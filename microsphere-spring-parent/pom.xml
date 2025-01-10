@@ -20,11 +20,9 @@
 
     <properties>
         <microsphere-java.version>0.0.9</microsphere-java.version>
-        <spring.version>5.3.39</spring.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
-        <lettuce.version>6.1.10.RELEASE</lettuce.version>
         <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.12</logback.version>
         <junit.version>4.13.2</junit.version>
@@ -34,15 +32,6 @@
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Microsphere Dependencies -->
-            <dependency>
-                <groupId>io.github.microsphere-projects</groupId>
-                <artifactId>microsphere-java-dependencies</artifactId>
-                <version>${microsphere-java.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Spring Framework BOM -->
             <dependency>
@@ -60,13 +49,6 @@
                 <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <!-- Lettuce -->
-            <dependency>
-                <groupId>io.lettuce</groupId>
-                <artifactId>lettuce-core</artifactId>
-                <version>${lettuce.version}</version>
             </dependency>
 
             <!-- YAML -->
@@ -100,7 +82,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- JSONasserta -->
+            <!-- JSONassert -->
             <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
@@ -112,6 +94,15 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+
+            <!-- Microsphere Dependencies -->
+            <dependency>
+                <groupId>io.github.microsphere-projects</groupId>
+                <artifactId>microsphere-java-dependencies</artifactId>
+                <version>${microsphere-java.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
         </dependencies>
@@ -148,6 +139,9 @@
 
         <profile>
             <id>spring-framework-5.3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <spring.version>5.3.39</spring.version>
             </properties>

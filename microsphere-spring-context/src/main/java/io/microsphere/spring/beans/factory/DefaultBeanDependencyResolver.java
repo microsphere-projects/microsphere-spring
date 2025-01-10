@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.collection.CollectionUtils;
 import io.microsphere.collection.SetUtils;
 import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;

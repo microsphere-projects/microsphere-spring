@@ -17,7 +17,8 @@
 package io.microsphere.spring.web.metadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.util.ClassUtils;
+
+import static org.springframework.util.ClassUtils.isPresent;
 
 /**
  * The {@link WebEndpointMappingFactory} class based on Jackson2 for JSON
@@ -31,7 +32,7 @@ public class Jackson2WebEndpointMappingFactory extends AbstractWebEndpointMappin
 
     private static final ClassLoader classLoader = Jackson2WebEndpointMappingFactory.class.getClassLoader();
 
-    private static final boolean objectMapperPresent = ClassUtils.isPresent(OBJECT_MAPPER_CLASS_NAME, classLoader);
+    private static final boolean objectMapperPresent = isPresent(OBJECT_MAPPER_CLASS_NAME, classLoader);
 
     @Override
     public boolean supports(String endpoint) {

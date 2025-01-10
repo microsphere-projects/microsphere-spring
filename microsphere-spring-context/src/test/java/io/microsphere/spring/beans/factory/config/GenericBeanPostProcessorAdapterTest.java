@@ -2,7 +2,6 @@ package io.microsphere.spring.beans.factory.config;
 
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.BeansException;
 
@@ -92,8 +91,8 @@ public class GenericBeanPostProcessorAdapterTest {
 
         String bean = "test";
 
-        Assert.assertEquals("test", beanPostProcessor.postProcessBeforeInitialization(bean, ""));
-        Assert.assertEquals("test", beanPostProcessor.postProcessAfterInitialization(bean, ""));
+        assertEquals("test", beanPostProcessor.postProcessBeforeInitialization(bean, ""));
+        assertEquals("test", beanPostProcessor.postProcessAfterInitialization(bean, ""));
     }
 
     @Test

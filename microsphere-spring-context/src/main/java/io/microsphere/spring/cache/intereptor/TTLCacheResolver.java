@@ -22,7 +22,6 @@ import io.microsphere.spring.cache.TTLContext;
 import io.microsphere.spring.cache.annotation.TTLCachePut;
 import io.microsphere.spring.cache.annotation.TTLCacheable;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
-import io.microsphere.util.ArrayUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperation;
