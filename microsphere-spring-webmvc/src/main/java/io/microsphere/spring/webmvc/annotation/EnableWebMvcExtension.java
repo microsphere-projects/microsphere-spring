@@ -103,14 +103,24 @@ public @interface EnableWebMvcExtension {
     boolean publishEvents() default true;
 
     /**
-     * Indicate whether the {@link InterceptorRegistry} registers the beans of {@link HandlerInterceptor}
-     * by the specified types
+     * Indicate whether the {@link InterceptorRegistry} registers the beans of {@link HandlerInterceptor}.
+     * If it specifies <code>true</code>, {@link #handlerInterceptors()} method will not work anymore.
      *
      * @return <code>false</code> as default
      * @see WebMvcConfigurer#addInterceptors(InterceptorRegistry)
      * @see InterceptorRegistry
      */
-    Class<? extends HandlerInterceptor>[] registerHandlerInterceptors() default {};
+    boolean registerHandlerInterceptors() default false;
+
+    /**
+     * Specify {@link HandlerInterceptor} types or its inherited types to register into {@link InterceptorRegistry}.
+     * If {@link #registerHandlerInterceptors()} is <code>true</code>, specified types will be ignored.
+     *
+     * @return <code>null</code> as default
+     * @see WebMvcConfigurer#addInterceptors(InterceptorRegistry)
+     * @see InterceptorRegistry
+     */
+    Class<? extends HandlerInterceptor>[] handlerInterceptors() default {};
 
     /**
      * Indicate that Stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}

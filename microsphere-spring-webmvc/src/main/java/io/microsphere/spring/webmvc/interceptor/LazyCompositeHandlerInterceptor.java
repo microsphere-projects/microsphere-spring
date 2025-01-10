@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.collection.CollectionUtils.size;
+import static io.microsphere.collection.SetUtils.of;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
@@ -54,7 +55,7 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
     private List<HandlerInterceptor> interceptors;
 
     public LazyCompositeHandlerInterceptor(Class<? extends HandlerInterceptor>... interceptorClasses) {
-        this.interceptorClasses = SetUtils.of(interceptorClasses);
+        this.interceptorClasses = of(interceptorClasses);
     }
 
     @Override

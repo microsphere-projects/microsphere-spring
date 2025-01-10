@@ -23,17 +23,19 @@ import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
+import io.microsphere.util.ArrayUtils;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static io.microsphere.util.ArrayUtils.of;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 
 /**
@@ -88,11 +90,16 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     }
 
     private void registerHandlerInterceptors(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        Class<? extends HandlerInterceptor>[] interceptorClasses = (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("registerHandlerInterceptors");
-        if (!ObjectUtils.isEmpty(interceptorClasses)) {
+        Class<? extends HandlerInterceptor>[] interceptorClasses = resolveHandlerInterceptorClasses(attributes);
+        if (isNotEmpty(interceptorClasses)) {
             registerLazyCompositeHandlerInterceptor(registry, interceptorClasses);
             registerInterceptors(registry, interceptorClasses);
         }
+    }
+
+    private Class<? extends HandlerInterceptor>[] resolveHandlerInterceptorClasses(AnnotationAttributes attributes) {
+        boolean registerHandlerInterceptors = attributes.getBoolean("registerHandlerInterceptors");
+        return registerHandlerInterceptors ? of(HandlerInterceptor.class) : (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("handlerInterceptors");
     }
 
     private void registerLazyCompositeHandlerInterceptor(BeanDefinitionRegistry registry, Class<? extends HandlerInterceptor>... interceptorClasses) {
