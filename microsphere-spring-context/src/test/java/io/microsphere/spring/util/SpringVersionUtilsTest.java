@@ -50,8 +50,8 @@ public class SpringVersionUtilsTest {
     @Test
     public void testGetSpringVersion() {
         Version version = getSpringVersion(StringUtils.class);
-        assertEquals(version,SPRING_AOP_VERSION);
-        assertEquals(SPRING_CORE_VERSION,SPRING_AOP_VERSION);
+        assertEquals(version, SPRING_AOP_VERSION);
+        assertEquals(SPRING_CORE_VERSION, SPRING_AOP_VERSION);
         assertEquals(SPRING_AOP_VERSION, SPRING_BEANS_VERSION);
         assertEquals(SPRING_BEANS_VERSION, SPRING_CONTEXT_VERSION);
         assertEquals(SPRING_CONTEXT_VERSION, SPRING_CONTEXT_SUPPORT_VERSION);
