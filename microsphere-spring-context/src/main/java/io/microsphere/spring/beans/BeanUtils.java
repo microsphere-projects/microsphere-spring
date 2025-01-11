@@ -44,7 +44,6 @@ import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurab
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
-import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
@@ -264,7 +263,6 @@ public abstract class BeanUtils extends BaseUtils {
      * @param <T>         the bean type
      * @return the bean if available, or <code>null</code>
      * @throws BeansException in case of creation errors
-     * @since 1.0.0
      */
     public static <T> T getBeanIfAvailable(BeanFactory beanFactory, String beanName, Class<T> beanType) throws BeansException {
         if (isBeanPresent(beanFactory, beanName, beanType)) {
@@ -272,7 +270,7 @@ public abstract class BeanUtils extends BaseUtils {
         }
 
         if (logger.isTraceEnabled()) {
-            logger.trace(format("The bean[name : %s , type : %s] can't be found in Spring BeanFactory", beanName, beanType.getName()));
+            logger.trace("The bean[name : '{}' , type : {}] can't be found in Spring BeanFactory", beanName, beanType.getName());
         }
         return null;
     }
