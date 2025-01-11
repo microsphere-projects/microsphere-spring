@@ -32,9 +32,9 @@ import org.springframework.context.annotation.Bean;
 import java.util.Collection;
 
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @EnableConfigurationBeanBinding(prefix = "users", type = User.class, multiple = true, ignoreUnknownFields = false,
         ignoreInvalidFields = false)
