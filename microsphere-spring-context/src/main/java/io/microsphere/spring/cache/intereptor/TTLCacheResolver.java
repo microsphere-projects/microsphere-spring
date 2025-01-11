@@ -22,7 +22,6 @@ import io.microsphere.spring.cache.TTLContext;
 import io.microsphere.spring.cache.annotation.TTLCachePut;
 import io.microsphere.spring.cache.annotation.TTLCacheable;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
-import io.microsphere.util.ArrayUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperation;
@@ -48,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.ArrayUtils.isEmpty;
 import static java.time.Duration.ofMillis;
 import static java.util.Collections.emptyList;
 
@@ -100,7 +100,7 @@ public class TTLCacheResolver extends OnceApplicationContextEventListener<Contex
         Collection<CacheManager> targetCacheManagers;
 
         String[] cacheManagerBeanNames = ttlAnnotationAttributes.getStringArray("cacheManagers");
-        if (ArrayUtils.isEmpty(cacheManagerBeanNames)) {
+        if (isEmpty(cacheManagerBeanNames)) {
             targetCacheManagers = namedCacheManagersMap.values();
         } else {
             targetCacheManagers = new LinkedList<>();

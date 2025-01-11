@@ -65,7 +65,6 @@ public abstract class BeanFactoryUtils extends BaseUtils {
      * @return A bean if present , or <code>null</code>
      */
     public static <T> T getOptionalBean(ListableBeanFactory beanFactory, String beanName, Class<T> beanType) {
-
         if (!hasText(beanName)) {
             return null;
         }
@@ -76,6 +75,7 @@ public abstract class BeanFactoryUtils extends BaseUtils {
 
         return isEmpty(beans) ? null : beans.get(0);
     }
+
 
     /**
      * Gets name-matched Beans from {@link ListableBeanFactory BeanFactory}

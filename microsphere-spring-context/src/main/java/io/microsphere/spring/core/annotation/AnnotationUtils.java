@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -22,8 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
@@ -52,11 +52,8 @@ public abstract class AnnotationUtils {
      * @return If present , return <code>true</code> , or <code>false</code>
      */
     public static <A extends Annotation> boolean isPresent(Method method, Class<A> annotationClass) {
-
         Map<ElementType, List<A>> annotationsMap = findAnnotations(method, annotationClass);
-
         return !annotationsMap.isEmpty();
-
     }
 
     /**
@@ -78,10 +75,10 @@ public abstract class AnnotationUtils {
         RetentionPolicy retentionPolicy = retention.value();
 
         if (!RetentionPolicy.RUNTIME.equals(retentionPolicy)) {
-            return Collections.emptyMap();
+            return emptyMap();
         }
 
-        Map<ElementType, List<A>> annotationsMap = new LinkedHashMap<ElementType, List<A>>();
+        Map<ElementType, List<A>> annotationsMap = new LinkedHashMap<>();
 
         Target target = annotationClass.getAnnotation(Target.class);
 
@@ -125,8 +122,7 @@ public abstract class AnnotationUtils {
                 annotationsMap.put(elementType, annotationsList);
             }
         }
-
-        return Collections.unmodifiableMap(annotationsMap);
+        return unmodifiableMap(annotationsMap);
 
     }
 
@@ -183,7 +179,7 @@ public abstract class AnnotationUtils {
             }
 
             if (attributeValue instanceof String) {
-                attributeValue = resolvePlaceholders(valueOf(attributeValue), propertyResolver);
+                attributeValue = resolvePlaceholders((String) attributeValue, propertyResolver);
             } else if (attributeValue instanceof String[]) {
                 String[] values = (String[]) attributeValue;
                 for (int i = 0; i < values.length; i++) {

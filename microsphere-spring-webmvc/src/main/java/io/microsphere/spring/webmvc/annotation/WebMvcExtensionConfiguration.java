@@ -16,12 +16,15 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.util.ArrayUtils.length;
 
 /**
  * The configuration class for {@link EnableWebMvcExtension}
@@ -33,13 +36,29 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 public class WebMvcExtensionConfiguration extends WebMvcConfigurerAdapter {
 
-    @Autowired
-    private ObjectProvider<LazyCompositeHandlerInterceptor[]> lazyCompositeHandlerInterceptorProvider;
+    private static final Logger logger = getLogger(WebMvcExtensionConfiguration.class);
+
+    private final ObjectProvider<LazyCompositeHandlerInterceptor[]> lazyCompositeHandlerInterceptorProvider;
+
+    public WebMvcExtensionConfiguration(ObjectProvider<LazyCompositeHandlerInterceptor[]> lazyCompositeHandlerInterceptorProvider) {
+        this.lazyCompositeHandlerInterceptorProvider = lazyCompositeHandlerInterceptorProvider;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         LazyCompositeHandlerInterceptor[] lazyCompositeHandlerInterceptors = lazyCompositeHandlerInterceptorProvider.getIfAvailable();
-        for (LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor : lazyCompositeHandlerInterceptors) {
+        int length = length(lazyCompositeHandlerInterceptors);
+        if (length == 0) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("No LazyCompositeHandlerInterceptor Bean was registered.");
+            }
+            return;
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("{} LazyCompositeHandlerInterceptor Beans will be added into InterceptorRegistry.", length);
+        }
+        for (int i = 0; i < length; i++) {
+            LazyCompositeHandlerInterceptor lazyCompositeHandlerInterceptor = lazyCompositeHandlerInterceptors[i];
             registry.addInterceptor(lazyCompositeHandlerInterceptor);
         }
     }

@@ -45,7 +45,6 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
@@ -75,11 +74,15 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotatio
 import static java.lang.Integer.getInteger;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
+import static org.springframework.beans.factory.annotation.InjectionMetadata.needsRefresh;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.ClassUtils.getMostSpecificMethod;
 import static org.springframework.util.ClassUtils.getUserClass;
+import static org.springframework.util.ReflectionUtils.doWithFields;
+import static org.springframework.util.ReflectionUtils.doWithMethods;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.StringUtils.hasLength;
 
 /**
@@ -305,27 +308,24 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
         final List<AnnotatedFieldElement> elements = new LinkedList<AnnotatedFieldElement>();
 
-        ReflectionUtils.doWithFields(beanClass, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+        doWithFields(beanClass, field -> {
 
-                for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
+            for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
 
-                    AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
+                AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
 
-                    if (attributes != null) {
+                if (attributes != null) {
 
-                        if (Modifier.isStatic(field.getModifiers())) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn("@" + annotationType.getName() + " is not supported on static fields: " + field);
-                            }
-                            return;
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@" + annotationType.getName() + " is not supported on static fields: " + field);
                         }
-
-                        boolean required = determineRequiredStatus(attributes);
-
-                        elements.add(new AnnotatedFieldElement(field, attributes, required));
+                        return;
                     }
+
+                    boolean required = determineRequiredStatus(attributes);
+
+                    elements.add(new AnnotatedFieldElement(field, attributes, required));
                 }
             }
         });
@@ -354,36 +354,33 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
         final List<AnnotatedMethodElement> elements = new LinkedList<AnnotatedMethodElement>();
 
-        ReflectionUtils.doWithMethods(beanClass, new ReflectionUtils.MethodCallback() {
-            @Override
-            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+        doWithMethods(beanClass, method -> {
 
-                Method bridgedMethod = findBridgedMethod(method);
+            Method bridgedMethod = findBridgedMethod(method);
 
-                if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
-                    return;
-                }
+            if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
+                return;
+            }
 
-                for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
+            for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
 
-                    AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
+                AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
 
-                    if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
-                        if (Modifier.isStatic(method.getModifiers())) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn("@" + annotationType.getName() + " annotation is not supported on static methods: " + method);
-                            }
-                            return;
+                if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
+                    if (Modifier.isStatic(method.getModifiers())) {
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@" + annotationType.getName() + " annotation is not supported on static methods: " + method);
                         }
-                        if (method.getParameterTypes().length == 0) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
-                            }
-                        }
-                        PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
-                        boolean required = determineRequiredStatus(attributes);
-                        elements.add(new AnnotatedMethodElement(method, pd, attributes, required));
+                        return;
                     }
+                    if (method.getParameterTypes().length == 0) {
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
+                        }
+                    }
+                    PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
+                    boolean required = determineRequiredStatus(attributes);
+                    elements.add(new AnnotatedMethodElement(method, pd, attributes, required));
                 }
             }
         });
@@ -424,10 +421,10 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         String cacheKey = (hasLength(beanName) ? beanName : clazz.getName());
         // Quick check on the concurrent map first, with minimal locking.
         AnnotatedInjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
-        if (InjectionMetadata.needsRefresh(metadata, clazz)) {
+        if (needsRefresh(metadata, clazz)) {
             synchronized (this.injectionMetadataCache) {
                 metadata = this.injectionMetadataCache.get(cacheKey);
-                if (InjectionMetadata.needsRefresh(metadata, clazz)) {
+                if (needsRefresh(metadata, clazz)) {
                     if (metadata != null) {
                         metadata.clear(pvs);
                     }
@@ -695,7 +692,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 value = resolveFieldValue(field, bean, beanName, pvs);
             }
             if (value != null) {
-                ReflectionUtils.makeAccessible(field);
+                makeAccessible(field);
                 field.set(bean, value);
             }
         }
@@ -769,7 +766,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             }
             if (arguments != null) {
                 try {
-                    ReflectionUtils.makeAccessible(method);
+                    makeAccessible(method);
                     method.invoke(bean, arguments);
                 } catch (InvocationTargetException ex) {
                     throw ex.getTargetException();

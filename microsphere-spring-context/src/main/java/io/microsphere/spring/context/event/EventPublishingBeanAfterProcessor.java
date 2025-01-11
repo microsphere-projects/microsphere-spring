@@ -28,7 +28,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.ReflectionUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +37,7 @@ import java.util.function.BiConsumer;
 import static io.microsphere.spring.context.event.BeanListeners.getBean;
 import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanNames;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static org.springframework.util.ReflectionUtils.doWithFields;
 
 /**
  * Bean After-Event Publishing Processor
@@ -111,7 +111,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
     private void decorateDisposableBeans() {
         ConfigurableListableBeanFactory beanFactory = this.context.getBeanFactory();
         if (beanFactory instanceof DefaultSingletonBeanRegistry) {
-            ReflectionUtils.doWithFields(DefaultSingletonBeanRegistry.class, field -> {
+            doWithFields(DefaultSingletonBeanRegistry.class, field -> {
                 field.setAccessible(true);
                 Map<String, Object> disposableBeans = (Map<String, Object>) field.get(beanFactory);
                 for (Map.Entry<String, Object> entry : disposableBeans.entrySet()) {
@@ -185,7 +185,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
         @Override
         public void destroy() throws Exception {
             this.delegate.destroy();
-            ReflectionUtils.doWithFields(DISPOSABLE_BEAN_ADAPTER_CLASS, field -> {
+            doWithFields(DISPOSABLE_BEAN_ADAPTER_CLASS, field -> {
                 field.setAccessible(true);
                 Object bean = field.get(this.delegate);
                 this.destroyedCallback.accept(this.beanName, bean);

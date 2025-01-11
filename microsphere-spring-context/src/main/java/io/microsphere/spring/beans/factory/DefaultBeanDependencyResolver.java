@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.collection.CollectionUtils;
 import io.microsphere.collection.SetUtils;
 import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
@@ -53,6 +52,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
@@ -252,7 +252,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             Set<String> dependentBeanNames = entry.getValue();
             for (String dependentBeanName : dependentBeanNames) {
                 Set<String> nestedDependentBeanNames = dependentBeanNamesMap.get(dependentBeanName);
-                if (CollectionUtils.isNotEmpty(nestedDependentBeanNames) && !dependentBeanNames.containsAll(nestedDependentBeanNames)) {
+                if (isNotEmpty(nestedDependentBeanNames) && !dependentBeanNames.containsAll(nestedDependentBeanNames)) {
                     nonRootBeanNames.add(beanName);
                     break;
                 }

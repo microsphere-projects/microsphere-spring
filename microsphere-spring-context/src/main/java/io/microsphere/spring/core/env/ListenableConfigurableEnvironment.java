@@ -40,6 +40,7 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static java.util.Arrays.asList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
@@ -233,7 +234,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
             } catch (Throwable e) {
                 if (logger.isWarnEnabled()) {
                     logger.warn("Failed to invokeExact on {} with args : '{}'", ACCEPTS_PROFILES_METHOD_HANDLE,
-                            Arrays.asList(delegate, profiles), e);
+                            asList(delegate, profiles), e);
                 }
             }
         }
@@ -388,7 +389,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         } catch (Throwable e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Failed to invokeExact on {} with args : '{}'", GET_PROPERTY_AS_CLASS_METHOD_HANDLE,
-                        Arrays.asList(key, targetType), e);
+                        asList(key, targetType), e);
             }
         }
         return value;

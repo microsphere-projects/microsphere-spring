@@ -20,28 +20,18 @@
 
     <properties>
         <microsphere-java.version>0.0.9</microsphere-java.version>
-        <spring.version>5.3.39</spring.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
-        <lettuce.version>6.1.10.RELEASE</lettuce.version>
         <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.12</logback.version>
         <junit.version>4.13.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
+        <jsonassert.version>1.5.3</jsonassert.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Microsphere Dependencies -->
-            <dependency>
-                <groupId>io.github.microsphere-projects</groupId>
-                <artifactId>microsphere-java-dependencies</artifactId>
-                <version>${microsphere-java.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Spring Framework BOM -->
             <dependency>
@@ -61,13 +51,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Lettuce -->
-            <dependency>
-                <groupId>io.lettuce</groupId>
-                <artifactId>lettuce-core</artifactId>
-                <version>${lettuce.version}</version>
-            </dependency>
-
             <!-- YAML -->
             <dependency>
                 <groupId>org.yaml</groupId>
@@ -80,7 +63,6 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet-api.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <!-- JUnit -->
@@ -90,7 +72,7 @@
                 <version>${junit.version}</version>
             </dependency>
 
-            <!-- Mockito Bom -->
+            <!-- Mockito BOM -->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-bom</artifactId>
@@ -99,10 +81,27 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- JSONassert -->
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${jsonassert.version}</version>
+            </dependency>
+
+            <!-- Logback -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+
+            <!-- Microsphere Dependencies -->
+            <dependency>
+                <groupId>io.github.microsphere-projects</groupId>
+                <artifactId>microsphere-java-dependencies</artifactId>
+                <version>${microsphere-java.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
         </dependencies>
@@ -139,6 +138,9 @@
 
         <profile>
             <id>spring-framework-5.3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <spring.version>5.3.39</spring.version>
             </properties>

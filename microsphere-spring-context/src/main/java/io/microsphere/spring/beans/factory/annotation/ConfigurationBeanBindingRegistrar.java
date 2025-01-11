@@ -18,13 +18,11 @@ package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
-import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -54,6 +52,7 @@ import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.l
 import static java.lang.Boolean.valueOf;
 import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -105,7 +104,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
                                             boolean ignoreUnknownFields, boolean ignoreInvalidFields,
                                             BeanDefinitionRegistry registry) {
 
-        Map<String, Object> configurationProperties = PropertySourcesUtils.getSubProperties(environment.getPropertySources(), environment, prefix);
+        Map<String, Object> configurationProperties = getSubProperties(environment.getPropertySources(), environment, prefix);
 
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(configurationProperties) :
                 singleton(resolveSingleBeanName(configurationProperties, configClass, registry));
@@ -207,7 +206,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         if (!hasText(beanName)) {
             BeanDefinitionBuilder builder = rootBeanDefinition(configClass);
-            beanName = BeanDefinitionReaderUtils.generateBeanName(builder.getRawBeanDefinition(), registry);
+            beanName = generateBeanName(builder.getRawBeanDefinition(), registry);
         }
 
         return beanName;

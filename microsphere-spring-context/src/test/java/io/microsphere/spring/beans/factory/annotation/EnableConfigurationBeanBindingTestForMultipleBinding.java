@@ -23,7 +23,6 @@ package io.microsphere.spring.beans.factory.annotation;
  * @since 1.0.0
  */
 
-import io.microsphere.spring.beans.BeanUtils;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
 import io.microsphere.spring.util.User;
 import org.junit.Before;
@@ -32,9 +31,10 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.Collection;
 
-import static junit.framework.TestCase.assertTrue;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @EnableConfigurationBeanBinding(prefix = "users", type = User.class, multiple = true, ignoreUnknownFields = false,
         ignoreInvalidFields = false)
@@ -61,7 +61,7 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
     public void init() {
         aUser = context.getBean("a", User.class);
         bUser = context.getBean("b", User.class);
-        users = BeanUtils.getSortedBeans(context, User.class);
+        users = getSortedBeans(context, User.class);
         configurationBeanBindingPostProcessor = context.getBean("configurationBeanBindingPostProcessor", ConfigurationBeanBindingPostProcessor.class);
     }
 
