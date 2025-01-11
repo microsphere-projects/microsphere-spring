@@ -27,6 +27,7 @@
         <logback.version>1.5.15</logback.version>
         <junit.version>5.11.4</junit.version>
         <mockito.version>5.14.2</mockito.version>
+        <jsonassert.version>1.5.3</jsonassert.version>
     </properties>
 
     <dependencyManagement>
@@ -80,6 +81,13 @@
                 <version>${mockito.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- JSONassert -->
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${jsonassert.version}</version>
             </dependency>
 
             <!-- Slf4j -->

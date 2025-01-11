@@ -70,9 +70,11 @@ import java.util.concurrent.ConcurrentMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static java.lang.Integer.getInteger;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.beans.BeanUtils.findPrimaryConstructor;
+import static org.springframework.beans.factory.annotation.InjectionMetadata.needsRefresh;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 import static org.springframework.util.Assert.notEmpty;
@@ -110,7 +112,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
-    private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
+    private final static int CACHE_SIZE = getInteger("microsphere.spring.injection.metadata.cache.size", 32);
 
     private final Logger logger = getLogger(getClass());
 
@@ -419,10 +421,10 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         String cacheKey = (hasLength(beanName) ? beanName : clazz.getName());
         // Quick check on the concurrent map first, with minimal locking.
         AnnotatedInjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
-        if (InjectionMetadata.needsRefresh(metadata, clazz)) {
+        if (needsRefresh(metadata, clazz)) {
             synchronized (this.injectionMetadataCache) {
                 metadata = this.injectionMetadataCache.get(cacheKey);
-                if (InjectionMetadata.needsRefresh(metadata, clazz)) {
+                if (needsRefresh(metadata, clazz)) {
                     if (metadata != null) {
                         metadata.clear(pvs);
                     }

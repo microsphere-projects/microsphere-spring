@@ -55,11 +55,6 @@ public class WebEventPublisher extends AbstractSmartLifecycle implements Handler
     }
 
     @Override
-    public void afterExecute(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Exception {
-        // DO NOTHING
-    }
-
-    @Override
     protected void doStart() {
         WebEndpointMappingRegistry webEndpointMappingRegistry = context.getBean(WebEndpointMappingRegistry.class);
         Collection<WebEndpointMapping> webEndpointMappings = webEndpointMappingRegistry.getWebEndpointMappings();
