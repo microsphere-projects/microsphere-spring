@@ -203,7 +203,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             }
         } else {
             executorService.execute(() -> {
-                Class beanClass = loadClass(beanClassName, classLoader, true);
+                Class beanClass = loadClass(classLoader, beanClassName, true);
                 beanDefinition.setBeanClass(beanClass);
                 if (logger.isTraceEnabled()) {
                     logger.trace("The bean[name : '{}'] class[name : '{}'] was loaded", beanName, beanClassName);

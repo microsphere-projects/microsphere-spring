@@ -36,8 +36,8 @@ import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 import java.util.Set;
 
-import static io.microsphere.invoke.MethodHandleUtils.NOT_FOUND_METHOD_HANDLE;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.invoke.MethodHandlesLookupUtils.NOT_FOUND_METHOD_HANDLE;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**

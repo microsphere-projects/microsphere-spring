@@ -93,7 +93,7 @@ public class SpringProtocolURLStreamHandler extends ExtendableProtocolURLStreamH
     }
 
     @Override
-    protected URLConnection openConnection(URL url, Proxy proxy) throws IOException {
+    public URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         List<String> subProtocols = resolveSubProtocols(url);
         int size = subProtocols.size();
         if (size < 1) {
