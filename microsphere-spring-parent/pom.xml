@@ -19,11 +19,12 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.0.9</microsphere-java.version>
+        <microsphere-java.version>0.1.0</microsphere-java.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
         <slf4j.version>1.7.36</slf4j.version>
+        <p6spy.version>3.9.1</p6spy.version>
         <logback.version>1.2.12</logback.version>
         <junit.version>4.13.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
@@ -63,6 +64,12 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>p6spy</groupId>
+                <artifactId>p6spy</artifactId>
+                <version>${p6spy.version}</version>
             </dependency>
 
             <!-- JUnit -->
