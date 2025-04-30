@@ -18,6 +18,9 @@ package io.microsphere.spring.context.lifecycle;
 
 import org.springframework.context.SmartLifecycle;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
+
 /**
  * The abstract class for {@link SmartLifecycle}
  *
@@ -29,12 +32,12 @@ public abstract class AbstractSmartLifecycle implements SmartLifecycle {
     /**
      * The earliest phase
      */
-    public static final int EARLIEST_PHASE = Integer.MIN_VALUE;
+    public static final int EARLIEST_PHASE = MIN_VALUE;
 
     /**
      * The latest phase
      */
-    public static final int LATEST_PHASE = Integer.MAX_VALUE;
+    public static final int LATEST_PHASE = MAX_VALUE;
 
     /**
      * Compatible with {@link SmartLifecycle#DEFAULT_PHASE} before Spring Framework 5.1
