@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.core.io.support;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -24,7 +25,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
