@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -31,7 +30,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter.getSingleton;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -67,9 +65,8 @@ public class ResolvableDependencyTypeFilterTest {
     private ConfigurableApplicationContext context;
 
     @Test
-    public void testGetSingleton() {
-        assertSame(filter, getSingleton((BeanFactory) context.getBeanFactory()));
-        assertSame(filter, getSingleton((SingletonBeanRegistry) context.getBeanFactory()));
+    public void testGet() {
+        assertSame(filter, ResolvableDependencyTypeFilter.get(context.getBeanFactory()));
     }
 
     @Test
