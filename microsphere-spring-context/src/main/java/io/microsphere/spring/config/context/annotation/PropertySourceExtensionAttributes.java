@@ -16,13 +16,13 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertySourceFactory;
 
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
 import java.util.Map;
