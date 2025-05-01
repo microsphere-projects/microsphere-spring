@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.handler;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -32,7 +33,6 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
