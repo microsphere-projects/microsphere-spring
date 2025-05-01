@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.beans.factory.config.GenericBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -28,7 +29,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Executor;
