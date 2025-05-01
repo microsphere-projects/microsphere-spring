@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.config;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
 
-import io.microsphere.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.util.Arrays;
