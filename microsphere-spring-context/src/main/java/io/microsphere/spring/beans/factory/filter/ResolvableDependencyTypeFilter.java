@@ -49,17 +49,17 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
         register(beanFactory);
     }
 
-
     private void register(SingletonBeanRegistry registry) {
         registerSingleton(registry, BEAN_NAME, this);
     }
 
-    public static ResolvableDependencyTypeFilter getSingleton(BeanFactory beanFactory) {
-        return getSingleton((SingletonBeanRegistry) beanFactory);
+    public static ResolvableDependencyTypeFilter get(BeanFactory beanFactory) {
+        return get(asDefaultListableBeanFactory(beanFactory));
     }
 
-    public static ResolvableDependencyTypeFilter getSingleton(SingletonBeanRegistry registry) {
-        return (ResolvableDependencyTypeFilter) registry.getSingleton(BEAN_NAME);
+    static ResolvableDependencyTypeFilter get(DefaultListableBeanFactory beanFactory) {
+        ResolvableDependencyTypeFilter filter = (ResolvableDependencyTypeFilter) beanFactory.getSingleton(BEAN_NAME);
+        return filter == null ? new ResolvableDependencyTypeFilter(beanFactory) : filter;
     }
 
     @Override
