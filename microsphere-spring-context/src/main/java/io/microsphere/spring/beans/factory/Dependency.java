@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import javax.annotation.Nullable;
+import io.microsphere.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
