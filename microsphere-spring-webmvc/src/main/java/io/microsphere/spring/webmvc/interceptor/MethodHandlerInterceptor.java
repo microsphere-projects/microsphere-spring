@@ -1,12 +1,12 @@
 package io.microsphere.spring.webmvc.interceptor;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
