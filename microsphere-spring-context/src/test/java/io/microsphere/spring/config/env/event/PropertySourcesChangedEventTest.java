@@ -23,12 +23,19 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertySource;
 import org.springframework.mock.env.MockPropertySource;
 
+import java.util.Map;
+
+import static io.microsphere.collection.ListUtils.ofList;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.added;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.removed;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.replaced;
+import static java.lang.System.currentTimeMillis;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link PropertySourcesChangedEvent} Test
@@ -43,15 +50,17 @@ public class PropertySourcesChangedEventTest {
 
     private MutablePropertySources propertySources;
 
-    private PropertySource newPropertySource;
+    private MockPropertySource newPropertySource;
 
-    private PropertySource oldPropertySource;
+    private MockPropertySource oldPropertySource;
 
     private PropertySourceChangedEvent addedEvent;
 
     private PropertySourceChangedEvent replacedEvent;
 
     private PropertySourceChangedEvent removedEvent;
+
+    private PropertySourcesChangedEvent event;
 
     @Before
     public void before() {
@@ -62,6 +71,10 @@ public class PropertySourcesChangedEventTest {
         this.addedEvent = added(this.context, this.newPropertySource);
         this.replacedEvent = replaced(this.context, this.newPropertySource, this.oldPropertySource);
         this.removedEvent = removed(this.context, this.oldPropertySource);
+        this.event = new PropertySourcesChangedEvent(this.context, this.addedEvent, this.replacedEvent, this.removedEvent);
+
+        this.newPropertySource.setProperty("test-key", "test-value");
+        this.oldPropertySource.setProperty("test-key-2", "test-value-2");
     }
 
     @After
@@ -71,37 +84,47 @@ public class PropertySourcesChangedEventTest {
 
     @Test
     public void testGetApplicationContext() {
+        assertSame(this.context, this.event.getApplicationContext());
     }
 
     @Test
     public void testGetTimestamp() {
+        assertTrue(this.event.getTimestamp() <= currentTimeMillis());
     }
 
     @Test
     public void testGetSource() {
+        assertSame(this.context, this.event.getSource());
     }
 
     @Test
     public void testTestToString() {
+        assertNotNull(this.event.toString());
     }
 
     @Test
     public void testGetSubEvents() {
+        assertEquals(this.event.getSubEvents(), ofList(this.addedEvent, this.replacedEvent, this.removedEvent));
     }
 
     @Test
     public void testGetChangedProperties() {
+        Map<String, Object> properties = this.event.getChangedProperties();
+        assertEquals(properties.size(), 1);
+        assertEquals("test-value", properties.get("test-key"));
     }
 
     @Test
     public void testGetAddedProperties() {
+        Map<String, Object> properties = this.event.getAddedProperties();
+        assertEquals(properties.size(), 1);
+        assertEquals("test-value", properties.get("test-key"));
     }
 
     @Test
     public void testGetRemovedProperties() {
-    }
-
-    @Test
-    public void testGetProperties() {
+        Map<String, Object> properties = this.event.getRemovedProperties();
+        assertEquals(properties.size(), 1);
+        assertEquals("test-value-2", properties.get("test-key-2"));
     }
 }
