@@ -40,6 +40,7 @@ import static io.microsphere.reflect.TypeUtils.asClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter.get;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 
 /**
@@ -50,9 +51,9 @@ import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
  */
 public abstract class AbstractInjectionPointDependencyResolver implements InjectionPointDependencyResolver, BeanFactoryAware {
 
-    private final Logger logger = getLogger(getClass());
+    protected final Logger logger = getLogger(getClass());
 
-    private ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
+    protected ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
@@ -185,6 +186,6 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.resolvableDependencyTypeFilter = ResolvableDependencyTypeFilter.getSingleton(beanFactory);
+        this.resolvableDependencyTypeFilter = get(beanFactory);
     }
 }
