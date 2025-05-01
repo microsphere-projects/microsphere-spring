@@ -24,8 +24,9 @@ import org.junit.Test;
 import java.time.Duration;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.cache.TTLContext.*;
+import static io.microsphere.spring.cache.TTLContext.clearTTL;
 import static io.microsphere.spring.cache.TTLContext.doWithTTL;
+import static io.microsphere.spring.cache.TTLContext.getTTL;
 import static io.microsphere.spring.cache.TTLContext.setTTL;
 import static java.time.Duration.ofMillis;
 import static org.junit.Assert.assertEquals;
