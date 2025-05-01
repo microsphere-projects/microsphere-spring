@@ -17,13 +17,13 @@
 package io.microsphere.spring.config.env.event;
 
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
