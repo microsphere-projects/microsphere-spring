@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.method.support;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -38,7 +39,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
