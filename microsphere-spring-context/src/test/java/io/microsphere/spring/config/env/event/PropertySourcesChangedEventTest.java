@@ -23,6 +23,12 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+import org.springframework.mock.env.MockPropertySource;
+
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.added;
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.removed;
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.replaced;
 
 /**
  * {@link PropertySourcesChangedEvent} Test
@@ -33,16 +39,29 @@ import org.springframework.core.env.MutablePropertySources;
  */
 public class PropertySourcesChangedEventTest {
 
-    private PropertySourcesChangedEvent event;
-
     private ConfigurableApplicationContext context;
 
     private MutablePropertySources propertySources;
 
+    private PropertySource newPropertySource;
+
+    private PropertySource oldPropertySource;
+
+    private PropertySourceChangedEvent addedEvent;
+
+    private PropertySourceChangedEvent replacedEvent;
+
+    private PropertySourceChangedEvent removedEvent;
+
     @Before
     public void before() {
         this.context = new GenericApplicationContext();
-        this.propertySources  = context.getEnvironment().getPropertySources();
+        this.propertySources = context.getEnvironment().getPropertySources();
+        this.newPropertySource = new MockPropertySource("new");
+        this.oldPropertySource = new MockPropertySource("old");
+        this.addedEvent = added(this.context, this.newPropertySource);
+        this.replacedEvent = replaced(this.context, this.newPropertySource, this.oldPropertySource);
+        this.removedEvent = removed(this.context, this.oldPropertySource);
     }
 
     @After

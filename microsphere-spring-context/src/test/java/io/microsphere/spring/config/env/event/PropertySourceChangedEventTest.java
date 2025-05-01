@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.mock.env.MockPropertySource;
 
@@ -50,9 +49,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class PropertySourceChangedEventTest {
 
-    private ConfigurableApplicationContext context;
-
-    private MutablePropertySources propertySources;
+    ConfigurableApplicationContext context;
 
     private PropertySource newPropertySource;
 
@@ -67,7 +64,6 @@ public class PropertySourceChangedEventTest {
     @Before
     public void before() {
         this.context = new GenericApplicationContext();
-        this.propertySources = context.getEnvironment().getPropertySources();
         this.newPropertySource = new MockPropertySource("new");
         this.oldPropertySource = new MockPropertySource("old");
         this.addedEvent = added(this.context, this.newPropertySource);
