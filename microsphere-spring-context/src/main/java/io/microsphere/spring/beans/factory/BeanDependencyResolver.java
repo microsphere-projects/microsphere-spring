@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.annotation.Nonnull;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
-import io.microsphere.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 
