@@ -16,10 +16,9 @@
 
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.annotation.Nullable;
 
 /**
  * Supports media type expressions as described in:
