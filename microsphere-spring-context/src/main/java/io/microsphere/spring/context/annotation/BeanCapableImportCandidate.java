@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.annotation;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.logging.Logger;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
@@ -33,8 +34,6 @@ import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
-
-import javax.annotation.Nonnull;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
