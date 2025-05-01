@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.util.BaseUtils;
 import org.springframework.util.MimeType;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 
 import static io.microsphere.collection.CollectionUtils.isEmpty;
