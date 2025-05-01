@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.context;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.BaseUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -25,8 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
