@@ -1,5 +1,6 @@
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.BaseUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -12,7 +13,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
