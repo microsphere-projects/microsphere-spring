@@ -20,7 +20,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
-import javax.annotation.Nonnull;
+import io.microsphere.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 
