@@ -1,7 +1,7 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -40,7 +40,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  * @see BeanDefinition
  * @since 2017.01.09
  */
-public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
+public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
 
     private static final Logger logger = getLogger(AnnotatedBeanDefinitionRegistryUtils.class);
 
@@ -223,5 +223,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
         return beanDefinitionHolders;
 
+    }
+
+    private AnnotatedBeanDefinitionRegistryUtils(){
     }
 }

@@ -18,7 +18,7 @@ package io.microsphere.spring.core.io.support;
 
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -50,7 +50,7 @@ import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
  * @see SpringFactoriesLoader
  * @since 1.0.0
  */
-public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
+public abstract class SpringFactoriesLoaderUtils implements Utils {
 
     private static final Logger logger = getLogger(SpringFactoriesLoaderUtils.class);
 
@@ -147,6 +147,9 @@ public abstract class SpringFactoriesLoaderUtils extends BaseUtils {
         }
 
         return targetConstructor;
+    }
+
+    private SpringFactoriesLoaderUtils(){
     }
 
 }

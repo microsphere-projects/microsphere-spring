@@ -2,7 +2,7 @@ package io.microsphere.spring.beans;
 
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.Aware;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -63,7 +63,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 2017.01.13
  */
-public abstract class BeanUtils extends BaseUtils {
+public abstract class BeanUtils implements Utils {
 
     private static final Logger logger = getLogger(BeanUtils.class);
 
@@ -650,4 +650,6 @@ public abstract class BeanUtils extends BaseUtils {
         }
     }
 
+    private BeanUtils() {
+    }
 }

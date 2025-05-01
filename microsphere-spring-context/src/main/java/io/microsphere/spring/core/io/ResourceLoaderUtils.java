@@ -18,7 +18,7 @@ package io.microsphere.spring.core.io;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import io.microsphere.util.ClassLoaderUtils;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -37,7 +37,7 @@ import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
  * @see ResourceLoader
  * @since 1.0.0
  */
-public abstract class ResourceLoaderUtils extends BaseUtils {
+public abstract class ResourceLoaderUtils implements Utils {
 
     private static ConcurrentMap<ClassLoader, ResourceLoader> resourceLoadersCache = new ConcurrentHashMap<>();
 
@@ -102,4 +102,6 @@ public abstract class ResourceLoaderUtils extends BaseUtils {
         return classLoader == null ? getDefaultClassLoader() : classLoader;
     }
 
+    private ResourceLoaderUtils() {
+    }
 }
