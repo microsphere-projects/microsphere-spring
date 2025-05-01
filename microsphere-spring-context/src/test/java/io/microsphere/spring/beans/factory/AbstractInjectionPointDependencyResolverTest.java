@@ -107,11 +107,12 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
         @Autowired
         private AbstractInjectionPointDependencyResolverTest test;
 
+        @Autowired
         public Config(AbstractInjectionPointDependencyResolverTest test) {
         }
 
         @Bean
-        public User user(AbstractInjectionPointDependencyResolverTest test) {
+        public User user(@Autowired AbstractInjectionPointDependencyResolverTest test) {
             return new User();
         }
 
