@@ -37,6 +37,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.asClass;
+import static io.microsphere.reflect.TypeUtils.isClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
@@ -154,9 +155,13 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
     }
 
     protected Class<?> resolveDependentType(Type type) {
-        Class klass = asClass(type);
-        Class dependentType = klass;
-        if (isParameterizedType(type)) {
+        if (isClass(type)) {
+            Class klass = (Class) type;
+            if (klass.isArray()) {
+                return resolveDependentType(klass.getComponentType());
+            }
+            return klass;
+        } else if (isParameterizedType(type)) {
             // ObjectProvider<SomeBean> == arguments == [SomeBean.class]
             // ObjectFactory<SomeBean> == arguments == [SomeBean.class]
             // Optional<SomeBean> == arguments == [SomeBean.class]
@@ -164,24 +169,12 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             // Map<String,SomeBean> == arguments == [SomeBean.class]
             // List<SomeBean> == arguments= [SomeBean.class]
             // Set<SomeBean> == arguments= [SomeBean.class]
-            List<Type> arguments = resolveActualTypeArguments(type, klass);
-            int argumentsSize = arguments.size();
-            if (argumentsSize > 0) {
-                // Last argument
-                Type argumentType = arguments.get(argumentsSize - 1);
-                Class<?> argumentClass = asClass(argumentType);
-                if (argumentClass == null) {
-                    dependentType = resolveDependentType(argumentType);
-                } else {
-                    if (argumentClass.isArray()) {
-                        return argumentClass.getComponentType();
-                    } else {
-                        return argumentClass;
-                    }
-                }
-            }
+            List<Type> arguments = resolveActualTypeArguments(type, asClass(type));
+            // Last argument
+            Type argumentType = arguments.get(arguments.size() - 1);
+            return resolveDependentType(argumentType);
         }
-        return dependentType;
+        return null;
     }
 
     @Override
