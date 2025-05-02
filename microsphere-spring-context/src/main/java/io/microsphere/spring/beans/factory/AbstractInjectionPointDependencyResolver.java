@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.BeansException;
@@ -43,6 +44,7 @@ import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter.get;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
+import static java.util.Collections.addAll;
 
 /**
  * Abstract {@link InjectionPointDependencyResolver}
@@ -54,7 +56,11 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
 
     protected final Logger logger = getLogger(getClass());
 
+    @Nonnull
     protected ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
+
+    @Nonnull
+    protected AutowireCandidateResolver autowireCandidateResolver;
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
@@ -104,29 +110,23 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
         }
     }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.resolvableDependencyTypeFilter = get(beanFactory);
+        this.autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
+    }
+
     protected String resolveDependentBeanNameByName(Field field, ConfigurableListableBeanFactory beanFactory) {
-        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true, false);
-        return resolveDependentBeanNameByName(dependencyDescriptor, autowireCandidateResolver);
+        return resolveDependentBeanNameByName(dependencyDescriptor);
     }
 
     protected String resolveDependentBeanNameByName(Parameter parameter, ConfigurableListableBeanFactory beanFactory) {
-        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
-        return resolveDependentBeanNameByName(dependencyDescriptor, autowireCandidateResolver);
+        return resolveDependentBeanNameByName(dependencyDescriptor);
     }
 
-    protected String resolveDependentBeanNameByName(DependencyDescriptor dependencyDescriptor,
-                                                    AutowireCandidateResolver autowireCandidateResolver) {
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
+    protected String resolveDependentBeanNameByName(DependencyDescriptor dependencyDescriptor) {
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
         return suggestedValue instanceof String ? (String) suggestedValue : null;
     }
@@ -138,15 +138,12 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             return;
         }
         String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
-        for (int i = 0; i < beanNames.length; i++) {
-            String beanName = beanNames[i];
-            dependentBeanNames.add(beanName);
-        }
+        addAll(dependentBeanNames, beanNames);
     }
 
-    protected AutowireCandidateResolver getAutowireCandidateResolver(ConfigurableListableBeanFactory beanFactory) {
+    private AutowireCandidateResolver getAutowireCandidateResolver(BeanFactory beanFactory) {
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
-        return dbf == null ? null : dbf.getAutowireCandidateResolver();
+        return dbf.getAutowireCandidateResolver();
     }
 
     private Class<?> resolveDependentType(Supplier<Type> typeSupplier) {
@@ -175,10 +172,5 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             return resolveDependentType(argumentType);
         }
         return null;
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.resolvableDependencyTypeFilter = get(beanFactory);
     }
 }
