@@ -31,6 +31,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static io.microsphere.reflect.ConstructorUtils.findConstructor;
@@ -71,11 +74,11 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
     }
 
     protected Method getMethod() {
-        return findMethod(Config.class, "user", AbstractInjectionPointDependencyResolverTest.class);
+        return findMethod(Config.class, "user", AbstractInjectionPointDependencyResolverTest[].class);
     }
 
     protected Constructor getConstructor() {
-        return findConstructor(Config.class, AbstractInjectionPointDependencyResolverTest.class);
+        return findConstructor(Config.class, Map.class);
     }
 
     protected abstract void testResolveFromField(Set<String> dependentBeanNames);
@@ -105,14 +108,14 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
     static class Config {
 
         @Autowired
-        private AbstractInjectionPointDependencyResolverTest test;
+        private Optional<List<AbstractInjectionPointDependencyResolverTest>> test;
 
         @Autowired
-        public Config(AbstractInjectionPointDependencyResolverTest test) {
+        public Config(Map<String, AbstractInjectionPointDependencyResolverTest> test) {
         }
 
         @Bean
-        public User user(@Autowired AbstractInjectionPointDependencyResolverTest test) {
+        public User user(@Autowired AbstractInjectionPointDependencyResolverTest[] test) {
             return new User();
         }
 
