@@ -38,6 +38,7 @@ import java.util.Set;
 
 import static io.microsphere.reflect.ConstructorUtils.findConstructor;
 import static io.microsphere.reflect.MethodUtils.findMethod;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.core.ResolvableType.forClass;
 import static org.springframework.util.ReflectionUtils.findField;
 
@@ -100,9 +101,21 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
     }
 
     @Test
+    public void testResolveFromMethodWithoutParameter() {
+        resolver.resolve(findMethod(getClass(), "testResolveFromMethodWithoutParameter"), this.beanFactory, this.dependentBeanNames);
+        assertTrue(this.dependentBeanNames.isEmpty());
+    }
+
+    @Test
     public void testResolveFromConstructor() {
         resolver.resolve(this.getConstructor(), this.beanFactory, this.dependentBeanNames);
         testResolveFromConstructor(this.dependentBeanNames);
+    }
+
+    @Test
+    public void testResolveFromConstructorWithoutParameter() {
+        resolver.resolve(findConstructor(getClass()), this.beanFactory, this.dependentBeanNames);
+        assertTrue(this.dependentBeanNames.isEmpty());
     }
 
     static class Config {
