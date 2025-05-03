@@ -43,6 +43,11 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * Bean After-Event Publishing Processor
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanBeforeProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
 class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements GenericApplicationListenerAdapter {
