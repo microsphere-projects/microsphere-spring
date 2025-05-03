@@ -24,6 +24,13 @@ import org.springframework.core.PriorityOrdered;
  * {@link ApplicationContextInitializer} for Publishing Bean Event with the highest priority
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ApplicationContextInitializer
+ * @see PriorityOrdered
  * @since 1.0.0
  */
 public class EventPublishingBeanInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>, PriorityOrdered {
