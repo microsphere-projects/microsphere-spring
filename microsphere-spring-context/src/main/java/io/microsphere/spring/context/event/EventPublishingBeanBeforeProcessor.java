@@ -44,6 +44,9 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanAfterProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
  * @see BeanFactoryListeners
  * @see BeanFactoryListener
  * @see BeanFactoryListenerAdapter
