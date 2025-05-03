@@ -36,7 +36,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 
@@ -80,23 +79,37 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
 
     @Override
     public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner) throws BeansException {
-        return aroundInstantiate(beanName, bd, () -> instantiationStrategyDelegate.instantiate(bd, beanName, owner));
+        this.beanEventListeners.onBeforeBeanInstantiate(beanName, bd);
+        Object bean = null;
+        try {
+            bean = instantiationStrategyDelegate.instantiate(bd, beanName, owner);
+        } finally {
+            this.beanEventListeners.onAfterBeanInstantiated(beanName, bd, bean);
+        }
+        return bean;
     }
 
     @Override
     public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner, Constructor<?> ctor, Object... args) throws BeansException {
-        return aroundInstantiate(beanName, bd, () -> instantiationStrategyDelegate.instantiate(bd, beanName, owner, ctor, args));
+        this.beanEventListeners.onBeforeBeanInstantiate(beanName, bd, ctor, args);
+        Object bean = null;
+        try {
+            bean = instantiationStrategyDelegate.instantiate(bd, beanName, owner, ctor, args);
+        } finally {
+            this.beanEventListeners.onAfterBeanInstantiated(beanName, bd, bean);
+        }
+        return bean;
     }
 
     @Override
     public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner, Object factoryBean, Method factoryMethod, Object... args) throws BeansException {
-        return aroundInstantiate(beanName, bd, () -> instantiationStrategyDelegate.instantiate(bd, beanName, owner, factoryBean, factoryMethod, args));
-    }
-
-    private Object aroundInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Supplier<Object> beanSupplier) {
-        this.beanEventListeners.onBeforeBeanInstantiate(beanName, mergedBeanDefinition);
-        Object bean = beanSupplier.get();
-        this.beanEventListeners.onAfterBeanInstantiated(beanName, mergedBeanDefinition, bean);
+        this.beanEventListeners.onBeforeBeanInstantiate(beanName, bd, factoryBean, factoryMethod, args);
+        Object bean = null;
+        try {
+            bean = instantiationStrategyDelegate.instantiate(bd, beanName, owner, factoryBean, factoryMethod, args);
+        } finally {
+            this.beanEventListeners.onAfterBeanInstantiated(beanName, bd, bean);
+        }
         return bean;
     }
 
