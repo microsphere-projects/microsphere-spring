@@ -29,6 +29,7 @@ import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.EventListener;
 import java.util.List;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -37,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.springframework.core.ResolvableType.forClass;
 
 /**
- * Abstract {@link BeanFactoryListener} Test
+ * Abstract {@link EventListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see BeanFactoryListener
@@ -49,7 +50,7 @@ import static org.springframework.core.ResolvableType.forClass;
         initializers = {
                 EventPublishingBeanInitializer.class
         })
-public abstract class AbstractBeanFactoryListenerTest<L extends BeanFactoryListener> {
+public abstract class AbstractEventListenerTest<L extends EventListener> {
 
     protected final Logger logger = getLogger(getClass());
 
@@ -69,7 +70,7 @@ public abstract class AbstractBeanFactoryListenerTest<L extends BeanFactoryListe
             if (declaringClass.isAssignableFrom(testClass)) {
                 return (context, mergedConfig) -> {
                     Class<?> listenerClass = forClass(testClass)
-                            .as(AbstractBeanFactoryListenerTest.class)
+                            .as(AbstractEventListenerTest.class)
                             .getGeneric(0)
                             .resolve(Object.class);
                     ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
