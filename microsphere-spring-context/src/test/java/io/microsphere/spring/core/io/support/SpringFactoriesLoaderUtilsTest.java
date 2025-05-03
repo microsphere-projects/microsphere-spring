@@ -77,7 +77,11 @@ public class SpringFactoriesLoaderUtilsTest {
 
         users = loadFactories(context, User.class, "Mercy", 18);
         assertUser(users);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoadFactoriesWithArgumentsOnConstructorNotFound() {
+        loadFactories(context, User.class, 18, "Mercy");
     }
 
     private void assertUser(List<User> users, Object... args) {
