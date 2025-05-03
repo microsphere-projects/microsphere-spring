@@ -18,7 +18,7 @@ package io.microsphere.spring.context.event;
 
 
 import io.microsphere.logging.Logger;
-import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -33,6 +33,7 @@ import java.util.List;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.core.ResolvableType.forClass;
 
 /**
@@ -55,8 +56,9 @@ public abstract class AbstractBeanFactoryListenerTest<L extends BeanFactoryListe
     @Autowired
     protected L beanFactoryListener;
 
-    @Before
-    public void before() {
+    @Test
+    public void test() {
+        assertNotNull(beanFactoryListener);
     }
 
     static class Factory implements ContextCustomizerFactory {
