@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.util;
 
-import io.microsphere.util.BaseUtils;
+import io.microsphere.annotation.Nullable;
+import io.microsphere.util.Utils;
 import org.springframework.util.MimeType;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 
 import static io.microsphere.collection.CollectionUtils.isEmpty;
@@ -32,7 +32,7 @@ import static io.microsphere.collection.CollectionUtils.isEmpty;
  * @see org.springframework.util.MimeTypeUtils
  * @since 1.0.0
  */
-public abstract class MimeTypeUtils extends BaseUtils {
+public abstract class MimeTypeUtils implements Utils {
 
     /**
      * Public constant mime type for {@code application/graphql+json}.
@@ -106,6 +106,9 @@ public abstract class MimeTypeUtils extends BaseUtils {
             return subtype.substring(suffixIndex + 1);
         }
         return null;
+    }
+
+    private MimeTypeUtils() {
     }
 
 }

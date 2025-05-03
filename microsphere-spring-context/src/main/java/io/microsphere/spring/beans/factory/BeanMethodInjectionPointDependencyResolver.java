@@ -19,6 +19,7 @@ package io.microsphere.spring.beans.factory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -35,6 +36,11 @@ public class BeanMethodInjectionPointDependencyResolver extends AbstractInjectio
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+        //DO NOTHING
+    }
+
+    @Override
+    public void resolve(Constructor constructor, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         //DO NOTHING
     }
 

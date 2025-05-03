@@ -16,7 +16,7 @@
 
 package io.microsphere.spring.web.rule;
 
-import javax.annotation.Nullable;
+import io.microsphere.annotation.Nullable;
 
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 

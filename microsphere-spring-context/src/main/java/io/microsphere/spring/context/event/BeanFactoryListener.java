@@ -27,9 +27,13 @@ import java.util.EventListener;
  * * The {@link EventListener} for {@link BeanFactory} lifecycle
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListenerAdapter
  * @see ConfigurableListableBeanFactory
  * @see DefaultListableBeanFactory
- * @see EventListener
  * @since 1.0.0
  */
 public interface BeanFactoryListener extends EventListener {

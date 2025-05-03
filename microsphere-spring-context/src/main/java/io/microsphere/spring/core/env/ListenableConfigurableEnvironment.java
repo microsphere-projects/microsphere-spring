@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,8 +29,6 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertyResolver;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.LinkedList;

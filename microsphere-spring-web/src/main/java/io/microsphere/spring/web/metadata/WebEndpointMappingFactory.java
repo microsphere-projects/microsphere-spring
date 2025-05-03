@@ -16,7 +16,8 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import javax.annotation.Nonnull;
+import io.microsphere.annotation.Nonnull;
+
 import java.util.Optional;
 
 import static org.springframework.core.ResolvableType.forClass;

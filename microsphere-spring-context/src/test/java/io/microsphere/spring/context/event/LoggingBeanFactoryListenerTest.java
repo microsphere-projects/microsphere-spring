@@ -16,25 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-
 /**
  * {@link LoggingBeanFactoryListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-        LoggingBeanFactoryListener.class,
-        LoggingBeanFactoryListenerTest.class},
-        initializers = {EventPublishingBeanInitializer.class})
-public class LoggingBeanFactoryListenerTest {
-
-    @Test
-    public void test() {
-    }
+public class LoggingBeanFactoryListenerTest extends AbstractEventListenerTest<LoggingBeanFactoryListener> {
 }

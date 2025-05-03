@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.annotation.Nonnull;
 import org.springframework.context.annotation.Import;
 
-import javax.annotation.Nonnull;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

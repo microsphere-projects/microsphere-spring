@@ -16,3 +16,6 @@ io.microsphere.spring.core.env.ThrowableErrorLoggingEnvironmentListener
 
 io.microsphere.spring.core.env.PropertyResolverListener=\
 io.microsphere.spring.config.CollectingConfigurationPropertyListener
+
+org.springframework.test.context.ContextCustomizerFactory=\
+io.microsphere.spring.context.event.AbstractEventListenerTest.Factory

@@ -16,8 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.config;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
 
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @see BeanDefinition#ROLE_INFRASTRUCTURE
  * @since 1.0.0
  */
-public abstract class BeanDefinitionUtils extends BaseUtils {
+public abstract class BeanDefinitionUtils implements Utils {
 
     private static final Logger logger = getLogger(BeanDefinitionUtils.class);
 
@@ -341,5 +341,8 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
      */
     protected static ResolvableType doGetResolvableType(AbstractBeanDefinition beanDefinition) {
         return beanDefinition.hasBeanClass() ? forClass(beanDefinition.getBeanClass()) : ResolvableType.NONE;
+    }
+
+    private BeanDefinitionUtils() {
     }
 }

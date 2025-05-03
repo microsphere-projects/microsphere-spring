@@ -17,20 +17,23 @@
 package io.microsphere.spring.config.env.event;
 
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 
-import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.ADDED;
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REMOVED;
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REPLACED;
 import static java.util.Arrays.binarySearch;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
@@ -48,7 +51,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     private final List<PropertySourceChangedEvent> subEvents;
 
     public PropertySourcesChangedEvent(ApplicationContext source, PropertySourceChangedEvent... subEvents) {
-        this(source, Arrays.asList(subEvents));
+        this(source, ofList(subEvents));
     }
 
     public PropertySourcesChangedEvent(ApplicationContext source, List<PropertySourceChangedEvent> subEvents) {
@@ -69,7 +72,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     @Nonnull
     public Map<String, Object> getChangedProperties() {
         return getProperties(PropertySourceChangedEvent::getNewPropertySource, PropertySourcesUtils::getProperties,
-                PropertySourceChangedEvent.Kind.ADDED, PropertySourceChangedEvent.Kind.REPLACED);
+                ADDED, REPLACED);
     }
 
     /**
@@ -78,7 +81,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     @Nonnull
     public Map<String, Object> getAddedProperties() {
         return getProperties(PropertySourceChangedEvent::getNewPropertySource, PropertySourcesUtils::getProperties,
-                PropertySourceChangedEvent.Kind.ADDED);
+                ADDED);
     }
 
     /**
@@ -87,7 +90,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
     @Nonnull
     public Map<String, Object> getRemovedProperties() {
         return getProperties(PropertySourceChangedEvent::getOldPropertySource, PropertySourcesUtils::getProperties,
-                PropertySourceChangedEvent.Kind.REMOVED);
+                REMOVED);
     }
 
     protected Map<String, Object> getProperties(Function<PropertySourceChangedEvent, PropertySource> propertySourceGetter,

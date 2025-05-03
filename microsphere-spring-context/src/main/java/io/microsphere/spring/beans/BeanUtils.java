@@ -1,7 +1,8 @@
 package io.microsphere.spring.beans;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.Aware;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -29,7 +30,6 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 2017.01.13
  */
-public abstract class BeanUtils extends BaseUtils {
+public abstract class BeanUtils implements Utils {
 
     private static final Logger logger = getLogger(BeanUtils.class);
 
@@ -326,7 +326,7 @@ public abstract class BeanUtils extends BaseUtils {
      *     <li>{@link ResourceLoaderAware}</li>
      *     <li>{@link ApplicationEventPublisherAware}</li>
      *     <li>{@link MessageSourceAware}</li>
-     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link org.springframework.context.ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      *     <li>{@link InitializingBean}</li>
      * </ul>
@@ -350,7 +350,7 @@ public abstract class BeanUtils extends BaseUtils {
      *     <li>{@link ResourceLoaderAware}</li>
      *     <li>{@link ApplicationEventPublisherAware}</li>
      *     <li>{@link MessageSourceAware}</li>
-     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link org.springframework.context.ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      *     <li>{@link InitializingBean}</li>
      * </ul>
@@ -392,7 +392,7 @@ public abstract class BeanUtils extends BaseUtils {
      *     <li>{@link ResourceLoaderAware}</li>
      *     <li>{@link ApplicationEventPublisherAware}</li>
      *     <li>{@link MessageSourceAware}</li>
-     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link org.springframework.context.ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      * </ul>
      *
@@ -419,7 +419,7 @@ public abstract class BeanUtils extends BaseUtils {
      *     <li>{@link ResourceLoaderAware}</li>
      *     <li>{@link ApplicationEventPublisherAware}</li>
      *     <li>{@link MessageSourceAware}</li>
-     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link org.springframework.context.ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      * </ul>
      *
@@ -446,7 +446,7 @@ public abstract class BeanUtils extends BaseUtils {
      *     <li>{@link ResourceLoaderAware}</li>
      *     <li>{@link ApplicationEventPublisherAware}</li>
      *     <li>{@link MessageSourceAware}</li>
-     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link org.springframework.context.ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      * </ul>
      *
@@ -538,7 +538,7 @@ public abstract class BeanUtils extends BaseUtils {
      *     <li>{@link ResourceLoaderAware}</li>
      *     <li>{@link ApplicationEventPublisherAware}</li>
      *     <li>{@link MessageSourceAware}</li>
-     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link org.springframework.context.ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      * </ul>
      *
@@ -565,7 +565,7 @@ public abstract class BeanUtils extends BaseUtils {
      *     <li>{@link ResourceLoaderAware}</li>
      *     <li>{@link ApplicationEventPublisherAware}</li>
      *     <li>{@link MessageSourceAware}</li>
-     *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
+     *     <li>{@link org.springframework.context.ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      * </ul>
      *
@@ -650,4 +650,6 @@ public abstract class BeanUtils extends BaseUtils {
         }
     }
 
+    private BeanUtils() {
+    }
 }

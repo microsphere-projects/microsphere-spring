@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.core.io;
 
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -29,7 +29,7 @@ import static io.microsphere.util.ClassLoaderUtils.resolveClass;
  * @see Resource
  * @since 1.0.0
  */
-public abstract class ResourceUtils extends BaseUtils {
+public abstract class ResourceUtils implements Utils {
 
     /**
      * The class name of {@linkplain org.springframework.core.io.FileUrlResource}
@@ -64,5 +64,8 @@ public abstract class ResourceUtils extends BaseUtils {
     public static boolean isFileBasedResource(Resource resource) {
         return resource instanceof FileSystemResource ||
                 isFileUrlResource(resource);
+    }
+
+    private ResourceUtils() {
     }
 }

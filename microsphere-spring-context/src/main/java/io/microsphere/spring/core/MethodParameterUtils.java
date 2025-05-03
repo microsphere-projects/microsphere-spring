@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.core;
 
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.core.MethodParameter;
 
 import java.lang.reflect.Constructor;
@@ -31,7 +31,7 @@ import java.lang.reflect.Parameter;
  * @see MethodParameter
  * @since 1.0.0
  */
-public abstract class MethodParameterUtils extends BaseUtils {
+public abstract class MethodParameterUtils implements Utils {
 
     /**
      * Create a new MethodParameter for the given parameter descriptor.
@@ -86,5 +86,8 @@ public abstract class MethodParameterUtils extends BaseUtils {
         }
         throw new IllegalArgumentException("Given parameter [" + parameter +
                 "] does not match any parameter in the declaring executable");
+    }
+
+    private MethodParameterUtils() {
     }
 }

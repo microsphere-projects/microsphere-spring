@@ -16,7 +16,8 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.util.BaseUtils;
+import io.microsphere.annotation.Nullable;
+import io.microsphere.util.Utils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +53,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class BeanFactoryUtils extends BaseUtils {
+public abstract class BeanFactoryUtils implements Utils {
 
     /**
      * Get optional Bean
@@ -198,4 +198,6 @@ public abstract class BeanFactoryUtils extends BaseUtils {
         return extendedBeanFactoryType.cast(beanFactory);
     }
 
+    private BeanFactoryUtils() {
+    }
 }

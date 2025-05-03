@@ -16,7 +16,8 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import javax.annotation.Nonnull;
+import io.microsphere.annotation.Nonnull;
+
 import javax.servlet.Registration;
 import javax.servlet.ServletContext;
 import java.util.Collection;
