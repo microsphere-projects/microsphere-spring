@@ -32,9 +32,6 @@ import java.util.EventListener;
  * @see EventPublishingBeanAfterProcessor
  * @see BeanListeners
  * @see BeanListenerAdapter
- * @see BeanFactoryListeners
- * @see BeanFactoryListener
- * @see BeanFactoryListenerAdapter
  * @since 1.0.0
  */
 public interface BeanListener extends EventListener {
