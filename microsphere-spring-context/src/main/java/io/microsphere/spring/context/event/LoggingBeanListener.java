@@ -33,8 +33,8 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
  * @see EventPublishingBeanInitializer
  * @see EventPublishingBeanBeforeProcessor
  * @see EventPublishingBeanAfterProcessor
- * @see BeanListener
  * @see BeanListeners
+ * @see BeanListener
  * @see BeanListenerAdapter
  * @since 1.0.0
  */
