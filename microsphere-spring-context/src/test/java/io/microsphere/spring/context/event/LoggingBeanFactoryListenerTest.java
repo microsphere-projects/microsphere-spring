@@ -17,9 +17,9 @@
 package io.microsphere.spring.context.event;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * {@link LoggingBeanFactoryListener} Test
@@ -27,14 +27,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-        LoggingBeanFactoryListener.class,
-        LoggingBeanFactoryListenerTest.class},
-        initializers = {EventPublishingBeanInitializer.class})
-public class LoggingBeanFactoryListenerTest {
+@ContextConfiguration(classes = LoggingBeanFactoryListenerTest.class)
+public class LoggingBeanFactoryListenerTest extends AbstractBeanFactoryListenerTest<LoggingBeanFactoryListener> {
 
     @Test
     public void test() {
+        assertNotNull(beanFactoryListener);
     }
 }
