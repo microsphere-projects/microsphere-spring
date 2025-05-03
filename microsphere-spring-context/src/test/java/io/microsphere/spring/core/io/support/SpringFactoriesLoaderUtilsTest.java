@@ -19,6 +19,7 @@ package io.microsphere.spring.core.io.support;
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.util.User;
+import io.microsphere.spring.util.UserFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import java.util.List;
 
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -69,7 +72,7 @@ public class SpringFactoriesLoaderUtilsTest {
 
     @Test
     public void testLoadFactoriesWithArguments() {
-        List<User> users = loadFactories(context, User.class);
+        List<User> users = loadFactories(context, User.class, EMPTY_OBJECT_ARRAY);
         assertUser(users);
 
         loadFactories(context, User.class, "Mercy");
@@ -82,6 +85,17 @@ public class SpringFactoriesLoaderUtilsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testLoadFactoriesWithArgumentsOnConstructorNotFound() {
         loadFactories(context, User.class, 18, "Mercy");
+    }
+
+    @Test
+    public void testLoadFactoriesOnNotFound() {
+        assertSame(emptyList(), loadFactories(context, UserFactory.class, "Mercy", 18));
+    }
+
+    @Test
+    public void testLoadFactoriesOnNull() {
+        assertEquals(emptyList(), loadFactories(null, UserFactory.class));
+        assertEquals(emptyList(), loadFactories((BeanFactory) null, UserFactory.class));
     }
 
     private void assertUser(List<User> users, Object... args) {
