@@ -31,7 +31,6 @@ import java.lang.reflect.Method;
  * @see EventPublishingBeanAfterProcessor
  * @see BeanListener
  * @see BeanListeners
- * @see BeanListenerAdapter
  * @since 1.0.0
  */
 public interface BeanListenerAdapter extends BeanListener {
