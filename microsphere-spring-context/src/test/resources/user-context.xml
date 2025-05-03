@@ -7,7 +7,7 @@
 
     <bean id="userFactory" class="io.microsphere.spring.util.UserFactory">
         <constructor-arg index="0">
-            <value>Mercy</value>
+            <value>${user.name}</value>
         </constructor-arg>
         <constructor-arg index="1">
             <value>39</value>
