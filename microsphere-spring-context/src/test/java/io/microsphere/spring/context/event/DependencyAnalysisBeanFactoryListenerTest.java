@@ -24,6 +24,6 @@ package io.microsphere.spring.context.event;
  * @see DependencyAnalysisBeanFactoryListener
  * @since 1.0.0
  */
-public class DependencyAnalysisBeanFactoryListenerTest extends AbstractBeanFactoryListenerTest<DependencyAnalysisBeanFactoryListener> {
+public class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventListenerTest<DependencyAnalysisBeanFactoryListener> {
 
 }
