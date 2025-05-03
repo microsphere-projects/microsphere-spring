@@ -22,5 +22,5 @@ package io.microsphere.spring.context.event;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class LoggingBeanFactoryListenerTest extends AbstractBeanFactoryListenerTest<LoggingBeanFactoryListener> {
+public class LoggingBeanFactoryListenerTest extends AbstractEventListenerTest<LoggingBeanFactoryListener> {
 }
