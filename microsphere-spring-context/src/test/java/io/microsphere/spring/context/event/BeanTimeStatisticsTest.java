@@ -18,6 +18,7 @@ package io.microsphere.spring.context.event;
 
 import io.microsphere.util.StopWatch;
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
 
 /**
  * {@link BeanTimeStatistics} Test
@@ -26,6 +27,7 @@ import org.junit.Test;
  * @see BeanTimeStatistics
  * @since 1.0.0
  */
+@ContextConfiguration(locations = "classpath:/user-context.xml")
 public class BeanTimeStatisticsTest extends AbstractEventListenerTest<BeanTimeStatistics> {
 
     @Test
