@@ -18,6 +18,7 @@ package io.microsphere.spring.core.io.support;
 
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.util.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +65,33 @@ public class SpringFactoriesLoaderUtilsTest {
     public void testLoadFactories() {
         testLoadFactoriesFromContext(beanFactory, context);
         testLoadFactoriesFromBeanFactory(beanFactory);
+    }
+
+    @Test
+    public void testLoadFactoriesWithArguments() {
+        List<User> users = loadFactories(context, User.class);
+        assertUser(users);
+
+        loadFactories(context, User.class, "Mercy");
+        assertUser(users);
+
+        users = loadFactories(context, User.class, "Mercy", 18);
+        assertUser(users);
+
+    }
+
+    private void assertUser(List<User> users, Object... args) {
+        assertEquals(1, users.size());
+        User user = users.get(0);
+        assertNotNull(user);
+        switch (args.length) {
+            case 2:
+                assertEquals(args[1], user.getAge());
+            case 1:
+                assertEquals(args[0], user.getName());
+            default:
+                break;
+        }
     }
 
     private void testLoadFactoriesFromBeanFactory(BeanFactory beanFactory) {
