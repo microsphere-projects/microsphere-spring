@@ -17,9 +17,15 @@
 package io.microsphere.spring.context.event;
 
 /**
- * {@link BeanListener} Test
+ * {@link EventPublishingBeanInitializer} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
  * @since 1.0.0
  */
 public class EventPublishingBeanInitializerTest extends AbstractEventListenerTest<EventPublishingBeanInitializerTest>
