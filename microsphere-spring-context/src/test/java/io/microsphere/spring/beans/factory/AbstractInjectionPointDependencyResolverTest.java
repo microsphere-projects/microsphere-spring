@@ -65,7 +65,8 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
         this.resolver = (R) forClass(this.getClass())
                 .as(AbstractInjectionPointDependencyResolverTest.class)
                 .getGeneric(0)
-                .toClass().newInstance();
+                .resolve(Object.class)
+                .newInstance();
         this.resolver.setBeanFactory(beanFactory);
         this.dependentBeanNames = new LinkedHashSet<>();
     }
