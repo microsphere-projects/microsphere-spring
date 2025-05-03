@@ -35,6 +35,7 @@ import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -69,7 +70,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
     }
 
     public static <T> List<T> loadFactories(@Nullable ConfigurableApplicationContext context, Class<T> factoryClass, Object... args) {
-        int argsLength = args == null ? 0 : args.length;
+        int argsLength = length(args);
         if (argsLength < 1) {
             return loadFactories(context, factoryClass);
         }
