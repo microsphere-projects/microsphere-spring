@@ -16,36 +16,22 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.logging.Logger;
 import io.microsphere.util.StopWatch;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
+ * {@link BeanTimeStatistics} Test
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since
+ * @see BeanTimeStatistics
+ * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {BeanTimeStatistics.class, BeanTimeStatisticsTest.class},
-        initializers = {EventPublishingBeanInitializer.class})
-public class BeanTimeStatisticsTest {
-
-    private static final Logger logger = getLogger(BeanTimeStatisticsTest.class);
-
-    @Autowired
-    private BeanFactory beanFactory;
+public class BeanTimeStatisticsTest extends AbstractEventListenerTest<BeanTimeStatistics> {
 
     @Test
     public void test() {
-        BeanTimeStatistics beanTimeStatistics = beanFactory.getBean(BeanTimeStatistics.class);
+        BeanTimeStatistics beanTimeStatistics = this.beanFactoryListener;
         StopWatch stopWatch = beanTimeStatistics.getStopWatch();
         logger.info(stopWatch.toString());
     }
-
 }
