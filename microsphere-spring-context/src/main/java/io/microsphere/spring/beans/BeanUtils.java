@@ -1,5 +1,6 @@
 package io.microsphere.spring.beans;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.Utils;
@@ -54,8 +55,6 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.ClassUtils.getUserClass;
-import static org.springframework.util.ClassUtils.resolveClassName;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Bean Utilities Class
@@ -81,7 +80,7 @@ public abstract class BeanUtils implements Utils {
      * @param beanClass   The  {@link Class} of Bean
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory, Class<?> beanClass) {
+    public static boolean isBeanPresent(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<?> beanClass) {
         return isBeanPresent(beanFactory, beanClass, false);
     }
 
@@ -93,7 +92,8 @@ public abstract class BeanUtils implements Utils {
      * @param includingAncestors including ancestors or not
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
+    public static boolean isBeanPresent(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<?> beanClass,
+                                        boolean includingAncestors) {
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
         return !isEmpty(beanNames);
     }
@@ -105,7 +105,7 @@ public abstract class BeanUtils implements Utils {
      * @param beanClassName The  name of {@link Class} of Bean
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName) {
+    public static boolean isBeanPresent(@Nonnull ListableBeanFactory beanFactory, @Nonnull String beanClassName) {
         return isBeanPresent(beanFactory, beanClassName, false);
     }
 
@@ -117,7 +117,8 @@ public abstract class BeanUtils implements Utils {
      * @param includingAncestors including ancestors or not
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(ListableBeanFactory beanFactory, String beanClassName, boolean includingAncestors) {
+    public static boolean isBeanPresent(@Nonnull ListableBeanFactory beanFactory, @Nonnull String beanClassName,
+                                        boolean includingAncestors) {
         ClassLoader classLoader = null;
         if (beanFactory instanceof ConfigurableBeanFactory) {
             ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
@@ -140,7 +141,8 @@ public abstract class BeanUtils implements Utils {
      * @param beanClass   The bean class
      * @return If present , return <code>true</code> , or <code>false</code>
      */
-    public static boolean isBeanPresent(BeanFactory beanFactory, String beanName, Class<?> beanClass) throws NullPointerException {
+    public static boolean isBeanPresent(@Nonnull BeanFactory beanFactory, @Nonnull String beanName,
+                                        @Nonnull Class<?> beanClass) throws NullPointerException {
         return beanFactory.containsBean(beanName) && beanFactory.isTypeMatch(beanName, beanClass);
     }
 
@@ -151,7 +153,7 @@ public abstract class BeanUtils implements Utils {
      * @param beanClass   The  {@link Class} of Bean
      * @return If found , return the array of Bean Names , or empty array.
      */
-    public static String[] getBeanNames(ListableBeanFactory beanFactory, Class<?> beanClass) {
+    public static String[] getBeanNames(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<?> beanClass) {
         return getBeanNames(beanFactory, beanClass, false);
     }
 
@@ -163,7 +165,8 @@ public abstract class BeanUtils implements Utils {
      * @param includingAncestors including ancestors or not
      * @return If found , return the array of Bean Names , or empty array.
      */
-    public static String[] getBeanNames(ListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
+    public static String[] getBeanNames(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<?> beanClass,
+                                        @Nonnull boolean includingAncestors) {
         if (includingAncestors) {
             return beanNamesForTypeIncludingAncestors(beanFactory, beanClass, true, false);
         } else {
@@ -178,7 +181,7 @@ public abstract class BeanUtils implements Utils {
      * @param beanClass   The  {@link Class} of Bean
      * @return If found , return the array of Bean Names , or empty array.
      */
-    public static String[] getBeanNames(ConfigurableListableBeanFactory beanFactory, Class<?> beanClass) {
+    public static String[] getBeanNames(@Nonnull ConfigurableListableBeanFactory beanFactory, @Nonnull Class<?> beanClass) {
         return getBeanNames(beanFactory, beanClass, false);
     }
 
@@ -190,7 +193,8 @@ public abstract class BeanUtils implements Utils {
      * @param includingAncestors including ancestors or not
      * @return If found , return the array of Bean Names , or empty array.
      */
-    public static String[] getBeanNames(ConfigurableListableBeanFactory beanFactory, Class<?> beanClass, boolean includingAncestors) {
+    public static String[] getBeanNames(@Nonnull ConfigurableListableBeanFactory beanFactory, @Nonnull Class<?> beanClass,
+                                        boolean includingAncestors) {
         return getBeanNames((ListableBeanFactory) beanFactory, beanClass, includingAncestors);
     }
 
@@ -201,21 +205,9 @@ public abstract class BeanUtils implements Utils {
      * @param classLoader   {@link ClassLoader}
      * @return Bean type if can be resolved , or return <code>null</code>.
      */
-    public static Class<?> resolveBeanType(String beanClassName, ClassLoader classLoader) {
-        if (!hasText(beanClassName)) {
-            return null;
-        }
-
-        Class<?> beanType = null;
-        try {
-            beanType = resolveClassName(beanClassName, classLoader);
-            beanType = getUserClass(beanType);
-        } catch (Exception e) {
-            if (logger.isErrorEnabled()) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-        return beanType;
+    public static Class<?> resolveBeanType(@Nullable String beanClassName, @Nullable ClassLoader classLoader) {
+        Class<?> beanType = resolveClass(beanClassName, classLoader);
+        return beanType == null ? null : getUserClass(beanType);
     }
 
     /**
@@ -229,7 +221,8 @@ public abstract class BeanUtils implements Utils {
      * @throws NoUniqueBeanDefinitionException if more than one bean of the given type was found
      * @see BeanFactoryUtils#beanOfTypeIncludingAncestors(ListableBeanFactory, Class)
      */
-    public static <T> T getOptionalBean(ListableBeanFactory beanFactory, Class<T> beanClass, boolean includingAncestors) throws BeansException {
+    public static <T> T getOptionalBean(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<T> beanClass,
+                                        boolean includingAncestors) throws BeansException {
         String[] beanNames = getBeanNames(beanFactory, beanClass, includingAncestors);
         if (isEmpty(beanNames)) {
             if (logger.isTraceEnabled()) {
@@ -260,7 +253,7 @@ public abstract class BeanUtils implements Utils {
      * @return Bean object if found , or return <code>null</code>.
      * @throws NoUniqueBeanDefinitionException if more than one bean of the given type was found
      */
-    public static <T> T getOptionalBean(ListableBeanFactory beanFactory, Class<T> beanClass) throws BeansException {
+    public static <T> T getOptionalBean(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<T> beanClass) throws BeansException {
         return getOptionalBean(beanFactory, beanClass, false);
     }
 
@@ -274,7 +267,8 @@ public abstract class BeanUtils implements Utils {
      * @return the bean if available, or <code>null</code>
      * @throws BeansException in case of creation errors
      */
-    public static <T> T getBeanIfAvailable(BeanFactory beanFactory, String beanName, Class<T> beanType) throws BeansException {
+    public static <T> T getBeanIfAvailable(@Nonnull BeanFactory beanFactory, @Nonnull String beanName,
+                                           @Nonnull Class<T> beanType) throws BeansException {
         if (isBeanPresent(beanFactory, beanName, beanType)) {
             return beanFactory.getBean(beanName, beanType);
         }
@@ -293,7 +287,7 @@ public abstract class BeanUtils implements Utils {
      * @param <T>         bean type
      * @return all sorted Beans
      */
-    public static <T> List<T> getSortedBeans(BeanFactory beanFactory, Class<T> type) {
+    public static <T> List<T> getSortedBeans(@Nonnull BeanFactory beanFactory, @Nonnull Class<T> type) {
         if (beanFactory instanceof ListableBeanFactory) {
             return getSortedBeans((ListableBeanFactory) beanFactory, type);
         }
@@ -308,7 +302,7 @@ public abstract class BeanUtils implements Utils {
      * @param <T>         bean type
      * @return all sorted Beans
      */
-    public static <T> List<T> getSortedBeans(ListableBeanFactory beanFactory, Class<T> type) {
+    public static <T> List<T> getSortedBeans(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<T> type) {
         Map<String, T> beansOfType = beansOfTypeIncludingAncestors(beanFactory, type);
         List<T> beansList = new ArrayList<T>(beansOfType.values());
         AnnotationAwareOrderComparator.sort(beansList);
@@ -334,7 +328,7 @@ public abstract class BeanUtils implements Utils {
      * @param bean    the bean
      * @param context {@link ApplicationContext}
      */
-    public static void invokeBeanInterfaces(Object bean, ApplicationContext context) {
+    public static void invokeBeanInterfaces(@Nullable Object bean, @Nullable ApplicationContext context) {
         ConfigurableApplicationContext configurableApplicationContext = asConfigurableApplicationContext(context);
         invokeBeanInterfaces(bean, configurableApplicationContext);
     }
@@ -361,7 +355,7 @@ public abstract class BeanUtils implements Utils {
      * @see #invokeAwareInterfaces(Object, ApplicationContext)
      * @see #invokeInitializingBean(Object)
      */
-    public static void invokeBeanInterfaces(Object bean, ConfigurableApplicationContext context) {
+    public static void invokeBeanInterfaces(@Nullable Object bean, @Nullable ConfigurableApplicationContext context) {
         invokeAwareInterfaces(bean, context);
         try {
             invokeInitializingBean(bean);
@@ -370,7 +364,7 @@ public abstract class BeanUtils implements Utils {
         }
     }
 
-    public static void invokeInitializingBean(Object bean) throws Exception {
+    public static void invokeInitializingBean(@Nullable Object bean) throws Exception {
         if (bean instanceof InitializingBean) {
             ((InitializingBean) bean).afterPropertiesSet();
         }
@@ -399,7 +393,7 @@ public abstract class BeanUtils implements Utils {
      * @param bean        the bean
      * @param beanFactory {@link BeanFactory}
      */
-    public static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory) {
+    public static void invokeAwareInterfaces(@Nullable Object bean, @Nullable BeanFactory beanFactory) {
         invokeAwareInterfaces(bean, beanFactory, asConfigurableBeanFactory(beanFactory));
     }
 
@@ -426,7 +420,7 @@ public abstract class BeanUtils implements Utils {
      * @param bean        the bean
      * @param beanFactory {@link ConfigurableBeanFactory}
      */
-    public static void invokeAwareInterfaces(Object bean, ConfigurableBeanFactory beanFactory) {
+    public static void invokeAwareInterfaces(@Nullable Object bean, @Nullable ConfigurableBeanFactory beanFactory) {
         invokeAwareInterfaces(bean, beanFactory, beanFactory);
     }
 
@@ -454,7 +448,8 @@ public abstract class BeanUtils implements Utils {
      * @param beanFactory
      * @param configurableBeanFactory
      */
-    public static void invokeAwareInterfaces(Object bean, BeanFactory beanFactory, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
+    public static void invokeAwareInterfaces(@Nullable Object bean, @Nullable BeanFactory beanFactory,
+                                             @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         if (beanFactory instanceof ApplicationContext) {
             invokeAwareInterfaces(bean, (ApplicationContext) beanFactory);
         } else {
@@ -473,7 +468,7 @@ public abstract class BeanUtils implements Utils {
      * @see org.springframework.beans.BeanUtils#findPrimaryConstructor(Class)
      * @since Spring Framework 5.0
      */
-    public static <T> Constructor<T> findPrimaryConstructor(Class<T> clazz) {
+    public static <T> Constructor<T> findPrimaryConstructor(@Nonnull Class<T> clazz) {
         if (FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE == null) {
             return null;
         }
@@ -491,13 +486,14 @@ public abstract class BeanUtils implements Utils {
     /**
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    static void invokeBeanFactoryAwareInterfaces(Object bean, BeanFactory beanFactory, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
+    static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, BeanFactory beanFactory,
+                                                 @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         invokeBeanNameAware(bean, beanFactory);
         invokeBeanClassLoaderAware(bean, configurableBeanFactory);
         invokeBeanFactoryAware(bean, beanFactory);
     }
 
-    static void invokeBeanNameAware(Object bean, BeanFactory beanFactory) {
+    static void invokeBeanNameAware(@Nonnull Object bean, @Nonnull BeanFactory beanFactory) {
         if (bean instanceof BeanNameAware) {
             BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
             BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
@@ -506,19 +502,19 @@ public abstract class BeanUtils implements Utils {
         }
     }
 
-    public static void invokeBeanNameAware(Object bean, String beanName) {
-        if (bean instanceof BeanNameAware) {
+    public static void invokeBeanNameAware(@Nullable Object bean, @Nullable String beanName) {
+        if (bean instanceof BeanNameAware && beanName != null) {
             ((BeanNameAware) bean).setBeanName(beanName);
         }
     }
 
-    static void invokeBeanFactoryAware(Object bean, BeanFactory beanFactory) {
-        if (bean instanceof BeanFactoryAware) {
+    static void invokeBeanFactoryAware(@Nullable Object bean, @Nullable BeanFactory beanFactory) {
+        if (bean instanceof BeanFactoryAware && beanFactory != null) {
             ((BeanFactoryAware) bean).setBeanFactory(beanFactory);
         }
     }
 
-    static void invokeBeanClassLoaderAware(Object bean, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
+    static void invokeBeanClassLoaderAware(@Nullable Object bean, @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         if (bean instanceof BeanClassLoaderAware && configurableBeanFactory != null) {
             ClassLoader classLoader = configurableBeanFactory.getBeanClassLoader();
             ((BeanClassLoaderAware) bean).setBeanClassLoader(classLoader);
@@ -548,7 +544,7 @@ public abstract class BeanUtils implements Utils {
      * @see org.springframework.context.support.ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    static void invokeAwareInterfaces(Object bean, ApplicationContext context) {
+    static void invokeAwareInterfaces(@Nullable Object bean, @Nullable ApplicationContext context) {
         invokeAwareInterfaces(bean, context, asConfigurableApplicationContext(context));
     }
 
@@ -575,11 +571,12 @@ public abstract class BeanUtils implements Utils {
      * @see org.springframework.context.support.ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    public static void invokeAwareInterfaces(Object bean, ConfigurableApplicationContext context) {
+    public static void invokeAwareInterfaces(@Nullable Object bean, @Nullable ConfigurableApplicationContext context) {
         invokeAwareInterfaces(bean, context, context);
     }
 
-    static void invokeAwareInterfaces(Object bean, ApplicationContext context, @Nullable ConfigurableApplicationContext applicationContext) {
+    static void invokeAwareInterfaces(@Nullable Object bean, @Nullable ApplicationContext context,
+                                      @Nullable ConfigurableApplicationContext applicationContext) {
         if (bean == null || context == null) {
             return;
         }
