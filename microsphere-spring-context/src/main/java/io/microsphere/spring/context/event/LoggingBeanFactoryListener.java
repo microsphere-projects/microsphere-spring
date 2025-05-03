@@ -19,6 +19,7 @@ package io.microsphere.spring.context.event;
 import io.microsphere.logging.Logger;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 
@@ -26,7 +27,14 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
  * Logging {@link BeanFactoryListener}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
  * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 public class LoggingBeanFactoryListener implements BeanFactoryListener {
