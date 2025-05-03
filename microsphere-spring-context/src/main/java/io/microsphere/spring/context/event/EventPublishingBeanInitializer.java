@@ -26,6 +26,9 @@ import org.springframework.core.PriorityOrdered;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanBeforeProcessor
  * @see EventPublishingBeanAfterProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
  * @see BeanFactoryListeners
  * @see BeanFactoryListener
  * @see BeanFactoryListenerAdapter
