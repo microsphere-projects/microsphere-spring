@@ -114,6 +114,12 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
     }
 
     public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
+        postProcessProperties(pvs, bean, beanName);
+        return pvs;
+    }
+
+    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
+            throws BeansException {
         this.beanEventListeners.onBeanPropertyValuesReady(beanName, bean, pvs);
         return pvs;
     }
