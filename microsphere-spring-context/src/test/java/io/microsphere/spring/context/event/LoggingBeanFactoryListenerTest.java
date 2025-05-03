@@ -16,22 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.Assert.assertNotNull;
-
 /**
  * {@link LoggingBeanFactoryListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@ContextConfiguration(classes = LoggingBeanFactoryListenerTest.class)
 public class LoggingBeanFactoryListenerTest extends AbstractBeanFactoryListenerTest<LoggingBeanFactoryListener> {
-
-    @Test
-    public void test() {
-        assertNotNull(beanFactoryListener);
-    }
 }
