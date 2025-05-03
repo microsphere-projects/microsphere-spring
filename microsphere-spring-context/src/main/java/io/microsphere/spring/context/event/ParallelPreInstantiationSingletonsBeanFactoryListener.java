@@ -50,6 +50,12 @@ import static org.springframework.util.CollectionUtils.containsAny;
  * in parallel.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
  * @since 1.0.0
  */
 public class ParallelPreInstantiationSingletonsBeanFactoryListener implements BeanFactoryListenerAdapter,
