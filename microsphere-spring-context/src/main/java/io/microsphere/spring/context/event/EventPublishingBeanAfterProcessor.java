@@ -44,6 +44,9 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanBeforeProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
  * @see BeanFactoryListeners
  * @see BeanFactoryListener
  * @see BeanFactoryListenerAdapter
