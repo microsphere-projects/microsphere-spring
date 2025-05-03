@@ -118,7 +118,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
     private static Constructor findConstructor(Class<?> factoryImplClass, Object[] args, int argsLength) {
         Constructor targetConstructor = null;
         Constructor[] constructors = factoryImplClass.getConstructors();
-        boolean matched = true;
+        boolean matched = false;
         for (Constructor constructor : constructors) {
             Class<?>[] parameterTypes = constructor.getParameterTypes();
             int parameterCount = parameterTypes.length;
@@ -130,14 +130,15 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
             for (int i = 0; i < argsLength; i++) {
                 Class<?> parameterType = parameterTypes[i];
                 Object arg = args[i];
-                if (!parameterType.isInstance(arg)) {
-                    matched = false;
-                    continue;
+                if (parameterType.isInstance(arg)) {
+                    matched = true;
+                    break;
                 }
             }
 
             if (matched) {
                 targetConstructor = constructor;
+                break;
             }
         }
 
@@ -149,7 +150,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
         return targetConstructor;
     }
 
-    private SpringFactoriesLoaderUtils(){
+    private SpringFactoriesLoaderUtils() {
     }
 
 }
