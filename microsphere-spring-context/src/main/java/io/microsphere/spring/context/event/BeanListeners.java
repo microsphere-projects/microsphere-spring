@@ -47,7 +47,6 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
  * @see EventPublishingBeanBeforeProcessor
  * @see EventPublishingBeanAfterProcessor
  * @see BeanListener
- * @see BeanListeners
  * @see BeanListenerAdapter
  * @since 1.0.0
  */
