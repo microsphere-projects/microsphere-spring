@@ -44,6 +44,11 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
  * Bean Before-Event Publishing Processor
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
 class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProcessorAdapter
