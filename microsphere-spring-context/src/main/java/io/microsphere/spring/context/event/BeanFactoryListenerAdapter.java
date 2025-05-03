@@ -23,6 +23,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  * The {@link BeanFactoryListener} Adapter
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
  * @since 1.0.0
  */
 public interface BeanFactoryListenerAdapter extends BeanFactoryListener {
