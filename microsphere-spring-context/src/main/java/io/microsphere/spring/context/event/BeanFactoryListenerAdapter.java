@@ -18,6 +18,7 @@ package io.microsphere.spring.context.event;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 /**
  * The {@link BeanFactoryListener} Adapter
@@ -28,6 +29,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  * @see EventPublishingBeanAfterProcessor
  * @see BeanFactoryListeners
  * @see BeanFactoryListener
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 public interface BeanFactoryListenerAdapter extends BeanFactoryListener {
