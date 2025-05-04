@@ -47,8 +47,11 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  * {@link ConfigurableEnvironment} with intercepting features
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see ConfigurableEnvironment
  * @see ListenableConfigurableEnvironmentInitializer
+ * @see EnvironmentListener
+ * @see ProfileListener
+ * @see PropertyResolverListener
+ * @see ConfigurableEnvironment
  * @since 1.0.0
  */
 public class ListenableConfigurableEnvironment implements ConfigurableEnvironment {
