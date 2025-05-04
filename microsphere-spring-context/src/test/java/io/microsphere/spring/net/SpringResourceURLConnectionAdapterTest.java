@@ -27,8 +27,13 @@ import org.springframework.core.io.UrlResource;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Date;
+import java.util.function.Function;
 
 import static io.microsphere.util.ClassLoaderUtils.getClassResource;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -82,7 +87,7 @@ public class SpringResourceURLConnectionAdapterTest {
         int timeout = 0;
         assertEquals(timeout, urlConnection.getConnectTimeout());
 
-        this.writable.setConnectTimeout(timeout);
+        urlConnection.setConnectTimeout(timeout);
         assertEquals(timeout, urlConnection.getConnectTimeout());
     }
 
@@ -100,7 +105,7 @@ public class SpringResourceURLConnectionAdapterTest {
         int timeout = 0;
         assertEquals(timeout, urlConnection.getReadTimeout());
 
-        this.writable.setReadTimeout(timeout);
+        urlConnection.setReadTimeout(timeout);
         assertEquals(timeout, urlConnection.getReadTimeout());
     }
 
@@ -154,30 +159,118 @@ public class SpringResourceURLConnectionAdapterTest {
 
     @Test
     public void testGetHeaderField() {
+        testGetHeaderFieldByName(this.readonly);
+        testGetHeaderFieldByName(this.writable);
+    }
+
+    void testGetHeaderFieldByName(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "value";
+        testHeader(adapter, name, value, adapter::getHeaderField, value);
     }
 
     @Test
     public void testGetHeaderFields() {
+        testGetHeaderFields(this.readonly);
+        testGetHeaderFields(this.writable);
+    }
+
+    void testGetHeaderFields(SpringResourceURLConnectionAdapter adapter) {
+        assertSame(emptyMap(), adapter.getHeaderFields());
+        String name = "name";
+        String value = "value";
+        adapter.addHeader(name, value);
+        assertEquals(singletonMap(name, asList(value)), adapter.getHeaderFields());
     }
 
     @Test
     public void testGetHeaderFieldInt() {
+        testGetHeaderFieldInt(this.readonly);
+        testGetHeaderFieldInt(this.writable);
+    }
+
+    void testGetHeaderFieldInt(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "1";
+        int expected = 1;
+
+        assertEquals(0, adapter.getHeaderFieldInt(name, 0));
+        adapter.addHeader(name, value);
+        assertEquals(expected, adapter.getHeaderFieldInt(name, 0));
     }
 
     @Test
     public void testGetHeaderFieldLong() {
+        testGetHeaderFieldLong(this.readonly);
+        testGetHeaderFieldLong(this.writable);
+    }
+
+    void testGetHeaderFieldLong(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "1";
+        int expected = 1;
+
+        assertEquals(0, adapter.getHeaderFieldLong(name, 0));
+        adapter.addHeader(name, value);
+        assertEquals(expected, adapter.getHeaderFieldLong(name, 0));
     }
 
     @Test
     public void testGetHeaderFieldDate() {
+        testGetHeaderFieldDate(this.readonly);
+        testGetHeaderFieldDate(this.writable);
+    }
+
+    void testGetHeaderFieldDate(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "Sat, 12 Aug 1995 13:30:00 GMT+0430";
+
+        assertEquals(0, adapter.getHeaderFieldDate(name, 0));
+        adapter.addHeader(name, value);
+        assertEquals(Date.parse(value), adapter.getHeaderFieldDate(name, 0));
     }
 
     @Test
     public void testGetHeaderFieldKey() {
+        testGetHeaderFieldKey(this.readonly);
+        testGetHeaderFieldKey(this.writable);
+    }
+
+    void testGetHeaderFieldKey(SpringResourceURLConnectionAdapter adapter) {
+        int times = 9;
+        for (int i = 0; i < times; i++) {
+            String name = "name" + i;
+            String value = "value" + i;
+            adapter.addHeader(name, value);
+        }
+
+        for (int i = 0; i < times; i++) {
+            assertEquals("name" + i, adapter.getHeaderFieldKey(i));
+        }
     }
 
     @Test
-    public void testTestGetHeaderField() {
+    public void testGetHeaderFieldByIndex() {
+        testGetHeaderFieldByIndex(this.readonly);
+        testGetHeaderFieldByIndex(this.writable);
+    }
+
+    void testGetHeaderFieldByIndex(SpringResourceURLConnectionAdapter adapter) {
+        int times = 9;
+        for (int i = 0; i < times; i++) {
+            String name = "name" + i;
+            String value = "value" + i;
+            adapter.addHeader(name, value);
+        }
+
+        for (int i = 0; i < times; i++) {
+            assertEquals("value" + i, adapter.getHeaderField(i));
+        }
+    }
+
+    <T> void testHeader(SpringResourceURLConnectionAdapter adapter, String name, String value, Function<String, T> getFunction, T expected) {
+        adapter.addHeader(name, value);
+        assertEquals(expected, getFunction.apply(name));
     }
 
     @Test
