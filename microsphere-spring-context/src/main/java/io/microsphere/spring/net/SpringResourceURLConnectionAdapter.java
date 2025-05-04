@@ -27,14 +27,14 @@ import java.io.OutputStream;
 import java.net.FileNameMap;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.first;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
 
 /**
@@ -98,14 +98,14 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
 
     @Override
     public String getHeaderField(String name) {
-        MultiValueMap<String, String> headers = this.headers;
-        return headers == null ? null : headers.getFirst(name);
+        MultiValueMap<String, String> headers = getHeaders();
+        return headers.getFirst(name);
     }
 
     @Override
     public Map<String, List<String>> getHeaderFields() {
-        MultiValueMap<String, String> headers = this.headers;
-        return headers == null ? emptyMap() : unmodifiableMap(headers);
+        MultiValueMap<String, String> headers = getHeaders();
+        return headers.isEmpty() ? emptyMap() : unmodifiableMap(headers);
     }
 
     @Override
@@ -121,7 +121,7 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
             return null;
         }
         List<String> value = entry.getValue();
-        return value != null && value.isEmpty() ? value.get(0) : null;
+        return first(value);
     }
 
     @Override
@@ -140,7 +140,7 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
     @Override
     public void setRequestProperty(String key, String value) {
         MultiValueMap<String, String> requestProperties = doGetRequestProperties();
-        requestProperties.put(key, Arrays.asList(value));
+        requestProperties.put(key, asList(value));
     }
 
     @Override
@@ -174,23 +174,30 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
         Set<Map.Entry<String, List<String>>> entries = getHeaderEntries();
         Iterator<Map.Entry<String, List<String>>> iterator = entries.iterator();
         Map.Entry<String, List<String>> entry = null;
-        for (int i = 0; i < n & iterator.hasNext(); i++) {
+        for (int i = 0; i <= n & iterator.hasNext(); i++) {
             entry = iterator.next();
         }
         return entry;
     }
 
     protected Set<Map.Entry<String, List<String>>> getHeaderEntries() {
-        MultiValueMap<String, String> headers = this.headers;
-        return headers == null ? emptySet() : headers.entrySet();
+        MultiValueMap<String, String> headers = getHeaders();
+        return headers.entrySet();
     }
 
     protected MultiValueMap<String, String> getHeaders() {
         MultiValueMap<String, String> headers = this.headers;
         if (headers == null) {
             headers = new LinkedMultiValueMap<>();
+            this.headers = headers;
         }
         return headers;
+    }
+
+    protected SpringResourceURLConnectionAdapter addHeader(String name, String value) {
+        MultiValueMap<String, String> headers = getHeaders();
+        headers.add(name, value);
+        return this;
     }
 
     protected MultiValueMap<String, String> doGetRequestProperties() {
