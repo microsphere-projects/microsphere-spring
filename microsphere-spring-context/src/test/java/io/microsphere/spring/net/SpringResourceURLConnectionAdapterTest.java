@@ -25,16 +25,29 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
+import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.reflect.FieldUtils.getFieldValue;
+import static io.microsphere.reflect.FieldUtils.setFieldValue;
+import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ClassLoaderUtils.getClassResource;
+import static java.lang.System.currentTimeMillis;
+import static java.net.URLConnection.getDefaultAllowUserInteraction;
+import static java.net.URLConnection.setDefaultAllowUserInteraction;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -274,11 +287,24 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
-    public void testGetContent() {
+    public void testGetContent() throws IOException {
+        assertNotNull(this.writable.getContent());
+    }
+
+    @Test(expected = IOException.class)
+    public void testGetContentOnIOException() throws IOException {
+        assertNotNull(this.readonly.getContent());
     }
 
     @Test
-    public void testTestGetContent() {
+    public void testGetContentWithClass() throws IOException {
+        assertNotNull(this.writable.getContent(ofArray(InputStream.class)));
+        assertNull(this.writable.getContent(ofArray(String.class)));
+    }
+
+    @Test(expected = IOException.class)
+    public void testGetContentWithClassOnIOException() throws IOException {
+        this.readonly.getContent(ofArray(InputStream.class));
     }
 
     @Test
@@ -286,75 +312,160 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
-    public void testGetInputStream() {
+    public void testGetInputStream() throws IOException {
+        testGetInputStream(this.readonly);
+        testGetInputStream(this.writable);
+    }
+
+    void testGetInputStream(SpringResourceURLConnectionAdapter adapter) throws IOException {
+        try (InputStream inputStream = adapter.getInputStream()) {
+            assertNotNull(inputStream);
+        }
     }
 
     @Test
-    public void testGetOutputStream() {
+    public void testGetOutputStream() throws IOException {
+        try (OutputStream outputStream = this.writable.getOutputStream()) {
+            assertNotNull(outputStream);
+        }
+    }
+
+    @Test(expected = IOException.class)
+    public void testGetOutputStreamOnIOException() throws IOException {
+        this.readonly.getOutputStream();
     }
 
     @Test
     public void testToString() {
+        assertNotNull(this.readonly.toString());
+        assertNotNull(this.writable.toString());
     }
 
     @Test
-    public void testSetDoInput() {
+    public void testDoInput() {
+        assertFalse(this.writable.getDoOutput());
+        this.writable.setDoOutput(true);
+        assertTrue(this.writable.getDoOutput());
+
+        this.writable.setDoOutput(false);
+        assertFalse(this.writable.getDoOutput());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testDoInputOnIOException() {
+        assertFalse(this.readonly.getDoOutput());
+        this.readonly.setDoOutput(true);
     }
 
     @Test
-    public void testGetDoInput() {
+    public void testAllowUserInteraction() {
+        testAllowUserInteraction(this.readonly);
+        testAllowUserInteraction(this.writable);
+    }
+
+    void testAllowUserInteraction(SpringResourceURLConnectionAdapter adapter) {
+        assertEquals(getDefaultAllowUserInteraction(), adapter.getAllowUserInteraction());
+        adapter.setAllowUserInteraction(true);
+        assertTrue(adapter.getAllowUserInteraction());
     }
 
     @Test
-    public void testSetDoOutput() {
+    public void testDefaultAllowUserInteraction() {
+        boolean defaultAllowUserInteraction = getDefaultAllowUserInteraction();
+        try {
+            assertFalse(defaultAllowUserInteraction);
+            setDefaultAllowUserInteraction(true);
+            assertTrue(getDefaultAllowUserInteraction());
+        } finally {
+            setDefaultAllowUserInteraction(defaultAllowUserInteraction);
+        }
     }
 
     @Test
-    public void testGetDoOutput() {
+    public void testUseCaches() {
+        testUseCaches(this.readonly);
+        testUseCaches(this.writable);
+    }
+
+    void testUseCaches(URLConnection urlConnection) {
+        boolean useCaches = urlConnection.getUseCaches();
+        boolean defaultUseCaches = urlConnection.getDefaultUseCaches();
+        try {
+            assertEquals(defaultUseCaches, useCaches);
+            urlConnection.setUseCaches(!defaultUseCaches);
+            assertEquals(!defaultUseCaches, urlConnection.getUseCaches());
+        } finally {
+            urlConnection.setUseCaches(useCaches);
+        }
     }
 
     @Test
-    public void testSetAllowUserInteraction() {
+    public void testDefaultUseCaches() {
+        testDefaultUseCaches(this.readonly);
+        testDefaultUseCaches(this.writable);
+    }
+
+    void testDefaultUseCaches(URLConnection urlConnection) {
+        boolean defaultUseCaches = urlConnection.getDefaultUseCaches();
+        try {
+            urlConnection.setDefaultUseCaches(!defaultUseCaches);
+            assertEquals(!defaultUseCaches, urlConnection.getDefaultUseCaches());
+        } finally {
+            urlConnection.setUseCaches(defaultUseCaches);
+        }
     }
 
     @Test
-    public void testGetAllowUserInteraction() {
+    public void testIfModifiedSince() throws IOException {
+        testIfModifiedSince(this.readonly);
+        testIfModifiedSince(this.writable);
+    }
+
+    void testIfModifiedSince(URLConnection urlConnection) throws IOException {
+        long ifModifiedSince = urlConnection.getIfModifiedSince();
+        String connectedFieldName = "connected";
+        boolean connected = getFieldValue(urlConnection, connectedFieldName, boolean.class);
+        try {
+            assertEquals(0, ifModifiedSince);
+            long currentTimeMillis = currentTimeMillis();
+            urlConnection.setIfModifiedSince(currentTimeMillis);
+            assertEquals(currentTimeMillis, urlConnection.getIfModifiedSince());
+
+            urlConnection.connect();
+            urlConnection.setIfModifiedSince(currentTimeMillis);
+        } catch (IllegalStateException e) {
+            assertNotNull(e);
+        } finally {
+            setFieldValue(urlConnection, connectedFieldName, connected);
+            urlConnection.setIfModifiedSince(ifModifiedSince);
+        }
     }
 
     @Test
-    public void testSetDefaultAllowUserInteraction() {
+    public void testRequestProperty() {
+        testRequestProperty(this.readonly);
+        testRequestProperty(this.writable);
     }
 
-    @Test
-    public void testGetDefaultAllowUserInteraction() {
-    }
+    void testRequestProperty(URLConnection urlConnection) {
+        Map<String, List<String>> requestProperties = urlConnection.getRequestProperties();
+        assertTrue(requestProperties.isEmpty());
+        String key = "test-key";
+        String value = "test-value";
 
-    @Test
-    public void testSetUseCaches() {
-    }
+        urlConnection.setRequestProperty(key, value);
 
-    @Test
-    public void testGetUseCaches() {
-    }
+        requestProperties = urlConnection.getRequestProperties();
+        assertEquals(1, requestProperties.size());
+        assertTrue(requestProperties.containsKey(key));
+        assertEquals(ofList(value), requestProperties.get(key));
+        assertEquals(value, urlConnection.getRequestProperty(key));
 
-    @Test
-    public void testSetIfModifiedSince() {
-    }
-
-    @Test
-    public void testGetIfModifiedSince() {
-    }
-
-    @Test
-    public void testGetDefaultUseCaches() {
-    }
-
-    @Test
-    public void testSetDefaultUseCaches() {
-    }
-
-    @Test
-    public void testSetRequestProperty() {
+        urlConnection.addRequestProperty(key, value);
+        assertEquals(1, requestProperties.size());
+        assertTrue(requestProperties.containsKey(key));
+        assertEquals(ofList(value, value), requestProperties.get(key));
+        assertEquals(value, urlConnection.getRequestProperty(key));
     }
 
     @Test
@@ -438,7 +549,15 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
-    public void testConnect() {
+    public void testConnect() throws IOException {
+        testConnect(this.readonly);
+        testConnect(this.writable);
+    }
+
+    void testConnect(SpringResourceURLConnectionAdapter adapter) throws IOException {
+        assertFalse(adapter.isConnected());
+        adapter.connect();
+        assertTrue(adapter.isConnected());
     }
 
     @Test
