@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.net;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -30,10 +32,15 @@ import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.reflect.FieldUtils.setFieldValue;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URLConnection.getDefaultAllowUserInteraction;
+import static java.net.URLConnection.setDefaultAllowUserInteraction;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -43,7 +50,154 @@ import static org.junit.Assert.assertTrue;
  * @see AbstractSpringResourceURLConnection
  * @since 1.0.0
  */
-public class AbstractSpringResourceURLConnectionTest {
+public abstract class AbstractSpringResourceURLConnectionTest {
+
+    @Test
+    public abstract void testConnectTimeout();
+
+    @Test
+    public abstract void testReadTimeout();
+
+    @Test
+    public abstract void testGetURL();
+
+    @Test
+    public abstract void testGetContentLength() throws IOException;
+
+    @Test
+    public abstract void testGetContentLengthOnNotFound();
+
+    @Test
+    public abstract void testGetContentLengthLong() throws IOException;
+
+    @Test
+    public abstract void testGetContentLengthLongOnNotFound();
+
+    @Test
+    public abstract void testGetContentType();
+
+    @Test
+    public abstract void testGetContentEncoding();
+
+    @Test
+    public abstract void testGetExpiration();
+
+    @Test
+    public abstract void testGetDate();
+
+    @Test
+    public abstract void testGetLastModified() throws IOException;
+
+    @Test
+    public abstract void testGetLastModifiedOnNotFound();
+
+    @Test
+    public abstract void testGetHeaderField();
+
+    @Test
+    public abstract void testGetHeaderFields();
+
+    @Test
+    public abstract void testGetHeaderFieldInt();
+
+    @Test
+    public abstract void testGetHeaderFieldLong();
+
+    @Test
+    public abstract void testGetHeaderFieldDate();
+
+    @Test
+    public abstract void testGetHeaderFieldKey();
+
+    @Test
+    public abstract void testGetContent() throws IOException;
+
+    @Test(expected = IOException.class)
+    public abstract void testGetContentOnIOException() throws IOException;
+
+    @Test(expected = IOException.class)
+    public abstract void testGetContentOnNotFoundException() throws IOException;
+
+    @Test
+    public abstract void testGetContentWithClass() throws IOException;
+
+    @Test(expected = IOException.class)
+    public abstract void testGetContentWithClassOnIOException() throws IOException;
+
+    @Test
+    public abstract void testGetPermission() throws IOException;
+
+    @Test
+    public abstract void testGetInputStream() throws IOException;
+
+    @Test(expected = IOException.class)
+    public abstract void testGetInputStreamOnIOException() throws IOException;
+
+    @Test
+    public abstract void testGetHeaderFieldByIndex();
+
+    @Test
+    public abstract void testGetOutputStream() throws IOException;
+
+    @Test(expected = IOException.class)
+    public abstract void testGetOutputStreamOnIOException() throws IOException;
+
+    @Test
+    public abstract void testToString();
+
+    @Test
+    public abstract void testDoInput();
+
+    @Test(expected = UnsupportedOperationException.class)
+    public abstract void testDoInputOnIOException();
+
+    @Test
+    public abstract void testAllowUserInteraction();
+
+    @Test
+    public void testDefaultAllowUserInteraction() {
+        boolean defaultAllowUserInteraction = getDefaultAllowUserInteraction();
+        try {
+            assertFalse(defaultAllowUserInteraction);
+            setDefaultAllowUserInteraction(true);
+            assertTrue(getDefaultAllowUserInteraction());
+        } finally {
+            setDefaultAllowUserInteraction(defaultAllowUserInteraction);
+        }
+    }
+
+    @Test
+    public abstract void testUseCaches();
+
+    @Test
+    public abstract void testDefaultUseCaches();
+
+    @Test
+    public abstract void testIfModifiedSince() throws IOException;
+
+    @Test
+    public abstract void testRequestProperty();
+
+    @Test
+    public abstract void testConnect() throws IOException;
+
+    @Test
+    public abstract void testGetHeaderEntryOnOutOfRange();
+
+    void testGetHeaderFieldByName(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "value";
+        testHeader(adapter, name, value, adapter::getHeaderField, value);
+    }
+
+    void testGetHeaderFields(SpringResourceURLConnectionAdapter adapter) {
+        assertSame(emptyMap(), adapter.getHeaderFields());
+        String name = "name";
+        String value = "value";
+        adapter.addHeader(name, value);
+        assertEquals(singletonMap(name, asList(value)), adapter.getHeaderFields());
+    }
+
     void testGetPermission(URLConnection urlConnection) throws IOException {
         assertEquals(new AllPermission(), urlConnection.getPermission());
     }
