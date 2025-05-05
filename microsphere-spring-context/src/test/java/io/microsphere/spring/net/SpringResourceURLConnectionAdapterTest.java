@@ -18,7 +18,6 @@ package io.microsphere.spring.net;
 
 
 import org.junit.Before;
-import org.junit.Test;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -88,171 +87,170 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
 
     }
 
-    @Test
+    @Override
     public void testConnectTimeout() {
         testConnectTimeout(this.readonly);
         testConnectTimeout(this.writable);
         testConnectTimeout(this.notFound);
     }
 
-
-    @Test
+    @Override
     public void testReadTimeout() {
         testReadTimeout(this.readonly);
         testReadTimeout(this.writable);
         testReadTimeout(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetURL() {
         assertSame(this.readonlyURL, this.readonly.getURL());
         assertSame(this.writableURL, this.writable.getURL());
         assertSame(this.notFoundURL, this.notFound.getURL());
     }
 
-    @Test
+    @Override
     public void testGetContentLength() throws IOException {
         assertEquals(this.readonlyResource.contentLength(), this.readonly.getContentLength());
         assertEquals(this.writableResource.contentLength(), this.writable.getContentLength());
     }
 
-    @Test
+    @Override
     public void testGetContentLengthOnNotFound() {
         assertEquals(-1L, this.notFound.getContentLength());
     }
 
-    @Test
+    @Override
     public void testGetContentLengthLong() throws IOException {
         assertEquals(this.readonlyResource.contentLength(), this.readonly.getContentLengthLong());
         assertEquals(this.writableResource.contentLength(), this.writable.getContentLengthLong());
     }
 
-    @Test
+    @Override
     public void testGetContentLengthLongOnNotFound() {
         assertEquals(-1L, this.notFound.getContentLengthLong());
     }
 
-    @Test
+    @Override
     public void testGetContentType() {
         assertNull(this.readonly.getContentType());
         assertEquals("text/plain", this.writable.getContentType());
         assertNull(this.notFound.getContentType());
     }
 
-    @Test
+    @Override
     public void testGetContentEncoding() {
         assertNull(this.readonly.getContentEncoding());
         assertNull(this.writable.getContentEncoding());
         assertNull(this.notFound.getContentEncoding());
     }
 
-    @Test
+    @Override
     public void testGetExpiration() {
         assertEquals(0, this.readonly.getExpiration());
         assertEquals(0, this.writable.getExpiration());
         assertEquals(0, this.notFound.getExpiration());
     }
 
-    @Test
+    @Override
     public void testGetDate() {
         assertEquals(0, this.readonly.getDate());
         assertEquals(0, this.writable.getDate());
         assertEquals(0, this.notFound.getDate());
     }
 
-    @Test
+    @Override
     public void testGetLastModified() throws IOException {
         assertEquals(this.readonlyResource.lastModified(), this.readonly.getLastModified());
         assertEquals(this.writableResource.lastModified(), this.writable.getLastModified());
     }
 
-    @Test
+    @Override
     public void testGetLastModifiedOnNotFound() {
         assertEquals(0L, this.notFound.getLastModified());
     }
 
-    @Test
+    @Override
     public void testGetHeaderField() {
         testGetHeaderFieldByName(this.readonly);
         testGetHeaderFieldByName(this.writable);
         testGetHeaderFieldByName(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetHeaderFields() {
         testGetHeaderFields(this.readonly);
         testGetHeaderFields(this.writable);
         testGetHeaderFields(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetHeaderFieldInt() {
         testGetHeaderFieldInt(this.readonly);
         testGetHeaderFieldInt(this.writable);
         testGetHeaderFieldInt(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetHeaderFieldLong() {
         testGetHeaderFieldLong(this.readonly);
         testGetHeaderFieldLong(this.writable);
         testGetHeaderFieldLong(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetHeaderFieldDate() {
         testGetHeaderFieldDate(this.readonly);
         testGetHeaderFieldDate(this.writable);
         testGetHeaderFieldDate(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetHeaderFieldKey() {
         testGetHeaderFieldKey(this.readonly);
         testGetHeaderFieldKey(this.writable);
         testGetHeaderFieldKey(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetContent() throws IOException {
         assertNotNull(this.writable.getContent());
     }
 
-    @Test(expected = IOException.class)
+    @Override
     public void testGetContentOnIOException() throws IOException {
         this.readonly.getContent();
     }
 
-    @Test(expected = IOException.class)
+    @Override
     public void testGetContentOnNotFoundException() throws IOException {
         this.notFound.getContent();
     }
 
-    @Test
+    @Override
     public void testGetContentWithClass() throws IOException {
         assertNotNull(this.writable.getContent(ofArray(InputStream.class)));
         assertNull(this.writable.getContent(ofArray(String.class)));
     }
 
-    @Test(expected = IOException.class)
+    @Override
     public void testGetContentWithClassOnIOException() throws IOException {
         this.readonly.getContent(ofArray(InputStream.class));
     }
 
-    @Test
+    @Override
     public void testGetPermission() throws IOException {
         testGetPermission(this.readonly);
         testGetPermission(this.writable);
         testGetPermission(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetInputStream() throws IOException {
         testGetInputStream(this.readonly);
         testGetInputStream(this.writable);
     }
 
-    @Test(expected = IOException.class)
+    @Override
     public void testGetInputStreamOnIOException() throws IOException {
         this.notFound.getInputStream();
     }
@@ -271,31 +269,31 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
         assertEquals(singletonMap(name, asList(value)), adapter.getHeaderFields());
     }
 
-    @Test
+    @Override
     public void testGetHeaderFieldByIndex() {
         testGetHeaderFieldByIndex(this.readonly);
         testGetHeaderFieldByIndex(this.writable);
     }
 
-    @Test
+    @Override
     public void testGetOutputStream() throws IOException {
         try (OutputStream outputStream = this.writable.getOutputStream()) {
             assertNotNull(outputStream);
         }
     }
 
-    @Test(expected = IOException.class)
+    @Override
     public void testGetOutputStreamOnIOException() throws IOException {
         this.readonly.getOutputStream();
     }
 
-    @Test
+    @Override
     public void testToString() {
         assertNotNull(this.readonly.toString());
         assertNotNull(this.writable.toString());
     }
 
-    @Test
+    @Override
     public void testDoInput() {
         assertFalse(this.writable.getDoOutput());
         this.writable.setDoOutput(true);
@@ -305,7 +303,7 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
         assertFalse(this.writable.getDoOutput());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Override
     public void testDoInputOnIOException() {
         assertFalse(this.readonly.getDoOutput());
         this.readonly.setDoOutput(false);
@@ -313,13 +311,13 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
         this.readonly.setDoOutput(true);
     }
 
-    @Test
+    @Override
     public void testAllowUserInteraction() {
         testAllowUserInteraction(this.readonly);
         testAllowUserInteraction(this.writable);
     }
 
-    @Test
+    @Override
     public void testDefaultAllowUserInteraction() {
         boolean defaultAllowUserInteraction = getDefaultAllowUserInteraction();
         try {
@@ -331,42 +329,42 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
         }
     }
 
-    @Test
+    @Override
     public void testUseCaches() {
         testUseCaches(this.readonly);
         testUseCaches(this.writable);
         testUseCaches(this.notFound);
     }
 
-    @Test
+    @Override
     public void testDefaultUseCaches() {
         testDefaultUseCaches(this.readonly);
         testDefaultUseCaches(this.writable);
         testDefaultUseCaches(this.notFound);
     }
 
-    @Test
+    @Override
     public void testIfModifiedSince() throws IOException {
         testIfModifiedSince(this.readonly);
         testIfModifiedSince(this.writable);
         testIfModifiedSince(this.notFound);
     }
 
-    @Test
+    @Override
     public void testRequestProperty() {
         testRequestProperty(this.readonly);
         testRequestProperty(this.writable);
         testRequestProperty(this.notFound);
     }
 
-    @Test
+    @Override
     public void testConnect() throws IOException {
         testConnect(this.readonly);
         testConnect(this.writable);
         testConnect(this.notFound);
     }
 
-    @Test
+    @Override
     public void testGetHeaderEntryOnOutOfRange() {
         testGetHeaderEntryOnOutOfRange(this.readonly);
         testGetHeaderEntryOnOutOfRange(this.writable);
