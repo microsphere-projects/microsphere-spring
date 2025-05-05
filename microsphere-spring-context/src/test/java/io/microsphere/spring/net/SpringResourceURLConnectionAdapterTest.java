@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.AllPermission;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
@@ -66,13 +67,19 @@ public class SpringResourceURLConnectionAdapterTest {
 
     private URL writableURL;
 
+    private URL notFoundURL;
+
     private Resource readonlyResource;
 
     private Resource writableResource;
 
+    private Resource notFoundResource;
+
     private SpringResourceURLConnectionAdapter writable;
 
     private SpringResourceURLConnectionAdapter readonly;
+
+    private SpringResourceURLConnectionAdapter notFound;
 
     @Before
     public void before() throws Throwable {
@@ -84,48 +91,33 @@ public class SpringResourceURLConnectionAdapterTest {
         this.writableResource = new FileSystemResource(this.writableURL.getPath());
         assertTrue(this.writableResource.exists());
         this.writable = new SpringResourceURLConnectionAdapter(this.writableURL, this.writableResource);
+
+        this.notFoundURL = getURL("file:///not-found");
+        this.notFoundResource = new UrlResource(this.notFoundURL);
+        this.notFound = new SpringResourceURLConnectionAdapter(this.notFoundURL, this.notFoundResource);
+
     }
 
     @Test
-    public void testConnectTimeoutForReadonly() {
+    public void testConnectTimeout() {
         testConnectTimeout(this.readonly);
-    }
-
-    @Test
-    public void testConnectTimeoutForWritable() {
         testConnectTimeout(this.writable);
+        testConnectTimeout(this.notFound);
     }
 
-    private void testConnectTimeout(URLConnection urlConnection) {
-        int timeout = 0;
-        assertEquals(timeout, urlConnection.getConnectTimeout());
-
-        urlConnection.setConnectTimeout(timeout);
-        assertEquals(timeout, urlConnection.getConnectTimeout());
-    }
 
     @Test
-    public void testReadTimeoutForReadonly() {
+    public void testReadTimeout() {
         testReadTimeout(this.readonly);
-    }
-
-    @Test
-    public void testReadTimeoutForWritable() {
         testReadTimeout(this.writable);
-    }
-
-    private void testReadTimeout(URLConnection urlConnection) {
-        int timeout = 0;
-        assertEquals(timeout, urlConnection.getReadTimeout());
-
-        urlConnection.setReadTimeout(timeout);
-        assertEquals(timeout, urlConnection.getReadTimeout());
+        testReadTimeout(this.notFound);
     }
 
     @Test
     public void testGetURL() {
         assertSame(this.readonlyURL, this.readonly.getURL());
         assertSame(this.writableURL, this.writable.getURL());
+        assertSame(this.notFoundURL, this.notFound.getURL());
     }
 
     @Test
@@ -135,33 +127,47 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
+    public void testGetContentLengthOnNotFound() {
+        assertEquals(-1L, this.notFound.getContentLength());
+    }
+
+    @Test
     public void testGetContentLengthLong() throws IOException {
         assertEquals(this.readonlyResource.contentLength(), this.readonly.getContentLengthLong());
         assertEquals(this.writableResource.contentLength(), this.writable.getContentLengthLong());
     }
 
     @Test
+    public void testGetContentLengthLongOnNotFound() {
+        assertEquals(-1L, this.notFound.getContentLengthLong());
+    }
+
+    @Test
     public void testGetContentType() {
         assertNull(this.readonly.getContentType());
         assertEquals("text/plain", this.writable.getContentType());
+        assertNull(this.notFound.getContentType());
     }
 
     @Test
     public void testGetContentEncoding() {
         assertNull(this.readonly.getContentEncoding());
         assertNull(this.writable.getContentEncoding());
+        assertNull(this.notFound.getContentEncoding());
     }
 
     @Test
     public void testGetExpiration() {
         assertEquals(0, this.readonly.getExpiration());
         assertEquals(0, this.writable.getExpiration());
+        assertEquals(0, this.notFound.getExpiration());
     }
 
     @Test
     public void testGetDate() {
         assertEquals(0, this.readonly.getDate());
         assertEquals(0, this.writable.getDate());
+        assertEquals(0, this.notFound.getDate());
     }
 
     @Test
@@ -171,47 +177,51 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
+    public void testGetLastModifiedOnNotFound() {
+        assertEquals(0L, this.notFound.getLastModified());
+    }
+
+    @Test
     public void testGetHeaderField() {
         testGetHeaderFieldByName(this.readonly);
         testGetHeaderFieldByName(this.writable);
-    }
-
-    void testGetHeaderFieldByName(SpringResourceURLConnectionAdapter adapter) {
-        String name = "name";
-        String value = "value";
-        testHeader(adapter, name, value, adapter::getHeaderField, value);
+        testGetHeaderFieldByName(this.notFound);
     }
 
     @Test
     public void testGetHeaderFields() {
         testGetHeaderFields(this.readonly);
         testGetHeaderFields(this.writable);
+        testGetHeaderFields(this.notFound);
     }
 
     @Test
     public void testGetHeaderFieldInt() {
         testGetHeaderFieldInt(this.readonly);
         testGetHeaderFieldInt(this.writable);
+        testGetHeaderFieldInt(this.notFound);
     }
 
     @Test
     public void testGetHeaderFieldLong() {
         testGetHeaderFieldLong(this.readonly);
         testGetHeaderFieldLong(this.writable);
+        testGetHeaderFieldLong(this.notFound);
     }
 
     @Test
     public void testGetHeaderFieldDate() {
         testGetHeaderFieldDate(this.readonly);
         testGetHeaderFieldDate(this.writable);
+        testGetHeaderFieldDate(this.notFound);
     }
 
     @Test
     public void testGetHeaderFieldKey() {
         testGetHeaderFieldKey(this.readonly);
         testGetHeaderFieldKey(this.writable);
+        testGetHeaderFieldKey(this.notFound);
     }
-
 
     @Test
     public void testGetContent() throws IOException {
@@ -220,7 +230,12 @@ public class SpringResourceURLConnectionAdapterTest {
 
     @Test(expected = IOException.class)
     public void testGetContentOnIOException() throws IOException {
-        assertNotNull(this.readonly.getContent());
+        this.readonly.getContent();
+    }
+
+    @Test(expected = IOException.class)
+    public void testGetContentOnNotFoundException() throws IOException {
+        this.notFound.getContent();
     }
 
     @Test
@@ -235,13 +250,31 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
-    public void testGetPermission() {
+    public void testGetPermission() throws IOException {
+        testGetPermission(this.readonly);
+        testGetPermission(this.writable);
+        testGetPermission(this.notFound);
     }
 
     @Test
     public void testGetInputStream() throws IOException {
         testGetInputStream(this.readonly);
         testGetInputStream(this.writable);
+    }
+
+    @Test(expected = IOException.class)
+    public void testGetInputStreamOnIOException() throws IOException {
+        this.notFound.getInputStream();
+    }
+
+    void testGetPermission(URLConnection urlConnection) throws IOException {
+        assertEquals(new AllPermission(), urlConnection.getPermission());
+    }
+
+    void testGetHeaderFieldByName(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "value";
+        testHeader(adapter, name, value, adapter::getHeaderField, value);
     }
 
     void testGetHeaderFields(SpringResourceURLConnectionAdapter adapter) {
@@ -288,6 +321,8 @@ public class SpringResourceURLConnectionAdapterTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testDoInputOnIOException() {
+        assertFalse(this.readonly.getDoOutput());
+        this.readonly.setDoOutput(false);
         assertFalse(this.readonly.getDoOutput());
         this.readonly.setDoOutput(true);
     }
@@ -347,6 +382,28 @@ public class SpringResourceURLConnectionAdapterTest {
         testGetHeaderEntryOnOutOfRange(this.writable);
     }
 
+    void testConnectTimeout(URLConnection urlConnection) {
+        int timeout = urlConnection.getConnectTimeout();
+        try {
+            assertEquals(0, urlConnection.getConnectTimeout());
+            urlConnection.setConnectTimeout(100);
+            assertEquals(100, urlConnection.getConnectTimeout());
+        } finally {
+            urlConnection.setConnectTimeout(timeout);
+        }
+    }
+
+    void testReadTimeout(URLConnection urlConnection) {
+        int timeout = urlConnection.getReadTimeout();
+        try {
+            assertEquals(0, urlConnection.getReadTimeout());
+            urlConnection.setReadTimeout(100);
+            assertEquals(100, urlConnection.getReadTimeout());
+        } finally {
+            urlConnection.setReadTimeout(timeout);
+        }
+    }
+
     void testGetHeaderEntryOnOutOfRange(SpringResourceURLConnectionAdapter adapter) {
         assertNull(adapter.getHeaderEntry(-1));
         assertNull(adapter.getHeaderEntry(1));
@@ -392,6 +449,9 @@ public class SpringResourceURLConnectionAdapterTest {
         for (int i = 0; i < times; i++) {
             assertEquals("name" + i, adapter.getHeaderFieldKey(i));
         }
+
+        assertNull(adapter.getHeaderFieldKey(-1));
+        assertNull(adapter.getHeaderFieldKey(times));
     }
 
     void testGetHeaderFieldByIndex(SpringResourceURLConnectionAdapter adapter) {
@@ -405,6 +465,9 @@ public class SpringResourceURLConnectionAdapterTest {
         for (int i = 0; i < times; i++) {
             assertEquals("value" + i, adapter.getHeaderField(i));
         }
+
+        assertNull(adapter.getHeaderField(-1));
+        assertNull(adapter.getHeaderField(times));
     }
 
     <T> void testHeader(SpringResourceURLConnectionAdapter adapter, String name, String value, Function<String, T> getFunction, T expected) {
