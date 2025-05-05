@@ -158,8 +158,8 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
 
     @Override
     public String getRequestProperty(String key) {
-        MultiValueMap<String, String> requestProperties = this.requestProperties;
-        return requestProperties == null ? null : requestProperties.getFirst(key);
+        MultiValueMap<String, String> requestProperties = doGetRequestProperties();
+        return requestProperties.getFirst(key);
     }
 
     @Override
@@ -170,6 +170,10 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
     @Override
     public void connect() throws IOException {
         super.connected = true;
+    }
+
+    public void disconnect() throws IOException {
+        super.connected = false;
     }
 
     public boolean isConnected() {
@@ -185,18 +189,17 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
     }
 
     protected Map.Entry<String, List<String>> getHeaderEntry(int n) {
-        Set<Map.Entry<String, List<String>>> entries = getHeaderEntries();
+        MultiValueMap<String, String> headers = getHeaders();
+        if (n < 0 || n > headers.size() - 1) { // out of the index range
+            return null;
+        }
+        Set<Map.Entry<String, List<String>>> entries = headers.entrySet();
         Iterator<Map.Entry<String, List<String>>> iterator = entries.iterator();
         Map.Entry<String, List<String>> entry = null;
         for (int i = 0; i <= n & iterator.hasNext(); i++) {
             entry = iterator.next();
         }
         return entry;
-    }
-
-    protected Set<Map.Entry<String, List<String>>> getHeaderEntries() {
-        MultiValueMap<String, String> headers = getHeaders();
-        return headers.entrySet();
     }
 
     protected MultiValueMap<String, String> getHeaders() {
