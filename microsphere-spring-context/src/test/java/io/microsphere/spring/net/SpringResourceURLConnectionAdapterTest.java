@@ -28,19 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
-import java.security.AllPermission;
-import java.sql.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
-import static io.microsphere.collection.Lists.ofList;
-import static io.microsphere.reflect.FieldUtils.getFieldValue;
-import static io.microsphere.reflect.FieldUtils.setFieldValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ClassLoaderUtils.getClassResource;
-import static java.lang.System.currentTimeMillis;
 import static java.net.URLConnection.getDefaultAllowUserInteraction;
 import static java.net.URLConnection.setDefaultAllowUserInteraction;
 import static java.util.Arrays.asList;
@@ -61,7 +51,7 @@ import static org.springframework.util.ResourceUtils.getURL;
  * @see SpringResourceURLConnectionAdapter
  * @since 1.0.0
  */
-public class SpringResourceURLConnectionAdapterTest {
+public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLConnectionTest {
 
     private URL readonlyURL;
 
@@ -267,10 +257,6 @@ public class SpringResourceURLConnectionAdapterTest {
         this.notFound.getInputStream();
     }
 
-    void testGetPermission(URLConnection urlConnection) throws IOException {
-        assertEquals(new AllPermission(), urlConnection.getPermission());
-    }
-
     void testGetHeaderFieldByName(SpringResourceURLConnectionAdapter adapter) {
         String name = "name";
         String value = "value";
@@ -387,198 +373,4 @@ public class SpringResourceURLConnectionAdapterTest {
         testGetHeaderEntryOnOutOfRange(this.notFound);
     }
 
-    void testConnectTimeout(URLConnection urlConnection) {
-        int timeout = urlConnection.getConnectTimeout();
-        try {
-            assertEquals(0, urlConnection.getConnectTimeout());
-            urlConnection.setConnectTimeout(100);
-            assertEquals(100, urlConnection.getConnectTimeout());
-        } finally {
-            urlConnection.setConnectTimeout(timeout);
-        }
-    }
-
-    void testReadTimeout(URLConnection urlConnection) {
-        int timeout = urlConnection.getReadTimeout();
-        try {
-            assertEquals(0, urlConnection.getReadTimeout());
-            urlConnection.setReadTimeout(100);
-            assertEquals(100, urlConnection.getReadTimeout());
-        } finally {
-            urlConnection.setReadTimeout(timeout);
-        }
-    }
-
-    void testGetHeaderEntryOnOutOfRange(SpringResourceURLConnectionAdapter adapter) {
-        assertNull(adapter.getHeaderEntry(-1));
-        assertNull(adapter.getHeaderEntry(1));
-    }
-
-    void testGetHeaderFieldInt(SpringResourceURLConnectionAdapter adapter) {
-        String name = "name";
-        String value = "1";
-        int expected = 1;
-
-        assertEquals(0, adapter.getHeaderFieldInt(name, 0));
-        adapter.addHeader(name, value);
-        assertEquals(expected, adapter.getHeaderFieldInt(name, 0));
-    }
-
-    void testGetHeaderFieldLong(SpringResourceURLConnectionAdapter adapter) {
-        String name = "name";
-        String value = "1";
-        int expected = 1;
-
-        assertEquals(0, adapter.getHeaderFieldLong(name, 0));
-        adapter.addHeader(name, value);
-        assertEquals(expected, adapter.getHeaderFieldLong(name, 0));
-    }
-
-    void testGetHeaderFieldDate(SpringResourceURLConnectionAdapter adapter) {
-        String name = "name";
-        String value = "Sat, 12 Aug 1995 13:30:00 GMT+0430";
-
-        assertEquals(0, adapter.getHeaderFieldDate(name, 0));
-        adapter.addHeader(name, value);
-        assertEquals(Date.parse(value), adapter.getHeaderFieldDate(name, 0));
-    }
-
-    void testGetHeaderFieldKey(SpringResourceURLConnectionAdapter adapter) {
-        int times = 9;
-        for (int i = 0; i < times; i++) {
-            String name = "name" + i;
-            String value = "value" + i;
-            adapter.addHeader(name, value);
-        }
-
-        for (int i = 0; i < times; i++) {
-            assertEquals("name" + i, adapter.getHeaderFieldKey(i));
-        }
-
-        assertNull(adapter.getHeaderFieldKey(-1));
-        assertNull(adapter.getHeaderFieldKey(times));
-    }
-
-    void testGetHeaderFieldByIndex(SpringResourceURLConnectionAdapter adapter) {
-        int times = 9;
-        for (int i = 0; i < times; i++) {
-            String name = "name" + i;
-            String value = "value" + i;
-            adapter.addHeader(name, value);
-        }
-
-        for (int i = 0; i < times; i++) {
-            assertEquals("value" + i, adapter.getHeaderField(i));
-        }
-
-        assertNull(adapter.getHeaderField(-1));
-        assertNull(adapter.getHeaderField(times));
-    }
-
-    <T> void testHeader(SpringResourceURLConnectionAdapter adapter, String name, String value, Function<String, T> getFunction, T expected) {
-        adapter.addHeader(name, value);
-        assertEquals(expected, getFunction.apply(name));
-    }
-
-    void testConnect(SpringResourceURLConnectionAdapter adapter) throws IOException {
-        try {
-            assertFalse(adapter.isConnected());
-            adapter.connect();
-            assertTrue(adapter.isConnected());
-        } finally {
-            adapter.disconnect();
-        }
-    }
-
-    void testGetInputStream(URLConnection urlConnection) throws IOException {
-        try (InputStream inputStream = urlConnection.getInputStream()) {
-            assertNotNull(inputStream);
-        }
-    }
-
-    void testAllowUserInteraction(URLConnection urlConnection) {
-        boolean defaultAllowUserInteraction = getDefaultAllowUserInteraction();
-        try {
-            assertEquals(defaultAllowUserInteraction, urlConnection.getAllowUserInteraction());
-            urlConnection.setAllowUserInteraction(!defaultAllowUserInteraction);
-            assertEquals(!defaultAllowUserInteraction, urlConnection.getAllowUserInteraction());
-        } finally {
-            urlConnection.setAllowUserInteraction(defaultAllowUserInteraction);
-        }
-    }
-
-    void testUseCaches(URLConnection urlConnection) {
-        boolean useCaches = urlConnection.getUseCaches();
-        boolean defaultUseCaches = urlConnection.getDefaultUseCaches();
-        try {
-            assertEquals(defaultUseCaches, useCaches);
-            urlConnection.setUseCaches(!defaultUseCaches);
-            assertEquals(!defaultUseCaches, urlConnection.getUseCaches());
-        } finally {
-            urlConnection.setUseCaches(useCaches);
-        }
-    }
-
-    void testDefaultUseCaches(URLConnection urlConnection) {
-        boolean defaultUseCaches = urlConnection.getDefaultUseCaches();
-        try {
-            urlConnection.setDefaultUseCaches(!defaultUseCaches);
-            assertEquals(!defaultUseCaches, urlConnection.getDefaultUseCaches());
-        } finally {
-            urlConnection.setUseCaches(defaultUseCaches);
-        }
-    }
-
-    void testIfModifiedSince(URLConnection urlConnection) throws IOException {
-        long ifModifiedSince = urlConnection.getIfModifiedSince();
-        String connectedFieldName = "connected";
-        boolean connected = getFieldValue(urlConnection, connectedFieldName, boolean.class);
-        try {
-            assertEquals(0, ifModifiedSince);
-            long currentTimeMillis = currentTimeMillis();
-            urlConnection.setIfModifiedSince(currentTimeMillis);
-            assertEquals(currentTimeMillis, urlConnection.getIfModifiedSince());
-
-            urlConnection.connect();
-            urlConnection.setIfModifiedSince(currentTimeMillis);
-        } catch (IllegalStateException e) {
-            assertNotNull(e);
-        } finally {
-            setFieldValue(urlConnection, connectedFieldName, connected);
-            urlConnection.setIfModifiedSince(ifModifiedSince);
-        }
-    }
-
-    void testRequestProperty(URLConnection urlConnection) {
-        Map<String, List<String>> requestProperties = urlConnection.getRequestProperties();
-        assertTrue(requestProperties.isEmpty());
-        String key = "test-key";
-        String value = "test-value";
-
-        urlConnection.setRequestProperty(key, value);
-
-        requestProperties = urlConnection.getRequestProperties();
-        assertEquals(1, requestProperties.size());
-        assertTrue(requestProperties.containsKey(key));
-        assertEquals(ofList(value), requestProperties.get(key));
-        assertEquals(value, urlConnection.getRequestProperty(key));
-
-        urlConnection.addRequestProperty(key, value);
-        assertEquals(1, requestProperties.size());
-        assertTrue(requestProperties.containsKey(key));
-        assertEquals(ofList(value, value), requestProperties.get(key));
-        assertEquals(value, urlConnection.getRequestProperty(key));
-    }
-
-    void testConnect(URLConnection urlConnection) throws IOException {
-        String connectedFieldName = "connected";
-        boolean connected = getFieldValue(urlConnection, connectedFieldName, boolean.class);
-        try {
-            assertFalse(connected);
-            urlConnection.connect();
-            assertTrue(getFieldValue(urlConnection, connectedFieldName, boolean.class));
-        } finally {
-            setFieldValue(urlConnection, connectedFieldName, connected);
-        }
-    }
 }
