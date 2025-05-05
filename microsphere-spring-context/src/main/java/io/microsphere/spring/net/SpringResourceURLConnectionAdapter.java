@@ -27,13 +27,13 @@ import java.io.OutputStream;
 import java.net.FileNameMap;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.first;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
@@ -89,6 +89,16 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
     }
 
     @Override
+    public Object getContent() throws IOException {
+        return super.getContent();
+    }
+
+    @Override
+    public Object getContent(Class[] classes) throws IOException {
+        return super.getContent(classes);
+    }
+
+    @Override
     public void setDoOutput(boolean dooutput) {
         if (writableResource == null && dooutput) {
             throw new UnsupportedOperationException("The resource does not support output!");
@@ -132,7 +142,7 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
     @Override
     public OutputStream getOutputStream() throws IOException {
         if (writableResource == null) {
-            throw new UnsupportedOperationException("The resource does not support output!");
+            throw new IOException("The resource does not support output!");
         }
         return writableResource.getOutputStream();
     }
@@ -140,7 +150,9 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
     @Override
     public void setRequestProperty(String key, String value) {
         MultiValueMap<String, String> requestProperties = doGetRequestProperties();
-        requestProperties.put(key, asList(value));
+        List<String> values = new ArrayList<>(1);
+        values.add(value);
+        requestProperties.put(key, values);
     }
 
     @Override
@@ -165,9 +177,16 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
         super.connected = true;
     }
 
+    public boolean isConnected() {
+        return super.connected;
+    }
+
     @Override
     public String toString() {
-        return getClass().getName() + "@" + getURL();
+        return "SpringResourceURLConnectionAdapter{" +
+                "url=" + url +
+                ", resource=" + resource +
+                '}';
     }
 
     protected Map.Entry<String, List<String>> getHeaderEntry(int n) {
