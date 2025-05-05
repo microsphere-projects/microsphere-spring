@@ -469,74 +469,6 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
-    public void testSetDefaultRequestProperty() {
-    }
-
-    @Test
-    public void testGetDefaultRequestProperty() {
-    }
-
-    @Test
-    public void testSetContentHandlerFactory() {
-    }
-
-    @Test
-    public void testGetContentHandler() {
-    }
-
-    @Test
-    public void testGuessContentTypeFromName() {
-    }
-
-    @Test
-    public void testGuessContentTypeFromStream() {
-    }
-
-    @Test
-    public void testTestSetDoOutput() {
-    }
-
-    @Test
-    public void testTestGetHeaderField1() {
-    }
-
-    @Test
-    public void testTestGetHeaderFields() {
-    }
-
-    @Test
-    public void testTestGetHeaderFieldKey() {
-    }
-
-    @Test
-    public void testTestGetHeaderField2() {
-    }
-
-    @Test
-    public void testTestGetInputStream() {
-    }
-
-    @Test
-    public void testTestGetOutputStream() {
-    }
-
-    @Test
-    public void testTestSetRequestProperty() {
-    }
-
-    @Test
-    public void testTestAddRequestProperty() {
-    }
-
-    @Test
-    public void testTestGetRequestProperty() {
-    }
-
-    @Test
-    public void testTestGetRequestProperties() {
-    }
-
-    @Test
     public void testConnect() throws IOException {
         testConnect(this.readonly);
         testConnect(this.writable);
@@ -546,9 +478,5 @@ public class SpringResourceURLConnectionAdapterTest {
         assertFalse(adapter.isConnected());
         adapter.connect();
         assertTrue(adapter.isConnected());
-    }
-
-    @Test
-    public void testToString1() {
     }
 }
