@@ -469,18 +469,6 @@ public class SpringResourceURLConnectionAdapterTest {
     }
 
     @Test
-    public void testAddRequestProperty() {
-    }
-
-    @Test
-    public void testGetRequestProperty() {
-    }
-
-    @Test
-    public void testGetRequestProperties() {
-    }
-
-    @Test
     public void testSetDefaultRequestProperty() {
     }
 
