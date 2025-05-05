@@ -188,28 +188,10 @@ public class SpringResourceURLConnectionAdapterTest {
         testGetHeaderFields(this.writable);
     }
 
-    void testGetHeaderFields(SpringResourceURLConnectionAdapter adapter) {
-        assertSame(emptyMap(), adapter.getHeaderFields());
-        String name = "name";
-        String value = "value";
-        adapter.addHeader(name, value);
-        assertEquals(singletonMap(name, asList(value)), adapter.getHeaderFields());
-    }
-
     @Test
     public void testGetHeaderFieldInt() {
         testGetHeaderFieldInt(this.readonly);
         testGetHeaderFieldInt(this.writable);
-    }
-
-    void testGetHeaderFieldInt(SpringResourceURLConnectionAdapter adapter) {
-        String name = "name";
-        String value = "1";
-        int expected = 1;
-
-        assertEquals(0, adapter.getHeaderFieldInt(name, 0));
-        adapter.addHeader(name, value);
-        assertEquals(expected, adapter.getHeaderFieldInt(name, 0));
     }
 
     @Test
@@ -218,29 +200,10 @@ public class SpringResourceURLConnectionAdapterTest {
         testGetHeaderFieldLong(this.writable);
     }
 
-    void testGetHeaderFieldLong(SpringResourceURLConnectionAdapter adapter) {
-        String name = "name";
-        String value = "1";
-        int expected = 1;
-
-        assertEquals(0, adapter.getHeaderFieldLong(name, 0));
-        adapter.addHeader(name, value);
-        assertEquals(expected, adapter.getHeaderFieldLong(name, 0));
-    }
-
     @Test
     public void testGetHeaderFieldDate() {
         testGetHeaderFieldDate(this.readonly);
         testGetHeaderFieldDate(this.writable);
-    }
-
-    void testGetHeaderFieldDate(SpringResourceURLConnectionAdapter adapter) {
-        String name = "name";
-        String value = "Sat, 12 Aug 1995 13:30:00 GMT+0430";
-
-        assertEquals(0, adapter.getHeaderFieldDate(name, 0));
-        adapter.addHeader(name, value);
-        assertEquals(Date.parse(value), adapter.getHeaderFieldDate(name, 0));
     }
 
     @Test
@@ -249,42 +212,6 @@ public class SpringResourceURLConnectionAdapterTest {
         testGetHeaderFieldKey(this.writable);
     }
 
-    void testGetHeaderFieldKey(SpringResourceURLConnectionAdapter adapter) {
-        int times = 9;
-        for (int i = 0; i < times; i++) {
-            String name = "name" + i;
-            String value = "value" + i;
-            adapter.addHeader(name, value);
-        }
-
-        for (int i = 0; i < times; i++) {
-            assertEquals("name" + i, adapter.getHeaderFieldKey(i));
-        }
-    }
-
-    @Test
-    public void testGetHeaderFieldByIndex() {
-        testGetHeaderFieldByIndex(this.readonly);
-        testGetHeaderFieldByIndex(this.writable);
-    }
-
-    void testGetHeaderFieldByIndex(SpringResourceURLConnectionAdapter adapter) {
-        int times = 9;
-        for (int i = 0; i < times; i++) {
-            String name = "name" + i;
-            String value = "value" + i;
-            adapter.addHeader(name, value);
-        }
-
-        for (int i = 0; i < times; i++) {
-            assertEquals("value" + i, adapter.getHeaderField(i));
-        }
-    }
-
-    <T> void testHeader(SpringResourceURLConnectionAdapter adapter, String name, String value, Function<String, T> getFunction, T expected) {
-        adapter.addHeader(name, value);
-        assertEquals(expected, getFunction.apply(name));
-    }
 
     @Test
     public void testGetContent() throws IOException {
@@ -317,10 +244,18 @@ public class SpringResourceURLConnectionAdapterTest {
         testGetInputStream(this.writable);
     }
 
-    void testGetInputStream(SpringResourceURLConnectionAdapter adapter) throws IOException {
-        try (InputStream inputStream = adapter.getInputStream()) {
-            assertNotNull(inputStream);
-        }
+    void testGetHeaderFields(SpringResourceURLConnectionAdapter adapter) {
+        assertSame(emptyMap(), adapter.getHeaderFields());
+        String name = "name";
+        String value = "value";
+        adapter.addHeader(name, value);
+        assertEquals(singletonMap(name, asList(value)), adapter.getHeaderFields());
+    }
+
+    @Test
+    public void testGetHeaderFieldByIndex() {
+        testGetHeaderFieldByIndex(this.readonly);
+        testGetHeaderFieldByIndex(this.writable);
     }
 
     @Test
@@ -363,12 +298,6 @@ public class SpringResourceURLConnectionAdapterTest {
         testAllowUserInteraction(this.writable);
     }
 
-    void testAllowUserInteraction(SpringResourceURLConnectionAdapter adapter) {
-        assertEquals(getDefaultAllowUserInteraction(), adapter.getAllowUserInteraction());
-        adapter.setAllowUserInteraction(true);
-        assertTrue(adapter.getAllowUserInteraction());
-    }
-
     @Test
     public void testDefaultAllowUserInteraction() {
         boolean defaultAllowUserInteraction = getDefaultAllowUserInteraction();
@@ -387,6 +316,129 @@ public class SpringResourceURLConnectionAdapterTest {
         testUseCaches(this.writable);
     }
 
+
+    @Test
+    public void testDefaultUseCaches() {
+        testDefaultUseCaches(this.readonly);
+        testDefaultUseCaches(this.writable);
+    }
+
+    @Test
+    public void testIfModifiedSince() throws IOException {
+        testIfModifiedSince(this.readonly);
+        testIfModifiedSince(this.writable);
+    }
+
+    @Test
+    public void testRequestProperty() {
+        testRequestProperty(this.readonly);
+        testRequestProperty(this.writable);
+    }
+
+    @Test
+    public void testConnect() throws IOException {
+        testConnect(this.readonly);
+        testConnect(this.writable);
+    }
+
+    @Test
+    public void testGetHeaderEntryOnOutOfRange() {
+        testGetHeaderEntryOnOutOfRange(this.readonly);
+        testGetHeaderEntryOnOutOfRange(this.writable);
+    }
+
+    void testGetHeaderEntryOnOutOfRange(SpringResourceURLConnectionAdapter adapter) {
+        assertNull(adapter.getHeaderEntry(-1));
+        assertNull(adapter.getHeaderEntry(1));
+    }
+
+    void testGetHeaderFieldInt(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "1";
+        int expected = 1;
+
+        assertEquals(0, adapter.getHeaderFieldInt(name, 0));
+        adapter.addHeader(name, value);
+        assertEquals(expected, adapter.getHeaderFieldInt(name, 0));
+    }
+
+    void testGetHeaderFieldLong(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "1";
+        int expected = 1;
+
+        assertEquals(0, adapter.getHeaderFieldLong(name, 0));
+        adapter.addHeader(name, value);
+        assertEquals(expected, adapter.getHeaderFieldLong(name, 0));
+    }
+
+    void testGetHeaderFieldDate(SpringResourceURLConnectionAdapter adapter) {
+        String name = "name";
+        String value = "Sat, 12 Aug 1995 13:30:00 GMT+0430";
+
+        assertEquals(0, adapter.getHeaderFieldDate(name, 0));
+        adapter.addHeader(name, value);
+        assertEquals(Date.parse(value), adapter.getHeaderFieldDate(name, 0));
+    }
+
+    void testGetHeaderFieldKey(SpringResourceURLConnectionAdapter adapter) {
+        int times = 9;
+        for (int i = 0; i < times; i++) {
+            String name = "name" + i;
+            String value = "value" + i;
+            adapter.addHeader(name, value);
+        }
+
+        for (int i = 0; i < times; i++) {
+            assertEquals("name" + i, adapter.getHeaderFieldKey(i));
+        }
+    }
+
+    void testGetHeaderFieldByIndex(SpringResourceURLConnectionAdapter adapter) {
+        int times = 9;
+        for (int i = 0; i < times; i++) {
+            String name = "name" + i;
+            String value = "value" + i;
+            adapter.addHeader(name, value);
+        }
+
+        for (int i = 0; i < times; i++) {
+            assertEquals("value" + i, adapter.getHeaderField(i));
+        }
+    }
+
+    <T> void testHeader(SpringResourceURLConnectionAdapter adapter, String name, String value, Function<String, T> getFunction, T expected) {
+        adapter.addHeader(name, value);
+        assertEquals(expected, getFunction.apply(name));
+    }
+
+    void testConnect(SpringResourceURLConnectionAdapter adapter) throws IOException {
+        try {
+            assertFalse(adapter.isConnected());
+            adapter.connect();
+            assertTrue(adapter.isConnected());
+        } finally {
+            adapter.disconnect();
+        }
+    }
+
+    void testGetInputStream(URLConnection urlConnection) throws IOException {
+        try (InputStream inputStream = urlConnection.getInputStream()) {
+            assertNotNull(inputStream);
+        }
+    }
+
+    void testAllowUserInteraction(URLConnection urlConnection) {
+        boolean defaultAllowUserInteraction = getDefaultAllowUserInteraction();
+        try {
+            assertEquals(defaultAllowUserInteraction, urlConnection.getAllowUserInteraction());
+            urlConnection.setAllowUserInteraction(!defaultAllowUserInteraction);
+            assertEquals(!defaultAllowUserInteraction, urlConnection.getAllowUserInteraction());
+        } finally {
+            urlConnection.setAllowUserInteraction(defaultAllowUserInteraction);
+        }
+    }
+
     void testUseCaches(URLConnection urlConnection) {
         boolean useCaches = urlConnection.getUseCaches();
         boolean defaultUseCaches = urlConnection.getDefaultUseCaches();
@@ -399,12 +451,6 @@ public class SpringResourceURLConnectionAdapterTest {
         }
     }
 
-    @Test
-    public void testDefaultUseCaches() {
-        testDefaultUseCaches(this.readonly);
-        testDefaultUseCaches(this.writable);
-    }
-
     void testDefaultUseCaches(URLConnection urlConnection) {
         boolean defaultUseCaches = urlConnection.getDefaultUseCaches();
         try {
@@ -413,12 +459,6 @@ public class SpringResourceURLConnectionAdapterTest {
         } finally {
             urlConnection.setUseCaches(defaultUseCaches);
         }
-    }
-
-    @Test
-    public void testIfModifiedSince() throws IOException {
-        testIfModifiedSince(this.readonly);
-        testIfModifiedSince(this.writable);
     }
 
     void testIfModifiedSince(URLConnection urlConnection) throws IOException {
@@ -439,12 +479,6 @@ public class SpringResourceURLConnectionAdapterTest {
             setFieldValue(urlConnection, connectedFieldName, connected);
             urlConnection.setIfModifiedSince(ifModifiedSince);
         }
-    }
-
-    @Test
-    public void testRequestProperty() {
-        testRequestProperty(this.readonly);
-        testRequestProperty(this.writable);
     }
 
     void testRequestProperty(URLConnection urlConnection) {
@@ -468,15 +502,15 @@ public class SpringResourceURLConnectionAdapterTest {
         assertEquals(value, urlConnection.getRequestProperty(key));
     }
 
-    @Test
-    public void testConnect() throws IOException {
-        testConnect(this.readonly);
-        testConnect(this.writable);
-    }
-
-    void testConnect(SpringResourceURLConnectionAdapter adapter) throws IOException {
-        assertFalse(adapter.isConnected());
-        adapter.connect();
-        assertTrue(adapter.isConnected());
+    void testConnect(URLConnection urlConnection) throws IOException {
+        String connectedFieldName = "connected";
+        boolean connected = getFieldValue(urlConnection, connectedFieldName, boolean.class);
+        try {
+            assertFalse(connected);
+            urlConnection.connect();
+            assertTrue(getFieldValue(urlConnection, connectedFieldName, boolean.class));
+        } finally {
+            setFieldValue(urlConnection, connectedFieldName, connected);
+        }
     }
 }
