@@ -349,37 +349,42 @@ public class SpringResourceURLConnectionAdapterTest {
     public void testUseCaches() {
         testUseCaches(this.readonly);
         testUseCaches(this.writable);
+        testUseCaches(this.notFound);
     }
-
 
     @Test
     public void testDefaultUseCaches() {
         testDefaultUseCaches(this.readonly);
         testDefaultUseCaches(this.writable);
+        testDefaultUseCaches(this.notFound);
     }
 
     @Test
     public void testIfModifiedSince() throws IOException {
         testIfModifiedSince(this.readonly);
         testIfModifiedSince(this.writable);
+        testIfModifiedSince(this.notFound);
     }
 
     @Test
     public void testRequestProperty() {
         testRequestProperty(this.readonly);
         testRequestProperty(this.writable);
+        testRequestProperty(this.notFound);
     }
 
     @Test
     public void testConnect() throws IOException {
         testConnect(this.readonly);
         testConnect(this.writable);
+        testConnect(this.notFound);
     }
 
     @Test
     public void testGetHeaderEntryOnOutOfRange() {
         testGetHeaderEntryOnOutOfRange(this.readonly);
         testGetHeaderEntryOnOutOfRange(this.writable);
+        testGetHeaderEntryOnOutOfRange(this.notFound);
     }
 
     void testConnectTimeout(URLConnection urlConnection) {
