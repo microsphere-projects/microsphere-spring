@@ -24,7 +24,6 @@ import org.springframework.util.MultiValueMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.FileNameMap;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -70,12 +69,8 @@ class SpringResourceURLConnectionAdapter extends URLConnection {
 
     @Override
     public String getContentType() {
-        FileNameMap fileNameMap = getFileNameMap();
         String fileName = this.resource.getFilename();
-        String contentType = null;
-        if (fileName != null) {
-            contentType = fileNameMap.getContentTypeFor(fileName);
-        }
+        String contentType = guessContentTypeFromName(fileName);
         return contentType == null ? super.getContentType() : contentType;
     }
 
