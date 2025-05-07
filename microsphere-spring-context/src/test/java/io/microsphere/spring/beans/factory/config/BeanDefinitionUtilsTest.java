@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.doGetResolvableType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
@@ -231,6 +232,24 @@ public class BeanDefinitionUtilsTest {
     public void testGetInstanceSupplierOnNull() {
         AbstractBeanDefinition beanDefinition = null;
         assertNull(getInstanceSupplier(beanDefinition));
+    }
+
+    @Test
+    public void testDoGetResolvableType() {
+        testInSpringContainer((context, beanFactory) -> {
+            RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
+            ResolvableType resolvableType = doGetResolvableType(beanDefinition);
+            assertEquals(User.class, resolvableType.resolve());
+
+            beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USERS_BEAN_NAME);
+            resolvableType = doGetResolvableType(beanDefinition);
+            assertEquals(List.class, resolvableType.resolve());
+            assertEquals(User.class, resolvableType.getGeneric(0).resolve());
+
+            beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
+            resolvableType = doGetResolvableType(beanDefinition);
+            assertEquals(Config.class, resolvableType.resolve());
+        });
     }
 
     private void assertBeanDefinition(AbstractBeanDefinition beanDefinition, int role, Object... constructorArguments) {
