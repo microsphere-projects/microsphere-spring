@@ -121,6 +121,13 @@ public class BeanDefinitionUtilsTest {
     }
 
     @Test
+    public void testResolveBeanTypeOnFallback() {
+        RootBeanDefinition beanDefinition = new RootBeanDefinition();
+        beanDefinition.setBeanClassName(User.class.getName());
+        assertEquals(User.class, resolveBeanType(beanDefinition));
+    }
+
+    @Test
     public void testFindInfrastructureBeanNames() {
         testInSpringContainer((context, beanFactory) -> {
             Set<String> infrastructureBeanNames = findInfrastructureBeanNames(beanFactory);
