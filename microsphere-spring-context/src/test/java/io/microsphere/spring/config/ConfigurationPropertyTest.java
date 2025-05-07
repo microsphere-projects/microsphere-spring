@@ -153,6 +153,7 @@ public class ConfigurationPropertyTest {
         ConfigurationProperty property = new ConfigurationProperty(name);
         assertEquals(this.property, property);
         assertNotEquals(this.property, new ConfigurationProperty("_" + name));
+        assertNotEquals(this.property, new Object());
 
         this.property.setType(type);
         assertNotEquals(this.property, property);
