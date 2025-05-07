@@ -98,11 +98,8 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
     }
 
     private ConfigurationProperty getConfigurationProperty(String name) {
-        if (name == null) {
-            return null;
-        }
         ConfigurationPropertyRepository repository = getRepository();
-        return repository == null ? null : repository.createIfAbsent(name);
+        return repository.createIfAbsent(name);
     }
 
     private ConfigurationPropertyRepository getRepository() {
