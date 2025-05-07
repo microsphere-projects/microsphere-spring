@@ -332,44 +332,44 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
 
     @Override
     public void setPlaceholderPrefix(String placeholderPrefix) {
-        forEachEnvironmentListener(listener -> listener.beforeSetPlaceholderPrefix(delegate, placeholderPrefix));
+        forEachPropertyResolverListener(listener -> listener.beforeSetPlaceholderPrefix(delegate, placeholderPrefix));
         delegate.setPlaceholderPrefix(placeholderPrefix);
-        forEachEnvironmentListener(listener -> listener.afterSetPlaceholderPrefix(delegate, placeholderPrefix));
+        forEachPropertyResolverListener(listener -> listener.afterSetPlaceholderPrefix(delegate, placeholderPrefix));
     }
 
     @Override
     public void setPlaceholderSuffix(String placeholderSuffix) {
-        forEachEnvironmentListener(listener -> listener.beforeSetPlaceholderSuffix(delegate, placeholderSuffix));
+        forEachPropertyResolverListener(listener -> listener.beforeSetPlaceholderSuffix(delegate, placeholderSuffix));
         delegate.setPlaceholderSuffix(placeholderSuffix);
-        forEachEnvironmentListener(listener -> listener.afterSetPlaceholderSuffix(delegate, placeholderSuffix));
+        forEachPropertyResolverListener(listener -> listener.afterSetPlaceholderSuffix(delegate, placeholderSuffix));
     }
 
     @Override
     public void setValueSeparator(String valueSeparator) {
-        forEachEnvironmentListener(listener -> listener.beforeSetValueSeparator(delegate, valueSeparator));
+        forEachPropertyResolverListener(listener -> listener.beforeSetValueSeparator(delegate, valueSeparator));
         delegate.setValueSeparator(valueSeparator);
-        forEachEnvironmentListener(listener -> listener.afterSetValueSeparator(delegate, valueSeparator));
+        forEachPropertyResolverListener(listener -> listener.afterSetValueSeparator(delegate, valueSeparator));
     }
 
     @Override
     public void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders) {
-        forEachEnvironmentListener(listener -> listener.beforeSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
+        forEachPropertyResolverListener(listener -> listener.beforeSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
         delegate.setIgnoreUnresolvableNestedPlaceholders(ignoreUnresolvableNestedPlaceholders);
-        forEachEnvironmentListener(listener -> listener.afterSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
+        forEachPropertyResolverListener(listener -> listener.afterSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
     }
 
     @Override
     public void setRequiredProperties(String... requiredProperties) {
-        forEachEnvironmentListener(listener -> listener.beforeSetRequiredProperties(delegate, requiredProperties));
+        forEachPropertyResolverListener(listener -> listener.beforeSetRequiredProperties(delegate, requiredProperties));
         delegate.setRequiredProperties(requiredProperties);
-        forEachEnvironmentListener(listener -> listener.afterSetRequiredProperties(delegate, requiredProperties));
+        forEachPropertyResolverListener(listener -> listener.afterSetRequiredProperties(delegate, requiredProperties));
     }
 
     @Override
     public void validateRequiredProperties() throws MissingRequiredPropertiesException {
-        forEachEnvironmentListener(listener -> listener.beforeValidateRequiredProperties(delegate));
+        forEachPropertyResolverListener(listener -> listener.beforeValidateRequiredProperties(delegate));
         delegate.validateRequiredProperties();
-        forEachEnvironmentListener(listener -> listener.afterValidateRequiredProperties(delegate));
+        forEachPropertyResolverListener(listener -> listener.afterValidateRequiredProperties(delegate));
     }
 
     /**
