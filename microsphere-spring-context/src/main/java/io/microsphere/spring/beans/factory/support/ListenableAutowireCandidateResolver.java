@@ -34,9 +34,9 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
 import java.lang.invoke.MethodHandle;
-import java.util.Arrays;
 import java.util.List;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
@@ -44,6 +44,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultList
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
+import static io.microsphere.spring.util.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.util.ArrayUtils.combine;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 
@@ -113,7 +114,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
     }
 
     public void addListeners(AutowireCandidateResolvingListener[] listeners) {
-        addListeners(Arrays.asList(listeners));
+        addListeners(ofList(listeners));
     }
 
     public void addListeners(List<AutowireCandidateResolvingListener> listeners) {
@@ -131,17 +132,15 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.0
      */
     public boolean isRequired(DependencyDescriptor descriptor) {
-        if (IS_REQUIRED_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = IS_REQUIRED_METHOD_HANDLE;
+        if (methodHandle == null) {
             return descriptor.isRequired();
         }
         boolean required = false;
         try {
-            required = (boolean) IS_REQUIRED_METHOD_HANDLE.invokeExact(delegate, descriptor);
+            required = (boolean) methodHandle.invokeExact(delegate, descriptor);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : '{}'", IS_REQUIRED_METHOD_HANDLE,
-                        Arrays.asList(delegate, descriptor), e);
-            }
+            handleInvokeExactFailure(e, methodHandle, descriptor, descriptor);
             required = descriptor.isRequired();
         }
         return required;
@@ -153,17 +152,15 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.1
      */
     public boolean hasQualifier(DependencyDescriptor descriptor) {
-        if (HAS_QUALIFIER_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = HAS_QUALIFIER_METHOD_HANDLE;
+        if (methodHandle == null) {
             return false;
         }
         boolean hasQualifier = false;
         try {
-            hasQualifier = (boolean) HAS_QUALIFIER_METHOD_HANDLE.invokeExact(delegate, descriptor);
+            hasQualifier = (boolean) methodHandle.invokeExact(delegate, descriptor);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : '{}'", HAS_QUALIFIER_METHOD_HANDLE,
-                        Arrays.asList(delegate, descriptor), e);
-            }
+            handleInvokeExactFailure(e, methodHandle, delegate, descriptor);
         }
         return hasQualifier;
     }
@@ -192,7 +189,8 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.2.7
      */
     public AutowireCandidateResolver cloneIfNecessary() {
-        if (CLONE_IF_NECESSARY_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = CLONE_IF_NECESSARY_METHOD_HANDLE;
+        if (methodHandle == null) {
             if (logger.isTraceEnabled()) {
                 logger.trace("The method AutowireCandidateResolver#cloneIfNecessary() was not found, the clone instance will be created on default way.");
             }
@@ -200,11 +198,9 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         }
         AutowireCandidateResolver autowireCandidateResolver = null;
         try {
-            autowireCandidateResolver = (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invokeExact(delegate);
+            autowireCandidateResolver = (AutowireCandidateResolver) methodHandle.invokeExact(delegate);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : '{}'", CLONE_IF_NECESSARY_METHOD_HANDLE, delegate, e);
-            }
+            handleInvokeExactFailure(e, methodHandle, delegate);
         }
         return autowireCandidateResolver;
     }
@@ -243,7 +239,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         }
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
         AutowireCandidateResolver autowireCandidateResolver = dbf.getAutowireCandidateResolver();
-        if (autowireCandidateResolver != null) {
+        if (autowireCandidateResolver != this) {
             List<AutowireCandidateResolvingListener> listeners = loadListeners(beanFactory);
             CompositeAutowireCandidateResolvingListener compositeListener = new CompositeAutowireCandidateResolvingListener(listeners);
             this.delegate = autowireCandidateResolver;
