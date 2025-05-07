@@ -39,14 +39,14 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import static org.springframework.core.ResolvableType.NONE;
 import static org.springframework.core.ResolvableType.forClass;
 import static org.springframework.core.ResolvableType.forMethodReturnType;
-import static org.springframework.util.ClassUtils.resolveClassName;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * {@link BeanDefinition} Utilities class
@@ -164,20 +164,11 @@ public abstract class BeanDefinitionUtils implements Utils {
     }
 
     public static Class<?> resolveBeanType(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
-        Class<?> beanClass = null;
-
-        Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
-        if (factoryMethod == null) {
-            if (beanDefinition.hasBeanClass()) {
-                beanClass = beanDefinition.getBeanClass();
-            } else {
-                String beanClassName = beanDefinition.getBeanClassName();
-                if (hasText(beanClassName)) {
-                    beanClass = resolveClassName(beanClassName, classLoader);
-                }
-            }
-        } else {
-            beanClass = factoryMethod.getReturnType();
+        ResolvableType resolvableType = getResolvableType(beanDefinition);
+        Class<?> beanClass = resolvableType == null ? null : resolvableType.resolve();
+        if (beanClass == null) { // resolving the bean class as fallback
+            String beanClassName = beanDefinition.getBeanClassName();
+            beanClass = resolveClass(beanClassName, classLoader);
         }
         return beanClass;
     }
@@ -340,7 +331,7 @@ public abstract class BeanDefinitionUtils implements Utils {
      * @return {@link ResolvableType#NONE} if can't be resolved
      */
     protected static ResolvableType doGetResolvableType(AbstractBeanDefinition beanDefinition) {
-        return beanDefinition.hasBeanClass() ? forClass(beanDefinition.getBeanClass()) : ResolvableType.NONE;
+        return beanDefinition.hasBeanClass() ? forClass(beanDefinition.getBeanClass()) : NONE;
     }
 
     private BeanDefinitionUtils() {
