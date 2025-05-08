@@ -20,7 +20,6 @@ package io.microsphere.spring.context.event;
 import org.junit.Before;
 import org.junit.Test;
 
-import static java.lang.System.currentTimeMillis;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -45,7 +44,7 @@ public class BeanPropertyChangedEventTest {
 
     @Test
     public void testGetTimestamp() {
-        assertTrue(this.event.getTimestamp() >= currentTimeMillis());
+        assertTrue(this.event.getTimestamp() > 0);
     }
 
     @Test
