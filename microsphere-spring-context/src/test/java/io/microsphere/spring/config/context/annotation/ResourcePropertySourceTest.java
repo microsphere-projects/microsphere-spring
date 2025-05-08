@@ -16,14 +16,28 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.io.StandardFileWatchService;
+import io.microsphere.io.event.FileChangedEvent;
+import io.microsphere.io.event.FileChangedListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
+import static io.microsphere.io.event.FileChangedEvent.Kind.MODIFIED;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties;
 
 /**
  * {@link ResourcePropertySource} Test
@@ -36,17 +50,67 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = {
         ResourcePropertySourceTest.class
 })
-@ResourcePropertySource(value = {
-        "classpath*:/META-INF/test/*.properties"
-})
+@ResourcePropertySource(
+        autoRefreshed = true,
+        value = {
+                "classpath*:/META-INF/test/*.properties"
+        }
+)
 public class ResourcePropertySourceTest {
 
     @Autowired
     private Environment environment;
 
+    @Value("classpath:/META-INF/test/b.properties")
+    private Resource bPropertiesResource;
+
     @Test
     public void test() {
+
+    }
+
+    @Test
+    public void testOnFileModified() throws Exception {
+        assertNotNull(bPropertiesResource);
+        assertTrue(bPropertiesResource.exists());
+
+        Properties bProperties = loadProperties(bPropertiesResource);
+
+        assertEquals("2", bProperties.getProperty("b"));
+
+        // watches the properties file
+        File bPropertiesFile = bPropertiesResource.getFile();
+        StandardFileWatchService watchService = new StandardFileWatchService();
+        watchService.watch(bPropertiesFile, new FileChangedListener() {
+            @Override
+            public void onFileModified(FileChangedEvent event) {
+                synchronized (bProperties) {
+                    bProperties.notify();
+                }
+            }
+        }, MODIFIED);
+
+        watchService.start();
+
+        String propertyName = "d";
+        String propertyValue = "4";
+
+        // appends the new content
+        try (OutputStream outputStream = new FileOutputStream(bPropertiesFile)) {
+            bProperties.setProperty(propertyName, propertyValue);
+            bProperties.store(outputStream, null);
+        }
+
+        // waits for be notified
+        synchronized (bProperties) {
+            bProperties.wait();
+        }
+
         assertEquals("1", environment.getProperty("a"));
         assertEquals("3", environment.getProperty("b"));
+        assertEquals(propertyValue, environment.getProperty(propertyName));
+
+        watchService.close();
     }
 }
+
