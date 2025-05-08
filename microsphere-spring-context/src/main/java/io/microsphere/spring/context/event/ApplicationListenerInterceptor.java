@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+
 /**
  * {@link ApplicationListener} Interceptor
  *
@@ -40,6 +42,6 @@ public interface ApplicationListenerInterceptor extends Ordered {
 
     @Override
     default int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return LOWEST_PRECEDENCE;
     }
 }
