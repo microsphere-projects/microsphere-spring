@@ -124,42 +124,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
         }
     }
 
-    class Listener implements FileChangedListener {
-
-        private final PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes;
-
-        private final CompositePropertySource compositePropertySource;
-
-        private final Comparator<Resource> resourceComparator;
-
-        private final PropertySourceFactory factory;
-
-        Listener(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, CompositePropertySource propertySource, Comparator<Resource> resourceComparator, PropertySourceFactory factory) {
-            this.extensionAttributes = extensionAttributes;
-            this.compositePropertySource = propertySource;
-            this.resourceComparator = resourceComparator;
-            this.factory = factory;
-        }
-
-        @Override
-        public void onFileModified(FileChangedEvent event) {
-            // PropertySource file has been modified
-            ConfigurableEnvironment environment = getEnvironment();
-            MutablePropertySources propertySources = environment.getPropertySources();
-            File resourceFile = event.getFile();
-            Resource resource = new FileSystemResource(resourceFile);
-            String encoding = extensionAttributes.getEncoding();
-            EncodedResource encodedResource = new EncodedResource(resource, encoding);
-            String propertySourceName = resourceFile.getAbsolutePath();
-            try {
-                PropertySource propertySource = factory.createPropertySource(propertySourceName, encodedResource);
-                propertySources.addFirst(propertySource);
-            } catch (IOException e) {
-                logger.error("TODO message", e);
-            }
-        }
-    }
-
     @Override
     public void destroy() throws Exception {
         if (fileWatchService != null) {
