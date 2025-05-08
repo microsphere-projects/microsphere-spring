@@ -38,7 +38,11 @@ class SpringResourceURLConnectionAdapter extends AbstractSpringResourceURLConnec
 
     @Override
     public long getContentLengthLong() {
+        boolean exists = this.resource.exists();
         try {
+            if (!exists) {
+                throw new IOException("Not Found");
+            }
             return this.resource.contentLength();
         } catch (IOException e) {
             return super.getContentLengthLong();
