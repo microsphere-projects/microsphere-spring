@@ -27,6 +27,9 @@ import java.lang.annotation.Annotation;
 import java.util.Comparator;
 import java.util.Map;
 
+import static io.microsphere.util.ExceptionUtils.create;
+import static java.lang.Boolean.TRUE;
+
 /**
  * {@link AnnotationAttributes} for the annotation meta-annotated {@link PropertySourceExtension}
  *
@@ -37,8 +40,18 @@ import java.util.Map;
  */
 public class PropertySourceExtensionAttributes<A extends Annotation> extends ResolvablePlaceholderAnnotationAttributes<A> {
 
+    private static final Class<PropertySourceExtension> PROPERTY_SOURCE_EXTENSION_CLASS = PropertySourceExtension.class;
+
     public PropertySourceExtensionAttributes(Map<String, Object> another, Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
-        super(another, annotationType, propertyResolver);
+        super(another, validateAnnotationType(annotationType), propertyResolver);
+    }
+
+    static <A> Class<A> validateAnnotationType(Class<A> annotationType) {
+        if (!annotationType.isAnnotationPresent(PROPERTY_SOURCE_EXTENSION_CLASS)) {
+            throw create(IllegalArgumentException.class, "The annotation type '{}' must be meta-annotated by '{}'",
+                    annotationType.getName(), PROPERTY_SOURCE_EXTENSION_CLASS.getName());
+        }
+        return annotationType;
     }
 
     public final String getName() {
@@ -46,7 +59,7 @@ public class PropertySourceExtensionAttributes<A extends Annotation> extends Res
     }
 
     public final boolean isAutoRefreshed() {
-        return Boolean.TRUE.equals(get("autoRefreshed"));
+        return TRUE.equals(get("autoRefreshed"));
     }
 
     public final boolean isFirstPropertySource() {
