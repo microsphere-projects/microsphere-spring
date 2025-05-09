@@ -17,6 +17,7 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -37,6 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties;
 
@@ -57,6 +60,7 @@ import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProp
                 "classpath*:/META-INF/test/*.properties"
         }
 )
+@DirtiesContext
 public class ResourcePropertySourceTest {
 
     @Autowired
@@ -68,20 +72,36 @@ public class ResourcePropertySourceTest {
     @Value("classpath:/META-INF/test/b.properties")
     private Resource bPropertiesResource;
 
-
-    @Test
-    public void test() {
-
+    @Before
+    public void before() {
+        assertNotNull(bPropertiesResource);
+        assertTrue(bPropertiesResource.exists());
     }
 
     @Test
-    public void testOnFileModified() throws Exception {
+    public void test() {
+        assertEquals("1", environment.getProperty("a"));
+        assertEquals("3", environment.getProperty("b"));
+    }
+
+//    @Test
+//    public void testOnFileCreated() throws Throwable {
+//        File bPropertiesFile = bPropertiesResource.getFile();
+//        File cPropertiesFile = new File(bPropertiesFile.getParentFile(), "c.properties");
+//        Properties cProperties = new Properties();
+//        testOnFile(cPropertiesFile, cProperties);
+//    }
+
+    @Test
+    public void testOnFileModified() throws Throwable {
         File bPropertiesFile = bPropertiesResource.getFile();
-        assertTrue(bPropertiesFile.exists());
 
         Properties bProperties = loadProperties(bPropertiesResource);
 
-        assertEquals("2", bProperties.getProperty("b"));
+        testOnFile(bPropertiesFile, bProperties);
+    }
+
+    void testOnFile(File targetFile, Properties properties) throws Throwable {
 
         // watches the properties file
         AtomicBoolean modified = new AtomicBoolean();
@@ -91,16 +111,15 @@ public class ResourcePropertySourceTest {
 
         context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
             modified.set(true);
-
             assertEquals("1", environment.getProperty("a"));
             assertEquals("3", environment.getProperty("b"));
             assertEquals(propertyValue, environment.getProperty(propertyName));
         });
 
         // appends the new content
-        try (OutputStream outputStream = new FileOutputStream(bPropertiesFile)) {
-            bProperties.setProperty(propertyName, propertyValue);
-            bProperties.store(outputStream, null);
+        try (OutputStream outputStream = new FileOutputStream(targetFile)) {
+            properties.setProperty(propertyName, propertyValue);
+            properties.store(outputStream, null);
         }
 
         // waits for being notified
