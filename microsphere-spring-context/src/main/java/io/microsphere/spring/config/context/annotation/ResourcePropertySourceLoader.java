@@ -23,23 +23,17 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.io.event.FileChangedEvent.Kind.MODIFIED;
 import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
 
 /**
@@ -51,8 +45,8 @@ import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
  * @since 1.0.0
  */
 public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource,
-        PropertySourceExtensionAttributes<ResourcePropertySource>>
-        implements ResourceLoaderAware, BeanClassLoaderAware, DisposableBean {
+        PropertySourceExtensionAttributes<ResourcePropertySource>> implements ResourceLoaderAware, BeanClassLoaderAware,
+        DisposableBean {
 
     private ResourcePatternResolver resourcePatternResolver;
 
@@ -86,7 +80,7 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             if (isFileBasedResource(resource)) {
                 File resourceFile = resource.getFile();
                 listenerAdapter.register(resourceFile, propertySourceResource.getResourceValue());
-                fileWatchService.watch(resourceFile, listenerAdapter, FileChangedEvent.Kind.MODIFIED);
+                fileWatchService.watch(resourceFile, listenerAdapter, MODIFIED);
             }
         }
 
