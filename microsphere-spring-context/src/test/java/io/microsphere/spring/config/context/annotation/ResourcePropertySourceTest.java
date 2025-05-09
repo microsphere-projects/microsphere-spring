@@ -91,6 +91,10 @@ public class ResourcePropertySourceTest {
 
         context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
             modified.set(true);
+
+            assertEquals("1", environment.getProperty("a"));
+            assertEquals("3", environment.getProperty("b"));
+            assertEquals(propertyValue, environment.getProperty(propertyName));
         });
 
         // appends the new content
@@ -102,12 +106,6 @@ public class ResourcePropertySourceTest {
         // waits for being notified
         while (!modified.get()) {
             sleep(100);
-        }
-
-        synchronized (environment) {
-            assertEquals("1", environment.getProperty("a"));
-            assertEquals("3", environment.getProperty("b"));
-            assertEquals(propertyValue, environment.getProperty(propertyName));
         }
     }
 }
