@@ -329,30 +329,6 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         return resourcePropertySourceName.substring(0, resourcePropertySourceName.lastIndexOf("@"));
     }
 
-    private void updateResourcePropertySources(ResourcePropertySource newResourcePropertySource,
-                                               List<ResourcePropertySource> resourcePropertySources, List<PropertySourceChangedEvent> subEvents) {
-
-        String newResourcePropertySourceName = newResourcePropertySource.getName();
-
-        Iterator<ResourcePropertySource> iterator = resourcePropertySources.iterator();
-
-        List<ResourcePropertySource> oldResourcePropertySources = new LinkedList<>();
-
-        while (iterator.hasNext()) {
-            ResourcePropertySource resourcePropertySource = iterator.next();
-            // Remove the old ResourcePropertySource if exists
-            if (newResourcePropertySourceName.equals(resourcePropertySource.getName())) {
-                oldResourcePropertySources.add(resourcePropertySource);
-                iterator.remove();
-            }
-        }
-
-        // Add new ResourcePropertySource
-        resourcePropertySources.add(newResourcePropertySource);
-
-
-    }
-
     private List<ResourcePropertySource> getResourcePropertySources(CompositePropertySource compositePropertySource) {
         Collection<PropertySource<?>> propertySources = compositePropertySource.getPropertySources();
         List<ResourcePropertySource> resourcePropertySources = new ArrayList<>(propertySources.size());
