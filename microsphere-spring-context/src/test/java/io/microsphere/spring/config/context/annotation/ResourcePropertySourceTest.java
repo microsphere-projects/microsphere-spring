@@ -32,8 +32,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.microsphere.io.event.FileChangedEvent.Kind.MODIFIED;
+import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -81,12 +83,13 @@ public class ResourcePropertySourceTest {
         // watches the properties file
         File bPropertiesFile = bPropertiesResource.getFile();
         StandardFileWatchService watchService = new StandardFileWatchService();
+
+        AtomicBoolean modified = new AtomicBoolean();
+
         watchService.watch(bPropertiesFile, new FileChangedListener() {
             @Override
             public void onFileModified(FileChangedEvent event) {
-                synchronized (bProperties) {
-                    bProperties.notify();
-                }
+                modified.set(true);
             }
         }, MODIFIED);
 
@@ -102,8 +105,8 @@ public class ResourcePropertySourceTest {
         }
 
         // waits for be notified
-        synchronized (bProperties) {
-            bProperties.wait();
+        while (!modified.get()) {
+            sleep(100);
         }
 
         assertEquals("1", environment.getProperty("a"));
