@@ -300,16 +300,17 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
         for (ResourcePropertySource newResourcePropertySource : newResourcePropertySources) {
             String newResourcePropertySourceName = newResourcePropertySource.getName();
+            String newSourceName = handleSourceName(newResourcePropertySourceName);
 
             Iterator<ResourcePropertySource> iterator = resourcePropertySources.iterator();
 
             boolean addedSubEvent = false;
             while (iterator.hasNext()) {
                 ResourcePropertySource resourcePropertySource = iterator.next();
+                String oldResourcePropertySourceName = resourcePropertySource.getName();
                 // Remove the old ResourcePropertySource if exists
-                String newSourceName = handleSourceName(newResourcePropertySourceName);
-                String oldSourceName = handleSourceName(resourcePropertySource.getName());
-                if (newSourceName.equals(oldSourceName)) {
+                String oldSourceName = handleSourceName(oldResourcePropertySourceName);
+                if (newSourceName.equals(oldSourceName) && newResourcePropertySourceName.equals(oldResourcePropertySourceName)) {
                     subEvents.add(replaced(this.context, newResourcePropertySource, resourcePropertySource));
                     addedSubEvent = true;
                     iterator.remove();
