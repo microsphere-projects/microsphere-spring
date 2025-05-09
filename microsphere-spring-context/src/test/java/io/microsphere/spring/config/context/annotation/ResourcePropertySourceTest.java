@@ -16,13 +16,13 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.io.StandardFileWatchService;
-import io.microsphere.io.event.FileChangedEvent;
-import io.microsphere.io.event.FileChangedListener;
+import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,10 +34,8 @@ import java.io.OutputStream;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.microsphere.io.event.FileChangedEvent.Kind.MODIFIED;
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties;
 
@@ -63,8 +61,12 @@ public class ResourcePropertySourceTest {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private ConfigurableApplicationContext context;
+
     @Value("classpath:/META-INF/test/b.properties")
     private Resource bPropertiesResource;
+
 
     @Test
     public void test() {
@@ -73,27 +75,19 @@ public class ResourcePropertySourceTest {
 
     @Test
     public void testOnFileModified() throws Exception {
-        assertNotNull(bPropertiesResource);
-        assertTrue(bPropertiesResource.exists());
+        File bPropertiesFile = bPropertiesResource.getFile();
+        assertTrue(bPropertiesFile.exists());
 
         Properties bProperties = loadProperties(bPropertiesResource);
 
         assertEquals("2", bProperties.getProperty("b"));
 
         // watches the properties file
-        File bPropertiesFile = bPropertiesResource.getFile();
-        StandardFileWatchService watchService = new StandardFileWatchService();
-
         AtomicBoolean modified = new AtomicBoolean();
 
-        watchService.watch(bPropertiesFile, new FileChangedListener() {
-            @Override
-            public void onFileModified(FileChangedEvent event) {
-                modified.set(true);
-            }
-        }, MODIFIED);
-
-        watchService.start();
+        context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
+            modified.set(true);
+        });
 
         String propertyName = "d";
         String propertyValue = "4";
@@ -113,7 +107,6 @@ public class ResourcePropertySourceTest {
         assertEquals("3", environment.getProperty("b"));
         assertEquals(propertyValue, environment.getProperty(propertyName));
 
-        watchService.close();
     }
 }
 
