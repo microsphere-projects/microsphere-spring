@@ -17,7 +17,9 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +28,29 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static io.microsphere.io.FileUtils.forceDelete;
+import static io.microsphere.spring.config.context.annotation.ResourcePropertySourceTest.TARGET_RESOURCE_PATTERN;
+import static io.microsphere.util.ClassLoaderUtils.getResource;
 import static java.lang.Thread.sleep;
+import static java.nio.file.Files.copy;
+import static java.util.Collections.singletonMap;
+import static java.util.UUID.randomUUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -56,12 +69,22 @@ import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProp
 })
 @ResourcePropertySource(
         autoRefreshed = true,
-        value = {
-                "classpath*:/META-INF/test/*.properties"
-        }
+        value = TARGET_RESOURCE_PATTERN
 )
 @DirtiesContext
 public class ResourcePropertySourceTest {
+
+    static final String SOURCE_DIR_PATH = "/META-INF/test/";
+
+    static final String TARGET_DIR_NAME = "tmp";
+
+    static final String TARGET_DIR_PATH = SOURCE_DIR_PATH + TARGET_DIR_NAME + "/";
+
+    static final String SOURCE_RESOURCE_PATTERN = "classpath:" + SOURCE_DIR_PATH + "*.properties";
+
+    static final String TARGET_RESOURCE_PATTERN_PREFIX = "classpath:" + TARGET_DIR_PATH;
+
+    static final String TARGET_RESOURCE_PATTERN = TARGET_RESOURCE_PATTERN_PREFIX + "*.properties";
 
     @Autowired
     private Environment environment;
@@ -69,51 +92,101 @@ public class ResourcePropertySourceTest {
     @Autowired
     private ConfigurableApplicationContext context;
 
-    @Value("classpath:/META-INF/test/b.properties")
+    @Value(TARGET_RESOURCE_PATTERN_PREFIX + "b.properties")
     private Resource bPropertiesResource;
 
+    private static final String C_PROPERTIES_FILE_NAME = "c.properties";
+
+    private File bPropertiesFile;
+
+    @BeforeClass
+    public static void beforeClass() throws Throwable {
+        URL sourceURL = getResource(SOURCE_DIR_PATH);
+        File sourceDirectory = new File(sourceURL.getFile());
+        File targetDirectory = new File(sourceDirectory, TARGET_DIR_NAME);
+        delete(targetDirectory);
+        targetDirectory.mkdirs();
+        ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = resourcePatternResolver.getResources(SOURCE_RESOURCE_PATTERN);
+        for (Resource resource : resources) {
+            File resourceFile = resource.getFile();
+            Path targetPath = targetDirectory.toPath().resolve(resource.getFilename());
+            copy(resourceFile.toPath(), targetPath);
+        }
+    }
+
     @Before
-    public void before() {
-        assertNotNull(bPropertiesResource);
-        assertTrue(bPropertiesResource.exists());
+    public void before() throws Throwable {
+        assertNotNull(this.bPropertiesResource);
+        assertTrue(this.bPropertiesResource.exists());
+        this.bPropertiesFile = bPropertiesResource.getFile();
+        assertTrue(this.bPropertiesFile.exists());
+    }
+
+    @After
+    public void after() throws Throwable {
+    }
+
+    static void delete(File file) throws IOException {
+        if (file.exists()) {
+            forceDelete(file);
+        }
     }
 
     @Test
-    public void test() {
-        assertEquals("1", environment.getProperty("a"));
-        assertEquals("3", environment.getProperty("b"));
+    public void testOnFileLoaded() {
+        assertOriginalProperties();
     }
 
-//    @Test
-//    public void testOnFileCreated() throws Throwable {
-//        File bPropertiesFile = bPropertiesResource.getFile();
-//        File cPropertiesFile = new File(bPropertiesFile.getParentFile(), "c.properties");
-//        Properties cProperties = new Properties();
-//        testOnFile(cPropertiesFile, cProperties);
-//    }
+    @Test
+    public void testOnFileCreated() throws Throwable {
+        File cPropertiesFile = new File(this.bPropertiesFile.getParentFile(), C_PROPERTIES_FILE_NAME);
+        Properties cProperties = new Properties();
+        testOnFile(cPropertiesFile, cProperties);
+    }
 
     @Test
     public void testOnFileModified() throws Throwable {
-        File bPropertiesFile = bPropertiesResource.getFile();
+        Properties bProperties = loadProperties(this.bPropertiesResource);
+        testOnFile(this.bPropertiesFile, bProperties);
+    }
 
-        Properties bProperties = loadProperties(bPropertiesResource);
+    @Test
+    public void testOnFileDeleted() throws Throwable {
+        // watches the properties file
+        AtomicBoolean notified = new AtomicBoolean();
 
-        testOnFile(bPropertiesFile, bProperties);
+        this.context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
+            notified.set(true);
+            Map<String, Object> removedProperties = event.getRemovedProperties();
+            assertEquals(singletonMap("b", "2"), removedProperties);
+        });
+
+        delete(this.bPropertiesFile);
+
+        // waits for being notified
+        while (!notified.get()) {
+            sleep(100);
+        }
+    }
+
+    void assertOriginalProperties() {
+        assertEquals("1", this.environment.getProperty("a"));
+        assertEquals("3", this.environment.getProperty("b"));
     }
 
     void testOnFile(File targetFile, Properties properties) throws Throwable {
 
         // watches the properties file
-        AtomicBoolean modified = new AtomicBoolean();
+        AtomicBoolean notified = new AtomicBoolean();
 
-        String propertyName = "d";
-        String propertyValue = new Date().toString();
+        String propertyName = targetFile.getName();
+        String propertyValue = randomUUID().toString();
 
-        context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
-            modified.set(true);
-            assertEquals("1", environment.getProperty("a"));
-            assertEquals("3", environment.getProperty("b"));
-            assertEquals(propertyValue, environment.getProperty(propertyName));
+        this.context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
+            notified.set(true);
+            assertOriginalProperties();
+            assertEquals(propertyValue, this.environment.getProperty(propertyName));
         });
 
         // appends the new content
@@ -123,7 +196,7 @@ public class ResourcePropertySourceTest {
         }
 
         // waits for being notified
-        while (!modified.get()) {
+        while (!notified.get()) {
             sleep(100);
         }
     }
