@@ -86,12 +86,12 @@ public class ResourcePropertySourceTest {
         // watches the properties file
         AtomicBoolean modified = new AtomicBoolean();
 
+        String propertyName = "d";
+        String propertyValue = new Date().toString();
+
         context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
             modified.set(true);
         });
-
-        String propertyName = "d";
-        String propertyValue = new Date().toString();
 
         // appends the new content
         try (OutputStream outputStream = new FileOutputStream(bPropertiesFile)) {
@@ -99,15 +99,16 @@ public class ResourcePropertySourceTest {
             bProperties.store(outputStream, null);
         }
 
-        // waits for be notified
+        // waits for being notified
         while (!modified.get()) {
             sleep(100);
         }
 
-        assertEquals("1", environment.getProperty("a"));
-        assertEquals("3", environment.getProperty("b"));
-        assertEquals(propertyValue, environment.getProperty(propertyName));
-
+        synchronized (environment) {
+            assertEquals("1", environment.getProperty("a"));
+            assertEquals("3", environment.getProperty("b"));
+            assertEquals(propertyValue, environment.getProperty(propertyName));
+        }
     }
 }
 
