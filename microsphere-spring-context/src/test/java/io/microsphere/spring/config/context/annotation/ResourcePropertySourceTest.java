@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -90,7 +91,7 @@ public class ResourcePropertySourceTest {
         });
 
         String propertyName = "d";
-        String propertyValue = "4";
+        String propertyValue = new Date().toString();
 
         // appends the new content
         try (OutputStream outputStream = new FileOutputStream(bPropertiesFile)) {
