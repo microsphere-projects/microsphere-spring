@@ -27,13 +27,16 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.PathMatcher;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static io.microsphere.io.event.FileChangedEvent.Kind.MODIFIED;
 import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
 
 /**
@@ -50,16 +53,19 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     private ResourcePatternResolver resourcePatternResolver;
 
+    private PathMatcher pathMatcher;
+
     private StandardFileWatchService fileWatchService;
 
     @Override
     protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
-                                          String propertySourceName, String resourceValue)
-            throws Throwable {
+                                          String propertySourceName, String resourceValue) throws Throwable {
         ResourcePatternResolver resourcePatternResolver = this.resourcePatternResolver;
         if (resourcePatternResolver == null) {
-            resourcePatternResolver = new PathMatchingResourcePatternResolver(getResourceLoader());
-            this.resourcePatternResolver = resourcePatternResolver;
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getResourceLoader());
+            this.resourcePatternResolver = resolver;
+            this.pathMatcher = resolver.getPathMatcher();
+            resourcePatternResolver = resolver;
         }
         return resourcePatternResolver.getResources(resourceValue);
     }
@@ -80,7 +86,7 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             if (isFileBasedResource(resource)) {
                 File resourceFile = resource.getFile();
                 listenerAdapter.register(resourceFile, propertySourceResource.getResourceValue());
-                fileWatchService.watch(resourceFile, listenerAdapter, MODIFIED);
+                fileWatchService.watch(resourceFile, listenerAdapter);
             }
         }
 
@@ -94,13 +100,46 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
         private final Map<File, String> fileToResourceValues;
 
+        private final Set<String> resourceValues;
+
         ListenerAdapter(ResourcePropertySourcesRefresher refresher, int initialCapacity) {
             this.refresher = refresher;
             this.fileToResourceValues = new HashMap<>(initialCapacity);
+            this.resourceValues = new HashSet<>(initialCapacity);
         }
 
         public void register(File file, String resourceValue) {
-            fileToResourceValues.put(file, resourceValue);
+            this.fileToResourceValues.put(file, resourceValue);
+            this.resourceValues.add(resourceValue);
+        }
+
+        @Override
+        public void onFileCreated(FileChangedEvent event) {
+            // new file created
+            File resourceFile = event.getFile();
+            for (String resourceValue : resourceValues) {
+                if (pathMatcher.isPattern(resourceValue)) {
+                    try {
+                        Resource[] resources = resourcePatternResolver.getResources(resourceValue);
+                        Resource resource = findResource(resourceFile, resources);
+                        if (resource != null) {
+                            refresher.refresh(resourceValue, resource);
+                            break;
+                        }
+                    } catch (Throwable e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        private Resource findResource(File resourceFile, Resource[] resources) throws IOException {
+            for (Resource resource : resources) {
+                if (resourceFile.equals(resource.getFile())) {
+                    return resource;
+                }
+            }
+            return null;
         }
 
         @Override
@@ -108,12 +147,21 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             File resourceFile = event.getFile();
             String resourceValue = fileToResourceValues.get(resourceFile);
             if (resourceValue != null) {
-                Resource resource = new FileSystemResource(resourceFile);
-                try {
-                    refresher.refresh(resourceValue, resource);
-                } catch (Throwable e) {
-                    throw new RuntimeException(e);
-                }
+                refreshResource(resourceValue, resourceFile);
+            }
+        }
+
+        @Override
+        public void onFileDeleted(FileChangedEvent event) {
+            onFileModified(event);
+        }
+
+        void refreshResource(String resourceValue, File resourceFile) {
+            Resource resource = new FileSystemResource(resourceFile);
+            try {
+                refresher.refresh(resourceValue, resource);
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
             }
         }
     }
