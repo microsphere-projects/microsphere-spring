@@ -64,7 +64,7 @@ import static org.junit.Assert.assertTrue;
         value = TARGET_RESOURCE_PATTERN
 )
 @DirtiesContext
-public class AbstractResourcePropertySourceTest {
+public abstract class AbstractResourcePropertySourceTest {
 
     static final String SOURCE_DIR_PATH = "/META-INF/test/";
 
