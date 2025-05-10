@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.lang.function.ThrowableAction.execute;
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
 
 /**
@@ -126,15 +128,17 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             File resourceFile = event.getFile();
             for (String resourceValue : resourceValues) {
                 if (isResourcePattern(resourceValue)) {
-                    try {
+                    boolean found = execute(() -> {
                         Resource[] resources = resourcePatternResolver.getResources(resourceValue);
                         Resource resource = findResource(resourceFile, resources);
                         if (resource != null) {
                             refresher.refresh(resourceValue, resource);
-                            break;
+                            return true;
                         }
-                    } catch (Throwable e) {
-                        throw new RuntimeException(e);
+                        return false;
+                    });
+                    if (found) {
+                        break;
                     }
                 }
             }
@@ -161,16 +165,11 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
         @Override
         public void onFileDeleted(FileChangedEvent event) {
             onFileModified(event);
-
         }
 
         void refreshResource(String resourceValue, File resourceFile) {
             Resource resource = new FileSystemResource(resourceFile);
-            try {
-                refresher.refresh(resourceValue, resource);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
+            execute(() -> refresher.refresh(resourceValue, resource));
         }
     }
 
