@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.Properties;
 
 /**
- * {@link ResourcePropertySource} Test on file created
+ * {@link ResourcePropertySource} Test on file created.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource
@@ -34,7 +34,7 @@ import java.util.Properties;
 })
 public class ResourcePropertySourceTestOnFileCreated extends AbstractResourcePropertySourceTest {
 
-    private static final String C_PROPERTIES_FILE_NAME = "c.properties";
+    static final String C_PROPERTIES_FILE_NAME = "c.properties";
 
     @Test
     public void testOnFileCreated() throws Throwable {
