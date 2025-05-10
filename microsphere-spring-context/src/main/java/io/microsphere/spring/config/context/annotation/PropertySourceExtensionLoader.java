@@ -84,7 +84,6 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
     private ApplicationContext context;
 
-
     public PropertySourceExtensionLoader() {
         super();
         this.extensionAttributesType = resolveExtensionAttributesType();
@@ -103,9 +102,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
      * @param resourceValue the {@link String} value presenting resource
      * @return <code>true</code> if <code>resourceValue</code> is a pattern value
      */
-    public boolean isResourcePattern(String resourceValue) {
-        return this.resourceMatcher.isPattern(resourceValue);
-    }
+    public abstract boolean isResourcePattern(String resourceValue);
 
     /**
      * Get the type of {@link EA}
@@ -271,15 +268,35 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
                                         Comparator<Resource> resourceComparator, String resourceValue, Resource resource,
                                         CompositePropertySource compositePropertySource, List<PropertySourceChangedEvent> subEvents) throws Throwable {
 
-        PropertySourceResource propertySourceResource = createPropertySourceResource(resourceValue, resource, resourceComparator);
-
-        ResourcePropertySource newResourcePropertySource = createResourcePropertySource(extensionAttributes, propertySourceName, factory, propertySourceResource);
-
         List<ResourcePropertySource> resourcePropertySources = getResourcePropertySources(compositePropertySource);
 
-        updateResourcePropertySources(singleton(newResourcePropertySource), resourcePropertySources, subEvents);
+        if (resource.exists()) { // Resource exists
+            PropertySourceResource propertySourceResource = createPropertySourceResource(resourceValue, resource, resourceComparator);
+            ResourcePropertySource newResourcePropertySource = createResourcePropertySource(extensionAttributes, propertySourceName, factory, propertySourceResource);
+            updateResourcePropertySources(singleton(newResourcePropertySource), resourcePropertySources, subEvents);
+        } else {
+            removeResourcePropertySource(propertySourceName, resourceValue, resource, resourcePropertySources, subEvents);
+        }
 
         updatePropertySources(propertySourceName, resourcePropertySources);
+    }
+
+    private void removeResourcePropertySource(String propertySourceName, String resourceValue, Resource resource,
+                                              List<ResourcePropertySource> resourcePropertySources, List<PropertySourceChangedEvent> subEvents) {
+        String removedResourcePropertySourceName = createResourcePropertySourceName(propertySourceName, resourceValue, resource);
+        Iterator<ResourcePropertySource> iterator = resourcePropertySources.iterator();
+        ResourcePropertySource removeResourcePropertySource = null;
+        while (iterator.hasNext()) {
+            ResourcePropertySource resourcePropertySource = iterator.next();
+            String resourcePropertySourceName = resourcePropertySource.getName();
+            if (removedResourcePropertySourceName.equals(resourcePropertySourceName)) {
+                removeResourcePropertySource = resourcePropertySource;
+                iterator.remove();
+            }
+        }
+        if (removeResourcePropertySource != null) {
+            subEvents.add(PropertySourceChangedEvent.removed(this.context, removeResourcePropertySource));
+        }
     }
 
     private void updatePropertySources(String propertySourceName, List<ResourcePropertySource> resourcePropertySources) {
