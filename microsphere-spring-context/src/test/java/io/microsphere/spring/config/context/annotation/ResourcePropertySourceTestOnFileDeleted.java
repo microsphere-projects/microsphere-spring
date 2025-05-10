@@ -29,7 +29,7 @@ import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 
 /**
- * {@link ResourcePropertySource} Test on file deleted
+ * {@link ResourcePropertySource} Test on file deleted.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource
