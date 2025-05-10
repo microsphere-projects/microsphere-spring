@@ -21,6 +21,7 @@ import io.microsphere.io.event.FileChangedEvent;
 import io.microsphere.io.event.FileChangedListener;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.io.FileSystemResource;
@@ -48,8 +49,8 @@ import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
  * @since 1.0.0
  */
 public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource,
-        PropertySourceExtensionAttributes<ResourcePropertySource>> implements ResourceLoaderAware, BeanClassLoaderAware,
-        DisposableBean {
+        PropertySourceExtensionAttributes<ResourcePropertySource>> implements InitializingBean, ResourceLoaderAware,
+        BeanClassLoaderAware, DisposableBean {
 
     private ResourcePatternResolver resourcePatternResolver;
 
@@ -58,16 +59,21 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
     private StandardFileWatchService fileWatchService;
 
     @Override
+    public void afterPropertiesSet() throws Exception {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getResourceLoader());
+        this.resourcePatternResolver = resolver;
+        this.pathMatcher = resolver.getPathMatcher();
+    }
+
+    @Override
     protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
                                           String propertySourceName, String resourceValue) throws Throwable {
-        ResourcePatternResolver resourcePatternResolver = this.resourcePatternResolver;
-        if (resourcePatternResolver == null) {
-            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getResourceLoader());
-            this.resourcePatternResolver = resolver;
-            this.pathMatcher = resolver.getPathMatcher();
-            resourcePatternResolver = resolver;
-        }
-        return resourcePatternResolver.getResources(resourceValue);
+        return this.resourcePatternResolver.getResources(resourceValue);
+    }
+
+    @Override
+    public boolean isResourcePattern(String resourceValue) {
+        return pathMatcher.isPattern(resourceValue);
     }
 
     @Override
@@ -94,6 +100,7 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     }
 
+
     class ListenerAdapter implements FileChangedListener {
 
         private final ResourcePropertySourcesRefresher refresher;
@@ -118,7 +125,7 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             // new file created
             File resourceFile = event.getFile();
             for (String resourceValue : resourceValues) {
-                if (pathMatcher.isPattern(resourceValue)) {
+                if (isResourcePattern(resourceValue)) {
                     try {
                         Resource[] resources = resourcePatternResolver.getResources(resourceValue);
                         Resource resource = findResource(resourceFile, resources);
@@ -154,6 +161,7 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
         @Override
         public void onFileDeleted(FileChangedEvent event) {
             onFileModified(event);
+
         }
 
         void refreshResource(String resourceValue, File resourceFile) {
