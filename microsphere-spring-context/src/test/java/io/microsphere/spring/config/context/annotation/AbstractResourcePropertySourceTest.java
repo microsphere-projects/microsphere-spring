@@ -138,14 +138,13 @@ public abstract class AbstractResourcePropertySourceTest {
             assertEquals(propertyValue, this.environment.getProperty(propertyName));
         });
 
-        // appends the new content
-        try (OutputStream outputStream = new FileOutputStream(targetFile)) {
-            properties.setProperty(propertyName, propertyValue);
-            properties.store(outputStream, null);
-        }
-
         // waits for being notified
         while (!notified.get()) {
+            // appends the new content
+            try (OutputStream outputStream = new FileOutputStream(targetFile)) {
+                properties.setProperty(propertyName, propertyValue);
+                properties.store(outputStream, null);
+            }
             sleep(100);
         }
     }
