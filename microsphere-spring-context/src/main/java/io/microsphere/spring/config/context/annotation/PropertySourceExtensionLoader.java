@@ -213,20 +213,23 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
                                                                                     Comparator<Resource> resourceComparator) throws Throwable {
         return (resourceValue, resource) -> {
 
-            CompositePropertySource compositePropertySource = getPropertySource(propertySourceName);
-            if (compositePropertySource == null) {
-                return;
+            synchronized (this) {
+                CompositePropertySource compositePropertySource = getPropertySource(propertySourceName);
+                if (compositePropertySource == null) {
+                    return;
+                }
+
+                List<PropertySourceChangedEvent> subEvents = new LinkedList<>();
+
+                if (resource == null) { // No Resource specified
+                    refreshPropertySources(extensionAttributes, propertySourceName, factory, resourceComparator, resourceValue, compositePropertySource, subEvents);
+                } else {
+                    refreshPropertySources(extensionAttributes, propertySourceName, factory, resourceComparator, resourceValue, resource, compositePropertySource, subEvents);
+                }
+
+                publishPropertySourcesChangedEvent(subEvents);
             }
 
-            List<PropertySourceChangedEvent> subEvents = new LinkedList<>();
-
-            if (resource == null) { // No Resource specified
-                refreshPropertySources(extensionAttributes, propertySourceName, factory, resourceComparator, resourceValue, compositePropertySource, subEvents);
-            } else {
-                refreshPropertySources(extensionAttributes, propertySourceName, factory, resourceComparator, resourceValue, resource, compositePropertySource, subEvents);
-            }
-
-            publishPropertySourcesChangedEvent(subEvents);
         };
 
     }
