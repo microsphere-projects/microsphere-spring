@@ -27,7 +27,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.microsphere.spring.config.context.annotation.ResourcePropertySourceTestOnFileCreated.C_PROPERTIES_FILE_NAME;
-import static java.lang.Thread.sleep;
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties;
@@ -44,7 +43,6 @@ import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProp
 })
 public class ResourcePropertySourceTest extends AbstractResourcePropertySourceTest {
 
-    @Test
     public void testOnFileCreated() throws Throwable {
         File cPropertiesFile = new File(this.bPropertiesFile.getParentFile(), C_PROPERTIES_FILE_NAME);
         Properties cProperties = new Properties();
@@ -71,9 +69,7 @@ public class ResourcePropertySourceTest extends AbstractResourcePropertySourceTe
         delete(this.bPropertiesFile);
 
         // waits for being notified
-        while (!notified.get()) {
-            sleep(100);
-        }
+        waits(notified);
     }
 }
 
