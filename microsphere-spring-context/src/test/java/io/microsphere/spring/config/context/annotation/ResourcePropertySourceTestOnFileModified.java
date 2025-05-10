@@ -24,7 +24,7 @@ import java.util.Properties;
 import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties;
 
 /**
- * {@link ResourcePropertySource} Test on file modified
+ * {@link ResourcePropertySource} Test on file modified.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource
