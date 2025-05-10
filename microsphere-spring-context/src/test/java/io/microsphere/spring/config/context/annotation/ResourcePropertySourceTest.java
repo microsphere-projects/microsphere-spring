@@ -16,8 +16,21 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
 import org.junit.Test;
+import org.springframework.context.ApplicationListener;
 import org.springframework.test.context.ContextConfiguration;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static io.microsphere.spring.config.context.annotation.ResourcePropertySourceTestOnFileCreated.C_PROPERTIES_FILE_NAME;
+import static java.lang.Thread.sleep;
+import static java.util.Collections.singletonMap;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties;
 
 /**
  * {@link ResourcePropertySource} Test
@@ -32,8 +45,35 @@ import org.springframework.test.context.ContextConfiguration;
 public class ResourcePropertySourceTest extends AbstractResourcePropertySourceTest {
 
     @Test
-    public void testOnFileLoaded() {
-        assertOriginalProperties();
+    public void testOnFileCreated() throws Throwable {
+        File cPropertiesFile = new File(this.bPropertiesFile.getParentFile(), C_PROPERTIES_FILE_NAME);
+        Properties cProperties = new Properties();
+        testOnFile(cPropertiesFile, cProperties);
+    }
+
+    @Test
+    public void testOnFileModified() throws Throwable {
+        Properties bProperties = loadProperties(this.bPropertiesResource);
+        testOnFile(this.bPropertiesFile, bProperties);
+    }
+
+    @Test
+    public void testOnFileDeleted() throws Throwable {
+        // watches the properties file
+        AtomicBoolean notified = new AtomicBoolean();
+
+        this.context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
+            notified.set(true);
+            Map<String, Object> removedProperties = event.getRemovedProperties();
+            assertEquals(singletonMap("b", "2"), removedProperties);
+        });
+
+        delete(this.bPropertiesFile);
+
+        // waits for being notified
+        while (!notified.get()) {
+            sleep(100);
+        }
     }
 }
 
