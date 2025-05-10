@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -139,13 +140,28 @@ public abstract class AbstractResourcePropertySourceTest {
         });
 
         // waits for being notified
-        while (!notified.get()) {
+        waits(notified, () -> {
             // appends the new content
             try (OutputStream outputStream = new FileOutputStream(targetFile)) {
                 properties.setProperty(propertyName, propertyValue);
                 properties.store(outputStream, null);
             }
-            sleep(100);
+        });
+    }
+
+    void waits(AtomicBoolean notified) throws Throwable {
+        waits(notified, () -> {
+        });
+    }
+
+    void waits(AtomicBoolean notified, ThrowableAction action) throws Throwable {
+        // waits for being notified
+        for (int i = 0; i < 100; i++) {
+            if (notified.get()) {
+                break;
+            }
+            action.execute();
+            sleep(500);
         }
     }
 }
