@@ -72,6 +72,7 @@ import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.lang.Integer.getInteger;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.beans.factory.annotation.InjectionMetadata.needsRefresh;
@@ -164,7 +165,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * @param annotationType the single type of {@link Annotation annotation}
      */
     public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation> annotationType, Class<? extends Annotation>... otherAnnotationTypes) {
-        this(combine(singleton(annotationType), Arrays.asList(otherAnnotationTypes)));
+        this(combine(singleton(annotationType), asList(otherAnnotationTypes)));
     }
 
     /**

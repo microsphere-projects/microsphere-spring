@@ -39,6 +39,7 @@ import java.util.Set;
 import static io.microsphere.spring.web.servlet.util.WebUtils.findServletRegistrations;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ClassLoaderUtils.isPresent;
+import static java.util.Arrays.asList;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findMethod;
@@ -359,10 +360,10 @@ public abstract class WebMvcUtils {
         List<String> parameterValuesList = new ArrayList<String>();
 
         if (isNotEmpty(existedParameterValues)) {
-            parameterValuesList.addAll(Arrays.asList(existedParameterValues));
+            parameterValuesList.addAll(asList(existedParameterValues));
         }
 
-        parameterValuesList.addAll(Arrays.asList(parameterValues));
+        parameterValuesList.addAll(asList(parameterValues));
 
         String newParameterValue = arrayToDelimitedString(parameterValuesList.toArray(), ",");
 

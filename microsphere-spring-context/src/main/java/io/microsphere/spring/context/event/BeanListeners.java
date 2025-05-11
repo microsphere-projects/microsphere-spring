@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
+import static java.util.Arrays.asList;
 
 /**
  * The composite {@link BeanListener}
@@ -71,7 +72,7 @@ class BeanListeners implements BeanListener {
     static Set<String> getReadyBeanNames(ConfigurableListableBeanFactory beanFactory) {
         Set<String> readyBeanNames = new LinkedHashSet<>();
         String[] singletonNames = beanFactory.getSingletonNames();
-        readyBeanNames.addAll(Arrays.asList(singletonNames));
+        readyBeanNames.addAll(asList(singletonNames));
         return readyBeanNames;
     }
 

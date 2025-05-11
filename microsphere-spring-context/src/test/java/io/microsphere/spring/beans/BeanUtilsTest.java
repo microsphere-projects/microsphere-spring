@@ -30,6 +30,7 @@ import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.spring.beans.BeanUtils.resolveBeanType;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -100,7 +101,7 @@ public class BeanUtilsTest {
 
         String[] beanNames = getBeanNames(applicationContext, String.class);
 
-        assertTrue(Arrays.asList(beanNames).contains("testString"));
+        assertTrue(asList(beanNames).contains("testString"));
 
         applicationContext.close();
     }
@@ -112,7 +113,7 @@ public class BeanUtilsTest {
 
         String[] beanNames = getBeanNames(context, User.class);
 
-        assertTrue(Arrays.asList(beanNames).contains("user"));
+        assertTrue(asList(beanNames).contains("user"));
 
         context.close();
 
@@ -361,7 +362,7 @@ public class BeanUtilsTest {
 
         BeanUtils.NamingBean namingBean2 = new BeanUtils.NamingBean("testBean2", new TestBean2());
 
-        List<BeanUtils.NamingBean> namingBeans = Arrays.asList(namingBean, namingBean2);
+        List<BeanUtils.NamingBean> namingBeans = asList(namingBean, namingBean2);
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 

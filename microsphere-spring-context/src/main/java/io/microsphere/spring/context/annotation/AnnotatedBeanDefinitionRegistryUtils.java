@@ -129,20 +129,20 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
             boolean traceEnabled = logger.isTraceEnabled();
 
             if (traceEnabled) {
-                logger.trace(registry.getClass().getSimpleName() + " will scan base packages " + Arrays.asList(basePackages) + ".");
+                logger.trace(registry.getClass().getSimpleName() + " will scan base packages " + asList(basePackages) + ".");
             }
 
-            List<String> registeredBeanNames = Arrays.asList(registry.getBeanDefinitionNames());
+            List<String> registeredBeanNames = asList(registry.getBeanDefinitionNames());
 
             ClassPathBeanDefinitionScanner classPathBeanDefinitionScanner = new ClassPathBeanDefinitionScanner(registry);
             count = classPathBeanDefinitionScanner.scan(basePackages);
 
             List<String> scannedBeanNames = new ArrayList<String>(count);
-            scannedBeanNames.addAll(Arrays.asList(registry.getBeanDefinitionNames()));
+            scannedBeanNames.addAll(asList(registry.getBeanDefinitionNames()));
             scannedBeanNames.removeAll(registeredBeanNames);
 
             if (traceEnabled) {
-                logger.trace("The Scanned Components[ count : " + count + "] under base packages " + Arrays.asList(basePackages) + " : ");
+                logger.trace("The Scanned Components[ count : " + count + "] under base packages " + asList(basePackages) + " : ");
             }
 
             for (String scannedBeanName : scannedBeanNames) {

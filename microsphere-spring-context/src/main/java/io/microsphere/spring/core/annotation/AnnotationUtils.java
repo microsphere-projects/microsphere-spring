@@ -164,7 +164,7 @@ public abstract class AnnotationUtils {
     public static Map<String, Object> getAttributes(Map<String, Object> annotationAttributes,
                                                     PropertyResolver propertyResolver, String... ignoreAttributeNames) {
 
-        Set<String> ignoreAttributeNamesSet = new HashSet<>(Arrays.asList(ignoreAttributeNames));
+        Set<String> ignoreAttributeNamesSet = new HashSet<>(asList(ignoreAttributeNames));
 
         Map<String, Object> actualAttributes = new LinkedHashMap<>();
 
