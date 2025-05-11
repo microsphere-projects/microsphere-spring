@@ -17,28 +17,45 @@
 
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.lang.function.ThrowableAction;
+import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.Resource;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import static io.microsphere.io.FileUtils.forceDelete;
+import static io.microsphere.lang.function.ThrowableAction.execute;
+import static java.lang.Thread.sleep;
+import static java.util.UUID.randomUUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME;
 import static org.springframework.core.env.StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME;
+import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties;
 
 /**
  * {@link ResourcePropertySourceLoader} Test
@@ -51,6 +68,10 @@ import static org.springframework.core.env.StandardEnvironment.SYSTEM_PROPERTIES
 public class ResourcePropertySourceLoaderTest {
 
     static final Class<ResourcePropertySource> RESOURCE_PROPERTY_SOURCE_CLASS = ResourcePropertySource.class;
+
+    static final String PROPERTIES_DIRECTORY_RESOURCE_LOCATION = "classpath:/META-INF/test/";
+
+    static final String PROPERTIES_RESOURCE_LOCATION = PROPERTIES_DIRECTORY_RESOURCE_LOCATION + "*.properties";
 
     @Before
     public void before() {
@@ -117,6 +138,63 @@ public class ResourcePropertySourceLoaderTest {
     public void testOnAutoRefreshedConfig() {
         testInSpringContainer((context, environment) -> {
             assertDefaultPropertySource(environment, AutoRefreshedConfig.class);
+        }, AutoRefreshedConfig.class);
+    }
+
+    @Test
+    public void testOnFileCreated() {
+        testInSpringContainer((context, environment) -> {
+            execute(() -> {
+                Resource propertiesDirectoryResource = context.getResource(PROPERTIES_DIRECTORY_RESOURCE_LOCATION);
+                assertTrue(propertiesDirectoryResource.exists());
+                File propertiesDirectory = propertiesDirectoryResource.getFile();
+                File cPropertiesFile = new File(propertiesDirectory, "c.properties");
+                try {
+                    testOnFileCreated(context, cPropertiesFile);
+                } finally {
+                    // recovery
+                    delete(cPropertiesFile);
+                }
+            });
+        }, AutoRefreshedConfig.class);
+    }
+
+    @Test
+    public void testOnFileModified() {
+        testInSpringContainer((context, environment) -> {
+            execute(() -> {
+                Resource bPropertiesResource = context.getResource(PROPERTIES_DIRECTORY_RESOURCE_LOCATION + "b.properties");
+                assertTrue(bPropertiesResource.exists());
+                Properties bProperties = loadProperties(bPropertiesResource);
+                File bPropertiesResourceFile = bPropertiesResource.getFile();
+                try {
+                    testOnFile(context, bPropertiesResourceFile, new Properties(bProperties));
+                } finally {
+                    // recovery
+                    writePropertiesFile(bPropertiesResourceFile, bProperties);
+                }
+            });
+        }, AutoRefreshedConfig.class);
+    }
+
+    @Test
+    public void testOnFileDeleted() {
+        testInSpringContainer((context, environment) -> {
+            execute(() -> {
+                Resource aPropertiesResource = context.getResource(PROPERTIES_DIRECTORY_RESOURCE_LOCATION + "a.properties");
+                assertTrue(aPropertiesResource.exists());
+                Properties aProperties = loadProperties(aPropertiesResource);
+                File aPropertiesResourceFile = aPropertiesResource.getFile();
+                try {
+                    testOnFileDeleted(context, aPropertiesResourceFile, removedProperties -> {
+                        assertEquals("1", removedProperties.get("a"));
+                        assertEquals("3", removedProperties.get("b"));
+                    });
+                } finally {
+                    // recovery
+                    writePropertiesFile(aPropertiesResourceFile, aProperties);
+                }
+            });
         }, AutoRefreshedConfig.class);
     }
 
@@ -225,33 +303,95 @@ public class ResourcePropertySourceLoaderTest {
         context.close();
     }
 
-    @ResourcePropertySource("classpath*:/META-INF/test/*.properties")
+    void testOnFileCreated(ConfigurableApplicationContext context, File newPropertiesFile) throws Throwable {
+        testOnFile(context, newPropertiesFile, new Properties());
+    }
+
+    void testOnFile(ConfigurableApplicationContext context, File propertiesFile, Properties properties) throws Throwable {
+
+        // watches the properties file
+        AtomicBoolean notified = new AtomicBoolean();
+
+        String propertyName = propertiesFile.getName();
+        String propertyValue = randomUUID().toString();
+
+        context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
+            notified.set(true);
+            ConfigurableEnvironment environment = context.getEnvironment();
+            assertEquals(propertyValue, environment.getProperty(propertyName));
+        });
+
+        // appends the new content
+        properties.setProperty(propertyName, propertyValue);
+
+        // waits for being notified
+        waits(notified, () -> writePropertiesFile(propertiesFile, properties));
+    }
+
+    void testOnFileDeleted(ConfigurableApplicationContext context, File deletedPropertiesFile, Consumer<Map<String, Object>> removedPropertiesConsumer) throws Throwable {
+        // watches the properties file
+        AtomicBoolean notified = new AtomicBoolean();
+
+        context.addApplicationListener((ApplicationListener<PropertySourcesChangedEvent>) event -> {
+            notified.set(true);
+            Map<String, Object> removedProperties = event.getRemovedProperties();
+            removedPropertiesConsumer.accept(removedProperties);
+        });
+
+        // waits for being notified
+        waits(notified, () -> delete(deletedPropertiesFile));
+    }
+
+    void writePropertiesFile(File propertiesFile, Properties properties) throws IOException {
+        try (OutputStream outputStream = new FileOutputStream(propertiesFile)) {
+            properties.store(outputStream, null);
+        }
+    }
+
+    void waits(AtomicBoolean notified, ThrowableAction action) throws Throwable {
+        // waits for being notified
+        for (int i = 0; i < 100; i++) {
+            if (notified.get()) {
+                break;
+            }
+            action.execute();
+            sleep(500);
+        }
+    }
+
+    static void delete(File file) throws IOException {
+        if (file.exists()) {
+            forceDelete(file);
+        }
+    }
+
+    @ResourcePropertySource(PROPERTIES_RESOURCE_LOCATION)
     static class DefaultConfig {
     }
 
     @ResourcePropertySource(
             name = "test-property-source",
-            value = "classpath*:/META-INF/test/*.properties"
+            value = PROPERTIES_RESOURCE_LOCATION
     )
     static class NamedConfig {
     }
 
     @ResourcePropertySource(
-            value = "classpath*:/META-INF/test/*.properties",
+            value = PROPERTIES_RESOURCE_LOCATION,
             first = true
     )
     static class FirstConfig {
     }
 
     @ResourcePropertySource(
-            value = "classpath*:/META-INF/test/*.properties",
+            value = PROPERTIES_RESOURCE_LOCATION,
             before = SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
     )
     static class BeforeConfig {
     }
 
     @ResourcePropertySource(
-            value = "classpath*:/META-INF/test/*.properties",
+            value = PROPERTIES_RESOURCE_LOCATION,
             after = SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME
     )
     static class AfterConfig {
@@ -269,7 +409,7 @@ public class ResourcePropertySourceLoaderTest {
     }
 
     @ResourcePropertySource(
-            value = "classpath*:/META-INF/test/*.properties",
+            value = PROPERTIES_RESOURCE_LOCATION,
             autoRefreshed = true
     )
     static class AutoRefreshedConfig {
