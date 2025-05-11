@@ -75,6 +75,7 @@ import static java.lang.Integer.getInteger;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
+import static org.springframework.beans.BeanUtils.findPropertyForMethod;
 import static org.springframework.beans.factory.annotation.InjectionMetadata.needsRefresh;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
@@ -379,7 +380,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                             logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
                         }
                     }
-                    PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
+                    PropertyDescriptor pd = findPropertyForMethod(bridgedMethod, beanClass);
                     boolean required = determineRequiredStatus(attributes);
                     elements.add(new AnnotatedMethodElement(method, pd, attributes, required));
                 }
