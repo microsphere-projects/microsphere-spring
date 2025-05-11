@@ -37,8 +37,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -60,6 +58,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.sort;
 import static org.springframework.beans.BeanUtils.instantiateClass;
+import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -80,18 +79,15 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
     private final Class<EA> extensionAttributesType;
 
-    private final PathMatcher resourceMatcher;
-
     private ApplicationContext context;
 
     public PropertySourceExtensionLoader() {
         super();
         this.extensionAttributesType = resolveExtensionAttributesType();
-        this.resourceMatcher = new AntPathMatcher();
     }
 
     protected Class<EA> resolveExtensionAttributesType() {
-        ResolvableType type = ResolvableType.forType(this.getClass());
+        ResolvableType type = forType(this.getClass());
         ResolvableType superType = type.as(PropertySourceExtensionLoader.class);
         return (Class<EA>) superType.resolveGeneric(1);
     }
