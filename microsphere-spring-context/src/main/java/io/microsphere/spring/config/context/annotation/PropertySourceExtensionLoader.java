@@ -144,14 +144,17 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             String relativePropertySourceName = extensionAttributes.getAfterPropertySourceName();
             if (hasText(relativePropertySourceName)) {
                 propertySources.addAfter(relativePropertySourceName, propertySource);
-            } else {
-                relativePropertySourceName = extensionAttributes.getBeforePropertySourceName();
+                return;
             }
+
+            relativePropertySourceName = extensionAttributes.getBeforePropertySourceName();
             if (hasText(relativePropertySourceName)) {
                 propertySources.addBefore(relativePropertySourceName, propertySource);
-            } else {
-                propertySources.addLast(propertySource);
+                return;
             }
+
+            //  default, add the PropertySource into last
+            propertySources.addLast(propertySource);
         }
     }
 
