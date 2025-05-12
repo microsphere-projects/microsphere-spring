@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.config;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.Utils;
@@ -28,25 +29,26 @@ import org.springframework.core.ResolvableType;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.lang.function.Predicates.and;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.util.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static java.util.Collections.emptySet;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import static org.springframework.core.ResolvableType.NONE;
 import static org.springframework.core.ResolvableType.forClass;
 import static org.springframework.core.ResolvableType.forMethodReturnType;
-import static org.springframework.util.ClassUtils.resolveClassName;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * {@link BeanDefinition} Utilities class
@@ -164,20 +166,11 @@ public abstract class BeanDefinitionUtils implements Utils {
     }
 
     public static Class<?> resolveBeanType(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
-        Class<?> beanClass = null;
-
-        Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
-        if (factoryMethod == null) {
-            if (beanDefinition.hasBeanClass()) {
-                beanClass = beanDefinition.getBeanClass();
-            } else {
-                String beanClassName = beanDefinition.getBeanClassName();
-                if (hasText(beanClassName)) {
-                    beanClass = resolveClassName(beanClassName, classLoader);
-                }
-            }
-        } else {
-            beanClass = factoryMethod.getReturnType();
+        ResolvableType resolvableType = getResolvableType(beanDefinition);
+        Class<?> beanClass = resolvableType.resolve();
+        if (beanClass == null) { // resolving the bean class as fallback
+            String beanClassName = beanDefinition.getBeanClassName();
+            beanClass = resolveClass(beanClassName, classLoader);
         }
         return beanClass;
     }
@@ -186,10 +179,8 @@ public abstract class BeanDefinitionUtils implements Utils {
         return findBeanNames(beanFactory, BeanDefinitionUtils::isInfrastructureBean);
     }
 
-    public static Set<String> findBeanNames(ConfigurableListableBeanFactory beanFactory, Predicate<BeanDefinition> predicate) {
-        if (predicate == null) {
-            return emptySet();
-        }
+    public static Set<String> findBeanNames(ConfigurableListableBeanFactory beanFactory, Predicate<? super BeanDefinition>... predicates) {
+        Predicate<? super BeanDefinition> predicate = and(predicates);
         Set<String> matchedBeanNames = new LinkedHashSet<>();
         String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
@@ -203,43 +194,6 @@ public abstract class BeanDefinitionUtils implements Utils {
 
     public static boolean isInfrastructureBean(BeanDefinition beanDefinition) {
         return beanDefinition != null && ROLE_INFRASTRUCTURE == beanDefinition.getRole();
-    }
-
-    /**
-     * Get {@link ResolvableType} from {@link RootBeanDefinition}
-     *
-     * @param rootBeanDefinition {@link RootBeanDefinition}
-     * @return non-null
-     * @see RootBeanDefinition#getResolvableType()
-     */
-    public static ResolvableType getResolvableType(RootBeanDefinition rootBeanDefinition) {
-        if (GET_RESOLVABLE_TYPE_METHOD_HANDLE == null) {
-            return doGetResolvableType(rootBeanDefinition);
-        }
-        ResolvableType resolvableType = null;
-        try {
-            resolvableType = (ResolvableType) GET_RESOLVABLE_TYPE_METHOD_HANDLE.invokeExact(rootBeanDefinition);
-        } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : '{}'", GET_RESOLVABLE_TYPE_METHOD_HANDLE, rootBeanDefinition, e);
-            }
-            resolvableType = doGetResolvableType(rootBeanDefinition);
-        }
-        return resolvableType;
-    }
-
-    /**
-     * Get {@link ResolvableType} from {@link AbstractBeanDefinition}
-     *
-     * @param beanDefinition {@link AbstractBeanDefinition}
-     * @return {@link ResolvableType#NONE} if can't be resolved
-     * @see AbstractBeanDefinition#getResolvableType()
-     */
-    public static ResolvableType getResolvableType(AbstractBeanDefinition beanDefinition) {
-        if (beanDefinition instanceof RootBeanDefinition) {
-            return getResolvableType((RootBeanDefinition) beanDefinition);
-        }
-        return doGetResolvableType(beanDefinition);
     }
 
     /**
@@ -276,6 +230,43 @@ public abstract class BeanDefinitionUtils implements Utils {
     }
 
     /**
+     * Get {@link ResolvableType} from {@link AbstractBeanDefinition}
+     *
+     * @param beanDefinition {@link AbstractBeanDefinition}
+     * @return {@link ResolvableType#NONE} if can't be resolved
+     * @see AbstractBeanDefinition#getResolvableType()
+     */
+    public static ResolvableType getResolvableType(AbstractBeanDefinition beanDefinition) {
+        if (beanDefinition instanceof RootBeanDefinition) {
+            return getResolvableType((RootBeanDefinition) beanDefinition);
+        }
+        return doGetResolvableType(beanDefinition);
+    }
+
+    /**
+     * Get {@link ResolvableType} from {@link RootBeanDefinition}
+     *
+     * @param rootBeanDefinition {@link RootBeanDefinition}
+     * @return {@link ResolvableType#NONE} if the bean definition can't be resolved
+     * @see RootBeanDefinition#getResolvableType()
+     */
+    @Nonnull
+    public static ResolvableType getResolvableType(RootBeanDefinition rootBeanDefinition) {
+        MethodHandle methodHandle = GET_RESOLVABLE_TYPE_METHOD_HANDLE;
+        if (methodHandle == null) {
+            return doGetResolvableType(rootBeanDefinition);
+        }
+        ResolvableType resolvableType = null;
+        try {
+            resolvableType = (ResolvableType) methodHandle.invokeExact(rootBeanDefinition);
+        } catch (Throwable e) {
+            handleInvokeExactFailure(e, methodHandle, rootBeanDefinition);
+            resolvableType = doGetResolvableType(rootBeanDefinition);
+        }
+        return resolvableType;
+    }
+
+    /**
      * Set the {@link Supplier} reference of bean instance for {@link AbstractBeanDefinition}
      *
      * @param beanDefinition   {@link AbstractBeanDefinition}
@@ -283,16 +274,14 @@ public abstract class BeanDefinitionUtils implements Utils {
      * @return <code>true</code> if set successfully, <code>false</code> otherwise
      */
     public static boolean setInstanceSupplier(AbstractBeanDefinition beanDefinition, @Nullable Supplier<?> instanceSupplier) {
-        if (instanceSupplier == null || SET_INSTANCE_SUPPLIER_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = SET_INSTANCE_SUPPLIER_METHOD_HANDLE;
+        if (methodHandle == null || instanceSupplier == null) {
             return false;
         }
         try {
-            SET_INSTANCE_SUPPLIER_METHOD_HANDLE.invokeExact(beanDefinition, instanceSupplier);
+            methodHandle.invokeExact(beanDefinition, instanceSupplier);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : '{}'", SET_INSTANCE_SUPPLIER_METHOD_HANDLE,
-                        Arrays.asList(beanDefinition, instanceSupplier), e);
-            }
+            handleInvokeExactFailure(e, methodHandle, beanDefinition, instanceSupplier);
         }
         return true;
     }
@@ -305,16 +294,15 @@ public abstract class BeanDefinitionUtils implements Utils {
      */
     @Nullable
     public static Supplier<?> getInstanceSupplier(AbstractBeanDefinition beanDefinition) {
-        if (GET_INSTANCE_SUPPLIER_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = GET_INSTANCE_SUPPLIER_METHOD_HANDLE;
+        if (methodHandle == null) {
             return null;
         }
         Supplier<?> supplier = null;
         try {
-            supplier = (Supplier<?>) GET_INSTANCE_SUPPLIER_METHOD_HANDLE.invokeExact(beanDefinition);
+            supplier = (Supplier<?>) methodHandle.invokeExact(beanDefinition);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : '{}'", GET_INSTANCE_SUPPLIER_METHOD_HANDLE, beanDefinition, e);
-            }
+            handleInvokeExactFailure(e, methodHandle, beanDefinition);
         }
         return supplier;
     }
@@ -326,6 +314,12 @@ public abstract class BeanDefinitionUtils implements Utils {
      * @return
      */
     protected static ResolvableType doGetResolvableType(RootBeanDefinition rootBeanDefinition) {
+        if (rootBeanDefinition == null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("The argument of RootBeanDefinition is null");
+            }
+            return NONE;
+        }
         Method factoryMethod = rootBeanDefinition.getResolvedFactoryMethod();
         if (factoryMethod != null) {
             return forMethodReturnType(factoryMethod);
@@ -340,7 +334,7 @@ public abstract class BeanDefinitionUtils implements Utils {
      * @return {@link ResolvableType#NONE} if can't be resolved
      */
     protected static ResolvableType doGetResolvableType(AbstractBeanDefinition beanDefinition) {
-        return beanDefinition.hasBeanClass() ? forClass(beanDefinition.getBeanClass()) : ResolvableType.NONE;
+        return beanDefinition.hasBeanClass() ? forClass(beanDefinition.getBeanClass()) : NONE;
     }
 
     private BeanDefinitionUtils() {

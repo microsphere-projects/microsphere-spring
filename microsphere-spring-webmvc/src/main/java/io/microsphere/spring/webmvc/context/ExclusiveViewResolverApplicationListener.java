@@ -10,6 +10,7 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import java.util.Arrays;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
@@ -67,7 +68,7 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
         ContentNegotiatingViewResolver contentNegotiatingViewResolver =
                 applicationContext.getBean(ContentNegotiatingViewResolver.class);
 
-        contentNegotiatingViewResolver.setViewResolvers(Arrays.asList(exclusiveViewResolver));
+        contentNegotiatingViewResolver.setViewResolvers(asList(exclusiveViewResolver));
 
     }
 

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.microsphere.spring.config.context.annotation;
 
 import org.junit.Test;
@@ -27,22 +28,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertEquals;
 
 /**
- * {@link ResourcePropertySources} Test
+ * {@link ResourcePropertySourcesLoader} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ResourcePropertySource
+ * @see ResourcePropertySourcesLoader
+ * @see ResourcePropertySources
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        ResourcePropertySourcesTest.class
+        ResourcePropertySourcesLoaderTest.class
 })
 @TestPropertySource(properties = "value=classpath*:/META-INF/test/*.properties")
 @ResourcePropertySources({
         @ResourcePropertySource(value = {"${value}"}),
         @ResourcePropertySource(value = {"${value}"})
 })
-public class ResourcePropertySourcesTest {
+public class ResourcePropertySourcesLoaderTest {
 
     @Autowired
     private Environment environment;

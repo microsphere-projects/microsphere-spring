@@ -22,6 +22,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -57,6 +58,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     public void add(ConfigurationProperty configurationProperty) {
         assertMaxSize();
         String name = configurationProperty.getName();
+        Map<String, ConfigurationProperty> repository = getRepository();
         repository.put(name, configurationProperty);
     }
 
@@ -66,6 +68,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
      * @param name {@link ConfigurationProperty#getName() the name of ConfigurationProperty}
      */
     public ConfigurationProperty remove(String name) {
+        Map<String, ConfigurationProperty> repository = getRepository();
         return repository.remove(name);
     }
 
@@ -76,6 +79,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
      * @return <code>null</code> if not found
      */
     public ConfigurationProperty get(String name) {
+        Map<String, ConfigurationProperty> repository = getRepository();
         return repository.get(name);
     }
 
@@ -86,6 +90,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
      * @return <code>true</code> if contains, otherwise <code>false</code>
      */
     public boolean contains(String name) {
+        Map<String, ConfigurationProperty> repository = getRepository();
         return repository.containsKey(name);
     }
 
@@ -97,6 +102,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
      */
     public ConfigurationProperty createIfAbsent(String name) {
         assertMaxSize();
+        Map<String, ConfigurationProperty> repository = getRepository();
         return repository.computeIfAbsent(name, ConfigurationProperty::new);
     }
 
@@ -106,6 +112,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
      * @return never <code>null</code>
      */
     public Collection<ConfigurationProperty> getAll() {
+        Map<String, ConfigurationProperty> repository = getRepository();
         return repository.values();
     }
 
@@ -124,7 +131,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.repository = new ConcurrentHashMap<>(this.maxSize);
     }
 
@@ -135,11 +142,20 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
      */
     @Override
     public void destroy() throws Exception {
-        repository.clear();
+        if (repository != null) {
+            repository.clear();
+        }
+    }
+
+    protected Map<String, ConfigurationProperty> getRepository() {
+        if (repository == null) {
+            this.afterPropertiesSet();
+        }
+        return repository;
     }
 
     private void assertMaxSize() {
-        if (repository.size() >= maxSize) {
+        if (repository != null && repository.size() >= maxSize) {
             String message = format("The size of repository is greater than max size : {}. " +
                     "If it requires to the greater threshold, change the configuration property : {}", maxSize, MAX_SIZE_PROPERTY_NAME);
             throw new IllegalStateException(message);

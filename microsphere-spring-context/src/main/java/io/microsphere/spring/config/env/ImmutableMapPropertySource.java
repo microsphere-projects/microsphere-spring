@@ -48,7 +48,7 @@ public class ImmutableMapPropertySource extends MapPropertySource {
     }
 
     private static Map immutableMap(Map source) {
-        Map result = null;
+        Map result;
         synchronized (ImmutableMapPropertySource.class) {
             result = newMap(source);
         }

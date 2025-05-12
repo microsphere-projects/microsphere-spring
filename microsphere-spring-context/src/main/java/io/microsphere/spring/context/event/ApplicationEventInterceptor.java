@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+
 /**
  * {@link ApplicationEvent} Interceptor
  *
@@ -40,6 +42,6 @@ public interface ApplicationEventInterceptor extends Ordered {
 
     @Override
     default int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return LOWEST_PRECEDENCE;
     }
 }

@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.doGetResolvableType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
@@ -51,9 +52,12 @@ import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import static org.springframework.core.ResolvableType.NONE;
 
 /**
  * {@link BeanDefinitionUtils} Test
@@ -121,6 +125,13 @@ public class BeanDefinitionUtilsTest {
     }
 
     @Test
+    public void testResolveBeanTypeOnFallback() {
+        RootBeanDefinition beanDefinition = new RootBeanDefinition();
+        beanDefinition.setBeanClassName(User.class.getName());
+        assertEquals(User.class, resolveBeanType(beanDefinition));
+    }
+
+    @Test
     public void testFindInfrastructureBeanNames() {
         testInSpringContainer((context, beanFactory) -> {
             Set<String> infrastructureBeanNames = findInfrastructureBeanNames(beanFactory);
@@ -131,6 +142,27 @@ public class BeanDefinitionUtilsTest {
 
     @Test
     public void testGetResolvableType() {
+        AbstractBeanDefinition beanDefinition = new RootBeanDefinition(User.class);
+        assertEquals(User.class, getResolvableType(beanDefinition).resolve());
+
+        beanDefinition = new RootBeanDefinition();
+        assertNull(getResolvableType(beanDefinition).resolve());
+
+        beanDefinition = genericBeanDefinition(User.class);
+        assertEquals(User.class, getResolvableType(beanDefinition).resolve());
+
+        beanDefinition = genericBeanDefinition(null);
+        assertNull(getResolvableType(beanDefinition).resolve());
+    }
+
+    @Test
+    public void testGetResolvableTypeOnNull() {
+        RootBeanDefinition rootBeanDefinition = null;
+        assertSame(NONE, getResolvableType(rootBeanDefinition));
+    }
+
+    @Test
+    public void testGetResolvableTypeWithRootDefinition() {
         testInSpringContainer((context, beanFactory) -> {
             RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
             ResolvableType resolvableType = getResolvableType(beanDefinition);
@@ -158,6 +190,11 @@ public class BeanDefinitionUtilsTest {
     }
 
     @Test
+    public void testIsInfrastructureBeanOnNull() {
+        assertFalse(isInfrastructureBean(null));
+    }
+
+    @Test
     public void testMethodsPresent() {
         assertEquals(isGESpring5, isSetInstanceSupplierMethodPresent());
         assertEquals(isGESpring5, isGetInstanceSupplierMethodPresent());
@@ -180,6 +217,39 @@ public class BeanDefinitionUtilsTest {
         Supplier<?> instanceSupplier = getInstanceSupplier(beanDefinition);
         Object instance = instanceSupplier == null ? null : instanceSupplier.get();
         assertEquals(isGESpring5 ? user : null, instance);
+    }
+
+    @Test
+    public void testSetInstanceSupplierOnNull() {
+        AbstractBeanDefinition beanDefinition = null;
+        assertEquals(isGESpring5, setInstanceSupplier(beanDefinition, () -> null));
+
+        beanDefinition = this.beanDefinition;
+        assertFalse(setInstanceSupplier(beanDefinition, null));
+    }
+
+    @Test
+    public void testGetInstanceSupplierOnNull() {
+        AbstractBeanDefinition beanDefinition = null;
+        assertNull(getInstanceSupplier(beanDefinition));
+    }
+
+    @Test
+    public void testDoGetResolvableType() {
+        testInSpringContainer((context, beanFactory) -> {
+            RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
+            ResolvableType resolvableType = doGetResolvableType(beanDefinition);
+            assertEquals(User.class, resolvableType.resolve());
+
+            beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USERS_BEAN_NAME);
+            resolvableType = doGetResolvableType(beanDefinition);
+            assertEquals(List.class, resolvableType.resolve());
+            assertEquals(User.class, resolvableType.getGeneric(0).resolve());
+
+            beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
+            resolvableType = doGetResolvableType(beanDefinition);
+            assertEquals(Config.class, resolvableType.resolve());
+        });
     }
 
     private void assertBeanDefinition(AbstractBeanDefinition beanDefinition, int role, Object... constructorArguments) {

@@ -14,39 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.config.context.annotation;
+package io.microsphere.spring.context.lifecycle;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import io.microsphere.logging.Logger;
+import org.springframework.context.SmartLifecycle;
 
-import static org.junit.Assert.assertEquals;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
- * {@link ResourcePropertySource} Test
+ * {@link SmartLifecycle} for Logging
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ResourcePropertySource
+ * @see AbstractSmartLifecycle
+ * @see SmartLifecycle
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-        ResourcePropertySourceTest.class
-})
-@ResourcePropertySource(value = {
-        "classpath*:/META-INF/test/*.properties"
-})
-public class ResourcePropertySourceTest {
+public class LoggingSmartLifecycle extends AbstractSmartLifecycle {
 
-    @Autowired
-    private Environment environment;
+    private static final Logger logger = getLogger(LoggingSmartLifecycle.class);
 
-    @Test
-    public void test() {
-        assertEquals("1", environment.getProperty("a"));
-        assertEquals("3", environment.getProperty("b"));
+    @Override
+    protected void doStart() {
+        logger.info("doStart()...");
+    }
+
+    @Override
+    protected void doStop() {
+        logger.info("doStop()...");
     }
 }

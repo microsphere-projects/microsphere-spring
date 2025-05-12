@@ -136,9 +136,9 @@ public @interface PropertySourceExtension {
 
     /**
      * A specific character encoding for the given resources.
-     * <p>Default is "UTF-8"
+     * <p>Default is the property value of "file.encoding" if present, or "UTF-8"
      */
-    String encoding() default "UTF-8";
+    String encoding() default "${file.encoding:UTF-8}";
 
     /**
      * Specify a custom {@link PropertySourceFactory}, if any.

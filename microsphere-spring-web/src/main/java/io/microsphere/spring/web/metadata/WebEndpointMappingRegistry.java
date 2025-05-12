@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static java.util.Arrays.asList;
+
 /**
  * {@link WebEndpointMapping} Registry
  *
@@ -52,7 +54,7 @@ public interface WebEndpointMappingRegistry {
         if (register(webEndpointMapping)) {
             count++;
         }
-        count += register(Arrays.asList(others));
+        count += register(asList(others));
         return count;
     }
 

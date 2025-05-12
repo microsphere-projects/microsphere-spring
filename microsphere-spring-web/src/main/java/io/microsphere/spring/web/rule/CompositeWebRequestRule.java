@@ -21,6 +21,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -37,7 +38,7 @@ public class CompositeWebRequestRule implements WebRequestRule {
     private List<WebRequestRule> webRequestRules;
 
     public CompositeWebRequestRule(WebRequestRule... requestRules) {
-        this.webRequestRules = isEmpty(requestRules) ? emptyList() : Arrays.asList(requestRules);
+        this.webRequestRules = isEmpty(requestRules) ? emptyList() : asList(requestRules);
     }
 
     @Override

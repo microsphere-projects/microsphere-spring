@@ -16,26 +16,28 @@
  */
 package io.microsphere.spring.core.env;
 
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 
-import static io.microsphere.spring.core.env.ListenableConfigurableEnvironment.setEnvironmentIfEnabled;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * The Initializer of {@link ListenableConfigurableEnvironment} based on {@link ApplicationContextInitializer}
+ * {@link ListenableConfigurableEnvironmentInitializer} Test
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see ListenableConfigurableEnvironment
- * @see EnvironmentListener
- * @see ProfileListener
- * @see PropertyResolverListener
- * @see ApplicationContextInitializer
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ListenableConfigurableEnvironmentInitializer
  * @since 1.0.0
  */
-public class ListenableConfigurableEnvironmentInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+@RunWith(SpringRunner.class)
+@ContextConfiguration(initializers = {
+        ListenableConfigurableEnvironmentInitializer.class
+})
+public class ListenableConfigurableEnvironmentInitializerTest {
 
-    @Override
-    public void initialize(ConfigurableApplicationContext applicationContext) {
-        setEnvironmentIfEnabled(applicationContext);
+    @Test
+    public void test() {
+
     }
+
 }
