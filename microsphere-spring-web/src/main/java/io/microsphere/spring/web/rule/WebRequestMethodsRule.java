@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.util.ArrayUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
 import static io.microsphere.collection.SetUtils.ofSet;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static io.microsphere.util.ArrayUtils.combine;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
@@ -54,7 +56,7 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
     }
 
     public WebRequestMethodsRule(String method, String... others) {
-        this.methods = ObjectUtils.isEmpty(others) ? singleton(method) : ofSet(method, others);
+        this.methods = ObjectUtils.isEmpty(others) ? singleton(method) : ofSet(combine(method, others));
     }
 
     @Override
