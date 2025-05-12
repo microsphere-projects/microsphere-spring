@@ -127,7 +127,7 @@
         <profile>
             <id>spring-framework-6.1</id>
             <properties>
-                <spring.version>6.1.16</spring.version>
+                <spring.version>6.1.19</spring.version>
             </properties>
         </profile>
 
@@ -137,7 +137,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.version>6.2.1</spring.version>
+                <spring.version>6.2.6</spring.version>
             </properties>
         </profile>
     </profiles>
