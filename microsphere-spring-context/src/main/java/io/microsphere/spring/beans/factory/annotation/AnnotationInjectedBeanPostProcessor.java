@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -54,6 +53,7 @@ import java.util.concurrent.ConcurrentMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static org.springframework.beans.BeanUtils.findPropertyForMethod;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
@@ -210,7 +210,7 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
                                 method);
                     }
                 }
-                PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
+                PropertyDescriptor pd = findPropertyForMethod(bridgedMethod, beanClass);
                 elements.add(new AnnotatedMethodElement(method, pd, annotation));
             }
         });
