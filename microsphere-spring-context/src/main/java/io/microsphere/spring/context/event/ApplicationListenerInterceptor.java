@@ -20,8 +20,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 
-import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
-
 /**
  * {@link ApplicationListener} Interceptor
  *
