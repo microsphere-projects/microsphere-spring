@@ -30,6 +30,13 @@ public class TTLContext {
 
     private static final ThreadLocal<Duration> ttlThreadLocal = new ThreadLocal<>();
 
+    public static void doWithTTL(Consumer<Duration> ttlFunction, Duration defaultTTL) {
+        doWithTTL(ttl -> {
+            ttlFunction.accept(ttl);
+            return null;
+        }, defaultTTL);
+    }
+
     public static <R> R doWithTTL(Function<Duration, R> ttlFunction, Duration defaultTTL) {
         Duration effectiveTTL = getEffectiveTTL(defaultTTL);
         try {
@@ -37,13 +44,6 @@ public class TTLContext {
         } finally {
             clearTTL();
         }
-    }
-
-    public static void doWithTTL(Consumer<Duration> ttlFunction, Duration defaultTTL) {
-        doWithTTL(ttl -> {
-            ttlFunction.accept(ttl);
-            return null;
-        }, defaultTTL);
     }
 
     private static Duration getEffectiveTTL(Duration defaultTTL) {
