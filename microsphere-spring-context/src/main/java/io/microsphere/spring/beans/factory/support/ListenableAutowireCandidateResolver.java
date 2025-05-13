@@ -181,7 +181,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         }
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
         AutowireCandidateResolver autowireCandidateResolver = dbf.getAutowireCandidateResolver();
-        if (autowireCandidateResolver != null) {
+        if (autowireCandidateResolver != this) {
             List<AutowireCandidateResolvingListener> listeners = loadListeners(beanFactory);
             CompositeAutowireCandidateResolvingListener compositeListener = new CompositeAutowireCandidateResolvingListener(listeners);
             this.delegate = autowireCandidateResolver;
