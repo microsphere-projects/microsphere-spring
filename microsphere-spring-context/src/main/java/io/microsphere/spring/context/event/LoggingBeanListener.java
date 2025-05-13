@@ -30,6 +30,12 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
  * Logging {@link BeanListener} implementation
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
  * @since 1.0.0
  */
 public class LoggingBeanListener implements BeanListener {
