@@ -50,13 +50,32 @@ import static org.springframework.util.CollectionUtils.containsAny;
  * in parallel.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 public class ParallelPreInstantiationSingletonsBeanFactoryListener implements BeanFactoryListenerAdapter,
         EnvironmentAware, BeanFactoryAware {
 
+    /**
+     * The property name of the number of threads to pre-instantiate singletons in parallel
+     */
     public static final String THREADS_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.threads";
+
+    /**
+     * The property name of the prefix of the thread name to pre-instantiate singletons in parallel
+     */
     public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.thread.name-prefix";
+
+    /**
+     * The default prefix of thread name to pre-instantiate singletons in parallel
+     */
     public static final String DEFAULT_THREAD_NAME_PREFIX = "Parallel-Pre-Instantiation-Singletons-Thread-";
 
     private static final Logger logger = getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
