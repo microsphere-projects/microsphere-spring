@@ -13,7 +13,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -31,7 +30,7 @@ import static org.springframework.core.annotation.AnnotationUtils.getDefaultValu
 import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnnotation;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
-import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.trimWhitespace;
 
 /**
  * {@link Annotation} Utilities
@@ -87,7 +86,7 @@ public abstract class AnnotationUtils {
 
         for (ElementType elementType : elementTypes) {
 
-            List<A> annotationsList = new LinkedList<>();
+            List<A> annotationsList = new LinkedList<A>();
 
             switch (elementType) {
 
@@ -164,7 +163,7 @@ public abstract class AnnotationUtils {
     public static Map<String, Object> getAttributes(Map<String, Object> annotationAttributes,
                                                     PropertyResolver propertyResolver, String... ignoreAttributeNames) {
 
-        Set<String> ignoreAttributeNamesSet = new HashSet<>(Arrays.asList(ignoreAttributeNames));
+        Set<String> ignoreAttributeNamesSet = new HashSet<>(asList(ignoreAttributeNames));
 
         Map<String, Object> actualAttributes = new LinkedHashMap<>();
 
@@ -238,7 +237,7 @@ public abstract class AnnotationUtils {
         String resolvedValue = attributeValue;
         if (propertyResolver != null) {
             resolvedValue = propertyResolver.resolvePlaceholders(resolvedValue);
-            resolvedValue = hasText(resolvedValue) ? resolvedValue.strip() : resolvedValue;
+            resolvedValue = trimWhitespace(resolvedValue);
         }
         return resolvedValue;
     }
