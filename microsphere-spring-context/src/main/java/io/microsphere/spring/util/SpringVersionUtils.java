@@ -19,7 +19,7 @@ package io.microsphere.spring.util;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.core.SpringVersion;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import io.microsphere.util.Version;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -38,7 +38,7 @@ import static io.microsphere.util.ClassLoaderUtils.resolveClass;
  * @see Version
  * @since 1.0.0
  */
-public abstract class SpringVersionUtils extends BaseUtils {
+public abstract class SpringVersionUtils implements Utils {
 
     private static final ClassLoader classLoader = getDefaultClassLoader();
 
@@ -112,5 +112,8 @@ public abstract class SpringVersionUtils extends BaseUtils {
 
         }
         return implementationVersion == null ? null : Version.of(implementationVersion);
+    }
+
+    private SpringVersionUtils() {
     }
 }
