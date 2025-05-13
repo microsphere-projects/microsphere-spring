@@ -55,18 +55,26 @@ import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
-import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.springframework.core.MethodParameter.forParameter;
+import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * Dependency Analysis {@link BeanFactoryListener}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListenerAdapter {
@@ -392,7 +400,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private Class<?> getBeanClass(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
         return beanDefinition.hasBeanClass() ? beanDefinition.getBeanClass() :
-                resolveClass(beanDefinition.getBeanClassName(), classLoader);
+                resolveClassName(beanDefinition.getBeanClassName(), classLoader);
     }
 
     /**
