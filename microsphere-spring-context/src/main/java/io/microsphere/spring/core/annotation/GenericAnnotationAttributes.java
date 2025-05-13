@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.core.annotation;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import org.springframework.core.annotation.AnnotationAttributes;
 
-import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
