@@ -35,6 +35,7 @@ import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
+import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -66,7 +67,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
     }
 
     protected Class<A> resolveAnnotationType() {
-        ResolvableType type = ResolvableType.forType(this.getClass());
+        ResolvableType type = forType(this.getClass());
         ResolvableType superType = type.as(AnnotatedPropertySourceLoader.class);
         return (Class<A>) superType.resolveGeneric(0);
     }
