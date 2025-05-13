@@ -28,10 +28,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
-import org.springframework.core.env.PropertyResolver;
 
 import java.lang.invoke.MethodHandle;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +39,6 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
-import static java.util.Arrays.asList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
