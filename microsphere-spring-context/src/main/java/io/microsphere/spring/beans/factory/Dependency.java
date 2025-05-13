@@ -27,6 +27,7 @@ import java.util.Objects;
 import static io.microsphere.collection.CollectionUtils.size;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Collections.emptyList;
 import static org.springframework.util.Assert.hasText;
@@ -129,7 +130,7 @@ public class Dependency {
     }
 
     protected Dependency doAddChildren(Dependency... children) {
-        this.doAddChildren(Arrays.asList(children));
+        this.doAddChildren(ofList(children));
         return this;
     }
 
