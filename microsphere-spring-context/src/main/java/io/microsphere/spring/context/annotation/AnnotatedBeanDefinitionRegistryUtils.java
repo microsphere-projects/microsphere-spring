@@ -1,7 +1,7 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -40,7 +40,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  * @see BeanDefinition
  * @since 2017.01.09
  */
-public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
+public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
 
     private static final Logger logger = getLogger(AnnotatedBeanDefinitionRegistryUtils.class);
 
@@ -129,20 +129,20 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
             boolean traceEnabled = logger.isTraceEnabled();
 
             if (traceEnabled) {
-                logger.trace(registry.getClass().getSimpleName() + " will scan base packages " + Arrays.asList(basePackages) + ".");
+                logger.trace(registry.getClass().getSimpleName() + " will scan base packages " + asList(basePackages) + ".");
             }
 
-            List<String> registeredBeanNames = Arrays.asList(registry.getBeanDefinitionNames());
+            List<String> registeredBeanNames = asList(registry.getBeanDefinitionNames());
 
             ClassPathBeanDefinitionScanner classPathBeanDefinitionScanner = new ClassPathBeanDefinitionScanner(registry);
             count = classPathBeanDefinitionScanner.scan(basePackages);
 
             List<String> scannedBeanNames = new ArrayList<String>(count);
-            scannedBeanNames.addAll(Arrays.asList(registry.getBeanDefinitionNames()));
+            scannedBeanNames.addAll(asList(registry.getBeanDefinitionNames()));
             scannedBeanNames.removeAll(registeredBeanNames);
 
             if (traceEnabled) {
-                logger.trace("The Scanned Components[ count : " + count + "] under base packages " + Arrays.asList(basePackages) + " : ");
+                logger.trace("The Scanned Components[ count : " + count + "] under base packages " + asList(basePackages) + " : ");
             }
 
             for (String scannedBeanName : scannedBeanNames) {
@@ -222,5 +222,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils extends BaseUtils {
 
         return beanDefinitionHolders;
 
+    }
+
+    private AnnotatedBeanDefinitionRegistryUtils(){
     }
 }
