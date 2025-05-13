@@ -16,30 +16,29 @@
  */
 package io.microsphere.spring.beans.factory.config;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.core.ResolvableType;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static io.microsphere.lang.function.Predicates.and;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
-import static java.util.Collections.emptySet;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
-import static org.springframework.util.ClassUtils.resolveClassName;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * {@link BeanDefinition} Utilities class
@@ -50,7 +49,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @see BeanDefinition#ROLE_INFRASTRUCTURE
  * @since 1.0.0
  */
-public abstract class BeanDefinitionUtils extends BaseUtils {
+public abstract class BeanDefinitionUtils implements Utils {
 
     private static final Logger logger = getLogger(BeanDefinitionUtils.class);
 
@@ -112,20 +111,11 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
     }
 
     public static Class<?> resolveBeanType(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
-        Class<?> beanClass = null;
-
-        Method factoryMethod = beanDefinition.getResolvedFactoryMethod();
-        if (factoryMethod == null) {
-            if (beanDefinition.hasBeanClass()) {
-                beanClass = beanDefinition.getBeanClass();
-            } else {
-                String beanClassName = beanDefinition.getBeanClassName();
-                if (hasText(beanClassName)) {
-                    beanClass = resolveClassName(beanClassName, classLoader);
-                }
-            }
-        } else {
-            beanClass = factoryMethod.getReturnType();
+        ResolvableType resolvableType = beanDefinition.getResolvableType();
+        Class<?> beanClass = resolvableType.resolve();
+        if (beanClass == null) { // resolving the bean class as fallback
+            String beanClassName = beanDefinition.getBeanClassName();
+            beanClass = resolveClass(beanClassName, classLoader);
         }
         return beanClass;
     }
@@ -134,10 +124,8 @@ public abstract class BeanDefinitionUtils extends BaseUtils {
         return findBeanNames(beanFactory, BeanDefinitionUtils::isInfrastructureBean);
     }
 
-    public static Set<String> findBeanNames(ConfigurableListableBeanFactory beanFactory, Predicate<BeanDefinition> predicate) {
-        if (predicate == null) {
-            return emptySet();
-        }
+    public static Set<String> findBeanNames(ConfigurableListableBeanFactory beanFactory, Predicate<? super BeanDefinition>... predicates) {
+        Predicate<? super BeanDefinition> predicate = and(predicates);
         Set<String> matchedBeanNames = new LinkedHashSet<>();
         String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
