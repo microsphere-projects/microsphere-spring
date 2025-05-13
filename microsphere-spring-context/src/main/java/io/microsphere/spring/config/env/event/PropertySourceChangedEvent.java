@@ -17,13 +17,12 @@
 package io.microsphere.spring.config.env.event;
 
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
-
-import javax.annotation.Nonnull;
 
 import static org.springframework.util.Assert.notNull;
 
