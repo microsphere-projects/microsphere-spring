@@ -22,6 +22,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.NamedBeanHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,13 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
  * The Composite {@link BeanFactoryListener}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
  * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 class BeanFactoryListeners implements BeanFactoryListener {
