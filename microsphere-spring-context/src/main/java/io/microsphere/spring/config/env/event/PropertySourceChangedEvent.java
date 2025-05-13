@@ -24,6 +24,11 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 
+import java.util.Objects;
+
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.ADDED;
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REMOVED;
+import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REPLACED;
 import static org.springframework.util.Assert.notNull;
 
 /**
@@ -76,6 +81,24 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
         return kind;
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof PropertySourceChangedEvent)) return false;
+
+        PropertySourceChangedEvent that = (PropertySourceChangedEvent) o;
+        return kind == that.kind
+                && Objects.equals(newPropertySource, that.newPropertySource)
+                && Objects.equals(oldPropertySource, that.oldPropertySource);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(kind);
+        result = 31 * result + Objects.hashCode(newPropertySource);
+        result = 31 * result + Objects.hashCode(oldPropertySource);
+        return result;
+    }
+
     /**
      * Create an {@link Kind#ADDED added} instance
      *
@@ -85,7 +108,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      */
     public static PropertySourceChangedEvent added(ApplicationContext source, @Nonnull PropertySource newPropertySource) {
         notNull(newPropertySource, "The 'newPropertySource' must not be null!");
-        return new PropertySourceChangedEvent(source, Kind.ADDED, newPropertySource);
+        return new PropertySourceChangedEvent(source, ADDED, newPropertySource);
     }
 
     /**
@@ -99,7 +122,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
     public static PropertySourceChangedEvent replaced(ApplicationContext source, @Nonnull PropertySource newPropertySource, @Nonnull PropertySource oldPropertySource) {
         notNull(newPropertySource, "The 'newPropertySource' must not be null!");
         notNull(oldPropertySource, "The 'oldPropertySource' must not be null!");
-        return new PropertySourceChangedEvent(source, Kind.REPLACED, newPropertySource, oldPropertySource);
+        return new PropertySourceChangedEvent(source, REPLACED, newPropertySource, oldPropertySource);
     }
 
     /**
@@ -111,7 +134,7 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      */
     public static PropertySourceChangedEvent removed(ApplicationContext source, @Nonnull PropertySource oldPropertySource) {
         notNull(oldPropertySource, "The 'oldPropertySource' must not be null!");
-        return new PropertySourceChangedEvent(source, Kind.REMOVED, null, oldPropertySource);
+        return new PropertySourceChangedEvent(source, REMOVED, null, oldPropertySource);
     }
 
     /**
