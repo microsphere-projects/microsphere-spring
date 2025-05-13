@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.config.env.event.PropertySourceChangedEvent;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
@@ -39,7 +40,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
