@@ -23,7 +23,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import javax.annotation.Nullable;
+import io.microsphere.annotation.Nullable;
 
 /**
  * The advice interface for {@link HandlerMethodArgumentResolver}
