@@ -30,6 +30,12 @@ import java.util.StringJoiner;
  * Bean Time Statistics
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
  * @since 1.0.0
  */
 public class BeanTimeStatistics implements BeanListener, BeanNameAware {
