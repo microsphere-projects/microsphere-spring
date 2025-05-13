@@ -56,6 +56,7 @@ import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
+import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.MemberUtils.isStatic;
@@ -141,19 +142,10 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         int beansCount = eligibleBeanDefinitionsMap.size();
         final Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
 
-        CompletionService<Map.Entry<String, Set<String>>> completionService = new ExecutorCompletionService<>(this.executorService);
-
-        for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
-            completionService.submit(() -> {
-                String beanName = entry.getKey();
-                RootBeanDefinition beanDefinition = entry.getValue();
-                Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
-                return ofEntry(beanName, dependentBeanNames);
-            });
-        }
+        CompletionService<Map.Entry<String, Set<String>>> completionService = getEntryCompletionService(eligibleBeanDefinitionsMap);
 
         for (int i = 0; i < beansCount; i++) {
-            ThrowableAction.execute(() -> {
+            execute(() -> {
                 Future<Map.Entry<String, Set<String>>> future = completionService.take();
                 Map.Entry<String, Set<String>> entry = future.get();
                 String beanName = entry.getKey();
@@ -164,6 +156,20 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         stopWatch.stop();
         return dependentBeanNamesMap;
+    }
+
+    private CompletionService<Map.Entry<String, Set<String>>> getEntryCompletionService(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap) {
+        CompletionService<Map.Entry<String, Set<String>>> completionService = new ExecutorCompletionService<>(this.executorService);
+
+        for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
+            completionService.submit(() -> {
+                String beanName = entry.getKey();
+                RootBeanDefinition beanDefinition = entry.getValue();
+                Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
+                return ofEntry(beanName, dependentBeanNames);
+            });
+        }
+        return completionService;
     }
 
     private void preProcessLoadBeanClasses(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap, StopWatch stopWatch) {
