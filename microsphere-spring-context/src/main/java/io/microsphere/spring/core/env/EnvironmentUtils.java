@@ -19,7 +19,7 @@ package io.microsphere.spring.core.env;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -52,7 +52,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
-public abstract class EnvironmentUtils extends BaseUtils {
+public abstract class EnvironmentUtils implements Utils {
 
     private static final Logger logger = getLogger(EnvironmentUtils.class);
 
@@ -199,5 +199,8 @@ public abstract class EnvironmentUtils extends BaseUtils {
                     propertyValue, resolvedPropertyValue, targetValue, targetType);
         }
         return targetValue;
+    }
+
+    private EnvironmentUtils() {
     }
 }
