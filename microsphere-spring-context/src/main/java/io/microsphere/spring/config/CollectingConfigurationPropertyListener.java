@@ -21,8 +21,6 @@ import io.microsphere.spring.core.env.PropertyResolverListener;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 
@@ -74,10 +72,6 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
     }
 
     @Override
-    public void afterResolvePlaceholders(ConfigurablePropertyResolver propertyResolver, String text, String result) {
-    }
-
-    @Override
     public void afterSetPlaceholderPrefix(ConfigurablePropertyResolver propertyResolver, String prefix) {
         this.placeholderPrefix = prefix;
     }
@@ -88,14 +82,6 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
     }
 
     @Override
-    public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
-        Value value = descriptor.getAnnotation(Value.class);
-        if (value != null) {
-
-        }
-    }
-
-    @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
         BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
@@ -103,8 +89,17 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
         registerBean(registry, BEAN_NAME, this);
     }
 
+    public String getPlaceholderPrefix() {
+        return placeholderPrefix;
+    }
+
+    public String getPlaceholderSuffix() {
+        return placeholderSuffix;
+    }
+
     private ConfigurationProperty getConfigurationProperty(String name) {
-        return this.getRepository().createIfAbsent(name);
+        ConfigurationPropertyRepository repository = getRepository();
+        return repository.createIfAbsent(name);
     }
 
     private ConfigurationPropertyRepository getRepository() {
@@ -113,4 +108,5 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
         }
         return repository;
     }
+
 }
