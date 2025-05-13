@@ -29,6 +29,7 @@ import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.type.AnnotationMetadata;
 
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.core.convert.SpringConverterAdapter.INSTANCE;
 
 /**
  * {@link EnableSpringConverterAdapter} {@link Configuration} class
@@ -55,7 +56,7 @@ class EnableSpringConverterAdapterRegistrar implements ImportSelector, BeanFacto
         ConversionServiceResolver conversionServiceResolver = new ConversionServiceResolver(beanFactory);
         ConversionService conversionService = conversionServiceResolver.resolve();
         if (conversionService instanceof ConverterRegistry registry) {
-            registry.addConverter(SpringConverterAdapter.INSTANCE);
+            registry.addConverter(INSTANCE);
         }
     }
 }
