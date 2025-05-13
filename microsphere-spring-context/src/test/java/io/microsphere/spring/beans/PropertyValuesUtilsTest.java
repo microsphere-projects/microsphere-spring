@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.PropertyValues;
 import org.springframework.mock.env.MockEnvironment;
 
+import static io.microsphere.spring.beans.PropertyValuesUtils.getSubPropertyValues;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +23,7 @@ public class PropertyValuesUtilsTest {
 
         MockEnvironment environment = new MockEnvironment();
 
-        PropertyValues propertyValues = PropertyValuesUtils.getSubPropertyValues(environment, "user");
+        PropertyValues propertyValues = getSubPropertyValues(environment, "user");
 
         assertNotNull(propertyValues);
 
@@ -32,7 +33,7 @@ public class PropertyValuesUtilsTest {
         environment.setProperty("user.name", "Mercy");
         environment.setProperty("user.age", "30");
 
-        propertyValues = PropertyValuesUtils.getSubPropertyValues(environment, "user");
+        propertyValues = getSubPropertyValues(environment, "user");
 
         assertEquals("Mercy", propertyValues.getPropertyValue("name").getValue());
         assertEquals("30", propertyValues.getPropertyValue("age").getValue());
