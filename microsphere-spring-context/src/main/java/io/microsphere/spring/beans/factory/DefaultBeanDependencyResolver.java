@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory;
 
 import io.microsphere.annotation.Nullable;
 import io.microsphere.collection.SetUtils;
-import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.MutablePropertyValues;
