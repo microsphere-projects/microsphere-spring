@@ -23,8 +23,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -36,20 +39,25 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
+import static java.lang.Integer.toHexString;
 
 /**
  * The {@link Import @Import} candidate is an instance of {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}
  * and not a regular Spring bean, which only invokes {@link BeanClassLoaderAware}, {@link BeanFactoryAware},
  * {@link EnvironmentAware}, and {@link ResourceLoaderAware} contracts in order if they are implemented, thus it will
- * not be  {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper) populated} and
- * {@link AbstractAutowireCapableBeanFactory#initializeBean(Object, String) initialized} .
+ * not be {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper) populated} and
+ * {@link AutowireCapableBeanFactory#initializeBean(Object, String) initialized} .
  * <p>
- * The current abstract implementation is a template class supports the population and initialization,
- * the sub-class must implement the interface {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}, and can't
- * override those methods:
+ * The current abstract implementation is a template class supports the Spring bean lifecycles :
+ * {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper) population},
+ * {@link AutowireCapableBeanFactory#initializeBean(Object, String) initialization}, and
+ * {@link ConfigurableBeanFactory#destroyBean(String, Object) destroy}, the sub-class must implement
+ * the interface {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}, and can't override those methods:
  * <ul>
  *     <li>{@link #setBeanClassLoader(ClassLoader)}</li>
  *     <li>{@link #setBeanFactory(BeanFactory)}</li>
@@ -59,7 +67,8 @@ import static io.microsphere.text.FormatUtils.format;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper)
- * @see AbstractAutowireCapableBeanFactory#initializeBean(Object, String)
+ * @see AutowireCapableBeanFactory#initializeBean(Object, String)
+ * @see ConfigurableBeanFactory#destroyBean(String, Object)
  * @see org.springframework.context.support.ApplicationContextAwareProcessor
  * @since 1.0.0
  */
@@ -103,7 +112,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     public final void setResourceLoader(ResourceLoader resourceLoader) {
         if (this.resourceLoader == null) {
             this.resourceLoader = resourceLoader;
-            initializeSelf();
+            initializeSelfAsBean();
         }
     }
 
@@ -126,7 +135,6 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
     }
-
 
     /**
      * The {@link ConfigurableEnvironment} instance
@@ -158,9 +166,12 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
         }
     }
 
-    private void initializeSelf() {
-        String beanName = getClass().getName() + "@" + Integer.toHexString(hashCode());
-        this.beanFactory.registerSingleton(beanName, this);
-        this.beanFactory.initializeBean(this, beanName);
+    private void initializeSelfAsBean() {
+        String beanName = getClass().getName() + "@" + toHexString(hashCode());
+        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(this.beanFactory);
+        // register the current instance as a Spring BeanDefinition
+        registerBean(registry, beanName, this);
+        // initialize bean from the BeanDefinition before registration
+        this.beanFactory.getBean(beanName);
     }
 }
