@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.config;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import javax.annotation.Nonnull;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
