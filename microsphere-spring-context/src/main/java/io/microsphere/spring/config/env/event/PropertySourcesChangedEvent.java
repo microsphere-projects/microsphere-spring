@@ -24,7 +24,6 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
