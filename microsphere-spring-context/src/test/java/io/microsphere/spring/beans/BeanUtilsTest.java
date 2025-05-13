@@ -15,18 +15,21 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
+import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.spring.beans.BeanUtils.resolveBeanType;
+import static io.microsphere.spring.beans.BeanUtils.sort;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -98,7 +101,7 @@ public class BeanUtilsTest {
 
         String[] beanNames = getBeanNames(applicationContext, String.class);
 
-        assertTrue(Arrays.asList(beanNames).contains("testString"));
+        assertTrue(asList(beanNames).contains("testString"));
 
         applicationContext.close();
     }
@@ -110,7 +113,7 @@ public class BeanUtilsTest {
 
         String[] beanNames = getBeanNames(context, User.class);
 
-        assertTrue(Arrays.asList(beanNames).contains("user"));
+        assertTrue(asList(beanNames).contains("user"));
 
         context.close();
 
@@ -225,17 +228,17 @@ public class BeanUtilsTest {
 
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
-        TestBean testBean = BeanUtils.getOptionalBean(registry, TestBean.class, true);
+        TestBean testBean = getOptionalBean(registry, TestBean.class, true);
 
         assertNull(testBean);
 
-        testBean = BeanUtils.getOptionalBean(registry, TestBean.class);
+        testBean = getOptionalBean(registry, TestBean.class);
 
         assertNull(testBean);
 
         registerBeans(registry, TestBean.class);
 
-        testBean = BeanUtils.getOptionalBean(registry, TestBean.class);
+        testBean = getOptionalBean(registry, TestBean.class);
 
         assertNotNull(testBean);
 
@@ -248,15 +251,15 @@ public class BeanUtilsTest {
 
         registerBeans(registry, TestBean.class, TestBean2.class);
 
-        List<io.microsphere.spring.test.Bean> beans = BeanUtils.getSortedBeans(registry, io.microsphere.spring.test.Bean.class);
+        List<io.microsphere.spring.test.Bean> beans = getSortedBeans(registry, io.microsphere.spring.test.Bean.class);
 
         assertEquals(2, beans.size());
 
-        TestBean testBean = BeanUtils.getOptionalBean(registry, TestBean.class);
+        TestBean testBean = getOptionalBean(registry, TestBean.class);
 
         assertEquals(testBean, beans.get(0));
 
-        TestBean2 testBean2 = BeanUtils.getOptionalBean(registry, TestBean2.class);
+        TestBean2 testBean2 = getOptionalBean(registry, TestBean2.class);
 
         assertEquals(testBean2, beans.get(1));
 
@@ -293,7 +296,7 @@ public class BeanUtilsTest {
             expectedBeansMap.put(orderedBean.toString(), orderedBean);
         }
 
-        Map<String, OrderedBean> sortedBeansMap = BeanUtils.sort(orderedBeansMap);
+        Map<String, OrderedBean> sortedBeansMap = sort(orderedBeansMap);
 
         assertArrayEquals(expectedBeansMap.values().toArray(), sortedBeansMap.values().toArray());
 
@@ -359,7 +362,7 @@ public class BeanUtilsTest {
 
         BeanUtils.NamingBean namingBean2 = new BeanUtils.NamingBean("testBean2", new TestBean2());
 
-        List<BeanUtils.NamingBean> namingBeans = Arrays.asList(namingBean, namingBean2);
+        List<BeanUtils.NamingBean> namingBeans = asList(namingBean, namingBean2);
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 
