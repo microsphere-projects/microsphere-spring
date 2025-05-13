@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.annotation;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy;
 import org.springframework.beans.MutablePropertyValues;
@@ -32,7 +33,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 

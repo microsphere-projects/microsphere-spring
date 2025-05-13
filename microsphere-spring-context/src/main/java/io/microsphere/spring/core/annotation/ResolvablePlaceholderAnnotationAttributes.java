@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.core.annotation;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Map;

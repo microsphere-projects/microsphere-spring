@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.collection.SetUtils;
 import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
@@ -35,7 +36,6 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.StopWatch;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;

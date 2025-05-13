@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.BaseUtils;
 import org.springframework.core.convert.ConversionService;
@@ -26,7 +27,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
