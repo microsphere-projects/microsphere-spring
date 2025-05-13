@@ -17,7 +17,7 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 /**
- * {@link EnableConfigurationBeanBinding} Test
+ * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
