@@ -86,7 +86,7 @@ public class MethodParameterUtilsTest {
         assertParameters(User.class);
     }
 
-    @Test(expected = Throwable.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testFindParameterIndexOnIllegalArgumentException() throws Throwable {
         Method waitMethod = findMethod(Object.class, "wait", long.class, int.class);
         Parameter clonedParameter = clone(waitMethod.getParameters()[1], findMethod(User.class, "getName"), 0);
