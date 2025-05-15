@@ -83,10 +83,24 @@ public class MethodParameterUtilsTest {
 
     @Test
     public void testFindParameterIndex() throws Throwable {
-        assertEquals(0, findParameterIndex(parameter));
+        assertParameters(User.class);
+    }
+
+    void assertParameters(Class<?> klass) throws Throwable {
+        for (Constructor constructor : klass.getConstructors()) {
+            Parameter[] parameters = constructor.getParameters();
+            for (int i = 0; i < parameters.length; i++) {
+                Parameter parameter = parameters[i];
+                assertParameter(i, parameter);
+            }
+        }
+    }
+
+    void assertParameter(int index, Parameter parameter) throws Throwable {
+        assertEquals(index, findParameterIndex(parameter));
         Constructor<Parameter> constructor = findConstructor(Parameter.class, String.class, int.class, Executable.class, int.class);
         trySetAccessible(constructor);
-        Parameter clonedParameter = constructor.newInstance("name", parameter.getModifiers(), method, 0);
-        assertEquals(0, findParameterIndex(clonedParameter));
+        Parameter clonedParameter = constructor.newInstance(parameter.getName(), parameter.getModifiers(), parameter.getDeclaringExecutable(), index);
+        assertEquals(index, findParameterIndex(clonedParameter));
     }
 }
