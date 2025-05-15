@@ -53,7 +53,7 @@ public class MethodParameterUtilsTest {
 
     @Before
     public void before() {
-        this.constructor = findConstructor(User.class, String.class);
+        this.constructor = findConstructor(User.class, String.class, int.class);
         this.method = findMethod(User.class, "setName", String.class);
         Method method = findMethod(User.class, "setName", String.class);
         Parameter[] parameters = method.getParameters();
@@ -86,6 +86,13 @@ public class MethodParameterUtilsTest {
         assertParameters(User.class);
     }
 
+    @Test(expected = Throwable.class)
+    public void testFindParameterIndexOnIllegalArgumentException() throws Throwable {
+        Method waitMethod = findMethod(Object.class, "wait", long.class, int.class);
+        Parameter clonedParameter = clone(waitMethod.getParameters()[1], findMethod(User.class, "getName"), 0);
+        findParameterIndex(clonedParameter);
+    }
+
     void assertParameters(Class<?> klass) throws Throwable {
         for (Constructor constructor : klass.getConstructors()) {
             Parameter[] parameters = constructor.getParameters();
@@ -98,9 +105,17 @@ public class MethodParameterUtilsTest {
 
     void assertParameter(int index, Parameter parameter) throws Throwable {
         assertEquals(index, findParameterIndex(parameter));
+        Parameter clonedParameter = clone(parameter, index);
+        assertEquals(index, findParameterIndex(clonedParameter));
+    }
+
+    Parameter clone(Parameter parameter, int index) throws Throwable {
+        return clone(parameter, parameter.getDeclaringExecutable(), index);
+    }
+
+    Parameter clone(Parameter parameter, Executable executable, int index) throws Throwable {
         Constructor<Parameter> constructor = findConstructor(Parameter.class, String.class, int.class, Executable.class, int.class);
         trySetAccessible(constructor);
-        Parameter clonedParameter = constructor.newInstance(parameter.getName(), parameter.getModifiers(), parameter.getDeclaringExecutable(), index);
-        assertEquals(index, findParameterIndex(clonedParameter));
+        return constructor.newInstance(parameter.getName(), parameter.getModifiers(), executable, index);
     }
 }
