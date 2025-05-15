@@ -62,11 +62,9 @@ public abstract class MethodParameterUtils implements Utils {
             return new MethodParameter((Method) executable, parameterIndex);
         } else if (executable instanceof Constructor) {
             return new MethodParameter((Constructor<?>) executable, parameterIndex);
-        } else {
-            throw new IllegalArgumentException("Not a Method/Constructor: " + executable);
         }
+        throw new IllegalArgumentException("Not a Method/Constructor: " + executable);
     }
-
 
     protected static int findParameterIndex(Parameter parameter) {
         Executable executable = parameter.getDeclaringExecutable();
@@ -84,8 +82,7 @@ public abstract class MethodParameterUtils implements Utils {
                 return i;
             }
         }
-        throw new IllegalArgumentException("Given parameter [" + parameter +
-                "] does not match any parameter in the declaring executable");
+        throw new IllegalArgumentException("Given parameter [" + parameter + "] does not match any parameter in the declaring executable");
     }
 
     private MethodParameterUtils() {
