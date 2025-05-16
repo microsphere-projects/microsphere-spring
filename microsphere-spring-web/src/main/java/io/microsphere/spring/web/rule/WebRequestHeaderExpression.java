@@ -44,16 +44,11 @@ public class WebRequestHeaderExpression extends AbstractNameValueExpression<Stri
     private final Set<String> namesToMatch = new HashSet<>(SUBMIT_IMAGE_SUFFIXES.length + 1);
 
     public WebRequestHeaderExpression(String expression) {
-        super(expression);
+        super(expression, false);
         this.namesToMatch.add(getName());
         for (String suffix : SUBMIT_IMAGE_SUFFIXES) {
             this.namesToMatch.add(getName() + suffix);
         }
-    }
-
-    @Override
-    protected boolean isCaseSensitiveName() {
-        return false;
     }
 
     @Override
