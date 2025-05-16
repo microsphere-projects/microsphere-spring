@@ -125,11 +125,10 @@ public abstract class EnvironmentUtils implements Utils {
         ConversionService conversionService = null;
         if (environment instanceof ConfigurablePropertyResolver) {
             conversionService = ((ConfigurablePropertyResolver) environment).getConversionService();
-            if (conversionService == null) {
-                conversionService = getSharedInstance();
-                logger.warn("ConversionService can't be resolved from Environment[class: {}], the shared ConversionService will be used!",
-                        environment.getClass().getName());
-            }
+        }
+        if (conversionService == null) {
+            conversionService = getSharedInstance();
+            logger.info("ConversionService can't be resolved from Environment[{}], the shared ConversionService will be used!", environment);
         }
         return conversionService;
     }
