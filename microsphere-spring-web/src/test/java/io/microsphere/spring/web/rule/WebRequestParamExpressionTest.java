@@ -22,6 +22,9 @@ import io.microsphere.spring.web.context.request.MockServletWebRequest;
 import org.junit.Before;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.List;
+
+import static io.microsphere.spring.web.rule.WebRequestParamExpression.parseExpressions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -47,9 +50,10 @@ public class WebRequestParamExpressionTest extends AbstractNameValueExpressionTe
 
     @Before
     public void before() {
-        this.nameOnlyExpression = new WebRequestParamExpression("name");
-        this.expression = new WebRequestParamExpression("name=Mercy");
-        this.negatedExpression = new WebRequestParamExpression("name!=Mercy");
+        List<WebRequestParamExpression> expressions = parseExpressions("name", "name=Mercy", "name!=Mercy");
+        this.nameOnlyExpression = expressions.get(0);
+        this.expression =  expressions.get(1);
+        this.negatedExpression =  expressions.get(2);
         this.request = new MockServletWebRequest();
         MockHttpServletRequest mockHttpServletRequest = this.request.getMockHttpServletRequest();
         mockHttpServletRequest.addParameter("name", "Mercy");
