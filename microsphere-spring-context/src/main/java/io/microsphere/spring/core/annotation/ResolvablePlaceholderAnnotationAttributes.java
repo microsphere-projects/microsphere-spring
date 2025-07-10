@@ -29,6 +29,7 @@ import java.util.Set;
 import static io.microsphere.collection.MapUtils.shallowCloneMap;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Collections.emptySet;
 
 /**
@@ -136,7 +137,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      */
     @Nonnull
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes[] attributesArray, @Nullable PropertyResolver propertyResolver) {
-        int length = attributesArray == null ? 0 : attributesArray.length;
+        int length = length(attributesArray);
 
         if (length < 1) {
             return emptySet();
