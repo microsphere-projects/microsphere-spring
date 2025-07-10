@@ -19,15 +19,23 @@ package io.microsphere.spring.core.annotation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.beans.ConstructorProperties;
+import java.util.Map;
+import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.ofMap;
+import static io.microsphere.reflect.ConstructorUtils.findConstructor;
 import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
+import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.ofSet;
+import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 
 /**
  * {@link ResolvablePlaceholderAnnotationAttributes} Test
@@ -48,8 +56,8 @@ public class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
-    public void test() throws NoSuchMethodException {
-        ConstructorProperties constructorProperties = ResolvablePlaceholderAnnotationAttributesTest.class.getConstructor().getAnnotation(ConstructorProperties.class);
+    public void testOfWithAnnotation() {
+        ConstructorProperties constructorProperties = findConstructor(getClass()).getAnnotation(ConstructorProperties.class);
         ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(constructorProperties, environment);
         assertEquals(ConstructorProperties.class, annotationAttributes.annotationType());
         assertEquals(constructorProperties.annotationType(), annotationAttributes.annotationType());
@@ -57,4 +65,48 @@ public class ResolvablePlaceholderAnnotationAttributesTest {
         assertEquals("1", values[0]);
         assertEquals("2", values[1]);
     }
+
+    @Test
+    public void testOfWithAnnotationAttributes() {
+        Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
+        AnnotationAttributes annotationAttributes = fromMap(map);
+        ResolvablePlaceholderAnnotationAttributes attributes = of(annotationAttributes, this.environment);
+        assertAnnotationAttributes(attributes);
+
+        attributes = of(attributes, this.environment);
+        assertAnnotationAttributes(attributes);
+    }
+
+    @Test
+    public void testOfWithMap() {
+        Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
+        ResolvablePlaceholderAnnotationAttributes attributes = of(map, ConstructorProperties.class, this.environment);
+        assertAnnotationAttributes(attributes);
+
+        attributes = of(attributes, ConstructorProperties.class, this.environment);
+        assertAnnotationAttributes(attributes);
+    }
+
+    @Test
+    public void testOfSet() {
+        Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
+        AnnotationAttributes annotationAttributes = fromMap(map);
+        Set<AnnotationAttributes> attributesSet = ofSet(ofArray(annotationAttributes), this.environment);
+        assertEquals(1, attributesSet.size());
+        AnnotationAttributes attributes = attributesSet.iterator().next();
+        assertAnnotationAttributes(attributes);
+    }
+
+    @Test
+    public void testOfSetOnEmptyArray() {
+        Set<AnnotationAttributes> attributesSet = ofSet(ofArray(), this.environment);
+        assertEquals(0, attributesSet.size());
+    }
+
+    private void assertAnnotationAttributes(AnnotationAttributes attributes) {
+        assertEquals(2, attributes.size());
+        assertEquals("1", attributes.getString("a"));
+        assertEquals("2", attributes.getString("b"));
+    }
+
 }
