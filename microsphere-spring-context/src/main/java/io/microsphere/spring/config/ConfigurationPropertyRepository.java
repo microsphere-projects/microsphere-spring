@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.text.FormatUtils.format;
+import static java.lang.Integer.parseInt;
 
 /**
  * {@link ConfigurationProperty} Repository
@@ -42,9 +43,22 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
 
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "config-property-repository.";
 
-    public static final String MAX_SIZE_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "max-size";
+    private static final String DEFAULT_MAX_SIZE = "99999";
 
-    public static final int DEFAULT_MAX_SIZE_PROPERTY_VALUE = 99999;
+    /**
+     * The default max size of {@link ConfigurationPropertyRepository}
+     */
+    public static final int DEFAULT_MAX_SIZE_PROPERTY_VALUE = parseInt(DEFAULT_MAX_SIZE);
+
+    /**
+     * The max size of {@link ConfigurationPropertyRepository}
+     */
+    @io.microsphere.annotation.ConfigurationProperty(
+            type = int.class,
+            description = "The max size of the repository for ConfigurationProperty instances",
+            defaultValue = DEFAULT_MAX_SIZE
+    )
+    public static final String MAX_SIZE_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "max-size";
 
     private int maxSize = DEFAULT_MAX_SIZE_PROPERTY_VALUE;
 
