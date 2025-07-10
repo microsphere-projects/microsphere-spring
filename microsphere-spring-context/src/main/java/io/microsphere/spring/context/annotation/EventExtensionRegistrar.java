@@ -16,14 +16,12 @@
  */
 package io.microsphere.spring.context.annotation;
 
-import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
@@ -38,9 +36,7 @@ import java.util.concurrent.Executor;
 
 import static io.microsphere.spring.context.annotation.EnableEventExtension.NO_EXECUTOR;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Event Management Registrar
@@ -69,9 +65,9 @@ public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, E
         registerApplicationEventMulticaster(intercepted, executorForListener, registry);
     }
 
-    private void registerApplicationEventMulticaster(boolean intercepted,
-                                                     String executorForListener,
-                                                     BeanDefinitionRegistry registry) {
+    void registerApplicationEventMulticaster(boolean intercepted,
+                                             String executorForListener,
+                                             BeanDefinitionRegistry registry) {
         if (!intercepted && NO_EXECUTOR.equals(executorForListener)) {
             return;
         }
@@ -79,7 +75,6 @@ public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, E
         String beanName = BEAN_NAME;
 
         boolean associatedExecutorBean = !NO_EXECUTOR.equals(executorForListener);
-
 
         boolean beanExists = registry.containsBeanDefinition(beanName);
 
@@ -118,23 +113,11 @@ public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, E
         return targetBeanDefinition;
     }
 
-
     private AbstractBeanDefinition buildApplicationEventMulticasterBeanDefinition(boolean intercepted) {
         Class<?> beanClass = intercepted ? InterceptingApplicationEventMulticaster.class : SimpleApplicationEventMulticaster.class;
         return new RootBeanDefinition(beanClass);
     }
 
-    private String getExecutorBeanName(boolean associatedExecutorBean, String executorForListener) {
-        return associatedExecutorBean ? executorForListener : null;
-    }
-
-    private AbstractBeanDefinition buildBeanDefinition(Class<?> beanClass, @Nullable String executorBeanName) {
-        BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(beanClass);
-        if (hasText(executorBeanName)) {
-
-        }
-        return beanDefinitionBuilder.getBeanDefinition();
-    }
 
     private void associateExecutorBeanIfRequired(AbstractBeanDefinition beanDefinition,
                                                  boolean associatedExecutorBean,
