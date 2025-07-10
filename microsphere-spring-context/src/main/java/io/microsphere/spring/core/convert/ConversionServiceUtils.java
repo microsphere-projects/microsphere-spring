@@ -59,7 +59,7 @@ public abstract class ConversionServiceUtils implements Utils {
         MethodHandle methodHandle = getSharedInstanceMethodHandle;
         if (methodHandle != null) {
             try {
-                return (ConversionService) methodHandle.invoke();
+                return (ConversionService) methodHandle.invokeExact();
             } catch (Throwable e) {
                 handleInvokeExactFailure(e, methodHandle);
             }
