@@ -31,6 +31,7 @@ import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimi
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolvePlaceholders;
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
@@ -55,17 +56,29 @@ public class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testGetProperties() {
+    public void testGetPropertiesWithoutArgument() {
         Map<String, String> properties = getProperties(environment);
-        assertEquals(emptyMap(), properties);
+        assertSame(emptyMap(), properties);
+    }
 
-        properties = getProperties(environment, "a");
+    @Test
+    public void testGetPropertiesWithOneNullArgument() {
+        Map<String, String> properties = getProperties(environment, (String) null);
+        assertSame(emptyMap(), properties);
+    }
+
+    @Test
+    public void testGetPropertiesWithOneArgument() {
+        Map<String, String> properties = getProperties(environment, "a");
         assertEquals(1, properties.size());
         assertEquals("1", properties.get("a"));
         assertNull(properties.get("b"));
         assertNull(properties.get("c"));
+    }
 
-        properties = getProperties(environment, "a", "b");
+    @Test
+    public void testGetPropertiesWithTwoAndMoreArguments() {
+        Map<String, String> properties = getProperties(environment, "a", "b");
         assertEquals(2, properties.size());
         assertEquals("1", properties.get("a"));
         assertEquals("2", properties.get("b"));
@@ -80,7 +93,12 @@ public class EnvironmentUtilsTest {
 
     @Test
     public void testGetConversionService() {
-        assertEquals(environment.getConversionService(), getConversionService(environment));
+        assertSame(environment.getConversionService(), getConversionService(environment));
+    }
+
+    @Test
+    public void testGetConversionServiceOnNull() {
+        assertNotNull(getConversionService(null));
     }
 
     @Test

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * parameters and request header conditions in {@code @RequestMapping}.
  *
  * @author Rossen Stoyanchev
- * @since 3.1
+ * @since Spring Framework 3.1
  * @param <T> the value type
  * @see RequestMapping#params()
  * @see RequestMapping#headers()
