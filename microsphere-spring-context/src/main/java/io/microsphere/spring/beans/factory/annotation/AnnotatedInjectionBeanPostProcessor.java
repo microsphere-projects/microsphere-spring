@@ -16,10 +16,10 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.TypeConverter;
@@ -70,6 +70,7 @@ import java.util.concurrent.ConcurrentMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.lang.Integer.getInteger;
 import static java.util.Arrays.asList;
@@ -114,7 +115,13 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
-    private final static int CACHE_SIZE = getInteger("microsphere.spring.injection.metadata.cache.size", 32);
+    /**
+     * The property name of metadata cache size : "microsphere.spring.injection.metadata.cache.size"
+     */
+    public static final String CACHE_SIZE_PROPERTY_NAME = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "injection.metadata.cache.size";
+
+    @ConfigurationProperty(name = CACHE_SIZE_PROPERTY_NAME, defaultValue = "32")
+    private final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, 32);
 
     private final Logger logger = getLogger(getClass());
 
