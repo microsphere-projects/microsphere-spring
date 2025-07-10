@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
@@ -46,6 +47,7 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.util.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.util.ArrayUtils.combine;
+import static java.lang.Boolean.parseBoolean;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
@@ -91,15 +93,22 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      */
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-autowire-candidate-resolver.";
 
+    private static final String DEFAULT_ENABLED = "false";
+
     /**
      * The property name of {@link ListenableAutowireCandidateResolver} to be 'enabled'
      */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_ENABLED,
+            description = "The property name of ListenableAutowireCandidateResolver to be enabled or not"
+    )
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
 
     /**
      * The default property value of {@link ListenableAutowireCandidateResolver} to be 'enabled'
      */
-    public static final boolean ENABLED_PROPERTY_VALUE = false;
+    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
 
     private AutowireCandidateResolver delegate;
 
@@ -255,7 +264,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @return <code>true</code> if enabled, otherwise <code>false</code>
      */
     public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, ENABLED_PROPERTY_VALUE);
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, DEFAULT_ENABLED_PROPERTY_VALUE);
     }
 
     /**
