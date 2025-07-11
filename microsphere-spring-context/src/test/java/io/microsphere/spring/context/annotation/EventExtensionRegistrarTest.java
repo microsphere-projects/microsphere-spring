@@ -18,11 +18,21 @@
 package io.microsphere.spring.context.annotation;
 
 
+import io.microsphere.lang.MutableInteger;
+import io.microsphere.spring.context.event.ApplicationEventInterceptor;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.PayloadApplicationEvent;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+
+import java.util.function.Consumer;
+
+import static io.microsphere.util.ArrayUtils.ofArray;
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link EventExtensionRegistrar} Test
@@ -31,20 +41,105 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see EventExtensionRegistrar
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-        EventExtensionRegistrarTest.class,
-        EventExtensionRegistrarTest.Config.class,
-        DefaultAdvisorAutoProxyCreator.class
-})
-@EnableEventExtension(intercepted = true)
 public class EventExtensionRegistrarTest {
 
-    @EnableEventExtension(intercepted = true)
-    class Config {
+    static class ExecutorConfig {
+        @Bean
+        public TaskExecutor taskExecutor() {
+            return new SyncTaskExecutor();
+        }
+    }
+
+    static class InterceptorConfig {
+        @Bean
+        public ApplicationEventInterceptor applicationEventInterceptor() {
+            return ((event, eventType, chain) -> {
+                if (event instanceof PayloadApplicationEvent) {
+                    PayloadApplicationEvent pe = (PayloadApplicationEvent) event;
+                    MutableInteger i = (MutableInteger) pe.getPayload();
+                    i.incrementAndGet();
+                }
+                chain.intercept(event, eventType);
+            });
+        }
+    }
+
+    @EnableEventExtension
+    static class DefaultConfig {
+    }
+
+    @EnableEventExtension(executorForListener = "taskExecutor")
+    static class FullConfig {
+    }
+
+    @EnableEventExtension(intercepted = false, executorForListener = "taskExecutor")
+    static class NoInterceptedConfig {
+    }
+
+    @EnableEventExtension(intercepted = false)
+    static class NoSenseConfig {
+    }
+
+    @EnableEventExtension
+    static class DuplicatedDefaultConfig {
+    }
+
+    static class MutableIntegerApplicationListener implements ApplicationListener<PayloadApplicationEvent<MutableInteger>> {
+
+        @Override
+        public void onApplicationEvent(PayloadApplicationEvent<MutableInteger> event) {
+            MutableInteger mutableInteger = event.getPayload();
+            mutableInteger.incrementAndGet();
+        }
     }
 
     @Test
-    public void test() {
+    public void testDefaultConfig() {
+        test(2, DefaultConfig.class);
+    }
+
+    @Test
+    public void testFullConfig() {
+        test(2, FullConfig.class);
+    }
+
+    @Test
+    public void testNoInterceptedConfig() {
+        test(1, NoInterceptedConfig.class);
+    }
+
+    @Test
+    public void testNoSenseConfig() {
+        test(1, NoSenseConfig.class);
+    }
+
+    @Test
+    public void testDuplicatedConfigs() {
+        test(2, DefaultConfig.class, DuplicatedDefaultConfig.class);
+    }
+
+//    @Test
+//    public void testRebuildConfigs() {
+//        test(2, DefaultConfig.class, FullConfig.class);
+//    }
+
+    void test(int expected, Class<?>... configClasses) {
+        MutableInteger i = new MutableInteger(0);
+        testInContext(context -> {
+            context.addApplicationListener(new MutableIntegerApplicationListener());
+            context.publishEvent(i);
+        }, configClasses);
+
+        assertEquals(expected, i.get());
+    }
+
+    void testInContext(Consumer<ConfigurableApplicationContext> contextConsumer, Class<?>... configClasses) {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        Class<?>[] requiredConfigClasses = ofArray(InterceptorConfig.class, ExecutorConfig.class);
+        context.register(requiredConfigClasses);
+        context.register(configClasses);
+        context.refresh();
+        contextConsumer.accept(context);
+        context.close();
     }
 }
