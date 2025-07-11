@@ -42,7 +42,7 @@ import static java.util.Collections.emptySet;
  */
 public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> extends GenericAnnotationAttributes<A> {
 
-    public ResolvablePlaceholderAnnotationAttributes(A annotation, @Nullable PropertyResolver propertyResolver) {
+    public ResolvablePlaceholderAnnotationAttributes(@Nonnull A annotation, @Nullable PropertyResolver propertyResolver) {
         this(getAnnotationAttributes(annotation, false), (Class<A>) annotation.annotationType(), propertyResolver);
     }
 
@@ -50,7 +50,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
         this(another, findAnnotationType(another), propertyResolver);
     }
 
-    public ResolvablePlaceholderAnnotationAttributes(Map<String, Object> another, Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
+    public ResolvablePlaceholderAnnotationAttributes(Map<String, Object> another, @Nonnull Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
         super(resolvePlaceholders(another, propertyResolver), annotationType);
     }
 
