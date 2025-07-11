@@ -32,6 +32,9 @@ import org.springframework.core.type.AnnotationMetadata;
  */
 class EventExtensionAttributes extends ResolvablePlaceholderAnnotationAttributes<EnableEventExtension> {
 
+    /**
+     * The {@link EnableEventExtension @EnableEventExtension} annotation class name
+     */
     static final String ANNOTATION_CLASS_NAME = EnableEventExtension.class.getName();
 
     /**
