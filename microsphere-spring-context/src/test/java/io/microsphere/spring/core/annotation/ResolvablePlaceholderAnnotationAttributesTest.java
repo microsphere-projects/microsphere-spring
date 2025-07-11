@@ -70,7 +70,7 @@ public class ResolvablePlaceholderAnnotationAttributesTest {
     public void testOfWithAnnotationAttributes() {
         Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
         AnnotationAttributes annotationAttributes = fromMap(map);
-        ResolvablePlaceholderAnnotationAttributes attributes = of(annotationAttributes, this.environment);
+        ResolvablePlaceholderAnnotationAttributes attributes = of(annotationAttributes, ConstructorProperties.class, this.environment);
         assertAnnotationAttributes(attributes);
 
         attributes = of(attributes, this.environment);
@@ -90,8 +90,7 @@ public class ResolvablePlaceholderAnnotationAttributesTest {
     @Test
     public void testOfSet() {
         Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
-        AnnotationAttributes annotationAttributes = fromMap(map);
-        Set<AnnotationAttributes> attributesSet = ofSet(ofArray(annotationAttributes), this.environment);
+        Set<AnnotationAttributes> attributesSet = ofSet(ofArray(of(map, ConstructorProperties.class, this.environment)), this.environment);
         assertEquals(1, attributesSet.size());
         AnnotationAttributes attributes = attributesSet.iterator().next();
         assertAnnotationAttributes(attributes);
