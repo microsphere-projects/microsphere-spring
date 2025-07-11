@@ -29,6 +29,7 @@ import java.util.Set;
 
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.Assert.assertNotNull;
 import static java.util.Collections.emptySet;
 
 /**
@@ -41,19 +42,20 @@ import static java.util.Collections.emptySet;
  */
 public class GenericAnnotationAttributes<A extends Annotation> extends AnnotationAttributes {
 
-    @Nullable
+    @Nonnull
     private final Class<A> annotationType;
 
     public GenericAnnotationAttributes(A annotation) {
         this(getAnnotationAttributes(annotation, false), (Class<A>) annotation.annotationType());
     }
 
-    public GenericAnnotationAttributes(AnnotationAttributes another) {
-        this(another, findAnnotationType(another));
+    public GenericAnnotationAttributes(AnnotationAttributes attributes) {
+        this(attributes, findAnnotationType(attributes));
     }
 
-    public GenericAnnotationAttributes(Map<String, Object> another, Class<A> annotationType) {
+    public GenericAnnotationAttributes(Map<String, Object> another, @Nonnull Class<A> annotationType) {
         super(another);
+        assertNotNull(annotationType, () -> "The annotation type must not be null");
         this.annotationType = annotationType;
     }
 
@@ -62,9 +64,9 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * <p>
      * Current method will override the super classes' method since Spring Framework 4.2
      *
-     * @return <code>null</code> if not found
+     * @return non-null
      */
-    @Nullable
+    @Nonnull
     public Class<A> annotationType() {
         return annotationType;
     }
@@ -107,6 +109,29 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             }
         }
         return h;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("@")
+                .append(annotationType().getName())
+                .append("(");
+        for (Map.Entry<String, Object> entry : entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            boolean isStringValue = value instanceof String;
+            stringBuilder.append(name).append('=');
+            if (isStringValue) {
+                stringBuilder.append('"');
+            }
+            stringBuilder.append(value);
+            if (isStringValue) {
+                stringBuilder.append('"');
+            }
+            stringBuilder.append(',');
+        }
+        stringBuilder.setCharAt(stringBuilder.length() - 1, ')');
+        return stringBuilder.toString();
     }
 
 
