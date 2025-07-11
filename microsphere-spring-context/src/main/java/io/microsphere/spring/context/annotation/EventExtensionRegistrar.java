@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy;
 import org.springframework.beans.MutablePropertyValues;
@@ -36,6 +35,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.context.annotation.EnableEventExtension.NO_EXECUTOR;
 import static io.microsphere.spring.context.annotation.EventExtensionAttributes.EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME;
 import static io.microsphere.spring.context.annotation.EventExtensionAttributes.INTERCEPTED_ATTRIBUTE_NAME;
@@ -53,11 +53,9 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @see TaskExecutor
  * @since 1.0.0
  */
-public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventExtensionRegistrar.class);
-
-    private static final String BEAN_NAME = APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
+    private static final Logger logger = getLogger(EventExtensionRegistrar.class);
 
     /**
      * The attribute name of the name of {@link EnableEventExtension} annotated on the class
@@ -79,7 +77,8 @@ public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, E
         String executorForListener = attributes.getExecutorForListener();
 
         boolean associatedExecutorBean = !NO_EXECUTOR.equals(executorForListener);
-        String beanName = BEAN_NAME;
+
+        String beanName = APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
         if (!intercepted && !associatedExecutorBean) {
             if (logger.isInfoEnabled()) {
