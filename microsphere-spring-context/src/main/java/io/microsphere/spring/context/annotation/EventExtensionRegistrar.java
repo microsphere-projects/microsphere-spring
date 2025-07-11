@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.context.annotation;
 
+import io.microsphere.logging.Logger;
+import io.microsphere.logging.LoggerFactory;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster;
 import io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy;
 import org.springframework.beans.MutablePropertyValues;
@@ -31,10 +33,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
 
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import static io.microsphere.spring.context.annotation.EnableEventExtension.NO_EXECUTOR;
+import static io.microsphere.spring.context.annotation.EventExtensionAttributes.EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME;
+import static io.microsphere.spring.context.annotation.EventExtensionAttributes.INTERCEPTED_ATTRIBUTE_NAME;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
@@ -51,51 +55,83 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  */
 public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-    private static final String ANNOTATION_CLASS_NAME = EnableEventExtension.class.getName();
+    private static final Logger logger = LoggerFactory.getLogger(EventExtensionRegistrar.class);
 
     private static final String BEAN_NAME = APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
+
+    /**
+     * The attribute name of the name of {@link EnableEventExtension} annotated on the class
+     */
+    static final String CLASS_NAME_ATTRIBUTE_NAME = "@className";
 
     private Environment environment;
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        Map<String, Object> attributes = metadata.getAnnotationAttributes(ANNOTATION_CLASS_NAME);
-        boolean intercepted = (Boolean) attributes.get("intercepted");
-        String executorForListener = (String) attributes.get("executorForListener");
-        registerApplicationEventMulticaster(intercepted, executorForListener, registry);
+        registerApplicationEventMulticaster(metadata, registry);
     }
 
-    void registerApplicationEventMulticaster(boolean intercepted,
-                                             String executorForListener,
-                                             BeanDefinitionRegistry registry) {
-        if (!intercepted && NO_EXECUTOR.equals(executorForListener)) {
+    void registerApplicationEventMulticaster(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+
+        EventExtensionAttributes attributes = new EventExtensionAttributes(metadata, this.environment);
+
+        boolean intercepted = attributes.isIntercepted();
+        String executorForListener = attributes.getExecutorForListener();
+
+        boolean associatedExecutorBean = !NO_EXECUTOR.equals(executorForListener);
+        String beanName = BEAN_NAME;
+
+        if (!intercepted && !associatedExecutorBean) {
+            if (logger.isInfoEnabled()) {
+                logger.info("The ApplicationEventMulticaster bean[name : '{}'] will not be registered, caused by {} annotated on the type '{}'",
+                        beanName,
+                        attributes,
+                        metadata.getClassName()
+                );
+            }
             return;
         }
 
-        String beanName = BEAN_NAME;
+        final BeanDefinition existedBeanDefinition = getApplicationEventMulticasterBeanDefinition(beanName, registry);
 
-        boolean associatedExecutorBean = !NO_EXECUTOR.equals(executorForListener);
+        final BeanDefinition targetBeanDefinition;
 
-        boolean beanExists = registry.containsBeanDefinition(beanName);
-
-        final AbstractBeanDefinition targetBeanDefinition;
-
-        if (beanExists) {
-            // Current BeanFactory registered a BeanDefinition for ApplicationEventMulticaster
-            targetBeanDefinition = rebuildApplicationEventMulticasterBeanDefinition(intercepted, beanName, registry);
-        } else {
+        if (existedBeanDefinition == null) {
             // NO ApplicationEventMulticaster BeanDefinition present
-            targetBeanDefinition = buildApplicationEventMulticasterBeanDefinition(intercepted);
+            targetBeanDefinition = buildApplicationEventMulticasterBeanDefinition(intercepted, executorForListener, metadata);
+        } else {
+            if (isSameBeanDefinition(existedBeanDefinition, intercepted, executorForListener)) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("The same {} was annotated on the class '{}'", attributes, existedBeanDefinition.getAttribute(CLASS_NAME_ATTRIBUTE_NAME));
+                }
+                return;
+            }
+            // Current BeanFactory registered a BeanDefinition for ApplicationEventMulticaster
+            targetBeanDefinition = rebuildApplicationEventMulticasterBeanDefinition(intercepted, existedBeanDefinition, beanName, registry);
         }
 
         associateExecutorBeanIfRequired(targetBeanDefinition, associatedExecutorBean, executorForListener);
         registry.registerBeanDefinition(beanName, targetBeanDefinition);
     }
 
-    private AbstractBeanDefinition rebuildApplicationEventMulticasterBeanDefinition(boolean intercepted,
-                                                                                    String beanName, BeanDefinitionRegistry registry) {
+    private boolean isSameBeanDefinition(BeanDefinition beanDefinition, boolean intercepted, String executorForListener) {
+        if (!Objects.equals(intercepted, beanDefinition.getAttribute(INTERCEPTED_ATTRIBUTE_NAME))) {
+            return false;
+        }
+        if (!Objects.equals(executorForListener, beanDefinition.getAttribute(EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME))) {
+            return false;
+        }
+        return true;
+    }
 
-        BeanDefinition originalBeanDefinition = registry.getBeanDefinition(beanName);
+    BeanDefinition getApplicationEventMulticasterBeanDefinition(String beanName, BeanDefinitionRegistry registry) {
+        return registry.containsBeanDefinition(beanName) ? registry.getBeanDefinition(beanName) : null;
+    }
+
+    private AbstractBeanDefinition rebuildApplicationEventMulticasterBeanDefinition(boolean intercepted,
+                                                                                    BeanDefinition existedBeanDefinition,
+                                                                                    String beanName,
+                                                                                    BeanDefinitionRegistry registry) {
 
         final AbstractBeanDefinition targetBeanDefinition;
         if (intercepted) {
@@ -103,23 +139,26 @@ public class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, E
             registry.removeBeanDefinition(beanName);
             String resetBeanName = getResetBeanName(this.environment);
             // Reset bean name and re-register the original BeanDefinition of ApplicationEventMulticaster
-            registry.registerBeanDefinition(resetBeanName, originalBeanDefinition);
+            registry.registerBeanDefinition(resetBeanName, existedBeanDefinition);
             // Build BeanDefinition InterceptingApplicationEventMulticasterProxy with bean name
             targetBeanDefinition = new RootBeanDefinition(InterceptingApplicationEventMulticasterProxy.class);
         } else {
-            targetBeanDefinition = (AbstractBeanDefinition) originalBeanDefinition;
+            targetBeanDefinition = (AbstractBeanDefinition) existedBeanDefinition;
         }
 
         return targetBeanDefinition;
     }
 
-    private AbstractBeanDefinition buildApplicationEventMulticasterBeanDefinition(boolean intercepted) {
+    private AbstractBeanDefinition buildApplicationEventMulticasterBeanDefinition(boolean intercepted, String executorForListener, AnnotationMetadata metadata) {
         Class<?> beanClass = intercepted ? InterceptingApplicationEventMulticaster.class : SimpleApplicationEventMulticaster.class;
-        return new RootBeanDefinition(beanClass);
+        RootBeanDefinition beanDefinition = new RootBeanDefinition(beanClass);
+        beanDefinition.setAttribute(INTERCEPTED_ATTRIBUTE_NAME, intercepted);
+        beanDefinition.setAttribute(EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME, executorForListener);
+        beanDefinition.setAttribute(CLASS_NAME_ATTRIBUTE_NAME, metadata.getClassName());
+        return beanDefinition;
     }
 
-
-    private void associateExecutorBeanIfRequired(AbstractBeanDefinition beanDefinition,
+    private void associateExecutorBeanIfRequired(BeanDefinition beanDefinition,
                                                  boolean associatedExecutorBean,
                                                  String executorBeanName) {
         if (associatedExecutorBean) {
