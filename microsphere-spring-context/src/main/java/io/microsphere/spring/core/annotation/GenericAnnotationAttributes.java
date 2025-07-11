@@ -21,16 +21,17 @@ import io.microsphere.annotation.Nullable;
 import org.springframework.core.annotation.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.Assert.assertNotNull;
+import static java.util.Arrays.deepHashCode;
+import static java.util.Arrays.deepToString;
 import static java.util.Collections.emptySet;
+import static java.util.Objects.deepEquals;
 
 /**
  * Generic {@link AnnotationAttributes}
@@ -79,12 +80,16 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
 
         AnnotationAttributes that = (AnnotationAttributes) o;
 
+        if (!this.annotationType().equals(that.annotationType())) {
+            return false;
+        }
+
         if (this.size() == that.size()) {
             for (Map.Entry<String, Object> entry : this.entrySet()) {
                 String attributeName = entry.getKey();
                 Object attributeValue = entry.getValue();
                 Object thatAttributeValue = that.get(attributeName);
-                if (!Objects.deepEquals(attributeValue, thatAttributeValue)) {
+                if (!deepEquals(attributeValue, thatAttributeValue)) {
                     return false;
                 }
             }
@@ -102,7 +107,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             if (attributeValue != null) {
                 Class<?> attributeValueType = attributeValue.getClass();
                 if (attributeValueType.isArray()) {
-                    h += 31 * Arrays.deepHashCode((Object[]) attributeValue);
+                    h += 31 * deepHashCode((Object[]) attributeValue);
                 } else {
                     h += 31 * attributeValue.hashCode();
                 }
@@ -119,14 +124,16 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
         for (Map.Entry<String, Object> entry : entrySet()) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            boolean isStringValue = value instanceof String;
+            Class<?> valueType = value.getClass();
+
             stringBuilder.append(name).append('=');
-            if (isStringValue) {
-                stringBuilder.append('"');
-            }
-            stringBuilder.append(value);
-            if (isStringValue) {
-                stringBuilder.append('"');
+
+            if (CharSequence.class.isAssignableFrom(valueType)) {
+                stringBuilder.append('"').append(value).append('"');
+            } else if (valueType.isArray()) {
+                stringBuilder.append(deepToString((Object[]) value));
+            } else {
+                stringBuilder.append(value);
             }
             stringBuilder.append(',');
         }
