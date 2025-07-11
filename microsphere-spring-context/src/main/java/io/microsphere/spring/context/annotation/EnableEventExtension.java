@@ -26,11 +26,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.Executor;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enables Spring's Event Extension
@@ -38,8 +40,8 @@ import java.util.concurrent.Executor;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE, ANNOTATION_TYPE})
+@Retention(RUNTIME)
 @Documented
 @Import(EventExtensionRegistrar.class)
 public @interface EnableEventExtension {
@@ -56,10 +58,10 @@ public @interface EnableEventExtension {
      *
      * @return {@link InterceptingApplicationEventMulticaster} will be
      * {@link AbstractApplicationContext#initApplicationEventMulticaster() initialized} by the Spring
-     * {@link ApplicationContext} if <code>true</code>. The default value is <code>false</code>.
+     * {@link ApplicationContext} if <code>true</code>. The default value is <code>true</code>.
      * @see InterceptingApplicationEventMulticaster
      */
-    boolean intercepted() default false;
+    boolean intercepted() default true;
 
     /**
      * A qualifier value for the asynchronous listening of {@link ApplicationListener ApplicationListeners}.
