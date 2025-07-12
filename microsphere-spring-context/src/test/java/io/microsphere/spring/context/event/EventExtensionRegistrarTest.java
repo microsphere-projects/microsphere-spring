@@ -117,10 +117,10 @@ public class EventExtensionRegistrarTest {
         test(2, DefaultConfig.class, DuplicatedDefaultConfig.class);
     }
 
-//    @Test
-//    public void testRebuildConfigs() {
-//        test(2, DefaultConfig.class, FullConfig.class);
-//    }
+    @Test
+    public void testRebuildConfigs() {
+        test(3, DefaultConfig.class, FullConfig.class);
+    }
 
     void test(int expected, Class<?>... configClasses) {
         MutableInteger i = new MutableInteger(0);
