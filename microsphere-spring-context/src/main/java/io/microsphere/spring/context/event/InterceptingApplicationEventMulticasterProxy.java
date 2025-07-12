@@ -52,7 +52,6 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
 public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPostProcessorAdapter<ApplicationListener>
         implements ApplicationEventMulticaster, BeanFactoryAware {
 
-
     /**
      * The default reset bean name of {@link ApplicationEventMulticaster}.
      * <p>
