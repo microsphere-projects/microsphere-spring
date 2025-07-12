@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.context.annotation;
+package io.microsphere.spring.context.event;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;

@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.context.annotation;
+package io.microsphere.spring.context.event;
 
 
 import io.microsphere.lang.MutableInteger;
-import io.microsphere.spring.context.event.ApplicationEventInterceptor;
 import org.junit.Test;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;

@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.annotation;
+package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster;
-import io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -36,9 +34,9 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.context.annotation.EnableEventExtension.NO_EXECUTOR;
-import static io.microsphere.spring.context.annotation.EventExtensionAttributes.EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME;
-import static io.microsphere.spring.context.annotation.EventExtensionAttributes.INTERCEPTED_ATTRIBUTE_NAME;
+import static io.microsphere.spring.context.event.EnableEventExtension.NO_EXECUTOR;
+import static io.microsphere.spring.context.event.EventExtensionAttributes.EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME;
+import static io.microsphere.spring.context.event.EventExtensionAttributes.INTERCEPTED_ATTRIBUTE_NAME;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
