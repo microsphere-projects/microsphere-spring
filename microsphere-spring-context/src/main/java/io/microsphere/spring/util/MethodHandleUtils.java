@@ -18,11 +18,11 @@ package io.microsphere.spring.util;
 
 import io.microsphere.annotation.Experimental;
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.LoggerFactory;
 import io.microsphere.util.Utils;
 
 import java.lang.invoke.MethodHandle;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.arrayToString;
 
 /**
@@ -35,7 +35,7 @@ import static io.microsphere.util.ArrayUtils.arrayToString;
 @Experimental(description = "Current class will be merged into microsphere-java-core")
 public abstract class MethodHandleUtils implements Utils {
 
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandleUtils.class);
+    private static final Logger logger = getLogger(MethodHandleUtils.class);
 
     public static void handleInvokeExactFailure(Throwable e, MethodHandle methodHandle, Object... args) {
         if (logger.isWarnEnabled()) {
