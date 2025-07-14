@@ -89,23 +89,67 @@ import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.StringUtils.hasLength;
 
 /**
- * The generic {@link BeanPostProcessor} implementation to support the dependency injection for the customized annotations.
+ * A {@link BeanPostProcessor} implementation that provides dependency injection support for custom annotation types.
  * <p>
- * As a substitution, besides the core features of {@link AutowiredAnnotationBeanPostProcessor}, {@link AnnotatedInjectionBeanPostProcessor}
- * also supports:
+ * This class extends {@link InstantiationAwareBeanPostProcessorAdapter}, making it compatible with Spring 6.x+,
+ * and supports the following features:
+ * </p>
+ *
  * <ul>
- *     <li>{@link #getAnnotationTypes() The dependency injection with multiple types of annotations}</li>
- *     <li>
- *         Annotation Features Enhancement:
+ *     <li><b>Custom Annotation Injection</b>: Allows dependency injection based on one or more custom annotations.</li>
+ *     <li><b>Annotation Processing Options</b>:
  *         <ul>
- *             <li>{@link #setClassValuesAsString(boolean)} : whether to turn Class references into Strings (for compatibility with  or to preserve them as Class references</li>
- *             <li>{@link #setNestedAnnotationsAsMap(boolean)} : whether to turn nested Annotation instances into AnnotationAttributes maps (for compatibility with {@link AnnotationMetadata} or to preserve them as Annotation instances</li>
- *             <li>{@link #setIgnoreDefaultValue(boolean)} : whether ignore default value or not</li>
- *             <li>{@link #setTryMergedAnnotation(boolean) : whether try merged annotation or not</li>
+ *             <li>{@link #setClassValuesAsString(boolean)}: Whether to convert Class references to Strings for compatibility with {@link org.springframework.core.type.AnnotationMetadata}.</li>
+ *             <li>{@link #setNestedAnnotationsAsMap(boolean)}: Whether to convert nested annotations into {@link AnnotationAttributes} maps.</li>
+ *             <li>{@link #setIgnoreDefaultValue(boolean)}: Whether to ignore default values from annotations.</li>
+ *             <li>{@link #setTryMergedAnnotation(boolean)}: Whether to attempt resolving merged annotations.</li>
  *         </ul>
  *     </li>
- *     <li>{@link #setCacheSize(int) The size of the metadata cache}</li>
+ *     <li><b>Caching Mechanism</b>: Metadata such as injection points and constructor information is cached to improve performance.</li>
+ *     <li><b>Integration with Spring Container</b>: Implements various Spring extension interfaces like
+ *         {@link MergedBeanDefinitionPostProcessor}, {@link BeanFactoryAware}, and {@link EnvironmentAware}.</li>
  * </ul>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Defining a Custom Injection Annotation</h4>
+ * <pre>{@code
+ * @Retention(RetentionPolicy.RUNTIME)
+ * @Target(ElementType.FIELD)
+ * public @interface MyInject {}
+ * }</pre>
+ *
+ * <h4>Registering the Processor in Spring Configuration</h4>
+ * <pre>{@code
+ * @Configuration
+ * public class AppConfig {
+ *
+ *     @Bean
+ *     public AnnotatedInjectionBeanPostProcessor myInjectBeanPostProcessor() {
+ *         return new AnnotatedInjectionBeanPostProcessor(MyInject.class);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h4>Using the Custom Injected Field</h4>
+ * <pre>{@code
+ * public class MyService {
+ *     @MyInject
+ *     private Dependency dependency;
+ * }
+ * }</pre>
+ *
+ * <h4>Customizing Behavior via Configuration</h4>
+ * <pre>{@code
+ * @Bean
+ * public AnnotatedInjectionBeanPostProcessor myInjectBeanPostProcessor() {
+ *     AnnotatedInjectionBeanPostProcessor processor = new AnnotatedInjectionBeanPostProcessor(MyInject.class);
+ *     processor.setClassValuesAsString(true);
+ *     processor.setNestedAnnotationsAsMap(true);
+ *     processor.setCacheSize(128);
+ *     return processor;
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AutowiredAnnotationBeanPostProcessor
