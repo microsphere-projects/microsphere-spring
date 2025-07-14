@@ -35,7 +35,7 @@ import java.util.Set;
  * injection points, such as fields, methods (e.g., setters), constructors, and parameters annotated with
  * dependency injection annotations.</p>
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  *
  * <pre>
  * public class MyDependencyResolver implements InjectionPointDependencyResolver {
