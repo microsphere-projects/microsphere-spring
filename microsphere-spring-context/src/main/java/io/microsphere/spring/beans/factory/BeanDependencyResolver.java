@@ -49,6 +49,7 @@ import java.util.Set;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see #resolve(ConfigurableListableBeanFactory)
  * @see #resolve(String, RootBeanDefinition, ConfigurableListableBeanFactory)
+ * @see DefaultBeanDependencyResolver
  * @see RootBeanDefinition
  * @see ConfigurableListableBeanFactory
  * @since 1.0.0
