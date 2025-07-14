@@ -59,9 +59,9 @@ import static java.util.Collections.emptyList;
  */
 public class TTLCacheResolver extends OnceApplicationContextEventListener<ContextRefreshedEvent> implements CacheResolver {
 
-    public static final String BEAN_NAME = "ttlCacheResolver";
-
     private static final Logger logger = getLogger(TTLCacheResolver.class);
+
+    public static final String BEAN_NAME = "ttlCacheResolver";
 
     private static final Map<Class<? extends CacheOperation>, Class<? extends Annotation>> ttlAnnotationTypes = ofMap(
             CacheableOperation.class, TTLCacheable.class,
