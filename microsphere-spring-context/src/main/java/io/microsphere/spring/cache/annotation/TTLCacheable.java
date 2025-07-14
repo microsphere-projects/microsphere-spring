@@ -30,6 +30,8 @@ import java.lang.annotation.Target;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 /**
  * {@link Cacheable @Cacheable} with TTL
  *
@@ -171,5 +173,5 @@ public @interface TTLCacheable {
     /**
      * The {@link TimeUnit timeunit} of expire
      */
-    TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
+    TimeUnit timeUnit() default MILLISECONDS;
 }
