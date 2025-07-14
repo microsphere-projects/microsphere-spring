@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -48,12 +47,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClass;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessor.CACHE_SIZE;
 import static org.springframework.beans.BeanUtils.findPropertyForMethod;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
@@ -79,18 +79,15 @@ public abstract class AnnotationInjectedBeanPostProcessor<A extends Annotation> 
         InstantiationAwareBeanPostProcessorAdapter implements MergedBeanDefinitionPostProcessor, PriorityOrdered,
         BeanFactoryAware, BeanClassLoaderAware, EnvironmentAware, DisposableBean {
 
-    private final static int CACHE_SIZE = Integer.getInteger("microsphere.spring.injection.metadata.cache.size", 32);
-
     private final static PropertyDescriptor[] EMPTY_PROPERTY_DESCRIPTOR_ARRAY = new PropertyDescriptor[0];
 
     private final Logger logger = getLogger(getClass());
 
     private final Class<A> annotationType;
 
-    private final ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache =
-            new ConcurrentHashMap<String, AnnotatedInjectionMetadata>(CACHE_SIZE);
+    private final ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache = newConcurrentHashMap(CACHE_SIZE);
 
-    private final ConcurrentMap<String, Object> injectedObjectsCache = new ConcurrentHashMap<String, Object>(CACHE_SIZE);
+    private final ConcurrentMap<String, Object> injectedObjectsCache = newConcurrentHashMap(CACHE_SIZE);
 
     private ConfigurableListableBeanFactory beanFactory;
 

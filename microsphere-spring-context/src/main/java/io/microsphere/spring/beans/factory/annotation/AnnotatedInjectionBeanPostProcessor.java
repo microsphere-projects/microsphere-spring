@@ -64,9 +64,9 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
@@ -121,7 +121,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public static final String CACHE_SIZE_PROPERTY_NAME = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "injection.metadata.cache.size";
 
     @ConfigurationProperty(name = CACHE_SIZE_PROPERTY_NAME, defaultValue = "32")
-    private final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, 32);
+    final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, 32);
 
     private final Logger logger = getLogger(getClass());
 
@@ -515,8 +515,8 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.candidateConstructorsCache = new ConcurrentHashMap<Class<?>, Constructor<?>[]>(cacheSize);
-        this.injectionMetadataCache = new ConcurrentHashMap<String, AnnotatedInjectionMetadata>(cacheSize);
+        this.candidateConstructorsCache = newConcurrentHashMap(cacheSize);
+        this.injectionMetadataCache = newConcurrentHashMap(cacheSize);
     }
 
     @Override
