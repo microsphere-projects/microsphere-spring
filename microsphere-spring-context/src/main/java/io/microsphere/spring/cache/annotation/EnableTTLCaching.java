@@ -28,6 +28,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static org.springframework.context.annotation.AdviceMode.PROXY;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
+
 /**
  * {@link @EnableCaching} Plus TTL features
  *
@@ -66,7 +69,7 @@ public @interface EnableTTLCaching {
      * {@link AdviceMode#ASPECTJ}.
      */
     @AliasFor(annotation = EnableCaching.class)
-    AdviceMode mode() default AdviceMode.PROXY;
+    AdviceMode mode() default PROXY;
 
     /**
      * Indicate the ordering of the execution of the caching advisor
@@ -74,5 +77,5 @@ public @interface EnableTTLCaching {
      * <p>The default is {@link Ordered#LOWEST_PRECEDENCE}.
      */
     @AliasFor(annotation = EnableCaching.class)
-    int order() default Ordered.LOWEST_PRECEDENCE;
+    int order() default LOWEST_PRECEDENCE;
 }
