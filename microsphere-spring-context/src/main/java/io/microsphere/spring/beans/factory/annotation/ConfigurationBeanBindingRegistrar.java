@@ -56,9 +56,43 @@ import static org.springframework.beans.factory.support.BeanDefinitionReaderUtil
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * The {@link ImportBeanDefinitionRegistrar} implementation for {@link EnableConfigurationBeanBinding @EnableConfigurationBinding}
+ * A registrar for registering {@link EnableConfigurationBeanBinding @EnableConfigurationBeanBinding}-annotated bean definitions.
+ * <p>
+ * This class processes the {@link EnableConfigurationBeanBinding} annotation, binding its attributes to corresponding Spring beans.
+ * It supports configuration options such as prefix resolution, bean naming strategies, and handling of unknown or invalid fields.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Basic Configuration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "my.config", type = MyConfig.class)
+ * public class MyConfig {}
+ * }</pre>
+ *
+ * <h4>Multiple Bean Registration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "multi.config", type = MultiConfig.class, multiple = true)
+ * public class MultiConfig {}
+ * }</pre>
+ *
+ * <h4>Custom Ignore Behavior</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(
+ *     prefix = "strict.config",
+ *     type = StrictConfig.class,
+ *     ignoreUnknownFields = false,
+ *     ignoreInvalidFields = false
+ * )
+ * public class StrictConfig {}
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EnableConfigurationBeanBinding
+ * @see ConfigurationBeanBindingPostProcessor
  * @since 1.0.0
  */
 public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware,
