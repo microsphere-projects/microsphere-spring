@@ -29,6 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 /**
  * {@link CachePut @CachePut} with TTL
  *
@@ -151,5 +153,5 @@ public @interface TTLCachePut {
     /**
      * The {@link TimeUnit timeunit} of expire
      */
-    TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
+    TimeUnit timeUnit() default MILLISECONDS;
 }
