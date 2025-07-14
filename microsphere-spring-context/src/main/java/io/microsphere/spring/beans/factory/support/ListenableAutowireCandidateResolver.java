@@ -51,15 +51,44 @@ import static java.lang.Boolean.parseBoolean;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
- * The decorator class of {@link AutowireCandidateResolver} to listen to the resolving process of autowire candidate by
- * {@link AutowireCandidateResolvingListener}
+ * A decorator implementation of {@link AutowireCandidateResolver} that allows listening to the autowire candidate
+ * resolution process via {@link AutowireCandidateResolvingListener}.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * <p>This class enables enhanced visibility into the Spring dependency resolution mechanism by allowing external
+ * listeners to observe and react to events during autowiring. It wraps the original resolver and delegates all calls
+ * to it while notifying registered listeners about various resolution stages.
+ *
+ * <h3>Key Features</h3>
+ * <ul>
+ *     <li>Wraps the existing {@link AutowireCandidateResolver} in a Spring bean factory</li>
+ *     <li>Supports dynamic registration of resolving listeners</li>
+ *     <li>Provides lifecycle integration through {@link BeanFactoryPostProcessor}</li>
+ *     <li>Configurable via environment properties (e.g., enable/disable)</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Register as infrastructure bean
+ * ListenableAutowireCandidateResolver.register(applicationContext);
+ *
+ * // Add custom listener
+ * ListenableAutowireCandidateResolver resolver = beanFactory.getBean(ListenableAutowireCandidateResolver.class);
+ * resolver.addListener((descriptor, candidates) -> {
+ *     System.out.println("Resolved candidates for " + descriptor.getDependencyType());
+ * });
+ * }</pre>
+ *
+ * <h3>Configuration</h3>
+ * Enable the resolver using property configuration:
+ * <pre>{@code
+ * microsphere.spring.listenable-autowire-candidate-resolver.enabled=true
+ * }</pre>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AutowireCandidateResolver
  * @see AutowireCandidateResolvingListener
  * @see CompositeAutowireCandidateResolvingListener
  * @see DefaultListableBeanFactory#setAutowireCandidateResolver(AutowireCandidateResolver)
- * @see BeanFactoryPostProcessor
  * @since 1.0.0
  */
 public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor,
