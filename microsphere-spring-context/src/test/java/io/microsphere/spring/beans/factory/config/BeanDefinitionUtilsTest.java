@@ -36,6 +36,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.doGetResolvableType;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
@@ -50,6 +51,7 @@ import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -138,6 +140,20 @@ public class BeanDefinitionUtilsTest {
             assertTrue(infrastructureBeanNames.contains(USER_BEAN_NAME));
             assertFalse(infrastructureBeanNames.contains(USERS_BEAN_NAME));
         });
+    }
+
+    @Test
+    public void testFindBeanNames() {
+        testInSpringContainer((context, beanFactory) -> {
+            Set<String> beanNames = findBeanNames(context.getBeanFactory());
+            assertTrue(beanNames.contains(USER_BEAN_NAME));
+            assertTrue(beanNames.contains(USERS_BEAN_NAME));
+        });
+    }
+
+    @Test
+    public void testFindBeanNamesOnNullBeanFactory() {
+        assertSame(emptySet(), findBeanNames(null));
     }
 
     @Test
