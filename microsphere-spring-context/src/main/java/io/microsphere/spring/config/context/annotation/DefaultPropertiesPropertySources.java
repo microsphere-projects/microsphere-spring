@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  * public class MyConfig {
  * }
  * }</pre>
- * 
+ *
  * <h4>Java 8+ @Repeatable Usage</h4>
  * <pre>{@code
  * @DefaultPropertiesPropertySource(name = "default1", properties = {"key1=value1", "key2=value2"})
