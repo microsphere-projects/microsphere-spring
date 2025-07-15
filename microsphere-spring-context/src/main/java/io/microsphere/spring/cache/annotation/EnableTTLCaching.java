@@ -32,10 +32,35 @@ import static org.springframework.context.annotation.AdviceMode.PROXY;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 /**
- * {@link @EnableCaching} Plus TTL features
+ * Enables Spring's caching functionality with TTL (Time-To-Live) support.
+ * <p>
+ * This annotation is an extension of Spring's {@link EnableCaching} and provides additional
+ * Time-To-Live capabilities for cached data. It allows developers to configure the duration 
+ * for which cache entries should remain valid, helping manage cache expiration more effectively.
+ * </p>
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.0
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * @Configuration
+ * @EnableTTLCaching
+ * public class CachingConfig {
+ *     // Cacheable beans and configurations go here
+ * }
+ * }</pre>
+ *
+ * <h3>Customizing Behavior</h3>
+ * You can customize the proxying behavior and order of execution like in standard Spring caching:
+ *
+ * <ul>
+ *   <li>{@link #proxyTargetClass()}</li>
+ *   <li>{@link #mode()}</li>
+ *   <li>{@link #order()}</li>
+ * </ul>
+ *
+ * <p>
+ * These settings affect how caching advice is applied across your application. For example,
+ * using the AspectJ mode enables more comprehensive interception compared to the default proxy-based approach.
+ * </p>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
