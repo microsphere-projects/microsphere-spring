@@ -39,13 +39,13 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * <p>This annotation allows the specification of an expiration time for cache entries, making it possible
  * to control how long values should be kept in the cache before being considered stale and evicted.
  *
- * <p><b>Example:</b>
- * <pre>
- *     {@code @TTLCacheable(cacheNames = "userCache", expire = 10, timeUnit = TimeUnit.SECONDS)}
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ *     @TTLCacheable(cacheNames = "userCache", expire = 10, timeUnit = TimeUnit.SECONDS)
  *     public User getUser(String userId) {
  *         // Method implementation
  *     }
- * </pre>
+ * }</pre>
  *
  * <p>In the example above, the result of the method will be stored in the "userCache" cache for 10 seconds.
  * After that time, the entry will be removed, and the next invocation will cause the method to be executed
