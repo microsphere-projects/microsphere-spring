@@ -27,11 +27,40 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * {@link PropertySourceFactory} for JSON
+ * {@link PropertySourceFactory} implementation that creates {@link PropertySource} instances from JSON resources.
+ * <p>
+ * This class reads JSON content and converts it into a {@link MapPropertySource}, allowing the properties defined in the
+ * JSON resource to be easily integrated into the Spring environment.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ * Suppose you have a JSON resource with the following content:
+ * <pre>{@code
+ * {
+ *     "app": {
+ *         "name": "My Application",
+ *         "version": "1.0.0"
+ *     }
+ * }
+ * }</pre>
+ *
+ * You can use this factory to load the JSON file as a property source:
+ * <pre>{@code
+ * EncodedResource encodedResource = new EncodedResource(resource);
+ * PropertySource propertySource = jsonPropertySourceFactory.createPropertySource("jsonProperties", encodedResource);
+ * environment.getPropertySources().addLast(propertySource);
+ * }</pre>
+ *
+ * After adding the property source to the environment, you can access properties like:
+ * <ul>
+ *     <li>{@code environment.getProperty("app.name")} which returns "My Application"</li>
+ *     <li>{@code environment.getProperty("app.version")} which returns "1.0.0"</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySourceFactory
  * @see PropertySource
+ * @see MapPropertySource
  * @since 1.0.0
  */
 public class JsonPropertySourceFactory implements PropertySourceFactory {
