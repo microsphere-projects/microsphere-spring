@@ -25,11 +25,25 @@ import org.springframework.core.io.support.PropertySourceFactory;
 import java.io.IOException;
 
 /**
- * {@link PropertySourceFactory} for YAML
+ * A {@link PropertySourceFactory} implementation that creates {@link PropertySource} instances from YAML resources.
+ *
+ * <p>This factory processes YAML files into a {@link java.util.Map} using {@link ResourceYamlProcessor}, 
+ * and wraps the result in an {@link ImmutableMapPropertySource} to ensure immutability.</p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Configure a Spring Environment to use this factory for loading YAML resources
+ * ConfigurableEnvironment environment = context.getEnvironment();
+ * environment.setPropertySources(new YamlPropertySourceFactory().createPropertySource("my-config", encodedResource));
+ * }</pre>
+ *
+ * <p>For more information on how YAML resources are processed, see {@link ResourceYamlProcessor}.</p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySourceFactory
  * @see PropertySource
+ * @see ResourceYamlProcessor
+ * @see ImmutableMapPropertySource
  * @since 1.0.0
  */
 public class YamlPropertySourceFactory implements PropertySourceFactory {
