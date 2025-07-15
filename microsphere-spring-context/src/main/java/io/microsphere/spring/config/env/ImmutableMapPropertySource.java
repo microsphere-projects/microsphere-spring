@@ -28,10 +28,32 @@ import java.util.TreeMap;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * Immutable {@link MapPropertySource}
+ * An immutable implementation of {@link MapPropertySource} that ensures the underlying map remains unmodifiable.
+ * <p>
+ * This class is useful in scenarios where the configuration properties should be protected from further modifications
+ * after initialization. It wraps the provided source map into an unmodifiable map using
+ * {@link java.util.Collections#unmodifiableMap(Map)}.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ *     Map<String, Object> source = new HashMap<>();
+ *     source.put("key1", "value1");
+ *     source.put("key2", 42);
+ *
+ *     ImmutableMapPropertySource propertySource = new ImmutableMapPropertySource("mySource", source);
+ *
+ *     // The following operations will throw UnsupportedOperationException
+ *     try {
+ *         propertySource.getPropertySources().addLast(new CustomPropertySource());
+ *     } catch (UnsupportedOperationException e) {
+ *         // Expected exception
+ *     }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see MapPropertySource
+ * @see java.util.Collections#unmodifiableMap(Map)
  * @since 1.0.0
  */
 public class ImmutableMapPropertySource extends MapPropertySource {
