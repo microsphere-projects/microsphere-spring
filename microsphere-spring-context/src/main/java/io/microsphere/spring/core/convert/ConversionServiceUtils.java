@@ -25,8 +25,8 @@ import org.springframework.core.convert.support.DefaultConversionService;
 
 import java.lang.invoke.MethodHandle;
 
+import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.invoke.MethodHandlesLookupUtils.findPublicStatic;
-import static io.microsphere.spring.util.MethodHandleUtils.handleInvokeExactFailure;
 
 /**
  * The utilities class for {@link ConversionService}
