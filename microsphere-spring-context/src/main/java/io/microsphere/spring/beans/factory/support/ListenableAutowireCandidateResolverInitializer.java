@@ -26,7 +26,7 @@ import static io.microsphere.spring.beans.factory.support.ListenableAutowireCand
  * {@link ListenableAutowireCandidateResolver} to provide extensible autowiring
  * capabilities within the Spring application context.
  *
- * <p><strong>Example usage:</strong>
+ * <p><h3>Example Usage</h3>
  * <pre>{@code
  * public class MyConfig implements WebMvcConfigurer {
  *     // Configuration code...
