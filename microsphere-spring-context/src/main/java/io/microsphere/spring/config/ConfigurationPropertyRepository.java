@@ -23,9 +23,9 @@ import org.springframework.core.env.Environment;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.text.FormatUtils.format;
 import static java.lang.Integer.parseInt;
@@ -146,7 +146,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
 
     @Override
     public void afterPropertiesSet() {
-        this.repository = new ConcurrentHashMap<>(this.maxSize);
+        this.repository = newConcurrentHashMap(this.maxSize);
     }
 
     /**
