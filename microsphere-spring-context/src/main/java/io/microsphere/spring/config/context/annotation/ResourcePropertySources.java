@@ -20,21 +20,50 @@ import io.microsphere.annotation.Nonnull;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
- * Container annotation that aggregates several {@link ResourcePropertySource} annotations.
+ * A container annotation that holds multiple {@link ResourcePropertySource} annotations.
+ *
+ * <p>This annotation is used to apply multiple {@link ResourcePropertySource} configurations
+ * to a single class. It supports the same attributes as the individual annotations and
+ * serves as a way to group them logically.</p>
+ *
+ * <h3>Examples Usage</h3>
+ * <h4>Basic Usage</h4>
+ * <pre>{@code
+ * @ResourcePropertySources(value = {
+ *     @ResourcePropertySource(name = "default1", properties = {"key1=value1", "key2=value2"}),
+ *     @ResourcePropertySource(name = "default2", properties = {"key3=value3", "key4=value4"})
+ * })
+ * public class MyConfig {
+ * }
+ * }</pre>
+ *
+ * <h4>Java 8+ @Repeatable Usage</h4>
+ * <pre>{@code
+ * @ResourcePropertySource(name = "default1", properties = {"key1=value1", "key2=value2"})
+ * @ResourcePropertySource(name = "default2", properties = {"key3=value3", "key4=value4"})
+ * public class MyConfig {
+ * }
+ * }</pre>
+ *
+ * <p>This example demonstrates how to use the annotation to load properties from both
+ * the classpath and an external file. The order of the annotations in the array defines
+ * the precedence of the property sources, with the first having the lowest precedence
+ * and the last having the highest.</p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(TYPE)
+@Retention(RUNTIME)
 @Inherited
 @Documented
 @Import(ResourcePropertySourcesLoader.class)
