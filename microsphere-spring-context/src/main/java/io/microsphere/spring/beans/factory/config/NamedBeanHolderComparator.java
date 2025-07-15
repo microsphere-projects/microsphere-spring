@@ -30,7 +30,7 @@ import java.util.Comparator;
  * the {@link org.springframework.core.Ordered} interface as well as
  * the {@link java.util.Collections#reverseOrder()} if applicable.
  *
- * <h3>Example</h3>
+ * <h3>Example Usage</h3>
  * <pre>{@code
  * List<NamedBeanHolder<MyBean>> beanHolders = getBeanHolders();
  * beanHolders.sort(NamedBeanHolderComparator.INSTANCE);
