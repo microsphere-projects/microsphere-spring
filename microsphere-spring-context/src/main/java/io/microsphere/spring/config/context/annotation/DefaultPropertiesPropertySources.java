@@ -27,11 +27,34 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation declaring the multiple {@link DefaultPropertiesPropertySource @DefaultPropertiesPropertySource}
+ * A container annotation that holds multiple {@link DefaultPropertiesPropertySource @DefaultPropertiesPropertySource} annotations.
+ * <p>
+ * This annotation is used to declare multiple {@link DefaultPropertiesPropertySource} on a configuration class,
+ * allowing the configuration of multiple property sources with default properties in a Spring application context.
+ * </p>
+ *
+ * <h3>Examples Usage</h3>
+ * <h4>Basic Usage</h4>
+ * <pre>{@code
+ * @DefaultPropertiesPropertySources(value = {
+ *     @DefaultPropertiesPropertySource(name = "default1", properties = {"key1=value1", "key2=value2"}),
+ *     @DefaultPropertiesPropertySource(name = "default2", properties = {"key3=value3", "key4=value4"})
+ * })
+ * public class MyConfig {
+ * }
+ * }</pre>
+ * 
+ * <h4>Java 8+ @Repeatable Usage</h4>
+ * <pre>{@code
+ * @DefaultPropertiesPropertySource(name = "default1", properties = {"key1=value1", "key2=value2"})
+ * @DefaultPropertiesPropertySource(name = "default2", properties = {"key3=value3", "key4=value4"})
+ * public class MyConfig {
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see DefaultPropertiesPropertySource
- * @see DefaultPropertiesPropertySourceLoader
+ * @see DefaultPropertiesPropertySourcesLoader
  * @see org.springframework.core.env.PropertySource
  * @see Configuration
  * @since 1.0.0
