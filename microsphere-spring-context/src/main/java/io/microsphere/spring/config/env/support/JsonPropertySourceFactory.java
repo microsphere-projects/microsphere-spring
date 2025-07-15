@@ -17,6 +17,7 @@
 package io.microsphere.spring.config.env.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.spring.config.env.annotation.JsonPropertySource;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.EncodedResource;
@@ -58,6 +59,7 @@ import java.util.Map;
  * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see JsonPropertySource
  * @see PropertySourceFactory
  * @see PropertySource
  * @see MapPropertySource
