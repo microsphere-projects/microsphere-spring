@@ -33,9 +33,69 @@ import java.lang.annotation.Target;
 import java.util.Comparator;
 
 /**
- * The extension annotation of {ResourcePropertySource @ResourcePropertySource} providing a convenient and declarative
+ * The extension annotation of {@link ResourcePropertySource @ResourcePropertySource} providing a convenient and declarative
  * mechanism for adding a YAML {@link ImmutableMapPropertySource} to Spring's Environment.
  * To be used in conjunction with {@link Configuration @Configuration} classes.
+ *
+ * <h3>Example Usage</h3>
+ * <h4>Example 1: Basic usage</h4>
+ * <pre>
+ * {@code
+ * @YamlPropertySource("classpath:/config/app.yaml")
+ * @Configuration
+ * public class AppConfig {
+ * }
+ * }
+ * </pre>
+ *
+ * <h4>Example 2: Using wildcard and custom sorting</h4>
+ * <pre>
+ * {@code
+ * @YamlPropertySource(value = "classpath:/config/*.yaml",
+ *                     resourceComparator = CustomResourceComparator.class)
+ * @Configuration
+ * public class AppConfig {
+ * }
+ * }
+ * </pre>
+ *
+ * <h4>Example 3: Optional JSON resource</h4>
+ * <pre>
+ * {@code
+ * @YamlPropertySource(value = "classpath:/config/optional.yaml", ignoreResourceNotFound = true)
+ * @Configuration
+ * public class AppConfig {
+ * }
+ * }
+ * </pre>
+ *
+ * <h4>Example 4: Auto-refreshing property source</h4>
+ * <pre>
+ * {@code
+ * @YamlPropertySource(value = "file:/data/config/app.yaml", autoRefreshed = true)
+ * @Configuration
+ * public class AppConfig {
+ * }
+ * }
+ * </pre>
+ *
+ * <h4>Example 5: For specifying the order of property sources</h4>
+ * <pre>{@code
+ * @YamlPropertySource(value = "classpath:/app.yaml", first = true)
+ * @Configuration
+ * public class AppConfig {
+ *     // configuration beans
+ * }
+ * }</pre>
+ *
+ * <h4>Example 6: Customizing the character encoding</h4>
+ * <pre>{@code
+ * @YamlPropertySource(value = "classpath:/app.yaml", encoding = "ISO-8859-1")
+ * @Configuration
+ * public class AppConfig {
+ *     // configuration beans
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource
