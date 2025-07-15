@@ -39,13 +39,13 @@ import java.util.List;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
-import static io.microsphere.spring.util.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.util.ArrayUtils.combine;
 import static java.lang.Boolean.parseBoolean;
 import static org.springframework.beans.BeanUtils.instantiateClass;
