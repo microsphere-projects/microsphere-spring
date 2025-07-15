@@ -16,33 +16,52 @@
  */
 package io.microsphere.spring.cache.annotation;
 
-import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import static io.microsphere.spring.cache.intereptor.TTLCacheResolver.BEAN_NAME;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
- * {@link Cacheable @Cacheable} with TTL
+ * A variation of {@link Cacheable @Cacheable} that supports Time-To-Live (TTL) settings for cached entries.
+ *
+ * <p>This annotation allows the specification of an expiration time for cache entries, making it possible
+ * to control how long values should be kept in the cache before being considered stale and evicted.
+ *
+ * <p><b>Example:</b>
+ * <pre>
+ *     {@code @TTLCacheable(cacheNames = "userCache", expire = 10, timeUnit = TimeUnit.SECONDS)}
+ *     public User getUser(String userId) {
+ *         // Method implementation
+ *     }
+ * </pre>
+ *
+ * <p>In the example above, the result of the method will be stored in the "userCache" cache for 10 seconds.
+ * After that time, the entry will be removed, and the next invocation will cause the method to be executed
+ * and the result cached again.
+ *
+ * <p>It is typically used in Spring applications where fine-grained control over cache expiration is needed.
+ * The TTL behavior is handled by the associated cache resolver, which must support TTL-based eviction policies.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE, METHOD})
+@Retention(RUNTIME)
 @Inherited
 @Documented
-@Cacheable(cacheResolver = TTLCacheResolver.BEAN_NAME)
+@Cacheable(cacheResolver = BEAN_NAME)
 public @interface TTLCacheable {
 
     /**
