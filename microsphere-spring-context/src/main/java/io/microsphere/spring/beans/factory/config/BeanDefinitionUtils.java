@@ -35,9 +35,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.lang.function.Predicates.and;
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.util.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
