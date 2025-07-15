@@ -17,6 +17,7 @@
 package io.microsphere.spring.config.env.support;
 
 import io.microsphere.spring.config.env.ImmutableMapPropertySource;
+import io.microsphere.spring.config.env.annotation.YamlPropertySource;
 import io.microsphere.spring.config.env.config.ResourceYamlProcessor;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.EncodedResource;
@@ -27,7 +28,7 @@ import java.io.IOException;
 /**
  * A {@link PropertySourceFactory} implementation that creates {@link PropertySource} instances from YAML resources.
  *
- * <p>This factory processes YAML files into a {@link java.util.Map} using {@link ResourceYamlProcessor}, 
+ * <p>This factory processes YAML files into a {@link java.util.Map} using {@link ResourceYamlProcessor},
  * and wraps the result in an {@link ImmutableMapPropertySource} to ensure immutability.</p>
  *
  * <h3>Example Usage</h3>
@@ -40,6 +41,7 @@ import java.io.IOException;
  * <p>For more information on how YAML resources are processed, see {@link ResourceYamlProcessor}.</p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see YamlPropertySource
  * @see PropertySourceFactory
  * @see PropertySource
  * @see ResourceYamlProcessor
