@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -45,7 +46,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * }
  * }</pre>
  *
- * <h4>Java 8+ @Repeatable Usage</h4>
+ * <h4>Java 8+ {@link Repeatable @Repeatable} Usage</h4>
  * <pre>{@code
  * @ResourcePropertySource(name = "default1", properties = {"key1=value1", "key2=value2"})
  * @ResourcePropertySource(name = "default2", properties = {"key3=value3", "key4=value4"})
