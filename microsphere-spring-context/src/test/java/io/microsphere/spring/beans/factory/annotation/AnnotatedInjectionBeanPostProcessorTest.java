@@ -22,12 +22,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,7 +40,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        AnnotationInjectedBeanPostProcessorTest.TestConfiguration.class,
+        AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.class,
         AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
@@ -47,14 +49,14 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
     @Autowired
     @Qualifier("parent")
-    private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.Parent parent;
+    private Parent parent;
 
     @Autowired
     @Qualifier("child")
-    private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.Child child;
+    private Child child;
 
     @Autowired
-    private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.UserHolder userHolder;
+    private UserHolder userHolder;
 
     @Autowired
     private AnnotatedInjectionBeanPostProcessor processor;
@@ -103,6 +105,62 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
     @Import(GenericChild.class)
     public static class GenericConfiguration {
+
+    }
+
+    static class TestConfiguration {
+
+        static class Parent {
+
+            @Referenced
+            User parentUser;
+
+            User user;
+
+            @Referenced
+            public void setUser(User user) {
+                this.user = user;
+            }
+        }
+
+        static class Child extends Parent {
+
+            @Referenced
+            User childUser;
+
+        }
+
+        static class UserHolder {
+
+            User user;
+        }
+
+
+        @Bean
+        public Parent parent() {
+            return new Parent();
+        }
+
+        @Bean
+        public Child child() {
+            return new Child();
+        }
+
+
+        @Bean
+        public User user() {
+            User user = new User();
+            user.setName("mercyblitz");
+            user.setAge(32);
+            return user;
+        }
+
+        @Bean
+        public UserHolder userHolder(User user) {
+            UserHolder userHolder = new UserHolder();
+            userHolder.user = user;
+            return userHolder;
+        }
 
     }
 
