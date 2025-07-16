@@ -13,6 +13,7 @@ import static org.springframework.util.StringUtils.capitalize;
  * </p>
  *
  * @author <a href="mailto:15868175516@163.com">qi.li</a>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
 public class DefaultConfigurationBeanAliasGenerator implements ConfigurationBeanAliasGenerator {
