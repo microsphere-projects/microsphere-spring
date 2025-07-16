@@ -11,7 +11,7 @@ import static org.springframework.util.StringUtils.capitalize;
  *
  * <p>
  * For example, given a prefix like "user.config" and a bean name "dataSource", it would generate an alias like:
- * {@code userConfig + jointSymbol() + dataSource}, where the joint symbol is defined by the implementing subclass.
+ * {@code userConfig + delimiter() + dataSource}, where the delimiter is defined by the implementing subclass.
  * </p>
  *
  * @author <a href="mailto:15868175516@163.com">qi.li</a>
@@ -26,8 +26,8 @@ public abstract class JoinAliasGenerator implements ConfigurationBeanAliasGenera
         String others = stream(prefixArray).skip(1)
                 .map(item -> capitalize(item))
                 .collect(joining());
-        return first + others + separator() + beanName;
+        return first + others + delimiter() + beanName;
     }
 
-    protected abstract String separator();
+    protected abstract String delimiter();
 }
