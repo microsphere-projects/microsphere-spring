@@ -22,7 +22,47 @@ import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
 
 /**
- * The abstract class for {@link SmartLifecycle}
+ * Abstract base class for implementing {@link SmartLifecycle} strategies.
+ * <p>
+ * This class provides a skeletal implementation of the {@link SmartLifecycle} interface,
+ * making it easier to create custom lifecycle beans with specific startup and shutdown logic.
+ * </p>
+ *
+ * <h3>Key Features</h3>
+ * <ul>
+ *     <li>Centralizes common lifecycle state management.</li>
+ *     <li>Offers phase-based control for startup and shutdown order.</li>
+ *     <li>Ensures consistent lifecycle behavior across implementations.</li>
+ * </ul>
+ *
+ * <h3>Usage Example</h3>
+ * <pre>{@code
+ * public class MyCustomLifecycle extends AbstractSmartLifecycle {
+ *     private boolean running = false;
+ *
+ *     @Override
+ *     protected void doStart() {
+ *         // Initialize resources
+ *         running = true;
+ *     }
+ *
+ *     @Override
+ *     protected void doStop() {
+ *         // Release resources
+ *         running = false;
+ *     }
+ *
+ *     @Override
+ *     public boolean isRunning() {
+ *         return running;
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>
+ * This class is designed to be extended, requiring subclasses to implement the
+ * abstract methods {@link #doStart()} and {@link #doStop()} to define custom behavior.
+ * </p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
