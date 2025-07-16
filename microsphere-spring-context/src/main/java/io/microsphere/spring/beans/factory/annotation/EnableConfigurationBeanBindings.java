@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -30,14 +31,23 @@ import java.lang.annotation.Target;
  *
  * <h3>Example Usage</h3>
  *
+ * <h4>Basic Usage</h4>
  * <pre>{@code
- * @EnableConfigurationBeanBindings({
+ * @EnableConfigurationBeanBindings(value = {
  *     @EnableConfigurationBeanBinding(name = "myBean1", value = MyBean1.class),
  *     @EnableConfigurationBeanBinding(name = "myBean2", value = MyBean2.class)
  * })
  * public class MyConfiguration {
  * }
  * }</pre>
+ *
+ * <h4>Java 8+ {@link Repeatable @Repeatable} Usage</h4>
+ * <pre>{@code
+ * @EnableConfigurationBeanBinding(name = "myBean1", value = MyBean1.class)
+ * @EnableConfigurationBeanBinding(name = "myBean2", value = MyBean2.class)
+ * public class MyConfiguration {
+ * }
+ * }</pre
  *
  * <p>The above example will register two configuration beans with names "myBean1" and "myBean2"
  * bound to their respective classes.</p>
