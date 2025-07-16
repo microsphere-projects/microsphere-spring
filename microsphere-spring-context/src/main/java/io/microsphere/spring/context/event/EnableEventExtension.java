@@ -32,7 +32,19 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Enables Spring's Event Extension
+ * Enables Spring's Event Extension.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * @EnableEventExtension(intercepted = true, executorForListener = "myExecutor")
+ * public class MyConfig {
+ *     // Configuration beans
+ * }
+ * }</pre>
+ *
+ * <p>This annotation enables advanced event handling features in Spring, such as event interception
+ * and asynchronous listener execution. It imports the {@link EventExtensionRegistrar} to register
+ * necessary infrastructure beans.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
