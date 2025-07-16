@@ -37,30 +37,30 @@ import java.util.Set;
  *
  * <h3>Example Usage</h3>
  *
- * <pre>
+ * <pre>{@code
  * public class MyDependencyResolver implements InjectionPointDependencyResolver {
  *
- *     {@literal @}Override
+ *     @Override
  *     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
  *         // Resolve dependency from a field
  *     }
  *
- *     {@literal @}Override
+ *     @Override
  *     public void resolve(Method method, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
  *         // Resolve dependency from a method (e.g., setter)
  *     }
  *
- *     {@literal @}Override
+ *     @Override
  *     public void resolve(Constructor constructor, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
  *         // Resolve dependency from a constructor
  *     }
  *
- *     {@literal @}Override
+ *     @Override
  *     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
  *         // Resolve dependency from a parameter annotated with @Autowired or similar
  *     }
  * }
- * </pre>
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AbstractInjectionPointDependencyResolver
