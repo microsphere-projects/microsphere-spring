@@ -48,8 +48,50 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.springframework.util.CollectionUtils.containsAny;
 
 /**
- * The {@link BeanFactoryListener} class {@link DefaultListableBeanFactory#preInstantiateSingletons() pre-instantiates singletons}
- * in parallel.
+ * A {@link BeanFactoryListener} implementation that pre-instantiates singleton beans in parallel
+ * to improve application startup performance. This class leverages multi-threading to initialize
+ * beans concurrently while respecting bean dependencies.
+ *
+ * <h3>Configuration Properties</h3>
+ *
+ * <dl>
+ *     <dt>{@value #THREADS_PROPERTY_NAME}</dt>
+ *     <dd>
+ *         The number of threads to use for parallel pre-instantiation. Default is based on the number of
+ *         available processors, with a minimum of 1 thread.
+ *     </dd>
+ *
+ *     <dt>{@value #THREAD_NAME_PREFIX_PROPERTY_NAME}</dt>
+ *     <dd>
+ *         The prefix for the thread names used during parallel pre-instantiation. Default is:
+ *         {@value #DEFAULT_THREAD_NAME_PREFIX}
+ *     </dd>
+ * </dl>
+ *
+ * <h3>Example Configuration</h3>
+ *
+ * <pre>{@code
+ * # application.properties
+ * microsphere.spring.pre-instantiation.singletons.threads=4
+ * microsphere.spring.pre-instantiation.singletons.thread.name-prefix=MyCustomThread-
+ * }</pre>
+ *
+ * <h3>Usage Example</h3>
+ * <p>
+ * This listener is typically registered in a Spring configuration class as follows:
+ *
+ * <pre>{@code
+ * @Configuration
+ * public class AppConfig {
+ *     @Bean
+ *     public BeanFactoryListener parallelPreInstantiationListener() {
+ *         return new ParallelPreInstantiationSingletonsBeanFactoryListener();
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>Once registered, the listener will automatically trigger parallel pre-instantiation
+ * when the bean factory configuration is frozen.</p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanInitializer
