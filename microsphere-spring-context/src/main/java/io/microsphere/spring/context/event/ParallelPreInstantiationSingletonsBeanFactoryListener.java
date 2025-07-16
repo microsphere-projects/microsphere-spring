@@ -68,7 +68,7 @@ import static org.springframework.util.CollectionUtils.containsAny;
  *     </dd>
  * </dl>
  *
- * <h3>Example Configuration</h3>
+ * <h3>Example Usage</h3>
  *
  * <pre>{@code
  * # application.properties
