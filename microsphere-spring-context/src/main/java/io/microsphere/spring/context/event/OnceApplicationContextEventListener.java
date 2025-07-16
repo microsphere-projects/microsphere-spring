@@ -29,9 +29,35 @@ import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
- * The abstract class {@link ApplicationListener} for {@link ApplicationEvent} guarantees just one-time execution
- * and prevents the event propagation in the hierarchical {@link ApplicationContext ApplicationContexts}
+ * Abstract {@link ApplicationListener} base class for handling {@link ApplicationContextEvent} in a one-time execution manner.
+ * <p>
+ * This class ensures that the event is processed only once and prevents event propagation across hierarchical
+ * {@link ApplicationContext} instances.
+ * </p>
  *
+ * <h3>Usage Example</h3>
+ *
+ * <pre>{@code
+ * public class MyApplicationContextEventListener
+ *     extends OnceApplicationContextEventListener<ContextRefreshedEvent> {
+ *
+ *     @Override
+ *     protected void onApplicationContextEvent(ContextRefreshedEvent event) {
+ *         // Handle the event only once in the original context
+ *         System.out.println("Context refreshed: " + event.getApplicationContext());
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>
+ * This ensures that the event handler logic in {@link #onApplicationContextEvent(ApplicationContextEvent)} is executed
+ * only if the event comes from the same {@link ApplicationContext} that was set during initialization.
+ * </p>
+ *
+ * @param <E> the specific {@link ApplicationContextEvent} type to listen for
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see ApplicationListener
+ * @see ApplicationContextEvent
  * @since 1.0.0
  */
 public abstract class OnceApplicationContextEventListener<E extends ApplicationContextEvent> implements ApplicationListener<E>,
