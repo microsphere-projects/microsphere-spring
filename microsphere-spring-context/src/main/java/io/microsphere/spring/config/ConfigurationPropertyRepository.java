@@ -31,7 +31,43 @@ import static io.microsphere.text.FormatUtils.format;
 import static java.lang.Integer.parseInt;
 
 /**
- * {@link ConfigurationProperty} Repository
+ * A repository for managing {@link ConfigurationProperty} instances with support for configuration via Spring's {@link Environment}.
+ * <p>
+ * This class provides methods to add, remove, retrieve, and manage configuration properties. It also allows integration with Spring's
+ * lifecycle management through the {@link InitializingBean} and {@link DisposableBean} interfaces, as well as environment-based
+ * property configuration through the {@link EnvironmentAware} interface.
+ * </p>
+ *
+ * <h3>Configuration Properties</h3>
+ * <ul>
+ *     <li>{@value #MAX_SIZE_PROPERTY_NAME}: Sets the maximum number of properties that can be stored in the repository.
+ *         Defaults to {@value #DEFAULT_MAX_SIZE} if not specified.</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Create a new repository instance
+ * ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+ *
+ * // Set the environment to load max size from configuration
+ * ConfigurableEnvironment environment = new StandardEnvironment();
+ * repository.setEnvironment(environment);
+ *
+ * // Initialize the repository (usually done automatically by Spring)
+ * repository.afterPropertiesSet();
+ *
+ * // Add a configuration property
+ * ConfigurationProperty property = new ConfigurationProperty("my.property.name");
+ * property.setValue("exampleValue");
+ * repository.add(property);
+ *
+ * // Retrieve the property
+ * ConfigurationProperty retrieved = repository.get("my.property.name");
+ * System.out.println(retrieved.getValue()); // Output: exampleValue
+ *
+ * // Clean up resources when done
+ * repository.destroy();
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see ConfigurationProperty
