@@ -46,8 +46,53 @@ import static org.springframework.util.ObjectUtils.containsElement;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * Bean Registrar
+ * BeanRegistrar provides utility methods for registering beans within a Spring {@link BeanDefinitionRegistry}.
+ * <p>
+ * This abstract class offers various static methods to register bean definitions, singleton beans, and factory beans.
+ * It supports functionalities such as bean overriding control, role-based registration, and custom naming strategies.
+ * </p>
  *
+ * <h3>Key Features</h3>
+ * <ul>
+ *     <li>Register infrastructure or application beans with auto-generated or explicit names.</li>
+ *     <li>Control bean overriding behavior during registration.</li>
+ *     <li>Supports registration from Spring factories using {@code spring.factories} resources.</li>
+ *     <li>Provides logging via the Microsphere Logger for trace, debug, warn, and error levels.</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Registering an Infrastructure Bean</h4>
+ * <pre>{@code
+ * boolean registered = BeanRegistrar.registerInfrastructureBean(registry, MyService.class);
+ * if (registered) {
+ *     logger.info("Infrastructure bean registered successfully.");
+ * } else {
+ *     logger.warn("Infrastructure bean was already registered.");
+ * }
+ * }</pre>
+ *
+ * <h4>Registering a Bean with Explicit Name</h4>
+ * <pre>{@code
+ * boolean registered = BeanRegistrar.registerBeanDefinition(registry, "customName", MyService.class);
+ * if (registered) {
+ *     logger.info("Bean registered under name 'customName'.");
+ * }
+ * }</pre>
+ *
+ * <h4>Registering a Singleton Bean</h4>
+ * <pre>{@code
+ * MySingleton mySingleton = new MySingleton();
+ * BeanRegistrar.registerSingleton(registry, "mySingleton", mySingleton);
+ * }</pre>
+ *
+ * <h4>Registering Beans from Spring Factories</h4>
+ * <pre>{@code
+ * int count = BeanRegistrar.registerSpringFactoriesBeans(registry, MyFactory.class);
+ * logger.info("{} beans registered from spring.factories.", count);
+ * }</pre>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
 public abstract class BeanRegistrar {
