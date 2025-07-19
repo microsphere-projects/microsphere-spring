@@ -35,7 +35,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  * {@link ApplicationContext} instances.
  * </p>
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  *
  * <pre>{@code
  * public class MyApplicationContextEventListener
