@@ -76,7 +76,7 @@ import static org.springframework.util.CollectionUtils.containsAny;
  * microsphere.spring.pre-instantiation.singletons.thread.name-prefix=MyCustomThread-
  * }</pre>
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  * <p>
  * This listener is typically registered in a Spring configuration class as follows:
  *
