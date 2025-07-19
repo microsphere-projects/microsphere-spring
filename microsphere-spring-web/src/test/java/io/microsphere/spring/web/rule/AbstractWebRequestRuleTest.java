@@ -17,12 +17,13 @@
 
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.collection.MapUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.Map;
+
+import static io.microsphere.collection.MapUtils.of;
 
 /**
  * Abstract {@link WebRequestRule} Test
@@ -35,8 +36,18 @@ public class AbstractWebRequestRuleTest {
 
     protected NativeWebRequest createWebRequest(Object... params) {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Map<String, Object> parameters = MapUtils.of(params);
+        Map<String, Object> parameters = of(params);
         request.setParameters(parameters);
+        return new ServletWebRequest(request);
+    }
+
+    protected NativeWebRequest createWebRequestWithHeaders(Object... headers) {
+        return createWebRequestWithHeaders(of(headers));
+    }
+
+    protected NativeWebRequest createWebRequestWithHeaders(Map<String, String> headers) {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        headers.forEach(request::addHeader);
         return new ServletWebRequest(request);
     }
 }
