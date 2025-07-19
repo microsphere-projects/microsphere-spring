@@ -65,7 +65,7 @@ import static java.lang.Integer.toHexString;
  *     <li>{@link #setResourceLoader(ResourceLoader)}</li>
  * </ul>
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  *
  * <pre>{@code
  * public class MyImportRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
