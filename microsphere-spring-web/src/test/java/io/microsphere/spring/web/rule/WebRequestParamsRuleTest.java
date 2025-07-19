@@ -17,13 +17,8 @@
 
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.collection.MapUtils;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.ServletWebRequest;
-
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,14 +27,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link WebRequestParamsRule} Test
  */
-public class WebRequestParamsRuleTest {
+public class WebRequestParamsRuleTest extends AbstractWebRequestRuleTest {
 
-    private NativeWebRequest createWebRequest(Object... values) {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        Map<String, Object> params = MapUtils.of(values);
-        request.setParameters(params);
-        return new ServletWebRequest(request);
-    }
 
     // ==================== Constructor ====================
     @Test
