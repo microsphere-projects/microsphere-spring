@@ -35,7 +35,7 @@ import static java.lang.Integer.MIN_VALUE;
  *     <li>Ensures consistent lifecycle behavior across implementations.</li>
  * </ul>
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  * <pre>{@code
  * public class MyCustomLifecycle extends AbstractSmartLifecycle {
  *     private boolean running = false;
