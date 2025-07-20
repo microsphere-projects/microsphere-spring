@@ -34,8 +34,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
-import static org.springframework.http.HttpHeaders.ORIGIN;
 
 /**
  * {@link WebRequestProducesRule} Test
@@ -48,12 +46,7 @@ public class WebRequestProducesRuleTest extends AbstractWebRequestRuleTest {
     @Test
     public void testIsPreFlightRequest() {
         WebRequestProducesRule rule = new WebRequestProducesRule();
-        NativeWebRequest request = createWebRequest(req -> {
-            req.setMethod("OPTIONS");
-            req.addHeader(":METHOD:", "OPTIONS");
-            req.addParameter(ORIGIN, "http://example.com");
-            req.addParameter(ACCESS_CONTROL_REQUEST_METHOD, "POST");
-        });
+        NativeWebRequest request = createPreFightRequest();
         assertFalse("Pre-Flight request should not match", rule.matches(request));
     }
 
