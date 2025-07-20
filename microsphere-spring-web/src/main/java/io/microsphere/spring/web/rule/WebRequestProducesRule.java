@@ -51,7 +51,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
  * @see WebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.ProducesRequestCondition
  * @see org.springframework.web.reactive.result.condition.ProducesRequestCondition
- * @since 1.0.066
+ * @since 1.0.0
  */
 public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaTypeExpression> {
 
