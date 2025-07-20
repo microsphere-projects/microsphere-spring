@@ -90,6 +90,13 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
     }
 
     private boolean matchRequestMethod(String method) {
-        return this.methods.contains(method);
+        boolean matched = false;
+        for (String requestMethod : this.methods) {
+            if (requestMethod.equalsIgnoreCase(method)) {
+                matched = true;
+                break;
+            }
+        }
+        return matched;
     }
 }
