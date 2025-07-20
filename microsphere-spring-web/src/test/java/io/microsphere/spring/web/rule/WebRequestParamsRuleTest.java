@@ -61,35 +61,35 @@ public class WebRequestParamsRuleTest extends AbstractWebRequestRuleTest {
     @Test
     public void testMatchesAllConditions() {
         WebRequestParamsRule rule = new WebRequestParamsRule("param1=value1", "param2=value2");
-        NativeWebRequest request = createWebRequest("param1", "value1", "param2", new String[]{"value2"});
+        NativeWebRequest request = createWebRequestWithParams("param1", "value1", "param2", new String[]{"value2"});
         assertTrue(rule.matches(request));
     }
 
     @Test
     public void testMatchesWithOneMismatch() {
         WebRequestParamsRule rule = new WebRequestParamsRule("param1=value1", "param2=value2");
-        NativeWebRequest request = createWebRequest("param1", "wrongValue");
+        NativeWebRequest request = createWebRequestWithParams("param1", "wrongValue");
         assertFalse(rule.matches(request));
     }
 
     @Test
     public void testMatchesWithEmptyExpressions() {
         WebRequestParamsRule rule = new WebRequestParamsRule();
-        NativeWebRequest request = createWebRequest("anyParam", "anyValue");
+        NativeWebRequest request = createWebRequestWithParams("anyParam", "anyValue");
         assertTrue("Should always match when no expressions", rule.matches(request));
     }
 
     @Test
     public void testMatchesWithMissingParameter() {
         WebRequestParamsRule rule = new WebRequestParamsRule("requiredParam=value");
-        NativeWebRequest request = createWebRequest("otherParam", "value");
+        NativeWebRequest request = createWebRequestWithParams("otherParam", "value");
         assertFalse(rule.matches(request));
     }
 
     @Test
     public void testMatchesWithNegatedExpression() {
         WebRequestParamsRule rule = new WebRequestParamsRule("param1!=value1");
-        NativeWebRequest request = createWebRequest("param1", "value1");
+        NativeWebRequest request = createWebRequestWithParams("param1", "value1");
         assertFalse(rule.matches(request));
     }
 
@@ -101,7 +101,7 @@ public class WebRequestParamsRuleTest extends AbstractWebRequestRuleTest {
                 "!param3"
         );
 
-        NativeWebRequest request = createWebRequest("param1", "value1", "param2", new String[]{"anyValue"});
+        NativeWebRequest request = createWebRequestWithParams("param1", "value1", "param2", new String[]{"anyValue"});
         assertTrue(rule.matches(request));
     }
 }
