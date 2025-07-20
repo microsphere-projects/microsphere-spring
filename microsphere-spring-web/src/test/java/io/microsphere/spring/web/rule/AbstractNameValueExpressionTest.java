@@ -18,7 +18,6 @@
 package io.microsphere.spring.web.rule;
 
 
-import org.junit.Before;
 import org.junit.Test;
 
 /**
