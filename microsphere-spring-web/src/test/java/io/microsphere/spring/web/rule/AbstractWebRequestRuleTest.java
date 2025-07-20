@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static io.microsphere.collection.MapUtils.of;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
+import static org.springframework.http.HttpHeaders.ORIGIN;
 
 /**
  * Abstract {@link WebRequestRule} Test
@@ -56,5 +58,15 @@ public class AbstractWebRequestRuleTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         headers.forEach(request::addHeader);
         return new ServletWebRequest(request);
+    }
+
+    protected NativeWebRequest createPreFightRequest() {
+        // Create pre-flight request (OPTIONS method with Origin header)
+        return createWebRequest(request -> {
+            request.setMethod("OPTIONS");
+            request.addHeader(":METHOD:", "OPTIONS");
+            request.addParameter(ORIGIN, "http://example.com");
+            request.addParameter(ACCESS_CONTROL_REQUEST_METHOD, "POST");
+        });
     }
 }
