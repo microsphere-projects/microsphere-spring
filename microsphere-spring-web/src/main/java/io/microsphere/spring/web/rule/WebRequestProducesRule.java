@@ -24,15 +24,16 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static org.springframework.http.MediaType.ALL;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 
@@ -112,18 +113,16 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
         List<ProduceMediaTypeExpression> result = getMatchingExpressions(acceptedMediaTypes);
         if (isNotEmpty(result)) {
             return false;
-        } else if (isPresentIn(MediaType.ALL, acceptedMediaTypes)) {
+        } else if (isPresentIn(ALL, acceptedMediaTypes)) {
             return false;
         }
         return true;
     }
 
-    @Nullable
     private List<ProduceMediaTypeExpression> getMatchingExpressions(List<MediaType> acceptedMediaTypes) {
-        List<ProduceMediaTypeExpression> result = null;
+        List<ProduceMediaTypeExpression> result = newArrayList(this.expressions.size());
         for (ProduceMediaTypeExpression expression : this.expressions) {
             if (expression.match(acceptedMediaTypes)) {
-                result = result != null ? result : new ArrayList<>();
                 result.add(expression);
             }
         }
