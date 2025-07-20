@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.web.rule;
 
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -27,6 +28,7 @@ import java.util.function.Consumer;
 import static io.microsphere.collection.MapUtils.of;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.ORIGIN;
+import static org.springframework.http.HttpMethod.OPTIONS;
 
 /**
  * Abstract {@link WebRequestRule} Test
@@ -35,7 +37,11 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
  * @see WebRequestRule
  * @since 1.0.0
  */
-public class AbstractWebRequestRuleTest {
+public abstract class AbstractWebRequestRuleTest {
+    protected NativeWebRequest createWebRequest() {
+        return createWebRequest(r -> {
+        });
+    }
 
     protected NativeWebRequest createWebRequest(Consumer<MockHttpServletRequest> requestBuilder) {
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -43,11 +49,10 @@ public class AbstractWebRequestRuleTest {
         return new ServletWebRequest(request);
     }
 
-    protected NativeWebRequest createWebRequest(Object... params) {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        Map<String, Object> parameters = of(params);
-        request.setParameters(parameters);
-        return new ServletWebRequest(request);
+    protected NativeWebRequest createWebRequestWithParams(Object... params) {
+        return createWebRequest(request -> {
+            request.setParameters(of(params));
+        });
     }
 
     protected NativeWebRequest createWebRequestWithHeaders(Object... headers) {
@@ -55,18 +60,22 @@ public class AbstractWebRequestRuleTest {
     }
 
     protected NativeWebRequest createWebRequestWithHeaders(Map<String, String> headers) {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        headers.forEach(request::addHeader);
-        return new ServletWebRequest(request);
+        return createWebRequest(request -> {
+            headers.forEach(request::addHeader);
+        });
     }
 
     protected NativeWebRequest createPreFightRequest() {
         // Create pre-flight request (OPTIONS method with Origin header)
         return createWebRequest(request -> {
-            request.setMethod("OPTIONS");
-            request.addHeader(":METHOD:", "OPTIONS");
-            request.addParameter(ORIGIN, "http://example.com");
-            request.addParameter(ACCESS_CONTROL_REQUEST_METHOD, "POST");
+            request.setMethod(OPTIONS.name());
+            request.addHeader(":METHOD:", request.getMethod());
+            request.addHeader(ORIGIN, "http://example.com");
+            request.addHeader(ACCESS_CONTROL_REQUEST_METHOD, "POST");
         });
+    }
+
+    @Test
+    public void testGetToStringInfix() {
     }
 }
