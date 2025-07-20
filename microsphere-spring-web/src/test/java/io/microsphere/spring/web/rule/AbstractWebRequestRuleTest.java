@@ -22,6 +22,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static io.microsphere.collection.MapUtils.of;
 
@@ -33,6 +34,12 @@ import static io.microsphere.collection.MapUtils.of;
  * @since 1.0.0
  */
 public class AbstractWebRequestRuleTest {
+
+    protected NativeWebRequest createWebRequest(Consumer<MockHttpServletRequest> requestBuilder) {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        requestBuilder.accept(request);
+        return new ServletWebRequest(request);
+    }
 
     protected NativeWebRequest createWebRequest(Object... params) {
         MockHttpServletRequest request = new MockHttpServletRequest();
