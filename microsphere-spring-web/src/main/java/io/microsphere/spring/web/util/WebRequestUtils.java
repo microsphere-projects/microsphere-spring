@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -53,6 +54,12 @@ public abstract class WebRequestUtils {
 
     public static String getMethod(NativeWebRequest request) {
         String method = request.getHeader(":METHOD:");
+        if (method == null) {
+            if (request instanceof ServletWebRequest) {
+                ServletWebRequest servletWebRequest = (ServletWebRequest) request;
+                method = servletWebRequest.getHttpMethod().name();
+            }
+        }
         return method;
     }
 
