@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebRequestHeadersRule
  * @since 1.0.0
  */
-public class WebRequestHeadersRuleTest extends AbstractWebRequestRuleTest {
+public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
 
     @Test
     public void testGetContent() {

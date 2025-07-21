@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class WebRequestMethodsRuleTest extends AbstractWebRequestRuleTest {
+public class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
 
     @Test
     public void testConstructorWithRequestMethods() {

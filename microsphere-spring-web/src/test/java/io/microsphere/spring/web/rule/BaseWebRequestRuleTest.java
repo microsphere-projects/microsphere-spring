@@ -32,13 +32,13 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpMethod.OPTIONS;
 
 /**
- * Abstract {@link WebRequestRule} Test
+ * Base {@link WebRequestRule} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebRequestRule
  * @since 1.0.0
  */
-public abstract class AbstractWebRequestRuleTest {
+public abstract class BaseWebRequestRuleTest {
     protected NativeWebRequest createWebRequest() {
         return createWebRequest(r -> {
         });

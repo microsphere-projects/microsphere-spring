@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class WebRequestPattensRuleTest extends AbstractWebRequestRuleTest {
+public class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
 
     // Test empty patterns match all requests
     @Test

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link WebRequestParamsRule} Test
  */
-public class WebRequestParamsRuleTest extends AbstractWebRequestRuleTest {
+public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
 
 
     // ==================== Constructor ====================
