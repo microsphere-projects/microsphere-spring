@@ -21,13 +21,13 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 
 /**
- * {@link AbstractNameValueExpression} Test
+ * Base {@link NameValueExpression} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AbstractNameValueExpression
  * @since 1.0.0
  */
-public abstract class AbstractNameValueExpressionTest<E extends AbstractNameValueExpression<String>> {
+public abstract class BaseNameValueExpressionTest<E extends AbstractNameValueExpression<String>> {
 
     @Test
     public abstract void testGetName();

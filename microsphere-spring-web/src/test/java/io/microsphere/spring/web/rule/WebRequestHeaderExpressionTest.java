@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebRequestHeaderExpression
  * @since 1.0.0
  */
-public class WebRequestHeaderExpressionTest extends AbstractNameValueExpressionTest<WebRequestHeaderExpression> {
+public class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<WebRequestHeaderExpression> {
 
     WebRequestHeaderExpression nameOnlyExpression;
 
