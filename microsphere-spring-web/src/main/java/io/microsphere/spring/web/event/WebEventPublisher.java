@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.event;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.lifecycle.AbstractSmartLifecycle;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -26,6 +27,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import java.util.Collection;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
 
 /**
  * The class publishes the Spring Web extension events:
@@ -39,6 +43,8 @@ import java.util.Collection;
  * @since 1.0.0
  */
 public class WebEventPublisher extends AbstractSmartLifecycle implements HandlerMethodInterceptor {
+
+    private static final Logger logger = getLogger(WebEventPublisher.class);
 
     public static final int DEFAULT_PHASE = EARLIEST_PHASE + 100;
 
@@ -56,7 +62,13 @@ public class WebEventPublisher extends AbstractSmartLifecycle implements Handler
 
     @Override
     protected void doStart() {
-        WebEndpointMappingRegistry webEndpointMappingRegistry = context.getBean(WebEndpointMappingRegistry.class);
+        WebEndpointMappingRegistry webEndpointMappingRegistry = getOptionalBean(this.context, WebEndpointMappingRegistry.class);
+        if (webEndpointMappingRegistry == null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("No WebEndpointMappingRegistry Bean was registered, caused by @EnableWebExtension.registerWebEndpointMappings() == false");
+            }
+            return;
+        }
         Collection<WebEndpointMapping> webEndpointMappings = webEndpointMappingRegistry.getWebEndpointMappings();
         context.publishEvent(new WebEndpointMappingsReadyEvent(context, webEndpointMappings));
     }
