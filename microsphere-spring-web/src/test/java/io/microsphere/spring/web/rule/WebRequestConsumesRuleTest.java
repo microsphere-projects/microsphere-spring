@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebRequestConsumesRule
  * @since 1.0.0
  */
-public class WebRequestConsumesRuleTest extends AbstractWebRequestRuleTest {
+public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
 
     // Test when request is preflight (should return false)
     @Test
