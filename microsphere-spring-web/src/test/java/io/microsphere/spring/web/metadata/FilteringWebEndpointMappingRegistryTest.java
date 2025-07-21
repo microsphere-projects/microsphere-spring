@@ -48,6 +48,29 @@ public class FilteringWebEndpointMappingRegistryTest {
 
     private FilteringWebEndpointMappingRegistry registry;
 
+    static class FilteringWebEndpointMappingRegistryImpl extends FilteringWebEndpointMappingRegistry {
+
+        private final boolean result;
+
+        FilteringWebEndpointMappingRegistryImpl() {
+            this(true);
+        }
+
+        FilteringWebEndpointMappingRegistryImpl(boolean result) {
+            this.result = result;
+        }
+
+        @Override
+        public boolean register(WebEndpointMapping webEndpointMapping) {
+            return result;
+        }
+
+        @Override
+        public Collection<WebEndpointMapping> getWebEndpointMappings() {
+            return emptyList();
+        }
+    }
+
     @Before
     public void setUp() throws Exception {
         this.webEndpointMappings = ofSet(
@@ -55,22 +78,13 @@ public class FilteringWebEndpointMappingRegistryTest {
                 of("/b").build(),
                 of("/c").build()
         );
-        this.registry = new FilteringWebEndpointMappingRegistry() {
-            @Override
-            public boolean register(WebEndpointMapping webEndpointMapping) {
-                return true;
-            }
-
-            @Override
-            public Collection<WebEndpointMapping> getWebEndpointMappings() {
-                return emptyList();
-            }
-        };
+        this.registry = new FilteringWebEndpointMappingRegistryImpl();
     }
 
     @Test
     public void testRegister() {
         assertEquals(3, this.registry.register(this.webEndpointMappings));
+        assertEquals(0, new FilteringWebEndpointMappingRegistryImpl(false).register(this.webEndpointMappings));
     }
 
     @Test
@@ -100,4 +114,5 @@ public class FilteringWebEndpointMappingRegistryTest {
         this.registry.setFilterOperator(AND);
         assertSame(AND, this.registry.getFilterOperator());
     }
+
 }
