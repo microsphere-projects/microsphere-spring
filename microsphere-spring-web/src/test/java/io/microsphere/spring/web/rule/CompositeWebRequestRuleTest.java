@@ -33,7 +33,7 @@ import static org.junit.Assert.fail;
  * @see CompositeWebRequestRule
  * @since 1.0.0
  */
-public class CompositeWebRequestRuleTest extends AbstractWebRequestRuleTest {
+public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
 
     @Test
     public void testEmptyRules() {
