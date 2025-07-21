@@ -56,7 +56,7 @@ public class WebEventPublisher extends AbstractSmartLifecycle implements Handler
     }
 
     @Override
-    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
+    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) {
         context.publishEvent(new HandlerMethodArgumentsResolvedEvent(request, handlerMethod, args));
     }
 
