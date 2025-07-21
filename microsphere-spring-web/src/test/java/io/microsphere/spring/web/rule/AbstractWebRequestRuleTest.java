@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static io.microsphere.collection.MapUtils.of;
+import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpMethod.OPTIONS;
@@ -47,6 +48,13 @@ public abstract class AbstractWebRequestRuleTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         requestBuilder.accept(request);
         return new ServletWebRequest(request);
+    }
+
+    protected NativeWebRequest createWebRequest(String requestURI) {
+        return createWebRequest(request -> {
+            request.setRequestURI(requestURI);
+            request.setAttribute(PATH_ATTRIBUTE, requestURI);
+        });
     }
 
     protected NativeWebRequest createWebRequestWithParams(Object... params) {
