@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.event;
 
 
-import io.microsphere.spring.web.BaseWebTest;
+import io.microsphere.spring.web.AbstractSpringWebTest;
 import io.microsphere.spring.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertSame;
  * @see HandlerMethodArgumentsResolvedEvent
  * @since 1.0.0
  */
-public class HandlerMethodArgumentsResolvedEventTest extends BaseWebTest {
+public class HandlerMethodArgumentsResolvedEventTest extends AbstractSpringWebTest {
 
     private HandlerMethod handlerMethod;
 
