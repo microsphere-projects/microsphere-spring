@@ -17,7 +17,7 @@
 
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.spring.web.BaseWebTest;
+import io.microsphere.spring.web.AbstractSpringWebTest;
 import org.junit.Test;
 
 /**
@@ -27,7 +27,7 @@ import org.junit.Test;
  * @see WebRequestRule
  * @since 1.0.0
  */
-public abstract class BaseWebRequestRuleTest extends BaseWebTest {
+public abstract class BaseWebRequestRuleTest extends AbstractSpringWebTest {
 
     @Test
     public void testGetToStringInfix() {
