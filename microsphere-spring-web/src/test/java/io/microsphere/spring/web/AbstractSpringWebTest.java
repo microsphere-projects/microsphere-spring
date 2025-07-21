@@ -17,6 +17,11 @@
 
 package io.microsphere.spring.web;
 
+import io.microsphere.lang.function.ThrowableBiConsumer;
+import io.microsphere.lang.function.ThrowableConsumer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -31,14 +36,14 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpMethod.OPTIONS;
 
 /**
- * Base Web Test
+ * Abstract Spring Web Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see NativeWebRequest
  * @see MockHttpServletRequest
  * @since 1.0.0
  */
-public class BaseWebTest {
+public class AbstractSpringWebTest {
     protected NativeWebRequest createWebRequest() {
         return createWebRequest(r -> {
         });
@@ -81,5 +86,21 @@ public class BaseWebTest {
             request.addHeader(ORIGIN, "http://example.com");
             request.addHeader(ACCESS_CONTROL_REQUEST_METHOD, "POST");
         });
+    }
+
+    protected void testInSpringContainer(ThrowableConsumer<ConfigurableApplicationContext> consumer, Class<?>... configClasses) {
+        testInSpringContainer((context, environment) -> {
+            consumer.accept(context);
+        }, configClasses);
+    }
+
+    protected void testInSpringContainer(ThrowableBiConsumer<ConfigurableApplicationContext, ConfigurableEnvironment> consumer, Class<?>... configClasses) {
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(configClasses);
+        try {
+            consumer.accept(context, context.getEnvironment());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        context.close();
     }
 }
