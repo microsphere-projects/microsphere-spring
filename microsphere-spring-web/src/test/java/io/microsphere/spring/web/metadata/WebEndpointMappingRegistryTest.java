@@ -27,6 +27,7 @@ import static io.microsphere.collection.ListUtils.ofList;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -38,12 +39,16 @@ import static org.junit.Assert.assertTrue;
  */
 public class WebEndpointMappingRegistryTest {
 
+    private static final WebEndpointMapping mapping = of("/*").build();
+
+    private static final WebEndpointMapping non_mapping = of("!/*").build();
+
 
     static class WebEndpointMappingRegistryImpl implements WebEndpointMappingRegistry {
 
         @Override
         public boolean register(WebEndpointMapping webEndpointMapping) {
-            return true;
+            return mapping == webEndpointMapping;
         }
 
         @Override
@@ -51,8 +56,6 @@ public class WebEndpointMappingRegistryTest {
             return emptyList();
         }
     }
-
-    WebEndpointMapping mapping = of("/*").build();
 
     private WebEndpointMappingRegistry registry;
 
@@ -64,16 +67,19 @@ public class WebEndpointMappingRegistryTest {
     @Test
     public void testRegister() {
         assertTrue(registry.register(mapping));
+        assertFalse(registry.register(non_mapping));
     }
 
     @Test
     public void testRegisterWithMultipleMappings() {
         assertEquals(3, registry.register(mapping, mapping, mapping));
+        assertEquals(1, registry.register(non_mapping, mapping));
     }
 
     @Test
     public void testRegisterWithMappingsList() {
         assertEquals(3, registry.register(ofList(mapping, mapping, mapping)));
+        assertEquals(1, registry.register(ofList(non_mapping, mapping)));
     }
 
     @Test
