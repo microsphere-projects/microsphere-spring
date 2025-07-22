@@ -19,11 +19,15 @@ package io.microsphere.spring.web.servlet;
 import io.microsphere.annotation.Nullable;
 import org.springframework.mock.web.MockServletContext;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Test {@link ServletContext}
@@ -34,6 +38,8 @@ import java.util.Map;
 public class TestServletContext extends MockServletContext {
 
     private Map<String, ServletRegistration.Dynamic> servletRegistrations = new HashMap<>();
+
+    private Map<String, FilterRegistration.Dynamic> filterRegistrations = new HashMap<>();
 
     @Override
     public ServletRegistration.Dynamic addServlet(String servletName, String className) {
@@ -60,8 +66,33 @@ public class TestServletContext extends MockServletContext {
 
     @Override
     public Map<String, ? extends ServletRegistration> getServletRegistrations() {
-        return this.servletRegistrations;
+        return unmodifiableMap(this.servletRegistrations);
     }
 
+    @Override
+    public FilterRegistration.Dynamic addFilter(String filterName, String className) {
+        FilterRegistration.Dynamic filterRegistration = new TestFilterRegistration(filterName, className);
+        filterRegistrations.put(filterName, filterRegistration);
+        return filterRegistration;
+    }
 
+    @Override
+    public FilterRegistration.Dynamic addFilter(String filterName, Filter filter) {
+        return addFilter(filterName, filter.getClass());
+    }
+
+    @Override
+    public FilterRegistration.Dynamic addFilter(String filterName, Class<? extends Filter> filterClass) {
+        return addFilter(filterName, filterClass.getName());
+    }
+
+    @Override
+    public FilterRegistration getFilterRegistration(String filterName) {
+        return filterRegistrations.get(filterName);
+    }
+
+    @Override
+    public Map<String, ? extends FilterRegistration> getFilterRegistrations() {
+        return unmodifiableMap(filterRegistrations);
+    }
 }
