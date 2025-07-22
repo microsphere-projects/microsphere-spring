@@ -26,6 +26,7 @@ import javax.servlet.ServletContext;
 import java.util.Collection;
 
 import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
@@ -63,6 +64,11 @@ public class RegistrationWebEndpointMappingFactoryTest {
     public void init() {
         this.servletContext = new MockServletContext();
         this.factory = new RegistrationWebEndpointMappingFactoryImpl(servletContext);
+    }
+
+    @Test
+    public void testSupports() {
+        assertFalse(factory.supports(null));
     }
 
     @Test
