@@ -110,4 +110,6 @@ public abstract class WebRequestUtils {
         return lookupPath;
     }
 
+    private WebRequestUtils() {
+    }
 }
