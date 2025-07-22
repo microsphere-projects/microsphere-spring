@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AbstractWebRequestRuleTest {
 
-    private AbstractWebRequestRule<String> createRule(Collection<String> content, String infix) {
+    AbstractWebRequestRule<String> createRule(Collection<String> content, String infix) {
         return new AbstractWebRequestRule<String>() {
             @Override
             public boolean matches(NativeWebRequest request) {
