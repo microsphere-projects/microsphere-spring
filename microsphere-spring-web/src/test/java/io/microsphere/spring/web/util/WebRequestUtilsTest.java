@@ -34,6 +34,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -59,7 +60,17 @@ public class WebRequestUtilsTest extends AbstractSpringWebTest {
     public void testIsPreFlightRequest() {
         NativeWebRequest request = createPreFightRequest();
         assertTrue(isPreFlightRequest(request));
+
         request = createWebRequest();
+        assertFalse(isPreFlightRequest(request));
+
+        request = createWebRequest(r -> r.setMethod("OPTIONS"));
+        assertFalse(isPreFlightRequest(request));
+
+        request = createWebRequest(r -> {
+            r.setMethod("OPTIONS");
+            r.addHeader(ORIGIN, "");
+        });
         assertFalse(isPreFlightRequest(request));
     }
 
