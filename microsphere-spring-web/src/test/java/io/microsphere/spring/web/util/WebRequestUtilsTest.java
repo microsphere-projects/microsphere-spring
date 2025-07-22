@@ -31,6 +31,7 @@ import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.parseContentType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -84,6 +85,9 @@ public class WebRequestUtilsTest extends AbstractSpringWebTest {
     public void testParseContentType() {
         NativeWebRequest request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, "application/json"));
         assertEquals(APPLICATION_JSON, parseContentType(request));
+
+        request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, "test"));
+        assertNull(parseContentType(request));
     }
 
     @Test
