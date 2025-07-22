@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 public class AbstractNameValueExpressionTest {
 
     // Concrete implementation for testing
-    private static class TestExpression extends AbstractNameValueExpression<String> {
+    static class TestExpression extends AbstractNameValueExpression<String> {
         private final boolean matchNameResult;
         private final boolean matchValueResult;
 
