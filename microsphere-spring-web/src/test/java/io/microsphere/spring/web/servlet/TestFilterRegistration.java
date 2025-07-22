@@ -109,4 +109,8 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
     public Collection<String> getUrlPatternMappings() {
         return this.urlPatterns;
     }
+
+    public boolean isAsyncSupported() {
+        return asyncSupported;
+    }
 }
