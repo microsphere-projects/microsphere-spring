@@ -37,28 +37,20 @@ import static org.junit.Assert.assertTrue;
  */
 public class AbstractWebEndpointMappingFactoryTest {
 
-    static class TestWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<String> {
-
-        private WebEndpointMapping<?> webEndpointMapping;
-
-        TestWebEndpointMappingFactory(WebEndpointMapping<?> webEndpointMapping) {
-            this.webEndpointMapping = webEndpointMapping;
-        }
-
-        @Override
-        protected WebEndpointMapping<?> doCreate(String endpoint) throws Throwable {
-            if (this.webEndpointMapping == null) {
-                throw new Throwable("webEndpointMapping == null");
-            }
-            return this.webEndpointMapping;
-        }
-    }
-
     private AbstractWebEndpointMappingFactory<String> factory;
 
     @Before
     public void setUp() throws Exception {
-        this.factory = new TestWebEndpointMappingFactory(of("/test").build());
+        this.factory = new AbstractWebEndpointMappingFactory<String>() {
+
+            @Override
+            protected WebEndpointMapping<?> doCreate(String endpoint) throws Throwable {
+                if ("test".equalsIgnoreCase(endpoint)) {
+                    return of("/test").build();
+                }
+                throw new Throwable();
+            }
+        };
     }
 
     @Test
@@ -68,14 +60,13 @@ public class AbstractWebEndpointMappingFactoryTest {
 
     @Test
     public void testCreate() {
-        Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(null);
+        Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create("test");
         assertTrue(webEndpointMapping.isPresent());
         webEndpointMapping.ifPresent(mapping -> assertEquals(of("/test").build(), mapping));
     }
 
     @Test
     public void testCreateOnFailed() {
-        this.factory = new TestWebEndpointMappingFactory(null);
         Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(null);
         assertFalse(webEndpointMapping.isPresent());
     }
