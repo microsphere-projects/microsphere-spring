@@ -83,7 +83,7 @@ public class BeanDefinitionUtilsTest {
     private AbstractBeanDefinition beanDefinition;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.beanDefinition = genericBeanDefinition(User.class);
     }
 
