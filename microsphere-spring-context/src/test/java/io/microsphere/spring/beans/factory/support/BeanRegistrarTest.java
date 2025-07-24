@@ -58,7 +58,7 @@ public class BeanRegistrarTest {
     private DefaultListableBeanFactory beanFactory;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.beanFactory = new DefaultListableBeanFactory();
     }
 
