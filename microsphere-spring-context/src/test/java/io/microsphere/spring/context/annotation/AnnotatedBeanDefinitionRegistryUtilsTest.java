@@ -25,7 +25,7 @@ public class AnnotatedBeanDefinitionRegistryUtilsTest {
     private DefaultListableBeanFactory registry = null;
 
     @Before
-    public void init() {
+    public void setUp() {
         registry = new DefaultListableBeanFactory();
         registry.setAllowBeanDefinitionOverriding(false);
         registerAnnotationConfigProcessors(registry);
