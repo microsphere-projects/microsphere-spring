@@ -27,12 +27,13 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.lang.annotation.Annotation;
 import java.util.Properties;
 import java.util.StringJoiner;
 
+import static io.microsphere.lang.function.ThrowableAction.execute;
+import static java.lang.System.lineSeparator;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 
@@ -99,27 +100,13 @@ class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionReg
             beanFactory = (ConfigurableBeanFactory) registry;
         }
         String[] values = attributes.getStringArray("properties");
-        if (values.length == 0) {
-            return null;
-        }
-        StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
+        StringJoiner stringJoiner = new StringJoiner(lineSeparator());
         for (String value : values) {
-            // TODO
-            // Resolve the placeholders
-            // If value starts with "_", ignored
-//            if (value.startsWith(INTERNAL_USE_PROPERTY_NAME_PREFIX)) {
-//                continue;
-//            }
-            String resolvedValue = beanFactory == null ? value :
-                    beanFactory.resolveEmbeddedValue(value);
+            String resolvedValue = beanFactory == null ? value : beanFactory.resolveEmbeddedValue(value);
             stringJoiner.add(resolvedValue);
         }
         Properties properties = new Properties();
-        try {
-            properties.load(new StringReader(stringJoiner.toString()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        execute(() -> properties.load(new StringReader(stringJoiner.toString())));
         return properties;
     }
 }
