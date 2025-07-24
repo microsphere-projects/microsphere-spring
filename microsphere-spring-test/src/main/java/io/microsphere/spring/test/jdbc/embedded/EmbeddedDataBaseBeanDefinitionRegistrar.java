@@ -32,8 +32,8 @@ import java.lang.annotation.Annotation;
 import java.util.Properties;
 import java.util.StringJoiner;
 
+import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.lang.function.ThrowableAction.execute;
-import static java.lang.System.lineSeparator;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 
@@ -47,8 +47,6 @@ import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
 
     private static final Class<? extends Annotation> ANNOTATION_TYPE = EnableEmbeddedDatabase.class;
-
-    private static final String INTERNAL_USE_PROPERTY_NAME_PREFIX = "_";
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -95,14 +93,11 @@ class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionReg
     }
 
     private Properties resolveProperties(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        ConfigurableBeanFactory beanFactory = null;
-        if (registry instanceof ConfigurableBeanFactory) {
-            beanFactory = (ConfigurableBeanFactory) registry;
-        }
+        ConfigurableBeanFactory beanFactory = (ConfigurableBeanFactory) registry;
         String[] values = attributes.getStringArray("properties");
-        StringJoiner stringJoiner = new StringJoiner(lineSeparator());
+        StringJoiner stringJoiner = new StringJoiner(LINE_SEPARATOR);
         for (String value : values) {
-            String resolvedValue = beanFactory == null ? value : beanFactory.resolveEmbeddedValue(value);
+            String resolvedValue = beanFactory.resolveEmbeddedValue(value);
             stringJoiner.add(resolvedValue);
         }
         Properties properties = new Properties();
