@@ -1,5 +1,6 @@
 package io.microsphere.spring.util;
 
+import io.microsphere.spring.test.domain.User;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
