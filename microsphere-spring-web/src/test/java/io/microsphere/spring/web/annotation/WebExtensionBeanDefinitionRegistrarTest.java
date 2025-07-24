@@ -18,13 +18,13 @@
 package io.microsphere.spring.web.annotation;
 
 
-import io.microsphere.spring.web.AbstractSpringWebTest;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import org.junit.Test;
 
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
-public class WebExtensionBeanDefinitionRegistrarTest extends AbstractSpringWebTest {
+public class WebExtensionBeanDefinitionRegistrarTest {
 
 
     @EnableWebExtension
