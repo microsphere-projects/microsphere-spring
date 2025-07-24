@@ -19,7 +19,7 @@ package io.microsphere.spring.beans.factory.support;
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.test.TestBean2;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
