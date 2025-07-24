@@ -20,6 +20,7 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithParams;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
