@@ -33,7 +33,7 @@ public class HandlerMethodInterceptorTest {
     private HandlerMethodInterceptor interceptor;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.interceptor = new HandlerMethodInterceptor() {
         };
     }
