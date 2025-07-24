@@ -30,6 +30,7 @@ import java.util.Set;
 
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
+import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableMap;
 
 /**
@@ -108,7 +109,7 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
 
     @Override
     public Collection<String> getServletNameMappings() {
-        return this.servletNames;
+        return unmodifiableCollection(this.servletNames);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
 
     @Override
     public Collection<String> getUrlPatternMappings() {
-        return this.urlPatterns;
+        return unmodifiableCollection(this.urlPatterns);
     }
 
     /**
