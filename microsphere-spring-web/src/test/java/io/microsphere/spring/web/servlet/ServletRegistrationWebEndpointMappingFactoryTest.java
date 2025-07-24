@@ -53,7 +53,7 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
     private TestServlet testServlet;
 
     @Before
-    public void init() throws ServletException {
+    public void setUp() throws ServletException {
         servletName = "test-servlet";
         url = "/test";
         servletContext = new TestServletContext();
