@@ -48,7 +48,7 @@ public class EnableWebExtensionTest {
     private MockMvc mockMvc;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.mockMvc = standaloneSetup(TestController.class).build();
     }
 
