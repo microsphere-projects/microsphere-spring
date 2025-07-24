@@ -37,17 +37,17 @@ import java.sql.Statement;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = EnableEmbeddedDatabaseTest.class)
-@EnableEmbeddedDatabase(dataSource = "primary", primary = true)
-@EnableEmbeddedDatabase(dataSource = "secondary")
+@EnableEmbeddedDatabase(
+        dataSource = "primary",
+        primary = true,
+        properties = {
+                "username=admin"
+        })
 public class EnableEmbeddedDatabaseTest {
 
     @Autowired
     @Qualifier("primary")
     private DataSource dataSource;
-
-    @Autowired
-    @Qualifier("secondary")
-    private DataSource dataSource2;
 
     @Test
     public void test() throws SQLException {
