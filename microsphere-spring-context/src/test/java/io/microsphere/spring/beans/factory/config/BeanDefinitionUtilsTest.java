@@ -122,7 +122,7 @@ public class BeanDefinitionUtilsTest {
 
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
             assertEquals(Config.class, resolveBeanType(beanDefinition));
-        });
+        }, Config.class);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class BeanDefinitionUtilsTest {
             Set<String> infrastructureBeanNames = findInfrastructureBeanNames(beanFactory);
             assertTrue(infrastructureBeanNames.contains(USER_BEAN_NAME));
             assertFalse(infrastructureBeanNames.contains(USERS_BEAN_NAME));
-        });
+        }, Config.class);
     }
 
     @Test
@@ -148,7 +148,7 @@ public class BeanDefinitionUtilsTest {
             Set<String> beanNames = findBeanNames(context.getBeanFactory());
             assertTrue(beanNames.contains(USER_BEAN_NAME));
             assertTrue(beanNames.contains(USERS_BEAN_NAME));
-        });
+        }, Config.class);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class BeanDefinitionUtilsTest {
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
             resolvableType = getResolvableType(beanDefinition);
             assertEquals(Config.class, resolvableType.getRawClass());
-        });
+        }, Config.class);
     }
 
 
@@ -267,7 +267,7 @@ public class BeanDefinitionUtilsTest {
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
             resolvableType = doGetResolvableType(beanDefinition);
             assertEquals(Config.class, resolvableType.resolve());
-        });
+        }, Config.class);
     }
 
     private void assertBeanDefinition(AbstractBeanDefinition beanDefinition, int role, Object... constructorArguments) {
