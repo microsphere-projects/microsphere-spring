@@ -72,7 +72,7 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
     }
 
     @Before
-    public void init() {
+    public void setUp() {
         factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
         this.handlerMethods = requestMappingInfoHandlerMapping.getHandlerMethods();
     }
