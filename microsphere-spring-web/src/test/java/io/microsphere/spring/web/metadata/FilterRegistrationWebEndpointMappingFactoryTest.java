@@ -57,7 +57,7 @@ public class FilterRegistrationWebEndpointMappingFactoryTest {
     private FilterRegistrationWebEndpointMappingFactory factory;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.servletContext = new TestServletContext();
         this.factory = new FilterRegistrationWebEndpointMappingFactory(this.servletContext);
 
