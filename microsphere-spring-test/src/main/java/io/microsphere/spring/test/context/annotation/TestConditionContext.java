@@ -23,14 +23,19 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * {@link ConditionContext} test
+ * {@link ConditionContext} for testing
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see ConditionContext
+ * @see Conditional
+ * @see Condition
  * @since 1.0.0
  */
 public class TestConditionContext implements ConditionContext, ApplicationContextAware {
