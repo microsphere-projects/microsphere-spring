@@ -113,7 +113,8 @@ public class TestServletRegistrationTest {
 
     @Test
     public void testSetInitParameter() {
-        this.registration.setInitParameter("paramName", "paramValue");
+        assertTrue(this.registration.setInitParameter("paramName", "paramValue"));
+        assertFalse(this.registration.setInitParameter("paramName", "paramValue"));
         assertEquals("paramValue", this.registration.getInitParameter("paramName"));
     }
 
