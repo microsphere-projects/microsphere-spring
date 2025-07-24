@@ -29,8 +29,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 /**
  * {@link RequestBodyAdviceAdapter} Test
@@ -58,16 +58,12 @@ public class RequestBodyAdviceAdapterTest {
         this.targetType = methodParameter.getGenericParameterType();
         this.converterType = StringHttpMessageConverter.class;
         this.adapter = new RequestBodyAdviceAdapter() {
-            @Override
-            public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
-                return true;
-            }
         };
     }
 
     @Test
     public void testSupports() {
-        assertTrue(adapter.supports(methodParameter, targetType, converterType));
+        assertFalse(adapter.supports(methodParameter, targetType, converterType));
     }
 
     @Test
