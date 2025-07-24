@@ -43,21 +43,21 @@ import static org.junit.Assert.assertThrows;
  */
 public class TestServletContextTest {
 
-    private static final String servletName = "testServlet";
+    static final String testServletName = "testServlet";
 
-    private static final Class<? extends Servlet> servletClass = TestServlet.class;
+    static final Class<? extends Servlet> testServletClass = TestServlet.class;
 
-    private static final String servletClassName = servletClass.getName();
+    static final String testServletClassName = testServletClass.getName();
 
-    private static final String filterName = "testFilter";
+    static final String testFilterName = "testFilter";
 
-    private static final Class<? extends Filter> filterClass = TestFilter.class;
+    static final Class<? extends Filter> testFilterClass = TestFilter.class;
 
-    private static final String filterClassName = filterClass.getName();
+    static final String testFilterClassName = testFilterClass.getName();
 
-    private static final Class<? extends EventListener> listenerClass = TestServletContextListener.class;
+    static final Class<? extends EventListener> testListenerClass = TestServletContextListener.class;
 
-    private static final String listenerClassName = listenerClass.getName();
+    static final String testListenerClassName = testListenerClass.getName();
 
     private TestServletContext servletContext;
 
@@ -68,95 +68,95 @@ public class TestServletContextTest {
 
     @Test
     public void testAddServletWithNameAndClassName() {
-        ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, servletClassName);
+        ServletRegistration.Dynamic registration = servletContext.addServlet(testServletName, testServletClassName);
         assertServletRegistration(registration);
     }
 
     @Test
     public void testAddServletWithNameAndInstance() throws ServletException {
-        ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, servletContext.createServlet(servletClass));
+        ServletRegistration.Dynamic registration = servletContext.addServlet(testServletName, servletContext.createServlet(testServletClass));
         assertServletRegistration(registration);
     }
 
     @Test
     public void testAddServletWithNameAndClass() {
-        ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, servletClass);
+        ServletRegistration.Dynamic registration = servletContext.addServlet(testServletName, testServletClass);
         assertServletRegistration(registration);
     }
 
     @Test
     public void testCreateServlet() throws ServletException {
-        assertNotNull(servletContext.createServlet(servletClass));
+        assertNotNull(servletContext.createServlet(testServletClass));
     }
 
 
     @Test
     public void testGetServletRegistration() {
         testAddServletWithNameAndClassName();
-        assertServletRegistration(servletContext.getServletRegistration(servletName));
+        assertServletRegistration(servletContext.getServletRegistration(testServletName));
     }
 
     @Test
     public void testGetServletRegistrations() {
         testAddServletWithNameAndClassName();
         Map<String, ? extends ServletRegistration> servletRegistrations = servletContext.getServletRegistrations();
-        assertServletRegistration(servletRegistrations.get(servletName));
+        assertServletRegistration(servletRegistrations.get(testServletName));
     }
 
     @Test
     public void testAddFilterWithNameAndClassName() {
-        FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, filterClassName);
+        FilterRegistration.Dynamic registration = servletContext.addFilter(testFilterName, testFilterClassName);
         assertFilterRegistration(registration);
     }
 
     @Test
     public void testTestAddFilterWithNameAndInstance() throws ServletException {
-        FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, servletContext.createFilter(filterClass));
+        FilterRegistration.Dynamic registration = servletContext.addFilter(testFilterName, servletContext.createFilter(testFilterClass));
         assertFilterRegistration(registration);
     }
 
     @Test
     public void testTestAddFilterWithNameAndClass() {
-        FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, filterClass);
+        FilterRegistration.Dynamic registration = servletContext.addFilter(testFilterName, testFilterClass);
         assertFilterRegistration(registration);
     }
 
     @Test
     public void testCreateFilter() throws ServletException {
-        assertNotNull(servletContext.createFilter(filterClass));
+        assertNotNull(servletContext.createFilter(testFilterClass));
     }
 
     @Test
     public void testGetFilterRegistration() {
         testAddFilterWithNameAndClassName();
-        assertFilterRegistration(servletContext.getFilterRegistration(filterName));
+        assertFilterRegistration(servletContext.getFilterRegistration(testFilterName));
     }
 
     @Test
     public void testGetFilterRegistrations() {
         testAddFilterWithNameAndClassName();
         Map<String, ? extends FilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
-        assertFilterRegistration(filterRegistrations.get(filterName));
+        assertFilterRegistration(filterRegistrations.get(testFilterName));
     }
 
     @Test
     public void testAddListenerWithClass() {
-        servletContext.addListener(listenerClass);
+        servletContext.addListener(testListenerClass);
     }
 
     @Test
     public void testAddListenerWithClassName() {
-        servletContext.addListener(listenerClassName);
+        servletContext.addListener(testListenerClassName);
     }
 
     @Test
     public void testAddListenerWithInstance() throws ServletException {
-        servletContext.addListener(servletContext.createListener(listenerClass));
+        servletContext.addListener(servletContext.createListener(testListenerClass));
     }
 
     @Test
     public void testCreateListener() throws ServletException {
-        assertNotNull(servletContext.createListener(listenerClass));
+        assertNotNull(servletContext.createListener(testListenerClass));
     }
 
     @Test
@@ -166,21 +166,21 @@ public class TestServletContextTest {
 
     @Test
     public void testLoadClass() {
-        assertSame(servletClass, servletContext.loadClass(servletClassName));
-        assertSame(filterClass, servletContext.loadClass(filterClassName));
-        assertSame(listenerClass, servletContext.loadClass(listenerClassName));
+        assertSame(testServletClass, servletContext.loadClass(testServletClassName));
+        assertSame(testFilterClass, servletContext.loadClass(testFilterClassName));
+        assertSame(testListenerClass, servletContext.loadClass(testListenerClassName));
     }
 
     void assertServletRegistration(ServletRegistration registration) {
-        assertEquals(servletName, registration.getName());
-        assertEquals(servletClassName, registration.getClassName());
+        assertEquals(testServletName, registration.getName());
+        assertEquals(testServletClassName, registration.getClassName());
         TestServletRegistration testServletRegistration = (TestServletRegistration) registration;
         assertNotNull(testServletRegistration.getServlet());
     }
 
     void assertFilterRegistration(FilterRegistration registration) {
-        assertEquals(filterName, registration.getName());
-        assertEquals(filterClassName, registration.getClassName());
+        assertEquals(testFilterName, registration.getName());
+        assertEquals(testFilterClassName, registration.getClassName());
         TestFilterRegistration testFilterRegistration = (TestFilterRegistration) registration;
         assertNotNull(testFilterRegistration.getFilter());
     }
