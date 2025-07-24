@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.web.servlet;
 
+import io.microsphere.spring.test.web.servlet.TestServlet;
+import io.microsphere.spring.test.web.servlet.TestServletContext;
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.junit.Before;
