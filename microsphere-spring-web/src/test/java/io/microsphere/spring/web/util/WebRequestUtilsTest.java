@@ -18,10 +18,11 @@
 package io.microsphere.spring.web.util;
 
 
-import io.microsphere.spring.web.AbstractSpringWebTest;
 import org.junit.Test;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
 import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
@@ -46,7 +47,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  * @see WebRequestUtils
  * @since 1.0.0
  */
-public class WebRequestUtilsTest extends AbstractSpringWebTest {
+public class WebRequestUtilsTest {
 
     @Test
     public void testGetMethod() {
