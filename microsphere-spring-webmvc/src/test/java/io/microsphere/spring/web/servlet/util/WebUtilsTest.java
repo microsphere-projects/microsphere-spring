@@ -67,7 +67,7 @@ public class WebUtilsTest {
     private TestServletContext servletContext;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.servletContext = new TestServletContext();
     }
 
