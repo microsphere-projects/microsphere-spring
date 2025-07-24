@@ -56,7 +56,7 @@ public abstract class WebUtils {
      */
     @Nonnull
     public static Map<String, ? extends FilterRegistration> findFilterRegistrations(
-            ServletContext servletContext, Class<? extends Filter> filterClass) {
+            @Nonnull ServletContext servletContext, @Nonnull Class<? extends Filter> filterClass) {
         Map<String, ? extends FilterRegistration> filterRegistrationsMap = servletContext.getFilterRegistrations();
         return findRegistrations(servletContext, filterRegistrationsMap, filterClass);
     }
@@ -69,7 +69,7 @@ public abstract class WebUtils {
      * @return the unmodifiable {@link Map map} of {@link ServletRegistration}
      */
     public static Map<String, ? extends ServletRegistration> findServletRegistrations(
-            ServletContext servletContext, Class<? extends Servlet> servletClass) {
+            @Nonnull ServletContext servletContext, @Nonnull Class<? extends Servlet> servletClass) {
         Map<String, ? extends ServletRegistration> servletRegistrationsMap = servletContext.getServletRegistrations();
         return findRegistrations(servletContext, servletRegistrationsMap, servletClass);
     }
@@ -105,5 +105,8 @@ public abstract class WebUtils {
         }
 
         return unmodifiableMap(foundRegistrationsMap);
+    }
+
+    private WebUtils() {
     }
 }
