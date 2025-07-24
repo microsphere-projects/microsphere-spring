@@ -18,7 +18,7 @@
 package io.microsphere.spring.beans.factory;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.DisposableBean;
