@@ -60,7 +60,7 @@ public class WebEndpointMappingRegistryTest {
     private WebEndpointMappingRegistry registry;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.registry = new WebEndpointMappingRegistryImpl();
     }
 
