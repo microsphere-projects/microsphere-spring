@@ -61,7 +61,7 @@ public class RegistrationWebEndpointMappingFactoryTest {
     private RegistrationWebEndpointMappingFactory factory;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.servletContext = new MockServletContext();
         this.factory = new RegistrationWebEndpointMappingFactoryImpl(servletContext);
     }
