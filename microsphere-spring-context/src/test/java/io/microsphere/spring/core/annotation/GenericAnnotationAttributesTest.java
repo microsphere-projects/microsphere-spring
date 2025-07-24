@@ -44,7 +44,7 @@ public class GenericAnnotationAttributesTest {
     private GenericAnnotationAttributes attributes;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.contextConfiguration = GenericAnnotationAttributesTest.class.getAnnotation(ContextConfiguration.class);
         this.attributes = of(this.contextConfiguration);
     }
