@@ -53,7 +53,7 @@ public class MethodParameterUtilsTest {
 
     @Before
     public void before() {
-        this.constructor = findConstructor(User.class, String.class, int.class);
+        this.constructor = findConstructor(User.class);
         this.method = findMethod(User.class, "setName", String.class);
         Method method = findMethod(User.class, "setName", String.class);
         Parameter[] parameters = method.getParameters();
@@ -69,8 +69,8 @@ public class MethodParameterUtilsTest {
 
     @Test
     public void testForExecutable() {
-        MethodParameter methodParameter = forExecutable(constructor, 0);
-        assertMethodParameter(methodParameter);
+        MethodParameter methodParameter = forExecutable(constructor, -1);
+        assertEquals(-1, methodParameter.getParameterIndex());
 
         methodParameter = forExecutable(method, 0);
         assertMethodParameter(methodParameter);
