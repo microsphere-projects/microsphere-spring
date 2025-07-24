@@ -18,7 +18,21 @@
 package io.microsphere.spring.webmvc.advice;
 
 
+import io.microsphere.spring.test.web.controller.TestRestController;
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * {@link StoringRequestBodyArgumentAdvice} Test
@@ -27,12 +41,29 @@ import org.junit.Before;
  * @see StoringRequestBodyArgumentAdvice
  * @since 1.0.0
  */
+@RunWith(SpringRunner.class)
+@WebAppConfiguration
+@ContextConfiguration(classes = {
+        TestRestController.class,
+        StoringRequestBodyArgumentAdvice.class,
+        StoringRequestBodyArgumentAdviceTest.class
+})
 public class StoringRequestBodyArgumentAdviceTest {
 
-    private StoringRequestBodyArgumentAdvice advice;
+    @Autowired
+    private WebApplicationContext context;
+
+    private MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
-        this.advice = new StoringRequestBodyArgumentAdvice();
+        this.mockMvc = webAppContextSetup(context).build();
+    }
+
+    @Test
+    public void test() throws Exception {
+        this.mockMvc.perform(get("/test/helloworld"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Hello World"));
     }
 }
