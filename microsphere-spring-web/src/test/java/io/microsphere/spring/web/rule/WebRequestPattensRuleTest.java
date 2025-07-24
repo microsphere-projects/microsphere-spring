@@ -24,6 +24,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import java.util.List;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
