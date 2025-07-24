@@ -53,7 +53,7 @@ public class ContentCachingFilterTest {
     private ContentCachingFilter filter;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
         this.filterChain = new MockFilterChain();
