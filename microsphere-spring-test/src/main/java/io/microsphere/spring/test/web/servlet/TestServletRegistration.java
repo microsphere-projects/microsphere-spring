@@ -31,6 +31,10 @@ import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Test {@link ServletRegistration.Dynamic}
@@ -77,8 +81,7 @@ public class TestServletRegistration implements ServletRegistration.Dynamic {
     @Override
     public Set<String> setServletSecurity(ServletSecurityElement constraint) {
         this.servletSecurityElement = constraint;
-        // TODO
-        return null;
+        return emptySet();
     }
 
     @Override
@@ -101,12 +104,12 @@ public class TestServletRegistration implements ServletRegistration.Dynamic {
         for (String urlPattern : urlPatterns) {
             this.urlPatterns.add(urlPattern);
         }
-        return this.urlPatterns;
+        return unmodifiableSet(this.urlPatterns);
     }
 
     @Override
     public Collection<String> getMappings() {
-        return urlPatterns;
+        return unmodifiableCollection(urlPatterns);
     }
 
     @Override
@@ -142,7 +145,7 @@ public class TestServletRegistration implements ServletRegistration.Dynamic {
 
     @Override
     public Map<String, String> getInitParameters() {
-        return this.initParameters;
+        return unmodifiableMap(this.initParameters);
     }
 
     /**
@@ -165,26 +168,6 @@ public class TestServletRegistration implements ServletRegistration.Dynamic {
         return multipartConfig;
     }
 
-    /**
-     * Get Servlet Name
-     *
-     * @return Servlet Name
-     */
-    @Nonnull
-    public String getServletName() {
-        return servletName;
-    }
-
-    /**
-     * Get Servlet Class Name
-     *
-     * @return Servlet Class Name
-     */
-    @Nonnull
-    public String getServletClassName() {
-        return servletClassName;
-    }
-
     @Nonnull
     public Servlet getServlet() {
         return servlet;
@@ -197,7 +180,7 @@ public class TestServletRegistration implements ServletRegistration.Dynamic {
      */
     @Nonnull
     public Set<String> getUrlPatterns() {
-        return urlPatterns;
+        return unmodifiableSet(urlPatterns);
     }
 
     /**
