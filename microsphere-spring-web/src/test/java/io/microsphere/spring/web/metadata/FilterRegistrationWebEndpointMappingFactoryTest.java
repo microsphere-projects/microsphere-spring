@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.metadata;
 
 
-import io.microsphere.spring.web.servlet.TestServletContext;
+import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +27,7 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import java.util.EnumSet;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.EnumSet.of;
 import static javax.servlet.DispatcherType.FORWARD;
@@ -75,7 +76,7 @@ public class FilterRegistrationWebEndpointMappingFactoryTest {
     public void testGetPatterns() {
         FilterRegistration registration = this.factory.getRegistration(filterName, this.servletContext);
         assertEquals(urlPatterns, this.factory.getPatterns(registration).toArray(new String[0]));
-        assertEquals(registration.getUrlPatternMappings(), this.factory.getPatterns(registration));
+        assertEquals(newLinkedList(registration.getUrlPatternMappings()), newLinkedList(this.factory.getPatterns(registration)));
     }
 
 }
