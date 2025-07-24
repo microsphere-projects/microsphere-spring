@@ -26,11 +26,13 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithHeaders;
+import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -86,7 +88,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testEmptyExpressionsReturnFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule();
-        NativeWebRequest request = createWebRequestWithHeaders(Collections.singletonMap("Accept", "application/json"));
+        NativeWebRequest request = createWebRequestWithHeaders(singletonMap("Accept", "application/json"));
         assertFalse("Empty expressions should return false", rule.matches(request));
     }
 
@@ -107,7 +109,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
                 exceptionManager
         );
 
-        NativeWebRequest request = createWebRequestWithHeaders(Collections.singletonMap("Accept", "invalid"));
+        NativeWebRequest request = createWebRequestWithHeaders(singletonMap("Accept", "invalid"));
         assertFalse("Should return false on media type exception", rule.matches(request));
     }
 
