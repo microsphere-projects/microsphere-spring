@@ -17,9 +17,12 @@
 
 package io.microsphere.spring.test.web.controller;
 
+import io.microsphere.spring.test.domain.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,5 +45,10 @@ public class TestRestController {
     @GetMapping("/greeting/{message}")
     public String greeting(@PathVariable String message) {
         return "Greeting : " + message;
+    }
+
+    @PostMapping
+    public String responseBody(@RequestBody User user) {
+        return user.toString();
     }
 }
