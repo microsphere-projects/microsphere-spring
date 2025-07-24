@@ -30,7 +30,7 @@ import java.util.Set;
 
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Test {@link FilterRegistration.Dynamic}
@@ -96,7 +96,7 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
 
     @Override
     public Map<String, String> getInitParameters() {
-        return this.initParameters;
+        return unmodifiableMap(this.initParameters);
     }
 
     @Override
@@ -124,26 +124,6 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
     }
 
     /**
-     * Get the Filter Name
-     *
-     * @return the Filter Name
-     */
-    @Nonnull
-    public String getFilterName() {
-        return filterName;
-    }
-
-    /**
-     * Get the Filter Class Name
-     *
-     * @return the Filter Class Name
-     */
-    @Nonnull
-    public String getFilterClassName() {
-        return filterClassName;
-    }
-
-    /**
      * Get the Filter
      *
      * @return the Filter
@@ -151,25 +131,6 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
     @Nonnull
     public Filter getFilter() {
         return filter;
-    }
-
-    /**
-     * Get the Servlet Names
-     *
-     * @return the Servlet Names
-     */
-    @Nonnull
-    public Set<String> getServletNames() {
-        return unmodifiableSet(servletNames);
-    }
-
-    /**
-     * Get the URL Patterns
-     *
-     * @return the URL Patterns
-     */
-    public Set<String> getUrlPatterns() {
-        return unmodifiableSet(urlPatterns);
     }
 
     /**
