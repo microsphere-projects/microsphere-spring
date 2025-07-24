@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static io.microsphere.util.ClassUtils.isAssignableFrom;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
-import static org.springframework.util.ClassUtils.isAssignable;
-import static org.springframework.util.ClassUtils.resolveClassName;
 
 /**
  * Web Utilities Class
@@ -97,8 +97,8 @@ public abstract class WebUtils {
         for (Map.Entry<String, R> entry : registrationsMap.entrySet()) {
             R registration = entry.getValue();
             String className = registration.getClassName();
-            Class<?> registeredRegistrationClass = resolveClassName(className, classLoader);
-            if (isAssignable(targetClass, registeredRegistrationClass)) {
+            Class<?> registeredRegistrationClass = resolveClass(className, classLoader);
+            if (isAssignableFrom(targetClass, registeredRegistrationClass)) {
                 String servletName = entry.getKey();
                 foundRegistrationsMap.put(servletName, registration);
             }
