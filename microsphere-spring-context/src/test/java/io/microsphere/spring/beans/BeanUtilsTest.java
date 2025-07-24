@@ -2,7 +2,7 @@ package io.microsphere.spring.beans;
 
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.test.TestBean2;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
