@@ -61,7 +61,7 @@ public class TestServletContext extends MockServletContext {
      * @see org.springframework.core.io.DefaultResourceLoader
      */
     public TestServletContext() {
-        super();
+        this("");
     }
 
     /**
@@ -71,17 +71,7 @@ public class TestServletContext extends MockServletContext {
      * @see org.springframework.core.io.DefaultResourceLoader
      */
     public TestServletContext(String resourceBasePath) {
-        super(resourceBasePath);
-    }
-
-    /**
-     * Create a new {@code TestServletContext}, using the specified {@link ResourceLoader}
-     * and no base path.
-     *
-     * @param resourceLoader the ResourceLoader to use (or null for the default)
-     */
-    public TestServletContext(ResourceLoader resourceLoader) {
-        super(resourceLoader);
+        this(resourceBasePath, null);
     }
 
     /**
