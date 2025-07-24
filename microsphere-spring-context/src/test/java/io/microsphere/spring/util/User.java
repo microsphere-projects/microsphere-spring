@@ -4,7 +4,7 @@ package io.microsphere.spring.util;
  * User POJO
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 2017.03.31
+ * @since 1.0.0
  */
 public class User {
 
