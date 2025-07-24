@@ -97,6 +97,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JSON Assert -->
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
