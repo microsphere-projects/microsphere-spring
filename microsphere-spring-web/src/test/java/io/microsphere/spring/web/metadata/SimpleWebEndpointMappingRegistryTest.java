@@ -40,7 +40,7 @@ public class SimpleWebEndpointMappingRegistryTest {
     private SimpleWebEndpointMappingRegistry registry;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.registry = new SimpleWebEndpointMappingRegistry();
     }
 
