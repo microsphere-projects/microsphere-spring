@@ -58,7 +58,7 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
     private ConfigurationBeanBindingPostProcessor configurationBeanBindingPostProcessor;
 
     @Before
-    public void init() {
+    public void setUp() {
         aUser = context.getBean("a", User.class);
         bUser = context.getBean("b", User.class);
         users = getSortedBeans(context, User.class);
