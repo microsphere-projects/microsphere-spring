@@ -46,7 +46,7 @@ public class ResourceUtilsTest {
     private Resource urlResource;
 
     @Before
-    public void init() throws IOException {
+    public void setUp() throws IOException {
         this.classPathResource = resourceLoader.getResource("classpath:/META-INF/spring.factories");
         URL url = this.classPathResource.getURL();
         this.urlResource = resourceLoader.getResource(url.toString());
