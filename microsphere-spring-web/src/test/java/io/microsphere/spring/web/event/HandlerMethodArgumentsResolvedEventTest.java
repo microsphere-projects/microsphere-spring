@@ -46,7 +46,7 @@ public class HandlerMethodArgumentsResolvedEventTest extends AbstractSpringWebTe
     private HandlerMethodArgumentsResolvedEvent event;
 
     @Before
-    public void init() throws Throwable {
+    public void setUp() throws Throwable {
         this.handlerMethod = new HandlerMethod(new TestController(), "helloWorld");
         event = new HandlerMethodArgumentsResolvedEvent(createWebRequest("/helloworld"), this.handlerMethod, ofArray("Hello", "World"));
     }
