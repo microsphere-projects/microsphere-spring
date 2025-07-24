@@ -24,7 +24,7 @@ package io.microsphere.spring.beans.factory.annotation;
  */
 
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
