@@ -93,7 +93,11 @@ public abstract class SpringTestUtils {
      * @see AnnotationConfigApplicationContext
      */
     public static void testInSpringContainer(ThrowableBiConsumer<ConfigurableApplicationContext, ConfigurableEnvironment> consumer, Class<?>... configClasses) {
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(configClasses);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        for (Class<?> configClass : configClasses) {
+            context.register(configClass);
+        }
+        context.refresh();
         try {
             consumer.accept(context, context.getEnvironment());
         } catch (Throwable e) {
