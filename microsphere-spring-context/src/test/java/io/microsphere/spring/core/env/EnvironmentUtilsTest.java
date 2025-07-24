@@ -47,7 +47,7 @@ public class EnvironmentUtilsTest {
     private ConfigurableEnvironment environment;
 
     @Before
-    public void init() throws Exception {
+    public void setUp() throws Exception {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty("a", "1");
         mockEnvironment.setProperty("b", "2");
