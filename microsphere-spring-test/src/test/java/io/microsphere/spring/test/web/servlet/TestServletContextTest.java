@@ -26,10 +26,13 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import java.util.EventListener;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 
 /**
  * {@link TestServletContext} Test
@@ -51,6 +54,10 @@ public class TestServletContextTest {
     private static final Class<? extends Filter> filterClass = TestFilter.class;
 
     private static final String filterClassName = filterClass.getName();
+
+    private static final Class<? extends EventListener> listenerClass = TestServletContextListener.class;
+
+    private static final String listenerClassName = listenerClass.getName();
 
     private TestServletContext servletContext;
 
@@ -134,28 +141,34 @@ public class TestServletContextTest {
 
     @Test
     public void testAddListenerWithClass() {
+        servletContext.addListener(listenerClass);
     }
 
     @Test
     public void testAddListenerWithClassName() {
+        servletContext.addListener(listenerClassName);
     }
 
     @Test
-    public void testAddListenerWithInstance() {
+    public void testAddListenerWithInstance() throws ServletException {
+        servletContext.addListener(servletContext.createListener(listenerClass));
     }
 
     @Test
-    public void testCreateListener() {
+    public void testCreateListener() throws ServletException {
+        assertNotNull(servletContext.createListener(listenerClass));
     }
 
     @Test
     public void testCreateInstance() {
-
+        assertThrows(RuntimeException.class, () -> servletContext.createInstance(EventListener.class.getName()));
     }
 
     @Test
     public void testLoadClass() {
-
+        assertSame(servletClass, servletContext.loadClass(servletClassName));
+        assertSame(filterClass, servletContext.loadClass(filterClassName));
+        assertSame(listenerClass, servletContext.loadClass(listenerClassName));
     }
 
     void assertServletRegistration(ServletRegistration registration) {
