@@ -70,7 +70,7 @@ public class BeanFactoryUtilsTest {
     private ConfigurableListableBeanFactory beanFactory;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.applicationContext = new AnnotationConfigApplicationContext();
         this.beanFactory = this.applicationContext.getBeanFactory();
     }
