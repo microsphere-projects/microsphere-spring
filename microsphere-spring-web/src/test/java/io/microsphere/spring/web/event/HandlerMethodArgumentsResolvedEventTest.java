@@ -19,13 +19,13 @@ package io.microsphere.spring.web.event;
 
 
 import io.microsphere.spring.test.web.controller.TestRestController;
-import io.microsphere.spring.web.AbstractSpringWebTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertSame;
  * @see HandlerMethodArgumentsResolvedEvent
  * @since 1.0.0
  */
-public class HandlerMethodArgumentsResolvedEventTest extends AbstractSpringWebTest {
+public class HandlerMethodArgumentsResolvedEventTest {
 
     private HandlerMethod handlerMethod;
 
