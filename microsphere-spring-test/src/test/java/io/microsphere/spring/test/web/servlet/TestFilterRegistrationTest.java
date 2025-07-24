@@ -47,12 +47,10 @@ public class TestFilterRegistrationTest {
 
     private TestFilterRegistration registration;
 
-    private TestServletContext servletContext;
-
     @Before
     public void setUp() throws Exception {
-        this.servletContext = new TestServletContext();
-        this.registration = (TestFilterRegistration) this.servletContext.addFilter(testFilterName, testFilterClass);
+        TestServletContext servletContext = new TestServletContext();
+        this.registration = (TestFilterRegistration) servletContext.addFilter(testFilterName, testFilterClass);
     }
 
     @Test
