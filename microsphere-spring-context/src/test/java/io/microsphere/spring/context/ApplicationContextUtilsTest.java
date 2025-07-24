@@ -43,7 +43,7 @@ public class ApplicationContextUtilsTest {
     private GenericApplicationContext context;
 
     @Before
-    public void init() {
+    public void setUp() {
         context = new GenericApplicationContext();
         context.refresh();
     }
