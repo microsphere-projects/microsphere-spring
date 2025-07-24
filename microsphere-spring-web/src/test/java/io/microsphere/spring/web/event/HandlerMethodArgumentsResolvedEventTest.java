@@ -18,8 +18,8 @@
 package io.microsphere.spring.web.event;
 
 
+import io.microsphere.spring.test.web.controller.TestRestController;
 import io.microsphere.spring.web.AbstractSpringWebTest;
-import io.microsphere.spring.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -47,7 +47,7 @@ public class HandlerMethodArgumentsResolvedEventTest extends AbstractSpringWebTe
 
     @Before
     public void setUp() throws Throwable {
-        this.handlerMethod = new HandlerMethod(new TestController(), "helloWorld");
+        this.handlerMethod = new HandlerMethod(new TestRestController(), "helloWorld");
         event = new HandlerMethodArgumentsResolvedEvent(createWebRequest("/helloworld"), this.handlerMethod, ofArray("Hello", "World"));
     }
 
@@ -67,7 +67,7 @@ public class HandlerMethodArgumentsResolvedEventTest extends AbstractSpringWebTe
 
     @Test
     public void testGetMethod() throws NoSuchMethodException {
-        assertEquals(TestController.class.getMethod("helloWorld"), this.event.getMethod());
+        assertEquals(TestRestController.class.getMethod("helloWorld"), this.event.getMethod());
     }
 
     @Test
