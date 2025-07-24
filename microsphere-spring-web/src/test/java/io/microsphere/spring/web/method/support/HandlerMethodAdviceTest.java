@@ -33,7 +33,7 @@ public class HandlerMethodAdviceTest {
     private HandlerMethodAdvice handlerMethodAdvice;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.handlerMethodAdvice = new HandlerMethodAdvice() {
         };
     }
