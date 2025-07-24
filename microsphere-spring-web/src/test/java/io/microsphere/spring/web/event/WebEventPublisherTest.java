@@ -19,7 +19,6 @@ package io.microsphere.spring.web.event;
 
 
 import io.microsphere.spring.test.web.controller.TestRestController;
-import io.microsphere.spring.web.AbstractSpringWebTest;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import org.junit.Test;
@@ -27,6 +26,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +39,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebEventPublisher
  * @since 1.0.0
  */
-public class WebEventPublisherTest extends AbstractSpringWebTest {
+public class WebEventPublisherTest {
 
     @Test
     public void testBeforeExecute() {
