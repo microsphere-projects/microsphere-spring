@@ -37,7 +37,7 @@ import static org.springframework.util.ReflectionUtils.findMethod;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AnnotationUtils
- * @since 2017.01.13
+ * @since 1.0.0
  */
 public class AnnotationUtilsTest {
 
