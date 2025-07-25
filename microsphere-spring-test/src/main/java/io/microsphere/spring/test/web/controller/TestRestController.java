@@ -47,8 +47,8 @@ public class TestRestController {
         return "Greeting : " + message;
     }
 
-    @PostMapping
-    public String responseBody(@RequestBody User user) {
-        return user.toString();
+    @PostMapping(path = "/user")
+    public User user(@RequestBody User user) {
+        return user;
     }
 }
