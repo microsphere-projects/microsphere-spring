@@ -60,7 +60,7 @@ import static org.springframework.util.ClassUtils.getUserClass;
  * Bean Utilities Class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 2017.01.13
+ * @since 1.0.0
  */
 public abstract class BeanUtils implements Utils {
 
