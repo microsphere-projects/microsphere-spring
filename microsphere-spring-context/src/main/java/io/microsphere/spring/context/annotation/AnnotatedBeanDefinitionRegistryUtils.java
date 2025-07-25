@@ -37,7 +37,7 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see BeanDefinition
- * @since 2017.01.09
+ * @since 1.0.0
  */
 public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
 
