@@ -1,7 +1,10 @@
 package io.microsphere.spring.webmvc.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.MutablePropertyValues;
-import org.springframework.http.MediaType;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.validation.DataBinder;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
@@ -10,9 +13,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.beans.PropertyEditorSupport;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
+import static io.microsphere.constants.SymbolConstants.LEFT_CURLY_BRACE_CHAR;
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
+import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
+import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.spring.webmvc.constants.PropertyConstants.MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX;
 import static org.springframework.util.ReflectionUtils.doWithFields;
 
 
@@ -20,57 +28,55 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * Configurable {@link ContentNegotiationManager} {@link WebMvcConfigurer}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ContentNegotiationManagerFactoryBean
  * @see ContentNegotiationManager
+ * @see WebMvcConfigurerAdapter
  * @see WebMvcConfigurer
+ * @see DataBinder
  * @since 1.0.0
  */
-public class ConfigurableContentNegotiationManagerWebMvcConfigurer extends WebMvcConfigurerAdapter {
+public class ConfigurableContentNegotiationManagerWebMvcConfigurer extends WebMvcConfigurerAdapter implements EnvironmentAware {
 
     /**
-     * Property separator : "."
+     * The property name prefix of {@link ContentNegotiationManager} : "microsphere.spring.webmvc.content-negotiation."
      */
-    private static final String PROPERTY_SEPARATOR = ".";
+    static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX + "content-negotiation.";
 
-    private static final Class<ContentNegotiationManagerFactoryBean> FACTORY_BEAN_FIELD_CLASS =
+    static final Class<ContentNegotiationManagerFactoryBean> FACTORY_BEAN_FIELD_CLASS =
             ContentNegotiationManagerFactoryBean.class;
 
-    private final Map<String, Object> propertyValues;
-
-    public ConfigurableContentNegotiationManagerWebMvcConfigurer(Map<String, String> properties) {
-        this.propertyValues = resolveNestedMap(properties);
-    }
+    private Map<String, Object> propertyValues;
 
     public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
-
         doWithFields(configurer.getClass(), field -> {
-
             boolean accessible = field.isAccessible();
-
             try {
-
                 if (!accessible) {
                     field.setAccessible(true);
                 }
-
                 ContentNegotiationManagerFactoryBean factoryBean = (ContentNegotiationManagerFactoryBean) field.get(configurer);
-
                 configureContentNegotiationManagerFactoryBean(factoryBean);
-
             } finally {
-
                 if (!accessible) {
                     field.setAccessible(accessible);
                 }
-
             }
-
         }, field -> {
             Class<?> fieldType = field.getType();
             return FACTORY_BEAN_FIELD_CLASS.isAssignableFrom(fieldType);
         });
-
     }
 
+    @Override
+    public void setEnvironment(Environment environment) {
+        ConfigurableEnvironment configurableEnvironment = asConfigurableEnvironment(environment);
+        Map<String, Object> properties = getSubProperties(configurableEnvironment, PROPERTY_NAME_PREFIX);
+        this.setProperties(properties);
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.propertyValues = properties;
+    }
 
     protected void configureContentNegotiationManagerFactoryBean(ContentNegotiationManagerFactoryBean factoryBean) {
 
@@ -80,128 +86,27 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurer extends WebMv
 
         dataBinder.setAutoGrowNestedPaths(true);
 
-        dataBinder.registerCustomEditor(MediaType.class, "defaultContentType", new MediaTypePropertyEditor());
+        dataBinder.registerCustomEditor(Map.class, "mediaTypes", new MediaTypesMapPropertyEditor());
 
         MutablePropertyValues propertyValues = new MutablePropertyValues();
 
         propertyValues.addPropertyValues(this.propertyValues);
 
         dataBinder.bind(propertyValues);
-
     }
 
-
-    private static class MediaTypePropertyEditor extends PropertyEditorSupport {
+    static class MediaTypesMapPropertyEditor extends PropertyEditorSupport {
 
         @Override
         public void setAsText(String text) {
-
-            MediaType mediaType = MediaType.valueOf(text);
-
-            setValue(mediaType);
-
-        }
-    }
-
-    private static Map<String, String> extraProperties(Map<String, Object> map) {
-
-        Map<String, String> properties = new LinkedHashMap<String, String>();
-
-        if (map != null) {
-
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-
-                String key = entry.getKey();
-
-                Object value = entry.getValue();
-
-                if (value instanceof Map) {
-                    Map<String, String> subProperties = extraProperties((Map) value);
-                    for (Map.Entry<String, String> e : subProperties.entrySet()) {
-                        String subKey = e.getKey();
-                        String subValue = e.getValue();
-                        properties.put(key + PROPERTY_SEPARATOR + subKey, subValue);
-                    }
-                } else if (value instanceof String) {
-
-                    properties.put(key, value.toString());
-
-                }
-            }
-        }
-
-        return properties;
-
-    }
-
-    /**
-     * <code>
-     * properties.put("a.b.1", "1");
-     * properties.put("a.b.2", "2");
-     * properties.put("d.e.f.1", "1");
-     * properties.put("d.e.f.2", "2");
-     * properties.put("d.e.f.3", "3");
-     * </code>
-     * resolved result :
-     * <code>
-     * {a={b={1=1, 2=2}}, d={e={f={1=1, 2=2, 3=3}}}}
-     * </code>
-     *
-     * @param properties Properties
-     * @return Resolved properties
-     */
-    public static Map<String, Object> resolveNestedMap(Map<String, String> properties) {
-
-        Map<String, Object> nestedMap = new LinkedHashMap<String, Object>();
-
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-
-            String propertyName = entry.getKey();
-
-            String propertyValue = entry.getValue();
-
-            int index = propertyName.indexOf(PROPERTY_SEPARATOR);
-
-            if (index > 0) {
-
-                String actualPropertyName = propertyName.substring(0, index);
-
-                String subPropertyName = propertyName.substring(index + 1, propertyName.length());
-
-                Object actualPropertyValue = nestedMap.get(actualPropertyName);
-
-                if (actualPropertyValue == null) {
-
-                    actualPropertyValue = new LinkedHashMap<String, Object>();
-
-                    nestedMap.put(actualPropertyName, actualPropertyValue);
-
-                }
-
-                if (actualPropertyValue instanceof Map) {
-
-                    Map<String, Object> nestedProperties = (Map<String, Object>) actualPropertyValue;
-
-                    Map<String, String> subProperties = extraProperties(nestedProperties);
-
-                    subProperties.put(subPropertyName, propertyValue);
-
-                    Map<String, Object> subNestedMap = resolveNestedMap(subProperties);
-
-                    nestedProperties.putAll(subNestedMap);
-
-
-                }
+            if (text.indexOf(LEFT_CURLY_BRACE_CHAR) == 0) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Properties mediaTypes = execute(() -> objectMapper.readValue(text, Properties.class));
+                setValue(mediaTypes);
             } else {
-
-                nestedMap.put(propertyName, propertyValue);
-
+                setValue(text);
             }
         }
-
-
-        return nestedMap;
-
     }
 
 }
