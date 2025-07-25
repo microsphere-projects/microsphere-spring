@@ -5,7 +5,7 @@ package io.microsphere.spring.test;
  *
 
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 2017.01.13
+ * @since 1.0.0
  */
 public interface Bean {
 }
