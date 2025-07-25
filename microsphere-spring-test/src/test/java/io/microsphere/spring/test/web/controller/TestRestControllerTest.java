@@ -18,6 +18,8 @@
 package io.microsphere.spring.test.web.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +29,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -46,6 +51,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         TestRestController.class,
         TestRestControllerTest.class
 })
+@EnableWebMvc
 public class TestRestControllerTest {
 
     @Autowired
@@ -70,5 +76,19 @@ public class TestRestControllerTest {
         this.mockMvc.perform(get("/test/greeting/{message}", "Mercy"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Greeting : Mercy"));
+    }
+
+    @Test
+    public void testUser() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = new User();
+        user.setName("Mercy");
+        user.setAge(18);
+        String json = objectMapper.writeValueAsString(user);
+        this.mockMvc.perform(post("/test/user")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string(json));
     }
 }
