@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ViewResolver;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ViewResolver
- * @since 2017.03.22
+ * @since 1.0.0
  */
 public class ViewResolverUtils {
 
