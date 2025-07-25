@@ -36,7 +36,7 @@ import static org.springframework.core.GenericTypeResolver.resolveTypeArgument;
  * @param <T> the type of beans this post-processor will operate on
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see BeanPostProcessor
- * @since 2017.01.22
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public abstract class GenericBeanPostProcessorAdapter<T> implements BeanPostProcessor {
