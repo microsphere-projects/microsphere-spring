@@ -22,7 +22,7 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ContentNegotiationManager
  * @see WebMvcConfigurer
- * @since 2017.03.23
+ * @since 1.0.0
  */
 public class ConfigurableContentNegotiationManagerWebMvcConfigurer extends WebMvcConfigurerAdapter {
 
