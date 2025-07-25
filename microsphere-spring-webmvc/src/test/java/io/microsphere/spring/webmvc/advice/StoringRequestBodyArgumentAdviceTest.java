@@ -18,6 +18,8 @@
 package io.microsphere.spring.webmvc.advice;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestRestController;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +30,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
+
+import static io.microsphere.spring.web.servlet.util.WebUtils.getServletContext;
+import static io.microsphere.spring.webmvc.util.WebMvcUtils.HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -48,22 +63,55 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         StoringRequestBodyArgumentAdvice.class,
         StoringRequestBodyArgumentAdviceTest.class
 })
-public class StoringRequestBodyArgumentAdviceTest {
+@EnableWebMvc
+public class StoringRequestBodyArgumentAdviceTest extends WebMvcConfigurerAdapter {
+
+    private static final String USER_ATTRIBUTE_NAME = "user";
 
     @Autowired
     private WebApplicationContext context;
 
     private MockMvc mockMvc;
 
+    private ServletContext servletContext;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new HandlerInterceptorAdapter() {
+            @Override
+            public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+                ServletContext servletContext = getServletContext(request);
+                Enumeration<String> attributeNames = request.getAttributeNames();
+                while (attributeNames.hasMoreElements()) {
+                    String attributeName = attributeNames.nextElement();
+                    if (attributeName.startsWith(HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX)) {
+                        servletContext.setAttribute(USER_ATTRIBUTE_NAME, request.getAttribute(attributeName));
+                    }
+                }
+            }
+        });
+    }
+
     @Before
     public void setUp() throws Exception {
-        this.mockMvc = webAppContextSetup(context).build();
+        this.mockMvc = webAppContextSetup(this.context).build();
+        this.servletContext = this.context.getServletContext();
     }
 
     @Test
     public void test() throws Exception {
-        this.mockMvc.perform(get("/test/helloworld"))
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = new User();
+        user.setName("Mercy");
+        user.setAge(18);
+        String json = objectMapper.writeValueAsString(user);
+        this.mockMvc.perform(post("/test/user")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Hello World"));
+                .andExpect(content().string(json));
+
+        User responsedUser = (User) this.servletContext.getAttribute(USER_ATTRIBUTE_NAME);
+        assertEquals(user, responsedUser);
     }
 }
