@@ -18,7 +18,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AnnotatedBeanDefinitionRegistryUtils
- * @since 2017.01.13
+ * @since 1.0.0
  */
 public class AnnotatedBeanDefinitionRegistryUtilsTest {
 
