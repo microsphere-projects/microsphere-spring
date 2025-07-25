@@ -26,7 +26,7 @@ import java.util.Objects;
  * Test Bean
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 2017.01.13
+ * @since 1.0.0
  */
 @Component("testBean")
 @Order(1)
