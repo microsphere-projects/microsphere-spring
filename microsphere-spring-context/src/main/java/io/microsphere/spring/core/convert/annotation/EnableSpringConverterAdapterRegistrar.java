@@ -29,6 +29,7 @@ import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.type.AnnotationMetadata;
 
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 
 /**
  * {@link EnableSpringConverterAdapter} {@link Configuration} class
@@ -42,7 +43,7 @@ class EnableSpringConverterAdapterRegistrar implements ImportSelector, BeanFacto
 
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        return new String[0];
+        return EMPTY_STRING_ARRAY;
     }
 
     @Override
