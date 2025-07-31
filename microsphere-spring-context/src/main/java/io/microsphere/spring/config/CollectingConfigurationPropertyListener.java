@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener;
 import io.microsphere.spring.core.env.PropertyResolverListener;
 import org.springframework.beans.BeansException;
