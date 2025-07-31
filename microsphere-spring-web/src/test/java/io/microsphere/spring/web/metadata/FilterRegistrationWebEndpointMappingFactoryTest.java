@@ -28,6 +28,7 @@ import javax.servlet.ServletContext;
 import java.util.EnumSet;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.EnumSet.of;
 import static javax.servlet.DispatcherType.FORWARD;
@@ -75,7 +76,7 @@ public class FilterRegistrationWebEndpointMappingFactoryTest {
     @Test
     public void testGetPatterns() {
         FilterRegistration registration = this.factory.getRegistration(filterName, this.servletContext);
-        assertEquals(urlPatterns, this.factory.getPatterns(registration).toArray(new String[0]));
+        assertEquals(urlPatterns, this.factory.getPatterns(registration).toArray(EMPTY_STRING_ARRAY));
         assertEquals(newLinkedList(registration.getUrlPatternMappings()), newLinkedList(this.factory.getPatterns(registration)));
     }
 
