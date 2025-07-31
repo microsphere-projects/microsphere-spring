@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.isNotEmpty;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
@@ -228,7 +229,7 @@ public abstract class AnnotationUtils {
                 }
             }
             // extends the ignored list
-            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(new String[0]);
+            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(EMPTY_STRING_ARRAY);
         }
 
         return getAttributes(annotationAttributes, propertyResolver, actualIgnoreAttributeNames);
