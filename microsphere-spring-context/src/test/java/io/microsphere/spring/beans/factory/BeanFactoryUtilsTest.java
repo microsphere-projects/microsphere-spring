@@ -49,6 +49,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvable
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isDefaultListableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -243,7 +244,7 @@ public class BeanFactoryUtilsTest {
             }
 
             public String[] getAliases(String name) {
-                return new String[0];
+                return EMPTY_STRING_ARRAY;
             }
         });
 
