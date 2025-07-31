@@ -29,6 +29,7 @@ import static io.microsphere.collection.MapUtils.of;
 import static io.microsphere.spring.test.web.servlet.TestServletContextTest.testServletClass;
 import static io.microsphere.spring.test.web.servlet.TestServletContextTest.testServletClassName;
 import static io.microsphere.spring.test.web.servlet.TestServletContextTest.testServletName;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
@@ -90,7 +91,7 @@ public class TestServletRegistrationTest {
     public void testAddMapping() {
         String[] urlPatterns = ofArray("/a", "/b", "c");
         this.registration.addMapping(urlPatterns);
-        assertEquals(urlPatterns, this.registration.getMappings().toArray(new String[0]));
+        assertEquals(urlPatterns, this.registration.getMappings().toArray(EMPTY_STRING_ARRAY));
     }
 
     @Test
