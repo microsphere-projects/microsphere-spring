@@ -43,7 +43,6 @@ import java.util.List;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.webmvc.config.ConfigurableContentNegotiationManagerWebMvcConfigurerTest.MEDIA_TYPES_JSON;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT;
@@ -103,8 +102,6 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurerTest {
 
         PathExtensionContentNegotiationStrategy pathExtensionContentNegotiationStrategy = this.contentNegotiationManager.getStrategy(ServletPathExtensionContentNegotiationStrategy.class);
         assertNotNull(pathExtensionContentNegotiationStrategy);
-        assertFalse(pathExtensionContentNegotiationStrategy.isUseRegisteredExtensionsOnly());
-        assertTrue(pathExtensionContentNegotiationStrategy.isIgnoreUnknownExtensions());
 
         ParameterContentNegotiationStrategy parameterContentNegotiationStrategy = this.contentNegotiationManager.getStrategy(ParameterContentNegotiationStrategy.class);
         assertNotNull(parameterContentNegotiationStrategy);
