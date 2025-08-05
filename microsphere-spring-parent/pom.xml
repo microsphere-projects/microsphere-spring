@@ -162,15 +162,4 @@
         </profile>
     </profiles>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerArgument>-proc:full</compilerArgument>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
