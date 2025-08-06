@@ -30,6 +30,7 @@
         <mockito.version>5.14.2</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
+        <hamcrest.version>3.0</hamcrest.version>
     </properties>
 
     <dependencyManagement>
@@ -96,6 +97,13 @@
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
                 <version>${jsonassert.version}</version>
+            </dependency>
+
+            <!-- Hamcrest -->
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <version>${hamcrest.version}</version>
             </dependency>
 
             <!-- SQLite -->
