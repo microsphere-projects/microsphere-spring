@@ -21,7 +21,6 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import java.util.LinkedList;
 import java.util.List;
 
-import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.forEach;
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
