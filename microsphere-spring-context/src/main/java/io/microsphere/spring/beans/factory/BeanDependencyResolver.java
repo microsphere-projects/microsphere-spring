@@ -25,12 +25,34 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The interface to resolve the dependencies
+ * A strategy interface for resolving bean dependencies within a Spring {@link ConfigurableListableBeanFactory}.
+ * Implementations of this interface should provide logic to analyze and extract bean dependencies,
+ * particularly based on the configuration metadata encapsulated in a {@link RootBeanDefinition}.
+ *
+ * <p>
+ * This interface is useful in scenarios where advanced visibility into the dependency relationships
+ * between beans is required, such as in dependency graph analysis, debugging tools, or specialized
+ * container diagnostics.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>
+ * // Assume a custom implementation of BeanDependencyResolver is created
+ * BeanDependencyResolver resolver = new CustomDependencyResolver();
+ *
+ * // Resolve all beans and their dependencies in the bean factory
+ * Map<String, Set<String>> allDependencies = resolver.resolve(beanFactory);
+ *
+ * // Resolve dependencies for a specific bean
+ * Set<String> dependencies = resolver.resolve("myBeanName", mergedBeanDefinition, beanFactory);
+ * </pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see #resolve(ConfigurableListableBeanFactory)
+ * @see #resolve(String, RootBeanDefinition, ConfigurableListableBeanFactory)
+ * @see DefaultBeanDependencyResolver
  * @see RootBeanDefinition
  * @see ConfigurableListableBeanFactory
- * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 public interface BeanDependencyResolver {
