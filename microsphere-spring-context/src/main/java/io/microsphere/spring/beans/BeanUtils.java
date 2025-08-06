@@ -606,7 +606,7 @@ public abstract class BeanUtils implements Utils {
      *     <li>{@link ApplicationStartupAware} (Spring Framework 5.3+)</li>
      *     <li>{@link ApplicationContextAware}</li>
      *     <li>{@link InitializingBean}</li>
-     * </ul>
+     * </ol>
      *
      * @param bean    the bean instance whose lifecycle interfaces should be invoked
      * @param context the application context associated with the bean, may be null
