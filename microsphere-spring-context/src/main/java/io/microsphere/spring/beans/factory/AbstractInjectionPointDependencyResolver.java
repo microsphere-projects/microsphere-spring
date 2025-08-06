@@ -47,7 +47,53 @@ import static java.util.Collections.addAll;
 import static org.springframework.core.MethodParameter.forParameter;
 
 /**
- * Abstract {@link InjectionPointDependencyResolver}
+ * Abstract base class for implementing {@link InjectionPointDependencyResolver}.
+ * <p>
+ * This class provides a foundation for resolving dependencies at injection points within Spring-managed beans.
+ * It handles common tasks such as bean factory awareness, dependency type resolution, and logging using the
+ * {@link Logger} interface.
+ * </p>
+ *
+ * <h3>Key Responsibilities</h3>
+ * <ul>
+ *     <li>Tracking and resolving dependencies based on injection points (fields, methods, constructors).</li>
+ *     <li>Filtering resolvable dependency types via the configured {@link ResolvableDependencyTypeFilter}.</li>
+ *     <li>Providing consistent logging capabilities through the injected logger.</li>
+ *     <li>Supporting custom resolution logic by allowing subclasses to implement specific strategies.</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Basic Implementation</h4>
+ * <pre>{@code
+ * public class MyDependencyResolver extends AbstractInjectionPointDependencyResolver {
+ *     // Custom implementation details here
+ * }
+ * }</pre>
+ *
+ * <h4>Resolving Dependencies from a Field</h4>
+ * <pre>{@code
+ * public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+ *     String dependentBeanName = resolveDependentBeanNameByName(field, beanFactory);
+ *     if (dependentBeanName == null) {
+ *         resolveDependentBeanNamesByType(field::getGenericType, beanFactory, dependentBeanNames);
+ *     } else {
+ *         dependentBeanNames.add(dependentBeanName);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h4>Resolving Dependencies from a Method Parameter</h4>
+ * <pre>{@code
+ * public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+ *     String dependentBeanName = resolveDependentBeanNameByName(parameter, beanFactory);
+ *     if (dependentBeanName == null) {
+ *         resolveDependentBeanNamesByType(parameter::getParameterizedType, beanFactory, dependentBeanNames);
+ *     } else {
+ *         dependentBeanNames.add(dependentBeanName);
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
