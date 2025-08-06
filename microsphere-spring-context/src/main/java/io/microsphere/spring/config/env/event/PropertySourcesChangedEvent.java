@@ -22,7 +22,6 @@ import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.PropertySource;
-import org.springframework.core.env.PropertySources;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,10 +39,35 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * The event raised when the {@link PropertySources} is changed
+ * Event raised when one or more {@link PropertySource} instances are added, removed, or replaced in the environment's property sources.
+ * This event extends {@link ApplicationContextEvent}, which means it is associated with an {@link ApplicationContext}.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * <p>{@link PropertySourcesChangedEvent} encapsulates multiple {@link PropertySourceChangedEvent}s to represent bulk changes
+ * to the property sources. It allows consumers to inspect individual changes and also provides utility methods to extract
+ * added, removed, and overall changed properties.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Creating a PropertySourcesChangedEvent from multiple PropertySourceChangedEvents
+ * PropertySourceChangedEvent addedEvent = PropertySourceChangedEvent.added(context, newPropertySource);
+ * PropertySourceChangedEvent removedEvent = PropertySourceChangedEvent.removed(context, oldPropertySource);
+ *
+ * PropertySourcesChangedEvent combinedEvent = new PropertySourcesChangedEvent(context, Arrays.asList(addedEvent, removedEvent));
+ *
+ * // Getting all changed properties
+ * Map<String, Object> allChangedProperties = combinedEvent.getChangedProperties();
+ *
+ * // Getting only added properties
+ * Map<String, Object> addedProperties = combinedEvent.getAddedProperties();
+ *
+ * // Getting only removed properties
+ * Map<String, Object> removedProperties = combinedEvent.getRemovedProperties();
+ * }</pre>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see PropertySourceChangedEvent
  * @see PropertySource
+ * @see ApplicationContextEvent
  * @since 1.0.0
  */
 public class PropertySourcesChangedEvent extends ApplicationContextEvent {
