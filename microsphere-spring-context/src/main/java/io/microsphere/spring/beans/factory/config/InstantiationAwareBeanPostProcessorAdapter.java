@@ -26,8 +26,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 
 /**
- * The Adapter class of {@link SmartInstantiationAwareBeanPostProcessor} is compatible with
- * Spring [3.x,)
+ * The Adapter class of {@link SmartInstantiationAwareBeanPostProcessor} is compatible with Spring [3.x,)
  * {@linkplain org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter} was deprecated
  * since Spring 5.3, and removed since Spring 6.x.
  * This class serves as a base for implementing custom bean post-processing logic
