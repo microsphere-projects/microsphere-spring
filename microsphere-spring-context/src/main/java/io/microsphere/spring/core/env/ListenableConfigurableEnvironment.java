@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.constants.PropertyConstants;
@@ -28,6 +29,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
+import org.springframework.core.env.PropertyResolver;
 
 import java.lang.invoke.MethodHandle;
 import java.util.LinkedList;
@@ -39,6 +41,7 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static java.lang.Boolean.parseBoolean;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
@@ -61,13 +64,25 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      */
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-environment.";
 
+    private static final String DEFAULT_ENABLED = "false";
+
     /**
      * The property name of {@link ListenableConfigurableEnvironment} to be 'enabled'
      */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_ENABLED,
+            description = "Whether to enable the ListenableConfigurableEnvironment"
+    )
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
 
     /**
-     * The {@link MethodHandle} of {@link ConfigurablePropertyResolver#setEscapeCharacter(Character)} since Spring Framework 6.2
+     * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
+     */
+    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
+
+    /**
+     * The {@link MethodHandle} of {@linkplain PropertyResolver#getPropertyAsClass(String, Class)} was removed from Spring Framework 5.0
      */
     @Nullable
     private static final MethodHandle SET_ESCAPE_CHARACTER_METHOD_HANDLE = findVirtual(ConfigurablePropertyResolver.class, "setEscapeCharacter", Character.class);
@@ -393,7 +408,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * @return <code>true</code> if enabled, <code>false</code> otherwise
      */
     public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, ENABLED_PROPERTY_VALUE);
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, DEFAULT_ENABLED_PROPERTY_VALUE);
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {
