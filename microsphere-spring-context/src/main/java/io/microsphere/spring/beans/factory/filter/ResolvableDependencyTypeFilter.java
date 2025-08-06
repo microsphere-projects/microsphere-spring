@@ -29,7 +29,20 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvable
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSingleton;
 
 /**
- * A class to filter {@link ConfigurableListableBeanFactory#registerResolvableDependency(Class, Object) Resolvable Dependency Type}
+ * A {@link Filter} implementation that evaluates whether a given class is a resolvable dependency type.
+ * <p>
+ * This class is used to determine if a specified class can be resolved as a dependency by checking it against a set of known resolvable dependency types.
+ * It is particularly useful in Spring contexts where certain types need to be filtered based on their resolvability.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * ConfigurableListableBeanFactory beanFactory = ...; // Obtain from Spring context
+ * ResolvableDependencyTypeFilter filter = new ResolvableDependencyTypeFilter(beanFactory);
+ *
+ * Class<?> dependencyType = MyService.class;
+ * boolean isResolvable = filter.accept(dependencyType);  // Returns true if MyService is a resolvable dependency
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
