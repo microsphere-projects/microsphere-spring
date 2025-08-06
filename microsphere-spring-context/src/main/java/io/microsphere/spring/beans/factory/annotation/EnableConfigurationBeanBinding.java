@@ -30,6 +30,35 @@ import java.lang.annotation.Target;
 /**
  * Enables Spring's annotation-driven configuration bean from {@link PropertySources properties}.
  *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Basic Configuration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "my.config", type = MyConfig.class)
+ * public class MyConfig {}
+ * }</pre>
+ *
+ * <h4>Multiple Bean Registration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "multi.config", type = MultiConfig.class, multiple = true)
+ * public class MultiConfig {}
+ * }</pre>
+ *
+ * <h4>Custom Ignore Behavior</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(
+ *     prefix = "strict.config",
+ *     type = StrictConfig.class,
+ *     ignoreUnknownFields = false,
+ *     ignoreInvalidFields = false
+ * )
+ * public class StrictConfig {}
+ * }</pre>
+ * Here, binding will fail if there are unknown or invalid fields in the configuration.
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ConfigurationBeanBindingRegistrar
  * @see ConfigurationBeanBindingPostProcessor
