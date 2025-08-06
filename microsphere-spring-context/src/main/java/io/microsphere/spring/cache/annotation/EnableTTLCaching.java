@@ -35,7 +35,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  * Enables Spring's caching functionality with TTL (Time-To-Live) support.
  * <p>
  * This annotation is an extension of Spring's {@link EnableCaching} and provides additional
- * Time-To-Live capabilities for cached data. It allows developers to configure the duration 
+ * Time-To-Live capabilities for cached data. It allows developers to configure the duration
  * for which cache entries should remain valid, helping manage cache expiration more effectively.
  * </p>
  *

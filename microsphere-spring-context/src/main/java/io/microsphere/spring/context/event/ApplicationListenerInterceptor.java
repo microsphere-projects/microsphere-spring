@@ -62,13 +62,6 @@ import org.springframework.core.Ordered;
 public interface ApplicationListenerInterceptor extends Ordered {
 
     /**
-     * Intercept the specified {@link ApplicationListener} with {@link ApplicationEvent}
-     *
-     * @param applicationListener {@link ApplicationListener}
-     * @param event               {@link ApplicationEvent}
-     * @param chain               {@link ApplicationListenerInterceptorChain}
-     */
-    /**
      * Intercept the specified {@link ApplicationListener} when it processes an {@link ApplicationEvent}.
      * Implementing classes can perform custom logic before or after delegating to the next element in the
      * {@link ApplicationListenerInterceptorChain}.
@@ -84,7 +77,7 @@ public interface ApplicationListenerInterceptor extends Ordered {
      * <pre>{@code
      * void intercept(ApplicationListener<?> listener, ApplicationEvent event, ApplicationListenerInterceptorChain chain) {
      *     // Perform pre-processing logic here
-     *     
+     *
      *     try {
      *         // Proceed with the interceptor chain
      *         chain.intercept(listener, event);
@@ -95,8 +88,8 @@ public interface ApplicationListenerInterceptor extends Ordered {
      * }</pre>
      *
      * @param applicationListener the listener that is processing the event
-     * @param event                 the event being processed
-     * @param chain                 the interceptor chain used to continue processing
+     * @param event               the event being processed
+     * @param chain               the interceptor chain used to continue processing
      */
     void intercept(ApplicationListener<?> applicationListener, ApplicationEvent event, ApplicationListenerInterceptorChain chain);
 

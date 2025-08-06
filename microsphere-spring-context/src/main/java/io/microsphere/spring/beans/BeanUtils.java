@@ -202,11 +202,10 @@ public abstract class BeanUtils implements Utils {
      * @param beanFactory the {@link BeanFactory} to check for the presence of the bean
      * @param beanName    the name of the bean to check
      * @param beanClass   the class type of the bean to match
-     * @param <T>         the type of the bean
      * @return true if the bean is present and matches the specified class; false otherwise
      */
-    public static <T> boolean isBeanPresent(@Nonnull BeanFactory beanFactory, @Nonnull String beanName,
-                                            @Nonnull Class<?> beanClass) throws NullPointerException {
+    public static boolean isBeanPresent(@Nonnull BeanFactory beanFactory, @Nonnull String beanName,
+                                        @Nonnull Class<?> beanClass) throws NullPointerException {
         return beanFactory.containsBean(beanName) && beanFactory.isTypeMatch(beanName, beanClass);
     }
 

@@ -44,14 +44,14 @@ import java.util.Map;
  *     }
  * }
  * }</pre>
- *
+ * <p>
  * You can use this factory to load the JSON file as a property source:
  * <pre>{@code
  * EncodedResource encodedResource = new EncodedResource(resource);
  * PropertySource propertySource = jsonPropertySourceFactory.createPropertySource("jsonProperties", encodedResource);
  * environment.getPropertySources().addLast(propertySource);
  * }</pre>
- *
+ * <p>
  * After adding the property source to the environment, you can access properties like:
  * <ul>
  *     <li>{@code environment.getProperty("app.name")} which returns "My Application"</li>
