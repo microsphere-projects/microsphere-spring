@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
@@ -67,14 +68,17 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.lang.Integer.getInteger;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.beans.BeanUtils.findPrimaryConstructor;
+import static org.springframework.beans.BeanUtils.findPropertyForMethod;
 import static org.springframework.beans.factory.annotation.InjectionMetadata.needsRefresh;
 import static org.springframework.core.BridgeMethodResolver.findBridgedMethod;
 import static org.springframework.core.BridgeMethodResolver.isVisibilityBridgeMethodPair;
@@ -87,23 +91,67 @@ import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.StringUtils.hasLength;
 
 /**
- * The generic {@link BeanPostProcessor} implementation to support the dependency injection for the customized annotations.
+ * A {@link BeanPostProcessor} implementation that provides dependency injection support for custom annotation types.
  * <p>
- * As a substitution, besides the core features of {@link AutowiredAnnotationBeanPostProcessor}, {@link AnnotatedInjectionBeanPostProcessor}
- * also supports:
+ * This class extends {@link InstantiationAwareBeanPostProcessorAdapter}, making it compatible with Spring 6.x+,
+ * and supports the following features:
+ * </p>
+ *
  * <ul>
- *     <li>{@link #getAnnotationTypes() The dependency injection with multiple types of annotations}</li>
- *     <li>
- *         Annotation Features Enhancement:
+ *     <li><b>Custom Annotation Injection</b>: Allows dependency injection based on one or more custom annotations.</li>
+ *     <li><b>Annotation Processing Options</b>:
  *         <ul>
- *             <li>{@link #setClassValuesAsString(boolean)} : whether to turn Class references into Strings (for compatibility with  or to preserve them as Class references</li>
- *             <li>{@link #setNestedAnnotationsAsMap(boolean)} : whether to turn nested Annotation instances into AnnotationAttributes maps (for compatibility with {@link AnnotationMetadata} or to preserve them as Annotation instances</li>
- *             <li>{@link #setIgnoreDefaultValue(boolean)} : whether ignore default value or not</li>
- *             <li>{@link #setTryMergedAnnotation(boolean) : whether try merged annotation or not</li>
+ *             <li>{@link #setClassValuesAsString(boolean)}: Whether to convert Class references to Strings for compatibility with {@link org.springframework.core.type.AnnotationMetadata}.</li>
+ *             <li>{@link #setNestedAnnotationsAsMap(boolean)}: Whether to convert nested annotations into {@link AnnotationAttributes} maps.</li>
+ *             <li>{@link #setIgnoreDefaultValue(boolean)}: Whether to ignore default values from annotations.</li>
+ *             <li>{@link #setTryMergedAnnotation(boolean)}: Whether to attempt resolving merged annotations.</li>
  *         </ul>
  *     </li>
- *     <li>{@link #setCacheSize(int) The size of the metadata cache}</li>
+ *     <li><b>Caching Mechanism</b>: Metadata such as injection points and constructor information is cached to improve performance.</li>
+ *     <li><b>Integration with Spring Container</b>: Implements various Spring extension interfaces like
+ *         {@link MergedBeanDefinitionPostProcessor}, {@link BeanFactoryAware}, and {@link EnvironmentAware}.</li>
  * </ul>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Defining a Custom Injection Annotation</h4>
+ * <pre>{@code
+ * @Retention(RetentionPolicy.RUNTIME)
+ * @Target(ElementType.FIELD)
+ * public @interface MyInject {}
+ * }</pre>
+ *
+ * <h4>Registering the Processor in Spring Configuration</h4>
+ * <pre>{@code
+ * @Configuration
+ * public class AppConfig {
+ *
+ *     @Bean
+ *     public AnnotatedInjectionBeanPostProcessor myInjectBeanPostProcessor() {
+ *         return new AnnotatedInjectionBeanPostProcessor(MyInject.class);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h4>Using the Custom Injected Field</h4>
+ * <pre>{@code
+ * public class MyService {
+ *     @MyInject
+ *     private Dependency dependency;
+ * }
+ * }</pre>
+ *
+ * <h4>Customizing Behavior via Configuration</h4>
+ * <pre>{@code
+ * @Bean
+ * public AnnotatedInjectionBeanPostProcessor myInjectBeanPostProcessor() {
+ *     AnnotatedInjectionBeanPostProcessor processor = new AnnotatedInjectionBeanPostProcessor(MyInject.class);
+ *     processor.setClassValuesAsString(true);
+ *     processor.setNestedAnnotationsAsMap(true);
+ *     processor.setCacheSize(128);
+ *     return processor;
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AutowiredAnnotationBeanPostProcessor
@@ -113,7 +161,13 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
-    private final static int CACHE_SIZE = getInteger("microsphere.spring.injection.metadata.cache.size", 32);
+    /**
+     * The property name of metadata cache size : "microsphere.spring.injection.metadata.cache.size"
+     */
+    public static final String CACHE_SIZE_PROPERTY_NAME = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "injection.metadata.cache.size";
+
+    @ConfigurationProperty(name = CACHE_SIZE_PROPERTY_NAME, defaultValue = "32")
+    final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, 32);
 
     private final Logger logger = getLogger(getClass());
 
@@ -379,7 +433,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                             logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
                         }
                     }
-                    PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, beanClass);
+                    PropertyDescriptor pd = findPropertyForMethod(bridgedMethod, beanClass);
                     boolean required = determineRequiredStatus(attributes);
                     elements.add(new AnnotatedMethodElement(method, pd, attributes, required));
                 }
@@ -507,8 +561,8 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.candidateConstructorsCache = new ConcurrentHashMap<Class<?>, Constructor<?>[]>(cacheSize);
-        this.injectionMetadataCache = new ConcurrentHashMap<String, AnnotatedInjectionMetadata>(cacheSize);
+        this.candidateConstructorsCache = newConcurrentHashMap(cacheSize);
+        this.injectionMetadataCache = newConcurrentHashMap(cacheSize);
     }
 
     @Override
