@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.config;
 
-import io.microsphere.spring.config.ConfigurationProperty.Metadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
