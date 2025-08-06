@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.collection.Lists;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
 import org.springframework.beans.BeansException;
