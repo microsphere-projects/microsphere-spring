@@ -24,7 +24,29 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import java.util.EventListener;
 
 /**
- * * The {@link EventListener} for {@link BeanFactory} lifecycle
+ * A listener interface for observing lifecycle events of a {@link BeanFactory}.
+ * <p>
+ * Implementations of this interface can be registered to receive notifications about significant
+ * stages in the lifecycle of a Spring {@link BeanFactory}, such as when the bean definition registry
+ * becomes available, when the bean factory is fully configured, or when the configuration is frozen.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyBeanFactoryListener implements BeanFactoryListener {
+ *     public void onBeanDefinitionRegistryReady(BeanDefinitionRegistry registry) {
+ *         System.out.println("BeanDefinitionRegistry is ready.");
+ *     }
+ *
+ *     public void onBeanFactoryReady(ConfigurableListableBeanFactory beanFactory) {
+ *         System.out.println("BeanFactory is ready.");
+ *     }
+ *
+ *     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory beanFactory) {
+ *         System.out.println("BeanFactory configuration has been frozen.");
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanInitializer
