@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.isNotEmpty;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
@@ -28,7 +30,6 @@ import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
 import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnnotation;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 import static org.springframework.util.StringUtils.trimWhitespace;
 
@@ -215,7 +216,7 @@ public abstract class AnnotationUtils {
 
         String[] actualIgnoreAttributeNames = ignoreAttributeNames;
 
-        if (ignoreDefaultValue && !isEmpty(annotationAttributes)) {
+        if (ignoreDefaultValue && isNotEmpty(annotationAttributes)) {
 
             List<String> attributeNamesToIgnore = new LinkedList<>(asList(ignoreAttributeNames));
 
@@ -227,7 +228,7 @@ public abstract class AnnotationUtils {
                 }
             }
             // extends the ignored list
-            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(new String[0]);
+            actualIgnoreAttributeNames = attributeNamesToIgnore.toArray(EMPTY_STRING_ARRAY);
         }
 
         return getAttributes(annotationAttributes, propertyResolver, actualIgnoreAttributeNames);
