@@ -40,6 +40,7 @@ public class ConfigurationBeanAliasGeneratorTest {
         });
 
     }
+
     @Test
     public void testPrefixAndBeanNameConnectUseUnderscore() {
         JoinAliasGenerator generator = new UnderScoreJoinAliasGenerator();
