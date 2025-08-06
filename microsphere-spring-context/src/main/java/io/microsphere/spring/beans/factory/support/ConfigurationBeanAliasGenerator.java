@@ -28,9 +28,9 @@ public interface ConfigurationBeanAliasGenerator {
      * <p><b>Example:</b> Given a prefix of "app", a bean name of "dataSource", and a configuration class
      * named {@code DatabaseConfig}, this method might return: <code>"appDataSourceDatabaseConfig"</code>.</p>
      *
-     * @param prefix     the prefix to be used in the alias; may be {@code null} or empty
-     * @param beanName   the name of the bean for which the alias is being generated;
-     *                   must not be {@code null} or empty
+     * @param prefix      the prefix to be used in the alias; may be {@code null} or empty
+     * @param beanName    the name of the bean for which the alias is being generated;
+     *                    must not be {@code null} or empty
      * @param configClass the configuration class associated with the bean;
      *                    may be {@code null} if no specific configuration class is associated
      * @return a generated alias as a {@link String}; never {@code null}
