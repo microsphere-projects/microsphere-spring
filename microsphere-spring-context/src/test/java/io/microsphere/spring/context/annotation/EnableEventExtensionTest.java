@@ -19,6 +19,7 @@ package io.microsphere.spring.context.annotation;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.event.ApplicationEventInterceptor;
 import io.microsphere.spring.context.event.ApplicationListenerInterceptor;
+import io.microsphere.spring.context.event.EnableEventExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
