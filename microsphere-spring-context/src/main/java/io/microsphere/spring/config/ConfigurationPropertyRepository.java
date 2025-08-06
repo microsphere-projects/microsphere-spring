@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.EnvironmentAware;
@@ -23,14 +24,51 @@ import org.springframework.core.env.Environment;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.text.FormatUtils.format;
+import static java.lang.Integer.parseInt;
 
 /**
- * {@link ConfigurationProperty} Repository
+ * A repository for managing {@link ConfigurationProperty} instances with support for configuration via Spring's {@link Environment}.
+ * <p>
+ * This class provides methods to add, remove, retrieve, and manage configuration properties. It also allows integration with Spring's
+ * lifecycle management through the {@link InitializingBean} and {@link DisposableBean} interfaces, as well as environment-based
+ * property configuration through the {@link EnvironmentAware} interface.
+ * </p>
+ *
+ * <h3>Configuration Properties</h3>
+ * <ul>
+ *     <li>{@value #MAX_SIZE_PROPERTY_NAME}: Sets the maximum number of properties that can be stored in the repository.
+ *         Defaults to {@value #DEFAULT_MAX_SIZE} if not specified.</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Create a new repository instance
+ * ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+ *
+ * // Set the environment to load max size from configuration
+ * ConfigurableEnvironment environment = new StandardEnvironment();
+ * repository.setEnvironment(environment);
+ *
+ * // Initialize the repository (usually done automatically by Spring)
+ * repository.afterPropertiesSet();
+ *
+ * // Add a configuration property
+ * ConfigurationProperty property = new ConfigurationProperty("my.property.name");
+ * property.setValue("exampleValue");
+ * repository.add(property);
+ *
+ * // Retrieve the property
+ * ConfigurationProperty retrieved = repository.get("my.property.name");
+ * System.out.println(retrieved.getValue()); // Output: exampleValue
+ *
+ * // Clean up resources when done
+ * repository.destroy();
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see ConfigurationProperty
@@ -42,9 +80,22 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
 
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "config-property-repository.";
 
-    public static final String MAX_SIZE_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "max-size";
+    private static final String DEFAULT_MAX_SIZE = "99999";
 
-    public static final int DEFAULT_MAX_SIZE_PROPERTY_VALUE = 99999;
+    /**
+     * The default max size of {@link ConfigurationPropertyRepository}
+     */
+    public static final int DEFAULT_MAX_SIZE_PROPERTY_VALUE = parseInt(DEFAULT_MAX_SIZE);
+
+    /**
+     * The max size of {@link ConfigurationPropertyRepository}
+     */
+    @io.microsphere.annotation.ConfigurationProperty(
+            type = int.class,
+            description = "The max size of the repository for ConfigurationProperty instances",
+            defaultValue = DEFAULT_MAX_SIZE
+    )
+    public static final String MAX_SIZE_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "max-size";
 
     private int maxSize = DEFAULT_MAX_SIZE_PROPERTY_VALUE;
 
@@ -132,7 +183,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
 
     @Override
     public void afterPropertiesSet() {
-        this.repository = new ConcurrentHashMap<>(this.maxSize);
+        this.repository = newConcurrentHashMap(this.maxSize);
     }
 
     /**
