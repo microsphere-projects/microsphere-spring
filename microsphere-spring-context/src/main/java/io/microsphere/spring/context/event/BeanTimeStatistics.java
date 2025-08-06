@@ -27,15 +27,41 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
- * Bean Time Statistics
+ * <p>{@code BeanTimeStatistics} is a {@link BeanListener} implementation that tracks and measures the time spent
+ * during various stages of a Spring Bean's lifecycle using a {@link StopWatch} instance.</p>
+ *
+ * <p>This class provides detailed timing information for bean instantiation, initialization, destruction,
+ * and other key events in the Spring context. It is particularly useful for performance analysis and debugging.</p>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <pre>{@code
+ * // Registering BeanTimeStatistics as a listener in a Spring context
+ * AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+ * context.register(BeanTimeStatistics.class);
+ * context.refresh();
+ * }</pre>
+ *
+ * <p>Once registered, it will automatically begin measuring the following bean lifecycle events:</p>
+ *
+ * <ul>
+ *   <li>{@link #onBeanDefinitionReady(String, RootBeanDefinition)} - when a bean definition is ready</li>
+ *   <li>{@link #onBeforeBeanInstantiate(String, RootBeanDefinition)} - before a bean is instantiated</li>
+ *   <li>{@link #onAfterBeanInstantiated(String, RootBeanDefinition, Object)} - after a bean is instantiated</li>
+ *   <li>{@link #onBeforeBeanInitialize(String, Object)} - before a bean is initialized</li>
+ *   <li>{@link #onAfterBeanInitialized(String, Object)} - after a bean is initialized</li>
+ *   <li>{@link #onBeanReady(String, Object)} - when a bean is fully ready for use</li>
+ *   <li>{@link #onBeforeBeanDestroy(String, Object)} - before a bean is destroyed</li>
+ *   <li>{@link #onAfterBeanDestroy(String, Object)} - after a bean is destroyed</li>
+ * </ul>
+ *
+ * <p>The collected timing data can be accessed via the {@link #getStopWatch()} method, which returns a
+ * {@link StopWatch} instance containing all measured times.</p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see EventPublishingBeanInitializer
- * @see EventPublishingBeanBeforeProcessor
- * @see EventPublishingBeanAfterProcessor
- * @see BeanListeners
+ * @see StopWatch
  * @see BeanListener
- * @see BeanListenerAdapter
+ * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
 public class BeanTimeStatistics implements BeanListener, BeanNameAware {
