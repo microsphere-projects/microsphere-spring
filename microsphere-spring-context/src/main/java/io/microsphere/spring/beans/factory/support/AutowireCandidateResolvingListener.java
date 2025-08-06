@@ -40,7 +40,7 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  * </ul>
  *
  * <h3>Example Usage</h3>
- *
+ * <p>
  * Implementing this interface to handle events when a suggested value is resolved:
  * <pre>{@code
  * public class MyAutowireCandidateResolvingListener implements AutowireCandidateResolvingListener {
