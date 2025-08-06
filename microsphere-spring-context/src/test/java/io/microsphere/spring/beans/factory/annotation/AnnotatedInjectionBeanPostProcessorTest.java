@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-        AnnotationInjectedBeanPostProcessorTest.TestConfiguration.class,
+        AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.class,
         AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
