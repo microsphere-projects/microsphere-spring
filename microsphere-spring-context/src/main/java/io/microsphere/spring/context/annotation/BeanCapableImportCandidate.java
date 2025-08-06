@@ -47,7 +47,7 @@ import static io.microsphere.text.FormatUtils.format;
 import static java.lang.Integer.toHexString;
 
 /**
- * The {@link Import @Import} candidate is an instance of {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}
+ * The {@link Import @Import} candidate is an instance of {@link org.springframework.context.annotation.ImportSelector} or {@link ImportBeanDefinitionRegistrar}
  * and not a regular Spring bean, which only invokes {@link BeanClassLoaderAware}, {@link BeanFactoryAware},
  * {@link EnvironmentAware}, and {@link ResourceLoaderAware} contracts in order if they are implemented, thus it will
  * not be {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper) populated} and
@@ -64,6 +64,20 @@ import static java.lang.Integer.toHexString;
  *     <li>{@link #setEnvironment(Environment)}</li>
  *     <li>{@link #setResourceLoader(ResourceLoader)}</li>
  * </ul>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <pre>{@code
+ * public class MyImportRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+ *
+ *     private final Logger logger = getLogger(this.getClass());
+ *
+ *     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+ *         logger.info("Registering beans from custom registrar");
+ *         registry.registerBeanDefinition("myBean", new RootBeanDefinition(MyBean.class));
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper)
