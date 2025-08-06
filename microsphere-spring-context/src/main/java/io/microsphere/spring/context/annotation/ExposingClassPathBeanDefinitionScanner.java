@@ -39,6 +39,21 @@ import static org.springframework.context.annotation.AnnotationConfigUtils.regis
  * {@link ExposingClassPathBeanDefinitionScanner} also supports the features from {@link #getRegistry() BeanDefinitionRegistry}
  * and {@link #getSingletonBeanRegistry() SingletonBeanRegistry}
  *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ *     // Create an instance with a BeanDefinitionRegistry
+ *     ExposingClassPathBeanDefinitionScanner scanner = new ExposingClassPathBeanDefinitionScanner(registry, useDefaultFilters, environment, resourceLoader);
+ *
+ *     // Perform a scan to detect and register beans
+ *     Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan("com.example.package");
+ *
+ *     // Register a custom bean definition
+ *     scanner.registerBeanDefinition("myBean", myBeanDefinition);
+ *
+ *     // Register a singleton instance
+ *     scanner.registerSingleton("mySingleton", new MySingleton());
+ * }</pre>
+ *
  * @see ClassPathBeanDefinitionScanner
  * @see BeanDefinitionRegistry
  * @see SingletonBeanRegistry
