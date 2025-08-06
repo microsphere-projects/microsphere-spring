@@ -32,10 +32,24 @@ import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.
 import static org.springframework.util.Assert.notNull;
 
 /**
- * The event raised when one single {@link PropertySource} is changed
+ * Event raised when a {@link PropertySource} is added, removed, or replaced in the environment's property sources.
+ * This event extends {@link ApplicationContextEvent}, which means it is associated with an {@link ApplicationContext}.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Creating an ADDED event
+ * PropertySourceChangedEvent addedEvent = PropertySourceChangedEvent.added(context, newPropertySource);
+ *
+ * // Creating a REPLACED event
+ * PropertySourceChangedEvent replacedEvent = PropertySourceChangedEvent.replaced(context, newPropertySource, oldPropertySource);
+ *
+ * // Creating a REMOVED event
+ * PropertySourceChangedEvent removedEvent = PropertySourceChangedEvent.removed(context, oldPropertySource);
+ * }</pre>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySource
+ * @see ApplicationContextEvent
  * @since 1.0.0
  */
 public class PropertySourceChangedEvent extends ApplicationContextEvent {
