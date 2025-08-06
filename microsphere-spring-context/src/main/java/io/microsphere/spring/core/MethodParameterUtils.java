@@ -82,7 +82,7 @@ public abstract class MethodParameterUtils implements Utils {
                 return i;
             }
         }
-        throw new IllegalArgumentException("Given parameter does not match any parameter in the declaring executable");
+        throw new IllegalArgumentException("Given parameter [" + parameter + "] does not match any parameter in the declaring executable");
     }
 
     private MethodParameterUtils() {
