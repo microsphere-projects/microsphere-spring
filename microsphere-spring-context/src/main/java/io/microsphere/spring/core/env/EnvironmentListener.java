@@ -50,7 +50,7 @@ public interface EnvironmentListener extends ProfileListener, PropertyResolverLi
     /**
      * Callback after {@link ConfigurableEnvironment#getPropertySources()}
      *
-     * @param environment            {@link ConfigurableEnvironment the underlying ConfigurableEnvironment}
+     * @param environment     {@link ConfigurableEnvironment the underlying ConfigurableEnvironment}
      * @param propertySources {@link MutablePropertySources} was returned by {@link ConfigurableEnvironment#getPropertySources()}
      */
     default void afterGetPropertySources(ConfigurableEnvironment environment, MutablePropertySources propertySources) {
