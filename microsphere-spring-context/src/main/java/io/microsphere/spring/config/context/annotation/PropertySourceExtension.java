@@ -24,15 +24,16 @@ import org.springframework.core.io.support.DefaultPropertySourceFactory;
 import org.springframework.core.io.support.PropertySourceFactory;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Comparator;
 
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
- * A meta-annotation extension for the Spring {@link PropertySource @PropertySource} that has some limitations:
+ * Extension meta-annotation for Spring's {@link PropertySource @PropertySource} to overcome its limitations:
  * <ul>
  *     <li>The {@link PropertySource @PropertySource} annotation can't auto-refresh the {@link PropertySources property sources}</li>
  *     <li>The {@link PropertySource @PropertySource} annotation can't control the order of {@link org.springframework.core.env.PropertySource}</li>
@@ -41,14 +42,107 @@ import java.util.Comparator;
  *     <li>The {@link PropertySource#encoding() PropertySource#encoding()} attribute does not specify the default encoding for the {@link Resource resource}</li>
  * </ul>
  *
+ * <h3>Features:</h3>
+ * <ul>
+ *     <li>Supports auto-refreshing property sources when configurations change</li>
+ *     <li>Allows specifying the order of property sources using:
+ *         <ul>
+ *             <li>{@link #first()} - Place this property source at the top</li>
+ *             <li>{@link #before()} - Place before a specific property source</li>
+ *             <li>{@link #after()} - Place after a specific property source</li>
+ *         </ul>
+ *     </li>
+ *     <li>Supports inheritance via the {@link Inherited @Inherited} annotation</li>
+ *     <li>Resource location wildcards are supported in the {@link #value()} attribute</li>
+ *     <li>Provides control over resource loading behavior with:
+ *         <ul>
+ *             <li>{@link #ignoreResourceNotFound()}</li>
+ *             <li>{@link #encoding()}</li>
+ *             <li>{@link #resourceComparator()}</li>
+ *         </ul>
+ *     </li>
+ *     <li>Customizable property source creation via the {@link #factory()} attribute</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <h4>Basic Usage</h4>
+ * <pre>{@code
+ * // Define a custom annotation using PropertySourceExtension
+ * @Target(ElementType.TYPE)
+ * @Retention(RetentionPolicy.RUNTIME)
+ * @PropertySourceExtension(
+ *     value = "classpath:/my-config/*.properties",
+ *     first = true,
+ *     autoRefreshed = true,
+ *     encoding = "UTF-8",
+ *     ignoreResourceNotFound = true,
+ *     resourceComparator = MyCustomResourceComparator.class
+ * )
+ * public @interface MyCustomPropertySource {
+ * }
+ *
+ * // Use the custom annotation on a configuration class
+ * @MyCustomPropertySource
+ * @Configuration
+ * public class MyConfig {
+ * }
+ * }</pre>
+ *
+ * <h4>Advanced Usage</h4>
+ * <pre>{@code
+ * @Target(TYPE)
+ * @Retention(RUNTIME)
+ * @Inherited
+ * @Documented
+ * @PropertySourceExtension
+ * @Repeatable(ResourcePropertySources.class)
+ * @Import(ResourcePropertySourceLoader.class)
+ * public @interface ResourcePropertySource {
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     String name() default "";
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     boolean autoRefreshed() default false;
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     boolean first() default false;
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     String before() default "";
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     String after() default "";
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     String[] value() default {};
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     Class<? extends Comparator<Resource>> resourceComparator() default DefaultResourceComparator.class;
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     boolean ignoreResourceNotFound() default false;
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     String encoding() default "${file.encoding:UTF-8}";
+ *
+ *     @AliasFor(annotation = PropertySourceExtension.class)
+ *     Class<? extends PropertySourceFactory> factory() default DefaultPropertySourceFactory.class;
+ * }
+ * }</pre>
+ *
+ * <p>This annotation is designed to be used as a meta-annotation for creating custom annotations that extend the functionality
+ * of Spring's built-in {@link PropertySource @PropertySource}. It provides more flexibility and control over how properties
+ * are loaded into the Spring environment.
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySource
+ * @see ResourcePropertySource
  * @see org.springframework.core.env.PropertySource
  * @see PropertySourceExtensionLoader
  * @since 1.0.0
  */
-@Target(ElementType.ANNOTATION_TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(ANNOTATION_TYPE)
+@Retention(RUNTIME)
 @Inherited
 @Documented
 public @interface PropertySourceExtension {
