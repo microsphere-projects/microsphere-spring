@@ -16,15 +16,13 @@
  */
 package io.microsphere.spring.beans.factory.config;
 
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.ResolvableType;
@@ -32,10 +30,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.doGetResolvableType;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.getInstanceSupplier;
@@ -49,7 +47,9 @@ import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.set
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -81,7 +81,7 @@ public class BeanDefinitionUtilsTest {
     private AbstractBeanDefinition beanDefinition;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.beanDefinition = genericBeanDefinition(User.class);
     }
 
@@ -111,7 +111,8 @@ public class BeanDefinitionUtilsTest {
 
     @Test
     public void testResolveBeanType() {
-        testInSpringContainer((context, beanFactory) -> {
+        testInSpringContainer((context) -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
             assertEquals(User.class, resolveBeanType(beanDefinition, context.getClassLoader()));
             assertEquals(User.class, resolveBeanType(beanDefinition));
@@ -121,7 +122,7 @@ public class BeanDefinitionUtilsTest {
 
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
             assertEquals(Config.class, resolveBeanType(beanDefinition));
-        });
+        }, Config.class);
     }
 
     @Test
@@ -133,11 +134,26 @@ public class BeanDefinitionUtilsTest {
 
     @Test
     public void testFindInfrastructureBeanNames() {
-        testInSpringContainer((context, beanFactory) -> {
+        testInSpringContainer((context) -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             Set<String> infrastructureBeanNames = findInfrastructureBeanNames(beanFactory);
             assertTrue(infrastructureBeanNames.contains(USER_BEAN_NAME));
             assertFalse(infrastructureBeanNames.contains(USERS_BEAN_NAME));
-        });
+        }, Config.class);
+    }
+
+    @Test
+    public void testFindBeanNames() {
+        testInSpringContainer((context, beanFactory) -> {
+            Set<String> beanNames = findBeanNames(context.getBeanFactory());
+            assertTrue(beanNames.contains(USER_BEAN_NAME));
+            assertTrue(beanNames.contains(USERS_BEAN_NAME));
+        }, Config.class);
+    }
+
+    @Test
+    public void testFindBeanNamesOnNullBeanFactory() {
+        assertSame(emptySet(), findBeanNames(null));
     }
 
     @Test
@@ -163,7 +179,8 @@ public class BeanDefinitionUtilsTest {
 
     @Test
     public void testGetResolvableTypeWithRootDefinition() {
-        testInSpringContainer((context, beanFactory) -> {
+        testInSpringContainer((context) -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
             ResolvableType resolvableType = getResolvableType(beanDefinition);
             assertEquals(User.class, resolvableType.getRawClass());
@@ -176,7 +193,7 @@ public class BeanDefinitionUtilsTest {
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
             resolvableType = getResolvableType(beanDefinition);
             assertEquals(Config.class, resolvableType.getRawClass());
-        });
+        }, Config.class);
     }
 
 
@@ -236,7 +253,8 @@ public class BeanDefinitionUtilsTest {
 
     @Test
     public void testDoGetResolvableType() {
-        testInSpringContainer((context, beanFactory) -> {
+        testInSpringContainer((context) -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
             ResolvableType resolvableType = doGetResolvableType(beanDefinition);
             assertEquals(User.class, resolvableType.resolve());
@@ -249,7 +267,7 @@ public class BeanDefinitionUtilsTest {
             beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(BEAN_NAME);
             resolvableType = doGetResolvableType(beanDefinition);
             assertEquals(Config.class, resolvableType.resolve());
-        });
+        }, Config.class);
     }
 
     private void assertBeanDefinition(AbstractBeanDefinition beanDefinition, int role, Object... constructorArguments) {
@@ -276,12 +294,5 @@ public class BeanDefinitionUtilsTest {
         public List<User> users() {
             return asList(new User());
         }
-    }
-
-
-    private void testInSpringContainer(BiConsumer<ConfigurableApplicationContext, ConfigurableListableBeanFactory> contextConsumer) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
-        contextConsumer.accept(context, context.getBeanFactory());
-        context.close();
     }
 }

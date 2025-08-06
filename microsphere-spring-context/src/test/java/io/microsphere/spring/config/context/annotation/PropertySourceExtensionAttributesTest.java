@@ -15,7 +15,6 @@ import static io.microsphere.spring.config.context.annotation.PropertySourceExte
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.StringUtils.EMPTY_STRING;
-import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

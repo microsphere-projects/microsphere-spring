@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener;
 import io.microsphere.spring.core.env.PropertyResolverListener;
 import org.springframework.beans.BeansException;
@@ -31,7 +32,56 @@ import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_PREFIX;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_SUFFIX;
 
 /**
- * The listener class for collecting the {@link ConfigurationProperty}
+ * A listener implementation that collects and manages configuration properties during property resolution and autowiring processes.
+ *
+ * <p>{@link CollectingConfigurationPropertyListener} integrates with Spring's property resolution and autowire candidate resolving mechanisms to:
+ * <ul>
+ *     <li>Capture configuration properties as they are resolved by a {@link ConfigurablePropertyResolver}</li>
+ *     <li>Track metadata such as the property name, target type, value, default value, and whether it's required</li>
+ *     <li>Register itself as a Spring bean for integration into the application context lifecycle</li>
+ * </ul>
+ *
+ * <h3>Property Resolution Example</h3>
+ * When a property is resolved via a {@link ConfigurablePropertyResolver}, this listener records its details:
+ *
+ * <pre>{@code
+ * @Component
+ * public class MyPropertyResolverListener implements PropertyResolverListener {
+ *     @Override
+ *     public void afterGetProperty(ConfigurablePropertyResolver resolver, String name, Class<?> targetType, Object value, Object defaultValue) {
+ *         System.out.println("Captured property: " + name);
+ *         System.out.println("Target type: " + targetType.getName());
+ *         System.out.println("Value: " + value);
+ *         System.out.println("Default Value: " + defaultValue);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h3>Autowire Candidate Resolving Example</h3>
+ * This listener also participates in autowire candidate resolution events:
+ *
+ * <pre>{@code
+ * @Component
+ * public class MyAutowireCandidateResolvingListener implements AutowireCandidateResolvingListener {
+ *     @Override
+ *     public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
+ *         System.out.println("Suggested value for dependency " + descriptor + ": " + suggestedValue);
+ *     }
+ *
+ *     @Override
+ *     public void lazyProxyResolved(DependencyDescriptor descriptor, String beanName, Object proxy) {
+ *         System.out.println("Lazy proxy created for " + descriptor + " in bean " + beanName);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h3>Bean Registration</h3>
+ * This class is typically registered as a Spring bean using:
+ *
+ * <pre>{@code
+ * BeanDefinitionRegistry registry = ...;
+ * registerBean(registry, CollectingConfigurationPropertyListener.BEAN_NAME, new CollectingConfigurationPropertyListener());
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see PropertyResolverListener

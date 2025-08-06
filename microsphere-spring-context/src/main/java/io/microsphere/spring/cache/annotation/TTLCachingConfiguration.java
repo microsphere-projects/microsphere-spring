@@ -19,6 +19,8 @@ package io.microsphere.spring.cache.annotation;
 import io.microsphere.spring.cache.intereptor.TTLCacheResolver;
 import org.springframework.context.annotation.Bean;
 
+import static io.microsphere.spring.cache.intereptor.TTLCacheResolver.BEAN_NAME;
+
 /**
  * TTL Caching Configuration
  *
@@ -27,7 +29,7 @@ import org.springframework.context.annotation.Bean;
  */
 class TTLCachingConfiguration {
 
-    @Bean(name = TTLCacheResolver.BEAN_NAME)
+    @Bean(name = BEAN_NAME)
     public TTLCacheResolver ttlCacheResolver() {
         return new TTLCacheResolver();
     }

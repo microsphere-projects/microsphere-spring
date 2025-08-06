@@ -1,5 +1,6 @@
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironment;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;
 import org.junit.Test;
@@ -86,7 +87,7 @@ public class CollectingConfigurationPropertyListenerTest {
         assertEquals("test-name", property.getName());
         assertEquals("test-value", property.getValue());
         assertEquals(required, property.isRequired());
-        assertEquals(String.class, property.getType());
+        assertEquals(String.class.getName(), property.getType());
         assertNull(property.getDefaultValue());
     }
 }

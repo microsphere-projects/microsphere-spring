@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
@@ -25,15 +24,23 @@ import java.util.List;
 import static io.microsphere.spring.web.rule.WebRequestParamExpression.parseExpressions;
 
 /**
- * {@link NativeWebRequest WebRequest} Parameters {@link WebRequestRule}
- * <p>
- * A logical conjunction ({@code ' && '}) request condition that matches a request against
- * a set parameter expressions with syntax defined in {@link RequestMapping#params()}.
+ * A {@link WebRequestRule} that matches requests based on parameter expressions.
  *
- * @author Arjen Poutsma
- * @author Rossen Stoyanchev
+ * <p>This class extends {@link AbstractWebRequestRule} with support for
+ * {@link WebRequestParamExpression} to define conditions on request parameters.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Create a rule that matches requests with the parameter "foo" set to "bar"
+ * WebRequestParamsRule rule = new WebRequestParamsRule("foo=bar");
+ *
+ * // Create a rule that matches requests with both "foo=bar" and "baz"
+ * WebRequestParamsRule rule = new WebRequestParamsRule("foo=bar", "baz");
+ * }</pre>
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see WebRequestRule
+ * @see WebRequestParamExpression
+ * @see AbstractWebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.ParamsRequestCondition
  * @see org.springframework.web.reactive.result.condition.ParamsRequestCondition
  * @since 1.0.0

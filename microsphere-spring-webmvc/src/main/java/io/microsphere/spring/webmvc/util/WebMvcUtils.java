@@ -29,7 +29,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.spring.web.servlet.util.WebUtils.findServletRegistrations;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ClassLoaderUtils.isPresent;
 import static java.util.Arrays.asList;
@@ -355,7 +355,7 @@ public abstract class WebMvcUtils {
 
         String[] existedParameterValues = hasLength(existedParameterValue) ?
                 existedParameterValue.split(INIT_PARAM_DELIMITERS) :
-                new String[0];
+                EMPTY_STRING_ARRAY;
 
         List<String> parameterValuesList = new ArrayList<String>();
 

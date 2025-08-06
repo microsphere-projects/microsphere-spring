@@ -2,8 +2,8 @@ io.microsphere.spring.test.Bean=\
 io.microsphere.spring.test.TestBean,\
 io.microsphere.spring.test.TestBean2
 
-io.microsphere.spring.util.User=\
-io.microsphere.spring.util.User
+io.microsphere.spring.test.domain.User=\
+io.microsphere.spring.test.domain.User
 
 io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
 io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\

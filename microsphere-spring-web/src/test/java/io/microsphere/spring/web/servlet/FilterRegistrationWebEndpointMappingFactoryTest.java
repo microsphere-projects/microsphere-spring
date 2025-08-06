@@ -48,7 +48,7 @@
 //    private FilterRegistration.Dynamic registration;
 //
 //    @Before
-//    public void init() throws ServletException {
+//    public void setUp() throws ServletException {
 //        filterName = "test-filter";
 //        url = "/test-filter";
 //        this.factory = new FilterRegistrationWebEndpointMappingFactory(size())

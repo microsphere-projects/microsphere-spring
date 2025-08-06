@@ -25,7 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.parseMediaTypes;
 import static org.springframework.util.StringUtils.hasText;
@@ -75,7 +75,7 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
 
     public static List<ProduceMediaTypeExpression> parseExpressions(String[] produces, @Nullable String[] headers) {
         Set<ProduceMediaTypeExpression> result = null;
-        if (!isEmpty(headers)) {
+        if (isNotEmpty(headers)) {
             for (String header : headers) {
                 WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
                 if (ACCEPT.equalsIgnoreCase(expression.name) && expression.value != null) {
@@ -87,7 +87,7 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
                 }
             }
         }
-        if (!isEmpty(produces)) {
+        if (isNotEmpty(produces)) {
             for (String produce : produces) {
                 result = (result != null ? result : new LinkedHashSet<>());
                 result.add(new ProduceMediaTypeExpression(produce));

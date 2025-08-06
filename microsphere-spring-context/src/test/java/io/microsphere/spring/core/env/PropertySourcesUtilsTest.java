@@ -44,7 +44,7 @@ import static org.springframework.core.convert.support.DefaultConversionService.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySourcesUtils
- * @since 2017.01.13
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public class PropertySourcesUtilsTest {

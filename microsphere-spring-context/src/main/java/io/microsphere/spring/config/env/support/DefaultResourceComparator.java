@@ -23,7 +23,15 @@ import org.springframework.core.io.Resource;
 import java.util.Comparator;
 
 /**
- * The default {@link Comparator} for {@link Resource} comparing {@link Resource#getFilename()}
+ * The default {@link Comparator} implementation for comparing {@link Resource} objects based on their filenames.
+ *
+ * <p>It uses a singleton instance to ensure consistent comparison logic across the application.</p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * List<Resource> resources = getResources();
+ * resources.sort(new DefaultResourceComparator());
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySource#resourceComparator()

@@ -74,6 +74,30 @@ import static org.springframework.util.StringUtils.hasText;
  *     </li>
  * </ol>
  *
+ * <h3>Example Usage</h3>
+ *
+ * <pre>{@code
+ * public class MyAnnotationBeanDefinitionRegistryPostProcessor extends AnnotationBeanDefinitionRegistryPostProcessor {
+ *
+ *     public MyAnnotationBeanDefinitionRegistryPostProcessor() {
+ *         super(MyAnnotation.class, "com.example.package");
+ *     }
+ *
+ *     protected Map<String, AnnotatedBeanDefinition> registerPrimaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+ *                                                                                   String[] basePackages) {
+ *         // Custom logic to register primary bean definitions
+ *         return super.registerPrimaryBeanDefinitions(scanner, basePackages);
+ *     }
+ *
+ *     @Override
+ *     protected void registerSecondaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+ *                                                    Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
+ *                                                    String[] basePackages) {
+ *         // Logic to register secondary bean definitions based on primary ones
+ *     }
+ * }
+ * }</pre>
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */

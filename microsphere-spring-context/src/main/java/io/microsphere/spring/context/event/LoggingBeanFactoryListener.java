@@ -24,7 +24,34 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
- * Logging {@link BeanFactoryListener}
+ * A {@link BeanFactoryListener} implementation that provides logging capabilities for Spring BeanFactory events.
+ * <p>
+ * This class logs the key lifecycle events of a Spring BeanFactory, such as when a {@link BeanDefinitionRegistry} is ready,
+ * when a {@link ConfigurableListableBeanFactory} is initialized, and when the BeanFactory configuration is frozen.
+ * The logging is done using the {@link Logger} interface provided by the MicroSphere logging framework.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <pre>{@code
+ * // Register the LoggingBeanFactoryListener with the Spring context
+ * context.addBeanFactoryListener(new LoggingBeanFactoryListener());
+ * }</pre>
+ *
+ * <p>
+ * When the BeanFactory events are triggered, log messages will be generated similar to the following:
+ * </p>
+ *
+ * <pre>
+ * INFO  onBeanDefinitionRegistryReady - BeanDefinitionRegistry : org.springframework.beans.factory.support.DefaultListableBeanFactory@1f9e655
+ * INFO  onBeanFactoryReady - BeanFactory : org.springframework.beans.factory.support.DefaultListableBeanFactory@1f9e655
+ * INFO  onBeanFactoryConfigurationFrozen - BeanFactory : org.springframework.beans.factory.support.DefaultListableBeanFactory@1f9e655
+ * </pre>
+ *
+ * <p>
+ * These logs provide visibility into the internal state of the Spring container during startup and can be useful for debugging
+ * and monitoring purposes.
+ * </p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanInitializer

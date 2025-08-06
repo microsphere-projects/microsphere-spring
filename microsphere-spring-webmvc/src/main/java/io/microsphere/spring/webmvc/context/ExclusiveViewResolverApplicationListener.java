@@ -7,7 +7,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -20,26 +19,25 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * @see ViewResolver
  * @see ApplicationListener
  * @see ContextRefreshedEvent
- * @since 2017.03.23
+ * @since 1.0.0
  */
 public class ExclusiveViewResolverApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Class<ViewResolver> VIEW_RESOLVER_CLASS = ViewResolver.class;
 
-    private final String exclusiveViewResolverBeanName;
+    private String exclusiveViewResolverBeanName;
 
-    public ExclusiveViewResolverApplicationListener(String exclusiveViewResolverBeanName) {
+    public ExclusiveViewResolverApplicationListener() {
+    }
+
+    public void setExclusiveViewResolverBeanName(String exclusiveViewResolverBeanName) {
         this.exclusiveViewResolverBeanName = exclusiveViewResolverBeanName;
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-
         ApplicationContext applicationContext = event.getApplicationContext();
-
         configureExclusiveViewResolver(applicationContext);
-
-
     }
 
     /**
@@ -48,11 +46,8 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
      * @param applicationContext {@link ApplicationContext}
      */
     private void configureExclusiveViewResolver(ApplicationContext applicationContext) {
-
         Map<String, ViewResolver> viewResolversMap = beansOfTypeIncludingAncestors(applicationContext, VIEW_RESOLVER_CLASS);
-
         int size = viewResolversMap.size();
-
         if (size < 2) {
             return;
         }
@@ -60,9 +55,7 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
         ViewResolver exclusiveViewResolver = viewResolversMap.get(exclusiveViewResolverBeanName);
 
         if (exclusiveViewResolver == null) {
-
             throw new NoSuchBeanDefinitionException(VIEW_RESOLVER_CLASS, exclusiveViewResolverBeanName);
-
         }
 
         ContentNegotiatingViewResolver contentNegotiatingViewResolver =

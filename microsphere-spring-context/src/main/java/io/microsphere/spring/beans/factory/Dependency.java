@@ -27,7 +27,6 @@ import static io.microsphere.collection.CollectionUtils.size;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Lists.ofList;
-import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Collections.emptyList;
 import static org.springframework.util.Assert.hasText;
 
@@ -41,25 +40,15 @@ public class Dependency {
 
     final String beanName;
 
-    List<Dependency> upstream;
-
-    List<Dependency> downstream;
-
     @Nullable
-    @Deprecated
     Dependency parent = null;
 
-    @Deprecated
     final List<Dependency> children = newLinkedList();
 
     boolean duplicated = false;
 
     protected Dependency(String beanName) {
         this(beanName, null, emptyList());
-    }
-
-    protected Dependency(String beanName, Dependency parent, String... dependentBeanNames) {
-        this(beanName, parent, createList(dependentBeanNames));
     }
 
     protected Dependency(String beanName, Dependency parent, Collection<Dependency> children) {
@@ -91,7 +80,7 @@ public class Dependency {
     }
 
     public Dependency addChildren(String... childBeanNames) {
-        return this.doAddChildren(createList(childBeanNames));
+        return this.addChildren(ofList(childBeanNames));
     }
 
     public Dependency addChildren(Iterable<String> childBeanNames) {
@@ -128,11 +117,6 @@ public class Dependency {
         return this;
     }
 
-    protected Dependency doAddChildren(Dependency... children) {
-        this.doAddChildren(ofList(children));
-        return this;
-    }
-
     protected Dependency doAddChildren(Iterable<Dependency> children) {
         for (Dependency child : children) {
             doAddChild(child);
@@ -142,10 +126,6 @@ public class Dependency {
 
     public static Dependency create(String beanName) {
         return new Dependency(beanName);
-    }
-
-    public static Dependency create(String beanName, Dependency parent, String... dependentBeanNames) {
-        return new Dependency(beanName, parent, dependentBeanNames);
     }
 
     private static List<Dependency> createList(Iterable<String> beanNames) {
@@ -158,18 +138,6 @@ public class Dependency {
         Iterator<String> iterator = beanNames.iterator();
         while (iterator.hasNext()) {
             dependencies.add(create(iterator.next()));
-        }
-        return dependencies;
-    }
-
-    private static List<Dependency> createList(String[] beanNames) {
-        int length = length(beanNames);
-        if (length < 1) {
-            return emptyList();
-        }
-        List<Dependency> dependencies = newArrayList(length);
-        for (int i = 0; i < length; i++) {
-            dependencies.add(create(beanNames[i]));
         }
         return dependencies;
     }

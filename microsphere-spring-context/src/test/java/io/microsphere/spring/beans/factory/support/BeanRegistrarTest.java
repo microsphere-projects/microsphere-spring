@@ -19,7 +19,7 @@ package io.microsphere.spring.beans.factory.support;
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.test.TestBean2;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class BeanRegistrarTest {
     private DefaultListableBeanFactory beanFactory;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.beanFactory = new DefaultListableBeanFactory();
     }
 
@@ -69,14 +69,14 @@ public class BeanRegistrarTest {
 
     @Test
     public void testRegisterInfrastructureBean() {
-        assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.util.User#0");
-        assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.util.User#0", "io.microsphere.spring.util.User#1");
+        assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.test.domain.User#0");
+        assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
     }
 
     @Test
     public void testRegisterBeanDefinition() {
-        assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.util.User#0");
-        assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.util.User#0", "io.microsphere.spring.util.User#1");
+        assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.test.domain.User#0");
+        assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
     }
 
     @Test

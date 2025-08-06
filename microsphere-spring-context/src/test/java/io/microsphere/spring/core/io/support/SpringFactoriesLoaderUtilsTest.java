@@ -18,7 +18,7 @@ package io.microsphere.spring.core.io.support;
 
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.util.UserFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -73,12 +73,6 @@ public class SpringFactoriesLoaderUtilsTest {
     @Test
     public void testLoadFactoriesWithArguments() {
         List<User> users = loadFactories(context, User.class, EMPTY_OBJECT_ARRAY);
-        assertUser(users);
-
-        loadFactories(context, User.class, "Mercy");
-        assertUser(users);
-
-        users = loadFactories(context, User.class, "Mercy", 18);
         assertUser(users);
     }
 

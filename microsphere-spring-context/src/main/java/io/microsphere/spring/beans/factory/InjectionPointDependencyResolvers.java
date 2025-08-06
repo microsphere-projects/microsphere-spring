@@ -28,7 +28,30 @@ import java.util.Set;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 
 /**
- * Composite {@link InjectionPointDependencyResolver}
+ * A composite implementation of the {@link InjectionPointDependencyResolver} interface that delegates to
+ * multiple resolvers. It combines all available resolvers in the given {@link Iterable} and applies them one by one
+ * when resolving dependencies for various injection points such as fields, methods, constructors, and parameters.
+ *
+ * <h3>Example Usage</h3> Suppose you have two custom resolvers: 
+ * {@code CustomFieldResolver} and {@code CustomMethodResolver}.
+ * You can compose them using this class as follows:</p>
+ *
+ * <pre>
+ * Iterable<InjectionPointDependencyResolver> resolvers = Arrays.asList(
+ *     new CustomFieldResolver(), 
+ *     new CustomMethodResolver()
+ * );
+ * InjectionPointDependencyResolver resolver = new InjectionPointDependencyResolvers(resolvers);
+ * </pre>
+ *
+ * <p>You can then use the resolver to resolve dependencies at different injection points:</p>
+ *
+ * <ul>
+ *   <li>{@link #resolve(Field, ConfigurableListableBeanFactory, Set)}</li>
+ *   <li>{@link #resolve(Method, ConfigurableListableBeanFactory, Set)}</li>
+ *   <li>{@link #resolve(Constructor, ConfigurableListableBeanFactory, Set)}</li>
+ *   <li>{@link #resolve(Parameter, ConfigurableListableBeanFactory, Set)}</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0

@@ -16,12 +16,14 @@
 
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import static io.microsphere.constants.SymbolConstants.EQUAL_CHAR;
 import static io.microsphere.constants.SymbolConstants.EXCLAMATION;
 import static io.microsphere.constants.SymbolConstants.EXCLAMATION_CHAR;
+import static io.microsphere.util.Assert.assertNotNull;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
@@ -32,9 +34,14 @@ import static org.springframework.util.ObjectUtils.nullSafeEquals;
  * @param <T> the value type
  * @author Rossen Stoyanchev
  * @author Arjen Poutsma
- * @since 3.1
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since Spring Framework 3.1
  */
 public abstract class AbstractNameValueExpression<T> implements NameValueExpression<T> {
+
+    protected final String expression;
+
+    protected final boolean caseSensitiveName;
 
     protected final String name;
 
@@ -43,7 +50,14 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
 
     protected final boolean isNegated;
 
-    protected AbstractNameValueExpression(String expression) {
+    protected AbstractNameValueExpression(@Nonnull String expression) {
+        this(expression, false);
+    }
+
+    protected AbstractNameValueExpression(@Nonnull String expression, boolean caseSensitiveName) {
+        assertNotNull(expression, () -> "The 'expression' argument must not be null");
+        this.expression = expression;
+        this.caseSensitiveName = caseSensitiveName;
         int separator = expression.indexOf(EQUAL_CHAR);
         if (separator == -1) {
             this.isNegated = expression.startsWith(EXCLAMATION);
@@ -56,6 +70,23 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
         }
     }
 
+    /**
+     * Get the expression
+     *
+     * @return non-null
+     */
+    protected final String getExpression() {
+        return this.expression;
+    }
+
+    /**
+     * Get the case-sensitivity of the name
+     *
+     * @return true if case-sensitive, false otherwise
+     */
+    protected final boolean isCaseSensitiveName() {
+        return this.caseSensitiveName;
+    }
 
     @Override
     public String getName() {
@@ -82,8 +113,6 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
         }
         return this.isNegated != isMatch;
     }
-
-    protected abstract boolean isCaseSensitiveName();
 
     protected abstract T parseValue(String valueExpression);
 

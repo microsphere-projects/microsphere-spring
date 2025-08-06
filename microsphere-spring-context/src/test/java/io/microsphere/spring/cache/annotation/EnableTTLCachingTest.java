@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -56,7 +56,7 @@ public class EnableTTLCachingTest {
     }
 
     static class TestData {
-        @Cacheable(cacheNames = "test")
+        @TTLCacheable(cacheNames = "test", timeUnit = MINUTES, expire = 1)
         public List<String> getNames() {
             return Collections.singletonList("a");
         }

@@ -34,6 +34,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -92,7 +93,7 @@ public class BeanCapableImportCandidateTest {
 
         @Override
         public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-            return new String[0];
+            return EMPTY_STRING_ARRAY;
         }
     }
 

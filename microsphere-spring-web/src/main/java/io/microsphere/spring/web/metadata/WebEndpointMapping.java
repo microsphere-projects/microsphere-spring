@@ -18,6 +18,7 @@ package io.microsphere.spring.web.metadata;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import io.microsphere.json.JSONUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 
@@ -28,13 +29,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
-import static io.microsphere.constants.SymbolConstants.COLON_CHAR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
-import static io.microsphere.constants.SymbolConstants.COMMA_CHAR;
-import static io.microsphere.constants.SymbolConstants.DOUBLE_QUOTATION_CHAR;
+import static io.microsphere.constants.SymbolConstants.LEFT_CURLY_BRACE;
+import static io.microsphere.constants.SymbolConstants.RIGHT_CURLY_BRACE;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.asArray;
-import static io.microsphere.util.ArrayUtils.size;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -450,19 +450,6 @@ public class WebEndpointMapping<E> {
         return (V) attributes.get(name);
     }
 
-    public String toJSON() {
-        StringBuilder stringBuilder = new StringBuilder("{").append(LINE_SEPARATOR);
-        append(stringBuilder, "id", this.id);
-        append(stringBuilder, "patterns", this.patterns, COMMA, LINE_SEPARATOR);
-        append(stringBuilder, "methods", this.methods, COMMA, LINE_SEPARATOR);
-        append(stringBuilder, "params", this.params, COMMA, LINE_SEPARATOR);
-        append(stringBuilder, "headers", this.headers, COMMA, LINE_SEPARATOR);
-        append(stringBuilder, "consumes", this.consumes, COMMA, LINE_SEPARATOR);
-        append(stringBuilder, "produces", this.produces, COMMA, LINE_SEPARATOR);
-        stringBuilder.append(LINE_SEPARATOR).append("}");
-        return stringBuilder.toString();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -508,56 +495,39 @@ public class WebEndpointMapping<E> {
         sb.append(", endpoint=").append(endpoint);
         sb.append(", id=").append(id);
         sb.append(", source=").append(source);
-        sb.append(", patterns=").append(Arrays.toString(patterns));
-        sb.append(", methods=").append(Arrays.toString(methods));
-        sb.append(", params=").append(Arrays.toString(params));
-        sb.append(", headers=").append(Arrays.toString(headers));
-        sb.append(", consumes=").append(Arrays.toString(consumes));
-        sb.append(", produces=").append(Arrays.toString(produces));
+        sb.append(", patterns=").append(arrayToString(patterns));
+        sb.append(", methods=").append(arrayToString(methods));
+        sb.append(", params=").append(arrayToString(params));
+        sb.append(", headers=").append(arrayToString(headers));
+        sb.append(", consumes=").append(arrayToString(consumes));
+        sb.append(", produces=").append(arrayToString(produces));
         sb.append('}');
         return sb.toString();
     }
 
+    public String toJSON() {
+        StringBuilder stringBuilder = new StringBuilder(LEFT_CURLY_BRACE).append(LINE_SEPARATOR);
+        append(stringBuilder, "id", this.id);
+        append(stringBuilder, "patterns", this.patterns, COMMA, LINE_SEPARATOR);
+        append(stringBuilder, "methods", this.methods, COMMA, LINE_SEPARATOR);
+        append(stringBuilder, "params", this.params, COMMA, LINE_SEPARATOR);
+        append(stringBuilder, "headers", this.headers, COMMA, LINE_SEPARATOR);
+        append(stringBuilder, "consumes", this.consumes, COMMA, LINE_SEPARATOR);
+        append(stringBuilder, "produces", this.produces, COMMA, LINE_SEPARATOR);
+        stringBuilder.append(LINE_SEPARATOR).append(RIGHT_CURLY_BRACE);
+        return stringBuilder.toString();
+    }
+
     private void append(StringBuilder appendable, String name, int value) {
-        append(appendable, name);
-        appendable.append(COLON_CHAR)
-                .append(value);
+        JSONUtils.append(appendable, name, value);
     }
 
     private void append(StringBuilder appendable, String name, String[] values, String... prefixes) {
-
-        int size = size(values);
-        if (size < 1) {
+        if (isEmpty(values)) {
             return;
         }
-
         append(prefixes, appendable);
-
-        append(appendable, name);
-
-        appendable.append(COLON_CHAR);
-
-        appendable.append('[');
-
-        for (int i = 0; i < size; i++) {
-            String value = values[i];
-            append(appendable, value);
-            if (i != size - 1) {
-                appendable.append(COMMA_CHAR);
-            }
-        }
-
-        appendable.append(']');
-
-    }
-
-    private void append(StringBuilder appendable, String appended) {
-        if (appended == null) {
-            return;
-        }
-        appendable.append(DOUBLE_QUOTATION_CHAR)
-                .append(appended)
-                .append(DOUBLE_QUOTATION_CHAR);
+        JSONUtils.append(appendable, name, values);
     }
 
     private void append(String[] values, StringBuilder appendable) {

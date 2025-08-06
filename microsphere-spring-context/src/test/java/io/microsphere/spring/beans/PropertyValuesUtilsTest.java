@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertyValuesUtils
- * @since 2017.01.13
+ * @since 1.0.0
  */
 public class PropertyValuesUtilsTest {
 

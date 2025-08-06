@@ -18,7 +18,6 @@ package io.microsphere.spring.web.rule;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;

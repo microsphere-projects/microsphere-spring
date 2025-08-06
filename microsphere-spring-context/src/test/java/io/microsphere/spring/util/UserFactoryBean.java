@@ -1,5 +1,6 @@
 package io.microsphere.spring.util;
 
+import io.microsphere.spring.test.domain.User;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -7,7 +8,7 @@ import org.springframework.beans.factory.FactoryBean;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see User
- * @since 2017.03.31
+ * @since 1.0.0
  */
 public class UserFactoryBean implements FactoryBean<User> {
 

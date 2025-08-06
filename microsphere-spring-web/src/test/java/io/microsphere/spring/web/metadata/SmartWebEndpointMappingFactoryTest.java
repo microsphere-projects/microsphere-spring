@@ -50,7 +50,7 @@ public class SmartWebEndpointMappingFactoryTest {
     private String fullJson;
 
     @Before
-    public void init() throws Throwable {
+    public void setUp() throws Throwable {
         this.fullJson = copyToString(this.fullJsonResource.getInputStream(), UTF_8);
     }
 

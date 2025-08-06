@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.spring.test.domain.User;
+
 /**
  * User Factory
  *
@@ -35,6 +37,9 @@ public class UserFactory {
     }
 
     public User createUser() {
-        return new User(name, age);
+        User user = new User();
+        user.setName(name);
+        user.setAge(age);
+        return user;
     }
 }
