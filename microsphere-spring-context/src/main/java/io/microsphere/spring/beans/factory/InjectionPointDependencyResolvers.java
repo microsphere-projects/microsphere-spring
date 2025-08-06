@@ -32,13 +32,13 @@ import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.l
  * multiple resolvers. It combines all available resolvers in the given {@link Iterable} and applies them one by one
  * when resolving dependencies for various injection points such as fields, methods, constructors, and parameters.
  *
- * <h3>Example Usage</h3> Suppose you have two custom resolvers: 
+ * <h3>Example Usage</h3> Suppose you have two custom resolvers:
  * {@code CustomFieldResolver} and {@code CustomMethodResolver}.
  * You can compose them using this class as follows:</p>
  *
  * <pre>
  * Iterable<InjectionPointDependencyResolver> resolvers = Arrays.asList(
- *     new CustomFieldResolver(), 
+ *     new CustomFieldResolver(),
  *     new CustomMethodResolver()
  * );
  * InjectionPointDependencyResolver resolver = new InjectionPointDependencyResolvers(resolvers);
