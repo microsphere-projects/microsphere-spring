@@ -39,10 +39,32 @@ import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * Abstract {@link ImportSelector} class to load the {@link PropertySource PropertySource}
- * when the {@link Configuration configuration} annotated the specified annotation
+ * Abstract base class for {@link ImportSelector} implementations that load a {@link PropertySource}
+ * when a {@link Configuration} class is annotated with a specific annotation.
  *
- * @param <A> The type of {@link Annotation}
+ * <p>This class provides a foundation for conditionally adding property sources to the Spring environment
+ * based on annotations present on configuration classes. Subclasses must implement the
+ * {@link #loadPropertySource(AnnotationAttributes, AnnotationMetadata, String, MutablePropertySources)} method
+ * to define how the property source is loaded.
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <pre>{@code
+ * public class MyPropertySourceLoader extends AnnotatedPropertySourceLoader<MyPropertySource> {
+ *
+ *     @Override
+ *     protected void loadPropertySource(AnnotationAttributes attributes,
+ *                                       AnnotationMetadata metadata,
+ *                                       String propertySourceName,
+ *                                       MutablePropertySources propertySources) throws Throwable {
+ *         // Create and add a custom PropertySource
+ *         PropertySource<?> propertySource = new CustomPropertySource(propertySourceName);
+ *         propertySources.addLast(propertySource);
+ *     }
+ * }
+ * }</pre>
+ *
+ * @param <A> The type of annotation that triggers property source loading
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySourceLoader
  * @see PropertySourceExtensionLoader
