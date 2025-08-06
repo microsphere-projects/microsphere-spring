@@ -81,7 +81,7 @@ public class ResolvableDependencyTypeFilterTest {
 
     @Test
     public void testAcceptOnNPE() {
-        assertThrows(NullPointerException.class,() -> filter.accept(null));
+        assertThrows(NullPointerException.class, () -> filter.accept(null));
     }
 
     @Test
