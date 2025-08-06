@@ -1,5 +1,6 @@
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironment;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;
 import org.junit.jupiter.api.Test;
