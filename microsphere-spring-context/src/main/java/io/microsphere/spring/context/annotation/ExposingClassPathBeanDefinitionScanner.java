@@ -38,7 +38,7 @@ import static org.springframework.context.annotation.AnnotationConfigUtils.regis
  * <p>
  * {@link ExposingClassPathBeanDefinitionScanner} also supports the features from {@link #getRegistry() BeanDefinitionRegistry}
  * and {@link #getSingletonBeanRegistry() SingletonBeanRegistry}
- * 
+ *
  * <h3>Example Usage</h3>
  * <pre>{@code
  *     // Create an instance with a BeanDefinitionRegistry
