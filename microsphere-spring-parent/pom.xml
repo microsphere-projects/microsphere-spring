@@ -167,7 +167,9 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <compilerArgument>-proc:full</compilerArgument>
+                    <compilerArgs>
+                        <compilerArg>-proc:full</compilerArg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
