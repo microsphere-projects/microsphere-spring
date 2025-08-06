@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.EnvironmentAware;
@@ -24,8 +25,6 @@ import org.springframework.core.env.Environment;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-
-import io.microsphere.beans.ConfigurationProperty;
 
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
