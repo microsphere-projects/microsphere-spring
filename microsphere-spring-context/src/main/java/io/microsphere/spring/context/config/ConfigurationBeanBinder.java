@@ -24,9 +24,29 @@ import org.springframework.core.env.Environment;
 import java.util.Map;
 
 /**
- * The binder for the configuration bean
+ * A binder interface for mapping configuration properties to a configuration bean.
+ *
+ * <p>It provides methods to bind properties from an environment into a target bean,
+ * handling unknown and invalid fields according to the provided flags.</p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Create or obtain an instance of ConfigurationBeanBinder
+ * ConfigurationBeanBinder binder = new DefaultConfigurationBeanBinder();
+ *
+ * // Prepare the configuration properties map
+ * Map<String, Object> properties = new HashMap<>();
+ * properties.put("user.configKey", "configValue");
+ *
+ * // Target configuration bean
+ * MyConfigurationBean configBean = new MyConfigurationBean();
+ *
+ * // Bind the properties into the bean
+ * binder.bind(properties, true, false, configBean);
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see DefaultConfigurationBeanBinder
  * @since 1.0.0
  */
 public interface ConfigurationBeanBinder {
