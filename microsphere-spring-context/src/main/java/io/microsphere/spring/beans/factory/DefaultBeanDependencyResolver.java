@@ -130,7 +130,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         clearResolvedBeanMembers();
 
-        logger.info(stopWatch.toString());
+        if (logger.isTraceEnabled()) {
+            logger.trace(stopWatch.toString());
+        }
 
         return dependentBeanNamesMap;
     }
