@@ -27,7 +27,7 @@ import static io.microsphere.constants.PropertyConstants.MICROSPHERE_PROPERTY_NA
 public interface PropertyConstants {
 
     /**
-     * The property name prefix of Microsphere Spring
+     * The property name prefix of Microsphere Spring : "microsphere.spring."
      */
     String MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX = MICROSPHERE_PROPERTY_NAME_PREFIX + "spring.";
 }
