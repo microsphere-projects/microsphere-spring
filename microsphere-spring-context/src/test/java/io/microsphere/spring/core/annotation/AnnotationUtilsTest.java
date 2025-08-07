@@ -143,10 +143,10 @@ public class AnnotationUtilsTest {
         Bean annotation = getAnnotation("dummyBean", Bean.class);
 
         Map<String, Object> attributes = getAttributes(annotation, true);
-        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertArrayEquals(new String[]{"dummy-bean"}, (String[]) attributes.get("name"));
 
         attributes = getAttributes(annotation, true);
-        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertArrayEquals(new String[]{"dummy-bean"}, (String[]) attributes.get("name"));
 
         attributes = getAttributes(annotation, false);
         if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
