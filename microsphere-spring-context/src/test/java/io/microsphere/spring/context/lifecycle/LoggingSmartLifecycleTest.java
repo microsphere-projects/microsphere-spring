@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see LoggingSmartLifecycle
  * @since 1.0.0
  */
-public class LoggingSmartLifecycleTest {
+class LoggingSmartLifecycleTest {
 
     private static final Logger logger = getLogger(LoggingSmartLifecycleTest.class);
 
     private LoggingSmartLifecycle lifecycle;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         lifecycle = new LoggingSmartLifecycle();
     }
 
