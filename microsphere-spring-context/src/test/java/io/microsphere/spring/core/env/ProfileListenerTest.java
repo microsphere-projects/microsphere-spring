@@ -21,7 +21,7 @@ public class ProfileListenerTest {
     private ConfigurableEnvironment environment;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.profileListener = new ProfileListener() {
         };
         this.environment = new MockEnvironment();
