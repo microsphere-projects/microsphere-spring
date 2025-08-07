@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see 1.0.0
  * @since 1.0.0
  */
-public class ResourceLoaderUtilsTest {
+class ResourceLoaderUtilsTest {
 
     @Test
     public void testGetResourceLoader() {
