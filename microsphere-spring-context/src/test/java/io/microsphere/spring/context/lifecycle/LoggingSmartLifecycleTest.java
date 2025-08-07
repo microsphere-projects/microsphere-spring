@@ -24,7 +24,7 @@ public class LoggingSmartLifecycleTest {
     private LoggingSmartLifecycle lifecycle;
 
     @Before
-    public void before() {
+    public void setUp() {
         lifecycle = new LoggingSmartLifecycle();
     }
 
