@@ -25,7 +25,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
 
-import static io.microsphere.collection.SetUtils.newLinkedHashSet;
+import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.Assert.assertNotNull;
@@ -76,6 +76,10 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof AnnotationAttributes that)) {
+            return false;
+        }
+
+        if (!this.annotationType().equals(that.annotationType())) {
             return false;
         }
 
@@ -179,7 +183,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             return emptySet();
         }
 
-        Set<AnnotationAttributes> annotationAttributesSet = newLinkedHashSet(length);
+        Set<AnnotationAttributes> annotationAttributesSet = newFixedLinkedHashSet(length);
         for (int i = 0; i < length; i++) {
             AnnotationAttributes annotationAttributes = attributesArray[i];
             annotationAttributesSet.add(of(annotationAttributes));
