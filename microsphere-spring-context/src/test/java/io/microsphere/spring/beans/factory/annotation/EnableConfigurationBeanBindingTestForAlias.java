@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @EnableConfigurationBeanBinding(prefix = "users",
         type = User.class, multiple = true, ignoreUnknownFields = false, ignoreInvalidFields = false)
-public class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableConfigurationBeanBindingTest {
+class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableConfigurationBeanBindingTest {
 
 
     @Test
