@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see GenericBeanPostProcessorAdapter
- * @since 2017.01.22
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public class GenericBeanPostProcessorAdapterTest {
