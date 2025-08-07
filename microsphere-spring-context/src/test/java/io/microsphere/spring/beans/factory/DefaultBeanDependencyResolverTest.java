@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = DefaultBeanDependencyResolverTest.class)
-public class DefaultBeanDependencyResolverTest {
+class DefaultBeanDependencyResolverTest {
 
     private DefaultBeanDependencyResolver resolver;
 
@@ -52,13 +52,13 @@ public class DefaultBeanDependencyResolverTest {
     private ExecutorService executorService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.executorService = newSingleThreadExecutor();
         this.resolver = new DefaultBeanDependencyResolver(this.beanFactory, this.executorService);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         this.executorService.shutdown();
     }
 
