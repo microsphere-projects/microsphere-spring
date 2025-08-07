@@ -27,12 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
 
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ClassLoaderUtils.getClassResource;
 import static java.net.URLConnection.getDefaultAllowUserInteraction;
 import static java.net.URLConnection.setDefaultAllowUserInteraction;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,7 +50,7 @@ import static org.springframework.util.ResourceUtils.getURL;
  * @see SpringResourceURLConnectionAdapter
  * @since 1.0.0
  */
-public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLConnectionTest {
+class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLConnectionTest {
 
     private URL readonlyURL;
 
@@ -71,7 +71,7 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
     private SpringResourceURLConnectionAdapter notFound;
 
     @BeforeEach
-    public void before() throws Throwable {
+    void setUp() throws Throwable {
         this.readonlyURL = getClassResource(SpringVersion.class);
         this.readonlyResource = new UrlResource(this.readonlyURL);
         this.readonly = new SpringResourceURLConnectionAdapter(this.readonlyURL, this.readonlyResource);
@@ -266,7 +266,7 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
         String name = "name";
         String value = "value";
         adapter.addHeader(name, value);
-        assertEquals(singletonMap(name, asList(value)), adapter.getHeaderFields());
+        assertEquals(singletonMap(name, List.of(value)), adapter.getHeaderFields());
     }
 
     @Override
