@@ -18,11 +18,11 @@
 package io.microsphere.spring.core.convert;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.microsphere.spring.core.convert.ConversionServiceUtils.doGetSharedInstance;
 import static io.microsphere.spring.core.convert.ConversionServiceUtils.getSharedInstance;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * {@link ConversionServiceUtils} Test
