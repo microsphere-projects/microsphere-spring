@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         ResolvableDependencyTypeFilterTest.class,
         ResolvableDependencyTypeFilterTest.Config.class
 })
-public class ResolvableDependencyTypeFilterTest {
+class ResolvableDependencyTypeFilterTest {
 
     class Config {
 
