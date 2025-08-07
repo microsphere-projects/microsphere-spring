@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         ignoreResourceNotFound = true,
         encoding = "UTF-8"
 )
-public class PropertySourceExtensionAttributesTest {
+class PropertySourceExtensionAttributesTest {
 
     private static final Class<ResourcePropertySource> annotationType = ResourcePropertySource.class;
 
@@ -53,7 +53,7 @@ public class PropertySourceExtensionAttributesTest {
     private Environment environment;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         AnnotationAttributes attributes = getAnnotationAttributes(getClass(), annotationType, environment, false);
         this.attributes = new PropertySourceExtensionAttributes<>(attributes, annotationType, environment);
     }
