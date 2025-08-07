@@ -41,7 +41,7 @@ import static org.springframework.util.ReflectionUtils.findMethod;
         ResourceInjectionPointDependencyResolverTest.class,
         ResourceInjectionPointDependencyResolverTest.Config.class,
 })
-public class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPointDependencyResolverTest<ResourceInjectionPointDependencyResolver> {
+class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPointDependencyResolverTest<ResourceInjectionPointDependencyResolver> {
 
     @Override
     protected Field getField() {
