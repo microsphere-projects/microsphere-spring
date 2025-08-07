@@ -24,6 +24,6 @@ package io.microsphere.spring.context.event;
  * @see ParallelPreInstantiationSingletonsBeanFactoryListener
  * @since 1.0.0
  */
-public class ParallelPreInstantiationSingletonsBeanFactoryListenerTest extends AbstractEventListenerTest<ParallelPreInstantiationSingletonsBeanFactoryListener> {
+class ParallelPreInstantiationSingletonsBeanFactoryListenerTest extends AbstractEventListenerTest<ParallelPreInstantiationSingletonsBeanFactoryListener> {
 
 }
