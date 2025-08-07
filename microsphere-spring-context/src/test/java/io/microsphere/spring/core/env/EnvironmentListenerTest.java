@@ -21,7 +21,7 @@ public class EnvironmentListenerTest {
     private ConfigurableEnvironment environment;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.environmentListener = new EnvironmentListener() {
         };
         this.environment = new MockEnvironment();
