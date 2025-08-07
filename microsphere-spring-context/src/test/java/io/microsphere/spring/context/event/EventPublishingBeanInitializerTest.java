@@ -28,6 +28,6 @@ package io.microsphere.spring.context.event;
  * @see BeanListenerAdapter
  * @since 1.0.0
  */
-public class EventPublishingBeanInitializerTest extends AbstractEventListenerTest<EventPublishingBeanInitializerTest>
+class EventPublishingBeanInitializerTest extends AbstractEventListenerTest<EventPublishingBeanInitializerTest>
         implements BeanListenerAdapter {
 }
