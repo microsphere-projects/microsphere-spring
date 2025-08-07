@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see NamedBeanHolderComparator
  * @since 1.0.0
  */
-public class NamedBeanHolderComparatorTest {
+class NamedBeanHolderComparatorTest {
 
     @Test
     public void testCompare() {
