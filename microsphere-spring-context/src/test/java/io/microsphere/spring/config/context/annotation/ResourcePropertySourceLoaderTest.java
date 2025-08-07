@@ -50,6 +50,7 @@ import static io.microsphere.lang.function.ThrowableAction.execute;
 import static java.lang.Thread.sleep;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,7 +67,7 @@ import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProp
  * @see ResourcePropertySource
  * @since 1.0.0
  */
-public class ResourcePropertySourceLoaderTest {
+class ResourcePropertySourceLoaderTest {
 
     static final Class<ResourcePropertySource> RESOURCE_PROPERTY_SOURCE_CLASS = ResourcePropertySource.class;
 
@@ -75,12 +76,12 @@ public class ResourcePropertySourceLoaderTest {
     static final String PROPERTIES_RESOURCE_LOCATION = PROPERTIES_DIRECTORY_RESOURCE_LOCATION + "*.properties";
 
     @BeforeEach
-    public void before() {
+    void setUp() {
 
     }
 
     @AfterEach
-    public void after() {
+    void tearDown() {
 
     }
 
@@ -229,7 +230,7 @@ public class ResourcePropertySourceLoaderTest {
         assertEquals(3, propertySources.size());
 
         Iterator<PropertySource<?>> iterator = propertySources.iterator();
-        assertTrue(iterator instanceof ListIterator);
+        assertInstanceOf(ListIterator.class, iterator);
         ListIterator<PropertySource<?>> listIterator = (ListIterator<PropertySource<?>>) iterator;
         ResourcePropertySource resourcePropertySource = introspectedClass.getAnnotation(RESOURCE_PROPERTY_SOURCE_CLASS);
         String before = resourcePropertySource.before();
@@ -282,7 +283,7 @@ public class ResourcePropertySourceLoaderTest {
     }
 
     void assertPropertySource(PropertySource<?> propertySource) {
-        assertTrue(propertySource instanceof CompositePropertySource);
+        assertInstanceOf(CompositePropertySource.class, propertySource);
         CompositePropertySource compositePropertySource = (CompositePropertySource) propertySource;
         Collection<PropertySource<?>> internalPropertySources = compositePropertySource.getPropertySources();
         assertEquals(2, internalPropertySources.size());
