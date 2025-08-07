@@ -90,31 +90,31 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
     protected abstract void testResolveFromConstructor(Set<String> dependentBeanNames);
 
     @Test
-    public void testResolveFromField() {
+    void testResolveFromField() {
         resolver.resolve(this.getField(), this.beanFactory, this.dependentBeanNames);
         testResolveFromField(this.dependentBeanNames);
     }
 
     @Test
-    public void testResolveFromMethod() {
+    void testResolveFromMethod() {
         resolver.resolve(this.getMethod(), this.beanFactory, this.dependentBeanNames);
         testResolveFromMethod(this.dependentBeanNames);
     }
 
     @Test
-    public void testResolveFromMethodWithoutParameter() {
+    void testResolveFromMethodWithoutParameter() {
         resolver.resolve(findMethod(getClass(), "testResolveFromMethodWithoutParameter"), this.beanFactory, this.dependentBeanNames);
         assertTrue(this.dependentBeanNames.isEmpty());
     }
 
     @Test
-    public void testResolveFromConstructor() {
+    void testResolveFromConstructor() {
         resolver.resolve(this.getConstructor(), this.beanFactory, this.dependentBeanNames);
         testResolveFromConstructor(this.dependentBeanNames);
     }
 
     @Test
-    public void testResolveFromConstructorWithoutParameter() {
+    void testResolveFromConstructorWithoutParameter() {
         resolver.resolve(findConstructor(getClass()), this.beanFactory, this.dependentBeanNames);
         assertTrue(this.dependentBeanNames.isEmpty());
     }

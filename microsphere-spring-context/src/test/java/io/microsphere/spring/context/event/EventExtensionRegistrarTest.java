@@ -93,32 +93,32 @@ public class EventExtensionRegistrarTest {
     }
 
     @Test
-    public void testDefaultConfig() {
+    void testDefaultConfig() {
         test(2, DefaultConfig.class);
     }
 
     @Test
-    public void testFullConfig() {
+    void testFullConfig() {
         test(2, FullConfig.class);
     }
 
     @Test
-    public void testNoInterceptedConfig() {
+    void testNoInterceptedConfig() {
         test(1, NoInterceptedConfig.class);
     }
 
     @Test
-    public void testNoSenseConfig() {
+    void testNoSenseConfig() {
         test(1, NoSenseConfig.class);
     }
 
     @Test
-    public void testDuplicatedConfigs() {
+    void testDuplicatedConfigs() {
         test(2, DefaultConfig.class, DuplicatedDefaultConfig.class);
     }
 
     @Test
-    public void testRebuildConfigs() {
+    void testRebuildConfigs() {
         test(3, DefaultConfig.class, FullConfig.class);
     }
 

@@ -32,6 +32,7 @@ import static io.microsphere.util.ArrayUtils.combine;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
+import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 
 /**
  * {@link NativeWebRequest WebRequest} {@link HttpMethod Methods} {@link WebRequestRule}
@@ -80,7 +81,7 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
 
     public boolean matches(String method) {
         if (isEmpty()) {
-            if (RequestMethod.OPTIONS.name().equals(method)) {
+            if (OPTIONS.name().equals(method)) {
                 return false;
             }
             return true;
@@ -89,6 +90,13 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
     }
 
     private boolean matchRequestMethod(String method) {
-        return this.methods.contains(method);
+        boolean matched = false;
+        for (String requestMethod : this.methods) {
+            if (requestMethod.equalsIgnoreCase(method)) {
+                matched = true;
+                break;
+            }
+        }
+        return matched;
     }
 }

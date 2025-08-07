@@ -76,7 +76,7 @@ class BeanDefinitionUtilsTest {
      * </ul>
      */
     @Test
-    public void testGenericBeanDefinition() {
+    void testGenericBeanDefinition() {
         AbstractBeanDefinition beanDefinition = this.beanDefinition;
         assertBeanDefinition(beanDefinition, ROLE_APPLICATION);
 
@@ -92,7 +92,7 @@ class BeanDefinitionUtilsTest {
     }
 
     @Test
-    public void testResolveBeanType() {
+    void testResolveBeanType() {
         testInSpringContainer((context) -> {
             ConfigurableBeanFactory beanFactory = context.getBeanFactory();
             RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition(USER_BEAN_NAME);
@@ -108,14 +108,14 @@ class BeanDefinitionUtilsTest {
     }
 
     @Test
-    public void testResolveBeanTypeOnFallback() {
+    void testResolveBeanTypeOnFallback() {
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClassName(User.class.getName());
         assertEquals(User.class, resolveBeanType(beanDefinition));
     }
 
     @Test
-    public void testFindInfrastructureBeanNames() {
+    void testFindInfrastructureBeanNames() {
         testInSpringContainer((context) -> {
             ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             Set<String> infrastructureBeanNames = findInfrastructureBeanNames(beanFactory);
@@ -125,7 +125,7 @@ class BeanDefinitionUtilsTest {
     }
 
     @Test
-    public void testFindBeanNames() {
+    void testFindBeanNames() {
         testInSpringContainer((context, beanFactory) -> {
             Set<String> beanNames = findBeanNames(context.getBeanFactory());
             assertTrue(beanNames.contains(USER_BEAN_NAME));
@@ -134,12 +134,12 @@ class BeanDefinitionUtilsTest {
     }
 
     @Test
-    public void testFindBeanNamesOnNullBeanFactory() {
+    void testFindBeanNamesOnNullBeanFactory() {
         assertSame(emptySet(), findBeanNames(null));
     }
 
     @Test
-    public void testIsInfrastructureBean() {
+    void testIsInfrastructureBean() {
         AbstractBeanDefinition beanDefinition = this.beanDefinition;
         assertFalse(isInfrastructureBean(beanDefinition));
 
@@ -148,7 +148,7 @@ class BeanDefinitionUtilsTest {
     }
 
     @Test
-    public void testIsInfrastructureBeanOnNull() {
+    void testIsInfrastructureBeanOnNull() {
         assertFalse(isInfrastructureBean(null));
     }
 

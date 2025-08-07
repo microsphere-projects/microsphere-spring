@@ -82,7 +82,7 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    public void testGetOptionalBean() {
+    void testGetOptionalBean() {
 
         this.applicationContext.register(BaseTestBean.class);
 
@@ -97,7 +97,7 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    public void testGetOptionalBeanIfAbsent() {
+    void testGetOptionalBeanIfAbsent() {
 
         this.applicationContext.refresh();
 
@@ -115,7 +115,7 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    public void testGetBeans() {
+    void testGetBeans() {
 
         this.applicationContext.register(BaseTestBean.class, BaseTestBean2.class);
 
@@ -141,7 +141,7 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    public void testGetBeansIfAbsent() {
+    void testGetBeansIfAbsent() {
 
         this.applicationContext.refresh();
 
@@ -152,13 +152,13 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    public void testIsMethods() {
+    void testIsMethods() {
         assertTrue(isDefaultListableBeanFactory(this.beanFactory));
         assertTrue(isBeanDefinitionRegistry(this.beanFactory));
     }
 
     @Test
-    public void testAsMethods() {
+    void testAsMethods() {
         assertSame(this.beanFactory, asBeanDefinitionRegistry(this.beanFactory));
         assertSame(this.beanFactory, asListableBeanFactory(this.beanFactory));
         assertSame(this.beanFactory, asHierarchicalBeanFactory(this.beanFactory));
@@ -169,14 +169,14 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    public void testGetResolvableDependencyTypes() {
+    void testGetResolvableDependencyTypes() {
         this.applicationContext.refresh();
         assertEquals(ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
                 getResolvableDependencyTypes(this.beanFactory));
     }
 
     @Test
-    public void testGetBeanPostProcessors() {
+    void testGetBeanPostProcessors() {
         this.applicationContext.refresh();
         List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(this.beanFactory);
         assertFalse(beanPostProcessors.isEmpty());
@@ -184,7 +184,7 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    public void testGetBeanPostProcessorsOnNotAbstractFactory() {
+    void testGetBeanPostProcessorsOnNotAbstractFactory() {
         List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(new BeanFactory() {
 
             public Object getBean(String name) throws BeansException {

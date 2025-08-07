@@ -25,7 +25,6 @@ import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +32,8 @@ import java.util.Set;
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -53,7 +54,7 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
 
-    private final static Set<String> EMPTY_PATH_PATTERN = Collections.singleton("");
+    private final static Set<String> EMPTY_PATH_PATTERN = singleton("");
 
     private final Set<String> patterns;
 
@@ -82,7 +83,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
     public WebRequestPattensRule(String[] patterns, boolean useTrailingSlashMatch,
                                  @Nullable PathMatcher pathMatcher) {
 
-        this(patterns, null, pathMatcher, useTrailingSlashMatch);
+        this(patterns, pathMatcher, useTrailingSlashMatch);
     }
 
     /**
@@ -95,22 +96,20 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
      * {@link #WebRequestPattensRule(String[], boolean, PathMatcher)}.
      */
     @Deprecated
-    public WebRequestPattensRule(String[] patterns, @Nullable UrlPathHelper urlPathHelper,
-                                 @Nullable PathMatcher pathMatcher, boolean useTrailingSlashMatch) {
-        this(patterns, urlPathHelper, pathMatcher, false, useTrailingSlashMatch);
+    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useTrailingSlashMatch) {
+        this(patterns, pathMatcher, false, useTrailingSlashMatch);
     }
 
     /**
-     * Variant of {@link #PatternsRequestCondition(String...)} with a
+     * Variant of {@link #WebRequestPattensRule(String...)} with a
      * {@link UrlPathHelper} and a {@link PathMatcher}, and flags for matching
      * with suffixes and trailing slashes.
      * <p>As of 5.3 the path is obtained through the static method
      * {@link UrlPathHelper#getResolvedLookupPath} and a {@code UrlPathHelper}
      * does not need to be passed in.
      */
-    public WebRequestPattensRule(String[] patterns, @Nullable UrlPathHelper urlPathHelper,
-                                 @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
-        this(patterns, urlPathHelper, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, null);
+    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
+        this(patterns, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, null);
     }
 
     /**
@@ -119,14 +118,12 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
      * with suffixes and trailing slashes, along with specific extensions.
      *
      * @param patterns
-     * @param urlPathHelper
      * @param pathMatcher
      * @param useSuffixPatternMatch
      * @param useTrailingSlashMatch
      * @param fileExtensions
      */
-    public WebRequestPattensRule(String[] patterns, @Nullable UrlPathHelper urlPathHelper,
-                                 @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch,
+    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch,
                                  boolean useTrailingSlashMatch, @Nullable List<String> fileExtensions) {
         this.patterns = initPatterns(patterns);
         this.pathMatcher = pathMatcher != null ? pathMatcher : new AntPathMatcher();
@@ -179,7 +176,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
             }
         }
         if (matches == null) {
-            return Collections.emptyList();
+            return emptyList();
         }
         if (matches.size() > 1) {
             matches.sort(this.pathMatcher.getPatternComparator(lookupPath));

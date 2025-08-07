@@ -66,7 +66,7 @@ class EnableTTLCachingTest {
     private TestData testData;
 
     @Test
-    public void test() {
+    void test() {
         List<String> names = testData.getNames();
         assertEquals(names, testData.getNames());
     }

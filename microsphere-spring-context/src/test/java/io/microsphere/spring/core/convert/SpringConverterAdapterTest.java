@@ -43,7 +43,7 @@ class SpringConverterAdapterTest {
     private final SpringConverterAdapter converterAdapter = SpringConverterAdapter.INSTANCE;
 
     @Test
-    public void testMatch() {
+    void testMatch() {
         assertMatch(String.class, Boolean.class);
         assertMatch(String.class, Character.class);
         assertMatch(String.class, char[].class);
@@ -59,7 +59,7 @@ class SpringConverterAdapterTest {
     }
 
     @Test
-    public void testGetConvertibleTypes() {
+    void testGetConvertibleTypes() {
         assertGetConvertibleTypes(String.class, Boolean.class);
         assertGetConvertibleTypes(String.class, Character.class);
         assertGetConvertibleTypes(String.class, char[].class);
@@ -75,7 +75,7 @@ class SpringConverterAdapterTest {
     }
 
     @Test
-    public void testConvert() {
+    void testConvert() {
         assertConvert("true", Boolean.TRUE);
         assertConvert("c", 'c');
         assertConvert("1", Float.valueOf(1));

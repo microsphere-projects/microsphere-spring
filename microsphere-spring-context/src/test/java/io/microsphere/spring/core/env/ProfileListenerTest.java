@@ -28,52 +28,52 @@ class ProfileListenerTest {
     }
 
     @Test
-    public void testBeforeGetActiveProfiles() {
+    void testBeforeGetActiveProfiles() {
         this.profileListener.beforeGetActiveProfiles(environment);
     }
 
     @Test
-    public void testAfterGetActiveProfiles() {
+    void testAfterGetActiveProfiles() {
         this.profileListener.afterGetActiveProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeGetDefaultProfiles() {
+    void testBeforeGetDefaultProfiles() {
         this.profileListener.beforeGetDefaultProfiles(environment);
     }
 
     @Test
-    public void testAfterGetDefaultProfiles() {
+    void testAfterGetDefaultProfiles() {
         this.profileListener.afterGetDefaultProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeSetActiveProfiles() {
+    void testBeforeSetActiveProfiles() {
         this.profileListener.beforeSetActiveProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testAfterSetActiveProfiles() {
+    void testAfterSetActiveProfiles() {
         this.profileListener.afterSetActiveProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeAddActiveProfile() {
+    void testBeforeAddActiveProfile() {
         this.profileListener.beforeAddActiveProfile(environment, "");
     }
 
     @Test
-    public void testAfterAddActiveProfile() {
+    void testAfterAddActiveProfile() {
         this.profileListener.afterAddActiveProfile(environment, "");
     }
 
     @Test
-    public void testBeforeSetDefaultProfiles() {
+    void testBeforeSetDefaultProfiles() {
         this.profileListener.beforeSetDefaultProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testAfterSetDefaultProfiles() {
+    void testAfterSetDefaultProfiles() {
         this.profileListener.afterSetDefaultProfiles(environment, EMPTY_STRING_ARRAY);
     }
 }

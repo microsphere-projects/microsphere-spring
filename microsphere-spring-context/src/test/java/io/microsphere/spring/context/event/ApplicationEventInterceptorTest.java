@@ -31,12 +31,12 @@ class ApplicationEventInterceptorTest {
     }
 
     @Test
-    public void testIntercept() {
+    void testIntercept() {
         this.interceptor.intercept(null, null, null);
     }
 
     @Test
-    public void testGetOrder() {
+    void testGetOrder() {
         assertEquals(LOWEST_PRECEDENCE, this.interceptor.getOrder());
     }
 }

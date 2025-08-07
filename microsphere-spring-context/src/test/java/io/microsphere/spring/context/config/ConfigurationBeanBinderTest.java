@@ -36,13 +36,13 @@ class ConfigurationBeanBinderTest {
     }
 
     @Test
-    public void testBind() {
+    void testBind() {
         Map<String, Object> configurationProperties = this.mockEnvironment.getSystemProperties();
         this.configurationBeanBinder.bind(configurationProperties, false, false, new Object());
     }
 
     @Test
-    public void testSetConversionService() {
+    void testSetConversionService() {
         this.configurationBeanBinder.setConversionService(this.mockEnvironment.getConversionService());
     }
 }

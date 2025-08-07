@@ -32,7 +32,7 @@ class AnnotatedBeanDefinitionRegistryUtilsTest {
     }
 
     @Test
-    public void testRegisterBeans() {
+    void testRegisterBeans() {
 
         for (int i = 0; i < 100; i++) {
             registerBeans(registry, this.getClass());
@@ -51,7 +51,7 @@ class AnnotatedBeanDefinitionRegistryUtilsTest {
     }
 
     @Test
-    public void testScanBasePackages() {
+    void testScanBasePackages() {
 
         int count = scanBasePackages(registry, TestBean.class.getPackage().getName());
 

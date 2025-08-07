@@ -35,6 +35,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class LoggingBeanFactoryListenerTest {
 
     @Test
-    public void test() {
+    void test() {
     }
 }

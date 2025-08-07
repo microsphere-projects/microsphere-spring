@@ -64,18 +64,18 @@ class AnnotationBeanDefinitionRegistryPostProcessorTest {
     private String stringBean;
 
     @Test
-    public void test() {
+    void test() {
         assertNotNull(myService);
         assertEquals("Hello,World", stringBean);
     }
 
     @Test
-    public void testGetAnnotation() {
+    void testGetAnnotation() {
         assertNotNull(getAnnotation(MyService.class, Service.class));
     }
 
     @Test
-    public void testResolveBeanClass() {
+    void testResolveBeanClass() {
 
     }
 

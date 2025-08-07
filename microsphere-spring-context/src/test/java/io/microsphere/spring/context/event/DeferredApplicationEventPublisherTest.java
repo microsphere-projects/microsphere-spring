@@ -49,7 +49,7 @@ class DeferredApplicationEventPublisherTest {
     private TestConfig testConfig;
 
     @Test
-    public void test() {
+    void test() {
         assertEquals("Hello,World", testConfig.getTestEvent().getSource());
     }
 

@@ -31,7 +31,7 @@ class DependencyTreeWalkerTest {
 
 
     @Test
-    public void testWalk() {
+    void testWalk() {
         DependencyTreeWalker walker = new DependencyTreeWalker();
         Dependency a = Dependency.create("A");
 

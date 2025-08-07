@@ -29,7 +29,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,7 +36,9 @@ import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.spring.web.servlet.util.WebUtils.findServletRegistrations;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static java.util.Arrays.asList;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.findMethod;
@@ -342,15 +343,15 @@ public abstract class WebMvcUtils {
 
         String[] existedParameterValues = hasLength(existedParameterValue) ?
                 existedParameterValue.split(INIT_PARAM_DELIMITERS) :
-                new String[0];
+                EMPTY_STRING_ARRAY;
 
         List<String> parameterValuesList = new ArrayList<String>();
 
         if (isNotEmpty(existedParameterValues)) {
-            parameterValuesList.addAll(Arrays.asList(existedParameterValues));
+            parameterValuesList.addAll(asList(existedParameterValues));
         }
 
-        parameterValuesList.addAll(Arrays.asList(parameterValues));
+        parameterValuesList.addAll(asList(parameterValues));
 
         String newParameterValue = arrayToDelimitedString(parameterValuesList.toArray(), ",");
 

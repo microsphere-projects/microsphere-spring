@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.web.servlet;
 
+import io.microsphere.spring.test.web.servlet.TestServlet;
+import io.microsphere.spring.test.web.servlet.TestServletContext;
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import jakarta.servlet.ServletException;
@@ -51,7 +53,7 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
     private TestServlet testServlet;
 
     @BeforeEach
-    public void init() throws ServletException {
+    void setUp() throws ServletException {
         servletName = "test-servlet";
         url = "/test";
         servletContext = new TestServletContext();
@@ -66,7 +68,7 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(servletName);
         webEndpointMapping.ifPresent(mapping -> {
             assertEquals(this.servletName, mapping.getEndpoint());

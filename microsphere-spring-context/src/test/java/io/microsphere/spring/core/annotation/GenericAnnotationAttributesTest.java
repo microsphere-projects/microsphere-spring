@@ -44,35 +44,35 @@ class GenericAnnotationAttributesTest {
     private GenericAnnotationAttributes attributes;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.contextConfiguration = GenericAnnotationAttributesTest.class.getAnnotation(ContextConfiguration.class);
         this.attributes = of(this.contextConfiguration);
     }
 
     @Test
-    public void testOfWithAnnotation() {
+    void testOfWithAnnotation() {
         assertAttributes(attributes, contextConfiguration);
     }
 
     @Test
-    public void testOfWithAnnotationAttributes() {
+    void testOfWithAnnotationAttributes() {
         GenericAnnotationAttributes attributes = of(this.attributes);
         assertAttributes(attributes, contextConfiguration);
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(this.attributes.hashCode(), of(this.attributes).hashCode());
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         AnnotationAttributes annotationAttributes = (AnnotationAttributes) getAnnotationAttributes(this.contextConfiguration);
         assertEquals(this.attributes, annotationAttributes);
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertNotNull(this.attributes.toString());
     }
 

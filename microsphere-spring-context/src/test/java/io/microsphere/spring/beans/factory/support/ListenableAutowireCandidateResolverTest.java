@@ -75,7 +75,7 @@ class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolv
     private static Object resolvedTestName;
 
     @Test
-    public void test() {
+    void test() {
         assertEquals(testName, resolvedTestName);
         assertNotNull(testBean.getResolver());
 
@@ -84,13 +84,13 @@ class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolv
     }
 
     @Test
-    public void testAddListeners() {
+    void testAddListeners() {
         ListenableAutowireCandidateResolver resolver = resolverProvider.getIfAvailable();
         resolver.addListener(new LoggingAutowireCandidateResolvingListener());
     }
 
     @Test
-    public void testIsRequired() {
+    void testIsRequired() {
         testIsRequired(true);
         testIsRequired(false);
     }
@@ -103,7 +103,7 @@ class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolv
     }
 
     @Test
-    public void testHasQualifier() {
+    void testHasQualifier() {
         ListenableAutowireCandidateResolver resolver = resolverProvider.getIfAvailable();
         Field field = findField(this.getClass(), "testBean");
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true);
@@ -115,13 +115,13 @@ class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolv
     }
 
     @Test
-    public void testHasQualifierOnNull() {
+    void testHasQualifierOnNull() {
         ListenableAutowireCandidateResolver resolver = resolverProvider.getIfAvailable();
         assertThrows(NullPointerException.class, () -> assertFalse(resolver.hasQualifier(null)));
     }
 
     @Test
-    public void testWrap() {
+    void testWrap() {
         // wrap(BeanFactory) method was invoked on BeanFactoryPostProcessor lifecycle
         ListenableAutowireCandidateResolver resolver = resolverProvider.getIfAvailable();
         AutowireCandidateResolver autowireCandidateResolver = beanFactory.getAutowireCandidateResolver();
@@ -134,7 +134,7 @@ class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolv
     }
 
     @Test
-    public void testWrapOnDisabled() {
+    void testWrapOnDisabled() {
         MutablePropertySources mutablePropertySources = this.environment.getPropertySources();
         MockPropertySource mockPropertySource = new MockPropertySource();
         mutablePropertySources.addFirst(mockPropertySource);

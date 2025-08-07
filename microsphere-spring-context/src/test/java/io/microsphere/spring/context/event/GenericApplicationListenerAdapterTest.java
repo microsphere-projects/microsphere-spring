@@ -62,23 +62,23 @@ public class GenericApplicationListenerAdapterTest {
     private GenericApplicationListenerAdapter listener;
 
     @Test
-    public void testSupportsEventType() {
+    void testSupportsEventType() {
         assertTrue(listener.supportsEventType(ApplicationEvent.class));
         assertTrue(listener.supportsEventType(forClass(ApplicationEvent.class)));
     }
 
     @Test
-    public void testSupportsSourceType() {
+    void testSupportsSourceType() {
         assertTrue(listener.supportsSourceType(Object.class));
     }
 
     @Test
-    public void testGetOrder() {
+    void testGetOrder() {
         assertEquals(LOWEST_PRECEDENCE, listener.getOrder());
     }
 
     @Test
-    public void testGetListenerId() {
+    void testGetListenerId() {
         assertEquals("", listener.getListenerId());
     }
 }

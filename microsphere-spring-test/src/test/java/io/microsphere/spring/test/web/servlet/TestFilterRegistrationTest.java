@@ -50,81 +50,81 @@ public class TestFilterRegistrationTest {
     private TestFilterRegistration registration;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         TestServletContext servletContext = new TestServletContext();
         this.registration = (TestFilterRegistration) servletContext.addFilter(testFilterName, testFilterClass);
     }
 
     @Test
-    public void testSetAsyncSupported() {
+    void testSetAsyncSupported() {
         assertFalse(this.registration.isAsyncSupported());
         this.registration.setAsyncSupported(true);
         assertTrue(this.registration.isAsyncSupported());
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals(testFilterName, this.registration.getName());
     }
 
     @Test
-    public void testGetClassName() {
+    void testGetClassName() {
         assertEquals(testFilterClassName, this.registration.getClassName());
     }
 
     @Test
-    public void testSetInitParameter() {
+    void testSetInitParameter() {
         assertTrue(this.registration.setInitParameter("paramName", "paramValue"));
         assertFalse(this.registration.setInitParameter("paramName", "paramValue"));
         assertEquals("paramValue", this.registration.getInitParameter("paramName"));
     }
 
     @Test
-    public void testGetInitParameter() {
+    void testGetInitParameter() {
         assertNull(this.registration.getInitParameter("paramName"));
     }
 
     @Test
-    public void testSetInitParameters() {
+    void testSetInitParameters() {
         Set<String> parameterNames = this.registration.setInitParameters(of("paramName", "paramValue"));
         assertTrue(parameterNames.contains("paramName"));
         assertEquals("paramValue", this.registration.getInitParameter("paramName"));
     }
 
     @Test
-    public void testGetInitParameters() {
+    void testGetInitParameters() {
         assertEquals(0, this.registration.getInitParameters().size());
     }
 
     @Test
-    public void testAddMappingForServletNames() {
+    void testAddMappingForServletNames() {
         this.registration.addMappingForServletNames(of(REQUEST), true, testServletName);
         assertTrue(this.registration.getServletNameMappings().contains(testServletName));
     }
 
     @Test
-    public void testGetServletNameMappings() {
+    void testGetServletNameMappings() {
         assertTrue(this.registration.getServletNameMappings().isEmpty());
     }
 
     @Test
-    public void testAddMappingForUrlPatterns() {
+    void testAddMappingForUrlPatterns() {
         this.registration.addMappingForUrlPatterns(of(REQUEST), true, "/*");
         assertTrue(this.registration.getUrlPatternMappings().contains("/*"));
     }
 
     @Test
-    public void testGetUrlPatternMappings() {
+    void testGetUrlPatternMappings() {
         assertTrue(this.registration.getUrlPatternMappings().isEmpty());
     }
 
     @Test
-    public void testGetFilter() {
+    void testGetFilter() {
         assertNotNull(this.registration.getFilter());
     }
 
     @Test
-    public void testIsAsyncSupported() {
+    void testIsAsyncSupported() {
         assertFalse(this.registration.isAsyncSupported());
     }
 }

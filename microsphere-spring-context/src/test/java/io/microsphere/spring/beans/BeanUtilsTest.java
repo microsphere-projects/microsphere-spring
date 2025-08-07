@@ -61,7 +61,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testIsBeanPresent() {
+    void testIsBeanPresent() {
 
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
@@ -95,7 +95,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testGetBeanNamesOnAnnotationBean() {
+    void testGetBeanNamesOnAnnotationBean() {
 
         AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);
 
@@ -107,7 +107,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testGetBeanNamesOnXmlBean() {
+    void testGetBeanNamesOnXmlBean() {
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-context.xml");
 
@@ -120,7 +120,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testGetBeanNames() {
+    void testGetBeanNames() {
 
         DefaultListableBeanFactory parentBeanFactory = new DefaultListableBeanFactory();
 
@@ -206,7 +206,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testResolveBeanType() {
+    void testResolveBeanType() {
         ClassLoader classLoader = getDefaultClassLoader();
 
         Class<?> beanType = resolveBeanType(this.getClass().getName(), classLoader);
@@ -224,7 +224,7 @@ class BeanUtilsTest {
 
 
     @Test
-    public void testGetOptionalBean() {
+    void testGetOptionalBean() {
 
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
@@ -245,7 +245,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testGetOptionalBeanExcludingAncestors() {
+    void testGetOptionalBeanExcludingAncestors() {
 
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
@@ -266,7 +266,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testGetBeanIfAvailable() {
+    void testGetBeanIfAvailable() {
 
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
@@ -278,7 +278,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testSort() {
+    void testSort() {
 
         int times = 9;
 
@@ -303,7 +303,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testInvokeAwareInterfaces() {
+    void testInvokeAwareInterfaces() {
         TestBean testBean = new TestBean();
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.refresh();
@@ -345,7 +345,7 @@ class BeanUtilsTest {
     }
 
     @Test
-    public void testNamingBean() {
+    void testNamingBean() {
 
         BeanUtils.NamingBean namingBean = new BeanUtils.NamingBean("testBean", new TestBean());
 

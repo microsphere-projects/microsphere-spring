@@ -45,7 +45,7 @@ class DependencyTest {
      * </ul>
      */
     @Test
-    public void test() {
+    void test() {
         Dependency a = create("A");
 
         Dependency c = a.addChild("B")
@@ -61,7 +61,7 @@ class DependencyTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(create("A").hashCode(), create("A").hashCode());
     }
 }

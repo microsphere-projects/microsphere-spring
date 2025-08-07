@@ -36,7 +36,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
 class ConversionServiceResolverTest {
 
     @Test
-    public void testGetResolvedBeanIfAvailable() {
+    void testGetResolvedBeanIfAvailable() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         ConversionServiceResolver resolver = new ConversionServiceResolver(beanFactory);
 
@@ -50,7 +50,7 @@ class ConversionServiceResolverTest {
     }
 
     @Test
-    public void testGetFromBeanFactory() {
+    void testGetFromBeanFactory() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
         ConversionService conversionService = new DefaultConversionService();
@@ -65,7 +65,7 @@ class ConversionServiceResolverTest {
     }
 
     @Test
-    public void testGetIfAvailableForBeanDefinition() {
+    void testGetIfAvailableForBeanDefinition() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
         beanFactory.registerBeanDefinition(CONVERSION_SERVICE_BEAN_NAME,
@@ -77,7 +77,7 @@ class ConversionServiceResolverTest {
     }
 
     @Test
-    public void testGetIfAvailableForSingletonBean() {
+    void testGetIfAvailableForSingletonBean() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
         ConversionService conversionService = new DefaultConversionService();
@@ -92,7 +92,7 @@ class ConversionServiceResolverTest {
     }
 
     @Test
-    public void testCreateDefaultConversionService() {
+    void testCreateDefaultConversionService() {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         ConversionServiceResolver resolver = new ConversionServiceResolver(beanFactory);
         ConversionService conversionService = resolver.resolve(false);

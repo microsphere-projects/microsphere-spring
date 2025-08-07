@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class PropertyValuesUtilsTest {
 
     @Test
-    public void testGetSubPropertyValues() {
+    void testGetSubPropertyValues() {
 
         MockEnvironment environment = new MockEnvironment();
 

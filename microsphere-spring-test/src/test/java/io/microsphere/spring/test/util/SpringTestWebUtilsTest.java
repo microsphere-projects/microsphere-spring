@@ -43,19 +43,19 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
 public class SpringTestWebUtilsTest {
 
     @Test
-    public void testCreateWebRequest() {
+    void testCreateWebRequest() {
         assertNativeWebRequest(createWebRequest());
     }
 
     @Test
-    public void testCreateWebRequestWithConsumer() {
+    void testCreateWebRequestWithConsumer() {
         NativeWebRequest webRequest = createWebRequest(request -> {
         });
         assertNativeWebRequest(webRequest);
     }
 
     @Test
-    public void testCreateWebRequestWithRequestURI() {
+    void testCreateWebRequestWithRequestURI() {
         NativeWebRequest webRequest = createWebRequest("/test");
         assertNativeWebRequest(webRequest);
         MockHttpServletRequest servletRequest = (MockHttpServletRequest) webRequest.getNativeRequest();
@@ -63,21 +63,21 @@ public class SpringTestWebUtilsTest {
     }
 
     @Test
-    public void testCreateWebRequestWithParams() {
+    void testCreateWebRequestWithParams() {
         NativeWebRequest webRequest = createWebRequestWithParams("name", "value");
         assertNativeWebRequest(webRequest);
         assertTrue("value".equals(webRequest.getParameter("name")));
     }
 
     @Test
-    public void testCreateWebRequestWithHeaders() {
+    void testCreateWebRequestWithHeaders() {
         NativeWebRequest webRequest = createWebRequestWithHeaders("name", "value");
         assertNativeWebRequest(webRequest);
         assertTrue("value".equals(webRequest.getHeader("name")));
     }
 
     @Test
-    public void testCreatePreFightRequest() {
+    void testCreatePreFightRequest() {
         NativeWebRequest webRequest = createPreFightRequest();
         MockHttpServletRequest servletRequest = (MockHttpServletRequest) webRequest.getNativeRequest();
         assertTrue("OPTIONS".equals(servletRequest.getMethod()));

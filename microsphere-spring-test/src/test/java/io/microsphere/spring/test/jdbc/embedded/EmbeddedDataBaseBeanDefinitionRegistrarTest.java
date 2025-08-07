@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class EmbeddedDataBaseBeanDefinitionRegistrarTest {
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         assertThrows(BeanCreationException.class, () -> {
             testInSpringContainer(context -> {
             }, Config.class);

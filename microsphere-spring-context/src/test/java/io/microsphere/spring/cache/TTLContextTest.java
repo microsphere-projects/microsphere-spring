@@ -44,19 +44,19 @@ public class TTLContextTest {
     private static final Logger logger = getLogger(TTLContextTest.class);
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         clearTTL();
     }
 
     @Test
-    public void testDoWithTTL() {
+    void testDoWithTTL() {
         doWithTTL(d -> {
             logger.trace("doWithTTL(Consumer) : {}", d);
         }, ofMillis(10));
     }
 
     @Test
-    public void testDoWithTTLWithFunction() {
+    void testDoWithTTLWithFunction() {
         Duration duration = ofMillis(10);
         assertEquals(duration, doWithTTL(d -> {
             logger.trace("doWithTTL(Function) : {}", d);
@@ -65,7 +65,7 @@ public class TTLContextTest {
     }
 
     @Test
-    public void testSetTTL() {
+    void testSetTTL() {
         Duration duration = ofMillis(100);
         setTTL(duration);
 
@@ -75,14 +75,14 @@ public class TTLContextTest {
     }
 
     @Test
-    public void testGetTTL() {
+    void testGetTTL() {
         Duration duration = ofMillis(100);
         setTTL(duration);
         assertEquals(duration, getTTL());
     }
 
     @Test
-    public void testClearTTL() {
+    void testClearTTL() {
         testGetTTL();
         clearTTL();
         assertNull(getTTL());

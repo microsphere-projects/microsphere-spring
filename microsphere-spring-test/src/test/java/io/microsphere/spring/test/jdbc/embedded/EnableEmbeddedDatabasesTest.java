@@ -52,7 +52,7 @@ public class EnableEmbeddedDatabasesTest {
     private DataSource dataSource2;
 
     @Test
-    public void test() throws SQLException {
+    void test() throws SQLException {
         assertDataSource(this.dataSource);
         assertDataSource(this.dataSource2);
     }

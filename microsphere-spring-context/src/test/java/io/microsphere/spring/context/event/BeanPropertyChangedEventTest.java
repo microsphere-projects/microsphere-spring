@@ -43,37 +43,37 @@ class BeanPropertyChangedEventTest {
     }
 
     @Test
-    public void testGetTimestamp() {
+    void testGetTimestamp() {
         assertTrue(this.event.getTimestamp() > 0);
     }
 
     @Test
-    public void testGetSource() {
+    void testGetSource() {
         assertSame(this, this.event.getSource());
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertNotNull(this.event.toString());
     }
 
     @Test
-    public void testGetBean() {
+    void testGetBean() {
         assertSame(this, this.event.getBean());
     }
 
     @Test
-    public void testGetPropertyName() {
+    void testGetPropertyName() {
         assertEquals("event", this.event.getPropertyName());
     }
 
     @Test
-    public void testGetOldValue() {
+    void testGetOldValue() {
         assertNull(this.event.getOldValue());
     }
 
     @Test
-    public void testGetNewValue() {
+    void testGetNewValue() {
         assertSame(this, this.event.getNewValue());
     }
 }

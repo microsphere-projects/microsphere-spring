@@ -37,14 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SpringTestUtilsTest {
 
     @Test
-    public void testTestInSpringContainer() {
+    void testTestInSpringContainer() {
         testInSpringContainer(context -> {
             assertNotNull(context.getBean(SpringTestUtilsTest.class));
         }, SpringTestUtilsTest.class);
     }
 
     @Test
-    public void testTestInSpringContainerWithEnvironment() {
+    void testTestInSpringContainerWithEnvironment() {
         testInSpringContainer((context, environment) -> {
             assertNotNull(context.getBean(SpringTestUtilsTest.class));
             assertNotNull(environment);
@@ -52,7 +52,7 @@ public class SpringTestUtilsTest {
     }
 
     @Test
-    public void testTestInSpringContainerOnFailed() {
+    void testTestInSpringContainerOnFailed() {
         assertThrows(RuntimeException.class, () -> testInSpringContainer(context -> {
             throw create(Throwable.class);
         }, SpringTestUtilsTest.class));

@@ -44,7 +44,7 @@ class JavaBeansPropertyChangeListenerAdapterTest {
     private ConfigurableApplicationContext context;
 
     @Test
-    public void testPropertyChange() {
+    void testPropertyChange() {
         JavaBeansPropertyChangeListenerAdapter listenerAdapter = new JavaBeansPropertyChangeListenerAdapter(context);
 
         User user = new User();

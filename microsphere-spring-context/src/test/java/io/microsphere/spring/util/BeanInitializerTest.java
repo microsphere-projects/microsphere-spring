@@ -51,7 +51,7 @@ class BeanInitializerTest {
     }
 
     @Test
-    public void testRegisterInfrastructureBean() {
+    void testRegisterInfrastructureBean() {
 
         assertTrue(registerInfrastructureBean(registry, BEAN_NAME, TestBean.class));
 
@@ -65,14 +65,14 @@ class BeanInitializerTest {
     }
 
     @Test
-    public void testHasAlias() {
+    void testHasAlias() {
         testRegisterInfrastructureBean();
         registry.registerAlias(BEAN_NAME, "A");
         assertTrue(hasAlias(registry, BEAN_NAME, "A"));
     }
 
     @Test
-    public void testRegisterSpringFactoriesBeans() {
+    void testRegisterSpringFactoriesBeans() {
         assertEquals(2, registerSpringFactoriesBeans((BeanDefinitionRegistry) registry, Bean.class));
         assertTrue(registry.containsBeanDefinition("testBean"));
         assertTrue(registry.containsBeanDefinition("testBean2"));

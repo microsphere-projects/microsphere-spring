@@ -28,122 +28,122 @@ class PropertyResolverListenerTest {
     }
 
     @Test
-    public void testBeforeGetProperty() {
+    void testBeforeGetProperty() {
         this.propertyResolverListener.beforeGetProperty(environment, "", String.class, null);
     }
 
     @Test
-    public void testAfterGetProperty() {
+    void testAfterGetProperty() {
         this.propertyResolverListener.afterGetProperty(environment, "", String.class, null, null);
     }
 
     @Test
-    public void testBeforeGetRequiredProperty() {
+    void testBeforeGetRequiredProperty() {
         this.propertyResolverListener.beforeGetRequiredProperty(environment, "", String.class);
     }
 
     @Test
-    public void testAfterGetRequiredProperty() {
+    void testAfterGetRequiredProperty() {
         this.propertyResolverListener.afterGetRequiredProperty(environment, "", String.class, null);
     }
 
     @Test
-    public void testBeforeResolvePlaceholders() {
+    void testBeforeResolvePlaceholders() {
         this.propertyResolverListener.beforeResolvePlaceholders(environment, "${}");
     }
 
     @Test
-    public void testAfterResolvePlaceholders() {
+    void testAfterResolvePlaceholders() {
         this.propertyResolverListener.afterResolvePlaceholders(environment, "${}", "");
     }
 
     @Test
-    public void testBeforeResolveRequiredPlaceholders() {
+    void testBeforeResolveRequiredPlaceholders() {
         this.propertyResolverListener.beforeResolveRequiredPlaceholders(environment, "${}");
     }
 
     @Test
-    public void testAfterResolveRequiredPlaceholders() {
+    void testAfterResolveRequiredPlaceholders() {
         this.propertyResolverListener.afterResolveRequiredPlaceholders(environment, "${}", "");
     }
 
     @Test
-    public void testBeforeSetRequiredProperties() {
+    void testBeforeSetRequiredProperties() {
         this.propertyResolverListener.beforeSetRequiredProperties(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testAfterSetRequiredProperties() {
+    void testAfterSetRequiredProperties() {
         this.propertyResolverListener.afterSetRequiredProperties(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeValidateRequiredProperties() {
+    void testBeforeValidateRequiredProperties() {
         this.propertyResolverListener.beforeValidateRequiredProperties(environment);
     }
 
     @Test
-    public void testAfterValidateRequiredProperties() {
+    void testAfterValidateRequiredProperties() {
         this.propertyResolverListener.afterValidateRequiredProperties(environment);
     }
 
     @Test
-    public void testBeforeGetConversionService() {
+    void testBeforeGetConversionService() {
         this.propertyResolverListener.beforeGetConversionService(environment);
     }
 
     @Test
-    public void testAfterGetConversionService() {
+    void testAfterGetConversionService() {
         this.propertyResolverListener.afterGetConversionService(environment, environment.getConversionService());
     }
 
     @Test
-    public void testBeforeSetConversionService() {
+    void testBeforeSetConversionService() {
         this.propertyResolverListener.beforeSetConversionService(environment, environment.getConversionService());
     }
 
     @Test
-    public void testAfterSetConversionService() {
+    void testAfterSetConversionService() {
         this.propertyResolverListener.afterSetConversionService(environment, environment.getConversionService());
     }
 
     @Test
-    public void testBeforeSetPlaceholderPrefix() {
+    void testBeforeSetPlaceholderPrefix() {
         this.propertyResolverListener.beforeSetPlaceholderPrefix(environment, "");
     }
 
     @Test
-    public void testAfterSetPlaceholderPrefix() {
+    void testAfterSetPlaceholderPrefix() {
         this.propertyResolverListener.afterSetPlaceholderPrefix(environment, "");
     }
 
     @Test
-    public void testBeforeSetPlaceholderSuffix() {
+    void testBeforeSetPlaceholderSuffix() {
         this.propertyResolverListener.beforeSetPlaceholderSuffix(environment, "");
     }
 
     @Test
-    public void testAfterSetPlaceholderSuffix() {
+    void testAfterSetPlaceholderSuffix() {
         this.propertyResolverListener.afterSetPlaceholderSuffix(environment, "");
     }
 
     @Test
-    public void testBeforeSetIgnoreUnresolvableNestedPlaceholders() {
+    void testBeforeSetIgnoreUnresolvableNestedPlaceholders() {
         this.propertyResolverListener.beforeSetIgnoreUnresolvableNestedPlaceholders(environment, true);
     }
 
     @Test
-    public void testAfterSetIgnoreUnresolvableNestedPlaceholders() {
+    void testAfterSetIgnoreUnresolvableNestedPlaceholders() {
         this.propertyResolverListener.afterSetIgnoreUnresolvableNestedPlaceholders(environment, true);
     }
 
     @Test
-    public void testBeforeSetValueSeparator() {
+    void testBeforeSetValueSeparator() {
         this.propertyResolverListener.beforeSetValueSeparator(environment, "");
     }
 
     @Test
-    public void testAfterSetValueSeparator() {
+    void testAfterSetValueSeparator() {
         this.propertyResolverListener.afterSetValueSeparator(environment, "");
     }
 }

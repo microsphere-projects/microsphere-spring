@@ -68,24 +68,24 @@ class BeanRegistrarTest {
     }
 
     @Test
-    public void testRegisterInfrastructureBean() {
+    void testRegisterInfrastructureBean() {
         assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.test.domain.User#0");
         assertBeanDefinitions(() -> registerInfrastructureBean(beanFactory, User.class), true, ROLE_INFRASTRUCTURE, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
     }
 
     @Test
-    public void testRegisterBeanDefinition() {
+    void testRegisterBeanDefinition() {
         assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.test.domain.User#0");
         assertBeanDefinitions(() -> registerBeanDefinition(beanFactory, User.class), true, ROLE_APPLICATION, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
     }
 
     @Test
-    public void testRegisterSingleton() {
+    void testRegisterSingleton() {
         registerUserAsSingleton();
     }
 
     @Test
-    public void testHasAlias() {
+    void testHasAlias() {
         String beanName = registerUserAsSingleton();
         String alias = "test-user";
         assertFalse(hasAlias(beanFactory, beanName, alias));
@@ -95,7 +95,7 @@ class BeanRegistrarTest {
     }
 
     @Test
-    public void testRegisterSpringFactoriesBeans() {
+    void testRegisterSpringFactoriesBeans() {
         int beansCount = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
         assertEquals(2, beansCount);
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean.class.getSimpleName())));
@@ -103,12 +103,12 @@ class BeanRegistrarTest {
     }
 
     @Test
-    public void testRegisterFactoryBean() {
+    void testRegisterFactoryBean() {
         testRegisterBean((beanName, bean) -> registerFactoryBean(this.beanFactory, beanName, bean));
     }
 
     @Test
-    public void testRegisterBean() {
+    void testRegisterBean() {
         testRegisterBean((beanName, bean) -> registerBean(this.beanFactory, beanName, bean));
     }
 

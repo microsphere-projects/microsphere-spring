@@ -42,22 +42,22 @@ public class TestFilterTest {
     private TestFilter testFilter;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.testFilter = new TestFilter();
     }
 
     @Test
-    public void testInit() throws ServletException {
+    void testInit() throws ServletException {
         this.testFilter.init(new MockFilterConfig());
     }
 
     @Test
-    public void testDoFilter() throws ServletException, IOException {
+    void testDoFilter() throws ServletException, IOException {
         this.testFilter.doFilter(new MockHttpServletRequest(), new MockHttpServletResponse(), new MockFilterChain());
     }
 
     @Test
-    public void testDestroy() {
+    void testDestroy() {
         this.testFilter.destroy();
     }
 }

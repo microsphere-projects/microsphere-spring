@@ -60,7 +60,7 @@ class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBean
     }
 
     @Test
-    public void testUser() {
+    void testUser() {
         User user = context.getBean("m", User.class);
         assertEquals("mercyblitz", user.getName());
         assertEquals(19, user.getAge());

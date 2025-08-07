@@ -45,20 +45,20 @@ class ResourceUtilsTest {
     private Resource urlResource;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         this.classPathResource = resourceLoader.getResource("classpath:/META-INF/spring.factories");
         URL url = this.classPathResource.getURL();
         this.urlResource = resourceLoader.getResource(url.toString());
     }
 
     @Test
-    public void testIsFileUrlResource() {
+    void testIsFileUrlResource() {
         assertResource(this.classPathResource, ResourceUtils::isFileUrlResource, false);
         assertResource(this.urlResource, ResourceUtils::isFileUrlResource, true);
     }
 
     @Test
-    public void testIsFileBasedResource() throws IOException {
+    void testIsFileBasedResource() throws IOException {
         assertResource(this.classPathResource, ResourceUtils::isFileBasedResource, false);
         assertResource(this.urlResource, ResourceUtils::isFileBasedResource, true);
         assertResource(new FileSystemResource(this.urlResource.getFile()), ResourceUtils::isFileBasedResource, true);

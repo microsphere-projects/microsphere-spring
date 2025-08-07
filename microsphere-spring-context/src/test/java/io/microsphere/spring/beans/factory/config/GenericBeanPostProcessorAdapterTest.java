@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class GenericBeanPostProcessorAdapterTest {
 
     @Test
-    public void testPostProcessBeforeInitialization() {
+    void testPostProcessBeforeInitialization() {
 
         TestBean testBean = new TestBean();
 
@@ -47,7 +47,7 @@ class GenericBeanPostProcessorAdapterTest {
     }
 
     @Test
-    public void testPostProcessAfterInitialization() {
+    void testPostProcessAfterInitialization() {
 
         TestBean testBean = new TestBean();
 
@@ -84,7 +84,7 @@ class GenericBeanPostProcessorAdapterTest {
     }
 
     @Test
-    public void testPostProcess() {
+    void testPostProcess() {
 
         GenericBeanPostProcessorAdapter<Bean> beanPostProcessor = new GenericBeanPostProcessorAdapter<Bean>() {
         };
@@ -96,7 +96,7 @@ class GenericBeanPostProcessorAdapterTest {
     }
 
     @Test
-    public void testGetBeanType() {
+    void testGetBeanType() {
 
         assertEquals(Bean.class, new GenericBeanPostProcessorAdapter<Bean>() {
         }.getBeanType());

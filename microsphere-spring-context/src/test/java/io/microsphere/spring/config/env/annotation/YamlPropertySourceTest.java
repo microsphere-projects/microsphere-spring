@@ -60,7 +60,7 @@ class YamlPropertySourceTest {
     private Environment environment;
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         assertEquals("mercyblitz", myName);
 
         String name = "Mercy Ma @ " + new Date();

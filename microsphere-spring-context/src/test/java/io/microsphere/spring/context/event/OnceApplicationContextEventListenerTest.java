@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OnceApplicationContextEventListenerTest {
 
     @Test
-    public void test() {
+    void test() {
 
         for (int levels = 1; levels < 10; levels++) {
             testOnceApplicationContextEventListener(levels, true);

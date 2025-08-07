@@ -26,25 +26,25 @@ class ImmutableMapPropertySourceTest {
     private static final Class<? extends Map> SOURCE_CLASS = unmodifiableMap(emptyMap()).getClass();
 
     @Test
-    public void testNewFromSortedMap() {
+    void testNewFromSortedMap() {
         ImmutableMapPropertySource propertySource = createPropertySource(new TreeMap<>());
         assertPropertySource(propertySource);
     }
 
     @Test
-    public void testNewFromLinkedHashMap() {
+    void testNewFromLinkedHashMap() {
         ImmutableMapPropertySource propertySource = createPropertySource(new LinkedHashMap<>());
         assertPropertySource(propertySource);
     }
 
     @Test
-    public void testNewFromIdentityHashMap() {
+    void testNewFromIdentityHashMap() {
         ImmutableMapPropertySource propertySource = createPropertySource(new IdentityHashMap<>());
         assertPropertySource(propertySource);
     }
 
     @Test
-    public void testNewFromHashMap() {
+    void testNewFromHashMap() {
         ImmutableMapPropertySource propertySource = createPropertySource(new HashMap<>());
         assertPropertySource(propertySource);
     }

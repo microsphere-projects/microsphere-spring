@@ -44,7 +44,7 @@ class EnableSpringConverterAdapterTest {
     private ConfigurableBeanFactory beanFactory;
 
     @Test
-    public void test() {
+    void test() {
         ConversionService conversionService = new ConversionServiceResolver(beanFactory).resolve();
         assertTrue(conversionService.canConvert(String.class, Duration.class));
     }

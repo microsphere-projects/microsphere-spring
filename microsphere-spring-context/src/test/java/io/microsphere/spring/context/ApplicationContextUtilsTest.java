@@ -54,19 +54,19 @@ class ApplicationContextUtilsTest {
     }
 
     @Test
-    public void testAsConfigurableApplicationContext() {
+    void testAsConfigurableApplicationContext() {
         ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
         assertSame(context, applicationContext);
     }
 
     @Test
-    public void testAsApplicationContext() {
+    void testAsApplicationContext() {
         ApplicationContext applicationContext = asApplicationContext(context);
         assertSame(context, applicationContext);
     }
 
     @Test
-    public void testGetApplicationContextAwareProcessor() {
+    void testGetApplicationContextAwareProcessor() {
         BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(context);
         assertEquals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS, beanPostProcessor.getClass());
     }

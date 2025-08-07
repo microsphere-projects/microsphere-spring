@@ -37,17 +37,17 @@ public class TestServletContextListenerTest {
     private TestServletContextListener listener;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.listener = new TestServletContextListener();
     }
 
     @Test
-    public void testContextInitialized() {
+    void testContextInitialized() {
         this.listener.contextInitialized(new ServletContextEvent(new MockServletContext()));
     }
 
     @Test
-    public void testContextDestroyed() {
+    void testContextDestroyed() {
         this.listener.contextDestroyed(new ServletContextEvent(new MockServletContext()));
     }
 }

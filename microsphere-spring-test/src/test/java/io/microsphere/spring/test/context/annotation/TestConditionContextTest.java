@@ -49,27 +49,27 @@ public class TestConditionContextTest {
     private TestConditionContext testConditionContext;
 
     @Test
-    public void testGetRegistry() {
+    void testGetRegistry() {
         assertSame(this.context.getBeanFactory(), testConditionContext.getRegistry());
     }
 
     @Test
-    public void testGetBeanFactory() {
+    void testGetBeanFactory() {
         assertSame(this.context.getBeanFactory(), testConditionContext.getBeanFactory());
     }
 
     @Test
-    public void testGetEnvironment() {
+    void testGetEnvironment() {
         assertSame(this.context.getEnvironment(), testConditionContext.getEnvironment());
     }
 
     @Test
-    public void testGetResourceLoader() {
+    void testGetResourceLoader() {
         assertSame(this.context, testConditionContext.getResourceLoader());
     }
 
     @Test
-    public void testGetClassLoader() {
+    void testGetClassLoader() {
         assertSame(this.context.getClassLoader(), testConditionContext.getClassLoader());
     }
 }

@@ -45,7 +45,7 @@ class ResourcePropertySourceTest {
     private Environment environment;
 
     @Test
-    public void test() {
+    void test() {
         assertEquals("1", environment.getProperty("a"));
         assertEquals("3", environment.getProperty("b"));
     }

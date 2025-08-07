@@ -61,7 +61,7 @@ class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testGetPropertySource() {
+    void testGetPropertySource() {
         PropertySource propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, PropertySource.class);
         assertNotNull(propertySource);
 
@@ -88,7 +88,7 @@ class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testGetMapPropertySource() {
+    void testGetMapPropertySource() {
         PropertySource propertySource = getMapPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME);
         assertNotNull(propertySource);
 
@@ -103,7 +103,7 @@ class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testFindConfiguredPropertySource() {
+    void testFindConfiguredPropertySource() {
         PropertySource propertySource = findConfiguredPropertySource(environment, "test-key");
         assertNotNull(propertySource);
 
@@ -112,7 +112,7 @@ class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testFindConfiguredPropertySourceName() {
+    void testFindConfiguredPropertySourceName() {
         String propertySourceName = findConfiguredPropertySourceName(environment, "test-key");
         assertNotNull(propertySourceName, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME);
 
@@ -121,20 +121,20 @@ class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testResolveCommaDelimitedValueToList() {
+    void testResolveCommaDelimitedValueToList() {
         List<String> values = resolveCommaDelimitedValueToList(environment, "${test-key},${test-key2}");
         assertEquals("test-value", values.get(0));
         assertEquals("test-value2", values.get(1));
     }
 
     @Test
-    public void testGetConversionService() {
+    void testGetConversionService() {
         ConversionService conversionService = getConversionService(environment);
         assertEquals(getSharedInstance(), conversionService);
     }
 
     @Test
-    public void testFindPropertyNamesByPrefix() {
+    void testFindPropertyNamesByPrefix() {
         Set<String> propertyNames = findPropertyNamesByPrefix(environment, "test-");
         assertEquals(2, propertyNames.size());
         assertTrue(propertyNames.contains("test-key"));
@@ -142,7 +142,7 @@ class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testGetSubProperties() {
+    void testGetSubProperties() {
 
         ConfigurableEnvironment environment = new AbstractEnvironment() {
         };
@@ -192,7 +192,7 @@ class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testDefaultProperties() {
+    void testDefaultProperties() {
         MockEnvironment environment = new MockEnvironment();
         addDefaultProperties(environment, "key-1", "value-1", "key-2", "value-2");
 

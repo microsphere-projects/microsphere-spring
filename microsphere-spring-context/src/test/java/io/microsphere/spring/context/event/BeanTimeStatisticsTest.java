@@ -31,7 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 class BeanTimeStatisticsTest extends AbstractEventListenerTest<BeanTimeStatistics> {
 
     @Test
-    public void test() {
+    void test() {
         BeanTimeStatistics beanTimeStatistics = this.beanFactoryListener;
         StopWatch stopWatch = beanTimeStatistics.getStopWatch();
         logger.info(stopWatch.toString());

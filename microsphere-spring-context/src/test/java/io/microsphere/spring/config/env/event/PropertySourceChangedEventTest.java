@@ -77,14 +77,14 @@ class PropertySourceChangedEventTest {
     }
 
     @Test
-    public void testGetApplicationContext() {
+    void testGetApplicationContext() {
         assertSame(this.context, this.addedEvent.getApplicationContext());
         assertSame(this.context, this.replacedEvent.getApplicationContext());
         assertSame(this.context, this.removedEvent.getApplicationContext());
     }
 
     @Test
-    public void testGetTimestamp() {
+    void testGetTimestamp() {
         long timestamp = currentTimeMillis();
         assertTrue(this.addedEvent.getTimestamp() <= timestamp);
         assertTrue(this.replacedEvent.getTimestamp() <= timestamp);
@@ -92,42 +92,42 @@ class PropertySourceChangedEventTest {
     }
 
     @Test
-    public void testGetSource() {
+    void testGetSource() {
         assertSame(this.context, this.addedEvent.getSource());
         assertSame(this.context, this.replacedEvent.getSource());
         assertSame(this.context, this.removedEvent.getSource());
     }
 
     @Test
-    public void testTestToString() {
+    void testTestToString() {
         assertNotNull(this.addedEvent.toString());
         assertNotNull(this.replacedEvent.toString());
         assertNotNull(this.removedEvent.toString());
     }
 
     @Test
-    public void testGetNewPropertySource() {
+    void testGetNewPropertySource() {
         assertSame(this.newPropertySource, this.addedEvent.getNewPropertySource());
         assertSame(this.newPropertySource, this.replacedEvent.getNewPropertySource());
         assertNull(this.removedEvent.getNewPropertySource());
     }
 
     @Test
-    public void testGetOldPropertySource() {
+    void testGetOldPropertySource() {
         assertNull(this.addedEvent.getOldPropertySource());
         assertSame(this.oldPropertySource, this.replacedEvent.getOldPropertySource());
         assertSame(this.oldPropertySource, this.removedEvent.getOldPropertySource());
     }
 
     @Test
-    public void testGetKind() {
+    void testGetKind() {
         assertSame(ADDED, this.addedEvent.getKind());
         assertSame(REPLACED, this.replacedEvent.getKind());
         assertSame(REMOVED, this.removedEvent.getKind());
     }
 
     @Test
-    public void testAdded() {
+    void testAdded() {
         assertEquals(this.addedEvent, added(this.context, this.newPropertySource));
         assertNotEquals(this.addedEvent, added(this.context, this.oldPropertySource));
 
@@ -139,7 +139,7 @@ class PropertySourceChangedEventTest {
     }
 
     @Test
-    public void testReplaced() {
+    void testReplaced() {
         assertNotEquals(this.addedEvent, replaced(this.context, this.newPropertySource, this.oldPropertySource));
         assertNotEquals(this.addedEvent, replaced(this.context, this.oldPropertySource, this.newPropertySource));
 
@@ -151,7 +151,7 @@ class PropertySourceChangedEventTest {
     }
 
     @Test
-    public void testRemoved() {
+    void testRemoved() {
         assertNotEquals(addedEvent, removed(this.context, this.oldPropertySource));
         assertNotEquals(addedEvent, removed(this.context, this.newPropertySource));
 
@@ -163,14 +163,14 @@ class PropertySourceChangedEventTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertFalse(this.addedEvent.equals(null));
         assertFalse(this.replacedEvent.equals(null));
         assertFalse(this.removedEvent.equals(null));
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(this.addedEvent.hashCode(), added(this.context, this.newPropertySource).hashCode());
         assertNotEquals(this.addedEvent.hashCode(), replaced(this.context, this.newPropertySource, this.oldPropertySource).hashCode());
         assertNotEquals(this.addedEvent.hashCode(), removed(this.context, this.oldPropertySource).hashCode());

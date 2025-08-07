@@ -86,42 +86,42 @@ class ResourcePropertySourceLoaderTest {
     }
 
     @Test
-    public void testOnDefaultConfig() {
+    void testOnDefaultConfig() {
         testInSpringContainer((context, environment) -> {
             assertDefaultPropertySource(environment, DefaultConfig.class);
         }, DefaultConfig.class);
     }
 
     @Test
-    public void testOnNamedConfig() {
+    void testOnNamedConfig() {
         testInSpringContainer((context, environment) -> {
             assertNamedPropertySource(environment, "test-property-source");
         }, NamedConfig.class);
     }
 
     @Test
-    public void testOnFirstConfig() {
+    void testOnFirstConfig() {
         testInSpringContainer((context, environment) -> {
             assertFirstPropertySource(environment, FirstConfig.class);
         }, FirstConfig.class);
     }
 
     @Test
-    public void testOnBeforeConfig() {
+    void testOnBeforeConfig() {
         testInSpringContainer((context, environment) -> {
             assertBeforePropertySource(environment, BeforeConfig.class);
         }, BeforeConfig.class);
     }
 
     @Test
-    public void testOnAfterConfig() {
+    void testOnAfterConfig() {
         testInSpringContainer((context, environment) -> {
             assertAfterPropertySource(environment, AfterConfig.class);
         }, AfterConfig.class);
     }
 
     @Test
-    public void testOnIgnoreResourceNotFoundConfig() {
+    void testOnIgnoreResourceNotFoundConfig() {
         testInSpringContainer((context, environment) -> {
             MutablePropertySources propertySources = environment.getPropertySources();
             assertEquals(2, propertySources.size());
@@ -131,21 +131,21 @@ class ResourcePropertySourceLoaderTest {
     }
 
     @Test
-    public void testOnNotFoundConfig() {
+    void testOnNotFoundConfig() {
         assertThrows(BeanDefinitionStoreException.class,
                 () -> testInSpringContainer((context, environment) -> {
                 }, NotFoundConfig.class));
     }
 
     @Test
-    public void testOnAutoRefreshedConfig() {
+    void testOnAutoRefreshedConfig() {
         testInSpringContainer((context, environment) -> {
             assertDefaultPropertySource(environment, AutoRefreshedConfig.class);
         }, AutoRefreshedConfig.class);
     }
 
     @Test
-    public void testOnFileCreated() {
+    void testOnFileCreated() {
         testInSpringContainer((context, environment) -> {
             execute(() -> {
                 Resource propertiesDirectoryResource = context.getResource(PROPERTIES_DIRECTORY_RESOURCE_LOCATION);
@@ -163,7 +163,7 @@ class ResourcePropertySourceLoaderTest {
     }
 
     @Test
-    public void testOnFileModified() {
+    void testOnFileModified() {
         testInSpringContainer((context, environment) -> {
             execute(() -> {
                 Resource bPropertiesResource = context.getResource(PROPERTIES_DIRECTORY_RESOURCE_LOCATION + "b.properties");
@@ -181,7 +181,7 @@ class ResourcePropertySourceLoaderTest {
     }
 
     @Test
-    public void testOnFileDeleted() {
+    void testOnFileDeleted() {
         testInSpringContainer((context, environment) -> {
             execute(() -> {
                 Resource aPropertiesResource = context.getResource(PROPERTIES_DIRECTORY_RESOURCE_LOCATION + "a.properties");

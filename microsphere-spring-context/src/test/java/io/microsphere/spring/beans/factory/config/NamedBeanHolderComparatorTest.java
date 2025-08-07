@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NamedBeanHolderComparatorTest {
 
     @Test
-    public void testCompare() {
+    void testCompare() {
         NamedBeanHolder namedBeanHolder1 = createNamedBeanHolder("bean1");
         NamedBeanHolder namedBeanHolder2 = createNamedBeanHolder("bean2");
         assertEquals(0, NamedBeanHolderComparator.INSTANCE.compare(namedBeanHolder1, namedBeanHolder2));

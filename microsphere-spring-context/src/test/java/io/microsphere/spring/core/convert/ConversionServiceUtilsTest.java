@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ConversionServiceUtilsTest {
 
     @Test
-    public void testGetSharedInstance() {
+    void testGetSharedInstance() {
         assertNotNull(getSharedInstance());
     }
 
     @Test
-    public void testDoGetSharedInstance() {
+    void testDoGetSharedInstance() {
         assertNotNull(doGetSharedInstance());
     }
 }

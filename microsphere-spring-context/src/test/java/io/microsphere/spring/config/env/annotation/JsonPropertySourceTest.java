@@ -46,7 +46,7 @@ class JsonPropertySourceTest {
     private String myName;
 
     @Test
-    public void test() {
+    void test() {
         assertEquals("mercyblitz", myName);
     }
 }

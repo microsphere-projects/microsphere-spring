@@ -53,7 +53,7 @@ class DefaultPropertiesPropertySourcesTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         assertTrue(propertySources.contains(DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME));
         assertEquals("1", environment.getProperty("a"));
         assertEquals("2", environment.getProperty("b"));

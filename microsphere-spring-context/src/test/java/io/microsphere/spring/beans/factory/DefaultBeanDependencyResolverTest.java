@@ -63,7 +63,7 @@ class DefaultBeanDependencyResolverTest {
     }
 
     @Test
-    public void testResolve() {
+    void testResolve() {
         Map<String, Set<String>> dependentBeanNamesMap = this.resolver.resolve(this.beanFactory);
         assertTrue(dependentBeanNamesMap.isEmpty());
     }

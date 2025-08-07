@@ -42,34 +42,34 @@ public class UserTest {
     private User user;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.user = new User();
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertNull(this.user.getName());
     }
 
     @Test
-    public void testSetName() {
+    void testSetName() {
         this.user.setName("Mercy");
         assertEquals("Mercy", this.user.getName());
     }
 
     @Test
-    public void testGetAge() {
+    void testGetAge() {
         assertEquals(0, this.user.getAge());
     }
 
     @Test
-    public void testSetAge() {
+    void testSetAge() {
         this.user.setAge(18);
         assertEquals(18, this.user.getAge());
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertNotEquals(this.user, null);
         assertEquals(this.user, this.user);
         assertUser(Assertions::assertEquals);
@@ -93,12 +93,12 @@ public class UserTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertUser((u1, u2) -> assertEquals(u1.hashCode(), u2.hashCode()));
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertUser((u1, u2) -> assertEquals(u1.toString(), u2.toString()));
     }
 

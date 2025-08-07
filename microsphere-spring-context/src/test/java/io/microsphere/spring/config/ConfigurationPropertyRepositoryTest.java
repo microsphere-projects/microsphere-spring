@@ -56,7 +56,7 @@ class ConfigurationPropertyRepositoryTest {
     private ConfigurationPropertyRepository repository;
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         String name = "test";
         ConfigurationProperty configurationProperty = new ConfigurationProperty(name);
 

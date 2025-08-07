@@ -47,17 +47,17 @@ import static org.springframework.util.StreamUtils.copyToString;
 class SpringProtocolURLStreamHandlerTest {
 
     @Test
-    public void testSpringResourceURLConnectionFactory() throws Throwable {
+    void testSpringResourceURLConnectionFactory() throws Throwable {
         assertContent(new URL("spring:resource:classpath://enable-configuration-bean-binding.properties"));
     }
 
     @Test
-    public void testSpringEnvironmentURLConnectionFactory() throws Throwable {
+    void testSpringEnvironmentURLConnectionFactory() throws Throwable {
         assertContent(new URL("spring:env:property-sources://microsphere.net/text/properties"));
     }
 
     @Test
-    public void testSpringDelegatingBeanURLConnectionFactory() throws Throwable {
+    void testSpringDelegatingBeanURLConnectionFactory() throws Throwable {
         assertContent(new URL("spring:test://test"));
     }
 

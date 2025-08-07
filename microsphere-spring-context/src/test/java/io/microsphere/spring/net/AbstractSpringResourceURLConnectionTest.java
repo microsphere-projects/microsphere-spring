@@ -154,7 +154,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     public abstract void testAllowUserInteraction();
 
     @Test
-    public void testDefaultAllowUserInteraction() {
+    void testDefaultAllowUserInteraction() {
         boolean defaultAllowUserInteraction = getDefaultAllowUserInteraction();
         try {
             assertFalse(defaultAllowUserInteraction);

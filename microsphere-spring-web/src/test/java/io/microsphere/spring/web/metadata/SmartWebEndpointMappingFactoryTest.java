@@ -42,7 +42,7 @@ import static org.springframework.util.StreamUtils.copyToString;
 @ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
 public class SmartWebEndpointMappingFactoryTest {
 
-    private WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory();
+    private final WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory();
 
     @Value("classpath:META-INF/web-mapping-descriptor.json")
     private Resource fullJsonResource;
@@ -50,12 +50,12 @@ public class SmartWebEndpointMappingFactoryTest {
     private String fullJson;
 
     @BeforeEach
-    public void init() throws Throwable {
+    void setUp() throws Throwable {
         this.fullJson = copyToString(this.fullJsonResource.getInputStream(), UTF_8);
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         Optional<WebEndpointMapping> descriptor = factory.create(fullJson);
         assertNotNull(descriptor);
         assertEquals(fullJson, descriptor.get().toJSON());

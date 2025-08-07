@@ -66,12 +66,12 @@ class ResolvableDependencyTypeFilterTest {
     private ConfigurableApplicationContext context;
 
     @Test
-    public void testGet() {
+    void testGet() {
         assertSame(filter, ResolvableDependencyTypeFilter.get(context.getBeanFactory()));
     }
 
     @Test
-    public void testAccept() {
+    void testAccept() {
         assertTrue(filter.accept(BeanFactory.class));
         assertTrue(filter.accept(ResourceLoader.class));
         assertTrue(filter.accept(ApplicationEventPublisher.class));
@@ -80,12 +80,12 @@ class ResolvableDependencyTypeFilterTest {
     }
 
     @Test
-    public void testAcceptOnNPE() {
+    void testAcceptOnNPE() {
         assertThrows(NullPointerException.class, () -> filter.accept(null));
     }
 
     @Test
-    public void testTestToString() {
+    void testTestToString() {
         assertNotNull(filter.toString());
     }
 }

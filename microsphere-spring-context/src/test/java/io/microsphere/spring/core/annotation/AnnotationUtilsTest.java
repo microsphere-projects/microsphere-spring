@@ -57,7 +57,7 @@ class AnnotationUtilsTest {
     }
 
     @Test
-    public void testIsPresent() {
+    void testIsPresent() {
 
         Method method = findMethod(RuntimeAnnotationHandler.class, "handle",
                 String.class, String.class);
@@ -80,7 +80,7 @@ class AnnotationUtilsTest {
     }
 
     @Test
-    public void testFindAnnotations() {
+    void testFindAnnotations() {
 
         Method method = findMethod(RuntimeAnnotationHandler.class, "handle",
                 String.class, String.class);
@@ -138,7 +138,7 @@ class AnnotationUtilsTest {
     }
 
     @Test
-    public void testGetAttributes() {
+    void testGetAttributes() {
 
         Bean annotation = getAnnotation("dummyBean", Bean.class);
 
@@ -181,7 +181,7 @@ class AnnotationUtilsTest {
     }
 
     @Test
-    public void testGetAttribute() {
+    void testGetAttribute() {
         Bean annotation = getAnnotation("dummyBean", Bean.class);
         assertArrayEquals(of("dummy-bean"), getAttribute(annotation, "name"));
 
@@ -193,7 +193,7 @@ class AnnotationUtilsTest {
     }
 
     @Test
-    public void testGetAnnotationAttributes() {
+    void testGetAnnotationAttributes() {
 
         MockEnvironment environment = new MockEnvironment();
 

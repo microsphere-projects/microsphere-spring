@@ -64,7 +64,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setActiveProfiles(String...)}
      */
     @Test
-    public void testSetActiveProfiles() {
+    void testSetActiveProfiles() {
         String[] activeProfiles = environment.getActiveProfiles();
         environment.setActiveProfiles(activeProfiles);
     }
@@ -73,7 +73,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#addActiveProfile(String)}
      */
     @Test
-    public void testAddActiveProfile() {
+    void testAddActiveProfile() {
         environment.addActiveProfile("dev");
     }
 
@@ -81,7 +81,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setDefaultProfiles(String...)}
      */
     @Test
-    public void testSetDefaultProfiles() {
+    void testSetDefaultProfiles() {
         environment.setDefaultProfiles("default");
     }
 
@@ -89,7 +89,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#getPropertySources()}
      */
     @Test
-    public void testGetPropertySources() {
+    void testGetPropertySources() {
         MutablePropertySources propertySources = environment.getPropertySources();
         assertNotNull(propertySources);
     }
@@ -98,7 +98,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#getSystemEnvironment()}
      */
     @Test
-    public void testGetSystemProperties() {
+    void testGetSystemProperties() {
         assertSame(System.getProperties(), environment.getSystemProperties());
     }
 
@@ -106,7 +106,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#getSystemEnvironment()}
      */
     @Test
-    public void testGetSystemEnvironment() {
+    void testGetSystemEnvironment() {
         assertSame(System.getenv(), environment.getSystemEnvironment());
     }
 
@@ -114,7 +114,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#merge(ConfigurableEnvironment)}
      */
     @Test
-    public void testMerge() {
+    void testMerge() {
         environment.merge(environment);
     }
 
@@ -122,7 +122,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#getActiveProfiles()}
      */
     @Test
-    public void testGetActiveProfiles() {
+    void testGetActiveProfiles() {
         String[] activeProfiles = environment.getActiveProfiles();
         assertEquals(1, activeProfiles.length);
         assertEquals("test", activeProfiles[0]);
@@ -132,7 +132,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#getDefaultProfiles()}
      */
     @Test
-    public void testGetDefaultProfiles() {
+    void testGetDefaultProfiles() {
         String[] defaultProfiles = environment.getDefaultProfiles();
         assertEquals(1, defaultProfiles.length);
         assertEquals("default", defaultProfiles[0]);
@@ -142,7 +142,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#matchesProfiles(String...)}
      */
     @Test
-    public void testMatchesProfiles() {
+    void testMatchesProfiles() {
         assertTrue(environment.matchesProfiles("test"));
         assertFalse(environment.matchesProfiles("!test"));
 
@@ -156,7 +156,7 @@ class ListenableConfigurableEnvironmentTest {
      * </ul>
      */
     @Test
-    public void testAcceptsProfiles() {
+    void testAcceptsProfiles() {
         assertTrue(environment.acceptsProfiles("test"));
         assertTrue(environment.acceptsProfiles(profile -> true));
     }
@@ -165,7 +165,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#containsProperty(String)}
      */
     @Test
-    public void testContainsProperty() {
+    void testContainsProperty() {
         assertTrue(environment.containsProperty("user.name"));
     }
 
@@ -179,7 +179,7 @@ class ListenableConfigurableEnvironmentTest {
      * </ul>
      */
     @Test
-    public void testGetProperty() {
+    void testGetProperty() {
         String userName = environment.getProperty("user.name");
         assertEquals("Mercy", userName);
 
@@ -201,7 +201,7 @@ class ListenableConfigurableEnvironmentTest {
      * </ul>
      */
     @Test
-    public void testGetRequiredProperty() {
+    void testGetRequiredProperty() {
         String userName = environment.getRequiredProperty("user.name");
         assertEquals("Mercy", userName);
 
@@ -213,7 +213,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#resolvePlaceholders(String)}
      */
     @Test
-    public void testResolvePlaceholders() {
+    void testResolvePlaceholders() {
         String userName = environment.resolvePlaceholders("${user.name}");
         assertEquals("Mercy", userName);
     }
@@ -222,7 +222,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#resolveRequiredPlaceholders(String)}
      */
     @Test
-    public void testResolveRequiredPlaceholders() {
+    void testResolveRequiredPlaceholders() {
         String userName = environment.resolveRequiredPlaceholders("${user.name}");
         assertEquals("Mercy", userName);
     }
@@ -231,7 +231,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#getConversionService()}
      */
     @Test
-    public void testGetConversionService() {
+    void testGetConversionService() {
         ConfigurableConversionService conversionService = environment.getConversionService();
         assertNotNull(conversionService);
     }
@@ -240,7 +240,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setConversionService(ConfigurableConversionService)}
      */
     @Test
-    public void testSetConversionService() {
+    void testSetConversionService() {
         environment.setConversionService(new DefaultFormattingConversionService());
     }
 
@@ -248,7 +248,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setPlaceholderSuffix(String)}
      */
     @Test
-    public void testSetPlaceholderPrefix() {
+    void testSetPlaceholderPrefix() {
         environment.setPlaceholderPrefix("${");
     }
 
@@ -256,7 +256,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setPlaceholderSuffix(String)}
      */
     @Test
-    public void testSetPlaceholderSuffix() {
+    void testSetPlaceholderSuffix() {
         environment.setPlaceholderSuffix("}");
     }
 
@@ -264,7 +264,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setValueSeparator(String)}
      */
     @Test
-    public void testSetValueSeparator() {
+    void testSetValueSeparator() {
         environment.setValueSeparator("#");
     }
 
@@ -272,7 +272,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setIgnoreUnresolvableNestedPlaceholders(boolean)}
      */
     @Test
-    public void testSetIgnoreUnresolvableNestedPlaceholders() {
+    void testSetIgnoreUnresolvableNestedPlaceholders() {
         environment.setIgnoreUnresolvableNestedPlaceholders(true);
     }
 
@@ -280,7 +280,7 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#setRequiredProperties(String...)}
      */
     @Test
-    public void testSetRequiredProperties() {
+    void testSetRequiredProperties() {
         environment.setRequiredProperties("user.name");
     }
 
@@ -288,12 +288,12 @@ class ListenableConfigurableEnvironmentTest {
      * Test {@link ListenableConfigurableEnvironment#validateRequiredProperties()}
      */
     @Test
-    public void testValidateRequiredProperties() {
+    void testValidateRequiredProperties() {
         environment.validateRequiredProperties();
     }
 
     @Test
-    public void testGetDelegate() {
+    void testGetDelegate() {
         assertInstanceOf(ListenableConfigurableEnvironment.class, environment);
         assertNotSame(environment, environment.getDelegate());
     }

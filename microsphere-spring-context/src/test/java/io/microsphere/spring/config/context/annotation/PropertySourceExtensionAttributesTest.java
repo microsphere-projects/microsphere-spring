@@ -59,89 +59,89 @@ class PropertySourceExtensionAttributesTest {
     }
 
     @Test
-    public void testValidateAnnotationType() {
+    void testValidateAnnotationType() {
         assertSame(annotationType, validateAnnotationType(annotationType));
     }
 
     @Test
-    public void testValidateAnnotationTypeOnIllegalArgumentException() {
+    void testValidateAnnotationTypeOnIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> validateAnnotationType(Override.class));
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("test-property-source", this.attributes.getName());
     }
 
     @Test
-    public void testIsAutoRefreshed() {
+    void testIsAutoRefreshed() {
         assertFalse(this.attributes.isAutoRefreshed());
     }
 
     @Test
-    public void testIsFirstPropertySource() {
+    void testIsFirstPropertySource() {
         assertFalse(this.attributes.isFirstPropertySource());
     }
 
     @Test
-    public void testGetBeforePropertySourceName() {
+    void testGetBeforePropertySourceName() {
         assertEquals(EMPTY_STRING, this.attributes.getBeforePropertySourceName());
     }
 
     @Test
-    public void testGetAfterPropertySourceName() {
+    void testGetAfterPropertySourceName() {
         assertEquals(EMPTY_STRING, this.attributes.getAfterPropertySourceName());
     }
 
     @Test
-    public void testGetAnnotationType() {
+    void testGetAnnotationType() {
         assertSame(annotationType, attributes.getAnnotationType());
     }
 
     @Test
-    public void testGetValue() {
+    void testGetValue() {
         assertArrayEquals(ofArray("classpath*:/META-INF/test/*.properties"), attributes.getValue());
     }
 
     @Test
-    public void testGetResourceComparatorClass() {
+    void testGetResourceComparatorClass() {
         assertEquals(DefaultResourceComparator.class, attributes.getResourceComparatorClass());
     }
 
     @Test
-    public void testIsIgnoreResourceNotFound() {
+    void testIsIgnoreResourceNotFound() {
         assertTrue(this.attributes.isIgnoreResourceNotFound());
     }
 
     @Test
-    public void testGetEncoding() {
+    void testGetEncoding() {
         assertEquals("UTF-8", this.attributes.getEncoding());
     }
 
     @Test
-    public void testGetPropertySourceFactoryClass() {
+    void testGetPropertySourceFactoryClass() {
         assertEquals(DefaultPropertySourceFactory.class, this.attributes.getPropertySourceFactoryClass());
     }
 
     @Test
-    public void testAnnotationType() {
+    void testAnnotationType() {
         assertSame(annotationType, attributes.annotationType());
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         AnnotationAttributes attributes = getAnnotationAttributes(getClass(), annotationType, environment, false);
         assertEquals(this.attributes, new PropertySourceExtensionAttributes<>(attributes, annotationType, environment));
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         AnnotationAttributes attributes = getAnnotationAttributes(getClass(), annotationType, environment, false);
         assertEquals(this.attributes.hashCode(), new PropertySourceExtensionAttributes<>(attributes, annotationType, environment).hashCode());
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertNotNull(this.attributes.toString());
     }
 }

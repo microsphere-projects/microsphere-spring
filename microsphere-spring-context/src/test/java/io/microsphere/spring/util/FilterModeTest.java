@@ -22,18 +22,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FilterModeTest {
 
     @Test
-    public void testConstants() {
+    void testConstants() {
         assertEquals("microsphere.spring.filter-mode", PROPERTY_NAME);
     }
 
     @Test
-    public void testValueOf() {
+    void testValueOf() {
         assertEquals(SEQUENTIAL, valueOf("SEQUENTIAL"));
         assertEquals(CONDITIONAL, valueOf("CONDITIONAL"));
     }
 
     @Test
-    public void testValueOfFromEnvironment() {
+    void testValueOfFromEnvironment() {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty(PROPERTY_NAME, "SEQUENTIAL");
 
@@ -44,7 +44,7 @@ class FilterModeTest {
     }
 
     @Test
-    public void testValues() {
+    void testValues() {
         FilterMode[] values = values();
         assertTrue(contains(values, SEQUENTIAL));
         assertTrue(contains(values, CONDITIONAL));

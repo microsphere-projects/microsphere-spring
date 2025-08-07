@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.web.rule;
 
-import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -24,12 +23,11 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.Collection;
 import java.util.List;
 
+import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExpressions;
-import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
-import static org.springframework.http.MediaType.parseMediaType;
-import static org.springframework.util.StringUtils.hasLength;
+import static io.microsphere.spring.web.util.WebRequestUtils.parseContentType;
 
 
 /**
@@ -81,21 +79,18 @@ public class WebRequestConsumesRule extends AbstractWebRequestRule<ConsumeMediaT
             return false;
         }
 
-        MediaType contentType;
-        try {
-            String contentTypeValue = getContentType(request);
-            contentType = hasLength(contentTypeValue) ? parseMediaType(contentTypeValue) : APPLICATION_OCTET_STREAM;
-        } catch (InvalidMediaTypeException ex) {
-            return false;
-        }
+        MediaType contentType = parseContentType(request);
+        List<ConsumeMediaTypeExpression> result = getMatchingExpressions(contentType);
+        return isNotEmpty(result);
+    }
 
-        int size = expressions.size();
-        for (int i = 0; i < size; i++) {
-            ConsumeMediaTypeExpression expression = expressions.get(i);
-            if (!expression.match(contentType)) {
-                return false;
+    List<ConsumeMediaTypeExpression> getMatchingExpressions(MediaType contentType) {
+        List<ConsumeMediaTypeExpression> result = newArrayList(this.expressions.size());
+        for (ConsumeMediaTypeExpression expression : this.expressions) {
+            if (expression.match(contentType)) {
+                result.add(expression);
             }
         }
-        return true;
+        return result;
     }
 }

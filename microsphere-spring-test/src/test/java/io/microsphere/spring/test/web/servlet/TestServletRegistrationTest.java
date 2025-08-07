@@ -54,123 +54,123 @@ public class TestServletRegistrationTest {
     private TestServletRegistration registration;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         TestServletContext servletContext = new TestServletContext();
         this.registration = (TestServletRegistration) servletContext.addServlet(testServletName, testServletClass);
     }
 
     @Test
-    public void testSetLoadOnStartup() {
+    void testSetLoadOnStartup() {
         registration.setLoadOnStartup(1);
         assertEquals(1, registration.getLoadOnStartup());
     }
 
     @Test
-    public void testSetServletSecurity() {
+    void testSetServletSecurity() {
         assertSame(emptySet(), registration.setServletSecurity(new ServletSecurityElement()));
     }
 
     @Test
-    public void testSetMultipartConfig() {
+    void testSetMultipartConfig() {
         MultipartConfigElement multipartConfig = new MultipartConfigElement("/test");
         this.registration.setMultipartConfig(multipartConfig);
         assertSame(multipartConfig, this.registration.getMultipartConfig());
     }
 
     @Test
-    public void testSetRunAsRole() {
+    void testSetRunAsRole() {
         this.registration.setRunAsRole("admin");
         assertEquals("admin", this.registration.getRunAsRole());
     }
 
     @Test
-    public void testSetAsyncSupported() {
+    void testSetAsyncSupported() {
         assertFalse(this.registration.isAsyncSupported());
         this.registration.setAsyncSupported(true);
         assertTrue(this.registration.isAsyncSupported());
     }
 
     @Test
-    public void testAddMapping() {
+    void testAddMapping() {
         String[] urlPatterns = ofArray("/a", "/b", "c");
         this.registration.addMapping(urlPatterns);
         assertArrayEquals(urlPatterns, this.registration.getMappings().toArray(EMPTY_STRING_ARRAY));
     }
 
     @Test
-    public void testGetMappings() {
+    void testGetMappings() {
     }
 
     @Test
-    public void testGetRunAsRole() {
+    void testGetRunAsRole() {
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals(testServletName, this.registration.getName());
     }
 
     @Test
-    public void testGetClassName() {
+    void testGetClassName() {
         assertEquals(testServletClassName, this.registration.getClassName());
     }
 
     @Test
-    public void testSetInitParameter() {
+    void testSetInitParameter() {
         assertTrue(this.registration.setInitParameter("paramName", "paramValue"));
         assertFalse(this.registration.setInitParameter("paramName", "paramValue"));
         assertEquals("paramValue", this.registration.getInitParameter("paramName"));
     }
 
     @Test
-    public void testGetInitParameter() {
+    void testGetInitParameter() {
         assertNull(this.registration.getInitParameter("paramName"));
     }
 
     @Test
-    public void testSetInitParameters() {
+    void testSetInitParameters() {
         Set<String> parameterNames = this.registration.setInitParameters(of("paramName", "paramValue"));
         assertTrue(parameterNames.contains("paramName"));
         assertEquals("paramValue", this.registration.getInitParameter("paramName"));
     }
 
     @Test
-    public void testGetInitParameters() {
+    void testGetInitParameters() {
         assertEquals(0, this.registration.getInitParameters().size());
     }
 
     @Test
-    public void testGetServletSecurityElement() {
+    void testGetServletSecurityElement() {
         assertNull(this.registration.getServletSecurityElement());
     }
 
     @Test
-    public void testGetMultipartConfig() {
+    void testGetMultipartConfig() {
         assertNull(this.registration.getMultipartConfig());
     }
 
     @Test
-    public void testGetServlet() {
+    void testGetServlet() {
         assertNotNull(this.registration.getServlet());
     }
 
     @Test
-    public void testGetUrlPatterns() {
+    void testGetUrlPatterns() {
         assertTrue(this.registration.getUrlPatterns().isEmpty());
     }
 
     @Test
-    public void testGetLoadOnStartup() {
+    void testGetLoadOnStartup() {
         assertEquals(0, this.registration.getLoadOnStartup());
     }
 
     @Test
-    public void testGetRoleName() {
+    void testGetRoleName() {
         assertNull(this.registration.getRoleName());
     }
 
     @Test
-    public void testIsAsyncSupported() {
+    void testIsAsyncSupported() {
         assertFalse(this.registration.isAsyncSupported());
     }
 }

@@ -29,37 +29,37 @@ class LoggingSmartLifecycleTest {
     }
 
     @Test
-    public void testIsAutoStartup() {
+    void testIsAutoStartup() {
         assertTrue(lifecycle.isAutoStartup());
     }
 
     @Test
-    public void testStop() {
+    void testStop() {
         lifecycle.stop();
         assertFalse(lifecycle.isStarted());
     }
 
     @Test
-    public void testGetPhase() {
+    void testGetPhase() {
         assertEquals(DEFAULT_PHASE, lifecycle.getPhase());
     }
 
     @Test
-    public void testStart() {
+    void testStart() {
         assertFalse(lifecycle.isStarted());
         lifecycle.start();
         assertTrue(lifecycle.isStarted());
     }
 
     @Test
-    public void testDoStart() {
+    void testDoStart() {
         assertFalse(lifecycle.isStarted());
         lifecycle.doStart();
         assertFalse(lifecycle.isStarted());
     }
 
     @Test
-    public void testStopWithRunnable() {
+    void testStopWithRunnable() {
         assertFalse(lifecycle.isStarted());
         lifecycle.stop(() -> {
             logger.trace("stop running");
@@ -68,21 +68,21 @@ class LoggingSmartLifecycleTest {
     }
 
     @Test
-    public void testDoStop() {
+    void testDoStop() {
         assertFalse(lifecycle.isStarted());
         lifecycle.doStop();
         assertFalse(lifecycle.isStarted());
     }
 
     @Test
-    public void testIsRunning() {
+    void testIsRunning() {
         assertFalse(lifecycle.isRunning());
         lifecycle.start();
         assertTrue(lifecycle.isRunning());
     }
 
     @Test
-    public void testIsStarted() {
+    void testIsStarted() {
         assertFalse(lifecycle.isStarted());
 
         lifecycle.start();
@@ -93,14 +93,14 @@ class LoggingSmartLifecycleTest {
     }
 
     @Test
-    public void testSetPhase() {
+    void testSetPhase() {
         int phase = 1;
         lifecycle.setPhase(phase);
         assertEquals(phase, lifecycle.getPhase());
     }
 
     @Test
-    public void testSetStarted() {
+    void testSetStarted() {
         assertFalse(lifecycle.isStarted());
         lifecycle.setStarted(true);
         assertTrue(lifecycle.isStarted());

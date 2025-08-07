@@ -83,46 +83,46 @@ class PropertySourcesChangedEventTest {
     }
 
     @Test
-    public void testGetApplicationContext() {
+    void testGetApplicationContext() {
         assertSame(this.context, this.event.getApplicationContext());
     }
 
     @Test
-    public void testGetTimestamp() {
+    void testGetTimestamp() {
         assertTrue(this.event.getTimestamp() <= currentTimeMillis());
     }
 
     @Test
-    public void testGetSource() {
+    void testGetSource() {
         assertSame(this.context, this.event.getSource());
     }
 
     @Test
-    public void testTestToString() {
+    void testTestToString() {
         assertNotNull(this.event.toString());
     }
 
     @Test
-    public void testGetSubEvents() {
+    void testGetSubEvents() {
         assertEquals(this.event.getSubEvents(), ofList(this.addedEvent, this.replacedEvent, this.removedEvent));
     }
 
     @Test
-    public void testGetChangedProperties() {
+    void testGetChangedProperties() {
         Map<String, Object> properties = this.event.getChangedProperties();
         assertEquals(properties.size(), 1);
         assertEquals("test-value", properties.get("test-key"));
     }
 
     @Test
-    public void testGetAddedProperties() {
+    void testGetAddedProperties() {
         Map<String, Object> properties = this.event.getAddedProperties();
         assertEquals(properties.size(), 1);
         assertEquals("test-value", properties.get("test-key"));
     }
 
     @Test
-    public void testGetRemovedProperties() {
+    void testGetRemovedProperties() {
         Map<String, Object> properties = this.event.getRemovedProperties();
         assertEquals(properties.size(), 1);
         assertEquals("test-value-2", properties.get("test-key-2"));

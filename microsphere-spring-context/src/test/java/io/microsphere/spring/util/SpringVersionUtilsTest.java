@@ -39,21 +39,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class SpringVersionUtilsTest {
 
     @Test
-    public void testGetSpringVersionOnNPE() {
+    void testGetSpringVersionOnNPE() {
         assertThrows(NullPointerException.class, () -> {
             getSpringVersion((Class) null);
         });
     }
 
     @Test
-    public void testGetSpringVersionOnIAE() {
+    void testGetSpringVersionOnIAE() {
         assertThrows(IllegalArgumentException.class, () -> {
             getSpringVersion(String.class);
         });
     }
 
     @Test
-    public void testGetSpringVersion() {
+    void testGetSpringVersion() {
         Version version = getSpringVersion(StringUtils.class);
         assertEquals(version, SPRING_AOP_VERSION);
         assertEquals(SPRING_CORE_VERSION, SPRING_AOP_VERSION);

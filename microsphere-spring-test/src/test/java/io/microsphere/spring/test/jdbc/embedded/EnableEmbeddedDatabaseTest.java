@@ -52,7 +52,7 @@ public class EnableEmbeddedDatabaseTest {
     private DataSource dataSource;
 
     @Test
-    public void test() throws SQLException {
+    void test() throws SQLException {
         Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();
         statement.close();

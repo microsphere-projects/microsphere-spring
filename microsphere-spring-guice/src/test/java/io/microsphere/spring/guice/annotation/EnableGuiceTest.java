@@ -53,7 +53,7 @@ public class EnableGuiceTest {
     private String notExists;
 
     @Test
-    public void testInject() {
+    void testInject() {
         assertNotNull(context);
         assertNotNull(guiceConfiguration);
         assertNotNull(postProcessor);

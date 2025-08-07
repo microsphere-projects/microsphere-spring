@@ -13,7 +13,7 @@ class ConfigurationBeanAliasGeneratorTest {
     private final String beanName = "bean";
 
     @Test
-    public void testClassNameAndBeanNameConnect() {
+    void testClassNameAndBeanNameConnect() {
         ConfigurationBeanAliasGenerator generator = new DefaultConfigurationBeanAliasGenerator();
         String prefix = "any";
 
@@ -26,7 +26,7 @@ class ConfigurationBeanAliasGeneratorTest {
     }
 
     @Test
-    public void testPrefixAndBeanNameConnectUseLine() {
+    void testPrefixAndBeanNameConnectUseLine() {
         JoinAliasGenerator generator = new HyphenAliasGenerator();
         Map<String, String> table = new HashMap<>();
         table.put("users", "users-bean");
@@ -41,7 +41,7 @@ class ConfigurationBeanAliasGeneratorTest {
     }
 
     @Test
-    public void testPrefixAndBeanNameConnectUseUnderscore() {
+    void testPrefixAndBeanNameConnectUseUnderscore() {
         JoinAliasGenerator generator = new UnderScoreJoinAliasGenerator();
 
         Map<String, String> table = new HashMap<>();

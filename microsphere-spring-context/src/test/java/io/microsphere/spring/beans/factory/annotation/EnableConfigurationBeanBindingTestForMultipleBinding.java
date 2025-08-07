@@ -67,7 +67,7 @@ class EnableConfigurationBeanBindingTestForMultipleBinding extends AbstractEnabl
     }
 
     @Test
-    public void testUser() {
+    void testUser() {
 
         assertEquals(2, users.size());
         assertTrue(users.contains(aUser));

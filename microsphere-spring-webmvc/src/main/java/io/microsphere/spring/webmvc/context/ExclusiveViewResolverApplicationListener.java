@@ -19,7 +19,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * @see ViewResolver
  * @see ApplicationListener
  * @see ContextRefreshedEvent
- * @since 2017.03.23
+ * @since 1.0.0
  */
 public class ExclusiveViewResolverApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 

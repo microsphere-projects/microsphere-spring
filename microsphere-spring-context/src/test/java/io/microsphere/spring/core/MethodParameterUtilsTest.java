@@ -53,7 +53,7 @@ public class MethodParameterUtilsTest {
     private Parameter parameter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.constructor = findConstructor(User.class);
         this.method = findMethod(User.class, "setName", String.class);
         Method method = findMethod(User.class, "setName", String.class);
@@ -63,13 +63,13 @@ public class MethodParameterUtilsTest {
     }
 
     @Test
-    public void testForParameter() {
+    void testForParameter() {
         MethodParameter methodParameter = forParameter(parameter);
         assertMethodParameter(methodParameter);
     }
 
     @Test
-    public void testForExecutable() {
+    void testForExecutable() {
         MethodParameter methodParameter = forExecutable(constructor, -1);
         assertEquals(-1, methodParameter.getParameterIndex());
 
@@ -78,7 +78,7 @@ public class MethodParameterUtilsTest {
     }
 
     @Test
-    public void testForNullExecutable() {
+    void testForNullExecutable() {
         assertThrows(IllegalArgumentException.class, () -> forExecutable(null, -1));
     }
 
@@ -88,12 +88,12 @@ public class MethodParameterUtilsTest {
     }
 
     @Test
-    public void testFindParameterIndex() throws Throwable {
+    void testFindParameterIndex() throws Throwable {
         assertParameters(User.class);
     }
 
     @Test
-    public void testFindParameterIndexWithClonedParameters() throws Throwable {
+    void testFindParameterIndexWithClonedParameters() throws Throwable {
         for (Method method : User.class.getMethods()) {
             for (int i = 0; i < method.getParameterCount(); i++) {
                 Parameter parameter = method.getParameters()[i];
@@ -103,7 +103,7 @@ public class MethodParameterUtilsTest {
     }
 
     @Test
-    public void testFindParameterIndexOnIllegalArgumentException() throws Throwable {
+    void testFindParameterIndexOnIllegalArgumentException() throws Throwable {
         Method waitMethod = findMethod(Object.class, "wait", long.class, int.class);
         Parameter clonedParameter = clone(waitMethod.getParameters()[1], findMethod(User.class, "getName"), 0);
         assertThrows(IllegalArgumentException.class, () -> findParameterIndex(clonedParameter));

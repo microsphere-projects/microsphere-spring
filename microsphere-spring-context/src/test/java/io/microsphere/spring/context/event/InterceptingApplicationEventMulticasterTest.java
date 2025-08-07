@@ -68,7 +68,7 @@ class InterceptingApplicationEventMulticasterTest {
 
 
     @Test
-    public void test() {
+    void test() {
         AtomicReference<String> eventValueRef = new AtomicReference<>();
 
         // EventType -> ResolvableType -> PayloadApplicationEvent<String>

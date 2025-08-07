@@ -28,212 +28,212 @@ class EnvironmentListenerTest {
     }
 
     @Test
-    public void testBeforeGetActiveProfiles() {
+    void testBeforeGetActiveProfiles() {
         this.environmentListener.beforeGetActiveProfiles(environment);
     }
 
     @Test
-    public void testAfterGetActiveProfiles() {
+    void testAfterGetActiveProfiles() {
         this.environmentListener.afterGetActiveProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeGetDefaultProfiles() {
+    void testBeforeGetDefaultProfiles() {
         this.environmentListener.beforeGetDefaultProfiles(environment);
     }
 
     @Test
-    public void testAfterGetDefaultProfiles() {
+    void testAfterGetDefaultProfiles() {
         this.environmentListener.afterGetDefaultProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeSetActiveProfiles() {
+    void testBeforeSetActiveProfiles() {
         this.environmentListener.beforeSetActiveProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testAfterSetActiveProfiles() {
+    void testAfterSetActiveProfiles() {
         this.environmentListener.afterSetActiveProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeAddActiveProfile() {
+    void testBeforeAddActiveProfile() {
         this.environmentListener.beforeAddActiveProfile(environment, "");
     }
 
     @Test
-    public void testAfterAddActiveProfile() {
+    void testAfterAddActiveProfile() {
         this.environmentListener.afterAddActiveProfile(environment, "");
     }
 
     @Test
-    public void testBeforeSetDefaultProfiles() {
+    void testBeforeSetDefaultProfiles() {
         this.environmentListener.beforeSetDefaultProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testAfterSetDefaultProfiles() {
+    void testAfterSetDefaultProfiles() {
         this.environmentListener.afterSetDefaultProfiles(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeGetProperty() {
+    void testBeforeGetProperty() {
         this.environmentListener.beforeGetProperty(environment, "", String.class, null);
     }
 
     @Test
-    public void testAfterGetProperty() {
+    void testAfterGetProperty() {
         this.environmentListener.afterGetProperty(environment, "", String.class, null, null);
     }
 
     @Test
-    public void testBeforeGetRequiredProperty() {
+    void testBeforeGetRequiredProperty() {
         this.environmentListener.beforeGetRequiredProperty(environment, "", String.class);
     }
 
     @Test
-    public void testAfterGetRequiredProperty() {
+    void testAfterGetRequiredProperty() {
         this.environmentListener.afterGetRequiredProperty(environment, "", String.class, null);
     }
 
     @Test
-    public void testBeforeResolvePlaceholders() {
+    void testBeforeResolvePlaceholders() {
         this.environmentListener.beforeResolvePlaceholders(environment, "${}");
     }
 
     @Test
-    public void testAfterResolvePlaceholders() {
+    void testAfterResolvePlaceholders() {
         this.environmentListener.afterResolvePlaceholders(environment, "${}", "");
     }
 
     @Test
-    public void testBeforeResolveRequiredPlaceholders() {
+    void testBeforeResolveRequiredPlaceholders() {
         this.environmentListener.beforeResolveRequiredPlaceholders(environment, "${}");
     }
 
     @Test
-    public void testAfterResolveRequiredPlaceholders() {
+    void testAfterResolveRequiredPlaceholders() {
         this.environmentListener.afterResolveRequiredPlaceholders(environment, "${}", "");
     }
 
     @Test
-    public void testBeforeSetRequiredProperties() {
+    void testBeforeSetRequiredProperties() {
         this.environmentListener.beforeSetRequiredProperties(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testAfterSetRequiredProperties() {
+    void testAfterSetRequiredProperties() {
         this.environmentListener.afterSetRequiredProperties(environment, EMPTY_STRING_ARRAY);
     }
 
     @Test
-    public void testBeforeValidateRequiredProperties() {
+    void testBeforeValidateRequiredProperties() {
         this.environmentListener.beforeValidateRequiredProperties(environment);
     }
 
     @Test
-    public void testAfterValidateRequiredProperties() {
+    void testAfterValidateRequiredProperties() {
         this.environmentListener.afterValidateRequiredProperties(environment);
     }
 
     @Test
-    public void testBeforeGetConversionService() {
+    void testBeforeGetConversionService() {
         this.environmentListener.beforeGetConversionService(environment);
     }
 
     @Test
-    public void testAfterGetConversionService() {
+    void testAfterGetConversionService() {
         this.environmentListener.afterGetConversionService(environment, environment.getConversionService());
     }
 
     @Test
-    public void testBeforeSetConversionService() {
+    void testBeforeSetConversionService() {
         this.environmentListener.beforeSetConversionService(environment, environment.getConversionService());
     }
 
     @Test
-    public void testAfterSetConversionService() {
+    void testAfterSetConversionService() {
         this.environmentListener.afterSetConversionService(environment, environment.getConversionService());
     }
 
     @Test
-    public void testBeforeSetPlaceholderPrefix() {
+    void testBeforeSetPlaceholderPrefix() {
         this.environmentListener.beforeSetPlaceholderPrefix(environment, "");
     }
 
     @Test
-    public void testAfterSetPlaceholderPrefix() {
+    void testAfterSetPlaceholderPrefix() {
         this.environmentListener.afterSetPlaceholderPrefix(environment, "");
     }
 
     @Test
-    public void testBeforeSetPlaceholderSuffix() {
+    void testBeforeSetPlaceholderSuffix() {
         this.environmentListener.beforeSetPlaceholderSuffix(environment, "");
     }
 
     @Test
-    public void testAfterSetPlaceholderSuffix() {
+    void testAfterSetPlaceholderSuffix() {
         this.environmentListener.afterSetPlaceholderSuffix(environment, "");
     }
 
     @Test
-    public void testBeforeSetIgnoreUnresolvableNestedPlaceholders() {
+    void testBeforeSetIgnoreUnresolvableNestedPlaceholders() {
         this.environmentListener.beforeSetIgnoreUnresolvableNestedPlaceholders(environment, true);
     }
 
     @Test
-    public void testAfterSetIgnoreUnresolvableNestedPlaceholders() {
+    void testAfterSetIgnoreUnresolvableNestedPlaceholders() {
         this.environmentListener.afterSetIgnoreUnresolvableNestedPlaceholders(environment, true);
     }
 
     @Test
-    public void testBeforeSetValueSeparator() {
+    void testBeforeSetValueSeparator() {
         this.environmentListener.beforeSetValueSeparator(environment, "");
     }
 
     @Test
-    public void testAfterSetValueSeparator() {
+    void testAfterSetValueSeparator() {
         this.environmentListener.afterSetValueSeparator(environment, "");
     }
 
     @Test
-    public void testBeforeGetPropertySources() {
+    void testBeforeGetPropertySources() {
         this.environmentListener.beforeGetPropertySources(environment);
     }
 
     @Test
-    public void testAfterGetPropertySources() {
+    void testAfterGetPropertySources() {
         this.environmentListener.afterGetPropertySources(environment, environment.getPropertySources());
     }
 
     @Test
-    public void testBeforeGetSystemProperties() {
+    void testBeforeGetSystemProperties() {
         this.environmentListener.beforeGetSystemProperties(environment);
     }
 
     @Test
-    public void testAfterGetSystemProperties() {
+    void testAfterGetSystemProperties() {
         this.environmentListener.afterGetSystemProperties(environment, environment.getSystemProperties());
     }
 
     @Test
-    public void testBeforeGetSystemEnvironment() {
+    void testBeforeGetSystemEnvironment() {
         this.environmentListener.beforeGetSystemEnvironment(environment);
     }
 
     @Test
-    public void testAfterGetSystemEnvironment() {
+    void testAfterGetSystemEnvironment() {
         this.environmentListener.afterGetSystemEnvironment(environment, environment.getSystemEnvironment());
     }
 
     @Test
-    public void testBeforeMerge() {
+    void testBeforeMerge() {
         this.environmentListener.beforeMerge(environment, environment);
     }
 
     @Test
-    public void testAfterMerge() {
+    void testAfterMerge() {
         this.environmentListener.afterMerge(environment, environment);
     }
 }

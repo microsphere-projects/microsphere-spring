@@ -62,26 +62,26 @@ public class TestRestControllerTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.mockMvc = webAppContextSetup(this.wac).build();
     }
 
     @Test
-    public void testHelloWorld() throws Exception {
+    void testHelloWorld() throws Exception {
         this.mockMvc.perform(get("/test/helloworld"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Hello World"));
     }
 
     @Test
-    public void testGreeting() throws Exception {
+    void testGreeting() throws Exception {
         this.mockMvc.perform(get("/test/greeting/{message}", "Mercy"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Greeting : Mercy"));
     }
 
     @Test
-    public void testUser() throws Exception {
+    void testUser() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = new User();
         user.setName("Mercy");

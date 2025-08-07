@@ -73,7 +73,7 @@ class AnnotatedInjectionBeanPostProcessorTest {
     private GenericChild genericChild;
 
     @Test
-    public void testCustomizedAnnotationBeanPostProcessor() {
+    void testCustomizedAnnotationBeanPostProcessor() {
 
         assertEquals(environment, processor.getEnvironment());
         assertEquals(beanFactory.getBeanClassLoader(), processor.getClassLoader());
@@ -85,7 +85,7 @@ class AnnotatedInjectionBeanPostProcessorTest {
     }
 
     @Test
-    public void testReferencedUser() {
+    void testReferencedUser() {
         assertEquals("mercyblitz", parent.user.getName());
         assertEquals(32, parent.user.getAge());
         assertEquals(parent.user, parent.parentUser);

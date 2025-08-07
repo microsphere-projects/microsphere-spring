@@ -90,7 +90,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     protected boolean storeResponseBodyReturnValue;
 
     @BeforeEach
-    public void setup() {
+    void setUp() {
         this.mockMvc = webAppContextSetup(this.wac).build();
         EnableWebMvcExtension enableWebMvcExtension = this.getClass().getAnnotation(EnableWebMvcExtension.class);
         this.registerWebEndpointMappings = enableWebMvcExtension.registerWebEndpointMappings();
@@ -103,7 +103,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     }
 
     @Test
-    public void testRegisteredBeans() {
+    void testRegisteredBeans() {
         assertTrue(isBeanPresent(this.wac, WebMvcExtensionConfiguration.class));
         // From @EnableWebExtension
         assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, SimpleWebEndpointMappingRegistry.class));
@@ -121,7 +121,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         this.mockMvc.perform(get("/echo/hello"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[ECHO] : hello"));

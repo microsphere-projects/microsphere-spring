@@ -56,7 +56,7 @@ class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
-    public void testOfWithAnnotation() {
+    void testOfWithAnnotation() {
         ConstructorProperties constructorProperties = findConstructor(getClass()).getAnnotation(ConstructorProperties.class);
         ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(constructorProperties, environment);
         assertEquals(ConstructorProperties.class, annotationAttributes.annotationType());
@@ -67,7 +67,7 @@ class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
-    public void testOfWithAnnotationAttributes() {
+    void testOfWithAnnotationAttributes() {
         Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
         AnnotationAttributes annotationAttributes = fromMap(map);
         ResolvablePlaceholderAnnotationAttributes attributes = of(annotationAttributes, ConstructorProperties.class, this.environment);
@@ -78,7 +78,7 @@ class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
-    public void testOfWithMap() {
+    void testOfWithMap() {
         Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
         ResolvablePlaceholderAnnotationAttributes attributes = of(map, ConstructorProperties.class, this.environment);
         assertAnnotationAttributes(attributes);
@@ -88,7 +88,7 @@ class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
-    public void testOfSet() {
+    void testOfSet() {
         Map<String, Object> map = ofMap("a", "${a}", "b", "${b}");
         Set<AnnotationAttributes> attributesSet = ofSet(ofArray(of(map, ConstructorProperties.class, this.environment)), this.environment);
         assertEquals(1, attributesSet.size());
@@ -97,7 +97,7 @@ class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
-    public void testOfSetOnEmptyArray() {
+    void testOfSetOnEmptyArray() {
         Set<AnnotationAttributes> attributesSet = ofSet(ofArray(), this.environment);
         assertEquals(0, attributesSet.size());
     }

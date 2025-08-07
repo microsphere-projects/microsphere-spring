@@ -46,50 +46,50 @@ public class DelegatingFactoryBeanTest implements DisposableBean {
     private DelegatingFactoryBean factoryBean2;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.user = new User();
         this.factoryBean = new DelegatingFactoryBean(this);
         this.factoryBean2 = new DelegatingFactoryBean(this.user, false);
     }
 
     @Test
-    public void testIsSingleton() {
+    void testIsSingleton() {
         assertTrue(factoryBean.isSingleton());
         assertFalse(factoryBean2.isSingleton());
     }
 
     @Test
-    public void testGetObject() throws Exception {
+    void testGetObject() throws Exception {
         assertSame(this, factoryBean.getObject());
         assertSame(this.user, factoryBean2.getObject());
     }
 
     @Test
-    public void testGetObjectType() {
+    void testGetObjectType() {
         assertSame(this.getClass(), factoryBean.getObjectType());
         assertSame(User.class, factoryBean2.getObjectType());
     }
 
     @Test
-    public void testAfterPropertiesSet() throws Exception {
+    void testAfterPropertiesSet() throws Exception {
         factoryBean.afterPropertiesSet();
         factoryBean2.afterPropertiesSet();
     }
 
     @Test
-    public void testSetApplicationContext() {
+    void testSetApplicationContext() {
         factoryBean.setApplicationContext(null);
         factoryBean2.setApplicationContext(null);
     }
 
     @Test
-    public void testSetBeanName() {
+    void testSetBeanName() {
         factoryBean.setBeanName("factoryBean");
         factoryBean2.setBeanName("factoryBean2");
     }
 
     @Test
-    public void testDestroy() throws Exception {
+    void testDestroy() throws Exception {
         factoryBean.destroy();
         factoryBean2.destroy();
     }

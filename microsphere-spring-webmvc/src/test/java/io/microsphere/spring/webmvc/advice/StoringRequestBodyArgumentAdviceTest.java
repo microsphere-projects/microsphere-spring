@@ -1,0 +1,117 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.microsphere.spring.webmvc.advice;
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.web.controller.TestRestController;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Enumeration;
+
+import static io.microsphere.spring.web.servlet.util.WebUtils.getServletContext;
+import static io.microsphere.spring.webmvc.util.WebMvcUtils.HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+/**
+ * {@link StoringRequestBodyArgumentAdvice} Test
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see StoringRequestBodyArgumentAdvice
+ * @since 1.0.0
+ */
+@ExtendWith(SpringExtension.class)
+@WebAppConfiguration
+@ContextConfiguration(classes = {
+        TestRestController.class,
+        StoringRequestBodyArgumentAdvice.class,
+        StoringRequestBodyArgumentAdviceTest.class
+})
+@EnableWebMvc
+public class StoringRequestBodyArgumentAdviceTest implements WebMvcConfigurer {
+
+    private static final String USER_ATTRIBUTE_NAME = "user";
+
+    @Autowired
+    private WebApplicationContext context;
+
+    private MockMvc mockMvc;
+
+    private ServletContext servletContext;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new HandlerInterceptor() {
+            @Override
+            public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+                ServletContext servletContext = getServletContext(request);
+                Enumeration<String> attributeNames = request.getAttributeNames();
+                while (attributeNames.hasMoreElements()) {
+                    String attributeName = attributeNames.nextElement();
+                    if (attributeName.startsWith(HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX)) {
+                        servletContext.setAttribute(USER_ATTRIBUTE_NAME, request.getAttribute(attributeName));
+                    }
+                }
+            }
+        });
+    }
+
+    @BeforeEach
+    void setUp() throws Exception {
+        this.mockMvc = webAppContextSetup(this.context).build();
+        this.servletContext = this.context.getServletContext();
+    }
+
+    @Test
+    void test() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = new User();
+        user.setName("Mercy");
+        user.setAge(18);
+        String json = objectMapper.writeValueAsString(user);
+        this.mockMvc.perform(post("/test/user")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string(json));
+
+        User responsedUser = (User) this.servletContext.getAttribute(USER_ATTRIBUTE_NAME);
+        assertEquals(user, responsedUser);
+    }
+}

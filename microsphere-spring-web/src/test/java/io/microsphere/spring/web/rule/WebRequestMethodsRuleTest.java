@@ -17,9 +17,16 @@
 package io.microsphere.spring.web.rule;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link WebRequestMethodsRule} Test
@@ -27,15 +34,91 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class WebRequestMethodsRuleTest {
+public class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
 
     @Test
-    public void testMatches() {
-        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET", "POST", "PUT");
-        assertTrue(rule.matches("GET"));
-        assertTrue(rule.matches("POST"));
-        assertTrue(rule.matches("PUT"));
-        assertFalse(rule.matches("DELETE"));
+    void testConstructorWithRequestMethods() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule(GET, POST);
+        assertEquals(2, rule.getContent().size());
+        assertTrue(rule.getContent().contains("GET"));
+        assertTrue(rule.getContent().contains("POST"));
+    }
+
+    @Test
+    void testConstructorWithStringMethods() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("PUT", "DELETE");
+        assertEquals(2, rule.getContent().size());
+        assertTrue(rule.getContent().contains("PUT"));
+        assertTrue(rule.getContent().contains("DELETE"));
+    }
+
+    @Test
+    void testGetContentOnEmpty() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule();
+        assertTrue(rule.getContent().isEmpty());
+    }
+
+    @Test
+    void testGetToStringInfix() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET");
+        assertEquals(" || ", rule.getToStringInfix());
+    }
+
+    @Test
+    void testMatchesOnPreflightRequest() {
+        NativeWebRequest request = createPreFightRequest();
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET", "POST");
+        assertFalse(rule.matches(request));
+    }
+
+    @Test
+    void testMatchesOnMatchingRequestMethod() {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setMethod("POST");
+        NativeWebRequest request = new ServletWebRequest(mockRequest);
+
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET", "POST");
+        assertTrue(rule.matches(request));
+    }
+
+    @Test
+    void testMatchesOnNonMatchingRequestMethod() {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setMethod("PUT");
+        NativeWebRequest request = new ServletWebRequest(mockRequest);
+
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET", "POST");
+        assertFalse(rule.matches(request));
+    }
+
+    @Test
+    void testMatchesStringMethodOnEmptyRuleWithOptions() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule();
         assertFalse(rule.matches("OPTIONS"));
+    }
+
+    @Test
+    void testMatchesStringMethodOnEmptyRuleWithGet() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule();
+        assertTrue(rule.matches("GET"));
+    }
+
+    @Test
+    void testMatchesStringMethodOnMatchingMethod() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("DELETE", "PATCH");
+        assertTrue(rule.matches("DELETE"));
+    }
+
+    @Test
+    void testMatchesStringMethodOnNonMatchingMethod() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("HEAD", "TRACE");
+        assertFalse(rule.matches("PUT"));
+    }
+
+    @Test
+    void testMatchRequestMethodOnCaseInsensitive() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("get", "post");
+        assertTrue(rule.matches("GET"));
+        assertTrue(rule.matches("Post"));
     }
 }

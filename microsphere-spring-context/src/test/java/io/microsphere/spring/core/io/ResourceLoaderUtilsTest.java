@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class ResourceLoaderUtilsTest {
 
     @Test
-    public void testGetResourceLoader() {
+    void testGetResourceLoader() {
         assertNotNull(getResourceLoader());
         assertSame(getResourceLoader(), getResourceLoader(null));
         assertSame(getResourceLoader(), getResourceLoader(getDefaultClassLoader()));
@@ -42,7 +42,7 @@ class ResourceLoaderUtilsTest {
     }
 
     @Test
-    public void testGetResourcePatternResolver() {
+    void testGetResourcePatternResolver() {
         assertNotNull(getResourcePatternResolver());
         assertNotNull(getResourcePatternResolver(null));
         assertSame(getResourcePatternResolver(), getResourcePatternResolver(null));

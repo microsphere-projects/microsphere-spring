@@ -45,14 +45,14 @@ class MimeTypeUtilsTest {
     private static final MimeType APPLICATION_TEXT = new MimeType("application", "text");
 
     @Test
-    public void testConstants() {
+    void testConstants() {
         assertEquals("application", APPLICATION_GRAPHQL.getType());
         assertEquals("graphql+json", APPLICATION_GRAPHQL.getSubtype());
         assertEquals("application/graphql+json", APPLICATION_GRAPHQL_VALUE);
     }
 
     @Test
-    public void testEqualsTypeAndSubtype() {
+    void testEqualsTypeAndSubtype() {
         assertTrue(equalsTypeAndSubtype(APPLICATION_GRAPHQL, APPLICATION_GRAPHQL));
         assertTrue(equalsTypeAndSubtype(APPLICATION_GRAPHQL, new MimeType("application", "graphql+json")));
         assertTrue(equalsTypeAndSubtype(new MimeType("application", "graphql+json"), APPLICATION_GRAPHQL));
@@ -63,7 +63,7 @@ class MimeTypeUtilsTest {
     }
 
     @Test
-    public void testGetSubtypeSuffix() {
+    void testGetSubtypeSuffix() {
         assertNull(getSubtypeSuffix(null));
         assertNull(getSubtypeSuffix(new MimeType("application")));
         assertNull(getSubtypeSuffix(new MimeType("application", "json")));
@@ -72,7 +72,7 @@ class MimeTypeUtilsTest {
     }
 
     @Test
-    public void testIsPresentIn() {
+    void testIsPresentIn() {
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, null));
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, emptyList()));
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, List.of(APPLICATION_TEXT)));

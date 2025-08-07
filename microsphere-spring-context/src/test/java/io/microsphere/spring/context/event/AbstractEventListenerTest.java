@@ -58,7 +58,7 @@ public abstract class AbstractEventListenerTest<L extends EventListener> {
     protected L beanFactoryListener;
 
     @Test
-    public void test() {
+    void test() {
         assertNotNull(beanFactoryListener);
     }
 

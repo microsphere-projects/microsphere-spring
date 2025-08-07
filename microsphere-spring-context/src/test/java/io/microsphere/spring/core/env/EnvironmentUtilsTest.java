@@ -56,19 +56,19 @@ class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testGetPropertiesWithoutArgument() {
+    void testGetPropertiesWithoutArgument() {
         Map<String, String> properties = getProperties(environment);
         assertSame(emptyMap(), properties);
     }
 
     @Test
-    public void testGetPropertiesWithOneNullArgument() {
+    void testGetPropertiesWithOneNullArgument() {
         Map<String, String> properties = getProperties(environment, (String) null);
         assertSame(emptyMap(), properties);
     }
 
     @Test
-    public void testGetPropertiesWithOneArgument() {
+    void testGetPropertiesWithOneArgument() {
         Map<String, String> properties = getProperties(environment, "a");
         assertEquals(1, properties.size());
         assertEquals("1", properties.get("a"));
@@ -77,7 +77,7 @@ class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testGetPropertiesWithTwoAndMoreArguments() {
+    void testGetPropertiesWithTwoAndMoreArguments() {
         Map<String, String> properties = getProperties(environment, "a", "b");
         assertEquals(2, properties.size());
         assertEquals("1", properties.get("a"));
@@ -92,17 +92,17 @@ class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testGetConversionService() {
+    void testGetConversionService() {
         assertSame(environment.getConversionService(), getConversionService(environment));
     }
 
     @Test
-    public void testGetConversionServiceOnNull() {
+    void testGetConversionServiceOnNull() {
         assertNotNull(getConversionService(null));
     }
 
     @Test
-    public void testResolveCommaDelimitedValueToList() {
+    void testResolveCommaDelimitedValueToList() {
         List<String> list = resolveCommaDelimitedValueToList(environment, "${a},${b},${c}");
         assertEquals(3, list.size());
         assertEquals("1", list.get(0));
@@ -111,7 +111,7 @@ class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testResolvePlaceholders() {
+    void testResolvePlaceholders() {
         Object value = resolvePlaceholders(environment, null, Integer.class);
         assertNull(value);
 
@@ -123,7 +123,7 @@ class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testAsConfigurableEnvironment() {
+    void testAsConfigurableEnvironment() {
         ConfigurableEnvironment configurableEnvironment = asConfigurableEnvironment(environment);
         assertSame(environment, configurableEnvironment);
     }

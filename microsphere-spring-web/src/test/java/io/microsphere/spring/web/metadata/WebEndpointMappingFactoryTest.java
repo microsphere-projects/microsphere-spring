@@ -14,17 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.servlet;
 
-import jakarta.servlet.Servlet;
-import jakarta.servlet.http.HttpServlet;
+package io.microsphere.spring.web.metadata;
+
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static java.util.Optional.empty;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link Servlet} for Testing
+ * {@link WebEndpointMappingFactory} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see WebEndpointMappingFactory
  * @since 1.0.0
  */
-public class TestServlet extends HttpServlet {
+public class WebEndpointMappingFactoryTest {
 
+    private WebEndpointMappingFactory factory;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        this.factory = endpoint -> empty();
+    }
+
+    @Test
+    void testSupports() {
+        assertTrue(factory.supports(null));
+    }
+
+    @Test
+    void testCreate() {
+        assertFalse(factory.create(null).isPresent());
+    }
+
+    @Test
+    void testGetSourceType() {
+        assertNull(factory.getSourceType());
+    }
 }

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class EnableConfigurationBeanBindingsTest extends AbstractEnableConfigurationBeanBindingTest {
 
     @Test
-    public void testUser() {
+    void testUser() {
         User user = context.getBean("m", User.class);
         assertEquals("mercyblitz", user.getName());
         assertEquals(34, user.getAge());

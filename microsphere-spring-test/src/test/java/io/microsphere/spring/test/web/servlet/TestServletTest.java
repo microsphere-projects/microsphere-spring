@@ -40,12 +40,12 @@ public class TestServletTest {
     private TestServlet testServlet;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         this.testServlet = new TestServlet();
     }
 
     @Test
-    public void testService() throws ServletException, IOException {
+    void testService() throws ServletException, IOException {
         testServlet.service(new MockHttpServletRequest(), new MockHttpServletResponse());
     }
 }

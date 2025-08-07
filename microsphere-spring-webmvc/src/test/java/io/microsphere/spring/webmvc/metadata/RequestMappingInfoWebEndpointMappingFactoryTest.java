@@ -72,13 +72,13 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
     }
 
     @BeforeEach
-    public void init() {
+    void setUp() {
         factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
         this.handlerMethods = requestMappingInfoHandlerMapping.getHandlerMethods();
     }
 
     @Test
-    public void test() {
+    void test() {
         assertNotNull(handlerMethods);
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());

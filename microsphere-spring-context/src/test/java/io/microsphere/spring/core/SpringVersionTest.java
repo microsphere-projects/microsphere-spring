@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SpringVersionTest {
 
     @Test
-    public void testVersionRange() {
+    void testVersionRange() {
         // Spring Framework 6.0 -> [6.0.0, 6.0.23]
         testVersionRange(SpringVersion.SPRING_6_0, 0, 23);
         // Spring Framework 6.1 -> [6.1.0, 6.0.16]
@@ -54,7 +54,7 @@ class SpringVersionTest {
     }
 
     @Test
-    public void testGetVersion() {
+    void testGetVersion() {
         for (SpringVersion springVersion : SpringVersion.values()) {
             if (SpringVersion.CURRENT.equals(springVersion)) {
                 continue;

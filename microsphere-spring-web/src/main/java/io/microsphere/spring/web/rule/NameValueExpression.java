@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Rossen Stoyanchev
  * @see RequestMapping#params()
  * @see RequestMapping#headers()
- * @since 3.1
+ * @since Spring Framework 3.1
  */
 public interface NameValueExpression<T> {
 

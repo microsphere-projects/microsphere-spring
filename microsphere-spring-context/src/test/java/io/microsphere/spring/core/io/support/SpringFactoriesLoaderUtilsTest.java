@@ -66,29 +66,29 @@ class SpringFactoriesLoaderUtilsTest {
     }
 
     @Test
-    public void testLoadFactories() {
+    void testLoadFactories() {
         testLoadFactoriesFromContext(beanFactory, context);
         testLoadFactoriesFromBeanFactory(beanFactory);
     }
 
     @Test
-    public void testLoadFactoriesWithArguments() {
+    void testLoadFactoriesWithArguments() {
         List<User> users = loadFactories(context, User.class, EMPTY_OBJECT_ARRAY);
         assertUser(users);
     }
 
     @Test
-    public void testLoadFactoriesWithArgumentsOnConstructorNotFound() {
+    void testLoadFactoriesWithArgumentsOnConstructorNotFound() {
         assertThrows(IllegalArgumentException.class, () -> loadFactories(context, User.class, 18, "Mercy"));
     }
 
     @Test
-    public void testLoadFactoriesOnNotFound() {
+    void testLoadFactoriesOnNotFound() {
         assertSame(emptyList(), loadFactories(context, UserFactory.class, "Mercy", 18));
     }
 
     @Test
-    public void testLoadFactoriesOnNull() {
+    void testLoadFactoriesOnNull() {
         assertEquals(emptyList(), loadFactories(null, UserFactory.class));
         assertEquals(emptyList(), loadFactories((BeanFactory) null, UserFactory.class));
     }

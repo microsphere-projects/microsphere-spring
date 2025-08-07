@@ -48,7 +48,7 @@ class CollectingConfigurationPropertyListenerTest {
     private CollectingConfigurationPropertyListener listener;
 
     @Test
-    public void testAfterGetProperty() {
+    void testAfterGetProperty() {
         String name = "test-name";
         assertEquals("test-value", environment.getProperty(name));
         ConfigurationProperty property = repository.get(name);
@@ -56,7 +56,7 @@ class CollectingConfigurationPropertyListenerTest {
     }
 
     @Test
-    public void testAfterGetRequiredProperty() {
+    void testAfterGetRequiredProperty() {
         String name = "test-name";
         assertEquals("test-value", environment.getRequiredProperty(name));
         ConfigurationProperty property = repository.get(name);
@@ -64,7 +64,7 @@ class CollectingConfigurationPropertyListenerTest {
     }
 
     @Test
-    public void testAfterSetPlaceholderPrefix() {
+    void testAfterSetPlaceholderPrefix() {
         String placeholderPrefix = listener.getPlaceholderPrefix();
         assertEquals(PLACEHOLDER_PREFIX, placeholderPrefix);
 
@@ -74,7 +74,7 @@ class CollectingConfigurationPropertyListenerTest {
     }
 
     @Test
-    public void testAfterSetPlaceholderSuffix() {
+    void testAfterSetPlaceholderSuffix() {
         String placeholderSuffix = listener.getPlaceholderSuffix();
         assertEquals(PLACEHOLDER_SUFFIX, placeholderSuffix);
 
