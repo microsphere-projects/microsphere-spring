@@ -28,7 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @since 1.0.0
  */
 @ContextConfiguration(locations = "classpath:/user-context.xml")
-public class BeanTimeStatisticsTest extends AbstractEventListenerTest<BeanTimeStatistics> {
+class BeanTimeStatisticsTest extends AbstractEventListenerTest<BeanTimeStatistics> {
 
     @Test
     public void test() {
