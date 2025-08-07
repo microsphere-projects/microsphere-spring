@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-public class GenericBeanPostProcessorAdapterTest {
+class GenericBeanPostProcessorAdapterTest {
 
     @Test
     public void testPostProcessBeforeInitialization() {
