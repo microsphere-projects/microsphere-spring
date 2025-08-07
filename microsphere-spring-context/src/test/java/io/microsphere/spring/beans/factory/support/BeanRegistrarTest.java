@@ -53,17 +53,17 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @see BeanRegistrar
  * @since 1.0.0
  */
-public class BeanRegistrarTest {
+class BeanRegistrarTest {
 
     private DefaultListableBeanFactory beanFactory;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.beanFactory = new DefaultListableBeanFactory();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         this.beanFactory.destroySingletons();
     }
 
