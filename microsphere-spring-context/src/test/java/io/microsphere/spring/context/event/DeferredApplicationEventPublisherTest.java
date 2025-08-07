@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         classes = TestConfig.class,
         loader = AnnotationConfigContextLoader.class
 )
-public class DeferredApplicationEventPublisherTest {
+class DeferredApplicationEventPublisherTest {
 
     @Autowired
     private TestConfig testConfig;
