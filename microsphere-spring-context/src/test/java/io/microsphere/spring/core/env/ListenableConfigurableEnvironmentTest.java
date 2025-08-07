@@ -30,6 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -54,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                 "score=99"
         }
 )
-public class ListenableConfigurableEnvironmentTest {
+class ListenableConfigurableEnvironmentTest {
 
     @Autowired
     private ListenableConfigurableEnvironment environment;
@@ -293,7 +294,7 @@ public class ListenableConfigurableEnvironmentTest {
 
     @Test
     public void testGetDelegate() {
-        assertTrue(ListenableConfigurableEnvironment.class.isInstance(environment));
+        assertInstanceOf(ListenableConfigurableEnvironment.class, environment);
         assertNotSame(environment, environment.getDelegate());
     }
 }
