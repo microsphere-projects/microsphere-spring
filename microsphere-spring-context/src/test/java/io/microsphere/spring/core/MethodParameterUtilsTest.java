@@ -18,8 +18,8 @@
 package io.microsphere.spring.core;
 
 import io.microsphere.spring.test.domain.User;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 
 import java.lang.reflect.Constructor;
@@ -35,6 +35,7 @@ import static io.microsphere.spring.core.MethodParameterUtils.forExecutable;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link MethodParameterUtils} Test
@@ -51,8 +52,8 @@ public class MethodParameterUtilsTest {
 
     private Parameter parameter;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    public void setUp() {
         this.constructor = findConstructor(User.class);
         this.method = findMethod(User.class, "setName", String.class);
         Method method = findMethod(User.class, "setName", String.class);
@@ -76,9 +77,9 @@ public class MethodParameterUtilsTest {
         assertMethodParameter(methodParameter);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testForNullExecutable() {
-        forExecutable(null, -1);
+        assertThrows(IllegalArgumentException.class, () -> forExecutable(null, -1));
     }
 
     void assertMethodParameter(MethodParameter methodParameter) {
@@ -101,11 +102,11 @@ public class MethodParameterUtilsTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFindParameterIndexOnIllegalArgumentException() throws Throwable {
         Method waitMethod = findMethod(Object.class, "wait", long.class, int.class);
         Parameter clonedParameter = clone(waitMethod.getParameters()[1], findMethod(User.class, "getName"), 0);
-        findParameterIndex(clonedParameter);
+        assertThrows(IllegalArgumentException.class, () -> findParameterIndex(clonedParameter));
     }
 
     void assertParameters(Class<?> klass) throws Throwable {
