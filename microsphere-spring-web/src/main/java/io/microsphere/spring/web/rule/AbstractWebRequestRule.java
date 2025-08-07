@@ -32,6 +32,7 @@ public abstract class AbstractWebRequestRule<T> implements WebRequestRule {
     /**
      * Indicates whether this condition is empty, i.e. whether it
      * contains any discrete items.
+     *
      * @return {@code true} if empty; {@code false} otherwise
      */
     public boolean isEmpty() {
@@ -41,6 +42,7 @@ public abstract class AbstractWebRequestRule<T> implements WebRequestRule {
     /**
      * Return the discrete items a request condition is composed of.
      * <p>For example URL patterns, HTTP request methods, param expressions, etc.
+     *
      * @return a collection of objects (never {@code null})
      */
     protected abstract Collection<T> getContent();
