@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
-public class AnnotatedInjectionBeanPostProcessorTest {
+class AnnotatedInjectionBeanPostProcessorTest {
 
     @Autowired
     @Qualifier("parent")
