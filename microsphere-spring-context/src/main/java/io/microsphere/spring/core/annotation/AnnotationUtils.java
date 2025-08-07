@@ -90,7 +90,6 @@ public abstract class AnnotationUtils {
             List<A> annotationsList = new LinkedList<A>();
 
             switch (elementType) {
-
                 case PARAMETER -> {
                     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
                     for (Annotation[] annotations : parameterAnnotations) {
@@ -101,14 +100,12 @@ public abstract class AnnotationUtils {
                         }
                     }
                 }
-
                 case METHOD -> {
                     A annotation = findAnnotation(method, annotationClass);
                     if (annotation != null) {
                         annotationsList.add(annotation);
                     }
                 }
-
                 case TYPE -> {
                     Class<?> beanType = method.getDeclaringClass();
                     A annotation2 = findAnnotation(beanType, annotationClass);
