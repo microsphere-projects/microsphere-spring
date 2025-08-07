@@ -324,25 +324,24 @@ class BeanUtilsTest {
     private record OrderedBean(int order) implements Ordered {
 
         @Override
-            public int getOrder() {
-                return order;
-            }
+        public int getOrder() {
+            return order;
+        }
 
-            @Override
-            public String toString() {
-                return "Bean #" + order;
-            }
+        @Override
+        public String toString() {
+            return "Bean #" + order;
+        }
 
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
-                OrderedBean that = (OrderedBean) o;
+            OrderedBean that = (OrderedBean) o;
 
-                return order == that.order;
-            }
-
+            return order == that.order;
+        }
     }
 
     @Test
