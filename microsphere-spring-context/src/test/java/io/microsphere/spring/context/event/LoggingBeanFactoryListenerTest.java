@@ -32,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         LoggingBeanFactoryListener.class,
         LoggingBeanFactoryListenerTest.class},
         initializers = {EventPublishingBeanInitializer.class})
-public class LoggingBeanFactoryListenerTest {
+class LoggingBeanFactoryListenerTest {
 
     @Test
     public void test() {
