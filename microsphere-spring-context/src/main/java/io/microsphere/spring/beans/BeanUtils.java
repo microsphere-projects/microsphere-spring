@@ -828,13 +828,13 @@ public abstract class BeanUtils implements Utils {
      * @param beanName the name to be assigned to the bean, may be null
      */
     public static void invokeBeanNameAware(@Nullable Object bean, @Nullable String beanName) {
-        if (bean instanceof BeanNameAware beanNameAware) {
+        if (bean instanceof BeanNameAware beanNameAware && beanName != null) {
             beanNameAware.setBeanName(beanName);
         }
     }
 
     static void invokeBeanFactoryAware(@Nullable Object bean, @Nullable BeanFactory beanFactory) {
-        if (bean instanceof BeanFactoryAware beanFactoryAware) {
+        if (bean instanceof BeanFactoryAware beanFactoryAware && beanFactory != null) {
             beanFactoryAware.setBeanFactory(beanFactory);
         }
     }
