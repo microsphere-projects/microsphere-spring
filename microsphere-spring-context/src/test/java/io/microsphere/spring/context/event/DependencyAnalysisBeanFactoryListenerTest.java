@@ -17,6 +17,7 @@
 package io.microsphere.spring.context.event;
 
 
+import io.microsphere.spring.test.domain.User;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -28,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = DependencyAnalysisBeanFactoryListenerTest.Config.class)
-public class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventListenerTest<DependencyAnalysisBeanFactoryListener> {
+class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventListenerTest<DependencyAnalysisBeanFactoryListener> {
 
 
     @Import(User.class)
