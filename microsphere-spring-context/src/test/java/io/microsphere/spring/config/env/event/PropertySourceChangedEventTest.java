@@ -62,7 +62,7 @@ public class PropertySourceChangedEventTest {
     private PropertySourceChangedEvent removedEvent;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.context = new GenericApplicationContext();
         this.newPropertySource = new MockPropertySource("new");
         this.oldPropertySource = new MockPropertySource("old");
@@ -72,7 +72,7 @@ public class PropertySourceChangedEventTest {
     }
 
     @After
-    public void after() {
+    public void tearDown() {
         this.context.close();
     }
 
