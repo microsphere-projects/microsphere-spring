@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see FilterMode
  * @since 1.0.0
  */
-public class FilterModeTest {
+class FilterModeTest {
 
     @Test
     public void testConstants() {
