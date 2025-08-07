@@ -16,7 +16,7 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
  * @see ConfigurationBeanBinder
  * @since 1.0.0
  */
-public class ConfigurationBeanBinderTest {
+class ConfigurationBeanBinderTest {
 
     private static final Logger logger = getLogger(ConfigurationBeanBinderTest.class);
 
@@ -25,7 +25,7 @@ public class ConfigurationBeanBinderTest {
     private MockEnvironment mockEnvironment;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.configurationBeanBinder = (configurationProperties, ignoreUnknownFields, ignoreInvalidFields, configurationBean) -> {
             if (logger.isTraceEnabled()) {
                 logger.trace("configurationProperties : {} , ignoreUnknownFields : {} , ignoreInvalidFields : {} , configurationBean : {}",
