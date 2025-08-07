@@ -49,7 +49,7 @@ public class WebRequestParamExpressionTest extends BaseNameValueExpressionTest<W
     MockServletWebRequest request;
 
     @Before
-    public void before() {
+    public void setUp() {
         List<WebRequestParamExpression> expressions = parseExpressions("name", "name=Mercy", "name!=Mercy");
         this.nameOnlyExpression = expressions.get(0);
         this.expression =  expressions.get(1);
