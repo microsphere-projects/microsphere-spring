@@ -48,7 +48,7 @@ public class DefaultPropertiesPropertySourcesTest {
     private MutablePropertySources propertySources;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.propertySources = environment.getPropertySources();
     }
 
