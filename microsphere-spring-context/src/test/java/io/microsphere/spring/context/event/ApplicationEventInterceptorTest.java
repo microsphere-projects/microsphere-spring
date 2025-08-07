@@ -15,14 +15,14 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  * @see ApplicationEventInterceptor
  * @since 1.0.0
  */
-public class ApplicationEventInterceptorTest {
+class ApplicationEventInterceptorTest {
 
     private static final Logger logger = getLogger(ApplicationEventInterceptorTest.class);
 
     private ApplicationEventInterceptor interceptor;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.interceptor = (event, eventType, chain) -> {
             if (logger.isTraceEnabled()) {
                 logger.trace("event : {} , eventType : {} , chain : {}", event, eventType, chain);
