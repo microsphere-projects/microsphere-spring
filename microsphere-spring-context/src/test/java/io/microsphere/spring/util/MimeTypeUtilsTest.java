@@ -19,6 +19,8 @@ package io.microsphere.spring.util;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeType;
 
+import java.util.List;
+
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL;
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL_VALUE;
 import static io.microsphere.spring.util.MimeTypeUtils.equalsTypeAndSubtype;
@@ -38,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see MimeTypeUtils
  * @since 1.0.0
  */
-public class MimeTypeUtilsTest {
+class MimeTypeUtilsTest {
 
     private static final MimeType APPLICATION_TEXT = new MimeType("application", "text");
 
@@ -73,8 +75,8 @@ public class MimeTypeUtilsTest {
     public void testIsPresentIn() {
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, null));
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, emptyList()));
-        assertFalse(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_TEXT)));
+        assertFalse(isPresentIn(APPLICATION_GRAPHQL, List.of(APPLICATION_TEXT)));
         assertTrue(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_TEXT, APPLICATION_GRAPHQL)));
-        assertTrue(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_GRAPHQL)));
+        assertTrue(isPresentIn(APPLICATION_GRAPHQL, List.of(APPLICATION_GRAPHQL)));
     }
 }
