@@ -18,8 +18,8 @@ package io.microsphere.spring.cache;
 
 
 import io.microsphere.logging.Logger;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
@@ -29,8 +29,8 @@ import static io.microsphere.spring.cache.TTLContext.doWithTTL;
 import static io.microsphere.spring.cache.TTLContext.getTTL;
 import static io.microsphere.spring.cache.TTLContext.setTTL;
 import static java.time.Duration.ofMillis;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * {@link TTLContext} Test
@@ -43,8 +43,8 @@ public class TTLContextTest {
 
     private static final Logger logger = getLogger(TTLContextTest.class);
 
-    @After
-    public void destroy() {
+    @AfterEach
+    public void tearDown() {
         clearTTL();
     }
 
