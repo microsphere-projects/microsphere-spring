@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link ListenableAutowireCandidateResolver} Test
@@ -53,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
                 ListenableAutowireCandidateResolverInitializer.class
         }
 )
-public class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolvingListener, EnvironmentAware {
+class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolvingListener, EnvironmentAware {
 
     @Value("${test.name}")
     private String testName;
@@ -106,7 +107,7 @@ public class ListenableAutowireCandidateResolverTest implements AutowireCandidat
         ListenableAutowireCandidateResolver resolver = resolverProvider.getIfAvailable();
         Field field = findField(this.getClass(), "testBean");
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true);
-        assertEquals(true, resolver.hasQualifier(dependencyDescriptor));
+        assertTrue(resolver.hasQualifier(dependencyDescriptor));
 
         field = findField(this.getClass(), "testName");
         dependencyDescriptor = new DependencyDescriptor(field, true);
