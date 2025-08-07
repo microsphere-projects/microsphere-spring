@@ -16,14 +16,18 @@
  */
 package io.microsphere.spring.core.annotation;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.of;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.core.annotation.AnnotationUtils.getAnnotationAttributes;
 
 /**
  * {@link GenericAnnotationAttributes} Test
@@ -33,22 +37,55 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {GenericAnnotationAttributesTest.class})
-public class GenericAnnotationAttributesTest {
+class GenericAnnotationAttributesTest {
+
+    private ContextConfiguration contextConfiguration;
+
+    private GenericAnnotationAttributes attributes;
+
+    @BeforeEach
+    public void setUp() {
+        this.contextConfiguration = GenericAnnotationAttributesTest.class.getAnnotation(ContextConfiguration.class);
+        this.attributes = of(this.contextConfiguration);
+    }
 
     @Test
-    public void test() {
-        ContextConfiguration contextConfiguration = GenericAnnotationAttributesTest.class.getAnnotation(ContextConfiguration.class);
-        GenericAnnotationAttributes annotationAttributes = of(contextConfiguration);
-        assertEquals(ContextConfiguration.class, annotationAttributes.annotationType());
-        assertEquals(contextConfiguration.annotationType(), annotationAttributes.annotationType());
-        assertArrayEquals(contextConfiguration.initializers(), annotationAttributes.getClassArray("initializers"));
-        assertArrayEquals(contextConfiguration.classes(), annotationAttributes.getClassArray("classes"));
-        assertArrayEquals(contextConfiguration.locations(), annotationAttributes.getStringArray("locations"));
-        assertEquals(contextConfiguration.name(), annotationAttributes.getString("name"));
-        assertEquals(contextConfiguration.loader(), annotationAttributes.getClass("loader"));
-        assertEquals(contextConfiguration.inheritInitializers(), annotationAttributes.getBoolean("inheritInitializers"));
-        assertEquals(contextConfiguration.inheritLocations(), annotationAttributes.getBoolean("inheritLocations"));
-        assertArrayEquals(contextConfiguration.value(), annotationAttributes.getStringArray("value"));
+    public void testOfWithAnnotation() {
+        assertAttributes(attributes, contextConfiguration);
+    }
 
+    @Test
+    public void testOfWithAnnotationAttributes() {
+        GenericAnnotationAttributes attributes = of(this.attributes);
+        assertAttributes(attributes, contextConfiguration);
+    }
+
+    @Test
+    public void testHashCode() {
+        assertEquals(this.attributes.hashCode(), of(this.attributes).hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        AnnotationAttributes annotationAttributes = (AnnotationAttributes) getAnnotationAttributes(this.contextConfiguration);
+        assertEquals(this.attributes, annotationAttributes);
+    }
+
+    @Test
+    public void testToString() {
+        assertNotNull(this.attributes.toString());
+    }
+
+    void assertAttributes(GenericAnnotationAttributes attributes, ContextConfiguration contextConfiguration) {
+        assertEquals(ContextConfiguration.class, attributes.annotationType());
+        assertEquals(contextConfiguration.annotationType(), attributes.annotationType());
+        assertArrayEquals(contextConfiguration.initializers(), attributes.getClassArray("initializers"));
+        assertArrayEquals(contextConfiguration.classes(), attributes.getClassArray("classes"));
+        assertArrayEquals(contextConfiguration.locations(), attributes.getStringArray("locations"));
+        assertEquals(contextConfiguration.name(), attributes.getString("name"));
+        assertEquals(contextConfiguration.loader(), attributes.getClass("loader"));
+        assertEquals(contextConfiguration.inheritInitializers(), attributes.getBoolean("inheritInitializers"));
+        assertEquals(contextConfiguration.inheritLocations(), attributes.getBoolean("inheritLocations"));
+        assertArrayEquals(contextConfiguration.value(), attributes.getStringArray("value"));
     }
 }
