@@ -17,7 +17,6 @@
 package io.microsphere.spring.context.event;
 
 
-import io.microsphere.spring.util.User;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
