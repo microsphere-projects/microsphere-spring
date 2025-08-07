@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see OnceApplicationContextEventListener
  * @since 1.0.0
  */
-public class OnceApplicationContextEventListenerTest {
+class OnceApplicationContextEventListenerTest {
 
     @Test
     public void test() {
