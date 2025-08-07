@@ -2,6 +2,7 @@ package io.microsphere.spring.beans;
 
 import io.microsphere.spring.test.TestBean;
 import io.microsphere.spring.test.TestBean2;
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -46,7 +47,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
  * @since 2017.01.13
  */
 @SuppressWarnings("unchecked")
-public class BeanUtilsTest {
+class BeanUtilsTest {
 
 
     @Configuration
@@ -320,38 +321,28 @@ public class BeanUtilsTest {
     }
 
 
-    private static class OrderedBean implements Ordered {
-
-        private final int order;
-
-        private OrderedBean(int order) {
-            this.order = order;
-        }
+    private record OrderedBean(int order) implements Ordered {
 
         @Override
-        public int getOrder() {
-            return order;
-        }
+            public int getOrder() {
+                return order;
+            }
 
-        @Override
-        public String toString() {
-            return "Bean #" + order;
-        }
+            @Override
+            public String toString() {
+                return "Bean #" + order;
+            }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
 
-            OrderedBean that = (OrderedBean) o;
+                OrderedBean that = (OrderedBean) o;
 
-            return order == that.order;
-        }
+                return order == that.order;
+            }
 
-        @Override
-        public int hashCode() {
-            return order;
-        }
     }
 
     @Test
