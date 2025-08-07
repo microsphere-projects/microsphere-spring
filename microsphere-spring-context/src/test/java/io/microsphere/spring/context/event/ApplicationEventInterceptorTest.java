@@ -22,7 +22,7 @@ public class ApplicationEventInterceptorTest {
     private ApplicationEventInterceptor interceptor;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.interceptor = (event, eventType, chain) -> {
             if (logger.isTraceEnabled()) {
                 logger.trace("event : {} , eventType : {} , chain : {}", event, eventType, chain);
