@@ -33,7 +33,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
  *
  * @since 1.0.0
  */
-public class ConversionServiceResolverTest {
+class ConversionServiceResolverTest {
 
     @Test
     public void testGetResolvedBeanIfAvailable() {
