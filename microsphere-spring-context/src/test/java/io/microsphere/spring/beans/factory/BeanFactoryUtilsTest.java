@@ -64,20 +64,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @since 1.0.0
  */
-public class BeanFactoryUtilsTest {
+class BeanFactoryUtilsTest {
 
     private AnnotationConfigApplicationContext applicationContext;
 
     private ConfigurableListableBeanFactory beanFactory;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.applicationContext = new AnnotationConfigApplicationContext();
         this.beanFactory = this.applicationContext.getBeanFactory();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         this.applicationContext.close();
     }
 
@@ -127,7 +127,7 @@ public class BeanFactoryUtilsTest {
 
         assertEquals("Hello,World", testBeans.get(0).getName());
 
-        testBeans = getBeans(applicationContext, (String[]) null, BaseTestBean.class);
+        testBeans = getBeans(applicationContext, null, BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
 
