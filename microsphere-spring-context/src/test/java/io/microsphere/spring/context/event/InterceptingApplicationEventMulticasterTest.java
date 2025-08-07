@@ -42,7 +42,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
 @ContextConfiguration(classes = {
         InterceptingApplicationEventMulticasterTest.class
 })
-public class InterceptingApplicationEventMulticasterTest {
+class InterceptingApplicationEventMulticasterTest {
 
     @Bean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
     public static ApplicationEventMulticaster applicationEventMulticaster() {
