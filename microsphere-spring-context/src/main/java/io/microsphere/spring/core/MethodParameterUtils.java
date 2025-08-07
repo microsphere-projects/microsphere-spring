@@ -24,7 +24,7 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-import static java.text.MessageFormat.format;
+import static io.microsphere.text.FormatUtils.format;
 
 /**
  * The utility class for {@link MethodParameter}
