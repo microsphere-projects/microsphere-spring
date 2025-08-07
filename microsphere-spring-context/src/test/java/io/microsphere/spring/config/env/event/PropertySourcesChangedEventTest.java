@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see PropertySourcesChangedEvent
  * @since 1.0.0
  */
-public class PropertySourcesChangedEventTest {
+class PropertySourcesChangedEventTest {
 
     private ConfigurableApplicationContext context;
 
@@ -63,7 +63,7 @@ public class PropertySourcesChangedEventTest {
     private PropertySourcesChangedEvent event;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.context = new GenericApplicationContext();
         this.propertySources = context.getEnvironment().getPropertySources();
         this.newPropertySource = new MockPropertySource("new");
@@ -78,7 +78,7 @@ public class PropertySourcesChangedEventTest {
     }
 
     @AfterEach
-    public void after() {
+    void tearDown() {
         this.context.close();
     }
 
