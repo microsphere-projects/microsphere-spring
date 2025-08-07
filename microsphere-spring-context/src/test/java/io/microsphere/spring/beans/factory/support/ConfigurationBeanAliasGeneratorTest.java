@@ -25,7 +25,6 @@ public class ConfigurationBeanAliasGeneratorTest {
 
     }
 
-
     @Test
     public void testPrefixAndBeanNameConnectUseLine() {
         JoinAliasGenerator generator = new HyphenAliasGenerator();
@@ -56,7 +55,6 @@ public class ConfigurationBeanAliasGeneratorTest {
         });
 
     }
-
 
     static class Foo {
     }
