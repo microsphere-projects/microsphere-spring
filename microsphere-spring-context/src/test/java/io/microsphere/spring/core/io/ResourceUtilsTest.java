@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see ResourceUtils
  * @since 1.0.0
  */
-public class ResourceUtilsTest {
+class ResourceUtilsTest {
 
     private static final ResourceLoader resourceLoader = getResourceLoader();
 
@@ -45,7 +45,7 @@ public class ResourceUtilsTest {
     private Resource urlResource;
 
     @BeforeEach
-    public void init() throws IOException {
+    public void setUp() throws IOException {
         this.classPathResource = resourceLoader.getResource("classpath:/META-INF/spring.factories");
         URL url = this.classPathResource.getURL();
         this.urlResource = resourceLoader.getResource(url.toString());
