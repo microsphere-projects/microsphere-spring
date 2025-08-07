@@ -14,14 +14,14 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
  * @see PropertyResolverListener
  * @since 1.0.0
  */
-public class PropertyResolverListenerTest {
+class PropertyResolverListenerTest {
 
     private PropertyResolverListener propertyResolverListener;
 
     private ConfigurableEnvironment environment;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.propertyResolverListener = new PropertyResolverListener() {
         };
         this.environment = new MockEnvironment();
