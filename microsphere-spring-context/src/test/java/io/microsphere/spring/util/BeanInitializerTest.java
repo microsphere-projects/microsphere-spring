@@ -39,7 +39,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  *
  * @since 1.0.0
  */
-public class BeanInitializerTest {
+class BeanInitializerTest {
 
     private static final String BEAN_NAME = "testBean";
 
