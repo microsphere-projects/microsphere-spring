@@ -36,7 +36,7 @@ import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_SUFFIX;
                 "test-name=test-value"
         }
 )
-public class CollectingConfigurationPropertyListenerTest {
+class CollectingConfigurationPropertyListenerTest {
 
     @Autowired
     private ListenableConfigurableEnvironment environment;
@@ -87,7 +87,7 @@ public class CollectingConfigurationPropertyListenerTest {
         assertEquals("test-name", property.getName());
         assertEquals("test-value", property.getValue());
         assertEquals(required, property.isRequired());
-        assertEquals(String.class, property.getType());
+        assertEquals(String.class.getName(), property.getType());
         assertNull(property.getDefaultValue());
     }
 }
