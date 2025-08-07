@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         @ResourcePropertySource(value = {"${value}"}),
         @ResourcePropertySource(value = {"${value}"})
 })
-public class ResourcePropertySourcesLoaderTest {
+class ResourcePropertySourcesLoaderTest {
 
     @Autowired
     private Environment environment;
