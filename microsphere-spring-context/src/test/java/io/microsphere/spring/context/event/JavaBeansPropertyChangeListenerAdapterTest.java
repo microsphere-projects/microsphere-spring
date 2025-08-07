@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {JavaBeansPropertyChangeListenerAdapterTest.class})
-public class JavaBeansPropertyChangeListenerAdapterTest {
+class JavaBeansPropertyChangeListenerAdapterTest {
 
     @Autowired
     private ConfigurableApplicationContext context;
