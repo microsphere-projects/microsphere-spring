@@ -52,7 +52,7 @@ public class MethodParameterUtilsTest {
     private Parameter parameter;
 
     @Before
-    public void setUp() {
+    public void before() {
         this.constructor = findConstructor(User.class);
         this.method = findMethod(User.class, "setName", String.class);
         Method method = findMethod(User.class, "setName", String.class);
