@@ -22,7 +22,7 @@ public class ApplicationListenerInterceptorTest {
     private ApplicationListenerInterceptor interceptor;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.interceptor = (applicationListener, event, chain) -> {
             if (logger.isTraceEnabled()) {
                 logger.trace("applicationListener : {} , event : {} , chain : {}", applicationListener, event, chain);
