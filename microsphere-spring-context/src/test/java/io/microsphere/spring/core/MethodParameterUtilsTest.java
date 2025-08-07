@@ -33,8 +33,8 @@ import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.core.MethodParameterUtils.findParameterIndex;
 import static io.microsphere.spring.core.MethodParameterUtils.forExecutable;
 import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * {@link MethodParameterUtils} Test
