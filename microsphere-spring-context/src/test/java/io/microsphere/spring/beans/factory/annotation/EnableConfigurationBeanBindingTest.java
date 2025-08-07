@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
-public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBeanBindingTest {
+class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBeanBindingTest {
 
     @Bean
     public ConfigurationBeanCustomizer customizer() {
