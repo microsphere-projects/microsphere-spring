@@ -73,12 +73,12 @@ public class ResourcePropertySourceLoaderTest {
     static final String PROPERTIES_RESOURCE_LOCATION = PROPERTIES_DIRECTORY_RESOURCE_LOCATION + "*.properties";
 
     @Before
-    public void before() {
+    public void setUp() {
 
     }
 
     @After
-    public void after() {
+    public void tearDown() {
 
     }
 
