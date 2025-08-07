@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since TODO
  */
-public class TTLCacheableOperation extends CacheableOperation {
+class TTLCacheableOperation extends CacheableOperation {
 
     private long expire;
 
