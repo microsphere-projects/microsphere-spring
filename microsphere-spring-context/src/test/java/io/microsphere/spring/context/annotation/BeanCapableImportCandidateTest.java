@@ -34,6 +34,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
         BeanCapableImportCandidateTest.MyImportSelector.class,
         BeanCapableImportCandidateTest.MyImportBeanDefinitionRegistrar.class
 })
-public class BeanCapableImportCandidateTest {
+class BeanCapableImportCandidateTest {
 
     @Autowired
     private MyImportSelector myImportSelector;
@@ -92,7 +93,7 @@ public class BeanCapableImportCandidateTest {
 
         @Override
         public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-            return new String[0];
+            return EMPTY_STRING_ARRAY;
         }
     }
 
