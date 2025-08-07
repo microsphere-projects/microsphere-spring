@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableConfigurationBeanBinding(prefix = "users", type = User.class, multiple = true, ignoreUnknownFields = false,
         ignoreInvalidFields = false)
-public class EnableConfigurationBeanBindingTestForMultipleBinding extends AbstractEnableConfigurationBeanBindingTest {
+class EnableConfigurationBeanBindingTestForMultipleBinding extends AbstractEnableConfigurationBeanBindingTest {
 
     @Bean
     public ConfigurationBeanBindingPostProcessor configurationBeanBindingPostProcessor() {
@@ -58,7 +58,8 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
     private ConfigurationBeanBindingPostProcessor configurationBeanBindingPostProcessor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
+        super.setUp();
         aUser = context.getBean("a", User.class);
         bUser = context.getBean("b", User.class);
         users = getSortedBeans(context, User.class);
