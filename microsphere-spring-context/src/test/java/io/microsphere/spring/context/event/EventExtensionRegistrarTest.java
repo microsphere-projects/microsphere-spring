@@ -19,7 +19,7 @@ package io.microsphere.spring.context.event;
 
 
 import io.microsphere.lang.MutableInteger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.PayloadApplicationEvent;
@@ -31,7 +31,7 @@ import org.springframework.core.task.TaskExecutor;
 import java.util.function.Consumer;
 
 import static io.microsphere.util.ArrayUtils.ofArray;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link EventExtensionRegistrar} Test
