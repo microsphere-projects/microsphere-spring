@@ -24,6 +24,6 @@ package io.microsphere.spring.context.event;
  * @see BeanFactoryListenerAdapter
  * @since 1.0.0
  */
-public class BeanFactoryListenerAdapterTest extends AbstractEventListenerTest<BeanFactoryListenerAdapterTest>
+class BeanFactoryListenerAdapterTest extends AbstractEventListenerTest<BeanFactoryListenerAdapterTest>
         implements BeanFactoryListenerAdapter {
 }
