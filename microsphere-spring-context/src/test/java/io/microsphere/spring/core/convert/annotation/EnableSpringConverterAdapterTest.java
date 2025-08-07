@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = EnableSpringConverterAdapterTest.class)
 @EnableSpringConverterAdapter
-public class EnableSpringConverterAdapterTest {
+class EnableSpringConverterAdapterTest {
 
     @Autowired
     private ConfigurableBeanFactory beanFactory;
