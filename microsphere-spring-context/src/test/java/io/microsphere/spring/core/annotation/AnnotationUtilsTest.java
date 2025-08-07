@@ -37,9 +37,9 @@ import static org.springframework.util.ReflectionUtils.findMethod;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AnnotationUtils
- * @since 2017.01.13
+ * @since 1.0.0
  */
-public class AnnotationUtilsTest {
+class AnnotationUtilsTest {
 
     @Bean(name = "dummy-bean")
     public String dummyBean() {
@@ -143,10 +143,10 @@ public class AnnotationUtilsTest {
         Bean annotation = getAnnotation("dummyBean", Bean.class);
 
         Map<String, Object> attributes = getAttributes(annotation, true);
-        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertArrayEquals(new String[]{"dummy-bean"}, (String[]) attributes.get("name"));
 
         attributes = getAttributes(annotation, true);
-        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertArrayEquals(new String[]{"dummy-bean"}, (String[]) attributes.get("name"));
 
         attributes = getAttributes(annotation, false);
         if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
@@ -183,13 +183,13 @@ public class AnnotationUtilsTest {
     @Test
     public void testGetAttribute() {
         Bean annotation = getAnnotation("dummyBean", Bean.class);
-        assertArrayEquals(of("dummy-bean"), (String[]) getAttribute(annotation, "name"));
+        assertArrayEquals(of("dummy-bean"), getAttribute(annotation, "name"));
 
         annotation = getAnnotation("dummyBean2", Bean.class);
-        assertArrayEquals(of(), (String[]) getAttribute(annotation, "name"));
+        assertArrayEquals(of(), getAttribute(annotation, "name"));
 
         annotation = getAnnotation("dummyBean3", Bean.class);
-        assertArrayEquals(of("${beanName}"), (String[]) getAttribute(annotation, "name"));
+        assertArrayEquals(of("${beanName}"), getAttribute(annotation, "name"));
     }
 
     @Test
@@ -299,7 +299,7 @@ public class AnnotationUtilsTest {
 
     @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    private static @interface RuntimeAnnotation {
+    private @interface RuntimeAnnotation {
 
         String value();
 
@@ -307,7 +307,7 @@ public class AnnotationUtilsTest {
 
     @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
     @Retention(RetentionPolicy.CLASS)
-    private static @interface ClassAnnotation {
+    private @interface ClassAnnotation {
 
     }
 }
