@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = AutowiredInjectionPointDependencyResolverTest.class)
-public class AutowiredInjectionPointDependencyResolverTest extends AbstractInjectionPointDependencyResolverTest<AutowiredInjectionPointDependencyResolver> {
+class AutowiredInjectionPointDependencyResolverTest extends AbstractInjectionPointDependencyResolverTest<AutowiredInjectionPointDependencyResolver> {
 
     @Override
     protected void testResolveFromField(Set<String> dependentBeanNames) {
