@@ -18,7 +18,6 @@ package io.microsphere.spring.core.io.support;
 
 import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.TestBean;
-import io.microsphere.spring.util.User;
 import io.microsphere.spring.util.UserFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
