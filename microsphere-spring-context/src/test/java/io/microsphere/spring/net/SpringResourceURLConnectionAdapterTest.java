@@ -71,7 +71,7 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
     private SpringResourceURLConnectionAdapter notFound;
 
     @Before
-    public void before() throws Throwable {
+    public void setUp() throws Throwable {
         this.readonlyURL = getClassResource(SpringVersion.class);
         this.readonlyResource = new UrlResource(this.readonlyURL);
         this.readonly = new SpringResourceURLConnectionAdapter(this.readonlyURL, this.readonlyResource);
