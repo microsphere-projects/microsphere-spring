@@ -44,7 +44,7 @@ import static org.springframework.util.StreamUtils.copyToString;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpringProtocolURLStreamHandler.class, SpringTestURLConnectionFactory.class})
 @TestPropertySource(properties = {"microsphere.net.a=1", "microsphere.net.b=2", "microsphere.net.c=3",})
-public class SpringProtocolURLStreamHandlerTest {
+class SpringProtocolURLStreamHandlerTest {
 
     @Test
     public void testSpringResourceURLConnectionFactory() throws Throwable {
