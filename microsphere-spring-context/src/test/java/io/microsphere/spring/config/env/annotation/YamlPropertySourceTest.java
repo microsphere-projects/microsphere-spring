@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         "classpath*:/META-INF/test/yaml/*.yaml"
 }, autoRefreshed = true
 )
-public class YamlPropertySourceTest {
+class YamlPropertySourceTest {
 
     @Value("${my.name}")
     private String myName;
