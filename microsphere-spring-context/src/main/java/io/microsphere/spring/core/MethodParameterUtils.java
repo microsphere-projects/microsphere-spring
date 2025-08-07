@@ -24,6 +24,8 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import static java.text.MessageFormat.format;
+
 /**
  * The utility class for {@link MethodParameter}
  *
@@ -82,7 +84,8 @@ public abstract class MethodParameterUtils implements Utils {
                 return i;
             }
         }
-        throw new IllegalArgumentException("Given parameter [" + parameter + "] does not match any parameter in the declaring executable");
+        String message = format("Given parameter[name : {}] does not match any parameter in the declaring executable : {}", parameter.getName(), executable);
+        throw new IllegalArgumentException(message);
     }
 
     private MethodParameterUtils() {
