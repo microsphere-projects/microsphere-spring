@@ -18,6 +18,8 @@ package io.microsphere.spring.beans.factory;
 
 import org.junit.jupiter.api.Test;
 
+import static io.microsphere.spring.beans.factory.Dependency.create;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class DependencyTest {
+class DependencyTest {
 
     /**
      * <ul>
@@ -44,15 +46,22 @@ public class DependencyTest {
      */
     @Test
     public void test() {
-        Dependency a = Dependency.create("A");
+        Dependency a = create("A");
 
         Dependency c = a.addChild("B")
                 .addChild("C")
-                .child("C").addChildren("D", "E");
+                .child("C")
+                .addChildren("D", "E");
 
         Dependency root = c.root();
 
         assertSame(root, a);
         assertSame(c, a.child("C"));
+        assertEquals(a, a.child("C").parent());
+    }
+
+    @Test
+    public void testHashCode() {
+        assertEquals(create("A").hashCode(), create("A").hashCode());
     }
 }
