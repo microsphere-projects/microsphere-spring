@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ResourcePropertySource(value = {
         "classpath*:/META-INF/test/*.properties"
 })
-public class ResourcePropertySourceTest {
+class ResourcePropertySourceTest {
 
     @Autowired
     private Environment environment;
