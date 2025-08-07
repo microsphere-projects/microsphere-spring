@@ -14,14 +14,14 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
  * @see EnvironmentListener
  * @since 1.0.0
  */
-public class EnvironmentListenerTest {
+class EnvironmentListenerTest {
 
     private EnvironmentListener environmentListener;
 
     private ConfigurableEnvironment environment;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.environmentListener = new EnvironmentListener() {
         };
         this.environment = new MockEnvironment();
