@@ -61,7 +61,7 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
     protected Set<String> dependentBeanNames;
 
     @BeforeEach
-    public void setUp() throws InstantiationException, IllegalAccessException {
+    void setUp() throws InstantiationException, IllegalAccessException {
         this.resolver = (R) forClass(this.getClass())
                 .as(AbstractInjectionPointDependencyResolverTest.class)
                 .getGeneric(0)
