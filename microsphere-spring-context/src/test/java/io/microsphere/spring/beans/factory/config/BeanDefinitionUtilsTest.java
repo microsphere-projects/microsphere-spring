@@ -37,7 +37,6 @@ import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.gen
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.isInfrastructureBean;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -53,7 +52,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @see BeanDefinitionUtils
  * @since 1.0.0
  */
-public class BeanDefinitionUtilsTest {
+class BeanDefinitionUtilsTest {
 
     private static final String USER_BEAN_NAME = "user";
 
@@ -64,7 +63,7 @@ public class BeanDefinitionUtilsTest {
     private AbstractBeanDefinition beanDefinition;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.beanDefinition = genericBeanDefinition(User.class);
     }
 
@@ -175,7 +174,7 @@ public class BeanDefinitionUtilsTest {
 
         @Bean(name = USERS_BEAN_NAME)
         public List<User> users() {
-            return asList(new User());
+            return List.of(new User());
         }
     }
 }
