@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see ApplicationContextUtils
  * @since 1.0.0
  */
-public class ApplicationContextUtilsTest {
+class ApplicationContextUtilsTest {
 
     private GenericApplicationContext context;
 
