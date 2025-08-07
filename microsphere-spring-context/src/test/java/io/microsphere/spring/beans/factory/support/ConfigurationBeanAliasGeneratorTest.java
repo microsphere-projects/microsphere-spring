@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConfigurationBeanAliasGeneratorTest {
+class ConfigurationBeanAliasGeneratorTest {
 
     private final Class<?> clazz = Foo.class;
     private final String beanName = "bean";
