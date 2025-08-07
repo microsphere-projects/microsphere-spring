@@ -47,12 +47,12 @@ import static org.springframework.core.convert.support.DefaultConversionService.
  * @since 2017.01.13
  */
 @SuppressWarnings("unchecked")
-public class PropertySourcesUtilsTest {
+class PropertySourcesUtilsTest {
 
     private ConfigurableEnvironment environment;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty("test-key", "test-value");
         mockEnvironment.setProperty("test-key2", "test-value2");
