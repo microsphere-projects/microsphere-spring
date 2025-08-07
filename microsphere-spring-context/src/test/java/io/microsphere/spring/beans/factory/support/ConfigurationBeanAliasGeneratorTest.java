@@ -25,7 +25,6 @@ public class ConfigurationBeanAliasGeneratorTest {
 
     }
 
-
     @Test
     public void testPrefixAndBeanNameConnectUseLine() {
         JoinAliasGenerator generator = new HyphenAliasGenerator();
@@ -40,6 +39,7 @@ public class ConfigurationBeanAliasGeneratorTest {
         });
 
     }
+
     @Test
     public void testPrefixAndBeanNameConnectUseUnderscore() {
         JoinAliasGenerator generator = new UnderScoreJoinAliasGenerator();
@@ -55,7 +55,6 @@ public class ConfigurationBeanAliasGeneratorTest {
         });
 
     }
-
 
     static class Foo {
     }
