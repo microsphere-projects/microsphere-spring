@@ -52,7 +52,7 @@ public class PropertySourcesUtilsTest {
     private ConfigurableEnvironment environment;
 
     @Before
-    public void before() {
+    public void setUp() {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty("test-key", "test-value");
         mockEnvironment.setProperty("test-key2", "test-value2");

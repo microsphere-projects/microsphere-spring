@@ -53,14 +53,14 @@ public class SpringFactoriesLoaderUtilsTest {
     private DefaultListableBeanFactory beanFactory;
 
     @Before
-    public void before() {
+    public void setUp() {
         context = new GenericApplicationContext();
         beanFactory = context.getDefaultListableBeanFactory();
         context.refresh();
     }
 
     @After
-    public void after() {
+    public void tearDown() {
         context.close();
     }
 

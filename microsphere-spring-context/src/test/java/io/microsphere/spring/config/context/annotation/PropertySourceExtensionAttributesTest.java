@@ -52,7 +52,7 @@ public class PropertySourceExtensionAttributesTest {
     private Environment environment;
 
     @Before
-    public void before() {
+    public void setUp() {
         AnnotationAttributes attributes = getAnnotationAttributes(getClass(), annotationType, environment, false);
         this.attributes = new PropertySourceExtensionAttributes<>(attributes, annotationType, environment);
     }

@@ -16,15 +16,16 @@
  */
 package io.microsphere.spring.core.annotation;
 
+import io.microsphere.annotation.Immutable;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import org.springframework.core.annotation.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.Assert.assertNotNull;
@@ -176,6 +177,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @return non-null
      */
     @Nonnull
+    @Immutable
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes... attributesArray) {
         int length = attributesArray == null ? 0 : attributesArray.length;
 
@@ -183,7 +185,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             return emptySet();
         }
 
-        Set<AnnotationAttributes> annotationAttributesSet = new LinkedHashSet<>();
+        Set<AnnotationAttributes> annotationAttributesSet = newFixedLinkedHashSet(length);
         for (int i = 0; i < length; i++) {
             AnnotationAttributes annotationAttributes = attributesArray[i];
             annotationAttributesSet.add(of(annotationAttributes));

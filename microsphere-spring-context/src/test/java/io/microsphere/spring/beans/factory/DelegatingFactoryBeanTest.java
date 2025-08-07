@@ -46,7 +46,7 @@ public class DelegatingFactoryBeanTest implements DisposableBean {
     private DelegatingFactoryBean factoryBean2;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.user = new User();
         this.factoryBean = new DelegatingFactoryBean(this);
         this.factoryBean2 = new DelegatingFactoryBean(this.user, false);

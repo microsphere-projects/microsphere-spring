@@ -63,7 +63,7 @@ public class BeanRegistrarTest {
     }
 
     @After
-    public void destroy() {
+    public void tearDown() {
         this.beanFactory.destroySingletons();
     }
 

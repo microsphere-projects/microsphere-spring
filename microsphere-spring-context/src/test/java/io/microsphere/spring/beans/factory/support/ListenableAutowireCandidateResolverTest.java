@@ -167,7 +167,6 @@ public class ListenableAutowireCandidateResolverTest implements AutowireCandidat
         }
     }
 
-
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = (ConfigurableEnvironment) environment;

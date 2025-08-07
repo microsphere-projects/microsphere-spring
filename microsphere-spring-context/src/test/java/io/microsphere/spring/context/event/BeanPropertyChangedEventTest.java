@@ -38,7 +38,7 @@ public class BeanPropertyChangedEventTest {
     private BeanPropertyChangedEvent event;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.event = new BeanPropertyChangedEvent(this, "event", null, this);
     }
 

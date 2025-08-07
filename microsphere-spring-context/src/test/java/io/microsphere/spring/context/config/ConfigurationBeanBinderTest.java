@@ -25,7 +25,7 @@ public class ConfigurationBeanBinderTest {
     private MockEnvironment mockEnvironment;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.configurationBeanBinder = (configurationProperties, ignoreUnknownFields, ignoreInvalidFields, configurationBean) -> {
             if (logger.isTraceEnabled()) {
                 logger.trace("configurationProperties : {} , ignoreUnknownFields : {} , ignoreInvalidFields : {} , configurationBean : {}",

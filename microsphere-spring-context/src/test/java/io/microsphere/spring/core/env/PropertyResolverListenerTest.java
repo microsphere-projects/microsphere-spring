@@ -21,7 +21,7 @@ public class PropertyResolverListenerTest {
     private ConfigurableEnvironment environment;
 
     @Before
-    public void before() {
+    public void setUp() {
         this.propertyResolverListener = new PropertyResolverListener() {
         };
         this.environment = new MockEnvironment();

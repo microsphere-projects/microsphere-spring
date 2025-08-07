@@ -77,7 +77,7 @@ public class BeanFactoryUtilsTest {
     }
 
     @After
-    public void destroy() {
+    public void tearDown() {
         applicationContext.close();
     }
 

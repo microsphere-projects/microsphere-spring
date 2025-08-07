@@ -41,7 +41,7 @@ public class AbstractSmartLifecycleTest {
     private AbstractSmartLifecycle lifecycle;
 
     @Before
-    public void before() {
+    public void setUp() {
         lifecycle = new AbstractSmartLifecycle() {
             @Override
             protected void doStart() {

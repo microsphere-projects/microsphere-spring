@@ -76,6 +76,11 @@ public class MethodParameterUtilsTest {
         assertMethodParameter(methodParameter);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testForNullExecutable() {
+        forExecutable(null, -1);
+    }
+
     void assertMethodParameter(MethodParameter methodParameter) {
         assertSame(String.class, methodParameter.getParameterType());
         assertEquals(0, methodParameter.getParameterIndex());
@@ -84,6 +89,16 @@ public class MethodParameterUtilsTest {
     @Test
     public void testFindParameterIndex() throws Throwable {
         assertParameters(User.class);
+    }
+
+    @Test
+    public void testFindParameterIndexWithClonedParameters() throws Throwable {
+        for (Method method : User.class.getMethods()) {
+            for (int i = 0; i < method.getParameterCount(); i++) {
+                Parameter parameter = method.getParameters()[i];
+                assertParameter(i, parameter);
+            }
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -98,7 +113,7 @@ public class MethodParameterUtilsTest {
             Parameter[] parameters = constructor.getParameters();
             for (int i = 0; i < parameters.length; i++) {
                 Parameter parameter = parameters[i];
-                assertParameter(i, parameter);
+                assertParameter(i, clone(parameter, i));
             }
         }
     }
