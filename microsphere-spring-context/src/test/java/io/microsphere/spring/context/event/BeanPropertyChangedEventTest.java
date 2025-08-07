@@ -33,12 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see BeanPropertyChangedEvent
  * @since 1.0.0
  */
-public class BeanPropertyChangedEventTest {
+class BeanPropertyChangedEventTest {
 
     private BeanPropertyChangedEvent event;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.event = new BeanPropertyChangedEvent(this, "event", null, this);
     }
 
