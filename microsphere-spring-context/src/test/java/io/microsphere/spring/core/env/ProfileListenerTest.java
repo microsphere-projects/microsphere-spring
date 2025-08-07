@@ -14,14 +14,14 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
  * @see ProfileListener
  * @since 1.0.0
  */
-public class ProfileListenerTest {
+class ProfileListenerTest {
 
     private ProfileListener profileListener;
 
     private ConfigurableEnvironment environment;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.profileListener = new ProfileListener() {
         };
         this.environment = new MockEnvironment();
