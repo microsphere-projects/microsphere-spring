@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see ImmutableMapPropertySource
  * @since 1.0.0
  */
-public class ImmutableMapPropertySourceTest {
+class ImmutableMapPropertySourceTest {
 
     private static final String NAME = "test";
 
