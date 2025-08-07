@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         AnnotationBeanDefinitionRegistryPostProcessorTest.class
 })
 @Configuration
-public class AnnotationBeanDefinitionRegistryPostProcessorTest {
+class AnnotationBeanDefinitionRegistryPostProcessorTest {
 
     @Service
     static class MyService {
