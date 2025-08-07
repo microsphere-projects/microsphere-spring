@@ -17,7 +17,7 @@
 package io.microsphere.spring.beans.factory;
 
 
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +61,7 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
     protected Set<String> dependentBeanNames;
 
     @BeforeEach
-    public void before() throws InstantiationException, IllegalAccessException {
+    public void setUp() throws InstantiationException, IllegalAccessException {
         this.resolver = (R) forClass(this.getClass())
                 .as(AbstractInjectionPointDependencyResolverTest.class)
                 .getGeneric(0)
