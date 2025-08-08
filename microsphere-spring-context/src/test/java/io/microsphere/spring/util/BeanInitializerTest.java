@@ -46,7 +46,7 @@ class BeanInitializerTest {
     private DefaultListableBeanFactory registry;
 
     @BeforeEach
-    public void init() {
+    public void setUp() {
         registry = new DefaultListableBeanFactory();
     }
 
