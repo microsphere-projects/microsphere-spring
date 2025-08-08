@@ -7,9 +7,9 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
-import java.util.Arrays;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
@@ -33,12 +33,8 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-
         ApplicationContext applicationContext = event.getApplicationContext();
-
         configureExclusiveViewResolver(applicationContext);
-
-
     }
 
     /**
@@ -47,11 +43,8 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
      * @param applicationContext {@link ApplicationContext}
      */
     private void configureExclusiveViewResolver(ApplicationContext applicationContext) {
-
         Map<String, ViewResolver> viewResolversMap = beansOfTypeIncludingAncestors(applicationContext, VIEW_RESOLVER_CLASS);
-
         int size = viewResolversMap.size();
-
         if (size < 2) {
             return;
         }
@@ -59,15 +52,13 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
         ViewResolver exclusiveViewResolver = viewResolversMap.get(exclusiveViewResolverBeanName);
 
         if (exclusiveViewResolver == null) {
-
             throw new NoSuchBeanDefinitionException(VIEW_RESOLVER_CLASS, exclusiveViewResolverBeanName);
-
         }
 
         ContentNegotiatingViewResolver contentNegotiatingViewResolver =
                 applicationContext.getBean(ContentNegotiatingViewResolver.class);
 
-        contentNegotiatingViewResolver.setViewResolvers(Arrays.asList(exclusiveViewResolver));
+        contentNegotiatingViewResolver.setViewResolvers(asList(exclusiveViewResolver));
 
     }
 
