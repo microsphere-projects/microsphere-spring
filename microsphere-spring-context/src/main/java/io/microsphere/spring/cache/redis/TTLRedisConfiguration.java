@@ -29,7 +29,7 @@
 //import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 //import static io.microsphere.util.ClassLoaderUtils.isPresent;
 //
-///**
+/// **
 // * Redis Configuration with TTL features
 // *
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
