@@ -47,6 +47,7 @@ import java.util.function.Consumer;
 
 import static io.microsphere.io.FileUtils.forceDelete;
 import static io.microsphere.lang.function.ThrowableAction.execute;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static java.lang.Thread.sleep;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -298,12 +299,6 @@ class ResourcePropertySourceLoaderTest {
     void assertProperties(ConfigurableEnvironment environment) {
         assertEquals("1", environment.getProperty("a"));
         assertEquals("3", environment.getProperty("b"));
-    }
-
-    void testInSpringContainer(BiConsumer<ConfigurableApplicationContext, ConfigurableEnvironment> consumer, Class<?>... configClasses) {
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(configClasses);
-        consumer.accept(context, context.getEnvironment());
-        context.close();
     }
 
     void testOnFileCreated(ConfigurableApplicationContext context, File newPropertiesFile) throws Throwable {
