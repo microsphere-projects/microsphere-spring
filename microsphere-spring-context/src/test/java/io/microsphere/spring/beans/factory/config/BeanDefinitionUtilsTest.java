@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -292,7 +293,7 @@ public class BeanDefinitionUtilsTest {
 
         @Bean(name = USERS_BEAN_NAME)
         public List<User> users() {
-            return asList(new User());
+            return Collections.singletonList(new User());
         }
     }
 }
