@@ -13,6 +13,7 @@ public class User {
     private int age;
 
     public User() {
+        this(null, 0);
     }
 
     public User(String name, int age) {
