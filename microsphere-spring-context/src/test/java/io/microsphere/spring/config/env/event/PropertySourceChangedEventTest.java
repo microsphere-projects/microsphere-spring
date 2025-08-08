@@ -164,9 +164,9 @@ public class PropertySourceChangedEventTest {
 
     @Test
     public void testEquals() {
-        assertFalse(this.addedEvent.equals(null));
-        assertFalse(this.replacedEvent.equals(null));
-        assertFalse(this.removedEvent.equals(null));
+        assertNotEquals(null, this.addedEvent);
+        assertNotEquals(null, this.replacedEvent);
+        assertNotEquals(null, this.removedEvent);
     }
 
     @Test
