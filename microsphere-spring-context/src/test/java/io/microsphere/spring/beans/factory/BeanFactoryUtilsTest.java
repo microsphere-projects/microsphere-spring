@@ -127,7 +127,7 @@ public class BeanFactoryUtilsTest {
 
         assertEquals("Hello,World", testBeans.get(0).getName());
 
-        testBeans = getBeans(this.applicationContext, (String[]) null, BaseTestBean.class);
+        testBeans = getBeans(this.applicationContext, null, BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
 
