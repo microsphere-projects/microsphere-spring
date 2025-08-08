@@ -15,6 +15,11 @@ public class User {
     public User() {
     }
 
+    public User(String name, int age) {
+        setName(name);
+        setAge(age);
+    }
+
     public String getName() {
         return name;
     }
