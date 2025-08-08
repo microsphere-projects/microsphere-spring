@@ -42,7 +42,6 @@ public class DeferredApplicationEventPublisherTest {
 
     private AnnotationConfigApplicationContext context;
 
-
     @Before
     public void setUp() {
         this.context = new AnnotationConfigApplicationContext();
