@@ -59,7 +59,11 @@ public abstract class ApplicationContextUtils implements Utils {
     public static final Class<?> APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS = resolveClass(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME);
 
     public static ConfigurableApplicationContext asConfigurableApplicationContext(ApplicationContext context) {
-        return cast(context, ConfigurableApplicationContext.class);
+        return asConfigurableApplicationContext((Object) context);
+    }
+
+    public static ConfigurableApplicationContext asConfigurableApplicationContext(Object object) {
+        return cast(object, ConfigurableApplicationContext.class);
     }
 
     public static ApplicationContext asApplicationContext(BeanFactory beanFactory) {
