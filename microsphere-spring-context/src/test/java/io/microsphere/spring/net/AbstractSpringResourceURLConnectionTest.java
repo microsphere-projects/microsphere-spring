@@ -33,8 +33,8 @@ import static io.microsphere.reflect.FieldUtils.setFieldValue;
 import static java.lang.System.currentTimeMillis;
 import static java.net.URLConnection.getDefaultAllowUserInteraction;
 import static java.net.URLConnection.setDefaultAllowUserInteraction;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -195,7 +195,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
         String name = "name";
         String value = "value";
         adapter.addHeader(name, value);
-        assertEquals(singletonMap(name, asList(value)), adapter.getHeaderFields());
+        assertEquals(singletonMap(name, singletonList(value)), adapter.getHeaderFields());
     }
 
     void testGetPermission(URLConnection urlConnection) throws IOException {
