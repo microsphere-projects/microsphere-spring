@@ -16,20 +16,20 @@
  */
 package io.microsphere.spring.context.event;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.ApplicationListener;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import static io.microsphere.spring.context.event.DeferredApplicationEventPublisher.PUBLISH_EVENT_METHOD;
+import static io.microsphere.spring.context.event.DeferredApplicationEventPublisher.detectPublishEventMethod;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -38,19 +38,44 @@ import static org.junit.Assert.assertEquals;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(
-        classes = TestConfig.class,
-        loader = AnnotationConfigContextLoader.class
-)
 public class DeferredApplicationEventPublisherTest {
 
-    @Autowired
-    private TestConfig testConfig;
+    private AnnotationConfigApplicationContext context;
+
+
+    @Before
+    public void setUp() {
+        this.context = new AnnotationConfigApplicationContext();
+    }
+
+    @After
+    public void tearDown() {
+        this.context.close();
+        // reset
+        PUBLISH_EVENT_METHOD = detectPublishEventMethod();
+    }
 
     @Test
-    public void test() {
-        assertEquals("Hello,World", testConfig.getTestEvent().getSource());
+    public void testOnNoDefer() {
+        testOn(false);
+    }
+
+    @Test
+    public void testOnDefer() {
+        testOn(true);
+    }
+
+    void testOn(boolean shouldDefer) {
+        if (shouldDefer) {
+            PUBLISH_EVENT_METHOD = null;
+        } else {
+            PUBLISH_EVENT_METHOD = detectPublishEventMethod();
+        }
+        this.context.register(TestComponent.class);
+        this.context.refresh();
+        TestComponent testComponent = this.context.getBean(TestComponent.class);
+        assertEquals("Hello,World", testComponent.getLatestTestEvent().getSource());
+        testComponent.publishEvent("Testing");
     }
 
 }
@@ -62,28 +87,39 @@ class TestEvent extends ApplicationEvent {
     }
 }
 
-class TestConfig implements BeanFactoryPostProcessor, ApplicationEventPublisherAware, ApplicationListener<TestEvent> {
+class TestComponent implements BeanFactoryPostProcessor, ApplicationEventPublisherAware, ApplicationListener<TestEvent> {
 
-    private TestEvent testEvent;
+    private final boolean shouldDefer;
+
+    private TestEvent latestTestEvent;
 
     private ApplicationEventPublisher applicationEventPublisher;
 
+    TestComponent() {
+        this.shouldDefer = PUBLISH_EVENT_METHOD == null;
+    }
+
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = new DeferredApplicationEventPublisher(applicationEventPublisher);
+        this.applicationEventPublisher = shouldDefer ? new DeferredApplicationEventPublisher(applicationEventPublisher, true)
+                : new DeferredApplicationEventPublisher(applicationEventPublisher);
     }
 
     @Override
     public void onApplicationEvent(TestEvent event) {
-        testEvent = event;
+        latestTestEvent = event;
     }
 
-    public TestEvent getTestEvent() {
-        return testEvent;
+    public TestEvent getLatestTestEvent() {
+        return latestTestEvent;
     }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        applicationEventPublisher.publishEvent(new TestEvent("Hello,World"));
+        this.applicationEventPublisher.publishEvent(new TestEvent("Hello,World"));
+    }
+
+    public void publishEvent(Object event) {
+        this.applicationEventPublisher.publishEvent(event);
     }
 }
