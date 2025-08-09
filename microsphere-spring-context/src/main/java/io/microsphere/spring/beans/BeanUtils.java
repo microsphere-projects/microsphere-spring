@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.invoke.MethodHandleUtils.findStatic;
+import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
@@ -832,9 +833,7 @@ public abstract class BeanUtils implements Utils {
         try {
             constructor = (Constructor<T>) FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE.invokeExact(clazz);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to execute invokeExact on {} with arg : '{}'", FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz, e);
-            }
+            handleInvokeExactFailure(e, FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
         }
         return constructor;
     }
