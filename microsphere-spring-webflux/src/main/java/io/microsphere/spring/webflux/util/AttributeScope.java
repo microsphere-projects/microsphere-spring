@@ -31,7 +31,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
 /**
- * The enumeration of Request Attribute Scopes for Spring Web
+ * The enumeration of attributes scopes for Spring Web
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see RequestAttributes#SCOPE_REQUEST
@@ -39,7 +39,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-public enum RequestAttributeScope {
+public enum AttributeScope {
 
     /**
      * Request Scope
@@ -68,7 +68,7 @@ public enum RequestAttributeScope {
 
     private final int value;
 
-    RequestAttributeScope(int value) {
+    AttributeScope(int value) {
         this.value = value;
     }
 
@@ -176,20 +176,20 @@ public enum RequestAttributeScope {
     protected abstract Map<String, Object> getAttributes(@Nonnull ServerWebExchange serverWebExchange);
 
     /**
-     * Resolve the {@link RequestAttributeScope} by the specified scope value
+     * Resolve the {@link AttributeScope} by the specified scope value
      *
      * @param scope the scope value
-     * @return the {@link RequestAttributeScope}
+     * @return the {@link AttributeScope}
      * @throws IllegalArgumentException if the scope value is not recognized
      * @see #value()
      * @see #REQUEST
      * @see #SESSION
      */
     @Nonnull
-    public static RequestAttributeScope valueOf(int scope) throws IllegalArgumentException {
-        for (RequestAttributeScope requestAttributeScope : values()) {
-            if (requestAttributeScope.value == scope) {
-                return requestAttributeScope;
+    public static AttributeScope valueOf(int scope) throws IllegalArgumentException {
+        for (AttributeScope attributeScope : values()) {
+            if (attributeScope.value == scope) {
+                return attributeScope;
             }
         }
         throw new IllegalArgumentException("Unknown RequestAttributeScope value: " + scope);
