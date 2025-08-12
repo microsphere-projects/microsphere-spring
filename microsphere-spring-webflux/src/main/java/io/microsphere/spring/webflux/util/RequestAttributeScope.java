@@ -25,6 +25,7 @@ import org.springframework.web.server.WebSession;
 
 import java.util.Map;
 
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.Assert.assertNotNull;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
@@ -160,6 +161,17 @@ public enum RequestAttributeScope {
         return value != null ? value : defaultValue;
     }
 
+    /**
+     * Get all attribute names in the specified {@link ServerWebExchange}.
+     *
+     * @param serverWebExchange {@link ServerWebExchange}
+     * @return an array of attribute names, never <code>null</code>
+     */
+    @Nonnull
+    public String[] getAttributeNames(@Nonnull ServerWebExchange serverWebExchange) {
+        return getAttributes(serverWebExchange).keySet().toArray(EMPTY_STRING_ARRAY);
+    }
+
     @Nonnull
     protected abstract Map<String, Object> getAttributes(@Nonnull ServerWebExchange serverWebExchange);
 
@@ -225,7 +237,21 @@ public enum RequestAttributeScope {
      * @throws IllegalArgumentException if the scope value is not recognized
      */
     @Nullable
-    public static Object removeAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name, int scope) {
+    public static Object removeAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name, int scope)
+            throws IllegalArgumentException {
         return valueOf(scope).removeAttribute(serverWebExchange, name);
+    }
+
+    /**
+     * Get all attribute names in the specified {@link ServerWebExchange} by the scope
+     *
+     * @param serverWebExchange {@link ServerWebExchange} source
+     * @param scope             the scope value
+     * @return an array of attribute names, never <code>null</code>
+     * @throws IllegalArgumentException if the scope value is not recognized
+     */
+    public static String[] getAttributeNames(@Nonnull ServerWebExchange serverWebExchange, int scope)
+            throws IllegalArgumentException {
+        return valueOf(scope).getAttributeNames(serverWebExchange);
     }
 }
