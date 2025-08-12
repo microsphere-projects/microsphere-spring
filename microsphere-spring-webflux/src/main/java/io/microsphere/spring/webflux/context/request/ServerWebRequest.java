@@ -18,6 +18,7 @@
 package io.microsphere.spring.webflux.context.request;
 
 import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.webflux.util.AttributeScope;
 import org.springframework.context.i18n.LocaleContext;
@@ -107,16 +108,19 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nonnull
     public Object getNativeRequest() {
         return request;
     }
 
     @Override
+    @Nonnull
     public Object getNativeResponse() {
         return exchange.getResponse();
     }
 
     @Override
+    @Nullable
     public <T> T getNativeRequest(Class<T> requiredType) {
         Object nativeRequest = getNativeRequest();
         if (isAssignableFrom(requiredType, nativeRequest.getClass())) {
@@ -126,6 +130,7 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nullable
     public <T> T getNativeResponse(Class<T> requiredType) {
         Object nativeResponse = getNativeResponse();
         if (isAssignableFrom(requiredType, nativeResponse.getClass())) {
@@ -135,12 +140,14 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nullable
     public String getHeader(String headerName) {
         HttpHeaders httpHeaders = getHttpHeaders();
         return httpHeaders.getFirst(headerName);
     }
 
     @Override
+    @Nullable
     public String[] getHeaderValues(String headerName) {
         HttpHeaders httpHeaders = getHttpHeaders();
         List<String> headerValues = httpHeaders.get(headerName);
@@ -148,18 +155,21 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nonnull
     public Iterator<String> getHeaderNames() {
         HttpHeaders httpHeaders = getHttpHeaders();
         return httpHeaders.keySet().iterator();
     }
 
     @Override
+    @Nullable
     public String getParameter(String paramName) {
         MultiValueMap<String, String> queryParams = getQueryParams();
         return queryParams.getFirst(paramName);
     }
 
     @Override
+    @Nullable
     public String[] getParameterValues(String paramName) {
         MultiValueMap<String, String> queryParams = getQueryParams();
         List<String> paramValues = queryParams.get(paramName);
@@ -167,12 +177,14 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nonnull
     public Iterator<String> getParameterNames() {
         MultiValueMap<String, String> queryParams = getQueryParams();
         return queryParams.keySet().iterator();
     }
 
     @Override
+    @Nonnull
     public Map<String, String[]> getParameterMap() {
         MultiValueMap<String, String> queryParams = getQueryParams();
         Map<String, String[]> parameterMap = newFixedLinkedHashMap(queryParams.size());
@@ -186,22 +198,26 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nullable
     public Locale getLocale() {
         LocaleContext localeContext = this.exchange.getLocaleContext();
         return localeContext.getLocale();
     }
 
     @Override
+    @Nonnull
     public String getContextPath() {
         return this.request.getPath().contextPath().value();
     }
 
     @Override
+    @Nullable
     public String getRemoteUser() {
         return (String) getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_REQUEST);
     }
 
     @Override
+    @Nullable
     public Principal getUserPrincipal() {
         return this.exchange.getPrincipal().block();
     }
@@ -234,6 +250,7 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nonnull
     public String getDescription(boolean includeClientInfo) {
         StringBuilder sb = new StringBuilder();
         sb.append("Method=").append(request.getMethod())
@@ -252,6 +269,7 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nullable
     public Object getAttribute(String name, int scope) {
         return AttributeScope.getAttribute(this.exchange, name, scope);
     }
@@ -267,6 +285,7 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nonnull
     public String[] getAttributeNames(int scope) {
         return AttributeScope.getAttributeNames(this.exchange, scope);
     }
@@ -279,6 +298,7 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nullable
     public Object resolveReference(String key) {
         switch (key) {
             case REFERENCE_KEY_REQUEST:
@@ -292,12 +312,14 @@ public class ServerWebRequest implements NativeWebRequest {
     }
 
     @Override
+    @Nonnull
     public String getSessionId() {
         WebSession webSession = this.getSession();
         return webSession.getId();
     }
 
     @Override
+    @Nonnull
     public Object getSessionMutex() {
         WebSession session = this.getSession();
         Object mutex = session.getAttribute(SESSION_MUTEX_ATTRIBUTE_NAME);
@@ -317,10 +339,12 @@ public class ServerWebRequest implements NativeWebRequest {
         return this.request.getQueryParams();
     }
 
+    @Nonnull
     protected WebSession getSession() {
         return this.exchange.getSession().block();
     }
 
+    @Nullable
     protected String[] toArray(List<String> values) {
         return values == null ? null : values.toArray(new String[0]);
     }
