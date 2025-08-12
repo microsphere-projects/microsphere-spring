@@ -189,6 +189,6 @@ class RequestAttributeScopeTest {
     }
 
     void testGetAttributeNames(int scope) {
-        assertNotNull( (this.serverWebExchange, scope));
+        assertNotNull(getAttributeNames(this.serverWebExchange, scope));
     }
 }
