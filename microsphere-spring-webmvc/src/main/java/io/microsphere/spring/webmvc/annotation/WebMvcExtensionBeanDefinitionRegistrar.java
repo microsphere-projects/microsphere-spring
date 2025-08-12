@@ -19,10 +19,11 @@ package io.microsphere.spring.webmvc.annotation;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
+import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
-import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
+import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -80,7 +81,8 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     private void registerWebEndpointMappingRegistrar(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
-            registerBeanDefinition(registry, WebEndpointMappingRegistrar.class);
+            registerBeanDefinition(registry, ServletWebEndpointMappingResolver.class);
+            registerBeanDefinition(registry, HandlerMappingWebEndpointMappingResolver.class);
         }
         if (logger.isTraceEnabled()) {
             logger.trace("@EnableWebMvcExtension.registerWebEndpointMappings = {}", registerWebEndpointMappings);
