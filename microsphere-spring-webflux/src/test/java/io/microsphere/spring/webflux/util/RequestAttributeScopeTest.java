@@ -29,10 +29,12 @@ import java.util.Map;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.REQUEST;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.SESSION;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.getAttribute;
+import static io.microsphere.spring.webflux.util.RequestAttributeScope.getAttributeNames;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.removeAttribute;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.setAttribute;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -162,6 +164,12 @@ class RequestAttributeScopeTest {
         testStaticSetAttribute(SCOPE_SESSION);
     }
 
+    @Test
+    void testGetAttributeNames() {
+        testGetAttributeNames(SCOPE_REQUEST);
+        testGetAttributeNames(SCOPE_SESSION);
+    }
+
     void testStaticGetAttribute(int scope) {
         assertSame(ATTRIBUTE_VALUE, getAttribute(this.serverWebExchange, ATTRIBUTE_NAME, scope));
         assertNull(getAttribute(this.serverWebExchange, NOT_FOUND_ATTRIBUTE_NAME, scope));
@@ -178,5 +186,9 @@ class RequestAttributeScopeTest {
         assertSame(ATTRIBUTE_VALUE, removeAttribute(this.serverWebExchange, ATTRIBUTE_NAME, scope));
         assertNull(removeAttribute(this.serverWebExchange, NOT_FOUND_ATTRIBUTE_NAME, scope));
         assertNull(removeAttribute(this.serverWebExchange, null, scope));
+    }
+
+    void testGetAttributeNames(int scope) {
+        assertNotNull( (this.serverWebExchange, scope));
     }
 }
