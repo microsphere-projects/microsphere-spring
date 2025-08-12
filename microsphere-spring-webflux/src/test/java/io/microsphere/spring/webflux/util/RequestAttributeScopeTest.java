@@ -28,9 +28,13 @@ import java.util.Map;
 
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.REQUEST;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.SESSION;
+import static io.microsphere.spring.webflux.util.RequestAttributeScope.getAttribute;
+import static io.microsphere.spring.webflux.util.RequestAttributeScope.removeAttribute;
+import static io.microsphere.spring.webflux.util.RequestAttributeScope.setAttribute;
 import static io.microsphere.spring.webflux.util.RequestAttributeScope.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
 import static org.springframework.mock.web.server.MockServerWebExchange.from;
@@ -81,6 +85,18 @@ class RequestAttributeScopeTest {
     }
 
     @Test
+    void testGetAttributeWithNullName() {
+        assertNull(REQUEST.setAttribute(this.serverWebExchange, null, ATTRIBUTE_VALUE));
+        assertNull(SESSION.setAttribute(this.serverWebExchange, null, ATTRIBUTE_VALUE));
+    }
+
+    @Test
+    void testGetAttributeWithNullValue() {
+        assertNull(REQUEST.setAttribute(this.serverWebExchange, ATTRIBUTE_NAME, null));
+        assertNull(SESSION.setAttribute(this.serverWebExchange, ATTRIBUTE_NAME, null));
+    }
+
+    @Test
     void testGetRequiredAttribute() {
         assertEquals(ATTRIBUTE_VALUE, REQUEST.getRequiredAttribute(this.serverWebExchange, ATTRIBUTE_NAME));
         assertEquals(ATTRIBUTE_VALUE, SESSION.getRequiredAttribute(this.serverWebExchange, ATTRIBUTE_NAME));
@@ -102,6 +118,21 @@ class RequestAttributeScopeTest {
     }
 
     @Test
+    void testRemoveAttribute() {
+        assertSame(ATTRIBUTE_VALUE, REQUEST.removeAttribute(this.serverWebExchange, ATTRIBUTE_NAME));
+        assertSame(ATTRIBUTE_VALUE, SESSION.removeAttribute(this.serverWebExchange, ATTRIBUTE_NAME));
+
+        assertNull(REQUEST.removeAttribute(this.serverWebExchange, ATTRIBUTE_NAME));
+        assertNull(SESSION.removeAttribute(this.serverWebExchange, ATTRIBUTE_NAME));
+    }
+
+    @Test
+    void testRemoveAttributeWithNullName() {
+        assertNull(REQUEST.removeAttribute(this.serverWebExchange, null));
+        assertNull(SESSION.removeAttribute(this.serverWebExchange, null));
+    }
+
+    @Test
     void testValueOf() {
         assertEquals(REQUEST, valueOf(SCOPE_REQUEST));
         assertEquals(SESSION, valueOf(SCOPE_SESSION));
@@ -111,5 +142,41 @@ class RequestAttributeScopeTest {
     void testValueOfWithInvalidScope() {
         assertThrows(IllegalArgumentException.class, () -> valueOf(-1));
         assertThrows(IllegalArgumentException.class, () -> valueOf(100));
+    }
+
+    @Test
+    void testStaticGetAttribute() {
+        testStaticGetAttribute(SCOPE_REQUEST);
+        testStaticGetAttribute(SCOPE_SESSION);
+    }
+
+    @Test
+    void testStaticRemoveAttribute() {
+        testStaticRemoveAttribute(SCOPE_REQUEST);
+        testStaticRemoveAttribute(SCOPE_SESSION);
+    }
+
+    @Test
+    void testStaticSetAttribute() {
+        testStaticSetAttribute(SCOPE_REQUEST);
+        testStaticSetAttribute(SCOPE_SESSION);
+    }
+
+    void testStaticGetAttribute(int scope) {
+        assertSame(ATTRIBUTE_VALUE, getAttribute(this.serverWebExchange, ATTRIBUTE_NAME, scope));
+        assertNull(getAttribute(this.serverWebExchange, NOT_FOUND_ATTRIBUTE_NAME, scope));
+        assertNull(getAttribute(this.serverWebExchange, null, scope));
+    }
+
+    void testStaticSetAttribute(int scope) {
+        assertSame(ATTRIBUTE_VALUE, setAttribute(this.serverWebExchange, ATTRIBUTE_NAME, ATTRIBUTE_VALUE, scope));
+        assertNull(setAttribute(this.serverWebExchange, ATTRIBUTE_NAME, null, SCOPE_REQUEST));
+        assertNull(setAttribute(this.serverWebExchange, null, ATTRIBUTE_VALUE, SCOPE_REQUEST));
+    }
+
+    void testStaticRemoveAttribute(int scope) {
+        assertSame(ATTRIBUTE_VALUE, removeAttribute(this.serverWebExchange, ATTRIBUTE_NAME, scope));
+        assertNull(removeAttribute(this.serverWebExchange, NOT_FOUND_ATTRIBUTE_NAME, scope));
+        assertNull(removeAttribute(this.serverWebExchange, null, scope));
     }
 }
