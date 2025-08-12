@@ -17,11 +17,13 @@
 
 package io.microsphere.spring.webflux.util;
 
+import io.microsphere.annotation.Nonnull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebSession;
-import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 import static io.microsphere.util.Assert.assertNotNull;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -43,8 +45,8 @@ public enum RequestAttributeScope {
      */
     REQUEST(SCOPE_REQUEST) {
         @Override
-        public <T> T getAttribute(ServerWebExchange serverWebExchange, String name) {
-            return serverWebExchange.getAttribute(name);
+        protected Map<String, Object> getAttributes(ServerWebExchange serverWebExchange) {
+            return serverWebExchange.getAttributes();
         }
     },
 
@@ -53,10 +55,13 @@ public enum RequestAttributeScope {
      */
     SESSION(SCOPE_SESSION) {
         @Override
-        public <T> T getAttribute(ServerWebExchange serverWebExchange, String name) {
-            Mono<WebSession> session = serverWebExchange.getSession();
-            WebSession webSession = session.block();
-            return webSession == null ? null : (T) webSession.getAttribute(name);
+        protected Map<String, Object> getAttributes(ServerWebExchange serverWebExchange) {
+            WebSession webSession = getSession(serverWebExchange);
+            return webSession.getAttributes();
+        }
+
+        protected WebSession getSession(ServerWebExchange serverWebExchange) {
+            return serverWebExchange.getSession().block();
         }
     };
 
@@ -84,7 +89,44 @@ public enum RequestAttributeScope {
      * @return the attribute value
      */
     @Nullable
-    public abstract <T> T getAttribute(ServerWebExchange serverWebExchange, String name);
+    public <T> T getAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name) {
+        if (name == null) {
+            return null;
+        }
+        Map<String, Object> attributes = getAttributes(serverWebExchange);
+        return (T) attributes.get(name);
+    }
+
+    /**
+     * Set the request attribute value.
+     *
+     * @param serverWebExchange {@link ServerWebExchange}
+     * @param name              the attribute name
+     * @param value             the attribute value
+     * @return the previous attribute value if the attribute exists, or <code>null</code>
+     */
+    public Object setAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name, @Nullable Object value) {
+        if (name == null || value == null) {
+            return null;
+        }
+        Map<String, Object> attributes = getAttributes(serverWebExchange);
+        return attributes.put(name, value);
+    }
+
+    /**
+     * Remove the request attribute by the specified name.
+     *
+     * @param serverWebExchange {@link ServerWebExchange}
+     * @param name              the attribute name
+     * @return the removed attribute value if the attribute exists, or <code>null</code>
+     */
+    public Object removeAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name) {
+        if (name == null) {
+            return null;
+        }
+        Map<String, Object> attributes = getAttributes(serverWebExchange);
+        return attributes.remove(name);
+    }
 
     /**
      * Return the request attribute value or if not present raise an
@@ -95,7 +137,8 @@ public enum RequestAttributeScope {
      * @param <T>               the attribute type
      * @return the attribute value
      */
-    public <T> T getRequiredAttribute(ServerWebExchange serverWebExchange, String name) {
+    @Nonnull
+    public <T> T getRequiredAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name) {
         T value = getAttribute(serverWebExchange, name);
         assertNotNull(value, () -> "Required attribute '" + name + "' is missing");
         return value;
@@ -110,10 +153,15 @@ public enum RequestAttributeScope {
      * @param <T>               the attribute type
      * @return the attribute value
      */
-    public <T> T getAttributeOrDefault(ServerWebExchange serverWebExchange, String name, T defaultValue) {
+    @Nullable
+    public <T> T getAttributeOrDefault(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name,
+                                       @Nullable T defaultValue) {
         T value = getAttribute(serverWebExchange, name);
         return value != null ? value : defaultValue;
     }
+
+    @Nonnull
+    protected abstract Map<String, Object> getAttributes(@Nonnull ServerWebExchange serverWebExchange);
 
     /**
      * Resolve the {@link RequestAttributeScope} by the specified scope value
@@ -125,12 +173,59 @@ public enum RequestAttributeScope {
      * @see #REQUEST
      * @see #SESSION
      */
-    public static RequestAttributeScope valueOf(int scope) {
+    @Nonnull
+    public static RequestAttributeScope valueOf(int scope) throws IllegalArgumentException {
         for (RequestAttributeScope requestAttributeScope : values()) {
             if (requestAttributeScope.value == scope) {
                 return requestAttributeScope;
             }
         }
         throw new IllegalArgumentException("Unknown RequestAttributeScope value: " + scope);
+    }
+
+    /**
+     * Get the attribute value by the specified name
+     *
+     * @param serverWebExchange {@link ServerWebExchange} source
+     * @param name              the attribute name
+     * @param scope             the scope value
+     * @param <T>               the attribute value type
+     * @return the attribute value or {@code null} if not found
+     * @throws IllegalArgumentException if the scope value is not recognized
+     */
+    @Nullable
+    public static <T> T getAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name, int scope)
+            throws IllegalArgumentException {
+        return valueOf(scope).getAttribute(serverWebExchange, name);
+    }
+
+    /**
+     * Set the attribute value
+     *
+     * @param serverWebExchange {@link ServerWebExchange} source
+     * @param name              the attribute name
+     * @param value             the attribute value
+     * @param scope             the scope value
+     * @return the previous attribute value if the attribute exists, or <code>null</code>
+     * @throws IllegalArgumentException if the scope value is not recognized
+     */
+    @Nullable
+    public static Object setAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name,
+                                      @Nullable Object value, int scope) throws IllegalArgumentException {
+        return valueOf(scope).setAttribute(serverWebExchange, name, value);
+    }
+
+    /**
+     * Remove the attribute by the specified name
+     *
+     * @param serverWebExchange {@link ServerWebExchange} source
+     * @param name              the attribute name
+     * @param scope             the scope value
+     * @return the removed attribute value if the attribute exists, or <code>null</code>
+     * @throws IllegalArgumentException if the scope value is not recognized
+     */
+    @Nullable
+    public static Object removeAttribute(@Nonnull ServerWebExchange serverWebExchange, @Nullable String name, int scope) {
+        return valueOf(scope).removeAttribute(serverWebExchange, name);
     }
 }
