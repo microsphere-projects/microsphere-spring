@@ -33,6 +33,7 @@ import static io.microsphere.spring.webflux.util.AttributeScope.getAttributeName
 import static io.microsphere.spring.webflux.util.AttributeScope.removeAttribute;
 import static io.microsphere.spring.webflux.util.AttributeScope.setAttribute;
 import static io.microsphere.spring.webflux.util.AttributeScope.valueOf;
+import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -50,25 +51,51 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @see AttributeScope
  * @since 1.0.0
  */
-class AttributeScopeTest {
+public class AttributeScopeTest {
 
-    private static final String ATTRIBUTE_NAME = "test-name";
+    public static final String ATTRIBUTE_NAME = "test-name";
 
-    private static final String NOT_FOUND_ATTRIBUTE_NAME = "not-found-name";
+    public static final String NOT_FOUND_ATTRIBUTE_NAME = "not-found-name";
 
-    private static final String ATTRIBUTE_VALUE = "test-value";
+    public static final String ATTRIBUTE_VALUE = "test-value";
+
+    public static final String HEADER_NAME = "test-header-name";
+
+    public static final String HEADER_VALUE = "test-header-value";
+
+    public static final String HEADER_NAME_2 = "test-header-name-2";
+
+    public static final String[] HEADER_VALUE_2 = ofArray("test-header-value-2", "test-header-value-3");
+
+    public static final String PARAM_NAME = "test-param-name";
+
+    public static final String PARAM_VALUE = "test-param-value";
+
+    public static final String PARAM_NAME_2 = "test-param-name-2";
+
+    public static final String[] PARAM_VALUE_2 = ofArray("test-param-value-2", "test-param-value-3");
 
     private MockServerWebExchange serverWebExchange;
 
     @BeforeEach
     void setUp() {
-        MockServerHttpRequest request = get("/test").build();
-        this.serverWebExchange = from(request);
-        Map<String, Object> attributes = this.serverWebExchange.getAttributes();
+        this.serverWebExchange = mockServerWebExchange();
+    }
+
+    public static MockServerWebExchange mockServerWebExchange() {
+        MockServerHttpRequest request = get("/test")
+                .header(HEADER_NAME, HEADER_VALUE)
+                .header(HEADER_NAME_2, HEADER_VALUE_2)
+                .queryParam(PARAM_NAME, PARAM_VALUE)
+                .queryParam(PARAM_NAME_2, PARAM_VALUE_2)
+                .build();
+        MockServerWebExchange serverWebExchange = from(request);
+        Map<String, Object> attributes = serverWebExchange.getAttributes();
         attributes.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
-        WebSession webSession = this.serverWebExchange.getSession().block();
+        WebSession webSession = serverWebExchange.getSession().block();
         webSession.getAttributes().put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+        return serverWebExchange;
     }
 
     @Test
