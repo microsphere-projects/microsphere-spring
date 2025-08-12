@@ -20,6 +20,7 @@ import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.lifecycle.AbstractSmartLifecycle;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
+import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingRegistrar;
 import io.microsphere.spring.web.metadata.FilterRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.ServletRegistrationWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -56,35 +57,15 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * @see AbstractSmartLifecycle
  * @since 1.0.0
  */
-public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
+public class WebEndpointMappingRegistrar extends AbstractWebEndpointMappingRegistrar {
 
     private static final Logger logger = getLogger(WebEndpointMappingRegistrar.class);
 
-    private final WebApplicationContext context;
-
     public WebEndpointMappingRegistrar(WebApplicationContext context) {
-        this.context = context;
-        // Mark sure earlier than WebEventPublisher
-        setPhase(WebEventPublisher.DEFAULT_PHASE - 10);
+        super(context);
     }
 
-    @Override
-    protected void doStart() {
-        registerWebEndpointMappings();
-    }
-
-    private void registerWebEndpointMappings() {
-        WebEndpointMappingRegistry registry = getRegistry();
-        Collection<WebEndpointMapping> webEndpointMappings = collectWebEndpointMappings();
-        int count = registry.register(webEndpointMappings);
-        logger.info("{} WebEndpointMappings were registered from the Spring context[id :'{}']", count, context.getId());
-    }
-
-    private WebEndpointMappingRegistry getRegistry() {
-        return context.getBean(WebEndpointMappingRegistry.class);
-    }
-
-    private Collection<WebEndpointMapping> collectWebEndpointMappings() {
+    protected Collection<WebEndpointMapping> collectWebEndpointMappings() {
         Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(context, HandlerMapping.class);
 
         Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = new HashMap<>();
