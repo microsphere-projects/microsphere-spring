@@ -119,6 +119,15 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Spring Boot Dependencies -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -127,6 +136,7 @@
             <id>spring-framework-4.3</id>
             <properties>
                 <spring.version>4.3.30.RELEASE</spring.version>
+                <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -134,6 +144,7 @@
             <id>spring-framework-5.0</id>
             <properties>
                 <spring.version>5.0.20.RELEASE</spring.version>
+                <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -141,6 +152,7 @@
             <id>spring-framework-5.1</id>
             <properties>
                 <spring.version>5.1.20.RELEASE</spring.version>
+                <spring-boot.version>2.1.18.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -148,6 +160,7 @@
             <id>spring-framework-5.2</id>
             <properties>
                 <spring.version>5.2.25.RELEASE</spring.version>
+                <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -158,6 +171,7 @@
             </activation>
             <properties>
                 <spring.version>5.3.39</spring.version>
+                <spring-boot.version>2.7.18</spring-boot.version>
             </properties>
         </profile>
     </profiles>
