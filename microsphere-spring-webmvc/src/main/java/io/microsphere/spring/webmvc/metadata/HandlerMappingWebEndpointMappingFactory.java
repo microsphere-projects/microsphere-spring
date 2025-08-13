@@ -17,6 +17,7 @@
 package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
+import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.web.servlet.HandlerMapping;
