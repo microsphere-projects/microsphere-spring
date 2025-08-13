@@ -18,7 +18,10 @@ package io.microsphere.spring.web.metadata;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 import java.util.Collection;
+
+import static io.microsphere.collection.ListUtils.newLinkedList;
 
 /**
  * {@link WebEndpointMappingFactory} from {@link FilterRegistration}
@@ -30,8 +33,11 @@ import java.util.Collection;
  */
 public class FilterRegistrationWebEndpointMappingFactory extends RegistrationWebEndpointMappingFactory<FilterRegistration> {
 
+    private final ServletRegistrationWebEndpointMappingFactory servletRegistrationWebEndpointMappingFactory;
+
     public FilterRegistrationWebEndpointMappingFactory(ServletContext servletContext) {
         super(servletContext);
+        this.servletRegistrationWebEndpointMappingFactory = new ServletRegistrationWebEndpointMappingFactory(servletContext);
     }
 
     @Override
@@ -41,6 +47,19 @@ public class FilterRegistrationWebEndpointMappingFactory extends RegistrationWeb
 
     @Override
     protected Collection<String> getPatterns(FilterRegistration registration) {
-        return registration.getUrlPatternMappings();
+        Collection<String> patterns = newLinkedList();
+        // Add the URL patterns directly mapped to the Filter
+        patterns.addAll(registration.getUrlPatternMappings());
+        // Add the URL patterns mapped to the Servlet(s) which are associated with the Filter
+        ServletContext servletContext = this.servletContext;
+        ServletRegistrationWebEndpointMappingFactory factory = this.servletRegistrationWebEndpointMappingFactory;
+        Collection<String> servletNameMappings = registration.getServletNameMappings();
+        for (String servletName : servletNameMappings) {
+            ServletRegistration servletRegistration = servletContext.getServletRegistration(servletName);
+            if (servletRegistration != null) {
+                patterns.addAll(factory.getPatterns(servletRegistration));
+            }
+        }
+        return patterns;
     }
 }
