@@ -40,6 +40,11 @@ public class TestFilter implements Filter {
     public static final String DEFAULT_FILTER_NAME = "testFilter";
 
     /**
+     * Filter Class Name
+     */
+    public static final String FILTER_CLASS_NAME = TestFilter.class.getName();
+
+    /**
      * Default URL Pattern
      */
     public static final String DEFAULT_FILTER_URL_PATTERN = "/" + DEFAULT_FILTER_NAME;
