@@ -23,11 +23,11 @@ import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
 import static java.util.Collections.unmodifiableCollection;
@@ -47,11 +47,11 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
 
     private final Filter filter;
 
-    private final Set<String> servletNames = new LinkedHashSet<>();
+    private final Set<String> servletNames = newLinkedHashSet();
 
-    private final Set<String> urlPatterns = new LinkedHashSet<>();
+    private final Set<String> urlPatterns = newLinkedHashSet();
 
-    private final Map<String, String> initParameters = new HashMap<>();
+    private final Map<String, String> initParameters = newHashMap();
 
     private boolean asyncSupported;
 
@@ -102,6 +102,8 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
 
     @Override
     public void addMappingForServletNames(EnumSet<DispatcherType> dispatcherTypes, boolean isMatchAfter, String... servletNames) {
+        assertNotNull(servletNames, () -> "The 'servletNames' argument must not be null!");
+        assertNotEmpty(servletNames, () -> "The 'servletNames' argument must not be empty!");
         for (String servletName : servletNames) {
             this.servletNames.add(servletName);
         }
@@ -114,6 +116,8 @@ public class TestFilterRegistration implements FilterRegistration.Dynamic {
 
     @Override
     public void addMappingForUrlPatterns(EnumSet<DispatcherType> dispatcherTypes, boolean isMatchAfter, String... urlPatterns) {
+        assertNotNull(urlPatterns, () -> "The 'urlPatterns' argument must not be null!");
+        assertNotEmpty(urlPatterns, () -> "The 'urlPatterns' argument must not be empty!");
         for (String urlPattern : urlPatterns) {
             this.urlPatterns.add(urlPattern);
         }
