@@ -44,6 +44,10 @@ public class ServletWebEndpointMappingResolver implements WebEndpointMappingReso
     @Override
     public Collection<WebEndpointMapping> resolve(ApplicationContext context) {
         ServletContext servletContext = getServletContext(context);
+        return resolve(servletContext);
+    }
+
+    public Collection<WebEndpointMapping> resolve(ServletContext servletContext) {
         if (servletContext == null || servletContext.getMajorVersion() < 3) {
             return emptyList();
         }
