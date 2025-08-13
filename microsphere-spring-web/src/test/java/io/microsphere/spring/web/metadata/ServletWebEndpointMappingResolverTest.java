@@ -21,6 +21,7 @@ package io.microsphere.spring.web.metadata;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
@@ -52,26 +53,39 @@ import static org.junit.Assert.assertTrue;
  */
 public class ServletWebEndpointMappingResolverTest {
 
+    private TestServletContext servletContext;
+
     private GenericWebApplicationContext context;
 
     private ServletWebEndpointMappingResolver webEndpointMappingResolver;
 
     @Before
     public void setUp() throws Exception {
-        TestServletContext servletContext = new TestServletContext();
+        this.servletContext = new TestServletContext();
         this.context = new GenericWebApplicationContext(servletContext);
+        this.webEndpointMappingResolver = new ServletWebEndpointMappingResolver();
+    }
 
+    @Test
+    public void testResolve() {
         addTestServlet(servletContext);
 
         FilterRegistration.Dynamic filterRegistration = addTestFilter(servletContext);
         String notFoundServletName = "notFoundServlet";
         filterRegistration.addMappingForServletNames(of(REQUEST), true, notFoundServletName);
 
-        this.webEndpointMappingResolver = new ServletWebEndpointMappingResolver();
+        Collection<WebEndpointMapping> webEndpointMappings = webEndpointMappingResolver.resolve(this.context);
+        assertWebEndpointMappings(webEndpointMappings);
     }
 
     @Test
-    public void testResolveUnderServlet3() {
+    public void testResolveOnEmpty() {
+        Collection<WebEndpointMapping> webEndpointMappings = webEndpointMappingResolver.resolve(this.context);
+        assertTrue(webEndpointMappings.isEmpty());
+    }
+
+    @Test
+    public void testResolveOnServlet2() {
         MockServletContext servletContext = new MockServletContext();
         servletContext.setMajorVersion(2);
         GenericWebApplicationContext context = new GenericWebApplicationContext(servletContext);
@@ -79,9 +93,15 @@ public class ServletWebEndpointMappingResolverTest {
     }
 
     @Test
-    public void testResolve() {
-        Collection<WebEndpointMapping> webEndpointMappings = webEndpointMappingResolver.resolve(this.context);
-        assertWebEndpointMappings(webEndpointMappings);
+    public void testResolveOnNullServletContext() {
+        GenericWebApplicationContext context = new GenericWebApplicationContext();
+        assertSame(emptyList(), this.webEndpointMappingResolver.resolve(context));
+    }
+
+    @Test
+    public void testResolveOnGenericApplicationContext() {
+        GenericApplicationContext context = new GenericApplicationContext();
+        assertSame(emptyList(), this.webEndpointMappingResolver.resolve(context));
     }
 
     static void assertWebEndpointMappings(Collection<WebEndpointMapping> webEndpointMappings) {
