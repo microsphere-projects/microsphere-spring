@@ -31,6 +31,16 @@ import java.io.IOException;
  */
 public class TestServlet extends HttpServlet {
 
+    /**
+     * Default Servlet Name : "testServlet"
+     */
+    public static final String DEFAULT_SERVLET_NAME = "testServlet";
+
+    /**
+     * Default URL Pattern : "/testServlet"
+     */
+    public static final String DEFAULT_SERVLET_URL_PATTERN = "/" + DEFAULT_SERVLET_NAME;
+
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.service(req, resp);
