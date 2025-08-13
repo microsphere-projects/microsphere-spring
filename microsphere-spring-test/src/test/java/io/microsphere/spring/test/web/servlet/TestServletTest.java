@@ -26,6 +26,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
+import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_NAME;
+import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
+import static org.junit.Assert.assertSame;
+
 /**
  * {@link TestServlet} Test
  *
@@ -40,6 +44,12 @@ public class TestServletTest {
     @Before
     public void setUp() throws Exception {
         this.testServlet = new TestServlet();
+    }
+
+    @Test
+    public void testConstants() {
+        assertSame("testServlet", DEFAULT_SERVLET_NAME);
+        assertSame("/testServlet", DEFAULT_SERVLET_URL_PATTERN);
     }
 
     @Test
