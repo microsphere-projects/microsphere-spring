@@ -28,6 +28,7 @@ import java.io.IOException;
 
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_NAME;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
+import static io.microsphere.spring.test.web.servlet.TestServlet.SERVLET_CLASS_NAME;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -49,6 +50,7 @@ public class TestServletTest {
     @Test
     public void testConstants() {
         assertSame("testServlet", DEFAULT_SERVLET_NAME);
+        assertSame("io.microsphere.spring.test.web.servlet.TestServlet", SERVLET_CLASS_NAME);
         assertSame("/testServlet", DEFAULT_SERVLET_URL_PATTERN);
     }
 
