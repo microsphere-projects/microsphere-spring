@@ -17,11 +17,14 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.annotation.Nonnull;
+import io.microsphere.spring.web.metadata.WebEndpointMapping.Kind;
 
+import javax.servlet.FilterRegistration;
 import javax.servlet.Registration;
 import javax.servlet.ServletContext;
 import java.util.Collection;
 
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
 
@@ -49,11 +52,16 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
     @Override
     protected final WebEndpointMapping<String> doCreate(String endpoint) throws Throwable {
         R registration = getRegistration(endpoint, this.servletContext);
+        Kind kind = getKind(registration);
         Collection<String> patterns = getPatterns(registration);
-        WebEndpointMapping.Builder<String> builder = of(SERVLET, endpoint, patterns);
+        WebEndpointMapping.Builder<String> builder = of(kind, endpoint, patterns);
         builder.source(this.servletContext);
         contribute(endpoint, servletContext, builder);
         return builder.build();
+    }
+
+    protected Kind getKind(R registration) {
+        return registration instanceof FilterRegistration ? FILTER : SERVLET;
     }
 
     /**
