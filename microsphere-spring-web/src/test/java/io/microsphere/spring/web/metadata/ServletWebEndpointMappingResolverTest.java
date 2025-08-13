@@ -21,6 +21,7 @@ package io.microsphere.spring.web.metadata;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import javax.servlet.FilterRegistration;
@@ -34,6 +35,7 @@ import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.util.Collections.emptyList;
 import static java.util.EnumSet.of;
 import static javax.servlet.DispatcherType.REQUEST;
 import static org.junit.Assert.assertArrayEquals;
@@ -66,6 +68,14 @@ public class ServletWebEndpointMappingResolverTest {
         filterRegistration.addMappingForServletNames(of(REQUEST), true, notFoundServletName);
 
         this.webEndpointMappingResolver = new ServletWebEndpointMappingResolver();
+    }
+
+    @Test
+    public void testResolveUnderServlet3() {
+        MockServletContext servletContext = new MockServletContext();
+        servletContext.setMajorVersion(2);
+        GenericWebApplicationContext context = new GenericWebApplicationContext(servletContext);
+        assertSame(emptyList(), this.webEndpointMappingResolver.resolve(context));
     }
 
     @Test
