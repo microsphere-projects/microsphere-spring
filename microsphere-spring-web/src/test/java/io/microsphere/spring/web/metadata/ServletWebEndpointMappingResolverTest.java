@@ -81,6 +81,10 @@ public class ServletWebEndpointMappingResolverTest {
     @Test
     public void testResolve() {
         Collection<WebEndpointMapping> webEndpointMappings = webEndpointMappingResolver.resolve(this.context);
+        assertWebEndpointMappings(webEndpointMappings);
+    }
+
+    static void assertWebEndpointMappings(Collection<WebEndpointMapping> webEndpointMappings) {
         assertEquals(2, webEndpointMappings.size());
 
         Iterator<WebEndpointMapping> iterator = webEndpointMappings.iterator();
