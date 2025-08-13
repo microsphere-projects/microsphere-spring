@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.test.web.controller.TestRestController;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
@@ -27,7 +28,6 @@ import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
-import io.microsphere.spring.webmvc.controller.TestController;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
@@ -71,7 +71,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 @EnableWebMvc
 @Ignore
-@Import(TestController.class)
+@Import(TestRestController.class)
 abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumentInterceptor {
 
     @Autowired
@@ -126,13 +126,13 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
 
     @Test
     public void test() throws Exception {
-        this.mockMvc.perform(get("/echo/hello"))
+        this.mockMvc.perform(get("/test/greeting/hello"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[ECHO] : hello"));
+                .andExpect(content().string("Greeting : hello"));
     }
 
     /**
-     * Test only one mapping : {@link TestController#echo(String)}
+     * Test only one mapping : {@link TestRestController#greeting(String)}
      *
      * @param event {@link WebEndpointMappingsReadyEvent}
      */
@@ -140,15 +140,14 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         // Only TestController
         Collection<WebEndpointMapping> mappings = event.getMappings();
-        assertEquals(1, mappings.size());
+        assertEquals(3, mappings.size());
         WebEndpointMapping webEndpointMapping = mappings.iterator().next();
         String[] patterns = webEndpointMapping.getPatterns();
         assertEquals(1, patterns.length);
-        assertEquals("/echo/{message}", patterns[0]);
     }
 
     /**
-     * Test only one method : {@link TestController#echo(String)}
+     * Test only one method : {@link TestRestController#greeting(String)}
      *
      * @param event {@link HandlerMethodArgumentsResolvedEvent}
      */
@@ -199,7 +198,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     }
 
     private void assertMethod(Method method) {
-        assertEquals("echo", method.getName());
+        assertEquals("greeting", method.getName());
         assertEquals(String.class, method.getReturnType());
 
         Class<?>[] parameterTypes = method.getParameterTypes();
@@ -211,7 +210,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
         assertNotNull(handlerMethod);
         Object bean = handlerMethod.getBean();
         assertNotNull(bean);
-        assertEquals(TestController.class, bean.getClass());
+        assertEquals(TestRestController.class, bean.getClass());
         assertMethod(handlerMethod.getMethod());
     }
 
