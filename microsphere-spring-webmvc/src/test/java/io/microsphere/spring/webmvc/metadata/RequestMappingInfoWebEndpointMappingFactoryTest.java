@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.test.web.controller.TestRestController;
 import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.webmvc.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
-        TestController.class,
+        TestRestController.class,
         RequestMappingInfoWebEndpointMappingFactoryTest.class,
         RequestMappingInfoWebEndpointMappingFactoryTest.Config.class
 })
@@ -62,7 +62,7 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
     private RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping;
 
     @Autowired
-    private TestController testController;
+    private TestRestController testRestController;
 
     static class Config {
 
