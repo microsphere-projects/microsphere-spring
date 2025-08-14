@@ -22,18 +22,26 @@ import io.microsphere.spring.web.metadata.HandlerMethodMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerMapping;
+import org.springframework.web.reactive.function.server.HandlerFunction;
+import org.springframework.web.reactive.function.server.RequestPredicate;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions.Visitor;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
 import org.springframework.web.reactive.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.reactive.result.method.RequestMappingInfo;
 import org.springframework.web.reactive.result.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.util.pattern.PathPattern;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
@@ -106,6 +114,38 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
     protected void resolveFromRouterFunctionMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
         if (handlerMapping instanceof RouterFunctionMapping) {
             RouterFunctionMapping routerFunctionMapping = (RouterFunctionMapping) handlerMapping;
+            RouterFunction<?> routerFunction = routerFunctionMapping.getRouterFunction();
+            routerFunction.accept(new Visitor(){
+                @Override
+                public void startNested(RequestPredicate predicate) {
+
+                }
+
+                @Override
+                public void endNested(RequestPredicate predicate) {
+
+                }
+
+                @Override
+                public void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
+
+                }
+
+                @Override
+                public void resources(Function<ServerRequest, Mono<Resource>> lookupFunction) {
+
+                }
+
+                @Override
+                public void attributes(Map<String, Object> attributes) {
+
+                }
+
+                @Override
+                public void unknown(RouterFunction<?> routerFunction) {
+
+                }
+            });
         }
     }
 }
