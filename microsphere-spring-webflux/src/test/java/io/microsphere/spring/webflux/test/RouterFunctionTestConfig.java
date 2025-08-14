@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -38,24 +39,27 @@ public class RouterFunctionTestConfig {
 
     public static final String PERSON_PATH = "/person";
 
+    public static final String PERSON_TEST_PATH = TEST_ROOT_PATH + PERSON_PATH;
+
     public static final String PERSON_ID_PATH = "/{id}";
 
-    public static final String GET_PERSON_PATH = PERSON_PATH + PERSON_ID_PATH;
+    public static final String GET_PERSON_PATH = PERSON_TEST_PATH + PERSON_ID_PATH;
 
     @Bean
     public RouterFunction<ServerResponse> personRouterFunction(PersonHandler handler) {
         return route()
                 .GET(GET_PERSON_PATH, accept(APPLICATION_JSON), handler::getPerson)
-                .GET(PERSON_PATH, accept(APPLICATION_JSON), handler::listPeople)
-                .POST(PERSON_PATH, handler::createPerson)
+                .GET(PERSON_TEST_PATH, accept(APPLICATION_JSON), handler::listPeople)
+                .POST(PERSON_TEST_PATH, handler::createPerson)
                 .build();
     }
 
     @Bean
     public RouterFunction<ServerResponse> nestedPersonRouterFunction(PersonHandler handler) {
-        return route().path(PERSON_PATH, builder -> builder
-                        .PUT(PERSON_ID_PATH, handler::updatePerson)
-                        .DELETE(PERSON_ID_PATH, handler::deletePerson))
+        return route().path(TEST_ROOT_PATH, builder ->
+                        builder.path(PERSON_PATH, b -> b
+                                .PUT(PERSON_ID_PATH, handler::updatePerson)
+                                .DELETE(PERSON_ID_PATH, handler::deletePerson)))
                 .build();
     }
 }
