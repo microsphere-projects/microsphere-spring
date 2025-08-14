@@ -38,22 +38,22 @@ import java.util.function.Function;
  * @see RouterFunctions
  * @since 1.0.0
  */
-public abstract class RouterFunctionVisitorAdapter implements Visitor {
+public interface RouterFunctionVisitorAdapter extends Visitor {
 
     @Override
-    public void startNested(RequestPredicate predicate) {
+    default void startNested(RequestPredicate predicate) {
     }
 
     @Override
-    public void endNested(RequestPredicate predicate) {
+    default void endNested(RequestPredicate predicate) {
     }
 
     @Override
-    public void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
+    default void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
     }
 
     @Override
-    public void resources(Function<ServerRequest, Mono<Resource>> lookupFunction) {
+    default void resources(Function<ServerRequest, Mono<Resource>> lookupFunction) {
     }
 
     /**
@@ -61,10 +61,10 @@ public abstract class RouterFunctionVisitorAdapter implements Visitor {
      * <p>
      * Compatible with Spring Framework 5.3.x and earlier versions.
      */
-    public void attributes(Map<String, Object> attributes) {
+    default void attributes(Map<String, Object> attributes) {
     }
 
     @Override
-    public void unknown(RouterFunction<?> routerFunction) {
+    default void unknown(RouterFunction<?> routerFunction) {
     }
 }
