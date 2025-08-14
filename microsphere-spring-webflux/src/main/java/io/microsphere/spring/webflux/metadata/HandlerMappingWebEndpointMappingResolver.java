@@ -24,6 +24,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerMapping;
+import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
 import org.springframework.web.reactive.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.reactive.result.method.RequestMappingInfo;
 import org.springframework.web.reactive.result.method.RequestMappingInfoHandlerMapping;
@@ -103,6 +104,8 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
     }
 
     protected void resolveFromRouterFunctionMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
-
+        if (handlerMapping instanceof RouterFunctionMapping) {
+            RouterFunctionMapping routerFunctionMapping = (RouterFunctionMapping) handlerMapping;
+        }
     }
 }
