@@ -18,12 +18,14 @@
 package io.microsphere.spring.webflux.annotation;
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 
 /**
@@ -45,6 +47,28 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
         AnnotationAttributes attributes = getAttributes(metadata);
+
+        registerWebEndpointMappings(attributes, registry);
+
+        registerDelegatingHandlerMethodAdvice(attributes, registry);
+
+        registerEventPublishingProcessor(attributes, registry);
+    }
+
+
+    private void registerWebEndpointMappings(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
+        if (registerWebEndpointMappings) {
+            registerBeanDefinition(registry, HandlerMappingWebEndpointMappingResolver.class);
+        }
+    }
+
+    private void registerDelegatingHandlerMethodAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+
+    }
+
+    private void registerEventPublishingProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+
     }
 
     private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
