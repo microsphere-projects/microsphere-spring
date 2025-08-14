@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webflux;
+package io.microsphere.spring.webflux.test;
 
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
 import org.junit.jupiter.api.BeforeEach;
