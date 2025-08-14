@@ -25,7 +25,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
-import io.microsphere.spring.webflux.AbstractWebFluxTest;
+import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
