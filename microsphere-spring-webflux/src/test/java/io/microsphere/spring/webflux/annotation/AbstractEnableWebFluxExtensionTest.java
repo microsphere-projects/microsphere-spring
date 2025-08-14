@@ -25,21 +25,16 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
+import io.microsphere.spring.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.MethodParameter;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.reactive.config.EnableWebFlux;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -48,7 +43,6 @@ import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.reactive.server.WebTestClient.bindToApplicationContext;
 
 /**
  * Abstract {@link EnableWebFluxExtension} Test
@@ -57,16 +51,9 @@ import static org.springframework.test.web.reactive.server.WebTestClient.bindToA
  * @see EnableWebFluxExtension
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@EnableWebFlux
 @Disabled
 @Import(TestRestController.class)
-abstract class AbstractEnableWebFluxExtensionTest implements HandlerMethodArgumentInterceptor {
-
-    @Autowired
-    protected ConfigurableApplicationContext context;
-
-    protected WebTestClient webTestClient;
+abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements HandlerMethodArgumentInterceptor {
 
     protected boolean registerWebEndpointMappings;
 
@@ -80,7 +67,6 @@ abstract class AbstractEnableWebFluxExtensionTest implements HandlerMethodArgume
 
     @BeforeEach
     void setup() {
-        this.webTestClient = bindToApplicationContext(this.context).build();
         EnableWebFluxExtension enableWebFluxExtension = this.getClass().getAnnotation(EnableWebFluxExtension.class);
         this.registerWebEndpointMappings = enableWebFluxExtension.registerWebEndpointMappings();
         this.interceptHandlerMethods = enableWebFluxExtension.interceptHandlerMethods();
