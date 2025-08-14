@@ -32,6 +32,5 @@ class WebFluxExtensionConfiguration implements WebFluxConfigurer {
 
     @Override
     public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
-        configurer.addCustomResolver();
     }
 }
