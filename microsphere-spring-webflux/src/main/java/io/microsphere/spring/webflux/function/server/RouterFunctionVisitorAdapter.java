@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * The adapter class for {@link Visitor RouterFunctions.Visitor}
+ * The adapter interface for {@link Visitor RouterFunctions.Visitor}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see Visitor
