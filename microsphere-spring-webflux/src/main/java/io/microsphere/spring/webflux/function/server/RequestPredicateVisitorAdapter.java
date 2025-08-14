@@ -19,15 +19,18 @@ package io.microsphere.spring.webflux.function.server;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.server.RequestPredicate;
+import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RequestPredicates.Visitor;
 
 import java.util.Set;
 
 /**
- * The adapter class for {@link Visitor}
+ * The adapter class for {@link Visitor RequestPredicates.Visitor}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see Visitor
+ * @see RequestPredicate
+ * @see RequestPredicates
  * @since 1.0.0
  */
 public class RequestPredicateVisitorAdapter implements Visitor {
