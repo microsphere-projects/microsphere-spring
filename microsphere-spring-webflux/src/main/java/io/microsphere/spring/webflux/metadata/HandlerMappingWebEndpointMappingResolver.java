@@ -58,6 +58,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             resolveFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);
             resolveFromRequestMappingInfoHandlerMapping(handlerMapping, requestMappingInfoHandlerMethods, webEndpointMappings);
+            resolveFromRouterFunctionMapping(handlerMapping, webEndpointMappings);
         }
         return webEndpointMappings;
     }
@@ -101,4 +102,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         }
     }
 
+    protected void resolveFromRouterFunctionMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
+
+    }
 }
