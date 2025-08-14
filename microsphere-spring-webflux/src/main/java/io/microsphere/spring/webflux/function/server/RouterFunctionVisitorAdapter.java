@@ -21,6 +21,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RequestPredicate;
 import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.RouterFunctions.Visitor;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
@@ -29,10 +30,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * The adapter class for {@link Visitor}
+ * The adapter class for {@link Visitor RouterFunctions.Visitor}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see Visitor
+ * @see RouterFunction
+ * @see RouterFunctions
  * @since 1.0.0
  */
 public abstract class RouterFunctionVisitorAdapter implements Visitor {
