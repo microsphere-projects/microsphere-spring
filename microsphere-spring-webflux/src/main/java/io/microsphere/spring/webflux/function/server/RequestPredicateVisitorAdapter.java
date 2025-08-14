@@ -25,7 +25,7 @@ import org.springframework.web.reactive.function.server.RequestPredicates.Visito
 import java.util.Set;
 
 /**
- * The adapter class for {@link Visitor RequestPredicates.Visitor}
+ * The adapter interface for {@link Visitor RequestPredicates.Visitor}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see Visitor
