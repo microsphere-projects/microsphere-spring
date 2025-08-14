@@ -37,6 +37,8 @@ import org.springframework.web.util.pattern.PathPattern;
 import java.util.Collection;
 import java.util.Set;
 
+import static io.microsphere.collection.SetUtils.newFixedHashSet;
+
 /**
  * {@link WebEndpointMappingFactory} based on Spring WebFlux {@link RequestMappingInfo}
  *
@@ -80,9 +82,13 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     }
 
     private Set<String> getPatterns(RequestMappingInfo source) {
-        Set<String> patterns = null;
         PatternsRequestCondition patternsCondition = source.getPatternsCondition();
         Set<PathPattern> pathPatterns = patternsCondition.getPatterns();
+        Set<String> patterns = newFixedHashSet(pathPatterns.size());
+        for (PathPattern pathPattern : pathPatterns) {
+            patterns.add(pathPattern.getPatternString());
+        }
+
         return patterns;
     }
 
