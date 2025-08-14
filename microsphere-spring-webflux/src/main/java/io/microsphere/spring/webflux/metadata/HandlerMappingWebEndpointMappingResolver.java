@@ -72,7 +72,9 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
 
             HandlerMetadataWebEndpointMappingFactory factory = new HandlerMetadataWebEndpointMappingFactory(urlHandlerMapping);
             for (Map.Entry<PathPattern, Object> entry : handlerMap.entrySet()) {
-                HandlerMetadata<Object, String> metadata = new HandlerMetadata<>(entry.getValue(), entry.getKey().toString());
+                PathPattern pathPattern = entry.getKey();
+                Object handler = entry.getValue();
+                HandlerMetadata<Object, String> metadata = new HandlerMetadata<>(handler, pathPattern.getPatternString());
                 Optional<WebEndpointMapping<HandlerMetadata<Object, String>>> webEndpointMapping = factory.create(metadata);
                 webEndpointMapping.ifPresent(webEndpointMappings::add);
             }
