@@ -22,10 +22,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.server.MockServerWebExchange;
 
-import static io.microsphere.spring.webflux.WebTestUtils.ATTRIBUTE_NAME;
-import static io.microsphere.spring.webflux.WebTestUtils.ATTRIBUTE_VALUE;
-import static io.microsphere.spring.webflux.WebTestUtils.NOT_FOUND_ATTRIBUTE_NAME;
-import static io.microsphere.spring.webflux.WebTestUtils.mockServerWebExchange;
+import static io.microsphere.spring.webflux.test.WebTestUtils.ATTRIBUTE_NAME;
+import static io.microsphere.spring.webflux.test.WebTestUtils.ATTRIBUTE_VALUE;
+import static io.microsphere.spring.webflux.test.WebTestUtils.NOT_FOUND_ATTRIBUTE_NAME;
+import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.spring.webflux.util.AttributeScope.REQUEST;
 import static io.microsphere.spring.webflux.util.AttributeScope.SESSION;
 import static io.microsphere.spring.webflux.util.AttributeScope.getAttribute;
