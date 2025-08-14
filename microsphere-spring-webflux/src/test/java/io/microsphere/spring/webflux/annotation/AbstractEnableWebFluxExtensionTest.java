@@ -21,6 +21,7 @@ import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
@@ -41,6 +42,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -120,13 +122,12 @@ abstract class AbstractEnableWebFluxExtensionTest implements HandlerMethodArgume
      */
     @EventListener(WebEndpointMappingsReadyEvent.class)
     void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
-        // Only TestController
-//        Collection<WebEndpointMapping> mappings = event.getMappings();
-//        assertEquals(1, mappings.size());
-//        WebEndpointMapping webEndpointMapping = mappings.iterator().next();
-//        String[] patterns = webEndpointMapping.getPatterns();
-//        assertEquals(1, patterns.length);
-//        assertEquals("/echo/{message}", patterns[0]);
+        // Only TestRestController
+        Collection<WebEndpointMapping> mappings = event.getMappings();
+        assertEquals(3, mappings.size());
+        WebEndpointMapping webEndpointMapping = mappings.iterator().next();
+        String[] patterns = webEndpointMapping.getPatterns();
+        assertEquals(1, patterns.length);
     }
 
 
