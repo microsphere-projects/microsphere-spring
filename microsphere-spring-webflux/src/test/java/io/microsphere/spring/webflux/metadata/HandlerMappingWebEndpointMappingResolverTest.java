@@ -20,18 +20,16 @@ package io.microsphere.spring.webflux.metadata;
 
 import io.microsphere.spring.test.web.controller.TestRestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.webflux.AbstractWebFluxTest;
+import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
+import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
+import io.microsphere.spring.webflux.test.SimpleUrlHandlerMappingTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 
 import java.util.Collection;
-import java.util.Map;
 
-import static io.microsphere.collection.MapUtils.ofMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -42,9 +40,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
+        RouterFunctionTestConfig.class,
+        SimpleUrlHandlerMappingTestConfig.class,
         HandlerMappingWebEndpointMappingResolver.class,
         HandlerMappingWebEndpointMappingResolverTest.class,
-        HandlerMappingWebEndpointMappingResolverTest.Config.class,
+
 })
 @Import(TestRestController.class)
 class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
@@ -58,14 +58,4 @@ class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
         assertEquals(5, webEndpointMappings.size());
     }
 
-    static class Config {
-
-        @Bean
-        public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
-            SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-            Map<String, ?> urlMap = ofMap("/test", this, "/test/1", this);
-            mapping.setUrlMap(urlMap);
-            return mapping;
-        }
-    }
 }
