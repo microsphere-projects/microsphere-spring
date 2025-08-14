@@ -33,61 +33,61 @@ import java.util.Set;
  * @see RequestPredicates
  * @since 1.0.0
  */
-public class RequestPredicateVisitorAdapter implements Visitor {
+public interface RequestPredicateVisitorAdapter extends Visitor {
 
     @Override
-    public void method(Set<HttpMethod> methods) {
+    default void method(Set<HttpMethod> methods) {
     }
 
     @Override
-    public void path(String pattern) {
+    default void path(String pattern) {
     }
 
     @Override
-    public void pathExtension(String extension) {
+    default void pathExtension(String extension) {
     }
 
     @Override
-    public void header(String name, String value) {
+    default void header(String name, String value) {
     }
 
     @Override
-    public void queryParam(String name, String value) {
+    default void queryParam(String name, String value) {
     }
 
     @Override
-    public void startAnd() {
+    default void startAnd() {
     }
 
     @Override
-    public void and() {
+    default void and() {
     }
 
     @Override
-    public void endAnd() {
+    default void endAnd() {
     }
 
     @Override
-    public void startOr() {
+    default void startOr() {
     }
 
     @Override
-    public void or() {
+    default void or() {
     }
 
     @Override
-    public void endOr() {
+    default void endOr() {
     }
 
     @Override
-    public void startNegate() {
+    default void startNegate() {
     }
 
     @Override
-    public void endNegate() {
+    default void endNegate() {
     }
 
     @Override
-    public void unknown(RequestPredicate predicate) {
+    default void unknown(RequestPredicate predicate) {
     }
 }
