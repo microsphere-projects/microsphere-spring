@@ -75,12 +75,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Spring Test -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -117,9 +111,9 @@
             <id>spring-framework-4.3</id>
             <properties>
                 <spring.version>5.0.20.RELEASE</spring.version>
-                <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
             </properties>
         </profile>
     </profiles>
+
 
 </project>
