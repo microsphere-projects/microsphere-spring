@@ -1,0 +1,67 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.microsphere.spring.webflux.function.server;
+
+import org.springframework.core.io.Resource;
+import org.springframework.web.reactive.function.server.HandlerFunction;
+import org.springframework.web.reactive.function.server.RequestPredicate;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions.Visitor;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
+import java.util.function.Function;
+
+/**
+ * The adapter class for {@link Visitor}
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see Visitor
+ * @since 1.0.0
+ */
+public abstract class RouterFunctionVisitorAdapter implements Visitor {
+
+    @Override
+    public void startNested(RequestPredicate predicate) {
+    }
+
+    @Override
+    public void endNested(RequestPredicate predicate) {
+    }
+
+    @Override
+    public void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
+    }
+
+    @Override
+    public void resources(Function<ServerRequest, Mono<Resource>> lookupFunction) {
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Compatible with Spring Framework 5.3.x and earlier versions.
+     */
+    public void attributes(Map<String, Object> attributes) {
+    }
+
+    @Override
+    public void unknown(RouterFunction<?> routerFunction) {
+    }
+}
