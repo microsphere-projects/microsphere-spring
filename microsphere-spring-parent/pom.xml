@@ -27,6 +27,7 @@
         <p6spy.version>3.9.1</p6spy.version>
         <logback.version>1.2.12</logback.version>
         <junit.version>4.13.2</junit.version>
+        <junit5.version>5.13.4</junit5.version>
         <mockito.version>4.11.0</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
@@ -34,15 +35,6 @@
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Spring Framework BOM -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Jackson BOM -->
             <dependency>
@@ -71,6 +63,15 @@
                 <groupId>p6spy</groupId>
                 <artifactId>p6spy</artifactId>
                 <version>${p6spy.version}</version>
+            </dependency>
+
+            <!-- JUnit 5 -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit5.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- JUnit -->
@@ -109,11 +110,13 @@
                 <artifactId>logback-access</artifactId>
                 <version>${logback.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
@@ -129,11 +132,11 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Spring Boot Dependencies -->
+            <!-- Spring Framework BOM -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
