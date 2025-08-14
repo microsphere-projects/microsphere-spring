@@ -37,7 +37,7 @@ import static org.springframework.mock.web.server.MockServerWebExchange.from;
  */
 public class WebTestUtils {
 
-    public static final String PATH = "/test";
+    public static final String TEST_ROOT_PATH = "/test";
 
     public static final String ATTRIBUTE_NAME = "test-name";
 
@@ -64,7 +64,7 @@ public class WebTestUtils {
     public static final InetSocketAddress REMOTE_ADDRESS = new InetSocketAddress("127.0.0.1", 12345);
 
     public static MockServerWebExchange mockServerWebExchange() {
-        MockServerHttpRequest request = get(PATH)
+        MockServerHttpRequest request = get(TEST_ROOT_PATH)
                 .header(HEADER_NAME, HEADER_VALUE)
                 .header(HEADER_NAME_2, HEADER_VALUE_2)
                 .acceptLanguageAsLocales(getDefault())
