@@ -62,7 +62,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         return webEndpointMappings;
     }
 
-    void resolveFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
+    protected void resolveFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
         if (handlerMapping instanceof AbstractUrlHandlerMapping) {
             AbstractUrlHandlerMapping urlHandlerMapping = (AbstractUrlHandlerMapping) handlerMapping;
             Map<PathPattern, Object> handlerMap = urlHandlerMapping.getHandlerMap();
@@ -81,9 +81,9 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         }
     }
 
-    void resolveFromRequestMappingInfoHandlerMapping(HandlerMapping handlerMapping,
-                                                     Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods,
-                                                     List<WebEndpointMapping> webEndpointMappings) {
+    protected void resolveFromRequestMappingInfoHandlerMapping(HandlerMapping handlerMapping,
+                                                               Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods,
+                                                               List<WebEndpointMapping> webEndpointMappings) {
         if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
             RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
             Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
