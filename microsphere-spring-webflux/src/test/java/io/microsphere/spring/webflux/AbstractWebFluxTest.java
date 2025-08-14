@@ -46,6 +46,10 @@ public abstract class AbstractWebFluxTest {
 
     @BeforeEach
     final void init() {
-        this.webTestClient = bindToApplicationContext(this.context).build();
+        this.webTestClient = buildWebTestClient(this.context);
+    }
+
+    public static WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
+        return bindToApplicationContext(context).build();
     }
 }
