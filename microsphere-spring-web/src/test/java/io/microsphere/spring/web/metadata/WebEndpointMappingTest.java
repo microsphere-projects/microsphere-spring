@@ -16,32 +16,47 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import io.microsphere.spring.web.metadata.WebEndpointMapping.Builder;
+import io.microsphere.spring.web.metadata.WebEndpointMapping.Kind;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
 
-import static io.microsphere.collection.ListUtils.ofList;
+import static io.microsphere.io.IOUtils.copyToString;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_FLUX;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.NON_ENDPOINT;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.NON_SOURCE;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.UNKNOWN_SOURCE;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.customized;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.filter;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.util.StreamUtils.copyToString;
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.IMAGE_PNG;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 /**
  * {@link WebEndpointMapping} Test
@@ -52,198 +67,296 @@ import static org.springframework.util.StreamUtils.copyToString;
  */
 public class WebEndpointMappingTest {
 
+    public static final String[] TEST_URL_PATTERNS = ofArray("/test");
+
+    public static final String[] TEST_METHODS = ofArray("OPTIONS");
+
     @Test
-    public void testOfWithCollection() {
-        WebEndpointMapping mapping = of(ofList("/*")).build();
-        assertSame(CUSTOMIZED, mapping.getKind());
-        assertSame(NON_ENDPOINT, mapping.getEndpoint());
-        assertSame(NON_SOURCE, mapping.getSource());
-        assertArrayEquals(ofArray("/*"), mapping.getPatterns());
+    public void testServlet() {
+        WebEndpointMapping mapping = minBuilder(servlet(this)).build();
+        assertMinMapping(mapping, SERVLET);
     }
 
     @Test
-    public void testOfWithEndpointAndCollection() {
-        WebEndpointMapping mapping = of(this, ofList("/*")).build();
-        assertSame(CUSTOMIZED, mapping.getKind());
-        assertSame(this, mapping.getEndpoint());
-        assertSame(NON_SOURCE, mapping.getSource());
-        assertArrayEquals(ofArray("/*"), mapping.getPatterns());
+    public void testFilter() {
+        WebEndpointMapping mapping = minBuilder(filter(this)).build();
+        assertMinMapping(mapping, FILTER);
     }
 
     @Test
-    public void testOfWithKindAndEndpointAndCollection() {
-        WebEndpointMapping mapping = of(SERVLET, this, ofList("/*")).build();
-        assertSame(SERVLET, mapping.getKind());
-        assertSame(this, mapping.getEndpoint());
-        assertSame(NON_SOURCE, mapping.getSource());
-        assertArrayEquals(ofArray("/*"), mapping.getPatterns());
+    public void testWebMVC() {
+        WebEndpointMapping mapping = minBuilder(webmvc(this)).build();
+        assertMinMapping(mapping, WEB_MVC);
     }
 
     @Test
-    public void testOfWithArray() {
-        WebEndpointMapping mapping = of("/*").build();
-        assertSame(CUSTOMIZED, mapping.getKind());
-        assertSame(NON_ENDPOINT, mapping.getEndpoint());
-        assertSame(NON_SOURCE, mapping.getSource());
-        assertArrayEquals(ofArray("/*"), mapping.getPatterns());
+    public void testWebFlux() {
+        WebEndpointMapping mapping = minBuilder(webflux(this)).build();
+        assertMinMapping(mapping, WEB_FLUX);
     }
 
     @Test
-    public void testOfWithEndpointAndArray() {
-        WebEndpointMapping mapping = of(this, "/*").build();
-        assertSame(CUSTOMIZED, mapping.getKind());
-        assertSame(this, mapping.getEndpoint());
-        assertSame(NON_SOURCE, mapping.getSource());
-        assertArrayEquals(ofArray("/*"), mapping.getPatterns());
+    public void testCustomized() {
+        WebEndpointMapping mapping = minBuilder(customized(this)).build();
+        assertMinMapping(mapping, CUSTOMIZED);
     }
 
     @Test
-    public void testOfWithKindAndEndpointAndArray() {
-        WebEndpointMapping mapping = of(WEB_FLUX, this, "/*").build();
-        assertSame(WEB_FLUX, mapping.getKind());
-        assertSame(this, mapping.getEndpoint());
-        assertSame(NON_SOURCE, mapping.getSource());
-        assertArrayEquals(ofArray("/*"), mapping.getPatterns());
+    public void testBuildWithoutPatterns() {
+        assertThrows(IllegalArgumentException.class, servlet(this)::build);
+    }
+
+    @Test
+    public void testBuildWithoutMethods() {
+        assertThrows(IllegalArgumentException.class, servlet(this).patterns(TEST_URL_PATTERNS)::build);
     }
 
     @Test
     public void testId() {
-        WebEndpointMapping mapping = of(this, "/*").build();
+        WebEndpointMapping mapping = minServletBuilder().build();
         assertEquals(this.hashCode(), mapping.getId());
     }
 
     @Test
-    public void testSource() {
-        WebEndpointMapping mapping = of("/*").source(this).build();
-        assertEquals(this, mapping.getSource());
+    public void testPattern() {
+        WebEndpointMapping mapping = of(SERVLET, this)
+                .method(GET)
+                .pattern("/test/1")
+                .pattern("/test/2")
+                .pattern("/test/3")
+                .build();
+        assertArrayEquals(ofArray("/test/1", "/test/2", "/test/3"), mapping.getPatterns());
     }
 
     @Test
     public void testPatterns() {
         String[] patterns = ofArray("/a", "/b", "/c");
-        WebEndpointMapping mapping = of(patterns).build();
-        assertArrayEquals(ofArray(patterns), mapping.getPatterns());
+        WebEndpointMapping mapping = minServletBuilder()
+                .patterns(patterns)
+                .build();
+        assertArrayEquals(patterns, mapping.getPatterns());
+    }
+
+    @Test
+    public void testMethodWithHttpMethod() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .method(POST)
+                .build();
+        assertArrayEquals(ofArray("OPTIONS", "POST"), mapping.getMethods());
+    }
+
+    @Test
+    public void testMethod() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .method("PUT")
+                .build();
+        assertArrayEquals(ofArray("OPTIONS", "PUT"), mapping.getMethods());
+    }
+
+    @Test
+    public void testMethodsWithHttpMethods() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .methods(GET, POST, PUT)
+                .build();
+        assertArrayEquals(ofArray("GET", "POST", "PUT"), mapping.getMethods());
     }
 
     @Test
     public void testMethods() {
-        String[] methods = ofArray("GET", "POST");
-        WebEndpointMapping mapping = of("/*")
+        String[] methods = ofArray("GET", "DELETE");
+        WebEndpointMapping mapping = minServletBuilder()
                 .methods(methods)
                 .build();
-
-        assertArrayEquals(methods, mapping.getMethods());
-
-        mapping = of("/*")
-                .methods(ofList(GET, POST), HttpMethod::name)
-                .build();
-
         assertArrayEquals(methods, mapping.getMethods());
     }
 
     @Test
-    public void testMethodsOnDefault() {
-        WebEndpointMapping mapping = of("/*").build();
-        assertSame(EMPTY_STRING_ARRAY, mapping.getMethods());
+    public void testMethodsWithoutHttpMethods() {
+        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods((HttpMethod[]) null));
+        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods(new HttpMethod[0]));
+        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods(new HttpMethod[]{null}));
+    }
+
+    @Test
+    public void testMethodsWithoutMethods() {
+        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods((String[]) null));
+        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods(new String[0]));
+        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods(new String[]{null}));
+    }
+
+    @Test
+    public void testParam() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .param("name1", "value1")
+                .param("name2", "value2")
+                .param("name3", "value3")
+                .build();
+        assertArrayEquals(ofArray("name1=value1", "name2=value2", "name3=value3"), mapping.getParams());
     }
 
     @Test
     public void testParams() {
         String[] params = ofArray("p1", "p2", "p3");
-        WebEndpointMapping mapping = of("/*")
+        WebEndpointMapping mapping = minServletBuilder()
                 .params(params)
                 .build();
-
-        assertArrayEquals(params, mapping.getParams());
-
-        mapping = of("/*")
-                .params(ofList(params), String::valueOf)
-                .build();
-
         assertArrayEquals(params, mapping.getParams());
     }
 
     @Test
-    public void testParamsOnDefault() {
-        WebEndpointMapping mapping = of("/*").build();
-        assertSame(EMPTY_STRING_ARRAY, mapping.getParams());
+    public void testParamsWithoutParams() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .params()
+                .build();
+        assertArrayEquals(EMPTY_STRING_ARRAY, mapping.getParams());
+    }
+
+    @Test
+    public void testHeader() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .header("h1", "v1")
+                .header("h2", "v2")
+                .header("h3", "v3")
+                .build();
+        assertArrayEquals(ofArray("h1=v1", "h2=v2", "h3=v3"), mapping.getHeaders());
+    }
+
+    @Test
+    public void testHeaderWithContentType() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .header("Content-Type", "application/json")
+                .build();
+        assertArrayEquals(EMPTY_STRING_ARRAY, mapping.getHeaders());
+        assertArrayEquals(ofArray("application/json"), mapping.getConsumes());
+    }
+
+    @Test
+    public void testHeaderWithAccept() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .header("Accept", "application/json")
+                .build();
+        assertArrayEquals(EMPTY_STRING_ARRAY, mapping.getHeaders());
+        assertArrayEquals(ofArray("application/json"), mapping.getProduces());
     }
 
     @Test
     public void testHeaders() {
-        String[] headers = ofArray("p1", "p2", "p3");
-        WebEndpointMapping mapping = of("/*")
+        String[] headers = ofArray("h1=v1", "h2=v2", "h3=v3");
+        WebEndpointMapping mapping = minServletBuilder()
                 .headers(headers)
                 .build();
-
         assertArrayEquals(headers, mapping.getHeaders());
+    }
 
-        mapping = of("/*")
-                .headers(ofList(headers), String::valueOf)
+    @Test
+    public void testHeadersWithoutHeaders() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .headers()
                 .build();
-
-        assertArrayEquals(headers, mapping.getHeaders());
-
-        mapping = of("/*")
-                .headers(emptyList(), String::valueOf)
-                .build();
-
         assertArrayEquals(EMPTY_STRING_ARRAY, mapping.getHeaders());
     }
 
     @Test
-    public void testHeadersOnDefault() {
-        WebEndpointMapping mapping = of("/*").build();
-        assertSame(EMPTY_STRING_ARRAY, mapping.getHeaders());
+    public void testConsumeWithMediaType() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .consume(TEXT_PLAIN)
+                .consume(APPLICATION_JSON)
+                .consume(IMAGE_PNG)
+                .build();
+        assertArrayEquals(ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE), mapping.getConsumes());
+    }
+
+    @Test
+    public void testConsume() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .consume(TEXT_PLAIN_VALUE)
+                .consume(APPLICATION_JSON_VALUE)
+                .consume(IMAGE_PNG_VALUE)
+                .build();
+        assertArrayEquals(ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE), mapping.getConsumes());
+    }
+
+    @Test
+    public void testConsumesWithMediaTypes() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .consumes(TEXT_PLAIN, APPLICATION_JSON, IMAGE_PNG)
+                .build();
+        assertArrayEquals(ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE), mapping.getConsumes());
     }
 
     @Test
     public void testConsumes() {
-        String[] consumes = ofArray("p1", "p2", "p3");
-        WebEndpointMapping mapping = of("/*")
+        String[] consumes = ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE);
+        WebEndpointMapping mapping = minServletBuilder()
                 .consumes(consumes)
                 .build();
-
-        assertArrayEquals(consumes, mapping.getConsumes());
-
-        mapping = of("/*")
-                .consumes(ofList(consumes), String::valueOf)
-                .build();
-
         assertArrayEquals(consumes, mapping.getConsumes());
     }
 
     @Test
-    public void testConsumersOnDefault() {
-        WebEndpointMapping mapping = of("/*").build();
+    public void testConsumersWithoutConsumers() {
+        WebEndpointMapping mapping = minServletBuilder().consumes((MediaType[]) null).build();
+        assertSame(EMPTY_STRING_ARRAY, mapping.getConsumes());
+
+        mapping = minServletBuilder().consumes(new MediaType[0]).build();
         assertSame(EMPTY_STRING_ARRAY, mapping.getConsumes());
     }
 
     @Test
+    public void testProduceWithMediaType() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .produce(TEXT_PLAIN)
+                .produce(APPLICATION_JSON)
+                .produce(IMAGE_PNG)
+                .build();
+        assertArrayEquals(ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE), mapping.getProduces());
+    }
+
+    @Test
+    public void testProduce() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .produce(TEXT_PLAIN_VALUE)
+                .produce(APPLICATION_JSON_VALUE)
+                .produce(IMAGE_PNG_VALUE)
+                .build();
+        assertArrayEquals(ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE), mapping.getProduces());
+    }
+
+
+    @Test
+    public void testProducesWithMediaTypes() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .produces(TEXT_PLAIN, APPLICATION_JSON, IMAGE_PNG)
+                .build();
+        assertArrayEquals(ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE), mapping.getProduces());
+    }
+
+    @Test
     public void testProduces() {
-        String[] produces = ofArray("p1", "p2", "p3");
-        WebEndpointMapping mapping = of("/*")
+        String[] produces = ofArray(TEXT_PLAIN_VALUE, APPLICATION_JSON_VALUE, IMAGE_PNG_VALUE);
+        WebEndpointMapping mapping = minServletBuilder()
                 .produces(produces)
                 .build();
-
-        assertArrayEquals(produces, mapping.getProduces());
-
-        mapping = of("/*")
-                .produces(ofList(produces), String::valueOf)
-                .build();
-
         assertArrayEquals(produces, mapping.getProduces());
     }
 
     @Test
+    public void testSource() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .source(this)
+                .build();
+        assertEquals(this, mapping.getSource());
+    }
+
+    @Test
     public void testProducesOnDefault() {
-        WebEndpointMapping mapping = of("/*").build();
+        WebEndpointMapping mapping = minServletBuilder().build();
         assertSame(EMPTY_STRING_ARRAY, mapping.getProduces());
     }
 
     @Test
     public void testAttribute() {
-        WebEndpointMapping mapping = of("/*").build();
+        WebEndpointMapping mapping = minServletBuilder().build();
         assertNull(mapping.getAttribute("key"));
 
         mapping.setAttribute("key", null);
@@ -255,7 +368,7 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testEquals() {
-        WebEndpointMapping.Builder<?> builder = of("/*");
+        Builder<?> builder = minServletBuilder();
         WebEndpointMapping mapping = builder.build();
         // same instance
         assertEquals(mapping, mapping);
@@ -264,7 +377,7 @@ public class WebEndpointMappingTest {
         assertNotEquals(mapping, this);
 
         // equals with different patterns
-        assertNotEquals(mapping, of("/**").build());
+        assertNotEquals(mapping, minServletBuilder().pattern("/**").build());
 
         // equals with patterns
         assertEquals(mapping, builder.build());
@@ -297,7 +410,7 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testHashCode() {
-        WebEndpointMapping.Builder<?> builder = of("/*");
+        Builder<?> builder = minServletBuilder();
         WebEndpointMapping mapping = builder.build();
         // same instance
         assertEquals(mapping.hashCode(), mapping.hashCode());
@@ -330,7 +443,7 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testToString() {
-        WebEndpointMapping.Builder<?> builder = of("/*");
+        Builder<?> builder = minServletBuilder();
         WebEndpointMapping mapping = builder.build();
         // same instance
         assertEquals(mapping.toString(), mapping.toString());
@@ -366,7 +479,8 @@ public class WebEndpointMappingTest {
     public void testToJSON() throws IOException {
         Resource fullJsonResource = new DefaultResourceLoader().getResource("classpath:META-INF/web-mapping-descriptor.json");
         String fullJson = copyToString(fullJsonResource.getInputStream(), UTF_8);
-        WebEndpointMapping mapping = of(CUSTOMIZED, 1, "/a", "/b", "/c")
+        WebEndpointMapping mapping = of(CUSTOMIZED, 1)
+                .patterns("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")
                 .headers("c=3", "d!=4")
@@ -379,7 +493,7 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testToJSONOnSteps() {
-        WebEndpointMapping.Builder<?> builder = of("/*");
+        Builder<?> builder = minServletBuilder();
         WebEndpointMapping mapping = builder.build();
         // same instance
         assertEquals(mapping.toJSON(), mapping.toJSON());
@@ -406,6 +520,32 @@ public class WebEndpointMappingTest {
         // toJSON with patterns, methods, params, headers, consumes and produces
         builder.produces("p1");
         assertEquals(builder.build().toJSON(), builder.build().toJSON());
+    }
+
+
+    Builder<?> minServletBuilder() {
+        return minBuilder(SERVLET);
+    }
+
+    Builder<?> minBuilder(Kind kind) {
+        return minBuilder(of(kind, this));
+    }
+
+    Builder<?> minBuilder(Builder<?> builder) {
+        return builder.patterns(TEST_URL_PATTERNS)
+                .methods(TEST_METHODS);
+    }
+
+    void assertMinMapping(WebEndpointMapping mapping, Kind kind) {
+        assertSame(kind, mapping.getKind());
+        assertSame(this, mapping.getEndpoint());
+        assertSame(UNKNOWN_SOURCE, mapping.getSource());
+        assertArrayEquals(TEST_URL_PATTERNS, mapping.getPatterns());
+        assertArrayEquals(TEST_METHODS, mapping.getMethods());
+        assertSame(EMPTY_STRING_ARRAY, mapping.getParams());
+        assertSame(EMPTY_STRING_ARRAY, mapping.getHeaders());
+        assertSame(EMPTY_STRING_ARRAY, mapping.getConsumes());
+        assertSame(EMPTY_STRING_ARRAY, mapping.getProduces());
     }
 
 }
