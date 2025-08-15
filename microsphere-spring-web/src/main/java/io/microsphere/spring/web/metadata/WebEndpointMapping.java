@@ -19,6 +19,9 @@ package io.microsphere.spring.web.metadata;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.json.JSONUtils;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 
@@ -26,17 +29,31 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
+import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
+import static io.microsphere.constants.SymbolConstants.EQUAL_CHAR;
 import static io.microsphere.constants.SymbolConstants.LEFT_CURLY_BRACE;
 import static io.microsphere.constants.SymbolConstants.RIGHT_CURLY_BRACE;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_FLUX;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.util.ArrayUtils.arrayToString;
-import static io.microsphere.util.ArrayUtils.asArray;
+import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static io.microsphere.util.Assert.assertNoNullElements;
+import static io.microsphere.util.Assert.assertNotBlank;
+import static io.microsphere.util.Assert.assertNotEmpty;
+import static io.microsphere.util.Assert.assertNotNull;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
-import static org.springframework.util.Assert.isTrue;
+import static java.util.function.Function.identity;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -76,7 +93,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  *     <li>{@link javax.servlet.ServletContext ServletContext}</li>
  *     <li>Spring WebMVC {@link org.springframework.web.servlet.HandlerMapping}</li>
  *     <li>Spring WebFlux {@link org.springframework.web.reactive.HandlerMapping}</li>
- * </ul>, or it's {@link #NON_SOURCE non-source}
+ * </ul>, or it's {@link #UNKNOWN_SOURCE non-source}
  *
  * @param <E> the type of endpoint
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -100,34 +117,45 @@ public class WebEndpointMapping<E> {
      */
     public static final String ID_HEADER_NAME = "microsphere_wem_id";
 
-    public static final Object NON_ENDPOINT = new Object();
+    /**
+     * The source is unknown
+     */
+    public static final Object UNKNOWN_SOURCE = new Object();
 
-    public static final Object NON_SOURCE = new Object();
+    @Nonnull
+    private final Kind kind;
 
-    private final transient Kind kind;
-
+    @Nonnull
     private final transient E endpoint;
 
+    @Nonnull
     private final int id;
 
+    @Nonnull
     private final String[] patterns;
 
+    @Nonnull
     private final String[] methods;
 
+    @Nullable
     private final String[] params;
 
+    @Nullable
     private final String[] headers;
 
+    @Nullable
     private final String[] consumes;
 
+    @Nullable
     private final String[] produces;
 
+    @Nullable
     private transient final Object source;
 
     private transient int hashCode = 0;
 
+    @Nullable
     private transient Map<String, Object> attributes;
-
 
     /**
      * {@link WebEndpointMapping} Kind
@@ -163,126 +191,832 @@ public class WebEndpointMapping<E> {
 
     public static class Builder<E> {
 
+        @Nonnull
         private final Kind kind;
 
+        @Nonnull
         private final E endpoint;
 
+        @Nullable
         private Object source;
 
-        private final String[] patterns;
+        @Nonnull
+        private Set<String> patterns;
 
-        private String[] methods;
+        @Nonnull
+        private Set<String> methods;
 
-        private String[] params;
+        @Nullable
+        private Set<String> params;
 
-        private String[] headers;
+        @Nullable
+        private Set<String> headers;
 
-        private String[] consumes;
+        @Nullable
+        private Set<String> consumes;
 
-        private String[] produces;
+        @Nullable
+        private Set<String> produces;
 
-        private Builder(Kind kind, E endpoint, String[] patterns) {
-            isTrue(!isEmpty(patterns), "The patterns must not be empty!");
-            this.kind = kind == null ? CUSTOMIZED : kind;
-            this.endpoint = endpoint == null ? (E) NON_ENDPOINT : endpoint;
-            this.patterns = patterns;
+        /**
+         * Create a new {@link Builder} instance.
+         *
+         * @param kind     the {@link Kind} of the endpoint
+         * @param endpoint the endpoint
+         * @throws IllegalArgumentException if the {@code kind} or {@code endpoint} is {@code null}
+         */
+        private Builder(Kind kind, E endpoint) throws IllegalArgumentException {
+            assertNotNull(kind, () -> "The 'kind' must not be null");
+            assertNotNull(endpoint, () -> "The 'endpoint' must not be null");
+            this.kind = kind;
+            this.endpoint = endpoint;
         }
 
+        /**
+         * Add a single path pattern to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.pattern("/api/users");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.pattern("/api/products/{id}");
+         * }</pre>
+         *
+         * @param pattern the path pattern to add (must not be null or blank)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the pattern is null or blank
+         */
+        @Nonnull
+        public Builder<E> pattern(@Nonnull String pattern) throws IllegalArgumentException {
+            assertNotNull(pattern, () -> "The 'pattern' must not be null");
+            assertNotBlank(pattern, () -> "The 'pattern' must not be blank");
+            if (this.patterns == null) {
+                this.patterns = newSet();
+            }
+            this.patterns.add(pattern);
+            return this;
+        }
+
+        /**
+         * Set multiple path patterns to the endpoint mapping from a collection of values.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint with a list of pattern strings
+         * List<String> patternList = Arrays.asList("/api/users", "/api/orders");
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.patterns(patternList, Function.identity());
+         *
+         * // For a WebFlux endpoint with custom objects that have a getName() method
+         * List<MyPathPattern> patterns = getCustomPatternObjects();
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.patterns(patterns, MyPathPattern::getName);
+         * }</pre>
+         *
+         * @param values         the collection of values to convert to patterns (must not be null)
+         * @param stringFunction the function to convert each value to a string pattern (must not be null)
+         * @param <V>            the type of values in the collection
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the values or stringFunction is null
+         */
+        @Nonnull
+        public <V> Builder<E> patterns(Collection<V> values, Function<V, String> stringFunction) {
+            return patterns(toStrings(values, stringFunction));
+        }
+
+        /**
+         * Set multiple path patterns to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.patterns("/api/users", "/api/orders");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.patterns("/api/products/{id}", "/api/categories/{categoryId}");
+         * }</pre>
+         *
+         * @param patterns the path patterns to add (must not be null or empty)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the patterns array is null, empty, or contains null elements
+         */
+        @Nonnull
+        public Builder<E> patterns(@Nonnull String... patterns) throws IllegalArgumentException {
+            assertNotEmpty(patterns, () -> "The 'patterns' must not be empty");
+            assertNoNullElements(patterns, () -> "The 'patterns' must not contain null element");
+            this.patterns = newLinkedHashSet(patterns);
+            return this;
+        }
+
+        /**
+         * Add a single HTTP method to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.method(HttpMethod.GET);
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.method(HttpMethod.POST);
+         * }</pre>
+         *
+         * @param method the HTTP method to add (must not be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the method is null
+         */
+        @Nonnull
+        public Builder<E> method(@Nonnull HttpMethod method) throws IllegalArgumentException {
+            assertNotNull(method, () -> "The 'method' must not be null");
+            return method(method.name());
+        }
+
+        /**
+         * Add a single HTTP method to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.method("GET");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.method("POST");
+         * }</pre>
+         *
+         * @param method the HTTP method to add (must not be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the method is null
+         */
+        @Nonnull
+        public Builder<E> method(@Nonnull String method) throws IllegalArgumentException {
+            assertNotNull(method, () -> "The 'method' must not be null");
+            if (this.methods == null) {
+                this.methods = newSet();
+            }
+            this.methods.add(method);
+            return this;
+        }
+
+        /**
+         * Set multiple HTTP methods to the endpoint mapping from a collection of values.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint with a list of HttpMethod enums
+         * List<HttpMethod> methodList = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.methods(methodList, HttpMethod::name);
+         *
+         * // For a WebFlux endpoint with custom objects that have a getMethodName() method
+         * List<MyHttpMethod> methods = getCustomMethodObjects();
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.methods(methods, MyHttpMethod::getMethodName);
+         * }</pre>
+         *
+         * @param values         the collection of values to convert to HTTP methods (must not be null)
+         * @param stringFunction the function to convert each value to an HTTP method string (must not be null)
+         * @param <V>            the type of values in the collection
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the values or stringFunction is null
+         */
+        @Nonnull
         public <V> Builder<E> methods(Collection<V> values, Function<V, String> stringFunction) {
             return methods(toStrings(values, stringFunction));
         }
 
-        public Builder<E> methods(String... methods) {
-            this.methods = methods;
+        /**
+         * Set multiple HTTP methods to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.methods(HttpMethod.GET, HttpMethod.POST);
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.methods(HttpMethod.PUT, HttpMethod.DELETE);
+         * }</pre>
+         *
+         * @param methods the HTTP methods to add (must not be null or empty)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the methods array is null, empty, or contains null elements
+         */
+        @Nonnull
+        public Builder<E> methods(@Nonnull HttpMethod... methods) throws IllegalArgumentException {
+            assertNotEmpty(methods, () -> "The 'methods' must not be empty");
+            assertNoNullElements(methods, () -> "The 'methods' must not contain null element");
+            return methods(toStrings(methods, HttpMethod::name));
+        }
+
+        /**
+         * Set multiple HTTP methods to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.methods("GET", "POST");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.methods("PUT", "DELETE");
+         * }</pre>
+         *
+         * @param methods the HTTP methods to add (must not be null or empty)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the methods array is null, empty, or contains null elements
+         */
+        @Nonnull
+        public Builder<E> methods(@Nonnull String... methods) throws IllegalArgumentException {
+            assertNotEmpty(methods, () -> "The 'methods' must not be empty");
+            assertNoNullElements(methods, () -> "The 'methods' must not contain null element");
+            this.methods = newLinkedHashSet(methods);
             return this;
         }
 
+        /**
+         * Add a single request parameter to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.param("version", "v1");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.param("userId", 12345);
+         * }</pre>
+         *
+         * @param name  the parameter name (must not be blank)
+         * @param value the parameter value (can be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the name is blank
+         */
+        @Nonnull
+        public Builder<E> param(@Nonnull String name, @Nullable String value) throws IllegalArgumentException {
+            String param = pair(name, value);
+            if (this.params == null) {
+                this.params = newSet();
+            }
+            this.params.add(param);
+            return this;
+        }
+
+        /**
+         * Set multiple request parameters to the endpoint mapping from a collection of values.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint with a list of parameter objects
+         * List<MyParam> paramList = Arrays.asList(new MyParam("version", "v1"), new MyParam("lang", "en"));
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.params(paramList, p -> p.getName() + "=" + p.getValue());
+         *
+         * // For a WebFlux endpoint with custom objects that have a toString() method
+         * List<MyQueryParam> queryParams = getCustomParamObjects();
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.params(queryParams, MyQueryParam::toString);
+         * }</pre>
+         *
+         * @param values         the collection of values to convert to parameters (must not be null)
+         * @param stringFunction the function to convert each value to a parameter string (must not be null)
+         * @param <V>            the type of values in the collection
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the values or stringFunction is null
+         */
+        @Nonnull
         public <V> Builder<E> params(Collection<V> values, Function<V, String> stringFunction) {
             return params(toStrings(values, stringFunction));
         }
 
-        public Builder<E> params(String... params) {
-            this.params = params;
+        /**
+         * Set multiple request parameters to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.params("version=v1", "lang=en");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.params("userId=12345", "active=true");
+         * }</pre>
+         *
+         * @param params the request parameters to add (can be null or empty)
+         * @return this builder instance for method chaining
+         */
+        @Nonnull
+        public Builder<E> params(@Nullable String... params) {
+            if (isNotEmpty(params)) {
+                this.params = newLinkedHashSet(params);
+            }
             return this;
         }
 
+        /**
+         * Add a single request header to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.header("X-API-Version", "v1");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.header("Authorization", "Bearer token");
+         * }</pre>
+         *
+         * @param name  the header name (must not be blank)
+         * @param value the header value (can be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the name is blank
+         */
+        @Nonnull
+        public <V> Builder<E> header(@Nonnull String name, @Nullable String value) {
+            String header = pair(name, value);
+            if (CONTENT_TYPE.equals(name)) {
+                return consume(value);
+            } else if (ACCEPT.equals(name)) {
+                return produce(value);
+            }
+            if (this.headers == null) {
+                this.headers = newSet();
+            }
+            this.headers.add(header);
+            return this;
+        }
+
+        /**
+         * Set multiple request headers to the endpoint mapping from a collection of values.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint with a list of header objects
+         * List<MyHeader> headerList = Arrays.asList(new MyHeader("X-API-Version", "v1"), new MyHeader("Accept-Language", "en"));
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.headers(headerList, h -> h.getName() + ":" + h.getValue());
+         *
+         * // For a WebFlux endpoint with custom objects that have a toString() method
+         * List<MyRequestHeader> requestHeaders = getCustomHeaderObjects();
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.headers(requestHeaders, MyRequestHeader::toString);
+         * }</pre>
+         *
+         * @param values         the collection of values to convert to headers (must not be null)
+         * @param stringFunction the function to convert each value to a header string (must not be null)
+         * @param <V>            the type of values in the collection
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the values or stringFunction is null
+         */
+        @Nonnull
         public <V> Builder<E> headers(Collection<V> values, Function<V, String> stringFunction) {
             return headers(toStrings(values, stringFunction));
         }
 
+        /**
+         * Set multiple request headers to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.headers("X-API-Version:v1", "Accept-Language:en");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.headers("Authorization:Bearer token", "X-Request-ID:12345");
+         * }</pre>
+         *
+         * @param headers the request headers to add (can be null or empty)
+         * @return this builder instance for method chaining
+         */
+        @Nonnull
         public Builder<E> headers(String... headers) {
-            this.headers = headers;
+            if (isNotEmpty(headers)) {
+                this.headers = newLinkedHashSet(headers);
+            }
             return this;
         }
 
+        /**
+         * Add a single media type to the endpoint mapping that it can consume.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.consume(MediaType.APPLICATION_JSON);
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.consume(MediaType.TEXT_PLAIN);
+         * }</pre>
+         *
+         * @param mediaType the media type to consume (must not be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the mediaType is null
+         */
+        @Nonnull
+        public Builder<E> consume(MediaType mediaType) {
+            assertNotNull(mediaType, () -> "The 'mediaType' must not be null");
+            return consume(mediaType.toString());
+        }
+
+        /**
+         * Add a single media type to the endpoint mapping that it can consume.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.consume("application/json");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.consume("text/plain");
+         * }</pre>
+         *
+         * @param consume the media type to consume (must not be blank)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the consume is blank
+         */
+        @Nonnull
+        public Builder<E> consume(String consume) {
+            assertNotBlank(consume, () -> "The 'consume' must not be blank");
+            if (this.consumes == null) {
+                this.consumes = newSet();
+            }
+            this.consumes.add(consume);
+            return this;
+        }
+
+        /**
+         * Set multiple media types to the endpoint mapping that it can consume.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.consumes(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.consumes(MediaType.TEXT_PLAIN, MediaType.APPLICATION_OCTET_STREAM);
+         * }</pre>
+         *
+         * @param mediaTypes the media types to consume (must not be null or contain null elements)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the mediaTypes array is null or contains null elements
+         */
+        @Nonnull
+        public Builder<E> consumes(MediaType... mediaTypes) {
+            return consumes(toStrings(mediaTypes, MediaType::toString));
+        }
+
+        /**
+         * Set multiple media types to the endpoint mapping that it can consume from a collection of values.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint with a list of MediaType objects
+         * List<MediaType> mediaTypeList = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.consumes(mediaTypeList, MediaType::toString);
+         *
+         * // For a WebFlux endpoint with custom objects that have a getMimeType() method
+         * List<MyMediaType> customMediaTypes = getCustomMediaTypes();
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.consumes(customMediaTypes, MyMediaType::getMimeType);
+         * }</pre>
+         *
+         * @param values         the collection of values to convert to media types (must not be null)
+         * @param stringFunction the function to convert each value to a media type string (must not be null)
+         * @param <V>            the type of values in the collection
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the values or stringFunction is null
+         */
+        @Nonnull
         public <V> Builder<E> consumes(Collection<V> values, Function<V, String> stringFunction) {
             return consumes(toStrings(values, stringFunction));
         }
 
+        /**
+         * Set multiple media types to the endpoint mapping that it can consume.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.consumes("application/json", "text/xml");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.consumes("text/plain", "application/octet-stream");
+         * }</pre>
+         *
+         * @param consumes the media types to consume (can be null or empty)
+         * @return this builder instance for method chaining
+         */
+        @Nonnull
         public Builder<E> consumes(String... consumes) {
-            this.consumes = consumes;
+            if (isNotEmpty(consumes)) {
+                this.consumes = newLinkedHashSet(consumes);
+            }
             return this;
         }
 
+        /**
+         * Add a single media type to the endpoint mapping that it can produce.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.produce(MediaType.APPLICATION_JSON);
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.produce(MediaType.TEXT_PLAIN);
+         * }</pre>
+         *
+         * @param mediaType the media type to produce (must not be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the mediaType is null
+         */
+        @Nonnull
+        public Builder<E> produce(MediaType mediaType) {
+            assertNotNull(mediaType, () -> "The 'mediaType' must not be null");
+            return produce(mediaType.toString());
+        }
+
+        /**
+         * Add a single media type to the endpoint mapping that it can produce.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.produce("application/json");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.produce("text/plain");
+         * }</pre>
+         *
+         * @param produce the media type to produce (must not be blank)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the produce is blank
+         */
+        @Nonnull
+        public Builder<E> produce(String produce) {
+            assertNotBlank(produce, () -> "The 'produce' must not be blank");
+            if (this.produces == null) {
+                this.produces = newSet();
+            }
+            this.produces.add(produce);
+            return this;
+        }
+
+        /**
+         * Set multiple media types to the endpoint mapping that it can produce.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.produces(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.produces(MediaType.TEXT_PLAIN, MediaType.APPLICATION_OCTET_STREAM);
+         * }</pre>
+         *
+         * @param mediaTypes the media types to produce (must not be null or contain null elements)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the mediaTypes array is null or contains null elements
+         */
+        @Nonnull
+        public Builder<E> produces(MediaType... mediaTypes) {
+            assertNotNull(mediaTypes, () -> "The 'mediaTypes' must not be null");
+            assertNoNullElements(mediaTypes, () -> "The 'mediaTypes' must not be null");
+            return produces(toStrings(mediaTypes, MimeType::toString));
+        }
+
+        /**
+         * Set multiple media types to the endpoint mapping that it can produce from a collection of values.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint with a list of MediaType objects
+         * List<MediaType> mediaTypeList = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.produces(mediaTypeList, MediaType::toString);
+         *
+         * // For a WebFlux endpoint with custom objects that have a getMimeType() method
+         * List<MyMediaType> customMediaTypes = getCustomMediaTypes();
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.produces(customMediaTypes, MyMediaType::getMimeType);
+         * }</pre>
+         *
+         * @param values         the collection of values to convert to media types (must not be null)
+         * @param stringFunction the function to convert each value to a media type string (must not be null)
+         * @param <V>            the type of values in the collection
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the values or stringFunction is null
+         */
+        @Nonnull
         public <V> Builder<E> produces(Collection<V> values, Function<V, String> stringFunction) {
             return produces(toStrings(values, stringFunction));
         }
 
+        /**
+         * Set multiple media types to the endpoint mapping that it can produce.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.produces("application/json", "text/xml");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.produces("text/plain", "application/octet-stream");
+         * }</pre>
+         *
+         * @param produces the media types to produce (can be null or empty)
+         * @return this builder instance for method chaining
+         */
         public Builder<E> produces(String... produces) {
-            this.produces = produces;
+            if (isNotEmpty(produces)) {
+                this.produces = newLinkedHashSet(produces);
+            }
             return this;
         }
 
+        /**
+         * Set the source of the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.source(servletContext);
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.source(handlerMapping);
+         * }</pre>
+         *
+         * @param source the source object (can be null)
+         * @return this builder instance for method chaining
+         */
         public Builder<E> source(Object source) {
             this.source = source;
             return this;
         }
 
-        protected <V> String[] toStrings(Collection<V> values, Function<V, String> stringFunction) {
-            if (values.isEmpty()) {
+        protected static String pair(String name, @Nullable Object value) {
+            assertNotBlank(name, () -> "The 'name' must not be blank");
+            return value == null ? name : name + EQUAL_CHAR + value;
+        }
+
+        protected static Set<String> newSet() {
+            return newLinkedHashSet(2);
+        }
+
+        protected static String[] toStrings(Collection<String> values) {
+            return toStrings(values, identity());
+        }
+
+        private static <V> String[] toStrings(V[] values, Function<V, String> stringFunction) {
+            return toStrings(ofList(values), stringFunction);
+        }
+
+        protected static <V> String[] toStrings(Collection<V> values, Function<V, String> stringFunction) {
+            if (isEmpty(values)) {
                 return EMPTY_STRING_ARRAY;
             }
             return values.stream().map(stringFunction).toArray(String[]::new);
         }
 
-        public WebEndpointMapping build() {
+        /**
+         * Build {@link WebEndpointMapping}
+         *
+         * @return non-null
+         * @throws IllegalArgumentException if "patterns" or "methods" is empty or has any null element
+         */
+        @Nonnull
+        public WebEndpointMapping build() throws IllegalArgumentException {
+            assertNotEmpty(this.patterns, () -> "The 'pattern' must not be empty");
+            assertNoNullElements(this.patterns, "Any element of 'patterns' must not be null");
+
+            assertNotEmpty(this.methods, () -> "The 'methods' must not be empty");
+            assertNoNullElements(this.methods, "Any element of 'methods' must not be null");
+
             return new WebEndpointMapping(
                     this.kind,
                     this.endpoint,
                     this.source,
-                    this.patterns,
-                    this.methods,
-                    this.params,
-                    this.headers,
-                    this.consumes,
-                    this.produces
+                    toStrings(this.patterns),
+                    toStrings(this.methods),
+                    toStrings(this.params),
+                    toStrings(this.headers),
+                    toStrings(this.consumes),
+                    toStrings(this.produces)
             );
         }
-
     }
 
-    public static Builder<?> of(Collection<String> patterns) {
-        return of(null, null, patterns);
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#SERVLET servlet} with specified endpoint.
+     *
+     * @param endpoint the endpoint
+     * @param <E>      the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> servlet(@Nonnull E endpoint) throws IllegalArgumentException {
+        return of(SERVLET, endpoint);
     }
 
-    public static Builder<?> of(String... patterns) {
-        return of(null, null, patterns);
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#FILTER filter} with specified endpoint.
+     *
+     * @param endpoint the endpoint
+     * @param <E>      the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> filter(@Nonnull E endpoint) throws IllegalArgumentException {
+        return of(FILTER, endpoint);
     }
 
-    public static <E> Builder<E> of(@Nullable E endpoint, Collection<String> patterns) {
-        return of(null, endpoint, patterns);
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_MVC webMvc} with specified endpoint.
+     *
+     * @param endpoint the endpoint
+     * @param <E>      the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> webmvc(@Nonnull E endpoint) throws IllegalArgumentException {
+        return of(WEB_MVC, endpoint);
     }
 
-    public static <E> Builder<E> of(@Nullable E endpoint, String... patterns) {
-        return of(null, endpoint, patterns);
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_FLUX webFlux} with specified endpoint.
+     *
+     * @param endpoint the endpoint
+     * @param <E>      the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> webflux(@Nonnull E endpoint) throws IllegalArgumentException {
+        return of(WEB_FLUX, endpoint);
     }
 
-    public static <E> Builder<E> of(@Nullable Kind kind, @Nullable E endpoint, Collection<String> patterns) {
-        return of(kind, endpoint, asArray(patterns, String.class));
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#CUSTOMIZED customized} with specified endpoint.
+     *
+     * @param endpoint the endpoint
+     * @param <E>      the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> customized(@Nonnull E endpoint) throws IllegalArgumentException {
+        return of(CUSTOMIZED, endpoint);
     }
 
-    public static <E> Builder of(@Nullable Kind kind, @Nullable E endpoint, String... patterns) {
-        return new Builder(kind, endpoint, patterns);
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} with specified kind and endpoint.
+     *
+     * @param kind     the kind of endpoint
+     * @param endpoint the endpoint
+     * @param <E>      the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code kind} or {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> of(@Nullable Kind kind, @Nullable E endpoint) throws IllegalArgumentException {
+        return new Builder(kind, endpoint);
     }
 
     private WebEndpointMapping(
@@ -299,7 +1033,7 @@ public class WebEndpointMapping<E> {
         this.endpoint = endpoint;
         // id is a hash code of the endpoint
         this.id = endpoint == null ? 0 : endpoint.hashCode();
-        this.source = source == null ? NON_SOURCE : source;
+        this.source = source == null ? UNKNOWN_SOURCE : source;
         this.patterns = patterns;
         this.methods = methods;
         this.params = params;
@@ -376,7 +1110,7 @@ public class WebEndpointMapping<E> {
      *     <li>{@link javax.servlet.ServletContext ServletContext}</li>
      *     <li>Spring WebMVC {@link org.springframework.web.servlet.HandlerMapping}</li>
      *     <li>Spring WebFlux {@link org.springframework.web.reactive.HandlerMapping}</li>
-     * </ul>, or it's {@link #NON_SOURCE non-source}
+     * </ul>, or it's {@link #UNKNOWN_SOURCE non-source}
      *
      * @return non-null
      */
@@ -391,44 +1125,27 @@ public class WebEndpointMapping<E> {
     }
 
     @Nonnull
-
     public String[] getMethods() {
-        if (methods == null) {
-            return EMPTY_STRING_ARRAY;
-        }
         return methods;
     }
 
     @Nonnull
-
     public String[] getParams() {
-        if (params == null) {
-            return EMPTY_STRING_ARRAY;
-        }
         return params;
     }
 
     @Nonnull
     public String[] getHeaders() {
-        if (headers == null) {
-            return EMPTY_STRING_ARRAY;
-        }
         return headers;
     }
 
     @Nonnull
     public String[] getConsumes() {
-        if (consumes == null) {
-            return EMPTY_STRING_ARRAY;
-        }
         return consumes;
     }
 
     @Nonnull
     public String[] getProduces() {
-        if (produces == null) {
-            return EMPTY_STRING_ARRAY;
-        }
         return produces;
     }
 
