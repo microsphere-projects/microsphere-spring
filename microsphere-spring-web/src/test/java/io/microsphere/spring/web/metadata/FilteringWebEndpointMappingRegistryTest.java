@@ -27,7 +27,7 @@ import java.util.Set;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.filter.FilterOperator.AND;
 import static io.microsphere.filter.FilterOperator.OR;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.filter;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -74,9 +74,9 @@ public class FilteringWebEndpointMappingRegistryTest {
     @Before
     public void setUp() throws Exception {
         this.webEndpointMappings = ofSet(
-                of("/a").build(),
-                of("/b").build(),
-                of("/c").build()
+                filter(this).pattern("/a").build(),
+                filter(this).pattern("/b").build(),
+                filter(this).pattern("/c").build()
         );
         this.registry = new FilteringWebEndpointMappingRegistryImpl();
     }
