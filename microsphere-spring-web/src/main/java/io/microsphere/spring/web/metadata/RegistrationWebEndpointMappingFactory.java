@@ -27,6 +27,7 @@ import java.util.Collection;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static java.util.function.Function.identity;
 
 /**
  * The abstract class of {@link AbstractWebEndpointMappingFactory} for Servlet {@link Registration}
@@ -54,8 +55,9 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
         R registration = getRegistration(endpoint, this.servletContext);
         Kind kind = getKind(registration);
         Collection<String> patterns = getPatterns(registration);
-        WebEndpointMapping.Builder<String> builder = of(kind, endpoint, patterns);
-        builder.source(this.servletContext);
+        WebEndpointMapping.Builder<String> builder = of(kind, endpoint)
+                .patterns(patterns, identity())
+                .source(this.servletContext);
         contribute(endpoint, servletContext, builder);
         return builder.build();
     }
