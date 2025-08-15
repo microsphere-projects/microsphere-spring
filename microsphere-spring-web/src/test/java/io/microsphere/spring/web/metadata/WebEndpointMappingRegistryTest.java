@@ -24,7 +24,7 @@ import org.junit.Test;
 import java.util.Collection;
 
 import static io.microsphere.collection.ListUtils.ofList;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,9 +39,9 @@ import static org.junit.Assert.assertTrue;
  */
 public class WebEndpointMappingRegistryTest {
 
-    private static final WebEndpointMapping mapping = of("/*").build();
+    private static final WebEndpointMapping mapping = servlet(Object.class).patterns("/*").build();
 
-    private static final WebEndpointMapping non_mapping = of("!/*").build();
+    private static final WebEndpointMapping non_mapping = servlet(Object.class).patterns("!/*").build();
 
 
     static class WebEndpointMappingRegistryImpl implements WebEndpointMappingRegistry {
