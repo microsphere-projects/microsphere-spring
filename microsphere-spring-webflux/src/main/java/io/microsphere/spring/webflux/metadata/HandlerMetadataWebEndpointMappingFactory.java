@@ -30,6 +30,7 @@ import org.springframework.web.reactive.HandlerMapping;
 
 import java.util.Collection;
 
+import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static java.util.Collections.singleton;
 
 /**
@@ -42,6 +43,11 @@ public class HandlerMetadataWebEndpointMappingFactory extends HandlerMappingWebE
 
     public HandlerMetadataWebEndpointMappingFactory(HandlerMapping handlerMapping) {
         super(handlerMapping);
+    }
+
+    @Override
+    protected Collection<String> getMethods(Object handler, String metadata) {
+        return ALL_HTTP_METHODS;
     }
 
     @Override
