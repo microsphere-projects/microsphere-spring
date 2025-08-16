@@ -55,7 +55,32 @@ public class TestServletTest {
     }
 
     @Test
-    public void testService() throws ServletException, IOException {
-        testServlet.service(new MockHttpServletRequest(), new MockHttpServletResponse());
+    public void testDoGet() throws ServletException, IOException {
+        testServlet.doGet(new MockHttpServletRequest(), new MockHttpServletResponse());
+    }
+
+    @Test
+    public void testDoHead() throws ServletException, IOException {
+        testServlet.doHead(new MockHttpServletRequest(), new MockHttpServletResponse());
+    }
+
+    @Test
+    public void testDoPost() throws ServletException, IOException {
+        testServlet.doPost(new MockHttpServletRequest(), new MockHttpServletResponse());
+    }
+
+    @Test
+    public void testDoPut() throws ServletException, IOException {
+        testServlet.doPut(new MockHttpServletRequest(), new MockHttpServletResponse());
+    }
+
+    @Test
+    public void testDoDelete() throws ServletException, IOException {
+        testServlet.doDelete(new MockHttpServletRequest(), new MockHttpServletResponse());
+    }
+
+    @Test
+    public void testDoService() throws ServletException, IOException {
+        testServlet.doService(new MockHttpServletRequest(), new MockHttpServletResponse());
     }
 }
