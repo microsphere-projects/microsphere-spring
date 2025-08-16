@@ -27,7 +27,6 @@ import java.util.Collection;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
-import static java.util.function.Function.identity;
 
 /**
  * The abstract class of {@link AbstractWebEndpointMappingFactory} for Servlet {@link Registration}
@@ -54,10 +53,13 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
     protected final WebEndpointMapping<String> doCreate(String endpoint) throws Throwable {
         R registration = getRegistration(endpoint, this.servletContext);
         Kind kind = getKind(registration);
+        String className = registration.getClassName();
+        Collection<String> methods = getMethods(registration);
         Collection<String> patterns = getPatterns(registration);
         WebEndpointMapping.Builder<String> builder = of(kind, endpoint)
-                .patterns(patterns, identity())
-                .source(this.servletContext);
+                .patterns(patterns)
+                .methods(methods)
+                .source(className);
         contribute(endpoint, servletContext, builder);
         return builder.build();
     }
@@ -67,12 +69,22 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
     }
 
     /**
+     * Gets the HTTP methods of the given registration
+     *
+     * @param registration the registration
+     * @return the HTTP methods of the given registration
+     */
+    @Nonnull
+    protected abstract Collection<String> getMethods(R registration);
+
+    /**
      * @param name           the name of {@link R Registration}
      * @param servletContext {@link ServletContext}
      * @return The {@link R Registration}
      */
     @Nonnull
     protected abstract R getRegistration(String name, ServletContext servletContext);
+
 
     /**
      * Get the patterns of {@link R Registration}
