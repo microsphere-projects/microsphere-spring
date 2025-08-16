@@ -34,6 +34,13 @@ import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static io.microsphere.util.ClassLoaderUtils.loadClass;
 import static io.microsphere.util.ClassUtils.isAssignableFrom;
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.HEAD;
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.TRACE;
 
 /**
  * {@link WebEndpointMappingFactory} from {@link ServletRegistration}
@@ -50,13 +57,13 @@ public class ServletRegistrationWebEndpointMappingFactory extends RegistrationWe
      * Value : The name of {@link HttpMethod}
      */
     private static final Map<String, String> methodNamesToHttpMethods = ofMap(
-            "doGet", "GET",
-            "doPost", "POST",
-            "doPut", "PUT",
-            "doDelete", "DELETE",
-            "doHead", "HEAD",
-            "doOptions", "OPTIONS",
-            "doTrace", "TRACE"
+            "doGet", GET.name(),
+            "doPost", POST.name(),
+            "doPut", PUT.name(),
+            "doDelete", DELETE.name(),
+            "doHead", HEAD.name(),
+            "doOptions", OPTIONS.name(),
+            "doTrace", TRACE.name()
     );
 
     public ServletRegistrationWebEndpointMappingFactory(ServletContext servletContext) {
