@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static io.microsphere.collection.SetUtils.newFixedHashSet;
+import static java.util.stream.Collectors.toList;
 
 /**
  * {@link WebEndpointMappingFactory} based on Spring WebFlux {@link RequestMappingInfo}
@@ -57,6 +58,12 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     protected HandlerMethod getHandler(HandlerMetadata<HandlerMethod, RequestMappingInfo> handlerMetadata) {
         HandlerMethod handlerMethod = handlerMetadata.getHandler();
         return handlerMethod.createWithResolvedBean();
+    }
+
+    @Override
+    protected Collection<String> getMethods(HandlerMethod handler, RequestMappingInfo metadata) {
+        Set<RequestMethod> requestMethods = metadata.getMethodsCondition().getMethods();
+        return requestMethods.stream().map(RequestMethod::name).collect(toList());
     }
 
     @Override
