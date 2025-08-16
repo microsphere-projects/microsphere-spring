@@ -16,9 +16,24 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import org.springframework.http.HttpMethod;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.Maps.ofMap;
+import static io.microsphere.reflect.MethodUtils.findMethod;
+import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
+import static io.microsphere.util.ClassLoaderUtils.loadClass;
+import static io.microsphere.util.ClassUtils.isAssignableFrom;
 
 /**
  * {@link WebEndpointMappingFactory} from {@link ServletRegistration}
@@ -30,8 +45,54 @@ import java.util.Collection;
  */
 public class ServletRegistrationWebEndpointMappingFactory extends RegistrationWebEndpointMappingFactory<ServletRegistration> {
 
+    /**
+     * Key : The method names of {@link HttpServlet}
+     * Value : The name of {@link HttpMethod}
+     */
+    private static final Map<String, String> methodNamesToHttpMethods = ofMap(
+            "doGet", "GET",
+            "doPost", "POST",
+            "doPut", "PUT",
+            "doDelete", "DELETE",
+            "doHead", "HEAD",
+            "doOptions", "OPTIONS",
+            "doTrace", "TRACE"
+    );
+
     public ServletRegistrationWebEndpointMappingFactory(ServletContext servletContext) {
         super(servletContext);
+    }
+
+    @Override
+    protected Collection<String> getMethods(ServletRegistration registration) {
+        String className = registration.getClassName();
+        ServletContext servletContext = this.servletContext;
+        ClassLoader classLoader = servletContext.getClassLoader();
+        Class<?> servletClass = loadClass(classLoader, className);
+        return getMethods(servletClass);
+    }
+
+    protected Collection<String> getMethods(Class<?> servletClass) {
+        if (isAssignableFrom(HttpServlet.class, servletClass)) {
+            return getMethodsFromHttpServlet(servletClass);
+        } else {
+            return ALL_HTTP_METHODS;
+        }
+    }
+
+    protected Collection<String> getMethodsFromHttpServlet(Class<?> servletClass) {
+        Collection<String> methods = newLinkedList();
+        for (Entry<String, String> entry : methodNamesToHttpMethods.entrySet()) {
+            String methodName = entry.getKey();
+            Method method = findMethod(servletClass, methodName, HttpServletRequest.class, HttpServletResponse.class);
+            if (method.getDeclaringClass() == servletClass) {
+                methods.add(entry.getValue());
+            }
+        }
+        if (methods.isEmpty()) {
+            methods = ALL_HTTP_METHODS;
+        }
+        return methods;
     }
 
     @Override
