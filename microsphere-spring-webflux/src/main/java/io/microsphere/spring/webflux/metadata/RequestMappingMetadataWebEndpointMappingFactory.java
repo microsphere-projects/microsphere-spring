@@ -95,7 +95,6 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
         for (PathPattern pathPattern : pathPatterns) {
             patterns.add(pathPattern.getPatternString());
         }
-
         return patterns;
     }
 
