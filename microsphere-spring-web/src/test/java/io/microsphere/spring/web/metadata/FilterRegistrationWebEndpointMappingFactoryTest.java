@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
+import java.util.Collection;
 import java.util.LinkedList;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -33,6 +34,7 @@ import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_N
 import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_URL_PATTERN;
 import static io.microsphere.spring.test.web.servlet.TestFilter.FILTER_CLASS_NAME;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
+import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertArrayEquals;
@@ -58,6 +60,13 @@ public class FilterRegistrationWebEndpointMappingFactoryTest {
 
         addTestServlet(this.servletContext);
         addTestFilter(this.servletContext);
+    }
+
+    @Test
+    public void testGetMethods() {
+        FilterRegistration registration = factory.getRegistration(DEFAULT_FILTER_NAME, this.servletContext);
+        Collection<String> methods = factory.getMethods(registration);
+        assertEquals(ALL_HTTP_METHODS, methods);
     }
 
     @Test
