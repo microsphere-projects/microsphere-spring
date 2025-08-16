@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import java.util.Collection;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
@@ -35,6 +36,7 @@ import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link ServletRegistrationWebEndpointMappingFactory} Test
@@ -53,8 +55,18 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
     public void setUp() throws Exception {
         this.servletContext = new TestServletContext();
         this.factory = new ServletRegistrationWebEndpointMappingFactory(this.servletContext);
-
         addTestServlet(this.servletContext);
+    }
+
+    @Test
+    public void testGetMethods() {
+        ServletRegistration servletRegistration = factory.getRegistration(DEFAULT_SERVLET_NAME, servletContext);
+        Collection<String> methods = this.factory.getMethods(servletRegistration);
+        assertTrue(methods.contains("GET"));
+        assertTrue(methods.contains("HEAD"));
+        assertTrue(methods.contains("POST"));
+        assertTrue(methods.contains("PUT"));
+        assertTrue(methods.contains("DELETE"));
     }
 
     @Test
