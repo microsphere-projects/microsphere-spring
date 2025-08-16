@@ -81,7 +81,7 @@ public class RegistrationWebEndpointMappingFactoryTest {
     public void testGetRegistration() {
         assertNull(this.factory.getRegistration(null, this.servletContext));
     }
-    
+
     @Test
     public void testGetMethods() {
         assertSame(ALL_HTTP_METHODS, this.factory.getMethods(null));
