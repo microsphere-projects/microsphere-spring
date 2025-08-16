@@ -25,6 +25,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpMethod.GET;
 
 /**
  * {@link SimpleWebEndpointMappingRegistry} Test
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimpleWebEndpointMappingRegistryTest {
 
-    private static final WebEndpointMapping mapping = servlet(Object.class).pattern("/*").build();
+    private static final WebEndpointMapping mapping = servlet(Object.class).pattern("/*").method(GET).build();
 
     private SimpleWebEndpointMappingRegistry registry;
 
