@@ -39,6 +39,7 @@ import java.util.Set;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.invoke.MethodHandlesLookupUtils.NOT_FOUND_METHOD_HANDLE;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -73,6 +74,12 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     protected HandlerMethod getHandler(HandlerMetadata<HandlerMethod, RequestMappingInfo> handlerMetadata) {
         HandlerMethod handlerMethod = handlerMetadata.getHandler();
         return handlerMethod.createWithResolvedBean();
+    }
+
+    @Override
+    protected Collection<String> getMethods(HandlerMethod handler, RequestMappingInfo metadata) {
+        Set<RequestMethod> methods = metadata.getMethodsCondition().getMethods();
+        return methods.stream().map(RequestMethod::name).collect(toList());
     }
 
     @Override
