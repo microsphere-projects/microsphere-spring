@@ -308,6 +308,29 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public Builder<E> patterns(@Nonnull String... patterns) throws IllegalArgumentException {
+            return patterns(ofList(patterns));
+        }
+
+        /**
+         * Set multiple path patterns to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.patterns(Arrays.asList("/api/users", "/api/orders"));
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.patterns(Arrays.asList("/api/products/{id}", "/api/categories/{categoryId}"));
+         * }</pre>
+         *
+         * @param patterns the collection of path patterns to add (must not be null or empty)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the patterns collection is null, empty, or contains null elements
+         */
+        @Nonnull
+        public Builder<E> patterns(@Nonnull Collection<String> patterns) {
             assertNotEmpty(patterns, () -> "The 'patterns' must not be empty");
             assertNoNullElements(patterns, () -> "The 'patterns' must not contain null element");
             this.patterns = newLinkedHashSet(patterns);
@@ -438,6 +461,10 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public Builder<E> methods(@Nonnull String... methods) throws IllegalArgumentException {
+            return methods(ofList(methods));
+        }
+
+        public Builder<E> methods(@Nonnull Collection<String> methods) throws IllegalArgumentException {
             assertNotEmpty(methods, () -> "The 'methods' must not be empty");
             assertNoNullElements(methods, () -> "The 'methods' must not contain null element");
             this.methods = newLinkedHashSet(methods);
