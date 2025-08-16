@@ -85,7 +85,6 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
     @Nonnull
     protected abstract R getRegistration(String name, ServletContext servletContext);
 
-
     /**
      * Get the patterns of {@link R Registration}
      *
