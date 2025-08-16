@@ -87,7 +87,9 @@ public class FilterRegistrationWebEndpointMappingFactory extends RegistrationWeb
         Collection<String> servletNameMappings = registration.getServletNameMappings();
         for (String servletName : servletNameMappings) {
             ServletRegistration servletRegistration = servletContext.getServletRegistration(servletName);
-            servletRegistrationConsumer.accept(servletRegistration);
+            if (servletRegistration != null) {
+                servletRegistrationConsumer.accept(servletRegistration);
+            }
         }
     }
 }
