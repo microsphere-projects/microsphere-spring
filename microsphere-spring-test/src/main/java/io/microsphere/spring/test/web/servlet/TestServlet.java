@@ -48,7 +48,31 @@ public class TestServlet extends HttpServlet {
     public static final String DEFAULT_SERVLET_URL_PATTERN = "/" + DEFAULT_SERVLET_NAME;
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.service(req, resp);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doService(request, response);
+    }
+
+    @Override
+    protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doService(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doService(request, response);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doService(request, response);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doService(request, response);
+    }
+
+    protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.getWriter().write("Hello World!");
     }
 }
