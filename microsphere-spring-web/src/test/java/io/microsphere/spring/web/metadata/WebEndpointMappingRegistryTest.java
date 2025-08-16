@@ -29,6 +29,7 @@ import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpMethod.GET;
 
 /**
  * {@link WebEndpointMappingRegistry} Test
@@ -39,9 +40,9 @@ import static org.junit.Assert.assertTrue;
  */
 public class WebEndpointMappingRegistryTest {
 
-    private static final WebEndpointMapping mapping = servlet(Object.class).patterns("/*").build();
+    private static final WebEndpointMapping mapping = servlet(Object.class).patterns("/*").method(GET).build();
 
-    private static final WebEndpointMapping non_mapping = servlet(Object.class).patterns("!/*").build();
+    private static final WebEndpointMapping non_mapping = servlet(Object.class).patterns("!/*").method(GET).build();
 
 
     static class WebEndpointMappingRegistryImpl implements WebEndpointMappingRegistry {
