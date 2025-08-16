@@ -34,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpMethod.GET;
 
 /**
  * {@link FilteringWebEndpointMappingRegistry} Test
@@ -74,9 +75,9 @@ public class FilteringWebEndpointMappingRegistryTest {
     @Before
     public void setUp() throws Exception {
         this.webEndpointMappings = ofSet(
-                filter(this).pattern("/a").build(),
-                filter(this).pattern("/b").build(),
-                filter(this).pattern("/c").build()
+                filter(this).pattern("/a").method(GET).build(),
+                filter(this).pattern("/b").method(GET).build(),
+                filter(this).pattern("/c").method(GET).build()
         );
         this.registry = new FilteringWebEndpointMappingRegistryImpl();
     }
