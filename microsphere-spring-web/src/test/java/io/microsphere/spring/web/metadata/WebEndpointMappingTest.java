@@ -45,6 +45,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
@@ -364,6 +365,12 @@ public class WebEndpointMappingTest {
 
         mapping.setAttribute("key", "value");
         assertEquals("value", mapping.getAttribute("key"));
+    }
+
+    @Test
+    public void testBuilderToString() {
+        Builder<?> builder = minServletBuilder();
+        assertNotNull(builder.toString());
     }
 
     @Test
