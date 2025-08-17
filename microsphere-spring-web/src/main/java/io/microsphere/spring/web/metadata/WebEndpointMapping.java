@@ -915,6 +915,22 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("WebEndpointMapping.Builder{");
+            sb.append("kind=").append(kind);
+            sb.append(", endpoint=").append(endpoint);
+            sb.append(", source=").append(source);
+            sb.append(", patterns=").append(patterns);
+            sb.append(", methods=").append(methods);
+            sb.append(", params=").append(params);
+            sb.append(", headers=").append(headers);
+            sb.append(", consumes=").append(consumes);
+            sb.append(", produces=").append(produces);
+            sb.append('}');
+            return sb.toString();
+        }
+
         protected static String pair(String name, @Nullable Object value) {
             assertNotBlank(name, () -> "The 'name' must not be blank");
             return value == null ? name : name + EQUAL_CHAR + value;
