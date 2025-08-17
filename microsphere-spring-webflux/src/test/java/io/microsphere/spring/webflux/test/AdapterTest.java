@@ -18,23 +18,28 @@
 package io.microsphere.spring.webflux.test;
 
 import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMapping.Builder;
 import io.microsphere.spring.webflux.function.server.RequestPredicateVisitorAdapter;
 import io.microsphere.spring.webflux.function.server.RouterFunctionVisitorAdapter;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RequestPredicate;
 import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
-import reactor.core.publisher.Mono;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Consumer;
+
+import static io.microsphere.collection.MapUtils.ofEntry;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * TODO
@@ -54,111 +59,87 @@ public class AdapterTest extends AbstractWebFluxTest {
     void test() {
         RouterFunctionMapping routerFunctionMapping = context.getBean(RouterFunctionMapping.class);
         RouterFunction<?> routerFunction = routerFunctionMapping.getRouterFunction();
-        routerFunction.accept(new Adapter());
+        Collection<WebEndpointMapping> webEndpointMappings = new LinkedList<>();
+        routerFunction.accept(new Adapter(webEndpointMappings::add));
+        assertFalse(webEndpointMappings.isEmpty());
     }
 
     static class Adapter implements RequestPredicateVisitorAdapter, RouterFunctionVisitorAdapter {
 
+        private final ThreadLocal<Entry<RequestPredicate, Builder<?>>> requestToBuilder = new ThreadLocal<>();
+
+        private final Consumer<WebEndpointMapping> webEndpointMappingConsumer;
+
+        Adapter(Consumer<WebEndpointMapping> webEndpointMappingConsumer) {
+            this.webEndpointMappingConsumer = webEndpointMappingConsumer;
+        }
+
         @Override
         public void method(Set<HttpMethod> methods) {
-            RequestPredicateVisitorAdapter.super.method(methods);
+            doInBuilder(builder -> builder.methods(methods, HttpMethod::name));
         }
 
         @Override
         public void path(String pattern) {
-            RequestPredicateVisitorAdapter.super.path(pattern);
-        }
-
-        @Override
-        public void pathExtension(String extension) {
-            RequestPredicateVisitorAdapter.super.pathExtension(extension);
+            doInBuilder(builder -> builder.pattern(pattern));
         }
 
         @Override
         public void header(String name, String value) {
-            RequestPredicateVisitorAdapter.super.header(name, value);
+            doInBuilder(builder -> builder.header(name, value));
         }
 
         @Override
         public void queryParam(String name, String value) {
-            RequestPredicateVisitorAdapter.super.queryParam(name, value);
-        }
-
-        @Override
-        public void startAnd() {
-            RequestPredicateVisitorAdapter.super.startAnd();
-        }
-
-        @Override
-        public void and() {
-            RequestPredicateVisitorAdapter.super.and();
-        }
-
-        @Override
-        public void endAnd() {
-            RequestPredicateVisitorAdapter.super.endAnd();
-        }
-
-        @Override
-        public void startOr() {
-            RequestPredicateVisitorAdapter.super.startOr();
-        }
-
-        @Override
-        public void or() {
-            RequestPredicateVisitorAdapter.super.or();
-        }
-
-        @Override
-        public void endOr() {
-            RequestPredicateVisitorAdapter.super.endOr();
-        }
-
-        @Override
-        public void startNegate() {
-            RequestPredicateVisitorAdapter.super.startNegate();
-        }
-
-        @Override
-        public void endNegate() {
-            RequestPredicateVisitorAdapter.super.endNegate();
+            doInBuilder(builder -> builder.param(name, value));
         }
 
         @Override
         public void startNested(RequestPredicate predicate) {
+            getOrCreateEntry(predicate);
             predicate.accept(this);
-            RouterFunctionVisitorAdapter.super.startNested(predicate);
         }
 
         @Override
         public void endNested(RequestPredicate predicate) {
-            RouterFunctionVisitorAdapter.super.endNested(predicate);
+            Entry<RequestPredicate, Builder<?>> entry = requestToBuilder.get();
+            clearEntry(entry, predicate);
         }
 
         @Override
         public void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
+            Entry<RequestPredicate, Builder<?>> entry = getOrCreateEntry(predicate);
             predicate.accept(this);
-            RouterFunctionVisitorAdapter.super.route(predicate, handlerFunction);
+            clearEntry(entry, predicate);
         }
 
-        @Override
-        public void resources(Function<ServerRequest, Mono<Resource>> lookupFunction) {
-            RouterFunctionVisitorAdapter.super.resources(lookupFunction);
+        private Entry<RequestPredicate, Builder<?>> getOrCreateEntry(RequestPredicate predicate) {
+            Entry<RequestPredicate, Builder<?>> entry = requestToBuilder.get();
+            if (entry == null) {
+                Builder<?> builder = webflux(this);
+                entry = ofEntry(predicate, builder);
+                requestToBuilder.set(entry);
+            }
+            return entry;
         }
 
-        @Override
-        public void unknown(RequestPredicate predicate) {
-            RequestPredicateVisitorAdapter.super.unknown(predicate);
+        private void clearEntry(Entry<RequestPredicate, Builder<?>> entry, RequestPredicate predicate) {
+            if (entry != null) {
+                if (entry.getKey() == predicate) {
+                    requestToBuilder.remove();
+                    Builder<?> builder = entry.getValue();
+                    WebEndpointMapping webEndpointMapping = builder.build();
+                    this.webEndpointMappingConsumer.accept(webEndpointMapping);
+                }
+            }
         }
 
-        @Override
-        public void attributes(Map<String, Object> attributes) {
-            RouterFunctionVisitorAdapter.super.attributes(attributes);
-        }
-
-        @Override
-        public void unknown(RouterFunction<?> routerFunction) {
-            RouterFunctionVisitorAdapter.super.unknown(routerFunction);
+        private void doInBuilder(Consumer<Builder<?>> builderConsumer) {
+            Entry<RequestPredicate, Builder<?>> entry = requestToBuilder.get();
+            if (entry != null) {
+                Builder<?> builder = entry.getValue();
+                builderConsumer.accept(builder);
+            }
         }
     }
 }
