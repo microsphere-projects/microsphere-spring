@@ -25,6 +25,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
+import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
+import static org.springframework.web.reactive.function.server.RequestPredicates.queryParam;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 /**
@@ -43,14 +45,18 @@ public class RouterFunctionTestConfig {
 
     public static final String PERSON_ID_PATH = "/{id}";
 
+    public static final String AUTH_NAME = "_auth";
+
+    public static final String AUTH_VALUE = "123456789";
+
     public static final String GET_PERSON_PATH = PERSON_TEST_PATH + PERSON_ID_PATH;
 
     @Bean
     public RouterFunction<ServerResponse> personRouterFunction(PersonHandler handler) {
         return route()
                 .GET(GET_PERSON_PATH, accept(APPLICATION_JSON), handler::getPerson)
-                .GET(PERSON_TEST_PATH, accept(APPLICATION_JSON), handler::listPeople)
-                .POST(PERSON_TEST_PATH, handler::createPerson)
+                .GET(PERSON_TEST_PATH, contentType(APPLICATION_JSON), handler::listPeople)
+                .POST(PERSON_TEST_PATH, queryParam(AUTH_NAME, AUTH_VALUE), handler::createPerson)
                 .build();
     }
 
