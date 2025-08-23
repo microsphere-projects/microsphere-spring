@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static io.microsphere.collection.Lists.ofList;
@@ -39,17 +40,20 @@ import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.EQUAL_CHAR;
 import static io.microsphere.constants.SymbolConstants.LEFT_CURLY_BRACE;
 import static io.microsphere.constants.SymbolConstants.RIGHT_CURLY_BRACE;
+import static io.microsphere.net.URLUtils.buildURI;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_FLUX;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
+import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.Assert.assertNoNullElements;
 import static io.microsphere.util.Assert.assertNotBlank;
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
+import static io.microsphere.util.Assert.assertTrue;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.function.Function.identity;
 import static org.springframework.http.HttpHeaders.ACCEPT;
@@ -83,7 +87,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  *      <ul>
  *          <li>The {@link String} presenting the name of Handler bean</li>
  *          <li>The {@link HandlerMethod} could be annotated the {@link RequestMapping @RequestMapping}</li>
- *          <li>The {@link org.springframework.web.reactive.function.server.RouterFunction} since Spring Framework 5.0</li>
+ *          <li>The {@link org.springframework.web.reactive.function.server.HandlerFunction} since Spring Framework 5.0</li>
  *      </ul>
  *     </li>
  * </ul>
@@ -492,11 +496,34 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public Builder<E> param(@Nonnull String name, @Nullable String value) throws IllegalArgumentException {
-            String param = pair(name, value);
+            String nameAndValue = pair(name, value);
+            return param(nameAndValue);
+        }
+
+        /**
+         * Add a single request parameter to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.param("version=v1");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.param("userId=12345");
+         * }</pre>
+         *
+         * @param nameAndValue the parameter name and value in the format "name=value" (must not be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the nameAndValue is null
+         */
+        @Nonnull
+        public Builder<E> param(@Nonnull String nameAndValue) throws IllegalArgumentException {
             if (this.params == null) {
                 this.params = newSet();
             }
-            this.params.add(param);
+            this.params.add(nameAndValue);
             return this;
         }
 
@@ -573,16 +600,40 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public <V> Builder<E> header(@Nonnull String name, @Nullable String value) {
-            String header = pair(name, value);
             if (CONTENT_TYPE.equals(name)) {
                 return consume(value);
             } else if (ACCEPT.equals(name)) {
                 return produce(value);
             }
+            String nameAndValue = pair(name, value);
+            return header(nameAndValue);
+        }
+
+        /**
+         * Add a single request header to the endpoint mapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.header("X-API-Version:v1");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.header("Authorization:Bearer token");
+         * }</pre>
+         *
+         * @param nameAndValue the header name and value in the format "name:value" (must not be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the nameAndValue is null
+         */
+        @Nonnull
+        public Builder<E> header(@Nonnull String nameAndValue) throws IllegalArgumentException {
+            assertNotNull(nameAndValue, () -> "The 'nameAndValue' must not be null");
             if (this.headers == null) {
                 this.headers = newSet();
             }
-            this.headers.add(header);
+            this.headers.add(nameAndValue);
             return this;
         }
 
@@ -886,6 +937,7 @@ public class WebEndpointMapping<E> {
          * @param produces the media types to produce (can be null or empty)
          * @return this builder instance for method chaining
          */
+        @Nonnull
         public Builder<E> produces(String... produces) {
             if (isNotEmpty(produces)) {
                 this.produces = newLinkedHashSet(produces);
@@ -910,8 +962,57 @@ public class WebEndpointMapping<E> {
          * @param source the source object (can be null)
          * @return this builder instance for method chaining
          */
+        @Nonnull
         public Builder<E> source(Object source) {
             this.source = source;
+            return this;
+        }
+
+        @Nonnull
+        public Builder<E> nestPatterns(@Nonnull Builder<?> other) {
+            assertNest(this, other);
+            Set<String> patterns = newSet();
+            iterate(this.patterns, pattern -> {
+                iterate(other.patterns, otherPattern -> {
+                    patterns.add(buildURI(otherPattern, pattern));
+                });
+            });
+            this.patterns = patterns;
+            return this;
+        }
+
+        @Nonnull
+        public Builder<E> nestMethods(@Nonnull Builder<?> other) {
+            assertNest(this, other);
+            iterate(other.methods, this::method);
+            return this;
+        }
+
+        @Nonnull
+        public Builder<E> nestParams(@Nonnull Builder<?> other) {
+            assertNest(this, other);
+            iterate(other.params, this::param);
+            return this;
+        }
+
+        @Nonnull
+        public Builder<E> nestHeaders(@Nonnull Builder<?> other) {
+            assertNest(this, other);
+            iterate(other.headers, this::header);
+            return this;
+        }
+
+        @Nonnull
+        public Builder<E> nestConsumes(@Nonnull Builder<?> other) {
+            assertNest(this, other);
+            iterate(other.consumes, this::consume);
+            return this;
+        }
+
+        @Nonnull
+        public Builder<E> nestProduces(@Nonnull Builder<?> other) {
+            assertNest(this, other);
+            iterate(other.produces, this::produce);
             return this;
         }
 
@@ -936,6 +1037,20 @@ public class WebEndpointMapping<E> {
             return value == null ? name : name + EQUAL_CHAR + value;
         }
 
+        static void assertNest(Builder<?> one, Builder<?> other) {
+            assertNotNull(one, () -> "The 'one' Builder must not be null!");
+            assertNotNull(other, () -> "The 'other' Builder must not be null!");
+            assertTrue(one.kind == other.kind, () -> format("The Kind does not match[one : {} , other : {}]", one.kind, other.kind));
+        }
+
+        static <E> void iterate(Iterable<E> elements, Consumer<E> elementConsumer) {
+            if (elements != null) {
+                for (E element : elements) {
+                    elementConsumer.accept(element);
+                }
+            }
+        }
+
         protected static Set<String> newSet() {
             return newLinkedHashSet(2);
         }
@@ -944,7 +1059,7 @@ public class WebEndpointMapping<E> {
             return toStrings(values, identity());
         }
 
-        private static <V> String[] toStrings(V[] values, Function<V, String> stringFunction) {
+        static <V> String[] toStrings(V[] values, Function<V, String> stringFunction) {
             return toStrings(ofList(values), stringFunction);
         }
 
@@ -1126,7 +1241,7 @@ public class WebEndpointMapping<E> {
      *      <ul>
      *          <li>The {@link String} presenting the name of Handler bean</li>
      *          <li>The {@link HandlerMethod} could be annotated the {@link RequestMapping @RequestMapping}</li>
-     *          <li>The {@link org.springframework.web.reactive.function.server.RouterFunction} since Spring Framework 5.0</li>
+     *          <li>The {@link org.springframework.web.reactive.function.server.HandlerFunction} since Spring Framework 5.0</li>
      *      </ul>
      *     </li>
      * </ul>
