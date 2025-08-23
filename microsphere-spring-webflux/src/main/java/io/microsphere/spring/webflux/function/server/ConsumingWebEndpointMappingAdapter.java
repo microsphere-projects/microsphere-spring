@@ -18,12 +18,13 @@
 package io.microsphere.spring.webflux.function.server;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMapping.Builder;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RequestPredicate;
 
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -33,10 +34,13 @@ import java.util.function.Consumer;
 import static io.microsphere.collection.CollectionUtils.isEmpty;
 import static io.microsphere.collection.CollectionUtils.size;
 import static io.microsphere.collection.MapUtils.ofEntry;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.UNKNOWN_SOURCE;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.Assert.assertTrue;
 import static java.lang.ThreadLocal.withInitial;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 /**
  * The adapter class of {@link RequestPredicateVisitorAdapter} and {@link RouterFunctionVisitorAdapter} to consume the
@@ -71,12 +75,19 @@ import static java.lang.ThreadLocal.withInitial;
  */
 public class ConsumingWebEndpointMappingAdapter implements RequestPredicateVisitorAdapter, RouterFunctionVisitorAdapter {
 
-    private final ThreadLocal<LinkedList<Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>>>> nestedRequestPredicateToBuilderStack = withInitial(LinkedList::new);
+    private final ThreadLocal<LinkedList<Entry<RequestPredicate, Builder<?>>>> nestedRequestPredicateToBuilderStack = withInitial(LinkedList::new);
 
-    private final Consumer<WebEndpointMapping> webEndpointMappingConsumer;
+    private final Consumer<WebEndpointMapping<?>> webEndpointMappingConsumer;
 
-    ConsumingWebEndpointMappingAdapter(Consumer<WebEndpointMapping> webEndpointMappingConsumer) {
+    private final Object source;
+
+    public ConsumingWebEndpointMappingAdapter(Consumer<WebEndpointMapping<?>> webEndpointMappingConsumer) {
+        this(webEndpointMappingConsumer, UNKNOWN_SOURCE);
+    }
+
+    public ConsumingWebEndpointMappingAdapter(Consumer<WebEndpointMapping<?>> webEndpointMappingConsumer, Object source) {
         this.webEndpointMappingConsumer = webEndpointMappingConsumer;
+        this.source = source;
     }
 
     @Override
@@ -119,7 +130,7 @@ public class ConsumingWebEndpointMappingAdapter implements RequestPredicateVisit
 
     @Override
     public void endNested(RequestPredicate predicate) {
-        LinkedList<Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>>> stack = popRequestPredicateToBuilder(predicate);
+        LinkedList<Entry<RequestPredicate, Builder<?>>> stack = popRequestPredicateToBuilder(predicate);
         if (isEmpty(stack)) {
             this.nestedRequestPredicateToBuilderStack.remove();
         }
@@ -127,56 +138,57 @@ public class ConsumingWebEndpointMappingAdapter implements RequestPredicateVisit
 
     @Override
     public void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
-        Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> entry = pushRequestPredicateToBuilder(predicate);
+        Entry<RequestPredicate, Builder<?>> entry = pushRequestPredicateToBuilder(predicate);
         predicate.accept(this);
         popRequestPredicateToBuilder(predicate);
         buildAndConsumeWebEndpointMapping(entry, handlerFunction);
     }
 
-
-    private Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> pushRequestPredicateToBuilder(RequestPredicate predicate) {
-        LinkedList<Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
-        Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> entry = createRequestPredicateToBuilder(predicate);
+    private Entry<RequestPredicate, Builder<?>> pushRequestPredicateToBuilder(RequestPredicate predicate) {
+        LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
+        Entry<RequestPredicate, Builder<?>> entry = createRequestPredicateToBuilder(predicate);
         stack.push(entry);
         return entry;
     }
 
-    private LinkedList<Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>>> popRequestPredicateToBuilder(RequestPredicate predicateToTest) {
-        LinkedList<Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
-        Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> entry = stack.pop();
+    private LinkedList<Entry<RequestPredicate, Builder<?>>> popRequestPredicateToBuilder(RequestPredicate predicateToTest) {
+        LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
+        Entry<RequestPredicate, Builder<?>> entry = stack.pop();
         RequestPredicate predicate = entry.getKey();
         assertTrue(Objects.equals(predicateToTest, predicate),
                 () -> format("The popped RequestPredicate[{}] does not match the actual one : {}", predicate, predicateToTest));
         return stack;
     }
 
-    private void buildAndConsumeWebEndpointMapping(Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> entry, HandlerFunction<?> handlerFunction) {
-        WebEndpointMapping.Builder<?> builder = entry.getValue();
-        builder.source(handlerFunction);
-        WebEndpointMapping webEndpointMapping = builder.build();
+    private void buildAndConsumeWebEndpointMapping(Entry<RequestPredicate, Builder<?>> entry, HandlerFunction<?> handlerFunction) {
+        Builder builder = entry.getValue();
+        builder.source(source)
+                .endpoint(handlerFunction);
+        WebEndpointMapping<?> webEndpointMapping = builder.build();
         this.webEndpointMappingConsumer.accept(webEndpointMapping);
     }
 
-    private LinkedList<Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>>> getNestedRequestPredicateToBuilderStack() {
+    private LinkedList<Entry<RequestPredicate, Builder<?>>> getNestedRequestPredicateToBuilderStack() {
         return this.nestedRequestPredicateToBuilderStack.get();
     }
 
-    private Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> createRequestPredicateToBuilder(RequestPredicate predicate) {
-        WebEndpointMapping.Builder<?> builder = webflux(this);
+    private Entry<RequestPredicate, Builder<?>> createRequestPredicateToBuilder(RequestPredicate predicate) {
+        Builder<?> builder = webflux();
         return ofEntry(predicate, builder);
     }
 
-    private void doInBuilderStack(BiConsumer<Optional<WebEndpointMapping.Builder<?>>, WebEndpointMapping.Builder<?>> prevAndCurrentBuilderConsumer) {
-        LinkedList<Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
+    private void doInBuilderStack(BiConsumer<Optional<Builder<?>>, Builder<?>> prevAndCurrentBuilderConsumer) {
+        LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
         int size = size(stack);
 
-        Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> currentEntry = stack.getFirst();
+        Entry<RequestPredicate, Builder<?>> currentEntry = stack.getFirst();
 
         if (size == 1) {
-            prevAndCurrentBuilderConsumer.accept(Optional.empty(), currentEntry.getValue());
+            prevAndCurrentBuilderConsumer.accept(empty(), currentEntry.getValue());
             return;
         }
-        Map.Entry<RequestPredicate, WebEndpointMapping.Builder<?>> prevEntry = stack.get(1);
-        prevAndCurrentBuilderConsumer.accept(Optional.of(prevEntry.getValue()), currentEntry.getValue());
+
+        Entry<RequestPredicate, Builder<?>> prevEntry = stack.get(1);
+        prevAndCurrentBuilderConsumer.accept(of(prevEntry.getValue()), currentEntry.getValue());
     }
 }

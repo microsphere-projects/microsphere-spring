@@ -17,6 +17,7 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.annotation.Nonnull;
+import io.microsphere.spring.web.metadata.WebEndpointMapping.Builder;
 import io.microsphere.spring.web.metadata.WebEndpointMapping.Kind;
 
 import javax.servlet.FilterRegistration;
@@ -56,10 +57,12 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
         String className = registration.getClassName();
         Collection<String> methods = getMethods(registration);
         Collection<String> patterns = getPatterns(registration);
-        WebEndpointMapping.Builder<String> builder = of(kind, endpoint)
+        Builder<String> builder = of(kind);
+        builder.endpoint(endpoint)
                 .patterns(patterns)
                 .methods(methods)
-                .source(className);
+                .source(className)
+        ;
         contribute(endpoint, servletContext, builder);
         return builder.build();
     }
@@ -95,14 +98,14 @@ public abstract class RegistrationWebEndpointMappingFactory<R extends Registrati
     protected abstract Collection<String> getPatterns(R registration);
 
     /**
-     * Contribute the {@link WebEndpointMapping.Builder} to create an instance of {@link WebEndpointMapping}
+     * Contribute the {@link Builder} to create an instance of {@link WebEndpointMapping}
      *
      * @param endpoint       the name of {@link R Registration}
      * @param servletContext {@link ServletContext}
-     * @param builder        {@link WebEndpointMapping.Builder}
+     * @param builder        {@link Builder}
      * @throws Throwable an error if contribution failed
      */
-    protected void contribute(String endpoint, ServletContext servletContext, WebEndpointMapping.Builder<String> builder) throws Throwable {
+    protected void contribute(String endpoint, ServletContext servletContext, Builder<String> builder) throws Throwable {
         // The sub-class implements the current method
     }
 }

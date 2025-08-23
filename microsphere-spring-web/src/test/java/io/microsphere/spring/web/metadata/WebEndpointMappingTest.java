@@ -76,42 +76,42 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testServlet() {
-        WebEndpointMapping mapping = minBuilder(servlet(this)).build();
+        WebEndpointMapping mapping = minBuilder(servlet().endpoint(this)).build();
         assertMinMapping(mapping, SERVLET);
     }
 
     @Test
     public void testFilter() {
-        WebEndpointMapping mapping = minBuilder(filter(this)).build();
+        WebEndpointMapping mapping = minBuilder(filter().endpoint(this)).build();
         assertMinMapping(mapping, FILTER);
     }
 
     @Test
     public void testWebMVC() {
-        WebEndpointMapping mapping = minBuilder(webmvc(this)).build();
+        WebEndpointMapping mapping = minBuilder(webmvc().endpoint(this)).build();
         assertMinMapping(mapping, WEB_MVC);
     }
 
     @Test
     public void testWebFlux() {
-        WebEndpointMapping mapping = minBuilder(webflux(this)).build();
+        WebEndpointMapping mapping = minBuilder(webflux().endpoint(this)).build();
         assertMinMapping(mapping, WEB_FLUX);
     }
 
     @Test
     public void testCustomized() {
-        WebEndpointMapping mapping = minBuilder(customized(this)).build();
+        WebEndpointMapping mapping = minBuilder(customized().endpoint(this)).build();
         assertMinMapping(mapping, CUSTOMIZED);
     }
 
     @Test
     public void testBuildWithoutPatterns() {
-        assertThrows(IllegalArgumentException.class, servlet(this)::build);
+        assertThrows(IllegalArgumentException.class, servlet().endpoint(this)::build);
     }
 
     @Test
     public void testBuildWithoutMethods() {
-        assertThrows(IllegalArgumentException.class, servlet(this).patterns(TEST_URL_PATTERNS)::build);
+        assertThrows(IllegalArgumentException.class, servlet().endpoint(this).patterns(TEST_URL_PATTERNS)::build);
     }
 
     @Test
@@ -122,7 +122,8 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testPattern() {
-        WebEndpointMapping mapping = of(SERVLET, this)
+        WebEndpointMapping mapping = of(SERVLET)
+                .endpoint(this)
                 .method(GET)
                 .pattern("/test/1")
                 .pattern("/test/2")
@@ -359,7 +360,8 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testNestPatterns() {
-        WebEndpointMapping mapping = of(SERVLET, this)
+        WebEndpointMapping mapping = of(SERVLET)
+                .endpoint(this)
                 .pattern("/api")
                 .method(GET)
                 .nestPatterns(minServletBuilder()).build();
@@ -535,7 +537,8 @@ public class WebEndpointMappingTest {
     public void testToJSON() throws IOException {
         Resource fullJsonResource = new DefaultResourceLoader().getResource("classpath:META-INF/web-mapping-descriptor.json");
         String fullJson = copyToString(fullJsonResource.getInputStream(), UTF_8);
-        WebEndpointMapping mapping = of(CUSTOMIZED, 1)
+        WebEndpointMapping mapping = of(CUSTOMIZED)
+                .endpoint(1)
                 .patterns("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")
@@ -584,7 +587,7 @@ public class WebEndpointMappingTest {
     }
 
     Builder<?> minBuilder(Kind kind) {
-        return minBuilder(of(kind, this));
+        return minBuilder(of(kind).endpoint(this));
     }
 
     Builder<?> minBuilder(Builder<?> builder) {

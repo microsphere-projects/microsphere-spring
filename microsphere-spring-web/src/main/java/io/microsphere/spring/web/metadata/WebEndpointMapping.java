@@ -199,7 +199,7 @@ public class WebEndpointMapping<E> {
         private final Kind kind;
 
         @Nonnull
-        private final E endpoint;
+        private E endpoint;
 
         @Nullable
         private Object source;
@@ -225,15 +225,36 @@ public class WebEndpointMapping<E> {
         /**
          * Create a new {@link Builder} instance.
          *
-         * @param kind     the {@link Kind} of the endpoint
-         * @param endpoint the endpoint
+         * @param kind the {@link Kind} of the endpoint
          * @throws IllegalArgumentException if the {@code kind} or {@code endpoint} is {@code null}
          */
-        private Builder(Kind kind, E endpoint) throws IllegalArgumentException {
+        private Builder(Kind kind) throws IllegalArgumentException {
             assertNotNull(kind, () -> "The 'kind' must not be null");
-            assertNotNull(endpoint, () -> "The 'endpoint' must not be null");
             this.kind = kind;
+        }
+
+        /**
+         * Set the endpoint for the WebEndpointMapping.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         * // For a servlet endpoint
+         * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
+         * builder.endpoint("myServlet");
+         *
+         * // For a WebFlux endpoint
+         * WebEndpointMapping.Builder<HandlerMethod> webFluxBuilder = WebEndpointMapping.webflux(handlerMethod);
+         * webFluxBuilder.endpoint(handlerMethod);
+         * }</pre>
+         *
+         * @param endpoint the endpoint (must not be null)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the endpoint is null
+         */
+        public Builder<E> endpoint(@Nonnull E endpoint) {
+            assertNotNull(endpoint, () -> "The 'endpoint' must not be null");
             this.endpoint = endpoint;
+            return this;
         }
 
         /**
@@ -1078,6 +1099,8 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public WebEndpointMapping build() throws IllegalArgumentException {
+            assertNotNull(this.endpoint, () -> "The 'endpoint' must not be null");
+
             assertNotEmpty(this.patterns, () -> "The 'pattern' must not be empty");
             assertNoNullElements(this.patterns, "Any element of 'patterns' must not be null");
 
@@ -1099,89 +1122,83 @@ public class WebEndpointMapping<E> {
     }
 
     /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#SERVLET servlet} with specified endpoint.
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#SERVLET servlet}.
      *
-     * @param endpoint the endpoint
-     * @param <E>      the type of endpoint
+     * @param <E> the type of endpoint
      * @return a {@link Builder} of {@link WebEndpointMapping}
      * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
      */
     @Nonnull
-    public static <E> Builder<E> servlet(@Nonnull E endpoint) throws IllegalArgumentException {
-        return of(SERVLET, endpoint);
+    public static <E> Builder<E> servlet() throws IllegalArgumentException {
+        return of(SERVLET);
     }
 
     /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#FILTER filter} with specified endpoint.
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#FILTER filter}.
      *
-     * @param endpoint the endpoint
-     * @param <E>      the type of endpoint
+     * @param <E> the type of endpoint
      * @return a {@link Builder} of {@link WebEndpointMapping}
      * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
      */
     @Nonnull
-    public static <E> Builder<E> filter(@Nonnull E endpoint) throws IllegalArgumentException {
-        return of(FILTER, endpoint);
+    public static <E> Builder<E> filter() throws IllegalArgumentException {
+        return of(FILTER);
     }
 
     /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_MVC webMvc} with specified endpoint.
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_MVC webMvc}.
      *
-     * @param endpoint the endpoint
-     * @param <E>      the type of endpoint
+     * @param <E> the type of endpoint
      * @return a {@link Builder} of {@link WebEndpointMapping}
      * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
      */
     @Nonnull
-    public static <E> Builder<E> webmvc(@Nonnull E endpoint) throws IllegalArgumentException {
-        return of(WEB_MVC, endpoint);
+    public static <E> Builder<E> webmvc() throws IllegalArgumentException {
+        return of(WEB_MVC);
     }
 
     /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_FLUX webFlux} with specified endpoint.
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_FLUX webFlux}.
      *
-     * @param endpoint the endpoint
-     * @param <E>      the type of endpoint
+     * @param <E> the type of endpoint
      * @return a {@link Builder} of {@link WebEndpointMapping}
      * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
      */
     @Nonnull
-    public static <E> Builder<E> webflux(@Nonnull E endpoint) throws IllegalArgumentException {
-        return of(WEB_FLUX, endpoint);
+    public static <E> Builder<E> webflux() throws IllegalArgumentException {
+        return of(WEB_FLUX);
     }
 
     /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#CUSTOMIZED customized} with specified endpoint.
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#CUSTOMIZED customized}.
      *
-     * @param endpoint the endpoint
-     * @param <E>      the type of endpoint
+     * @param <E> the type of endpoint
      * @return a {@link Builder} of {@link WebEndpointMapping}
      * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
      */
     @Nonnull
-    public static <E> Builder<E> customized(@Nonnull E endpoint) throws IllegalArgumentException {
-        return of(CUSTOMIZED, endpoint);
+    public static <E> Builder<E> customized() throws IllegalArgumentException {
+        return of(CUSTOMIZED);
     }
 
     /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} with specified kind and endpoint.
+     * Create a {@link Builder} of {@link WebEndpointMapping} with specified kind.
      *
-     * @param kind     the kind of endpoint
-     * @param endpoint the endpoint
-     * @param <E>      the type of endpoint
+     * @param kind the kind of endpoint
+     * @param <E>  the type of endpoint
      * @return a {@link Builder} of {@link WebEndpointMapping}
      * @throws IllegalArgumentException if the {@code kind} or {@code endpoint} is {@code null}
      */
     @Nonnull
-    public static <E> Builder<E> of(@Nullable Kind kind, @Nullable E endpoint) throws IllegalArgumentException {
-        return new Builder(kind, endpoint);
+    public static <E> Builder<E> of(@Nonnull Kind kind) throws IllegalArgumentException {
+        return new Builder<>(kind);
     }
 
     private WebEndpointMapping(
-            Kind kind,
-            E endpoint,
-            Object source,
-            String[] patterns,
+            @Nonnull Kind kind,
+            @Nonnull E endpoint,
+            @Nullable Object source,
+            @Nonnull String[] patterns,
             @Nullable String[] methods,
             @Nullable String[] params,
             @Nullable String[] headers,
@@ -1256,7 +1273,7 @@ public class WebEndpointMapping<E> {
     /**
      * The id of endpoint
      *
-     * @return 0 if {@link #NON_ENDPOINT no endpoint present}
+     * @return id of endpoint
      */
     public int getId() {
         return id;

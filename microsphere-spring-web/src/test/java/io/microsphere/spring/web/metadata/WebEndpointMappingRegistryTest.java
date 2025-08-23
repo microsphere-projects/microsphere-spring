@@ -40,9 +40,9 @@ import static org.springframework.http.HttpMethod.GET;
  */
 public class WebEndpointMappingRegistryTest {
 
-    private static final WebEndpointMapping mapping = servlet(Object.class).patterns("/*").method(GET).build();
+    private static final WebEndpointMapping mapping = servlet().endpoint(Object.class).patterns("/*").method(GET).build();
 
-    private static final WebEndpointMapping non_mapping = servlet(Object.class).patterns("!/*").method(GET).build();
+    private static final WebEndpointMapping non_mapping = servlet().endpoint(Object.class).patterns("!/*").method(GET).build();
 
 
     static class WebEndpointMappingRegistryImpl implements WebEndpointMappingRegistry {

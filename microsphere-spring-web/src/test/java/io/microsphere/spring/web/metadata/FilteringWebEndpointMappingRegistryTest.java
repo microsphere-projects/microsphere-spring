@@ -75,9 +75,9 @@ public class FilteringWebEndpointMappingRegistryTest {
     @Before
     public void setUp() throws Exception {
         this.webEndpointMappings = ofSet(
-                filter(this).pattern("/a").method(GET).build(),
-                filter(this).pattern("/b").method(GET).build(),
-                filter(this).pattern("/c").method(GET).build()
+                filter().endpoint(this).pattern("/a").method(GET).build(),
+                filter().endpoint(this).pattern("/b").method(GET).build(),
+                filter().endpoint(this).pattern("/c").method(GET).build()
         );
         this.registry = new FilteringWebEndpointMappingRegistryImpl();
     }
