@@ -32,11 +32,18 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static io.microsphere.collection.CollectionUtils.isEmpty;
+import static io.microsphere.collection.CollectionUtils.size;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.ofEntry;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,7 +73,9 @@ public class AdapterTest extends AbstractWebFluxTest {
 
     static class Adapter implements RequestPredicateVisitorAdapter, RouterFunctionVisitorAdapter {
 
-        private final ThreadLocal<Entry<RequestPredicate, Builder<?>>> requestToBuilder = new ThreadLocal<>();
+        private final ThreadLocal<LinkedList<Entry<RequestPredicate, Builder<?>>>> nestedRequestPredicateToBuilderStack = new ThreadLocal<>();
+
+        private final ThreadLocal<Entry<RequestPredicate, Builder<?>>> requestPredicateToBuilder = new ThreadLocal<>();
 
         private final Consumer<WebEndpointMapping> webEndpointMappingConsumer;
 
@@ -76,70 +85,121 @@ public class AdapterTest extends AbstractWebFluxTest {
 
         @Override
         public void method(Set<HttpMethod> methods) {
-            doInBuilder(builder -> builder.methods(methods, HttpMethod::name));
+            doInBuilderStack((prev, current) -> {
+                prev.ifPresent(current::nestMethods);
+                current.methods(methods, HttpMethod::name);
+            });
         }
 
         @Override
         public void path(String pattern) {
-            doInBuilder(builder -> builder.pattern(pattern));
+            doInBuilderStack((prev, current) -> {
+                current.pattern(pattern);
+                prev.ifPresent(current::nestPatterns);
+            });
         }
 
         @Override
         public void header(String name, String value) {
-            doInBuilder(builder -> builder.header(name, value));
+            doInBuilderStack((prev, current) -> {
+                prev.ifPresent(current::nestHeaders);
+                current.header(name, value);
+            });
         }
 
         @Override
         public void queryParam(String name, String value) {
-            doInBuilder(builder -> builder.param(name, value));
+            doInBuilderStack((prev, current) -> {
+                prev.ifPresent(current::nestParams);
+                current.param(name, value);
+            });
         }
 
         @Override
         public void startNested(RequestPredicate predicate) {
-            getOrCreateEntry(predicate);
+            pushRequestPredicateToBuilder(predicate);
             predicate.accept(this);
         }
 
         @Override
         public void endNested(RequestPredicate predicate) {
-            Entry<RequestPredicate, Builder<?>> entry = requestToBuilder.get();
-            clearEntry(entry, predicate);
+            popRequestPredicateToBuilder(predicate);
+            LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
+            if (isEmpty(stack)) {
+                this.nestedRequestPredicateToBuilderStack.remove();
+            }
         }
 
         @Override
         public void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
-            Entry<RequestPredicate, Builder<?>> entry = getOrCreateEntry(predicate);
+            Entry<RequestPredicate, Builder<?>> entry = pushRequestPredicateToBuilder(predicate);
             predicate.accept(this);
-            clearEntry(entry, predicate);
+            popRequestPredicateToBuilder(predicate);
+            buildAndConsumeWebEndpointMapping(entry, handlerFunction);
         }
 
-        private Entry<RequestPredicate, Builder<?>> getOrCreateEntry(RequestPredicate predicate) {
-            Entry<RequestPredicate, Builder<?>> entry = requestToBuilder.get();
-            if (entry == null) {
-                Builder<?> builder = webflux(this);
-                entry = ofEntry(predicate, builder);
-                requestToBuilder.set(entry);
-            }
+
+        private Entry<RequestPredicate, Builder<?>> pushRequestPredicateToBuilder(RequestPredicate predicate) {
+            LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getOrCreateNestedRequestPredicateToBuilderStack();
+            Entry<RequestPredicate, Builder<?>> entry = createRequestPredicateToBuilder(predicate);
+            stack.push(entry);
             return entry;
         }
 
-        private void clearEntry(Entry<RequestPredicate, Builder<?>> entry, RequestPredicate predicate) {
-            if (entry != null) {
-                if (entry.getKey() == predicate) {
-                    requestToBuilder.remove();
-                    Builder<?> builder = entry.getValue();
-                    WebEndpointMapping webEndpointMapping = builder.build();
-                    this.webEndpointMappingConsumer.accept(webEndpointMapping);
+        private void popRequestPredicateToBuilder(RequestPredicate predicate) {
+            LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
+            if (stack != null) {
+                Iterator<Entry<RequestPredicate, Builder<?>>> iterator = stack.iterator();
+                while (iterator.hasNext()) {
+                    Entry<RequestPredicate, Builder<?>> entry = iterator.next();
+                    if (Objects.equals(predicate, entry.getKey())) {
+                        iterator.remove();
+                        break;
+                    }
                 }
             }
         }
 
-        private void doInBuilder(Consumer<Builder<?>> builderConsumer) {
-            Entry<RequestPredicate, Builder<?>> entry = requestToBuilder.get();
-            if (entry != null) {
-                Builder<?> builder = entry.getValue();
-                builderConsumer.accept(builder);
+        private void buildAndConsumeWebEndpointMapping(Entry<RequestPredicate, Builder<?>> entry, HandlerFunction<?> handlerFunction) {
+            Builder<?> builder = entry.getValue();
+            builder.source(handlerFunction);
+            WebEndpointMapping webEndpointMapping = builder.build();
+            this.webEndpointMappingConsumer.accept(webEndpointMapping);
+        }
+
+        private LinkedList<Entry<RequestPredicate, Builder<?>>> getOrCreateNestedRequestPredicateToBuilderStack() {
+            LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
+            if (stack == null) {
+                stack = newLinkedList();
+                this.nestedRequestPredicateToBuilderStack.set(stack);
             }
+            return stack;
+        }
+
+        private LinkedList<Entry<RequestPredicate, Builder<?>>> getNestedRequestPredicateToBuilderStack() {
+            return this.nestedRequestPredicateToBuilderStack.get();
+        }
+
+        private Entry<RequestPredicate, Builder<?>> createRequestPredicateToBuilder(RequestPredicate predicate) {
+            Builder<?> builder = webflux(this);
+            return ofEntry(predicate, builder);
+        }
+
+        private void doInBuilderStack(BiConsumer<Optional<Builder<?>>, Builder<?>> prevAndCurrentBuilderConsumer) {
+            LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
+            int size = size(stack);
+            if (size == 0) {
+                return;
+            }
+
+            Entry<RequestPredicate, Builder<?>> currentEntry = stack.getFirst();
+
+            if (size == 1) {
+                prevAndCurrentBuilderConsumer.accept(Optional.empty(), currentEntry.getValue());
+                return;
+            }
+            Entry<RequestPredicate, Builder<?>> prevEntry = stack.get(1);
+            prevAndCurrentBuilderConsumer.accept(Optional.of(prevEntry.getValue()), currentEntry.getValue());
         }
     }
 }
