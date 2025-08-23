@@ -1095,7 +1095,7 @@ public class WebEndpointMapping<E> {
          * Build {@link WebEndpointMapping}
          *
          * @return non-null
-         * @throws IllegalArgumentException if "patterns" or "methods" is empty or has any null element
+         * @throws IllegalArgumentException if "endpoint" or "patterns" or "methods" is empty or has any null element
          */
         @Nonnull
         public WebEndpointMapping build() throws IllegalArgumentException {
