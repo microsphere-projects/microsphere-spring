@@ -54,6 +54,8 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
@@ -342,6 +344,12 @@ public class WebEndpointMappingTest {
     }
 
     @Test
+    public void testProducesOnDefault() {
+        WebEndpointMapping mapping = minServletBuilder().build();
+        assertSame(EMPTY_STRING_ARRAY, mapping.getProduces());
+    }
+
+    @Test
     public void testSource() {
         WebEndpointMapping mapping = minServletBuilder()
                 .source(this)
@@ -350,9 +358,50 @@ public class WebEndpointMappingTest {
     }
 
     @Test
-    public void testProducesOnDefault() {
-        WebEndpointMapping mapping = minServletBuilder().build();
-        assertSame(EMPTY_STRING_ARRAY, mapping.getProduces());
+    public void testNestPatterns() {
+        WebEndpointMapping mapping = of(SERVLET, this)
+                .pattern("/api")
+                .method(GET)
+                .nestPatterns(minServletBuilder()).build();
+        assertArrayEquals(ofArray("/test/api"), mapping.getPatterns());
+    }
+
+    @Test
+    public void testNestMethods() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .nestMethods(minServletBuilder().method(GET)).build();
+        assertArrayEquals(ofArray("OPTIONS", "GET"), mapping.getMethods());
+    }
+
+    @Test
+    public void testNestParams() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .nestParams(minServletBuilder().param("name1", "value1")).build();
+        assertArrayEquals(ofArray("name1=value1"), mapping.getParams());
+    }
+
+    @Test
+    public void testNestHeaders() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .header("name1", "value1")
+                .nestHeaders(minServletBuilder().header("name1", "value1")).build();
+        assertArrayEquals(ofArray("name1=value1"), mapping.getHeaders());
+    }
+
+    @Test
+    public void testNestConsumes() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .consume(APPLICATION_JSON)
+                .nestConsumes(minServletBuilder().consume(APPLICATION_XML)).build();
+        assertArrayEquals(ofArray(APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE), mapping.getConsumes());
+    }
+
+    @Test
+    public void testNestProduces() {
+        WebEndpointMapping mapping = minServletBuilder()
+                .produce(APPLICATION_JSON)
+                .nestProduces(minServletBuilder().produce(APPLICATION_XML)).build();
+        assertArrayEquals(ofArray(APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE), mapping.getProduces());
     }
 
     @Test
