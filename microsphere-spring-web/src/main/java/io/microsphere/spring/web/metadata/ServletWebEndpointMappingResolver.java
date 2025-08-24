@@ -26,6 +26,7 @@ import javax.servlet.ServletRegistration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -68,7 +69,7 @@ public class ServletWebEndpointMappingResolver implements WebEndpointMappingReso
         }
 
         FilterRegistrationWebEndpointMappingFactory factory = new FilterRegistrationWebEndpointMappingFactory(servletContext);
-        for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
+        for (Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
             String filterName = entry.getKey();
             Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(filterName);
             webEndpointMapping.ifPresent(webEndpointMappings::add);
@@ -82,7 +83,7 @@ public class ServletWebEndpointMappingResolver implements WebEndpointMappingReso
         }
 
         ServletRegistrationWebEndpointMappingFactory factory = new ServletRegistrationWebEndpointMappingFactory(servletContext);
-        for (Map.Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
+        for (Entry<String, ? extends ServletRegistration> entry : servletRegistrations.entrySet()) {
             String servletName = entry.getKey();
             Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create(servletName);
             webEndpointMapping.ifPresent(webEndpointMappings::add);
