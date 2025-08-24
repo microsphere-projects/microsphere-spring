@@ -25,10 +25,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_NAME;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
 import static io.microsphere.spring.test.web.servlet.TestServlet.SERVLET_CLASS_NAME;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -40,10 +43,16 @@ import static org.junit.Assert.assertSame;
  */
 public class TestServletTest {
 
+    private MockHttpServletRequest request;
+
+    private MockHttpServletResponse response;
+
     private TestServlet testServlet;
 
     @Before
     public void setUp() throws Exception {
+        this.request = new MockHttpServletRequest();
+        this.response = new MockHttpServletResponse();
         this.testServlet = new TestServlet();
     }
 
@@ -56,31 +65,42 @@ public class TestServletTest {
 
     @Test
     public void testDoGet() throws ServletException, IOException {
-        testServlet.doGet(new MockHttpServletRequest(), new MockHttpServletResponse());
+        this.testServlet.doGet(this.request, this.response);
+        assertResponse();
     }
 
     @Test
     public void testDoHead() throws ServletException, IOException {
-        testServlet.doHead(new MockHttpServletRequest(), new MockHttpServletResponse());
+        this.testServlet.doHead(this.request, this.response);
+        assertResponse();
     }
 
     @Test
     public void testDoPost() throws ServletException, IOException {
-        testServlet.doPost(new MockHttpServletRequest(), new MockHttpServletResponse());
+        this.testServlet.doPost(this.request, this.response);
+        assertResponse();
     }
 
     @Test
     public void testDoPut() throws ServletException, IOException {
-        testServlet.doPut(new MockHttpServletRequest(), new MockHttpServletResponse());
+        this.testServlet.doPut(this.request, this.response);
+        assertResponse();
     }
 
     @Test
     public void testDoDelete() throws ServletException, IOException {
-        testServlet.doDelete(new MockHttpServletRequest(), new MockHttpServletResponse());
+        this.testServlet.doDelete(this.request, this.response);
+        assertResponse();
     }
 
     @Test
     public void testDoService() throws ServletException, IOException {
-        testServlet.doService(new MockHttpServletRequest(), new MockHttpServletResponse());
+        this.testServlet.doService(this.request, this.response);
+        assertResponse();
+    }
+
+    private void assertResponse() throws UnsupportedEncodingException {
+        assertEquals(SC_OK, response.getStatus());
+        assertEquals("Hello World!", this.response.getContentAsString());
     }
 }
