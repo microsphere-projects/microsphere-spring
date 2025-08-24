@@ -24,6 +24,7 @@ import org.springframework.core.env.PropertyResolver;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.shallowCloneMap;
@@ -60,7 +61,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
             return source;
         }
         Map<String, Object> copy = shallowCloneMap(source);
-        for (Map.Entry<String, Object> entry : copy.entrySet()) {
+        for (Entry<String, Object> entry : copy.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof String) {
                 entry.setValue(resolvePlaceholder((String) value, propertyResolver));
