@@ -55,7 +55,7 @@ class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
     @Test
     void testResolve() {
         Collection<WebEndpointMapping> webEndpointMappings = resolver.resolve(context);
-        assertEquals(5, webEndpointMappings.size());
+        assertEquals(10, webEndpointMappings.size());
     }
 
 }
