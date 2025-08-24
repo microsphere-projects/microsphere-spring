@@ -45,6 +45,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -104,7 +105,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
         Map<String, Set<String>> dependenciesMap = new LinkedHashMap<>(dependentBeanNamesMap.size());
-        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
             if (dependentBeanNames.isEmpty()) { // No Dependent bean name
                 continue;
@@ -118,7 +119,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         }
 
         // Remove the bean names that ware dependent by the requesting beans
-        for (Map.Entry<String, Set<String>> entry : dependenciesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependenciesMap.entrySet()) {
             String dependentBeanName = entry.getKey();
             dependentBeanNamesMap.remove(dependentBeanName);
             logDependenciesTrace(dependentBeanName, entry);
@@ -128,7 +129,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     }
 
 
-    private void logDependenciesTrace(String dependentBeanName, Map.Entry<String, Set<String>> dependencies) {
+    private void logDependenciesTrace(String dependentBeanName, Entry<String, Set<String>> dependencies) {
         if (logger.isTraceEnabled()) {
             logger.trace("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
         }
@@ -137,7 +138,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
         if (logger.isTraceEnabled()) {
-            for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+            for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
                 logger.trace("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
             }
         }
