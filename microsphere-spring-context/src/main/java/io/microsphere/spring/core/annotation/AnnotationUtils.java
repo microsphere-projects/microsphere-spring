@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.isNotEmpty;
@@ -163,7 +164,7 @@ public abstract class AnnotationUtils {
 
         Map<String, Object> actualAttributes = new LinkedHashMap<>();
 
-        for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
+        for (Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
 
             String attributeName = annotationAttribute.getKey();
             Object attributeValue = annotationAttribute.getValue();
@@ -211,7 +212,7 @@ public abstract class AnnotationUtils {
 
             List<String> attributeNamesToIgnore = new LinkedList<>(asList(ignoreAttributeNames));
 
-            for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
+            for (Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
                 String attributeName = annotationAttribute.getKey();
                 Object attributeValue = annotationAttribute.getValue();
                 if (nullSafeEquals(attributeValue, getDefaultValue(annotation, attributeName))) {
