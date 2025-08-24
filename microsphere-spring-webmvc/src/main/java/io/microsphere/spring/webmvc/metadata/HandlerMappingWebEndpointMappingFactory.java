@@ -52,7 +52,8 @@ public abstract class HandlerMappingWebEndpointMappingFactory<H, M> extends Abst
         M metadata = getMetadata(handlerMetadata);
         Collection<String> methods = getMethods(handler, metadata);
         Collection<String> patterns = getPatterns(handler, metadata);
-        WebEndpointMapping.Builder builder = webmvc(handler)
+        WebEndpointMapping.Builder builder = webmvc()
+                .endpoint(handler)
                 .patterns(patterns)
                 .methods(methods)
                 .source(handlerMapping);
