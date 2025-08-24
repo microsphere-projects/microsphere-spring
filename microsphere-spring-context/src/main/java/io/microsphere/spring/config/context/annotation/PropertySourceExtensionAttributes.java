@@ -26,6 +26,7 @@ import org.springframework.core.io.support.PropertySourceFactory;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.microsphere.util.ExceptionUtils.create;
 import static java.lang.Boolean.TRUE;
@@ -104,7 +105,7 @@ public class PropertySourceExtensionAttributes<A extends Annotation> extends Res
                 .append(getAnnotationType().getName())
                 .append("(");
 
-        for (Map.Entry<String, Object> entry : entrySet()) {
+        for (Entry<String, Object> entry : entrySet()) {
             String name = entry.getKey();
             Object value = entry.getValue();
             boolean isStringValue = value instanceof String;
