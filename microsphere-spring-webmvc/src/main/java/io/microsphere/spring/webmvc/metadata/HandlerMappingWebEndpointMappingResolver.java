@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -69,7 +70,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
             }
 
             HandlerMetadataWebEndpointMappingFactory factory = new HandlerMetadataWebEndpointMappingFactory(urlHandlerMapping);
-            for (Map.Entry<String, Object> entry : handlerMap.entrySet()) {
+            for (Entry<String, Object> entry : handlerMap.entrySet()) {
                 HandlerMetadata<Object, String> metadata = new HandlerMetadata<>(entry.getValue(), entry.getKey());
                 Optional<WebEndpointMapping<HandlerMetadata<Object, String>>> webEndpointMapping = factory.create(metadata);
                 webEndpointMapping.ifPresent(webEndpointMappings::add);
@@ -88,7 +89,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
             }
 
             RequestMappingMetadataWebEndpointMappingFactory factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
-            for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodsMap.entrySet()) {
+            for (Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodsMap.entrySet()) {
                 RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
                 Optional<WebEndpointMapping<HandlerMetadata<HandlerMethod, RequestMappingInfo>>> webEndpointMapping = factory.create(metadata);
                 webEndpointMapping.ifPresent(webEndpointMappings::add);
