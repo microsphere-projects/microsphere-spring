@@ -28,9 +28,9 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static io.microsphere.collection.ListUtils.newLinkedList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link ConsumingWebEndpointMappingAdapter} Test
@@ -50,9 +50,9 @@ public class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest 
     void test() {
         RouterFunctionMapping routerFunctionMapping = context.getBean(RouterFunctionMapping.class);
         RouterFunction<?> routerFunction = routerFunctionMapping.getRouterFunction();
-        Collection<WebEndpointMapping> webEndpointMappings = new LinkedList<>();
+        Collection<WebEndpointMapping> webEndpointMappings = newLinkedList();
         routerFunction.accept(new ConsumingWebEndpointMappingAdapter(webEndpointMappings::add));
-        assertFalse(webEndpointMappings.isEmpty());
+        assertEquals(5, webEndpointMappings.size());
     }
 
 }
