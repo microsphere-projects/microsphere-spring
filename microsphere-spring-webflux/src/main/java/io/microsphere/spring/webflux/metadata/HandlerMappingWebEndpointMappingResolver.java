@@ -21,6 +21,7 @@ import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.HandlerMethodMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
+import io.microsphere.spring.webflux.function.server.ConsumingWebEndpointMappingAdapter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerMapping;
@@ -34,6 +35,7 @@ import org.springframework.web.util.pattern.PathPattern;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -74,7 +76,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
             }
 
             HandlerMetadataWebEndpointMappingFactory factory = new HandlerMetadataWebEndpointMappingFactory(urlHandlerMapping);
-            for (Map.Entry<PathPattern, Object> entry : handlerMap.entrySet()) {
+            for (Entry<PathPattern, Object> entry : handlerMap.entrySet()) {
                 PathPattern pathPattern = entry.getKey();
                 Object handler = entry.getValue();
                 HandlerMetadata<Object, String> metadata = new HandlerMetadata<>(handler, pathPattern.getPatternString());
@@ -95,7 +97,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
             }
 
             RequestMappingMetadataWebEndpointMappingFactory factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
-            for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodsMap.entrySet()) {
+            for (Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodsMap.entrySet()) {
                 HandlerMethodMetadata<RequestMappingInfo> metadata = new HandlerMethodMetadata<>(entry.getValue(), entry.getKey());
                 Optional<WebEndpointMapping<HandlerMetadata<HandlerMethod, RequestMappingInfo>>> webEndpointMapping = factory.create(metadata);
                 webEndpointMapping.ifPresent(webEndpointMappings::add);
@@ -108,6 +110,9 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         if (handlerMapping instanceof RouterFunctionMapping) {
             RouterFunctionMapping routerFunctionMapping = (RouterFunctionMapping) handlerMapping;
             RouterFunction<?> routerFunction = routerFunctionMapping.getRouterFunction();
+            if (routerFunction != null) {
+                routerFunction.accept(new ConsumingWebEndpointMappingAdapter(webEndpointMappings::add, routerFunction));
+            }
         }
     }
 }
