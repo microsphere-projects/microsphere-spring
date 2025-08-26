@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static io.microsphere.collection.Lists.ofList;
@@ -54,6 +53,7 @@ import static io.microsphere.util.Assert.assertNotBlank;
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
 import static io.microsphere.util.Assert.assertTrue;
+import static io.microsphere.util.IterableUtils.iterate;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.function.Function.identity;
 import static org.springframework.http.HttpHeaders.ACCEPT;
@@ -1062,14 +1062,6 @@ public class WebEndpointMapping<E> {
             assertNotNull(one, () -> "The 'one' Builder must not be null!");
             assertNotNull(other, () -> "The 'other' Builder must not be null!");
             assertTrue(one.kind == other.kind, () -> format("The Kind does not match[one : {} , other : {}]", one.kind, other.kind));
-        }
-
-        static <E> void iterate(Iterable<E> elements, Consumer<E> elementConsumer) {
-            if (elements != null) {
-                for (E element : elements) {
-                    elementConsumer.accept(element);
-                }
-            }
         }
 
         protected static Set<String> newSet() {
