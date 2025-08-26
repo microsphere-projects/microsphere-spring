@@ -43,6 +43,8 @@ public enum AttributeScope {
 
     /**
      * Request Scope
+     *
+     * @see RequestAttributes#SCOPE_REQUEST
      */
     REQUEST(SCOPE_REQUEST) {
         @Override
@@ -53,6 +55,8 @@ public enum AttributeScope {
 
     /**
      * Session Scope
+     *
+     * @see RequestAttributes#SCOPE_SESSION
      */
     SESSION(SCOPE_SESSION) {
         @Override
