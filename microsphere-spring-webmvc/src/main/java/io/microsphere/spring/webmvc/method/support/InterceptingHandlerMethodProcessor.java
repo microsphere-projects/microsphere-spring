@@ -24,6 +24,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -51,7 +52,7 @@ import java.util.Map;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
-import static io.microsphere.spring.webmvc.util.WebMvcUtils.getHandlerMethodArguments;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static java.util.Collections.emptyList;
 
 /**
@@ -345,7 +346,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private Object[] getArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
-        return getHandlerMethodArguments(request, handlerMethod);
+        return WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
     }
 
     private Object[] resolveArguments(MethodParameter parameter, Object argument, NativeWebRequest webRequest) {
