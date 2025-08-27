@@ -19,6 +19,7 @@ package io.microsphere.spring.webflux.annotation;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
+import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -48,27 +49,29 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
         AnnotationAttributes attributes = getAttributes(metadata);
 
-        registerWebEndpointMappings(attributes, registry);
+        registerWebEndpointMappingResolver(attributes, registry);
 
-        registerDelegatingHandlerMethodAdvice(attributes, registry);
+        registerInterceptingHandlerMethodProcessor(attributes, registry);
 
-        registerEventPublishingProcessor(attributes, registry);
     }
 
 
-    private void registerWebEndpointMappings(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+    private void registerWebEndpointMappingResolver(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
             registerBeanDefinition(registry, HandlerMappingWebEndpointMappingResolver.class);
         }
     }
 
-    private void registerDelegatingHandlerMethodAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-
-    }
-
-    private void registerEventPublishingProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-
+    private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean interceptHandlerMethods = attributes.getBoolean("interceptHandlerMethods");
+        if (interceptHandlerMethods) {
+            String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
+            registerBeanDefinition(registry, beanName, InterceptingHandlerMethodProcessor.class);
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("@EnableWebMvcExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
+        }
     }
 
     private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
