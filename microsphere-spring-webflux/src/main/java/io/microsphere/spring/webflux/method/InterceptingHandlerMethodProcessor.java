@@ -28,11 +28,11 @@ import io.microsphere.spring.webflux.context.request.ServerWebRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.reactive.BindingContext;
+import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.HandlerResult;
 import org.springframework.web.reactive.HandlerResultHandler;
 import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver;
@@ -41,15 +41,18 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
+import static java.util.Collections.emptyList;
 import static reactor.core.publisher.Mono.empty;
+import static reactor.core.publisher.Mono.error;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
@@ -75,9 +78,9 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private final Map<MethodParameter, ReturnTypeContext> returnTypeContextsCache = new HashMap<>(256);
 
-    private List<HandlerMethodAdvice> handlerMethodAdvices;
+    private List<HandlerMethodAdvice> handlerMethodAdvices = emptyList();
 
-    private int advicesSize = 0;
+    private List<HandlerResultHandler> handlerResultHandlers = emptyList();
 
     static class MethodParameterContext {
 
@@ -101,12 +104,24 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     protected void onApplicationContextEvent(WebEndpointMappingsReadyEvent event) {
         ApplicationContext context = event.getApplicationContext();
         initHandlerMethodAdvices(context);
+        initHandlerResultHandlers(context);
         initRequestMappingHandlerAdapters(event, context);
     }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return true;
+        return this.parameterContextsCache.containsKey(parameter);
+    }
+
+    @Override
+    public boolean supports(HandlerResult result) {
+        for (int i = 1; i < handlerResultHandlers.size(); i++) {
+            HandlerResultHandler handler = handlerResultHandlers.get(i);
+            if (handler.supports(result)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -121,58 +136,73 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
         ServerWebRequest webRequest = new ServerWebRequest(exchange);
 
-        beforeResolveArgument(parameter, webRequest, methodParameterContext);
+        Mono<Object> result;
 
-        Object argument = resolver.resolveArgument(parameter, bindingContext, exchange);
+        try {
+            beforeResolveArgument(parameter, webRequest, methodParameterContext);
 
-        afterResolveArgument(parameter, argument, webRequest, methodParameterContext);
+            result = resolver.resolveArgument(parameter, bindingContext, exchange);
 
-        beforeExecute(parameter, methodParameterContext, webRequest, argument);
+            Object argument = result.toFuture().get();
 
-        return argument;
+            afterResolveArgument(parameter, argument, webRequest, methodParameterContext);
+
+            beforeExecute(parameter, methodParameterContext, webRequest, argument);
+
+        } catch (Exception e) {
+            result = error(e);
+        }
+
+        return result;
     }
 
-    @Override
-    public boolean supports(HandlerResult result) {
-        return true;
-    }
 
     @Override
-    public Mono<Void> handleResult(ServerWebExchange exchange, HandlerResult result) {
-        ReturnTypeContext context = getReturnTypeContext(result);
+    public Mono<Void> handleResult(ServerWebExchange exchange, HandlerResult handlerResult) {
+        ReturnTypeContext context = getReturnTypeContext(handlerResult);
         if (context == null) {
-            logger.trace("The ReturnTypeContext can't be found by the return type[{}]", returnType);
+            logger.trace("The ReturnTypeContext can't be found by the return type[{}]", handlerResult.getReturnTypeSource());
             return empty();
         }
+
+        NativeWebRequest webRequest = new ServerWebRequest(exchange);
 
         HandlerResultHandler handler = context.handler;
 
         HandlerMethod handlerMethod = context.method;
 
-        afterExecute(webRequest, handlerMethod, context);
-
-        handler.handleResult(exchange, result);
-        return null;
+        Mono<Void> result;
+        try {
+            result = handler.handleResult(exchange, handlerResult);
+            afterExecute(webRequest, handlerMethod, context);
+        } catch (Exception e) {
+            result = error(e);
+        }
+        return result;
     }
-
 
     private void initHandlerMethodAdvices(ApplicationContext context) {
         this.handlerMethodAdvices = getSortedBeans(context, HandlerMethodAdvice.class);
-        this.advicesSize = handlerMethodAdvices.size();
+    }
+
+    private void initHandlerResultHandlers(ApplicationContext context) {
+        this.handlerResultHandlers = getHandlerResultHandlers(context);
+        this.handlerResultHandlers.add(0, this);
     }
 
     private void initRequestMappingHandlerAdapters(WebEndpointMappingsReadyEvent event, ApplicationContext context) {
         Collection<WebEndpointMapping> mappings = event.getMappings();
         List<RequestMappingHandlerAdapter> adapters = getSortedBeans(context, RequestMappingHandlerAdapter.class);
+        List<HandlerResultHandler> handlers = this.handlerResultHandlers;
         for (int i = 0; i < adapters.size(); i++) {
             RequestMappingHandlerAdapter adapter = adapters.get(i);
-            initRequestMappingHandlerAdapter(adapter, mappings);
+            initRequestMappingHandlerAdapter(adapter, handlers, mappings);
         }
     }
 
-    private void initRequestMappingHandlerAdapter(RequestMappingHandlerAdapter adapter, Collection<WebEndpointMapping> webEndpointMappings) {
-        List<HandlerMethodArgumentResolver> resolvers = adapter.getArgumentResolvers();
-        List<HandlerMethodReturnValueHandler> handlers = adapter.getReturnValueHandlers();
+    private void initRequestMappingHandlerAdapter(RequestMappingHandlerAdapter adapter, List<HandlerResultHandler> handlers,
+                                                  Collection<WebEndpointMapping> webEndpointMappings) {
+        List<HandlerMethodArgumentResolver> resolvers = getHandlerMethodArgumentResolvers(adapter);
         for (WebEndpointMapping webEndpointMapping : webEndpointMappings) {
             Object endpoint = webEndpointMapping.getEndpoint();
             if (endpoint instanceof HandlerMethod) {
@@ -187,19 +217,18 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                 initReturnTypeContextsCache(handlerMethod, handlers);
             }
         }
+        resolvers.add(0, this);
+    }
 
-        List<HandlerMethodArgumentResolver> newResolvers = new ArrayList<>(resolvers.size() + 1);
-        // Current instance is the first element, others as the fallback if first can't resolve
-        newResolvers.add(this);
-        newResolvers.addAll(resolvers);
 
-        List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>(handlers.size() + 1);
-        // Current instance is the first element, others as the fallback if first can't handle
-        newHandlers.add(this);
-        newHandlers.addAll(handlers);
+    private List<HandlerResultHandler> getHandlerResultHandlers(ApplicationContext context) {
+        DispatcherHandler dispatcherHandler = context.getBean(DispatcherHandler.class);
+        return getFieldValue(dispatcherHandler, "resultHandlers");
+    }
 
-        adapter.setArgumentResolvers(newResolvers);
-        adapter.setReturnValueHandlers(newHandlers);
+    private List<HandlerMethodArgumentResolver> getHandlerMethodArgumentResolvers(RequestMappingHandlerAdapter adapter) {
+        Object methodResolver = getFieldValue(adapter, "methodResolver");
+        return getFieldValue(methodResolver, "requestMappingResolvers");
     }
 
     private void initMethodParameterContextsCache(MethodParameter methodParameter, HandlerMethod handlerMethod,
@@ -214,8 +243,8 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         }
     }
 
-    private void initReturnTypeContextsCache(HandlerMethod handlerMethod, List<HandlerMethodReturnValueHandler> handlers) {
-        HandlerMethodReturnValueHandler handler = resolveReturnValueHandler(handlerMethod, handlers);
+    private void initReturnTypeContextsCache(HandlerMethod handlerMethod, List<HandlerResultHandler> handlers) {
+        HandlerResultHandler handler = resolveHandlerResultHandler(handlerMethod, handlers);
         if (handler != null) {
             ReturnTypeContext context = new ReturnTypeContext();
             context.method = handlerMethod;
@@ -240,7 +269,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private void beforeResolveArgument(MethodParameter parameter, NativeWebRequest webRequest, MethodParameterContext methodParameterContext) throws Exception {
-        for (int i = 0; i < advicesSize; i++) {
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
             HandlerMethod handlerMethod = methodParameterContext.method;
             handlerMethodAdvice.beforeResolveArgument(parameter, handlerMethod, webRequest);
@@ -248,7 +277,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private void afterResolveArgument(MethodParameter parameter, Object argument, NativeWebRequest webRequest, MethodParameterContext methodParameterContext) throws Exception {
-        for (int i = 0; i < advicesSize; i++) {
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
             HandlerMethod handlerMethod = methodParameterContext.method;
             handlerMethodAdvice.afterResolveArgument(parameter, argument, handlerMethod, webRequest);
@@ -258,15 +287,15 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private void beforeExecute(MethodParameter parameter, MethodParameterContext methodParameterContext,
                                NativeWebRequest webRequest, Object argument) throws Exception {
-        HandlerMethodAdvice facade = this.handlerMethodAdvices;
-        if (facade != null) {
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
+            HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
             int parameterCount = methodParameterContext.parameterCount;
             Object[] arguments = resolveArguments(parameter, argument, webRequest);
 
             int parameterIndex = parameter.getParameterIndex();
             if (parameterIndex == parameterCount - 1) {
                 HandlerMethod handlerMethod = methodParameterContext.method;
-                facade.beforeExecuteMethod(handlerMethod, arguments, webRequest);
+                handlerMethodAdvice.beforeExecuteMethod(handlerMethod, arguments, webRequest);
             }
         }
     }
@@ -282,29 +311,24 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         afterExecute(webRequest, handlerMethod, args, returnValue, null);
     }
 
-    private void afterExecute(HttpServletRequest request, Object handler, @Nullable Exception error) throws Exception {
+    private void afterExecute(NativeWebRequest webRequest, Object handler, @Nullable Exception error) throws Exception {
         HandlerMethod handlerMethod = resolveHandlerMethod(handler);
         if (handlerMethod != null) {
-            ServletWebRequest webRequest = new ServletWebRequest(request);
-            Object[] arguments = getArguments(request, handlerMethod);
+            Object[] arguments = getArguments(webRequest, handlerMethod);
             afterExecute(webRequest, handlerMethod, arguments, null, error);
         }
     }
 
     private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments,
                               @Nullable Object returnValue, @Nullable Exception error) throws Exception {
-        HandlerMethodAdvice facade = this.handlerMethodAdvices;
-        if (facade != null) {
-            facade.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
+        for (int i = 0; i < this.handlerMethodAdvices.size(); i++) {
+            HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
+            handlerMethodAdvice.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
         }
     }
 
     private Object[] getArguments(NativeWebRequest webRequest, HandlerMethod handlerMethod) {
         return getHandlerMethodArguments(webRequest, handlerMethod);
-    }
-
-    private Object[] getArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
-        return getHandlerMethodArguments(request, handlerMethod);
     }
 
     private Object[] resolveArguments(MethodParameter parameter, Object argument, NativeWebRequest webRequest) {
@@ -337,19 +361,21 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return targetResolver;
     }
 
-    private HandlerMethodReturnValueHandler resolveReturnValueHandler(HandlerMethod methodParameter, List<HandlerMethodReturnValueHandler> handlers) {
-        MethodParameter returnType = methodParameter.getReturnType();
+    private HandlerResultHandler resolveHandlerResultHandler(HandlerMethod handlerMethod, List<HandlerResultHandler> handlers) {
+        MethodParameter returnType = handlerMethod.getReturnType();
+        HandlerResult handlerResult = new HandlerResult(handlerMethod, null, returnType);
         int size = handlers.size();
-        HandlerMethodReturnValueHandler targetHandler = null;
-        for (int i = 0; i < size; i++) {
-            HandlerMethodReturnValueHandler handler = handlers.get(i);
-            if (handler.supportsReturnType(returnType)) {
+        HandlerResultHandler targetHandler = null;
+        for (int i = 1; i < size; i++) {
+            HandlerResultHandler handler = handlers.get(i);
+            if (handler.supports(handlerResult)) {
                 // Put the first HandlerMethodReturnValueHandler instance
                 if (targetHandler == null) {
                     targetHandler = handler;
+                    break;
                 } else {
-                    logger.warn("The HandlerMethodReturnValueHandler[class : '{}'] also supports the return type[{}] , the mapped one : {}",
-                            getClassName(handler), methodParameter, getClassName(targetHandler));
+                    logger.warn("The HandlerResultHandler[class : '{}'] also supports the return type[{}] , the mapped one : {}",
+                            getClassName(handler), handlerMethod, getClassName(targetHandler));
                 }
             }
         }
