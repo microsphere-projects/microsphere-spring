@@ -274,7 +274,7 @@ public class WebMvcUtilsTest {
     public void testIsPageRenderRequestWithNull() {
         assertFalse(isPageRenderRequest(null));
     }
-    
+
     void assertHandlerMethodArguments(Object[] arguments) {
         assertEquals(1, arguments.length);
     }
