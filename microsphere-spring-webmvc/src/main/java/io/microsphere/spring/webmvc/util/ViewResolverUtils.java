@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.util;
 
+import io.microsphere.util.Utils;
 import org.springframework.web.servlet.ViewResolver;
 
 /**
@@ -25,7 +26,7 @@ import org.springframework.web.servlet.ViewResolver;
  * @see ViewResolver
  * @since 1.0.0
  */
-public class ViewResolverUtils {
+public abstract class ViewResolverUtils implements Utils {
 
     /**
      * The bean name of InternalResourceViewResolver
@@ -57,5 +58,6 @@ public class ViewResolverUtils {
      */
     public static final String MUSTACHE_VIEW_RESOLVER_BEAN_NAME = "mustacheViewResolver";
 
-
+    private ViewResolverUtils() {
+    }
 }
