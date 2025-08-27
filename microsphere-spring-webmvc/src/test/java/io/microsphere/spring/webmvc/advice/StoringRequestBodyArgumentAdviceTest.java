@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
 import static io.microsphere.spring.web.servlet.util.WebUtils.getServletContext;
-import static io.microsphere.spring.webmvc.util.WebMvcUtils.HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
