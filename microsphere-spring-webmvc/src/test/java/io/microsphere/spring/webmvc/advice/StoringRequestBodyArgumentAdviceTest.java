@@ -20,7 +20,7 @@ package io.microsphere.spring.webmvc.advice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +59,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
-        TestRestController.class,
+        TestController.class,
         StoringRequestBodyArgumentAdvice.class,
         StoringRequestBodyArgumentAdviceTest.class
 })
