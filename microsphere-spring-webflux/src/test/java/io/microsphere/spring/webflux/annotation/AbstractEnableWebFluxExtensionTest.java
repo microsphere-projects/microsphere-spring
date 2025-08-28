@@ -109,7 +109,7 @@ abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest im
     @EventListener(WebEndpointMappingsReadyEvent.class)
     void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         Collection<WebEndpointMapping> mappings = event.getMappings();
-        assertEquals(8, mappings.size());
+        assertEquals(9, mappings.size());
         WebEndpointMapping webEndpointMapping = mappings.iterator().next();
         String[] patterns = webEndpointMapping.getPatterns();
         assertEquals(1, patterns.length);
