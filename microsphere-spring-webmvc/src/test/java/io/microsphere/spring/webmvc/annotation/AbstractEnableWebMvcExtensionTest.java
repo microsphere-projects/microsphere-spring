@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
@@ -71,7 +71,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 @EnableWebMvc
 @Ignore
-@Import(TestRestController.class)
+@Import(TestController.class)
 abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumentInterceptor {
 
     @Autowired
@@ -132,7 +132,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     }
 
     /**
-     * Test only one mapping : {@link TestRestController#greeting(String)}
+     * Test only one mapping : {@link TestController#greeting(String)}
      *
      * @param event {@link WebEndpointMappingsReadyEvent}
      */
@@ -147,7 +147,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     }
 
     /**
-     * Test only one method : {@link TestRestController#greeting(String)}
+     * Test only one method : {@link TestController#greeting(String)}
      *
      * @param event {@link HandlerMethodArgumentsResolvedEvent}
      */
@@ -210,7 +210,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
         assertNotNull(handlerMethod);
         Object bean = handlerMethod.getBean();
         assertNotNull(bean);
-        assertEquals(TestRestController.class, bean.getClass());
+        assertEquals(TestController.class, bean.getClass());
         assertMethod(handlerMethod.getMethod());
     }
 
