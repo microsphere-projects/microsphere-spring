@@ -19,7 +19,7 @@ package io.microsphere.spring.web.util;
 
 
 import io.microsphere.spring.test.domain.User;
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class RequestAttributesUtilsTest {
         this.servletRequest = new MockHttpServletRequest();
         this.requestAttributes = new ServletWebRequest(this.servletRequest);
         setRequestAttributes(this.requestAttributes);
-        this.handlerMethod = new HandlerMethod(new TestRestController(), "user", User.class);
+        this.handlerMethod = new HandlerMethod(new TestController(), "user", User.class);
         this.method = this.handlerMethod.getMethod();
         this.methodParameter = forExecutable(this.method, 0);
         this.user = new User();
