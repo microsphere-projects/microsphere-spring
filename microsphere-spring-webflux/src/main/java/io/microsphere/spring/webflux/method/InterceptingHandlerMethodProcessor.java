@@ -156,9 +156,8 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
         HandlerMethod handlerMethod = context.method;
 
-        Mono<Void> result;
+        Mono<Void> result = handler.handleResult(exchange, handlerResult);
         try {
-            result = handler.handleResult(exchange, handlerResult);
             afterExecute(webRequest, handlerMethod, handlerResult.getReturnValue());
         } catch (Exception e) {
             result = error(e);
@@ -286,24 +285,15 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, @Nullable Object returnValue) throws Exception {
         Object[] arguments = getArguments(webRequest, handlerMethod);
-        afterExecute(webRequest, handlerMethod, arguments, returnValue);
-    }
-
-    private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments,
-                              @Nullable Object returnValue) throws Exception {
-        afterExecute(webRequest, handlerMethod, arguments, returnValue, null);
-    }
-
-    private void afterExecute(NativeWebRequest webRequest, Object handler, @Nullable Exception error) throws Exception {
-        HandlerMethod handlerMethod = resolveHandlerMethod(handler);
-        if (handlerMethod != null) {
-            Object[] arguments = getArguments(webRequest, handlerMethod);
-            afterExecute(webRequest, handlerMethod, arguments, null, error);
+        if (returnValue instanceof Throwable) {
+            afterExecute(webRequest, handlerMethod, arguments, null, (Throwable) returnValue);
+        } else {
+            afterExecute(webRequest, handlerMethod, arguments, returnValue, null);
         }
     }
 
     private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments,
-                              @Nullable Object returnValue, @Nullable Exception error) throws Exception {
+                              @Nullable Object returnValue, @Nullable Throwable error) throws Exception {
         for (int i = 0; i < this.handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
             handlerMethodAdvice.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
