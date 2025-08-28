@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -38,26 +39,30 @@ import static org.springframework.http.ResponseEntity.ok;
  * @see Controller
  * @since 1.0.0
  */
-@RestController
+@Controller
 @RequestMapping("/test")
-public class TestRestController {
+public class TestController {
 
     @GetMapping("/helloworld")
+    @ResponseBody
     public String helloWorld() {
         return "Hello World";
     }
 
     @GetMapping("/greeting/{message}")
+    @ResponseBody
     public String greeting(@PathVariable String message) {
         return "Greeting : " + message;
     }
 
     @PostMapping(path = "/user")
+    @ResponseBody
     public User user(@RequestBody User user) {
         return user;
     }
 
     @GetMapping("/error")
+    @ResponseBody
     public String error(@RequestParam String message) {
         throw new RuntimeException(message);
     }
