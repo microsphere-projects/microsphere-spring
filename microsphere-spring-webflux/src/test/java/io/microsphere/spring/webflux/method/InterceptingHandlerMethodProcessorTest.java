@@ -104,6 +104,12 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     }
 
     @Test
+    void testSupportsWithModelAndViewResult() {
+        HandlerResult handlerResult = newHandlerResult("view");
+        assertTrue(processor.supports(handlerResult));
+    }
+
+    @Test
     void testSupportsWithUnsupportedHandlerResult() {
         Method method = findMethod(Object.class, "hashCode");
         HandlerResult handlerResult = new HandlerResult(method, null, forExecutable(method, -1));
