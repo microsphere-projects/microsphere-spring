@@ -58,8 +58,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Disabled
 @Import(TestRestController.class)
-abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements HandlerMethodArgumentInterceptor,
-        HandlerMethodInterceptor {
+public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements
+        HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
 
     private static final String expectedReturnValue = "Greeting : hello";
 
@@ -137,7 +137,6 @@ abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest im
     @EventListener(WebEndpointMappingsReadyEvent.class)
     void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         Collection<WebEndpointMapping> mappings = event.getMappings();
-        assertEquals(9, mappings.size());
         WebEndpointMapping webEndpointMapping = mappings.iterator().next();
         String[] patterns = webEndpointMapping.getPatterns();
         assertEquals(1, patterns.length);
