@@ -43,20 +43,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
- * {@link TestRestController} Test
+ * {@link TestController} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see TestRestController
+ * @see TestController
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
-        TestRestController.class,
-        TestRestControllerTest.class
+        TestController.class,
+        TestControllerTest.class
 })
 @EnableWebMvc
-public class TestRestControllerTest {
+public class TestControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
