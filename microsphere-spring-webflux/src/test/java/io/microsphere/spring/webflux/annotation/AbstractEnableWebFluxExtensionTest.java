@@ -25,8 +25,10 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
-import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
+import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
+import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
+import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,7 @@ import java.util.Collection;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -53,7 +56,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Disabled
 @Import(TestRestController.class)
-abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements HandlerMethodArgumentInterceptor {
+abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements
+        HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
+
+    private static final String expectedReturnValue = "Greeting : hello";
+
+    private static final String expectedArgument0 = "hello";
 
     protected boolean registerWebEndpointMappings;
 
@@ -87,7 +95,7 @@ abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest im
         // From @EnableWebFluxExtension
         assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, HandlerMappingWebEndpointMappingResolver.class));
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, DelegatingHandlerMethodAdvice.class));
-        // assertEquals(this.interceptHandlerMethods, this.wac.containsBean(InterceptingHandlerMethodProcessor.BEAN_NAME));
+        assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, InterceptingHandlerMethodProcessor.class));
         // assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, InterceptingHandlerMethodProcessor.class));
         // assertEquals(this.registerHandlerInterceptors, isBeanPresent(this.wac, LazyCompositeHandlerInterceptor.class));
         // assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.wac, StoringRequestBodyArgumentAdvice.class));
@@ -95,17 +103,19 @@ abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest im
     }
 
     @Test
-    void test() throws Exception {
+    void testGreeting() {
         this.webTestClient.get().uri("/test/greeting/hello")
                 .exchange()
-                .expectBody(String.class).isEqualTo("Greeting : hello");
+                .expectBody(String.class).isEqualTo(expectedReturnValue);
     }
 
-    /**
-     * Test only one mapping : {@link TestRestController#greeting(String)}
-     *
-     * @param event {@link WebEndpointMappingsReadyEvent}
-     */
+    @Test
+    void testError() {
+        this.webTestClient.get().uri("/test/error?message=hello")
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+
     @EventListener(WebEndpointMappingsReadyEvent.class)
     void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         Collection<WebEndpointMapping> mappings = event.getMappings();
@@ -115,88 +125,70 @@ abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest im
         assertEquals(1, patterns.length);
     }
 
-
-    /**
-     * Test only one method : {@link TestRestController#greeting(String)}
-     *
-     * @param event {@link HandlerMethodArgumentsResolvedEvent}
-     */
     @EventListener(HandlerMethodArgumentsResolvedEvent.class)
     public void onHandlerMethodArgumentsResolvedEvent(HandlerMethodArgumentsResolvedEvent event) {
         Method method = event.getMethod();
-        assertMethod(method);
-
         HandlerMethod handlerMethod = event.getHandlerMethod();
         assertEquals(method, handlerMethod.getMethod());
-
         assertHandlerMethod(handlerMethod);
-
         Object[] arguments = event.getArguments();
         assertArguments(arguments);
     }
 
-    /**
-     * callback before the {@link MethodParameter} being resolved
-     *
-     * @param parameter     the method parameter to resolve.
-     * @param handlerMethod the method to handle
-     * @param webRequest    the current request
-     * @throws Exception in case of errors with the preparation of argument values
-     */
+
     @Override
     public void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
-        assertMethodParameter(parameter);
         assertHandlerMethod(handlerMethod);
         assertNativeWebRequest(webRequest);
     }
 
-    /**
-     * callback after the {@link MethodParameter} being resolved
-     *
-     * @param parameter        the method parameter to resolve.
-     * @param resolvedArgument the resolved argument
-     * @param handlerMethod    the method to handle
-     * @param webRequest       the current request
-     * @return the resolved argument value, or {@code null} if not resolvable
-     * @throws Exception in case of errors with the preparation of argument values
-     */
     @Override
     public void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
         // Reuse
         beforeResolveArgument(parameter, handlerMethod, webRequest);
-        assertEquals("hello", resolvedArgument);
     }
 
-    private void assertMethod(Method method) {
-        assertEquals("greeting", method.getName());
-        assertEquals(String.class, method.getReturnType());
+    @Override
+    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
+        assertHandlerMethod(handlerMethod);
+        assertArguments(args);
+    }
 
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        assertEquals(1, parameterTypes.length);
-        assertEquals(String.class, parameterTypes[0]);
+    @Override
+    public void afterExecute(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Exception {
+        beforeExecute(handlerMethod, args, request);
+        if (returnValue == null) {
+            assertNotNull(error);
+            assertEquals(expectedArgument0, error.getMessage());
+        } else {
+            assertReturnValue(returnValue);
+            assertNull(error);
+        }
     }
 
     private void assertHandlerMethod(HandlerMethod handlerMethod) {
         assertNotNull(handlerMethod);
         Object bean = handlerMethod.getBean();
         assertNotNull(bean);
-        assertEquals(TestRestController.class, bean.getClass());
-        assertMethod(handlerMethod.getMethod());
+        assertEquals(TestRestController.class, handlerMethod.getBeanType());
+        Method method = handlerMethod.getMethod();
+        assertEquals(String.class, method.getReturnType());
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        assertEquals(1, parameterTypes.length);
+        assertEquals(String.class, parameterTypes[0]);
     }
 
     private void assertArguments(Object[] arguments) {
         assertEquals(1, arguments.length);
-        assertEquals("hello", arguments[0]);
+        assertEquals(expectedArgument0, arguments[0]);
     }
 
-    private void assertMethodParameter(MethodParameter parameter) {
-        assertNotNull(parameter);
-        assertEquals(0, parameter.getParameterIndex());
-        assertEquals(String.class, parameter.getParameterType());
+    private void assertReturnValue(Object returnValue) {
+        assertEquals(expectedReturnValue, returnValue);
     }
 
     private void assertNativeWebRequest(NativeWebRequest webRequest) {
+        assertNotNull(webRequest);
     }
-
 
 }
