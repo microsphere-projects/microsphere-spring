@@ -29,8 +29,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.HandlerResult;
@@ -54,16 +52,16 @@ import static java.util.Collections.emptyList;
 import static reactor.core.publisher.Mono.error;
 
 /**
- * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
- * {@link HandlerMethodArgumentResolver}, {@link HandlerMethodReturnValueHandler}.
+ * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} beans based on
+ * {@link HandlerMethodArgumentResolver}, {@link HandlerResultHandler}.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see HandlerMethodAdvice
  * @see HandlerMethodInterceptor
  * @see HandlerMethodArgumentInterceptor
  * @see HandlerMethodArgumentResolver
- * @see HandlerMethodReturnValueHandler
- * @see HandlerMethodReturnValueHandlerComposite
+ * @see HandlerResultHandler
+ * @see WebEndpointMappingsReadyEvent
  * @since 1.0.0
  */
 public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>
