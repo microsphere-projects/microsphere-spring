@@ -171,7 +171,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         NativeWebRequest webRequest = new ServerWebRequest(exchange);
         HandlerMethod handlerMethod = getHandlerMethod(exchange);
-        Mono<Void> result = null;
+        Mono<Void> result;
         try {
             afterExecute(webRequest, handlerMethod, ex);
             result = error(ex);
