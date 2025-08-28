@@ -22,7 +22,7 @@ import io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateRe
 import io.microsphere.spring.context.event.EventPublishingBeanInitializer;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;
 import io.microsphere.spring.test.domain.User;
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.test.web.servlet.TestServlet;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.After;
@@ -113,7 +113,7 @@ public class WebMvcUtilsTest {
         this.servletRequest = new MockHttpServletRequest();
         this.requestAttributes = new ServletWebRequest(this.servletRequest);
         setRequestAttributes(this.requestAttributes);
-        this.handlerMethod = new HandlerMethod(new TestRestController(), "user", User.class);
+        this.handlerMethod = new HandlerMethod(new TestController(), "user", User.class);
         this.method = this.handlerMethod.getMethod();
         this.methodParameter = forExecutable(this.method, 0);
         this.user = new User();
@@ -211,7 +211,7 @@ public class WebMvcUtilsTest {
     @Test
     public void testIsControllerAdviceBeanType() {
         assertTrue(isControllerAdviceBeanType(WebMvcUtilsTest.class));
-        assertFalse(isControllerAdviceBeanType(TestRestController.class));
+        assertFalse(isControllerAdviceBeanType(TestController.class));
     }
 
     @Test
