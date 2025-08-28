@@ -21,6 +21,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import static reactor.core.publisher.Mono.empty;
+
 /**
  * Person Handler
  *
@@ -32,22 +34,22 @@ import reactor.core.publisher.Mono;
 public class PersonHandler {
 
     public Mono<ServerResponse> listPeople(ServerRequest request) {
-        return Mono.empty();
+        return empty();
     }
 
     public Mono<ServerResponse> createPerson(ServerRequest request) {
-        return Mono.empty();
+        return empty();
     }
 
     public Mono<ServerResponse> getPerson(ServerRequest request) {
-        return Mono.empty();
+        return empty();
     }
 
     public Mono<ServerResponse> updatePerson(ServerRequest request) {
-        return Mono.empty();
+        return empty();
     }
 
     public Mono<ServerResponse> deletePerson(ServerRequest request) {
-        return Mono.empty();
+        return empty();
     }
 }
