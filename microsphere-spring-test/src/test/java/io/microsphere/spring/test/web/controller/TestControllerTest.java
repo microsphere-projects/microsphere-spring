@@ -110,4 +110,11 @@ public class TestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("OK"));
     }
+
+    @Test
+    public void testView() throws Exception {
+        this.mockMvc.perform(get("/test/view"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+    }
 }
