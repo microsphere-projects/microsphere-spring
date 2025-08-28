@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.webflux.annotation;
 
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @Disabled
-@Import(TestRestController.class)
+@Import(TestController.class)
 public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements
         HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
 
@@ -105,7 +105,7 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
     }
 
     /**
-     * @see TestRestController#greeting(String)
+     * @see TestController#greeting(String)
      */
     @Test
     void testGreeting() {
@@ -115,7 +115,7 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
     }
 
     /**
-     * @see TestRestController#error(String)
+     * @see TestController#error(String)
      */
     @Test
     void testError() {
@@ -187,7 +187,7 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         assertNotNull(handlerMethod);
         Object bean = handlerMethod.getBean();
         assertNotNull(bean);
-        assertEquals(TestRestController.class, handlerMethod.getBeanType());
+        assertEquals(TestController.class, handlerMethod.getBeanType());
         Method method = handlerMethod.getMethod();
         assertEquals(String.class, method.getReturnType());
         Class<?>[] parameterTypes = method.getParameterTypes();
