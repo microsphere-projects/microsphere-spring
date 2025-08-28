@@ -18,7 +18,7 @@
 package io.microsphere.spring.webflux.metadata;
 
 
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
         HandlerMappingWebEndpointMappingResolverTest.class,
 
 })
-@Import(TestRestController.class)
+@Import(TestController.class)
 class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
 
     @Autowired
