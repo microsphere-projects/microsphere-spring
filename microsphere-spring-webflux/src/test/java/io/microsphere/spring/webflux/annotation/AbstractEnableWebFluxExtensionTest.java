@@ -29,6 +29,8 @@ import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
+import io.microsphere.spring.webflux.test.PersonHandler;
+import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -56,8 +58,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Disabled
 @Import(TestRestController.class)
-abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements
-        HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
+abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements HandlerMethodArgumentInterceptor,
+        HandlerMethodInterceptor {
 
     private static final String expectedReturnValue = "Greeting : hello";
 
@@ -102,6 +104,9 @@ abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest im
         // assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.wac, StoringResponseBodyReturnValueAdvice.class));
     }
 
+    /**
+     * @see TestRestController#greeting(String)
+     */
     @Test
     void testGreeting() {
         this.webTestClient.get().uri("/test/greeting/hello")
@@ -109,11 +114,24 @@ abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest im
                 .expectBody(String.class).isEqualTo(expectedReturnValue);
     }
 
+    /**
+     * @see TestRestController#error(String)
+     */
     @Test
     void testError() {
         this.webTestClient.get().uri("/test/error?message=hello")
                 .exchange()
                 .expectStatus().is5xxServerError();
+    }
+
+    /**
+     * @see RouterFunctionTestConfig#nestedPersonRouterFunction(PersonHandler)
+     */
+    @Test
+    void testUpdatePerson() {
+        this.webTestClient.put().uri("/test/person/{id}", "1")
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
