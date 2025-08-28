@@ -37,6 +37,7 @@ import static org.junit.Assert.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -101,5 +102,12 @@ public class TestRestControllerTest {
                 this.mockMvc.perform(get("/test/error")
                                 .param("message", "For testing"))
                         .andReturn());
+    }
+
+    @Test
+    public void testResponseEntity() throws Exception {
+        this.mockMvc.perform(put("/test/response-entity"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("OK"));
     }
 }
