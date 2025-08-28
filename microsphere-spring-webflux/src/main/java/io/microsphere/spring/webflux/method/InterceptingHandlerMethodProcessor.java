@@ -36,6 +36,7 @@ import org.springframework.web.reactive.HandlerResultHandler;
 import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver;
 import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
@@ -49,6 +50,7 @@ import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static java.util.Collections.emptyList;
+import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 import static reactor.core.publisher.Mono.error;
 
 /**
@@ -65,7 +67,7 @@ import static reactor.core.publisher.Mono.error;
  * @since 1.0.0
  */
 public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>
-        implements HandlerMethodArgumentResolver, HandlerResultHandler {
+        implements HandlerMethodArgumentResolver, HandlerResultHandler, WebExceptionHandler {
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
 
@@ -159,10 +161,28 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         Mono<Void> result = handler.handleResult(exchange, handlerResult);
         try {
             afterExecute(webRequest, handlerMethod, handlerResult.getReturnValue());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             result = error(e);
         }
         return result;
+    }
+
+    @Override
+    public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
+        NativeWebRequest webRequest = new ServerWebRequest(exchange);
+        HandlerMethod handlerMethod = getHandlerMethod(exchange);
+        Mono<Void> result = null;
+        try {
+            afterExecute(webRequest, handlerMethod, ex);
+            result = error(ex);
+        } catch (Throwable e) {
+            result = error(e);
+        }
+        return result;
+    }
+
+    private HandlerMethod getHandlerMethod(ServerWebExchange exchange) {
+        return exchange.getAttribute(BEST_MATCHING_HANDLER_ATTRIBUTE);
     }
 
     private void initHandlerMethodAdvices(ApplicationContext context) {
@@ -284,16 +304,16 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, @Nullable Object returnValue) throws Exception {
-        Object[] arguments = getArguments(webRequest, handlerMethod);
-        if (returnValue instanceof Throwable) {
-            afterExecute(webRequest, handlerMethod, arguments, null, (Throwable) returnValue);
-        } else {
-            afterExecute(webRequest, handlerMethod, arguments, returnValue, null);
-        }
+        afterExecute(webRequest, handlerMethod, returnValue, null);
     }
 
-    private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments,
-                              @Nullable Object returnValue, @Nullable Throwable error) throws Exception {
+    private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Throwable error) throws Exception {
+        afterExecute(webRequest, handlerMethod, null, error);
+    }
+
+    private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, @Nullable Object returnValue,
+                              @Nullable Throwable error) throws Exception {
+        Object[] arguments = getArguments(webRequest, handlerMethod);
         for (int i = 0; i < this.handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
             handlerMethodAdvice.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
