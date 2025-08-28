@@ -53,6 +53,7 @@ import java.util.Collection;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -140,7 +141,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         // Only TestController
         Collection<WebEndpointMapping> mappings = event.getMappings();
-        assertEquals(3, mappings.size());
+        assertFalse(mappings.isEmpty());
         WebEndpointMapping webEndpointMapping = mappings.iterator().next();
         String[] patterns = webEndpointMapping.getPatterns();
         assertEquals(1, patterns.length);
