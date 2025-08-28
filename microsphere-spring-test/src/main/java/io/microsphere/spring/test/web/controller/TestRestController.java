@@ -18,14 +18,18 @@
 package io.microsphere.spring.test.web.controller;
 
 import io.microsphere.spring.test.domain.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * Test {@link RestController @RestController}
@@ -56,5 +60,10 @@ public class TestRestController {
     @GetMapping("/error")
     public String error(@RequestParam String message) {
         throw new RuntimeException(message);
+    }
+
+    @PutMapping("/response-entity")
+    public ResponseEntity<String> responseEntity() {
+        return ok("OK");
     }
 }
