@@ -134,7 +134,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
             Object argument = result.toFuture().get();
 
-            Object[] arguments = resolveArguments(parameter, argument, webRequest);
+            Object[] arguments = resolveArguments(webRequest, parameter, argument);
 
             afterResolveArgument(parameter, argument, webRequest, handlerMethod);
 
@@ -326,7 +326,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return getHandlerMethodArguments(webRequest, handlerMethod);
     }
 
-    private Object[] resolveArguments(MethodParameter parameter, Object argument, NativeWebRequest webRequest) {
+    Object[] resolveArguments(NativeWebRequest webRequest, MethodParameter parameter, Object argument) {
         int index = parameter.getParameterIndex();
         Object[] arguments = null;
         if (argument != null) {
@@ -338,7 +338,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return arguments;
     }
 
-    private HandlerMethodArgumentResolver resolveArgumentResolver(MethodParameter methodParameter, List<HandlerMethodArgumentResolver> resolvers) {
+    HandlerMethodArgumentResolver resolveArgumentResolver(MethodParameter methodParameter, List<HandlerMethodArgumentResolver> resolvers) {
         int size = resolvers.size();
         HandlerMethodArgumentResolver targetResolver = null;
         for (int i = 1; i < size; i++) {
@@ -356,7 +356,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return targetResolver;
     }
 
-    private HandlerResultHandler resolveHandlerResultHandler(HandlerResult handlerResult) {
+    HandlerResultHandler resolveHandlerResultHandler(HandlerResult handlerResult) {
         List<HandlerResultHandler> handlers = this.handlerResultHandlers;
         int size = handlers.size();
         HandlerResultHandler targetHandler = null;
