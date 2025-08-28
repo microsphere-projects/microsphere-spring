@@ -17,7 +17,7 @@
 
 package io.microsphere.spring.webflux.function.server;
 
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         ConsumingWebEndpointMappingAdapterTest.class,
         RouterFunctionTestConfig.class
 })
-@Import(TestRestController.class)
+@Import(TestController.class)
 public class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
 
     @Test
