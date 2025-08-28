@@ -21,12 +21,14 @@ package io.microsphere.spring.webflux.method;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
+import io.microsphere.spring.webflux.context.request.ServerWebRequest;
 import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerResult;
 
@@ -34,8 +36,11 @@ import java.lang.reflect.Method;
 
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.reflect.MethodUtils.invokeMethod;
+import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.util.ClassUtils.getTypes;
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.core.MethodParameter.forExecutable;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
@@ -117,21 +122,15 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     }
 
     @Test
-    void testResolveArgument() {
+    void testResolveArgumentResolver() {
+        assertNull(processor.resolveArgumentResolver(greetingMethodParameter0, emptyList()));
     }
 
     @Test
-    void testHandleResult() {
+    void testResolveArguments() {
+        NativeWebRequest webRequest = new ServerWebRequest(mockServerWebExchange());
+        assertNull(processor.resolveArguments(webRequest, greetingMethodParameter0, null));
     }
-
-    @Test
-    void testHandle() {
-    }
-
-    @Test
-    void testGetReturnTypeContext() {
-    }
-
 
     HandlerResult newHandlerResult(String handlerMethodName, Object... arguments) {
         Class[] parameterTypes = getTypes(arguments);
