@@ -191,6 +191,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private void initHandlerResultHandlers(ApplicationContext context) {
         this.handlerResultHandlers = getHandlerResultHandlers(context);
+        this.handlerResultHandlers.remove(this);
         this.handlerResultHandlers.add(0, this);
     }
 
@@ -265,12 +266,13 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         ReturnTypeContext returnTypeContext = returnTypeContextsCache.get(returnType);
         if (returnTypeContext == null) {
             logger.trace("No ReturnTypeContext was found by the return type[{}]", returnType);
-            returnTypeContext = new ReturnTypeContext();
             HandlerResultHandler handler = resolveHandlerResultHandler(handlerResult);
-            returnTypeContext.handler = handler;
-            returnTypeContext.method = resolveHandlerMethod(handlerResult.getHandler());
+            if (handler != null) {
+                returnTypeContext = new ReturnTypeContext();
+                returnTypeContext.handler = handler;
+                returnTypeContext.method = resolveHandlerMethod(handlerResult.getHandler());
+            }
         }
-
         return returnTypeContext;
     }
 
