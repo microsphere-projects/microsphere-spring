@@ -71,4 +71,9 @@ public class TestController {
     public ResponseEntity<String> responseEntity() {
         return ok("OK");
     }
+
+    @GetMapping("/view")
+    public String view() {
+        return "test-view";
+    }
 }
