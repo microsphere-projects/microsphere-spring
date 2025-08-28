@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.core.io.support;
 
-import io.microsphere.spring.test.Bean;
-import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.beans.test.Bean;
+import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.util.UserFactory;
 import org.junit.After;
@@ -134,7 +134,7 @@ public class SpringFactoriesLoaderUtilsTest {
 
     private void assertTestBean(TestBean testBean, BeanFactory beanFactory) {
         assertNotNull(testBean);
-        assertEquals("io.microsphere.spring.test.TestBean#0", testBean.getBeanName());
+        assertEquals("io.microsphere.spring.beans.test.TestBean#0", testBean.getBeanName());
 
         if (beanFactory instanceof ConfigurableApplicationContext) {
             ConfigurableApplicationContext context = (ConfigurableApplicationContext) beanFactory;

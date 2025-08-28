@@ -59,6 +59,7 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
 
     @Before
     public void setUp() {
+        super.setUp();
         aUser = context.getBean("a", User.class);
         bUser = context.getBean("b", User.class);
         users = getSortedBeans(context, User.class);
