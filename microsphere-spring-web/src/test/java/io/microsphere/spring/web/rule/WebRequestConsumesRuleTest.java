@@ -41,7 +41,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     public void testMatchesOnPreflightRequest() {
         NativeWebRequest request = createPreFightRequest();
         WebRequestConsumesRule rule = new WebRequestConsumesRule("application/json");
-        assertFalse("Preflight request should return false", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test with empty expressions (should return false)
@@ -51,7 +51,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
             req.setContentType("application/json");
         });
         WebRequestConsumesRule rule = new WebRequestConsumesRule();
-        assertFalse("Empty expressions should return false", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test with invalid content type (should return false)
@@ -62,7 +62,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
         });
 
         WebRequestConsumesRule rule = new WebRequestConsumesRule("application/json");
-        assertFalse("Invalid content type should return false", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test when no content type header (should use default)
@@ -70,7 +70,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     public void testMatchesOnNoContentTypeHeader() {
         NativeWebRequest request = createWebRequest();
         WebRequestConsumesRule rule = new WebRequestConsumesRule("application/octet-stream");
-        assertTrue("Should match default octet-stream type", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     // Test when all expressions match (should return true)
@@ -81,7 +81,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
         });
 
         WebRequestConsumesRule rule = new WebRequestConsumesRule("*/*");
-        assertTrue("All expressions should match", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     // Test when any expression fails (should return false)
@@ -92,7 +92,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
         });
 
         WebRequestConsumesRule rule = new WebRequestConsumesRule("application/json", "text/plain");
-        assertFalse("Should fail when any expression doesn't match", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test with wildcard media type matching
@@ -103,7 +103,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
         });
 
         WebRequestConsumesRule rule = new WebRequestConsumesRule("application/*");
-        assertTrue("Wildcard should match any application subtype", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     // Test with multiple expressions where one is negated
@@ -117,7 +117,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
         WebRequestConsumesRule rule = new WebRequestConsumesRule(
                 ofArray("application/xml"),
                 "Content-Type=!application/json");
-        assertTrue("Should match when negated expression passes", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     @Override
