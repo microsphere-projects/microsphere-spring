@@ -52,106 +52,106 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractSpringResourceURLConnectionTest {
 
     @Test
-    public abstract void testConnectTimeout();
+    abstract void testConnectTimeout();
 
     @Test
-    public abstract void testReadTimeout();
+    abstract void testReadTimeout();
 
     @Test
-    public abstract void testGetURL();
+    abstract void testGetURL();
 
     @Test
-    public abstract void testGetContentLength() throws IOException;
+    abstract void testGetContentLength() throws IOException;
 
     @Test
-    public abstract void testGetContentLengthOnNotFound();
+    abstract void testGetContentLengthOnNotFound();
 
     @Test
-    public abstract void testGetContentLengthLong() throws IOException;
+    abstract void testGetContentLengthLong() throws IOException;
 
     @Test
-    public abstract void testGetContentLengthLongOnNotFound();
+    abstract void testGetContentLengthLongOnNotFound();
 
     @Test
-    public abstract void testGetContentType();
+    abstract void testGetContentType();
 
     @Test
-    public abstract void testGetContentEncoding();
+    abstract void testGetContentEncoding();
 
     @Test
-    public abstract void testGetExpiration();
+    abstract void testGetExpiration();
 
     @Test
-    public abstract void testGetDate();
+    abstract void testGetDate();
 
     @Test
-    public abstract void testGetLastModified() throws IOException;
+    abstract void testGetLastModified() throws IOException;
 
     @Test
-    public abstract void testGetLastModifiedOnNotFound();
+    abstract void testGetLastModifiedOnNotFound();
 
     @Test
-    public abstract void testGetHeaderField();
+    abstract void testGetHeaderField();
 
     @Test
-    public abstract void testGetHeaderFields();
+    abstract void testGetHeaderFields();
 
     @Test
-    public abstract void testGetHeaderFieldInt();
+    abstract void testGetHeaderFieldInt();
 
     @Test
-    public abstract void testGetHeaderFieldLong();
+    abstract void testGetHeaderFieldLong();
 
     @Test
-    public abstract void testGetHeaderFieldDate();
+    abstract void testGetHeaderFieldDate();
 
     @Test
-    public abstract void testGetHeaderFieldKey();
+    abstract void testGetHeaderFieldKey();
 
     @Test
-    public abstract void testGetContent() throws IOException;
+    abstract void testGetContent() throws IOException;
 
     @Test
-    public abstract void testGetContentOnIOException() throws IOException;
+    abstract void testGetContentOnIOException() throws IOException;
 
     @Test
-    public abstract void testGetContentOnNotFoundException() throws IOException;
+    abstract void testGetContentOnNotFoundException() throws IOException;
 
     @Test
-    public abstract void testGetContentWithClass() throws IOException;
+    abstract void testGetContentWithClass() throws IOException;
 
     @Test
-    public abstract void testGetContentWithClassOnIOException() throws IOException;
+    abstract void testGetContentWithClassOnIOException() throws IOException;
 
     @Test
-    public abstract void testGetPermission() throws IOException;
+    abstract void testGetPermission() throws IOException;
 
     @Test
-    public abstract void testGetInputStream() throws IOException;
+    abstract void testGetInputStream() throws IOException;
 
     @Test
-    public abstract void testGetInputStreamOnIOException() throws IOException;
+    abstract void testGetInputStreamOnIOException() throws IOException;
 
     @Test
-    public abstract void testGetHeaderFieldByIndex();
+    abstract void testGetHeaderFieldByIndex();
 
     @Test
-    public abstract void testGetOutputStream() throws IOException;
+    abstract void testGetOutputStream() throws IOException;
 
     @Test
-    public abstract void testGetOutputStreamOnIOException() throws IOException;
+    abstract void testGetOutputStreamOnIOException() throws IOException;
 
     @Test
-    public abstract void testToString();
+    abstract void testToString();
 
     @Test
-    public abstract void testDoInput();
+    abstract void testDoInput();
 
     @Test
-    public abstract void testDoInputOnIOException();
+    abstract void testDoInputOnIOException();
 
     @Test
-    public abstract void testAllowUserInteraction();
+    abstract void testAllowUserInteraction();
 
     @Test
     void testDefaultAllowUserInteraction() {
@@ -166,22 +166,22 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     }
 
     @Test
-    public abstract void testUseCaches();
+    abstract void testUseCaches();
 
     @Test
-    public abstract void testDefaultUseCaches();
+    abstract void testDefaultUseCaches();
 
     @Test
-    public abstract void testIfModifiedSince() throws IOException;
+    abstract void testIfModifiedSince() throws IOException;
 
     @Test
-    public abstract void testRequestProperty();
+    abstract void testRequestProperty();
 
     @Test
-    public abstract void testConnect() throws IOException;
+    abstract void testConnect() throws IOException;
 
     @Test
-    public abstract void testGetHeaderEntryOnOutOfRange();
+    abstract void testGetHeaderEntryOnOutOfRange();
 
     void testGetHeaderFieldByName(SpringResourceURLConnectionAdapter adapter) {
         String name = "name";
