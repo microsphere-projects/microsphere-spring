@@ -77,7 +77,7 @@ public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
     public void testMatchesWithEmptyExpressions() {
         WebRequestParamsRule rule = new WebRequestParamsRule();
         NativeWebRequest request = createWebRequestWithParams("anyParam", "anyValue");
-        assertTrue("Should always match when no expressions", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     @Test
