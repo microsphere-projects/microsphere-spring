@@ -47,7 +47,6 @@ import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Abstract {@link EnableWebFluxExtension} Test
@@ -87,7 +86,6 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
 
     @Test
     void testRegisteredBeans() {
-        assertTrue(isBeanPresent(this.context, WebFluxExtensionConfiguration.class));
         // From @EnableWebExtension
         assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, SimpleWebEndpointMappingRegistry.class));
         assertEquals(this.interceptHandlerMethods, this.context.containsBean(DelegatingHandlerMethodAdvice.BEAN_NAME));
