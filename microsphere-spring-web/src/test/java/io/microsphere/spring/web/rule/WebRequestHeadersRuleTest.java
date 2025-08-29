@@ -38,13 +38,13 @@ public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testGetContent() {
         WebRequestHeadersRule rule1 = new WebRequestHeadersRule();
-        assertTrue("Content should be empty for no-arg constructor", rule1.getContent().isEmpty());
+        assertTrue(rule1.getContent().isEmpty());
 
         rule1 = new WebRequestHeadersRule("Accept=text/plain", "Content-Type=application/json");
-        assertTrue("Content should be empty", rule1.getContent().isEmpty());
+        assertTrue(rule1.getContent().isEmpty());
 
         WebRequestHeadersRule rule2 = new WebRequestHeadersRule("header1=value1", "header2=value2");
-        assertEquals("Should have 2 expressions", 2, rule2.getContent().size());
+        assertEquals(2, rule2.getContent().size());
     }
 
     @Test
@@ -57,21 +57,21 @@ public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
     public void testEmptyExpressionsShouldMatch() {
         WebRequestHeadersRule rule = new WebRequestHeadersRule();
         NativeWebRequest request = createWebRequestWithHeaders();
-        assertTrue("Empty expressions should always match", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     @Test
     public void testAllExpressionsMatch() {
         WebRequestHeadersRule rule = new WebRequestHeadersRule("header1=value1", "header2=value2");
         NativeWebRequest request = createWebRequestWithHeaders("header1", "value1", "header2", "value2");
-        assertTrue("Should match when all expressions match", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     @Test
     public void testPartialMatchFailure() {
         WebRequestHeadersRule rule = new WebRequestHeadersRule("header1=value1", "header2=value2");
         NativeWebRequest request = createWebRequestWithHeaders("header1", "value1", "header2", "value");
-        assertFalse("Should fail when any expression fails", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     @Test
@@ -79,14 +79,14 @@ public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
         WebRequestHeadersRule rule = new WebRequestHeadersRule("Invalid-Header=value", "Accept=text/plain");
 
         NativeWebRequest request = createWebRequestWithHeaders("Accept", "text/plain");
-        assertFalse("Should short-circuit on first failure", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     @Test
     public void testSpecialHeadersHandling() {
         WebRequestHeadersRule rule = new WebRequestHeadersRule("Accept=text/plain", "Content-Type=application/json");
         NativeWebRequest request = createWebRequestWithHeaders("Accept", "text/plain", "Content-Type", "application/json");
-        assertTrue("Special headers should be processed normally", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
 }
