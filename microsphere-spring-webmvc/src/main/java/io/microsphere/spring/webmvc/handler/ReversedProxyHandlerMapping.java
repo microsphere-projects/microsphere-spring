@@ -90,7 +90,7 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         try {
             methodHandle = findVirtual(RequestMappingHandlerMapping.class, methodName, parameterTypes);
         } catch (Throwable e) {
-            logger.error("The method {}{} can't be found in the {}", methodName, Arrays.toString(parameterTypes), declaredClass.getName(), e);
+            logger.error("The method {}{} can't be found in the {}", methodName,arrayToString(parameterTypes), declaredClass.getName(), e);
         }
         getHandlerExecutionChainMethodHandle = methodHandle;
     }
