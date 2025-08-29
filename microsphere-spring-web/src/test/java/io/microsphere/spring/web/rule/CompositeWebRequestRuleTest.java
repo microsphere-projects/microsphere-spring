@@ -40,7 +40,7 @@ public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
     public void testEmptyRules() {
         CompositeWebRequestRule rule = new CompositeWebRequestRule();
         NativeWebRequest request = createWebRequest();
-        assertTrue("Empty rules should always match", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
 
         CompositeWebRequestRule rule = new CompositeWebRequestRule(rule1, rule2);
         NativeWebRequest request = createWebRequest();
-        assertTrue("Should match when all rules are true", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
 
         CompositeWebRequestRule rule = new CompositeWebRequestRule(rule1, rule2);
         NativeWebRequest request = createWebRequest();
-        assertFalse("Should fail when any rule fails", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     @Test
@@ -81,6 +81,6 @@ public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
 
         CompositeWebRequestRule rule = new CompositeWebRequestRule(failRule, neverCalledRule);
         NativeWebRequest request = createWebRequest();
-        assertFalse("Should short-circuit on first failure", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 }
