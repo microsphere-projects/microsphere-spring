@@ -47,16 +47,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @see org.springframework.web.reactive.config.EnableWebFlux
  * @see EnableWebExtension
  * @see WebFluxExtensionBeanDefinitionRegistrar
- * @see WebFluxExtensionConfiguration
  * @since 1.0.0
  */
 @Retention(RUNTIME)
 @Target(TYPE)
 @Documented
-@Import(value = {
-        WebFluxExtensionBeanDefinitionRegistrar.class,
-        WebFluxExtensionConfiguration.class
-})
+@Import(WebFluxExtensionBeanDefinitionRegistrar.class)
 @EnableWebExtension
 public @interface EnableWebFluxExtension {
 
