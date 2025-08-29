@@ -33,6 +33,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProp
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getMapPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -160,7 +161,7 @@ public class PropertySourcesUtilsTest {
 
         Map<String, Object> result = getSubProperties(propertySources, "user");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         source.put("age", "31");
         source.put("user.name", "Mercy");
@@ -183,11 +184,11 @@ public class PropertySourcesUtilsTest {
 
         result = getSubProperties(propertySources, "");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         result = getSubProperties(propertySources, "no-exists");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
     }
 
