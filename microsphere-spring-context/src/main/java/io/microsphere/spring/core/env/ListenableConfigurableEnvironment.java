@@ -31,7 +31,6 @@ import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertyResolver;
 
 import java.lang.invoke.MethodHandle;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -221,7 +220,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
                 return (boolean) MATCHES_PROFILES_METHOD_HANDLE.invokeExact((Environment) delegate, profileExpressions);
             } catch (Throwable e) {
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Failed to invoke {} with args : '{}'", MATCHES_PROFILES_METHOD_HANDLE, Arrays.toString(profileExpressions), e);
+                    logger.warn("Failed to invoke {} with args : '{}'", MATCHES_PROFILES_METHOD_HANDLE, arrayToString(profileExpressions), e);
                 }
             }
         }
