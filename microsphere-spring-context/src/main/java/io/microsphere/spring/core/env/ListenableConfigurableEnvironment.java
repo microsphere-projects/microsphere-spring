@@ -40,6 +40,7 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static java.lang.Boolean.parseBoolean;
 import static java.util.Arrays.asList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
