@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 
 /**
  * A {@link BeanListener} implementation that provides comprehensive logging for various bean lifecycle events.
