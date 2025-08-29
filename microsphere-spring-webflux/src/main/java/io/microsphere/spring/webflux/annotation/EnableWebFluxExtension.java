@@ -24,11 +24,13 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.web.util.RequestAttributesUtils;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.annotation.Documented;
@@ -97,19 +99,21 @@ public @interface EnableWebFluxExtension {
     boolean publishEvents() default true;
 
     /**
-     * Indicate that Stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}
+     * Indicate that {@link RequestAttributes} stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}
      *
      * @return <code>false</code> as default
      * @see RequestBody
      * @see HandlerMethod
+     * @see RequestAttributesUtils#getHandlerMethodRequestBodyArgument(RequestAttributes, HandlerMethod)
      */
     boolean storeRequestBodyArgument() default false;
 
     /**
-     * Stores the return value of {@link HandlerMethod} before write as the {@link ResponseBody}
+     * Indicate that {@link RequestAttributes} stores the return value of {@link HandlerMethod} before write as the {@link ResponseBody}
      *
      * @return <code>false</code> as default
      * @see ResponseBody
+     * @see RequestAttributesUtils#getHandlerMethodReturnValue(RequestAttributes, HandlerMethod)
      */
     boolean storeResponseBodyReturnValue() default false;
 }
