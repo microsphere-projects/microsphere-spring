@@ -49,7 +49,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     public void testIsPreFlightRequest() {
         WebRequestProducesRule rule = new WebRequestProducesRule();
         NativeWebRequest request = createPreFightRequest();
-        assertFalse("Pre-Flight request should not match", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test getContent() method
@@ -57,11 +57,11 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     public void testGetContent() {
         // Empty constructor
         WebRequestProducesRule rule1 = new WebRequestProducesRule();
-        assertTrue("Content should be empty for no-arg constructor", rule1.getContent().isEmpty());
+        assertTrue(rule1.getContent().isEmpty());
 
         // Constructor with parameters
         WebRequestProducesRule rule2 = new WebRequestProducesRule("application/json", "text/plain");
-        assertEquals("Should have 2 expressions", 2, rule2.getContent().size());
+        assertEquals(2, rule2.getContent().size());
     }
 
     // Test getToStringInfix() method
@@ -81,7 +81,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         request.addHeader("Origin", "http://example.com");
         NativeWebRequest webRequest = new ServletWebRequest(request);
 
-        assertFalse("Pre-flight requests should return false", rule.matches(webRequest));
+        assertFalse(rule.matches(webRequest));
     }
 
     // Test empty expressions return false
@@ -89,7 +89,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     public void testEmptyExpressionsReturnFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule();
         NativeWebRequest request = createWebRequestWithHeaders(singletonMap("Accept", "application/json"));
-        assertFalse("Empty expressions should return false", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test media type parsing exception returns false
@@ -110,7 +110,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         );
 
         NativeWebRequest request = createWebRequestWithHeaders(singletonMap("Accept", "invalid"));
-        assertFalse("Should return false on media type exception", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test matching expressions return false
@@ -122,7 +122,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         headers.put("Accept", "application/json"); // Matches first expression
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
-        assertFalse("Should return false when matching expressions found", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test wildcard media type returns false
@@ -134,11 +134,11 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         headers.put("Accept", "*/*"); // Wildcard media type
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
-        assertFalse("Should return false for wildcard media type", rule.matches(request));
+        assertFalse(rule.matches(request));
 
 
         rule = new WebRequestProducesRule("!application/xml");
-        assertFalse("Should return false for wildcard media type", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test successful match returns true
@@ -150,7 +150,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         headers.put("Accept", "application/json"); // Doesn't match rule expressions
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
-        assertTrue("Should return true when no expressions match and no wildcard", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     // Test media type caching
@@ -174,6 +174,6 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         boolean secondResult = rule.matches(webRequest);
 
         // Both calls should return same result because of caching
-        assertEquals("Cached results should be consistent", firstResult, secondResult);
+        assertEquals(firstResult, secondResult);
     }
 }
