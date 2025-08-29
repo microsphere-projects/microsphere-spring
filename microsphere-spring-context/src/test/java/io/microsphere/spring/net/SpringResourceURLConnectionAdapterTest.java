@@ -40,6 +40,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.util.ResourceUtils.getURL;
 
@@ -217,13 +218,13 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
     }
 
     @Override
-    public void testGetContentOnIOException() throws IOException {
-        this.readonly.getContent();
+    public void testGetContentOnIOException() {
+        assertThrows(IOException.class, this.readonly::getContent);
     }
 
     @Override
-    public void testGetContentOnNotFoundException() throws IOException {
-        this.notFound.getContent();
+    public void testGetContentOnNotFoundException() {
+        assertThrows(IOException.class, this.notFound::getContent);
     }
 
     @Override
@@ -233,8 +234,8 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
     }
 
     @Override
-    public void testGetContentWithClassOnIOException() throws IOException {
-        this.readonly.getContent(ofArray(InputStream.class));
+    public void testGetContentWithClassOnIOException() {
+        assertThrows(IOException.class, () -> this.readonly.getContent(ofArray(InputStream.class)));
     }
 
     @Override
@@ -251,8 +252,8 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
     }
 
     @Override
-    public void testGetInputStreamOnIOException() throws IOException {
-        this.notFound.getInputStream();
+    public void testGetInputStreamOnIOException() {
+        assertThrows(IOException.class, this.notFound::getInputStream);
     }
 
     void testGetHeaderFieldByName(SpringResourceURLConnectionAdapter adapter) {
@@ -283,8 +284,8 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
     }
 
     @Override
-    public void testGetOutputStreamOnIOException() throws IOException {
-        this.readonly.getOutputStream();
+    public void testGetOutputStreamOnIOException() {
+        assertThrows(IOException.class, this.readonly::getOutputStream);
     }
 
     @Override
@@ -308,7 +309,7 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
         assertFalse(this.readonly.getDoOutput());
         this.readonly.setDoOutput(false);
         assertFalse(this.readonly.getDoOutput());
-        this.readonly.setDoOutput(true);
+        assertThrows(UnsupportedOperationException.class, () -> this.readonly.setDoOutput(true));
     }
 
     @Override
