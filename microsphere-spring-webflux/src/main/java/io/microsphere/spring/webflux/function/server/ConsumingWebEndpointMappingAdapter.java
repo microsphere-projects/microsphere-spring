@@ -155,8 +155,7 @@ public class ConsumingWebEndpointMappingAdapter implements RequestPredicateVisit
         LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
         Entry<RequestPredicate, Builder<?>> entry = stack.pop();
         RequestPredicate predicate = entry.getKey();
-        assertTrue(Objects.equals(predicateToTest, predicate),
-                () -> format("The popped RequestPredicate[{}] does not match the actual one : {}", predicate, predicateToTest));
+        assertTrue(Objects.equals(predicateToTest, predicate), () -> format("The popped RequestPredicate[{}] does not match the actual one : {}", predicate, predicateToTest));
         return stack;
     }
 
