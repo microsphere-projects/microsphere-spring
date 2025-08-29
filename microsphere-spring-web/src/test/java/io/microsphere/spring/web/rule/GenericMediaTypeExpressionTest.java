@@ -39,8 +39,8 @@ public class GenericMediaTypeExpressionTest {
     @Test
     public void testConstructor() {
         GenericMediaTypeExpression expression = new GenericMediaTypeExpression(TEXT_PLAIN, false);
-        assertEquals("MediaType should match", TEXT_PLAIN, expression.getMediaType());
-        assertEquals("Negated flag should be false", false, expression.isNegated());
+        assertEquals(TEXT_PLAIN, expression.getMediaType());
+        assertEquals(false, expression.isNegated());
     }
 
     // ==================== getMediaType() ====================
@@ -48,20 +48,20 @@ public class GenericMediaTypeExpressionTest {
     public void testGetMediaType() {
         MediaType expected = TEXT_PLAIN;
         GenericMediaTypeExpression expression = new GenericMediaTypeExpression("text/plain");
-        assertEquals("MediaType should match", expected, expression.getMediaType());
+        assertEquals(expected, expression.getMediaType());
     }
 
     // ==================== isNegated() ====================
     @Test
     public void testIsNegatedWhenNotNegated() {
         GenericMediaTypeExpression expression = new GenericMediaTypeExpression("text/plain");
-        assertFalse("Should not be negated", expression.isNegated());
+        assertFalse(expression.isNegated());
     }
 
     @Test
     public void testIsNegatedWhenNegated() {
         GenericMediaTypeExpression expression = new GenericMediaTypeExpression("!text/plain");
-        assertTrue("Should be negated", expression.isNegated());
+        assertTrue(expression.isNegated());
     }
 
     // ==================== compareTo() ====================
@@ -69,61 +69,61 @@ public class GenericMediaTypeExpressionTest {
     public void testCompareToWhenMoreSpecific() {
         GenericMediaTypeExpression specific = new GenericMediaTypeExpression("text/plain");
         GenericMediaTypeExpression general = new GenericMediaTypeExpression("text/*");
-        assertTrue("Specific type should have higher priority", specific.compareTo(general) < 0);
+        assertTrue(specific.compareTo(general) < 0);
     }
 
     @Test
     public void testCompareToWhenLessSpecific() {
         GenericMediaTypeExpression general = new GenericMediaTypeExpression("text/*");
         GenericMediaTypeExpression specific = new GenericMediaTypeExpression("text/plain");
-        assertTrue("General type should have lower priority", general.compareTo(specific) > 0);
+        assertTrue(general.compareTo(specific) > 0);
     }
 
     @Test
     public void testCompareToWhenEqualSpecificity() {
         GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
         GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("text/plain");
-        assertEquals("Equal specificity should return 0", 0, expr1.compareTo(expr2));
+        assertEquals(0, expr1.compareTo(expr2));
     }
 
     // ==================== equals() ====================
     @Test
     public void testEqualsSameInstance() {
         GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
-        assertTrue("Same instance should be equal", expr.equals(expr));
+        assertTrue(expr.equals(expr));
     }
 
     @Test
     public void testEqualsNull() {
         GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
-        assertFalse("Null comparison should return false", expr.equals(null));
+        assertFalse(expr.equals(null));
     }
 
     @Test
     public void testEqualsDifferentType() {
         GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
-        assertFalse("Different object types should not be equal", expr.equals("text/plain"));
+        assertFalse(expr.equals("text/plain"));
     }
 
     @Test
     public void testEqualsDifferentMediaType() {
         GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
         GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("application/json");
-        assertFalse("Different media types should not be equal", expr1.equals(expr2));
+        assertFalse(expr1.equals(expr2));
     }
 
     @Test
     public void testEqualsDifferentNegatedFlag() {
         GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
         GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("!text/plain");
-        assertFalse("Different negated flags should not be equal", expr1.equals(expr2));
+        assertFalse(expr1.equals(expr2));
     }
 
     @Test
     public void testEqualsSameProperties() {
         GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
         GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("text/plain");
-        assertTrue("Same properties should be equal", expr1.equals(expr2));
+        assertTrue(expr1.equals(expr2));
     }
 
     // ==================== hashCode() ====================
@@ -131,45 +131,41 @@ public class GenericMediaTypeExpressionTest {
     public void testHashCodeSameMediaType() {
         GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
         GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("text/plain");
-        assertEquals("Same mediaType should produce same hash code",
-                expr1.hashCode(), expr2.hashCode());
+        assertEquals(expr1.hashCode(), expr2.hashCode());
     }
 
     @Test
     public void testHashCodeDifferentMediaType() {
         GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
         GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("application/json");
-        assertNotEquals("Different mediaType should produce different hash codes",
-                expr1.hashCode(), expr2.hashCode());
+        assertNotEquals(expr1.hashCode(), expr2.hashCode());
     }
 
     // ==================== toString() ====================
     @Test
     public void testToStringWhenNotNegated() {
         GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
-        assertEquals("Non-negated should return plain media type",
-                "text/plain", expr.toString());
+        assertEquals("text/plain", expr.toString());
     }
 
     @Test
     public void testToStringWhenNegated() {
         GenericMediaTypeExpression expr = new GenericMediaTypeExpression("!text/plain");
-        assertEquals("Negated should include exclamation mark",
-                "!text/plain", expr.toString());
+        assertEquals("!text/plain", expr.toString());
     }
 
     // ==================== static of() ====================
     @Test
     public void testOfWhenNotNegated() {
         GenericMediaTypeExpression expr = of("text/plain");
-        assertEquals("MediaType should match", TEXT_PLAIN, expr.getMediaType());
-        assertFalse("Should not be negated", expr.isNegated());
+        assertEquals(TEXT_PLAIN, expr.getMediaType());
+        assertFalse(expr.isNegated());
     }
 
     @Test
     public void testOfWhenNegated() {
         GenericMediaTypeExpression expr = of("!text/plain");
-        assertEquals("MediaType should match", TEXT_PLAIN, expr.getMediaType());
-        assertTrue("Should be negated", expr.isNegated());
+        assertEquals(TEXT_PLAIN, expr.getMediaType());
+        assertTrue(expr.isNegated());
     }
 }
