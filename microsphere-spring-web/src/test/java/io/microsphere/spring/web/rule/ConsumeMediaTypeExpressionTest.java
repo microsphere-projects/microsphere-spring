@@ -41,44 +41,44 @@ public class ConsumeMediaTypeExpressionTest {
     public void testMatchWhenPositiveMatch() {
         MediaType contentType = APPLICATION_JSON;
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(contentType, false);
-        assertTrue("Should match the same media type", expression.match(contentType));
+        assertTrue(expression.match(contentType));
     }
 
     @Test
     public void testMatchWhenNegativeMatch() {
         MediaType contentType = APPLICATION_JSON;
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(APPLICATION_XML, false);
-        assertFalse("Should not match different media types", expression.match(contentType));
+        assertFalse(expression.match(contentType));
     }
 
     @Test
     public void testMatchWithWildcard() {
         MediaType contentType = valueOf("application/json");
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(valueOf("application/*"), false);
-        assertTrue("Wildcard should match any subtype", expression.match(contentType));
+        assertTrue(expression.match(contentType));
     }
 
     @Test
     public void testMatchWhenNegatedMatch() {
         MediaType contentType = APPLICATION_JSON;
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(contentType, true);
-        assertFalse("Negated expression should return false when media types match", expression.match(contentType));
+        assertFalse(expression.match(contentType));
     }
 
     @Test
     public void testParseExpressionsWithHeaders() {
         String[] headers = {"Content-Type=application/json"};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(null, headers);
-        assertFalse("Should parse Content-Type from headers", expressions.isEmpty());
-        assertTrue("Parsed expression should match application/json", expressions.get(0).match(APPLICATION_JSON));
+        assertFalse(expressions.isEmpty());
+        assertTrue(expressions.get(0).match(APPLICATION_JSON));
     }
 
     @Test
     public void testParseExpressionsWithConsumes() {
         String[] consumes = {"application/xml"};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, null);
-        assertFalse("Should parse media types from consumes array", expressions.isEmpty());
-        assertTrue("Parsed expression should match application/xml", expressions.get(0).match(APPLICATION_XML));
+        assertFalse(expressions.isEmpty());
+        assertTrue(expressions.get(0).match(APPLICATION_XML));
     }
 
     @Test
@@ -86,9 +86,9 @@ public class ConsumeMediaTypeExpressionTest {
         String[] headers = {"Content-Type=application/json"};
         String[] consumes = {"application/xml"};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
-        assertEquals("Should parse both headers and consumes", 2, expressions.size());
-        assertTrue("First expression should match application/json", expressions.get(0).match(APPLICATION_JSON));
-        assertTrue("Second expression should match application/xml", expressions.get(1).match(APPLICATION_XML));
+        assertEquals(2, expressions.size());
+        assertTrue(expressions.get(0).match(APPLICATION_JSON));
+        assertTrue(expressions.get(1).match(APPLICATION_XML));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ConsumeMediaTypeExpressionTest {
         String[] headers = {"Content-Type"};
         String[] consumes = {};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
-        assertTrue("No expression should be parsed", expressions.isEmpty());
+        assertTrue(expressions.isEmpty());
     }
 
     @Test
@@ -104,9 +104,9 @@ public class ConsumeMediaTypeExpressionTest {
         String[] headers = {"Content-Type=application/json", "Content-Type=application/xml"};
         String[] consumes = {};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
-        assertEquals("Should parse both headers and consumes", 2, expressions.size());
-        assertTrue("First expression should match application/json", expressions.get(0).match(APPLICATION_JSON));
-        assertTrue("Second expression should match application/xml", expressions.get(1).match(APPLICATION_XML));
+        assertEquals(2, expressions.size());
+        assertTrue(expressions.get(0).match(APPLICATION_JSON));
+        assertTrue(expressions.get(1).match(APPLICATION_XML));
     }
 
     @Test
@@ -114,6 +114,6 @@ public class ConsumeMediaTypeExpressionTest {
         String[] headers = {"Content=application/json"};
         String[] consumes = {};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
-        assertTrue("No expression should be parsed", expressions.isEmpty());
+        assertTrue(expressions.isEmpty());
     }
 }
