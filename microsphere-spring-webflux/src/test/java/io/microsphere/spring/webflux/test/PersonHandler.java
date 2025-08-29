@@ -14,25 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc.metadata;
 
-import org.springframework.web.method.HandlerMethod;
+package io.microsphere.spring.webflux.test;
+
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import static reactor.core.publisher.Mono.empty;
 
 /**
- * The metadata class for Spring WebMVC's {@link HandlerMethod}
+ * Person Handler
  *
- * @param <M> the type of metadata
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see HandlerMethod
+ * @see ServerRequest
+ * @see ServerResponse
  * @since 1.0.0
  */
-public class HandlerMethodMetadata<M> extends HandlerMetadata<HandlerMethod, M> {
+public class PersonHandler {
 
-    public HandlerMethodMetadata(HandlerMethod handlerMethod, M metadata) {
-        super(handlerMethod, metadata);
+    public Mono<ServerResponse> listPeople(ServerRequest request) {
+        return empty();
     }
 
-    public final HandlerMethod getHandlerMethod() {
-        return getHandler();
+    public Mono<ServerResponse> createPerson(ServerRequest request) {
+        return empty();
+    }
+
+    public Mono<ServerResponse> getPerson(ServerRequest request) {
+        return empty();
+    }
+
+    public Mono<ServerResponse> updatePerson(ServerRequest request) {
+        return empty();
+    }
+
+    public Mono<ServerResponse> deletePerson(ServerRequest request) {
+        return empty();
     }
 }

@@ -10,6 +10,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
@@ -94,7 +95,7 @@ public abstract class WebUtils {
 
         Map<String, R> foundRegistrationsMap = newLinkedHashMap();
 
-        for (Map.Entry<String, R> entry : registrationsMap.entrySet()) {
+        for (Entry<String, R> entry : registrationsMap.entrySet()) {
             R registration = entry.getValue();
             String className = registration.getClassName();
             Class<?> registeredRegistrationClass = resolveClass(className, classLoader);

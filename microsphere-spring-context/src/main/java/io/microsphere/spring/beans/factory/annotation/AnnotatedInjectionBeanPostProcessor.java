@@ -41,7 +41,6 @@ import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcess
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.MethodParameter;
-import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
@@ -73,6 +72,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static java.lang.Integer.getInteger;
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
@@ -164,8 +164,22 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     public static final String CACHE_SIZE_PROPERTY_NAME = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "injection.metadata.cache.size";
 
-    @ConfigurationProperty(name = CACHE_SIZE_PROPERTY_NAME, defaultValue = "32")
-    final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, 32);
+    /**
+     * The default cache size of metadata cache : "32"
+     */
+    public static final String DEFAULT_CACHE_SIZE_PROPERTY_VALUE = "32";
+
+    /**
+     * The property name of metadata cache expire time : "microsphere.spring.injection.metadata.cache.expire.time"
+     */
+    public static final int DEFAULT_CACHE_SIZE = parseInt(DEFAULT_CACHE_SIZE_PROPERTY_VALUE);
+
+    @ConfigurationProperty(
+            name = CACHE_SIZE_PROPERTY_NAME,
+            defaultValue = DEFAULT_CACHE_SIZE_PROPERTY_VALUE,
+            description = "The size of metadata cache"
+    )
+    public final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, DEFAULT_CACHE_SIZE);
 
     private final Logger logger = getLogger(getClass());
 
@@ -184,7 +198,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * make sure higher priority than {@link AutowiredAnnotationBeanPostProcessor}
      */
-    private int order = Ordered.LOWEST_PRECEDENCE - 3;
+    private int order = LOWEST_PRECEDENCE - 3;
 
     /**
      * whether to turn Class references into Strings (for compatibility with {@link AnnotationMetadata} or to
@@ -362,29 +376,22 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         final List<AnnotatedFieldElement> elements = new LinkedList<AnnotatedFieldElement>();
 
         doWithFields(beanClass, field -> {
-
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
-
                 AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
-
                 if (attributes != null) {
-
                     if (Modifier.isStatic(field.getModifiers())) {
                         if (logger.isWarnEnabled()) {
                             logger.warn("@" + annotationType.getName() + " is not supported on static fields: " + field);
                         }
                         return;
                     }
-
                     boolean required = determineRequiredStatus(attributes);
-
                     elements.add(new AnnotatedFieldElement(field, attributes, required));
                 }
             }
         });
 
         return elements;
-
     }
 
     /**
@@ -408,17 +415,12 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         final List<AnnotatedMethodElement> elements = new LinkedList<AnnotatedMethodElement>();
 
         doWithMethods(beanClass, method -> {
-
             Method bridgedMethod = findBridgedMethod(method);
-
             if (!isVisibilityBridgeMethodPair(method, bridgedMethod)) {
                 return;
             }
-
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
-
                 AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
-
                 if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
                     if (Modifier.isStatic(method.getModifiers())) {
                         if (logger.isWarnEnabled()) {
@@ -437,7 +439,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 }
             }
         });
-
         return elements;
     }
 

@@ -37,8 +37,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.microsphere.invoke.MethodHandleUtils.findStatic;
+import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
@@ -832,9 +834,7 @@ public abstract class BeanUtils implements Utils {
         try {
             constructor = (Constructor<T>) FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE.invokeExact(clazz);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to execute invokeExact on {} with arg : '{}'", FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz, e);
-            }
+            handleInvokeExactFailure(e, FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
         }
         return constructor;
     }
@@ -994,7 +994,7 @@ public abstract class BeanUtils implements Utils {
 
         List<NamingBean<T>> namingBeans = new ArrayList<NamingBean<T>>(unmodifiableBeansMap.size());
 
-        for (Map.Entry<String, T> entry : unmodifiableBeansMap.entrySet()) {
+        for (Entry<String, T> entry : unmodifiableBeansMap.entrySet()) {
             String beanName = entry.getKey();
             T bean = entry.getValue();
             NamingBean<T> namingBean = new NamingBean<T>(beanName, bean);

@@ -44,8 +44,8 @@ public class EnableWebMvcExtensionInterceptorsTest extends AbstractEnableWebMvcE
     @Test
     @Override
     public void test() throws Exception {
-        this.mockMvc.perform(get("/echo/hello").header(TOKEN_HEADER_NAME, MOCK_TOKEN_VALUE))
+        this.mockMvc.perform(get("/test/greeting/hello").header(TOKEN_HEADER_NAME, MOCK_TOKEN_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[ECHO] : hello"));
+                .andExpect(content().string("Greeting : hello"));
     }
 }

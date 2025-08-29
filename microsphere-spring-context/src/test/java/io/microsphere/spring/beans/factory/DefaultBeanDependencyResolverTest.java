@@ -52,13 +52,13 @@ public class DefaultBeanDependencyResolverTest {
     private ExecutorService executorService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.executorService = newSingleThreadExecutor();
         this.resolver = new DefaultBeanDependencyResolver(this.beanFactory, this.executorService);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         this.executorService.shutdown();
     }
 

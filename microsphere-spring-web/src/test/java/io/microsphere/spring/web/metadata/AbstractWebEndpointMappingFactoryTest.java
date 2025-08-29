@@ -23,10 +23,11 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpMethod.GET;
 
 /**
  * {@link AbstractWebEndpointMappingFactory} Test
@@ -46,7 +47,7 @@ public class AbstractWebEndpointMappingFactoryTest {
             @Override
             protected WebEndpointMapping<?> doCreate(String endpoint) throws Throwable {
                 if ("test".equalsIgnoreCase(endpoint)) {
-                    return of("/test").build();
+                    return servlet().endpoint(this).pattern("/test").method(GET).build();
                 }
                 throw new Throwable();
             }
@@ -62,7 +63,7 @@ public class AbstractWebEndpointMappingFactoryTest {
     public void testCreate() {
         Optional<WebEndpointMapping<String>> webEndpointMapping = factory.create("test");
         assertTrue(webEndpointMapping.isPresent());
-        webEndpointMapping.ifPresent(mapping -> assertEquals(of("/test").build(), mapping));
+        webEndpointMapping.ifPresent(mapping -> assertEquals(servlet().endpoint(this).pattern("/test").method(GET).build(), mapping));
     }
 
     @Test

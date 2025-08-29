@@ -16,8 +16,9 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.test.web.controller.TestController;
+import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.webmvc.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -80,7 +82,7 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
     @Test
     public void test() {
         assertNotNull(handlerMethods);
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
+        for (Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
             Optional<WebEndpointMapping<HandlerMetadata<HandlerMethod, RequestMappingInfo>>> webEndpointMapping = factory.create(metadata);
             assertTrue(webEndpointMapping.isPresent());

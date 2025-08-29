@@ -19,7 +19,7 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.1.4</microsphere-java.version>
+        <microsphere-java.version>0.1.5</microsphere-java.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
@@ -27,6 +27,7 @@
         <p6spy.version>3.9.1</p6spy.version>
         <logback.version>1.2.12</logback.version>
         <junit.version>4.13.2</junit.version>
+        <junit5.version>5.13.4</junit5.version>
         <mockito.version>4.11.0</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
@@ -34,15 +35,6 @@
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Spring Framework BOM -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Jackson BOM -->
             <dependency>
@@ -71,6 +63,15 @@
                 <groupId>p6spy</groupId>
                 <artifactId>p6spy</artifactId>
                 <version>${p6spy.version}</version>
+            </dependency>
+
+            <!-- JUnit 5 -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit5.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- JUnit -->
@@ -106,7 +107,19 @@
             <!-- Logback -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-access</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
             </dependency>
 
@@ -119,6 +132,15 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Spring Framework BOM -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -127,6 +149,7 @@
             <id>spring-framework-4.3</id>
             <properties>
                 <spring.version>4.3.30.RELEASE</spring.version>
+                <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -134,6 +157,7 @@
             <id>spring-framework-5.0</id>
             <properties>
                 <spring.version>5.0.20.RELEASE</spring.version>
+                <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -141,6 +165,7 @@
             <id>spring-framework-5.1</id>
             <properties>
                 <spring.version>5.1.20.RELEASE</spring.version>
+                <spring-boot.version>2.1.18.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -148,6 +173,7 @@
             <id>spring-framework-5.2</id>
             <properties>
                 <spring.version>5.2.25.RELEASE</spring.version>
+                <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
             </properties>
         </profile>
 
@@ -158,6 +184,7 @@
             </activation>
             <properties>
                 <spring.version>5.3.39</spring.version>
+                <spring-boot.version>2.7.18</spring-boot.version>
             </properties>
         </profile>
     </profiles>

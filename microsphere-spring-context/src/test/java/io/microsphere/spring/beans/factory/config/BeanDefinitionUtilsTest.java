@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -48,7 +49,6 @@ import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -292,7 +292,7 @@ public class BeanDefinitionUtilsTest {
 
         @Bean(name = USERS_BEAN_NAME)
         public List<User> users() {
-            return asList(new User());
+            return Collections.singletonList(new User());
         }
     }
 }

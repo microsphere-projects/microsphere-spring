@@ -26,6 +26,7 @@ import org.springframework.core.env.PropertySource;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -134,7 +135,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
             if (predicate.test(event.getKind())) {
                 PropertySource propertySource = propertySourceGetter.apply(event);
                 Map<String, Object> subProperties = propertiesGenerator.apply(propertySource);
-                for (Map.Entry<String, Object> entry : subProperties.entrySet()) {
+                for (Entry<String, Object> entry : subProperties.entrySet()) {
                     String propertyName = entry.getKey();
                     properties.computeIfAbsent(propertyName, k -> entry.getValue());
                 }

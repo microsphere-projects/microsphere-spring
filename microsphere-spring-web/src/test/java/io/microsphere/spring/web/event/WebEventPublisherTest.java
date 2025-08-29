@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.event;
 
 
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class WebEventPublisherTest {
     public void testBeforeExecute() {
         testInSpringContainer(context -> {
             String[] arguments = ofArray("Mercy");
-            HandlerMethod handlerMethod = new HandlerMethod(new TestRestController(), "greeting", String.class);
+            HandlerMethod handlerMethod = new HandlerMethod(new TestController(), "greeting", String.class);
             NativeWebRequest webRequest = createWebRequest("/greeting/Mercy");
             context.addApplicationListener((ApplicationListener<HandlerMethodArgumentsResolvedEvent>) event -> {
                 assertSame(handlerMethod, event.getHandlerMethod());

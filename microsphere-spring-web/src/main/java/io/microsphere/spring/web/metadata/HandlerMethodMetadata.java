@@ -14,30 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc.controller;
+package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.webmvc.annotation.Idempotent;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import org.springframework.web.method.HandlerMethod;
 
 /**
- * Test {@link Controller}
+ * The metadata class for Spring WebMVC's {@link HandlerMethod}
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see TestController
+ * @param <M> the type of metadata
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see HandlerMethod
  * @since 1.0.0
  */
-@RestController
-public class TestController {
+public class HandlerMethodMetadata<M> extends HandlerMetadata<HandlerMethod, M> {
 
-    @RequestMapping(value = "/echo/{message}", method = {GET, POST})
-    @Idempotent
-    public String echo(@PathVariable String message) {
-        return "[ECHO] : " + message;
+    public HandlerMethodMetadata(HandlerMethod handlerMethod, M metadata) {
+        super(handlerMethod, metadata);
+    }
+
+    public final HandlerMethod getHandlerMethod() {
+        return getHandler();
     }
 }

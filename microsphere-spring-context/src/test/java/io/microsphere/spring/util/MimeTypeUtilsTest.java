@@ -26,6 +26,7 @@ import static io.microsphere.spring.util.MimeTypeUtils.getSubtypeSuffix;
 import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -73,8 +74,8 @@ public class MimeTypeUtilsTest {
     public void testIsPresentIn() {
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, null));
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, emptyList()));
-        assertFalse(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_TEXT)));
+        assertFalse(isPresentIn(APPLICATION_GRAPHQL, singletonList(APPLICATION_TEXT)));
         assertTrue(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_TEXT, APPLICATION_GRAPHQL)));
-        assertTrue(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_GRAPHQL)));
+        assertTrue(isPresentIn(APPLICATION_GRAPHQL, singletonList(APPLICATION_GRAPHQL)));
     }
 }

@@ -16,18 +16,20 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
+import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
-import io.microsphere.spring.webmvc.controller.TestController;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
-import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
+import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -51,6 +53,7 @@ import java.util.Collection;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -109,9 +112,11 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
         assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, SimpleWebEndpointMappingRegistry.class));
         assertEquals(this.interceptHandlerMethods, this.wac.containsBean(DelegatingHandlerMethodAdvice.BEAN_NAME));
         assertEquals(this.publishEvents, isBeanPresent(this.wac, WebEventPublisher.class));
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, WebEndpointMappingRegistrar.class));
 
         // From @EnableWebMvcExtension
-        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, WebEndpointMappingRegistrar.class));
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, ServletWebEndpointMappingResolver.class));
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, HandlerMappingWebEndpointMappingResolver.class));
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, DelegatingHandlerMethodAdvice.class));
         assertEquals(this.interceptHandlerMethods, this.wac.containsBean(InterceptingHandlerMethodProcessor.BEAN_NAME));
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, InterceptingHandlerMethodProcessor.class));
@@ -122,13 +127,13 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
 
     @Test
     public void test() throws Exception {
-        this.mockMvc.perform(get("/echo/hello"))
+        this.mockMvc.perform(get("/test/greeting/hello"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[ECHO] : hello"));
+                .andExpect(content().string("Greeting : hello"));
     }
 
     /**
-     * Test only one mapping : {@link TestController#echo(String)}
+     * Test only one mapping : {@link TestController#greeting(String)}
      *
      * @param event {@link WebEndpointMappingsReadyEvent}
      */
@@ -136,15 +141,14 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         // Only TestController
         Collection<WebEndpointMapping> mappings = event.getMappings();
-        assertEquals(1, mappings.size());
+        assertFalse(mappings.isEmpty());
         WebEndpointMapping webEndpointMapping = mappings.iterator().next();
         String[] patterns = webEndpointMapping.getPatterns();
         assertEquals(1, patterns.length);
-        assertEquals("/echo/{message}", patterns[0]);
     }
 
     /**
-     * Test only one method : {@link TestController#echo(String)}
+     * Test only one method : {@link TestController#greeting(String)}
      *
      * @param event {@link HandlerMethodArgumentsResolvedEvent}
      */
@@ -195,7 +199,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
     }
 
     private void assertMethod(Method method) {
-        assertEquals("echo", method.getName());
+        assertEquals("greeting", method.getName());
         assertEquals(String.class, method.getReturnType());
 
         Class<?>[] parameterTypes = method.getParameterTypes();

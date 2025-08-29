@@ -2,7 +2,6 @@ package io.microsphere.spring.core.annotation;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -14,7 +13,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +23,13 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute
 import static io.microsphere.spring.core.annotation.AnnotationUtils.isPresent;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
 import static io.microsphere.util.ArrayUtils.of;
+import static java.util.Arrays.deepEquals;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.beans.factory.support.AbstractBeanDefinition.INFER_METHOD;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
 /**
@@ -143,17 +143,17 @@ public class AnnotationUtilsTest {
         Bean annotation = getAnnotation("dummyBean", Bean.class);
 
         Map<String, Object> attributes = getAttributes(annotation, true);
-        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertArrayEquals(new String[]{"dummy-bean"}, (String[]) attributes.get("name"));
 
         attributes = getAttributes(annotation, true);
-        assertTrue(Arrays.equals(new String[]{"dummy-bean"}, (String[]) attributes.get("name")));
+        assertArrayEquals(new String[]{"dummy-bean"}, (String[]) attributes.get("name"));
 
         attributes = getAttributes(annotation, false);
         if (SPRING_CONTEXT_VERSION.getMajor() < 6) {
             assertEquals(Autowire.NO, attributes.get("autowire"));
         }
         assertEquals("", attributes.get("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, attributes.get("destroyMethod"));
+        assertEquals(INFER_METHOD, attributes.get("destroyMethod"));
 
         MockEnvironment environment = new MockEnvironment();
 
@@ -162,7 +162,7 @@ public class AnnotationUtilsTest {
             assertEquals(Autowire.NO, attributes.get("autowire"));
         }
         assertEquals("", attributes.get("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, attributes.get("destroyMethod"));
+        assertEquals(INFER_METHOD, attributes.get("destroyMethod"));
 
         annotation = getAnnotation("dummyBean2", Bean.class);
 
@@ -176,20 +176,20 @@ public class AnnotationUtilsTest {
 
         annotation = getAnnotation("dummyBean3", Bean.class);
         attributes = getAttributes(annotation, environment, true);
-        assertTrue(Arrays.deepEquals(of(environment.getProperty("beanName")), (String[]) attributes.get("name")));
+        assertTrue(deepEquals(of(environment.getProperty("beanName")), (String[]) attributes.get("name")));
 
     }
 
     @Test
     public void testGetAttribute() {
         Bean annotation = getAnnotation("dummyBean", Bean.class);
-        assertArrayEquals(of("dummy-bean"), (String[]) getAttribute(annotation, "name"));
+        assertArrayEquals(of("dummy-bean"), getAttribute(annotation, "name"));
 
         annotation = getAnnotation("dummyBean2", Bean.class);
-        assertArrayEquals(of(), (String[]) getAttribute(annotation, "name"));
+        assertArrayEquals(of(), getAttribute(annotation, "name"));
 
         annotation = getAnnotation("dummyBean3", Bean.class);
-        assertArrayEquals(of("${beanName}"), (String[]) getAttribute(annotation, "name"));
+        assertArrayEquals(of("${beanName}"), getAttribute(annotation, "name"));
     }
 
     @Test
@@ -217,7 +217,7 @@ public class AnnotationUtilsTest {
             assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
         }
         assertEquals("", annotationAttributes.getString("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
+        assertEquals(INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 
         // case 5 : PropertyResolver , ignoreDefaultValue(false) , ignoreAttributeName(empty)
         annotationAttributes = getAnnotationAttributes(annotation, environment, false);
@@ -226,11 +226,11 @@ public class AnnotationUtilsTest {
             assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
         }
         assertEquals("", annotationAttributes.getString("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
+        assertEquals(INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 
         // case 6 : PropertyResolver , ignoreDefaultValue(false) , ignoreAttributeName(name,autowire,initMethod)
         annotationAttributes = getAnnotationAttributes(annotation, environment, false, "name", "autowire", "initMethod");
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
+        assertEquals(INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 
         // getAnnotationAttributes(AnnotatedElement, java.lang.Class, PropertyResolver, boolean, String...)
         annotationAttributes = getAnnotationAttributes(getMethod("dummyBean"), Bean.class, environment, true);
@@ -299,7 +299,7 @@ public class AnnotationUtilsTest {
 
     @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    private static @interface RuntimeAnnotation {
+    private @interface RuntimeAnnotation {
 
         String value();
 
@@ -307,7 +307,7 @@ public class AnnotationUtilsTest {
 
     @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
     @Retention(RetentionPolicy.CLASS)
-    private static @interface ClassAnnotation {
+    private @interface ClassAnnotation {
 
     }
 }

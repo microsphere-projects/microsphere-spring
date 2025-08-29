@@ -19,8 +19,12 @@ package io.microsphere.spring.core.env;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * {@link ListenableConfigurableEnvironmentInitializer} Test
@@ -35,9 +39,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 })
 public class ListenableConfigurableEnvironmentInitializerTest {
 
+    @Autowired
+    private Environment environment;
+
     @Test
     public void test() {
-
+        assertNotNull(environment.getProperty("user.home"));
     }
 
 }

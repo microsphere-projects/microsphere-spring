@@ -1,8 +1,11 @@
 package io.microsphere.spring.webmvc.util;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
+import io.microsphere.spring.web.util.RequestAttributesUtils;
+import io.microsphere.util.Utils;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -11,45 +14,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FrameworkServlet;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.servlet.util.WebUtils.findServletRegistrations;
-import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
-import static io.microsphere.util.ArrayUtils.isNotEmpty;
-import static io.microsphere.util.ClassLoaderUtils.isPresent;
-import static java.util.Arrays.asList;
+import static io.microsphere.util.Assert.assertNotNull;
+import static java.util.stream.Stream.of;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.ReflectionUtils.findMethod;
-import static org.springframework.util.ReflectionUtils.invokeMethod;
-import static org.springframework.util.StringUtils.arrayToDelimitedString;
-import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM;
 import static org.springframework.web.context.ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM;
-import static org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext;
+import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 import static org.springframework.web.servlet.support.RequestContextUtils.findWebApplicationContext;
 
 /**
@@ -58,32 +48,13 @@ import static org.springframework.web.servlet.support.RequestContextUtils.findWe
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
-@SuppressWarnings("unchecked")
-public abstract class WebMvcUtils {
-
-    public static final String HANDLER_METHOD_ARGUMENTS_ATTRIBUTE_NAME_PREFIX = "HM.ARGS:";
-
-    public static final String HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX = "HM.RB.ARG:";
-
-    public static final String HANDLER_METHOD_RETURN_VALUE_ATTRIBUTE_NAME_PREFIX = "HM.RV:";
-
-    public static final Set<Class<? extends HttpMessageConverter<?>>> supportedConverterTypes;
+public abstract class WebMvcUtils implements Utils {
 
     /**
-     * The name of AbstractJsonpResponseBodyAdvice class which was present in Spring Framework since 4.1
+     * The supported {@link HttpMessageConverter} types
      */
-    public static final String ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_CLASS_NAME =
-            "org.springframework.web.servlet.mvc.findWebApplicationContextMethod.annotation.AbstractJsonpResponseBodyAdvice";
-
-    /**
-     * Indicates current version of Spring Framework is 4.1 or above
-     */
-    private final static boolean ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_PRESENT = isPresent(ABSTRACT_JSONP_RESPONSE_BODY_ADVICE_CLASS_NAME, WebMvcUtils.class.getClassLoader());
-
-    /**
-     * {@link RequestMappingHandlerMapping} Context name
-     */
-    private final static String REQUEST_MAPPING_HANDLER_MAPPING_CONTEXT_NAME = RequestMappingHandlerMapping.class.getName();
+    public static final Set<Class<? extends HttpMessageConverter<?>>> SUPPORTED_CONVERTER_TYPES =
+            ofSet(MappingJackson2HttpMessageConverter.class, StringHttpMessageConverter.class);
 
     /**
      * Any number of these characters are considered delimiters between
@@ -91,22 +62,7 @@ public abstract class WebMvcUtils {
      *
      * @see ContextLoader#INIT_PARAM_DELIMITERS
      */
-    private static final String INIT_PARAM_DELIMITERS = ",; \t\n";
-
-    /**
-     * RequestContextUtils#findWebApplicationContext(HttpServletRequest, ServletContext) method
-     *
-     * @since Spring 4.2.1
-     */
-    private static final Method findWebApplicationContextMethod = findMethod(RequestContextUtils.class,
-            "findWebApplicationContext", HttpServletRequest.class, ServletContext.class);
-
-    static {
-        Set<Class<? extends HttpMessageConverter<?>>> converterTypes = new HashSet<>(3);
-        converterTypes.add(MappingJackson2HttpMessageConverter.class);
-        converterTypes.add(StringHttpMessageConverter.class);
-        supportedConverterTypes = Collections.unmodifiableSet(converterTypes);
-    }
+    public static final String INIT_PARAM_DELIMITERS = ",; \t\n";
 
     /**
      * Gets the current {@link HttpServletRequest} object
@@ -117,8 +73,14 @@ public abstract class WebMvcUtils {
      *
      * @return <code>null<code> returns the current {@link HttpServletRequest} object.
      */
+    @Nullable
     public static HttpServletRequest getHttpServletRequest() throws IllegalStateException {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        RequestAttributes requestAttributes = getRequestAttributes();
+        return getHttpServletRequest(requestAttributes);
+    }
+
+    @Nullable
+    public static HttpServletRequest getHttpServletRequest(RequestAttributes requestAttributes) {
         HttpServletRequest request = null;
         if (requestAttributes instanceof ServletRequestAttributes) {
             request = ((ServletRequestAttributes) requestAttributes).getRequest();
@@ -126,33 +88,40 @@ public abstract class WebMvcUtils {
         return request;
     }
 
-
-    public static HttpServletRequest getHttpServletRequest(WebRequest webRequest) {
-        HttpServletRequest request = null;
-        if (webRequest instanceof ServletWebRequest) {
-            request = ((ServletWebRequest) webRequest).getRequest();
-        }
-        return request;
-    }
-
-
     /**
      * Gets the {@link WebApplicationContext} associated with the current Servlet Request request
      *
      * @return Current Servlet Request associated with {@link WebApplicationContext}
      * @throws IllegalStateException In a non-Web scenario, an exception is thrown
      */
+    @Nonnull
     public static WebApplicationContext getWebApplicationContext() throws IllegalStateException {
         HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
             throw new IllegalStateException("Use it in your Servlet Web application!");
         }
         ServletContext servletContext = request.getServletContext();
-        return getRequiredWebApplicationContext(servletContext);
+        return getWebApplicationContext(request, servletContext);
     }
 
     /**
-     * Set the {@link RequestBody @RequestBody} method parameter in {@link HandlerMethod} to the {@link ServletRequest} context
+     * Get the {@link WebApplicationContext} from {@link HttpServletRequest}
+     *
+     * @param request        {@link HttpServletRequest}
+     * @param servletContext {@link ServletContext}
+     * @return {@link WebApplicationContext}
+     * @throws IllegalStateException if no servlet-specific context has been found
+     * @see RequestContextUtils#getWebApplicationContext(HttpServletRequest)
+     * @see RequestContextUtils#findWebApplicationContext(HttpServletRequest, ServletContext)
+     * @see DispatcherServlet#WEB_APPLICATION_CONTEXT_ATTRIBUTE
+     */
+    @Nullable
+    public static WebApplicationContext getWebApplicationContext(HttpServletRequest request, @Nullable ServletContext servletContext) {
+        return findWebApplicationContext(request, servletContext);
+    }
+
+    /**
+     * Set the {@link RequestBody @RequestBody} method parameter in {@link HandlerMethod} to the {@link HttpServletRequest} context
      *
      * @param method              Handler {@link Method}
      * @param requestBodyArgument {@link RequestBody @RequestBody} The method parameters
@@ -161,135 +130,150 @@ public abstract class WebMvcUtils {
         setHandlerMethodRequestBodyArgument(getHttpServletRequest(), method, requestBodyArgument);
     }
 
-    public static void setHandlerMethodReturnValue(HttpServletRequest request, Method method, Object returnValue) {
-        String attributeName = getHandlerMethodReturnValueAttributeName(method);
-        if (request != null && returnValue != null) {
-            request.setAttribute(attributeName, returnValue);
-        }
-    }
-
     /**
-     * Set the {@link RequestBody @RequestBody} method parameter in {@link HandlerMethod} to the {@link ServletRequest} context
+     * Set the {@link RequestBody @RequestBody} method parameter in {@link HandlerMethod} to the {@link HttpServletRequest} context
      *
-     * @param request             {@link ServletRequest}
+     * @param request             {@link HttpServletRequest}
      * @param method              Handler {@link Method}
      * @param requestBodyArgument {@link RequestBody @RequestBody} The method parameters
      */
-    public static void setHandlerMethodRequestBodyArgument(ServletRequest request, Method method, Object requestBodyArgument) {
-        String attributeName = getHandlerMethodRequestBodyArgumentAttributeName(method);
-        if (request != null && requestBodyArgument != null) {
-            request.setAttribute(attributeName, requestBodyArgument);
-        }
+    public static void setHandlerMethodRequestBodyArgument(HttpServletRequest request, Method method, Object requestBodyArgument) {
+        RequestAttributesUtils.setHandlerMethodRequestBodyArgument(new ServletWebRequest(request), method, requestBodyArgument);
     }
 
     /**
-     * Gets the {@link RequestBody @RequestBody} method parameter from the {@link ServletRequest} context
+     * Set the return value of the {@link HandlerMethod} to the {@link HttpServletRequest} context
      *
-     * @param request       {@link ServletRequest}
+     * @param method      Handler {@link Method}
+     * @param returnValue The return value
+     */
+    public static void setHandlerMethodReturnValue(Method method, Object returnValue) {
+        setHandlerMethodReturnValue(getHttpServletRequest(), method, returnValue);
+    }
+
+    /**
+     * Set the return value of the {@link HandlerMethod} to the {@link HttpServletRequest} context
+     *
+     * @param request     {@link HttpServletRequest}
+     * @param method      Handler {@link Method}
+     * @param returnValue The return value
+     */
+    public static void setHandlerMethodReturnValue(HttpServletRequest request, Method method, Object returnValue) {
+        RequestAttributesUtils.setHandlerMethodReturnValue(new ServletWebRequest(request), method, returnValue);
+    }
+
+    /**
+     * Gets the {@link RequestBody @RequestBody} method parameter from the {@link HttpServletRequest} context
+     *
      * @param handlerMethod {@link HandlerMethod}
      * @param <T>           {@link RequestBody @RequestBody} Method parameter Types
      * @return {@link RequestBody @RequestBody} Method parameters if present, otherwise，<code>null</code>
      */
-    public static <T> T getHandlerMethodRequestBodyArgument(ServletRequest request, HandlerMethod handlerMethod) {
+    @Nullable
+    public static <T> T getHandlerMethodRequestBodyArgument(HandlerMethod handlerMethod) {
+        return getHandlerMethodRequestBodyArgument(getHttpServletRequest(), handlerMethod);
+    }
+
+    /**
+     * Gets the {@link RequestBody @RequestBody} method parameter from the {@link HttpServletRequest} context
+     *
+     * @param request       {@link HttpServletRequest}
+     * @param handlerMethod {@link HandlerMethod}
+     * @param <T>           {@link RequestBody @RequestBody} Method parameter Types
+     * @return {@link RequestBody @RequestBody} Method parameters if present, otherwise，<code>null</code>
+     */
+    @Nullable
+    public static <T> T getHandlerMethodRequestBodyArgument(HttpServletRequest request, HandlerMethod handlerMethod) {
         return getHandlerMethodRequestBodyArgument(request, handlerMethod.getMethod());
     }
 
     /**
-     * Gets the {@link RequestBody @RequestBody} method parameter from the {@link ServletRequest} context
+     * Gets the {@link RequestBody @RequestBody} method parameter from the {@link HttpServletRequest} context
      *
-     * @param request {@link ServletRequest}
+     * @param method Handler {@link Method}
+     * @param <T>    {@link RequestBody @RequestBody} Method parameter Types
+     * @return {@link RequestBody @RequestBody} method parameter if present, otherwise <code>null<code>
+     */
+    @Nonnull
+    public static <T> T getHandlerMethodRequestBodyArgument(Method method) {
+        return getHandlerMethodRequestBodyArgument(getHttpServletRequest(), method);
+    }
+
+    /**
+     * Gets the {@link RequestBody @RequestBody} method parameter from the {@link HttpServletRequest} context
+     *
+     * @param request {@link HttpServletRequest}
      * @param method  Handler {@link Method}
      * @param <T>     {@link RequestBody @RequestBody} Method parameter Types
      * @return {@link RequestBody @RequestBody} method parameter if present, otherwise <code>null<code>
      */
-    public static <T> T getHandlerMethodRequestBodyArgument(ServletRequest request, Method method) {
-        String attributeName = getHandlerMethodRequestBodyArgumentAttributeName(method);
-        return request == null ? null : (T) request.getAttribute(attributeName);
-    }
-
-    public static Object[] getHandlerMethodArguments(WebRequest webRequest, HandlerMethod handlerMethod) {
-        Method method = handlerMethod.getMethod();
-        return getHandlerMethodArguments(webRequest, method);
-    }
-
-    public static Object[] getHandlerMethodArguments(WebRequest webRequest, MethodParameter parameter) {
-        Method method = parameter.getMethod();
-        return getHandlerMethodArguments(webRequest, method);
-    }
-
-    public static Object[] getHandlerMethodArguments(WebRequest webRequest, Method method) {
-        HttpServletRequest request = getHttpServletRequest(webRequest);
-        final Object[] arguments;
-        if (request != null) {
-            arguments = WebMvcUtils.getHandlerMethodArguments(request, method);
-        } else {
-            arguments = new Object[method.getParameterCount()];
-        }
-        return arguments;
+    @Nonnull
+    public static <T> T getHandlerMethodRequestBodyArgument(HttpServletRequest request, Method method) {
+        return RequestAttributesUtils.getHandlerMethodRequestBodyArgument(new ServletWebRequest(request), method);
     }
 
     /**
      * Gets the {@link HandlerMethod} method parameter
      *
-     * @param request       {@link ServletRequest}
      * @param handlerMethod {@link HandlerMethod}
      * @return non-null
      */
-    public static Object[] getHandlerMethodArguments(ServletRequest request, HandlerMethod handlerMethod) {
+    @Nonnull
+    public static Object[] getHandlerMethodArguments(HandlerMethod handlerMethod) {
+        return getHandlerMethodArguments(getHttpServletRequest(), handlerMethod);
+    }
+
+    /**
+     * Gets the {@link HandlerMethod} method parameter
+     *
+     * @param request       {@link HttpServletRequest}
+     * @param handlerMethod {@link HandlerMethod}
+     * @return non-null
+     */
+    @Nonnull
+    public static Object[] getHandlerMethodArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
         return getHandlerMethodArguments(request, handlerMethod.getMethod());
     }
 
     /**
      * Gets the {@link HandlerMethod} method parameter
      *
-     * @param request {@link ServletRequest}
-     * @param method  {@link Method}
+     * @param method {@link HandlerMethod}
      * @return non-null
      */
-    public static Object[] getHandlerMethodArguments(ServletRequest request, Method method) {
-        String attributeName = getHandlerMethodArgumentsAttributeName(method);
-        Object[] arguments = (Object[]) request.getAttribute(attributeName);
-        if (arguments == null) {
-            arguments = new Object[method.getParameterCount()];
-            request.setAttribute(attributeName, arguments);
-        }
-        return arguments;
-    }
-
-    /**
-     * Gets the {@link HandlerMethod} method parameter
-     *
-     * @param method {@link Method}
-     * @return non-null
-     */
+    @Nonnull
     public static Object[] getHandlerMethodArguments(Method method) {
         return getHandlerMethodArguments(getHttpServletRequest(), method);
     }
 
     /**
-     * Gets the value returned by the {@link HandlerMethod} method
+     * Gets the {@link HandlerMethod} method parameter
      *
-     * @param request       {@link ServletRequest}
-     * @param handlerMethod {@link HandlerMethod}
-     * @param <T>           Method return value type
-     * @return {@link HandlerMethod} Method return value
+     * @param request {@link HttpServletRequest}
+     * @param method  {@link Method}
+     * @return non-null
      */
-    public static <T> T getHandlerMethodReturnValue(ServletRequest request, HandlerMethod handlerMethod) {
-        Method method = handlerMethod.getMethod();
-        return getHandlerMethodReturnValue(request, method);
+    @Nonnull
+    public static Object[] getHandlerMethodArguments(HttpServletRequest request, Method method) {
+        return RequestAttributesUtils.getHandlerMethodArguments(new ServletWebRequest(request), method);
+    }
+
+    @Nullable
+    public static <T> T getHandlerMethodReturnValue(HandlerMethod handlerMethod) {
+        return getHandlerMethodReturnValue(getHttpServletRequest(), handlerMethod);
     }
 
     /**
      * Gets the value returned by the {@link HandlerMethod} method
      *
-     * @param request {@link ServletRequest}
-     * @param method  {@link Method}
-     * @param <T>     Method return value type
+     * @param request       {@link HttpServletRequest}
+     * @param handlerMethod {@link HandlerMethod}
+     * @param <T>           Method return value type
      * @return {@link HandlerMethod} Method return value
      */
-    public static <T> T getHandlerMethodReturnValue(ServletRequest request, Method method) {
-        String attributeName = getHandlerMethodReturnValueAttributeName(method);
-        return (T) request.getAttribute(attributeName);
+    @Nullable
+    public static <T> T getHandlerMethodReturnValue(HttpServletRequest request, HandlerMethod handlerMethod) {
+        return getHandlerMethodReturnValue(request, handlerMethod.getMethod());
     }
 
     /**
@@ -299,9 +283,22 @@ public abstract class WebMvcUtils {
      * @param <T>    Method return value type
      * @return {@link HandlerMethod} Method return value
      */
+    @Nullable
     public static <T> T getHandlerMethodReturnValue(Method method) {
-        HttpServletRequest request = getHttpServletRequest();
-        return getHandlerMethodReturnValue(request, method);
+        return getHandlerMethodReturnValue(getHttpServletRequest(), method);
+    }
+
+    /**
+     * Gets the value returned by the {@link HandlerMethod} method
+     *
+     * @param request {@link HttpServletRequest}
+     * @param method  {@link Method}
+     * @param <T>     Method return value type
+     * @return {@link HandlerMethod} Method return value
+     */
+    @Nullable
+    public static <T> T getHandlerMethodReturnValue(HttpServletRequest request, Method method) {
+        return RequestAttributesUtils.getHandlerMethodReturnValue(new ServletWebRequest(request), method);
     }
 
     /**
@@ -315,137 +312,63 @@ public abstract class WebMvcUtils {
     }
 
     /**
-     * Get the {@link WebApplicationContext} from {@link HttpServletRequest}
-     *
-     * @param request        {@link HttpServletRequest}
-     * @param servletContext {@link ServletContext}
-     * @return {@link WebApplicationContext}
-     * @throws IllegalStateException if no servlet-specific context has been found
-     * @see RequestContextUtils#getWebApplicationContext(ServletRequest)
-     * @see DispatcherServlet#WEB_APPLICATION_CONTEXT_ATTRIBUTE
-     */
-    public static WebApplicationContext getWebApplicationContext(HttpServletRequest request, ServletContext servletContext) {
-
-        WebApplicationContext webApplicationContext = null;
-
-        if (findWebApplicationContextMethod != null) {
-
-            try {
-
-                webApplicationContext = (WebApplicationContext)
-                        invokeMethod(findWebApplicationContextMethod, null, request, servletContext);
-
-            } catch (IllegalStateException e) {
-
-            }
-
-        }
-
-        if (webApplicationContext == null) {
-
-            webApplicationContext = findWebApplicationContext(request, servletContext);
-
-        }
-
-        return webApplicationContext;
-
-    }
-
-    protected static String appendInitParameter(String existedParameterValue, String... parameterValues) {
-
-        String[] existedParameterValues = hasLength(existedParameterValue) ?
-                existedParameterValue.split(INIT_PARAM_DELIMITERS) :
-                EMPTY_STRING_ARRAY;
-
-        List<String> parameterValuesList = new ArrayList<String>();
-
-        if (isNotEmpty(existedParameterValues)) {
-            parameterValuesList.addAll(asList(existedParameterValues));
-        }
-
-        parameterValuesList.addAll(asList(parameterValues));
-
-        String newParameterValue = arrayToDelimitedString(parameterValuesList.toArray(), ",");
-
-        return newParameterValue;
-    }
-
-    /**
-     * Append {@link ServletContext#setInitParameter(String, String) ServletContext Intialized Parameters}
+     * Sets {@link ServletContext#setInitParameter(String, String) ServletContext Intialized Parameters}
      *
      * @param servletContext  {@link ServletContext}
      * @param parameterName   the name of init parameter
      * @param parameterValues the values of init parameters
      */
-    public static void appendInitParameters(ServletContext servletContext, String parameterName, String... parameterValues) {
+    public static void setInitParameters(ServletContext servletContext, String parameterName, String... parameterValues) {
+        assertNotNull(servletContext, () -> "The argument 'servletContext' must not be null!");
+        assertNotNull(parameterValues, () -> "The argument 'parameterValues' must not be null!");
 
-        notNull(servletContext, "The argument 'servletContext' must not be null!");
-        notNull(parameterValues, "The argument 'parameterValues' must not be null!");
-
-        String existedParameterValue = servletContext.getInitParameter(parameterName);
-
-        String newParameterValue = appendInitParameter(existedParameterValue, parameterValues);
-
-        if (hasLength(newParameterValue)) {
-            servletContext.setInitParameter(parameterName, newParameterValue);
-        }
-
+        String newParameterValue = arrayToCommaDelimitedString(parameterValues);
+        servletContext.setInitParameter(parameterName, newParameterValue);
     }
 
     /**
-     * Append  initialized parameter for {@link ApplicationContextInitializer Global Initializer Class}
+     * Sets the initialized parameter for {@link ApplicationContextInitializer Global Initializer Class}
      *
-     * @param servletContext          {@link ServletContext}
-     * @param contextInitializerClass the class of {@link ApplicationContextInitializer}
+     * @param servletContext            {@link ServletContext}
+     * @param contextInitializerClasses the classes of {@link ApplicationContextInitializer}
      * @see ContextLoader#GLOBAL_INITIALIZER_CLASSES_PARAM
      */
-    public static void appendGlobalInitializerClassInitParameter(ServletContext servletContext,
-                                                                 Class<? extends ApplicationContextInitializer> contextInitializerClass) {
-
-        String contextInitializerClassName = contextInitializerClass.getName();
-
-        appendInitParameters(servletContext, GLOBAL_INITIALIZER_CLASSES_PARAM, contextInitializerClassName);
-
+    public static void setGlobalInitializerClassInitParameter(ServletContext servletContext,
+                                                              Class<? extends ApplicationContextInitializer>... contextInitializerClasses) {
+        setInitParameters(servletContext, GLOBAL_INITIALIZER_CLASSES_PARAM, getClassNames(contextInitializerClasses));
     }
 
     /**
-     * Append  initialized parameter for {@link ApplicationContextInitializer Context Initializer Class}
+     * Sets the initialized parameter for {@link ApplicationContextInitializer Context Initializer Class}
      *
-     * @param servletContext          {@link ServletContext}
-     * @param contextInitializerClass the class of {@link ApplicationContextInitializer}
+     * @param servletContext            {@link ServletContext}
+     * @param contextInitializerClasses the classes of {@link ApplicationContextInitializer}
      * @see ContextLoader#CONTEXT_INITIALIZER_CLASSES_PARAM
      */
-    public static void appendContextInitializerClassInitParameter(ServletContext servletContext,
-                                                                  Class<? extends ApplicationContextInitializer> contextInitializerClass) {
-
-        String contextInitializerClassName = contextInitializerClass.getName();
-
-        appendInitParameters(servletContext, CONTEXT_INITIALIZER_CLASSES_PARAM, contextInitializerClassName);
-
+    public static void setContextInitializerClassInitParameter(ServletContext servletContext,
+                                                               Class<? extends ApplicationContextInitializer>... contextInitializerClasses) {
+        setInitParameters(servletContext, CONTEXT_INITIALIZER_CLASSES_PARAM, getClassNames(contextInitializerClasses));
     }
 
-
     /**
-     * Append initialized parameter for {@link ApplicationContextInitializer Context Initializer Class} into {@link
+     * Sets initialized parameter for {@link ApplicationContextInitializer Context Initializer Class} into {@link
      * FrameworkServlet}
      *
-     * @param servletContext          {@link ServletContext}
-     * @param contextInitializerClass the class of {@link ApplicationContextInitializer}
+     * @param servletContext            {@link ServletContext}
+     * @param contextInitializerClasses the classes of {@link ApplicationContextInitializer}
      * @see FrameworkServlet#applyInitializers(ConfigurableApplicationContext)
      */
-    public static void appendFrameworkServletContextInitializerClassInitParameter(
+    public static void setFrameworkServletContextInitializerClassInitParameter(
             ServletContext servletContext,
-            Class<? extends ApplicationContextInitializer> contextInitializerClass) {
+            Class<? extends ApplicationContextInitializer>... contextInitializerClasses) {
 
         Collection<? extends ServletRegistration> servletRegistrations =
                 findServletRegistrations(servletContext, FrameworkServlet.class).values();
 
         for (ServletRegistration servletRegistration : servletRegistrations) {
-            String contextInitializerClassName = servletRegistration.getInitParameter(CONTEXT_INITIALIZER_CLASSES_PARAM);
-            String newContextInitializerClassName = appendInitParameter(contextInitializerClassName, contextInitializerClass.getName());
-            servletRegistration.setInitParameter(CONTEXT_INITIALIZER_CLASSES_PARAM, newContextInitializerClassName);
+            String classNames = arrayToCommaDelimitedString(getClassNames(contextInitializerClasses));
+            servletRegistration.setInitParameter(CONTEXT_INITIALIZER_CLASSES_PARAM, classNames);
         }
-
     }
 
     /**
@@ -462,19 +385,10 @@ public abstract class WebMvcUtils {
         return false;
     }
 
-    private static String getHandlerMethodRequestBodyArgumentAttributeName(Method method) {
-        return HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX + getMethodInfo(method);
+    protected static String[] getClassNames(Class<?>... classes) {
+        return of(classes).map(Class::getName).toArray(String[]::new);
     }
 
-    private static String getHandlerMethodReturnValueAttributeName(Method method) {
-        return HANDLER_METHOD_RETURN_VALUE_ATTRIBUTE_NAME_PREFIX + getMethodInfo(method);
-    }
-
-    private static String getHandlerMethodArgumentsAttributeName(Method method) {
-        return HANDLER_METHOD_ARGUMENTS_ATTRIBUTE_NAME_PREFIX + getMethodInfo(method);
-    }
-
-    private static String getMethodInfo(Method method) {
-        return String.valueOf(method);
+    private WebMvcUtils() {
     }
 }

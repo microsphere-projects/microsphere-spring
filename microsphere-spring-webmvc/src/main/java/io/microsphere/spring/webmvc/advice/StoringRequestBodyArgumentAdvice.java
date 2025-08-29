@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.setHandlerMethodRequestBodyArgument;
-import static io.microsphere.spring.webmvc.util.WebMvcUtils.supportedConverterTypes;
+import static io.microsphere.spring.webmvc.util.WebMvcUtils.SUPPORTED_CONVERTER_TYPES;
 
 /**
  * Store the {@link HandlerMethod} {@link RequestBody} parameter {@link RequestBodyAdvice} implementation
@@ -25,7 +25,7 @@ public final class StoringRequestBodyArgumentAdvice extends RequestBodyAdviceAda
 
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return supportedConverterTypes.contains(converterType);
+        return SUPPORTED_CONVERTER_TYPES.contains(converterType);
     }
 
     @Override

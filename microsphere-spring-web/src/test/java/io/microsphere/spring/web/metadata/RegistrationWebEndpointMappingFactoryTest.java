@@ -25,6 +25,7 @@ import javax.servlet.Registration;
 import javax.servlet.ServletContext;
 import java.util.Collection;
 
+import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -43,6 +44,11 @@ public class RegistrationWebEndpointMappingFactoryTest {
 
         public RegistrationWebEndpointMappingFactoryImpl(ServletContext servletContext) {
             super(servletContext);
+        }
+
+        @Override
+        protected Collection<String> getMethods(Registration registration) {
+            return ALL_HTTP_METHODS;
         }
 
         @Override
@@ -74,6 +80,11 @@ public class RegistrationWebEndpointMappingFactoryTest {
     @Test
     public void testGetRegistration() {
         assertNull(this.factory.getRegistration(null, this.servletContext));
+    }
+
+    @Test
+    public void testGetMethods() {
+        assertSame(ALL_HTTP_METHODS, this.factory.getMethods(null));
     }
 
     @Test

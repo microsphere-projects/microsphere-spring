@@ -31,28 +31,32 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.servlet.ServletException;
+
+import static org.junit.Assert.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
- * {@link TestRestController} Test
+ * {@link TestController} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see TestRestController
+ * @see TestController
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
-        TestRestController.class,
-        TestRestControllerTest.class
+        TestController.class,
+        TestControllerTest.class
 })
 @EnableWebMvc
-public class TestRestControllerTest {
+public class TestControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
@@ -90,5 +94,27 @@ public class TestRestControllerTest {
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string(json));
+    }
+
+    @Test
+    public void testError() {
+        assertThrows(ServletException.class, () ->
+                this.mockMvc.perform(get("/test/error")
+                                .param("message", "For testing"))
+                        .andReturn());
+    }
+
+    @Test
+    public void testResponseEntity() throws Exception {
+        this.mockMvc.perform(put("/test/response-entity"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("OK"));
+    }
+
+    @Test
+    public void testView() throws Exception {
+        this.mockMvc.perform(get("/test/view"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
     }
 }

@@ -38,6 +38,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link AnnotatedInjectionBeanPostProcessor} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
@@ -129,6 +130,15 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
             @Referenced
             User childUser;
+
+            @Referenced
+            static User invalidUser;
+
+
+            @Referenced
+            static void init(User user) {
+            }
+
 
         }
 

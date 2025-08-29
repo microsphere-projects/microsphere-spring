@@ -101,6 +101,8 @@ public class TestServletRegistration implements ServletRegistration.Dynamic {
 
     @Override
     public Set<String> addMapping(String... urlPatterns) {
+        assertNotNull(urlPatterns, () -> "The 'urlPatterns' argument must not be null!");
+        assertNotEmpty(urlPatterns, () -> "The 'urlPatterns' argument must not be empty!");
         for (String urlPattern : urlPatterns) {
             this.urlPatterns.add(urlPattern);
         }

@@ -22,17 +22,21 @@ import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
-import java.util.EnumSet;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.spring.test.util.ServletTestUtils.addTestFilter;
+import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
+import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_NAME;
+import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_URL_PATTERN;
+import static io.microsphere.spring.test.web.servlet.TestFilter.FILTER_CLASS_NAME;
+import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
+import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
-import static java.util.EnumSet.of;
-import static javax.servlet.DispatcherType.FORWARD;
-import static javax.servlet.DispatcherType.REQUEST;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -45,14 +49,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class FilterRegistrationWebEndpointMappingFactoryTest {
 
-    private static final String filterName = "testFilter";
-
-    private static final String filterClassName = "org.springframework.web.filter.CharacterEncodingFilter";
-
-    private static final EnumSet<DispatcherType> dispatcherTypes = of(REQUEST, FORWARD);
-
-    private static final String[] urlPatterns = ofArray("/test/*", "/*");
-
     private ServletContext servletContext;
 
     private FilterRegistrationWebEndpointMappingFactory factory;
@@ -62,22 +58,30 @@ public class FilterRegistrationWebEndpointMappingFactoryTest {
         this.servletContext = new TestServletContext();
         this.factory = new FilterRegistrationWebEndpointMappingFactory(this.servletContext);
 
-        FilterRegistration.Dynamic registration = this.servletContext.addFilter(filterName, filterClassName);
-        registration.addMappingForUrlPatterns(dispatcherTypes, true, urlPatterns);
+        addTestServlet(this.servletContext);
+        addTestFilter(this.servletContext);
+    }
+
+    @Test
+    public void testGetMethods() {
+        FilterRegistration registration = factory.getRegistration(DEFAULT_FILTER_NAME, this.servletContext);
+        Collection<String> methods = factory.getMethods(registration);
+        assertEquals(ALL_HTTP_METHODS, methods);
     }
 
     @Test
     public void testGetRegistration() {
-        FilterRegistration registration = factory.getRegistration(filterName, this.servletContext);
-        assertEquals(filterClassName, registration.getClassName());
-        assertArrayEquals(urlPatterns, registration.getUrlPatternMappings().toArray());
+        FilterRegistration registration = factory.getRegistration(DEFAULT_FILTER_NAME, this.servletContext);
+        assertEquals(FILTER_CLASS_NAME, registration.getClassName());
+        assertArrayEquals(ofArray(DEFAULT_FILTER_URL_PATTERN), registration.getUrlPatternMappings().toArray(EMPTY_STRING_ARRAY));
     }
 
     @Test
     public void testGetPatterns() {
-        FilterRegistration registration = this.factory.getRegistration(filterName, this.servletContext);
-        assertEquals(urlPatterns, this.factory.getPatterns(registration).toArray(EMPTY_STRING_ARRAY));
-        assertEquals(newLinkedList(registration.getUrlPatternMappings()), newLinkedList(this.factory.getPatterns(registration)));
+        FilterRegistration registration = this.factory.getRegistration(DEFAULT_FILTER_NAME, this.servletContext);
+        LinkedList<String> patterns = newLinkedList(registration.getUrlPatternMappings());
+        patterns.add(DEFAULT_SERVLET_URL_PATTERN);
+        assertEquals(patterns, newLinkedList(this.factory.getPatterns(registration)));
     }
 
 }

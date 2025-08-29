@@ -67,7 +67,7 @@ public class YamlPropertySourceTest {
         write(1, "my.name2 : " + name);
 
         while (!Objects.equals(name, environment.getProperty("my.name2"))) {
-            Thread.sleep(1000 * 1L);
+            Thread.sleep((long) 1000);
         }
     }
 

@@ -1,6 +1,6 @@
-io.microsphere.spring.test.Bean=\
-io.microsphere.spring.test.TestBean,\
-io.microsphere.spring.test.TestBean2
+io.microsphere.spring.beans.test.Bean=\
+io.microsphere.spring.beans.test.TestBean,\
+io.microsphere.spring.beans.test.TestBean2
 
 io.microsphere.spring.test.domain.User=\
 io.microsphere.spring.test.domain.User

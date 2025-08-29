@@ -42,7 +42,7 @@ public abstract class ResourceLoaderUtils implements Utils {
     private static ConcurrentMap<ClassLoader, ResourceLoader> resourceLoadersCache = new ConcurrentHashMap<>();
 
     static {
-        addShutdownHookCallback(resourceLoadersCache::clear);
+        addShutdownHookCallback(ResourceLoaderUtils::clearResourceLoadersCache);
     }
 
     /**
@@ -100,6 +100,10 @@ public abstract class ResourceLoaderUtils implements Utils {
     protected static ClassLoader getClassLoader(@Nullable ResourceLoader resourceLoader) {
         ClassLoader classLoader = resourceLoader == null ? null : resourceLoader.getClassLoader();
         return classLoader == null ? getDefaultClassLoader() : classLoader;
+    }
+
+    static void clearResourceLoadersCache() {
+        resourceLoadersCache.clear();
     }
 
     private ResourceLoaderUtils() {

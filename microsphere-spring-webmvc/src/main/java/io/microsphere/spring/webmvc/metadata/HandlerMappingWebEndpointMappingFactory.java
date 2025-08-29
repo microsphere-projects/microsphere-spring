@@ -16,15 +16,16 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
+import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.Collection;
 
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
 
 /**
  * The abstract class {@link WebEndpointMappingFactory} for Spring WebMVC {@link HandlerMapping}
@@ -49,9 +50,13 @@ public abstract class HandlerMappingWebEndpointMappingFactory<H, M> extends Abst
         HandlerMapping handlerMapping = this.handlerMapping;
         H handler = getHandler(handlerMetadata);
         M metadata = getMetadata(handlerMetadata);
+        Collection<String> methods = getMethods(handler, metadata);
         Collection<String> patterns = getPatterns(handler, metadata);
-        WebEndpointMapping.Builder builder = of(WEB_MVC, handler, patterns);
-        builder.source(handlerMapping);
+        WebEndpointMapping.Builder builder = webmvc()
+                .endpoint(handler)
+                .patterns(patterns)
+                .methods(methods)
+                .source(handlerMapping);
         contribute(handler, metadata, handlerMapping, builder);
         return builder.build();
     }
@@ -63,6 +68,16 @@ public abstract class HandlerMappingWebEndpointMappingFactory<H, M> extends Abst
     protected M getMetadata(HandlerMetadata<H, M> handlerMetadata) {
         return handlerMetadata.getMetadata();
     }
+
+    /**
+     * Get the methods of the specified {@link H Handler} and {@link M Metadata}
+     *
+     * @param handler  {@link H Handler}
+     * @param metadata {@link M Metadata}
+     * @return non-null
+     */
+    @Nonnull
+    protected abstract Collection<String> getMethods(H handler, M metadata);
 
     /**
      * Get the patterns of {@link H Handler} and {@link M Metadata}
