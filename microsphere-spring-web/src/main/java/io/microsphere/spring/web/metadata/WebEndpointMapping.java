@@ -46,6 +46,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_FLUX;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.ArrayUtils.arrayEquals;
 import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.Assert.assertNoNullElements;
@@ -1339,12 +1340,12 @@ public class WebEndpointMapping<E> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WebEndpointMapping that = (WebEndpointMapping) o;
-        return Arrays.equals(patterns, that.patterns)
-                && Arrays.equals(methods, that.methods)
-                && Arrays.equals(params, that.params)
-                && Arrays.equals(headers, that.headers)
-                && Arrays.equals(consumes, that.consumes)
-                && Arrays.equals(produces, that.produces);
+        return arrayEquals(patterns, that.patterns)
+                && arrayEquals(methods, that.methods)
+                && arrayEquals(params, that.params)
+                && arrayEquals(headers, that.headers)
+                && arrayEquals(consumes, that.consumes)
+                && arrayEquals(produces, that.produces);
     }
 
     @Override
