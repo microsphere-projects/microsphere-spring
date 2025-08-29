@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.spring.beans.test.Bean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
-import io.microsphere.spring.test.Bean;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
