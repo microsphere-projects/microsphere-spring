@@ -24,6 +24,7 @@ import static io.microsphere.spring.core.io.ResourceLoaderUtils.clearResourceLoa
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourcePatternResolver;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static java.lang.Thread.currentThread;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
