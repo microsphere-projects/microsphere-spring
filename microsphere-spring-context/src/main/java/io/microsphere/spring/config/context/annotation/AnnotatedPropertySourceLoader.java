@@ -34,6 +34,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.StringUtils.hasText;
@@ -98,7 +99,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
     public final String[] selectImports(AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
         Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
-        ResolvablePlaceholderAnnotationAttributes attributes = ResolvablePlaceholderAnnotationAttributes.of(annotationAttributes, annotationType, getEnvironment());
+        ResolvablePlaceholderAnnotationAttributes attributes = of(annotationAttributes, annotationType, getEnvironment());
         String propertySourceName = resolvePropertySourceName(attributes, metadata);
         this.propertySourceName = propertySourceName;
         MutablePropertySources propertySources = getEnvironment().getPropertySources();
