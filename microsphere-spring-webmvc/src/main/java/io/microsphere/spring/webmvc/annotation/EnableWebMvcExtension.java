@@ -26,6 +26,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
+import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
@@ -37,11 +38,13 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 
 /**
  * Enable annotation to extend the features of Spring WebMVC
@@ -129,6 +132,7 @@ public @interface EnableWebMvcExtension {
      * @see RequestBody
      * @see StoringRequestBodyArgumentAdvice
      * @see HandlerMethod
+     * @see WebMvcUtils#getHandlerMethodRequestBodyArgument(HttpServletRequest, Method)
      */
     boolean storeRequestBodyArgument() default false;
 
@@ -137,6 +141,7 @@ public @interface EnableWebMvcExtension {
      *
      * @return <code>false</code> as default
      * @see ResponseBody
+     * @see WebMvcUtils#getHandlerMethodReturnValue(HttpServletRequest, Method)
      */
     boolean storeResponseBodyReturnValue() default false;
 }
