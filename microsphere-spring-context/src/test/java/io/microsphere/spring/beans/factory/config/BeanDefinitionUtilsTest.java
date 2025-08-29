@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.Bean;
@@ -276,7 +277,7 @@ public class BeanDefinitionUtilsTest {
         int length = constructorArguments.length;
         assertEquals(length, argumentValues.getArgumentCount());
         for (int i = 0; i < length; i++) {
-            ConstructorArgumentValues.ValueHolder argumentValue = argumentValues.getArgumentValue(i, Object.class);
+            ValueHolder argumentValue = argumentValues.getArgumentValue(i, Object.class);
             assertEquals(constructorArguments[i], argumentValue.getValue());
         }
     }
