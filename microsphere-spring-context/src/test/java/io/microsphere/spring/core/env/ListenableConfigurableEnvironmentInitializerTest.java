@@ -43,7 +43,7 @@ public class ListenableConfigurableEnvironmentInitializerTest {
     private Environment environment;
 
     @Test
-    public void test() {
+    void test() {
         assertNotNull(environment.getProperty("user.home"));
     }
 

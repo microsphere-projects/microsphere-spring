@@ -16,8 +16,9 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.test.web.controller.TestController;
+import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.webmvc.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

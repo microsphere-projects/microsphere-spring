@@ -28,6 +28,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
 
+import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_NAME;
+import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_URL_PATTERN;
+import static io.microsphere.spring.test.web.servlet.TestFilter.FILTER_CLASS_NAME;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 ;
 
 /**
@@ -44,6 +49,13 @@ public class TestFilterTest {
     @BeforeEach
     void setUp() throws Exception {
         this.testFilter = new TestFilter();
+    }
+
+    @Test
+    void testConstants() {
+        assertSame("testFilter", DEFAULT_FILTER_NAME);
+        assertSame("/testFilter", DEFAULT_FILTER_URL_PATTERN);
+        assertSame("io.microsphere.spring.test.web.servlet.TestFilter", FILTER_CLASS_NAME);
     }
 
     @Test

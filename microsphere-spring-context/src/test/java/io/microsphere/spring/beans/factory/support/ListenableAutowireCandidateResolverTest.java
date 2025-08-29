@@ -1,7 +1,7 @@
 package io.microsphere.spring.beans.factory.support;
 
 
-import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.beans.test.TestBean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.ObjectProvider;

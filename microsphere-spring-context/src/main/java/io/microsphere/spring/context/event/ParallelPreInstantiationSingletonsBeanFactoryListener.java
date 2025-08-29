@@ -33,6 +33,7 @@ import org.springframework.util.StopWatch;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -239,7 +240,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
 
     private List<Set<String>> buildBeanNamesList(Map<String, Set<String>> dependentBeanNamesMap) {
         List<Set<String>> beanNamesList = newArrayList(dependentBeanNamesMap.size());
-        for (Map.Entry<String, Set<String>> dependentEntry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> dependentEntry : dependentBeanNamesMap.entrySet()) {
             String beanName = dependentEntry.getKey();
             Set<String> dependentBeanNames = dependentEntry.getValue();
             // reuse the space of dependentBeanNames
@@ -250,10 +251,10 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
         return beanNamesList;
     }
 
-    private void mergeBeanNames(Map.Entry<String, Set<String>> dependentEntry, List<Set<String>> allBeanNamesList,
+    private void mergeBeanNames(Entry<String, Set<String>> dependentEntry, List<Set<String>> allBeanNamesList,
                                 Map<String, Set<String>> dependentBeanNamesMap) {
 
-        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             if (dependentEntry.equals(entry)) {
                 continue;
             }

@@ -17,7 +17,7 @@
 
 package io.microsphere.spring.web.annotation;
 
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +49,7 @@ public class EnableWebExtensionTest {
 
     @BeforeEach
     void setUp() {
-        this.mockMvc = standaloneSetup(TestRestController.class).build();
+        this.mockMvc = standaloneSetup(TestController.class).build();
     }
 
     @Test

@@ -19,7 +19,7 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.1.4</microsphere-java.version>
+        <microsphere-java.version>0.1.5</microsphere-java.version>
         <servlet-api.version>6.1.0</servlet-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
@@ -35,15 +35,6 @@
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Spring Framework BOM -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Jackson BOM -->
             <dependency>
@@ -127,6 +118,21 @@
                 <version>${logback.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <!-- Spring Framework BOM -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Microsphere Dependencies -->
             <dependency>
                 <groupId>io.github.microsphere-projects</groupId>
@@ -160,7 +166,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.version>6.2.9</spring.version>
+                <spring.version>6.2.10</spring.version>
             </properties>
         </profile>
     </profiles>

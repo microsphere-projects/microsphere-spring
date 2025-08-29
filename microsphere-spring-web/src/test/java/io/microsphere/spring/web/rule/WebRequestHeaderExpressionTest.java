@@ -60,63 +60,63 @@ public class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<
     }
 
     @Override
-    public void testGetName() {
+    void testGetName() {
         assertEquals("name", nameOnlyExpression.getName());
         assertEquals("name", expression.getName());
         assertEquals("name", negatedExpression.getName());
     }
 
     @Override
-    public void testGetValue() {
+    void testGetValue() {
         assertNull(nameOnlyExpression.getValue());
         assertEquals("Mercy", expression.getValue());
         assertEquals("Mercy", negatedExpression.getValue());
     }
 
     @Override
-    public void testIsNegated() {
+    void testIsNegated() {
         assertFalse(nameOnlyExpression.isNegated);
         assertFalse(expression.isNegated);
         assertTrue(negatedExpression.isNegated);
     }
 
     @Override
-    public void testMatch() {
+    void testMatch() {
         assertTrue(nameOnlyExpression.match(request));
         assertTrue(expression.match(request));
         assertFalse(negatedExpression.match(request));
     }
 
     @Override
-    public void testIsCaseSensitiveName() {
+    void testIsCaseSensitiveName() {
         assertFalse(this.nameOnlyExpression.isCaseSensitiveName());
         assertFalse(this.expression.isCaseSensitiveName());
         assertFalse(this.negatedExpression.isCaseSensitiveName());
     }
 
     @Override
-    public void testParseValue() {
+    void testParseValue() {
         assertEquals("test", this.nameOnlyExpression.parseValue("test"));
         assertEquals("test", this.expression.parseValue("test"));
         assertEquals("test", this.negatedExpression.parseValue("test"));
     }
 
     @Override
-    public void testMatchName() {
+    void testMatchName() {
         assertTrue(nameOnlyExpression.matchName(request));
         assertTrue(expression.matchName(request));
         assertTrue(negatedExpression.matchName(request));
     }
 
     @Override
-    public void testMatchValue() {
+    void testMatchValue() {
         assertFalse(nameOnlyExpression.matchValue(request));
         assertTrue(expression.matchValue(request));
         assertTrue(negatedExpression.matchValue(request));
     }
 
     @Override
-    public void testEquals() {
+    void testEquals() {
         assertNotEquals(this, this.nameOnlyExpression);
         assertNotEquals(this.nameOnlyExpression, this.expression);
         assertNotEquals(this.expression, this.negatedExpression);
@@ -127,14 +127,14 @@ public class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<
     }
 
     @Override
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(this.nameOnlyExpression.hashCode(), new WebRequestHeaderExpression("name").hashCode());
         assertEquals(this.expression.hashCode(), new WebRequestHeaderExpression("name=Mercy").hashCode());
         assertEquals(this.negatedExpression.hashCode(), new WebRequestHeaderExpression("name!=Mercy").hashCode());
     }
 
     @Override
-    public void testToString() {
+    void testToString() {
         assertEquals(this.nameOnlyExpression.toString(), "name");
         assertEquals(this.expression.toString(), "name=Mercy");
         assertEquals(this.negatedExpression.toString(), "name!=Mercy");

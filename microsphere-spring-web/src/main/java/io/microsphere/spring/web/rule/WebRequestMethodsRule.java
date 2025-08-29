@@ -81,10 +81,7 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
 
     public boolean matches(String method) {
         if (isEmpty()) {
-            if (OPTIONS.name().equals(method)) {
-                return false;
-            }
-            return true;
+            return !OPTIONS.name().equals(method);
         }
         return matchRequestMethod(method);
     }

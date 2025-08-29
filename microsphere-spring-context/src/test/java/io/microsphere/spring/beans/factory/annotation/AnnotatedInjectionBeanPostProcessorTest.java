@@ -130,6 +130,15 @@ class AnnotatedInjectionBeanPostProcessorTest {
             @Referenced
             User childUser;
 
+            @Referenced
+            static User invalidUser;
+
+
+            @Referenced
+            static void init(User user) {
+            }
+
+
         }
 
         static class UserHolder {

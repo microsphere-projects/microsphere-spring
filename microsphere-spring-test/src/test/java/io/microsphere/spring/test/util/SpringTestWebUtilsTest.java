@@ -31,8 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.ORIGIN;
 
-;
-
 /**
  * {@link SpringTestWebUtils} Test
  *

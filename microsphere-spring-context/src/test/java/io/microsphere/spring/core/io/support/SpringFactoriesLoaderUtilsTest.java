@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.core.io.support;
 
-import io.microsphere.spring.test.Bean;
-import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.beans.test.Bean;
+import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.util.UserFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -57,26 +57,26 @@ class SpringFactoriesLoaderUtilsTest {
     private static final Object[] ARGS = ofArray("Mercy", 18);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         context = new GenericApplicationContext();
         beanFactory = context.getDefaultListableBeanFactory();
         context.refresh();
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         context.close();
     }
 
     @Test
-    public void testLoadFactories() {
+    void testLoadFactories() {
         testLoadFactoriesFromContext(beanFactory, context);
         testLoadFactoriesFromBeanFactory(beanFactory);
         testLoadFactoriesFromBeanFactory(this.context);
     }
 
     @Test
-    public void testLoadFactoriesWithArguments() {
+    void testLoadFactoriesWithArguments() {
         List<User> users = loadFactories(context, User.class, EMPTY_OBJECT_ARRAY);
         assertUser(users);
 
@@ -88,18 +88,18 @@ class SpringFactoriesLoaderUtilsTest {
     }
 
     @Test
-    public void testLoadFactoriesWithArgumentsOnConstructorNotFound() {
+    void testLoadFactoriesWithArgumentsOnConstructorNotFound() {
         assertThrows(IllegalArgumentException.class, () -> loadFactories(context, User.class, 18, "Mercy"));
     }
 
     @Test
-    public void testLoadFactoriesOnNotFound() {
+    void testLoadFactoriesOnNotFound() {
         assertSame(emptyList(), loadFactories(context, UserFactory.class, ARGS));
         assertSame(emptyList(), loadFactories(null, UserFactory.class, ARGS));
     }
 
     @Test
-    public void testLoadFactoriesOnNull() {
+    void testLoadFactoriesOnNull() {
         assertEquals(emptyList(), loadFactories(null, UserFactory.class));
         assertEquals(emptyList(), loadFactories((BeanFactory) null, UserFactory.class));
     }
@@ -134,7 +134,7 @@ class SpringFactoriesLoaderUtilsTest {
 
     private void assertTestBean(TestBean testBean, BeanFactory beanFactory) {
         assertNotNull(testBean);
-        assertEquals("io.microsphere.spring.test.TestBean#0", testBean.getBeanName());
+        assertEquals("io.microsphere.spring.beans.test.TestBean#0", testBean.getBeanName());
 
         if (beanFactory instanceof ConfigurableApplicationContext) {
             ConfigurableApplicationContext context = (ConfigurableApplicationContext) beanFactory;

@@ -137,7 +137,7 @@ public class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
     }
 
     @Override
-    public void testGetToStringInfix() {
+    void testGetToStringInfix() {
         WebRequestPattensRule rule = new WebRequestPattensRule();
         assertEquals("Should return ' || '", " || ", rule.getToStringInfix());
     }

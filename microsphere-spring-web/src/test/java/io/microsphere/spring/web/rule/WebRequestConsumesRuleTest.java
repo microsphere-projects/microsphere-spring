@@ -121,7 +121,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     }
 
     @Override
-    public void testGetToStringInfix() {
+    void testGetToStringInfix() {
         assertEquals("Should return ' || '", " || ", new WebRequestConsumesRule().getToStringInfix());
     }
 }

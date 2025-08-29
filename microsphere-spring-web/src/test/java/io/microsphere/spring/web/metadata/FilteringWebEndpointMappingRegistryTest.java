@@ -22,18 +22,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.filter.FilterOperator.AND;
 import static io.microsphere.filter.FilterOperator.OR;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.filter;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpMethod.GET;
 
 /**
  * {@link FilteringWebEndpointMappingRegistry} Test
@@ -74,9 +75,9 @@ public class FilteringWebEndpointMappingRegistryTest {
     @BeforeEach
     void setUp() throws Exception {
         this.webEndpointMappings = ofSet(
-                of("/a").build(),
-                of("/b").build(),
-                of("/c").build()
+                filter().endpoint(this).pattern("/a").method(GET).build(),
+                filter().endpoint(this).pattern("/b").method(GET).build(),
+                filter().endpoint(this).pattern("/c").method(GET).build()
         );
         this.registry = new FilteringWebEndpointMappingRegistryImpl();
     }
@@ -95,7 +96,7 @@ public class FilteringWebEndpointMappingRegistryTest {
 
     @Test
     void testSetWebEndpointMappingFilters() {
-        this.registry.setWebEndpointMappingFilters(List.of(e -> true));
+        this.registry.setWebEndpointMappingFilters(asList(e -> true));
         assertEquals(3, this.registry.register(this.webEndpointMappings));
         assertNotNull(this.registry.getFilter());
     }

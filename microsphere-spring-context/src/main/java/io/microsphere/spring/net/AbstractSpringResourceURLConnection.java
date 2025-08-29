@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.first;
@@ -74,13 +75,13 @@ public class AbstractSpringResourceURLConnection extends URLConnection {
 
     @Override
     public String getHeaderFieldKey(int n) {
-        Map.Entry<String, List<String>> entry = getHeaderEntry(n);
+        Entry<String, List<String>> entry = getHeaderEntry(n);
         return entry == null ? null : entry.getKey();
     }
 
     @Override
     public String getHeaderField(int n) {
-        Map.Entry<String, List<String>> entry = getHeaderEntry(n);
+        Entry<String, List<String>> entry = getHeaderEntry(n);
         if (entry == null) {
             return null;
         }
@@ -152,14 +153,14 @@ public class AbstractSpringResourceURLConnection extends URLConnection {
         return writableResource;
     }
 
-    protected Map.Entry<String, List<String>> getHeaderEntry(int n) {
+    protected Entry<String, List<String>> getHeaderEntry(int n) {
         MultiValueMap<String, String> headers = getHeaders();
         if (n < 0 || n > headers.size() - 1) { // out of the index range
             return null;
         }
-        Set<Map.Entry<String, List<String>>> entries = headers.entrySet();
-        Iterator<Map.Entry<String, List<String>>> iterator = entries.iterator();
-        Map.Entry<String, List<String>> entry = null;
+        Set<Entry<String, List<String>>> entries = headers.entrySet();
+        Iterator<Entry<String, List<String>>> iterator = entries.iterator();
+        Entry<String, List<String>> entry = null;
         for (int i = 0; i <= n & iterator.hasNext(); i++) {
             entry = iterator.next();
         }

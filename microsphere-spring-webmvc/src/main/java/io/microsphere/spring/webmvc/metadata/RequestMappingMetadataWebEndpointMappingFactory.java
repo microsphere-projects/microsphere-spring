@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,8 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.Collection;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * {@link WebEndpointMappingFactory} based on Spring WebMVC {@link RequestMappingInfo}
@@ -52,6 +55,12 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     protected HandlerMethod getHandler(HandlerMetadata<HandlerMethod, RequestMappingInfo> handlerMetadata) {
         HandlerMethod handlerMethod = handlerMetadata.getHandler();
         return handlerMethod.createWithResolvedBean();
+    }
+
+    @Override
+    protected Collection<String> getMethods(HandlerMethod handler, RequestMappingInfo metadata) {
+        Set<RequestMethod> methods = metadata.getMethodsCondition().getMethods();
+        return methods.stream().map(RequestMethod::name).collect(toList());
     }
 
     @Override

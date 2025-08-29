@@ -20,7 +20,9 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.Collection;
-import java.util.Collections;
+
+import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
+import static java.util.Collections.singleton;
 
 /**
  * {@link WebEndpointMappingFactory} based on Spring WebMVC Handlers
@@ -35,7 +37,12 @@ public class HandlerMetadataWebEndpointMappingFactory extends HandlerMappingWebE
     }
 
     @Override
+    protected Collection<String> getMethods(Object handler, String metadata) {
+        return ALL_HTTP_METHODS;
+    }
+
+    @Override
     protected Collection<String> getPatterns(Object handler, String metadata) {
-        return Collections.singleton(metadata);
+        return singleton(metadata);
     }
 }

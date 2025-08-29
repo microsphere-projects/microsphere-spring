@@ -30,6 +30,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -101,7 +102,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
     private void fireBeansReadyEvent() {
         ConfigurableListableBeanFactory beanFactory = this.context.getBeanFactory();
         Map<String, Object> beansMap = beanFactory.getBeansOfType(Object.class, true, false);
-        for (Map.Entry<String, Object> beanEntry : beansMap.entrySet()) {
+        for (Entry<String, Object> beanEntry : beansMap.entrySet()) {
             String beanName = beanEntry.getKey();
             Object bean = beanEntry.getValue();
             fireBeanReadyEvent(beanName, bean);
@@ -122,7 +123,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
             doWithFields(DefaultSingletonBeanRegistry.class, field -> {
                 field.setAccessible(true);
                 Map<String, Object> disposableBeans = (Map<String, Object>) field.get(beanFactory);
-                for (Map.Entry<String, Object> entry : disposableBeans.entrySet()) {
+                for (Entry<String, Object> entry : disposableBeans.entrySet()) {
                     String beanName = entry.getKey();
                     Object adapterBean = entry.getValue();
                     if (isDisposableBeanAdapter(adapterBean)) {

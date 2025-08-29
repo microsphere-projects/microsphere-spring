@@ -91,7 +91,7 @@ class OnceApplicationContextEventListenerTest {
         }
 
 
-        private Map<EventObject, AtomicInteger> eventsHandledCount = new LinkedHashMap<EventObject, AtomicInteger>();
+        private final Map<EventObject, AtomicInteger> eventsHandledCount = new LinkedHashMap<EventObject, AtomicInteger>();
 
         @Override
         protected void onApplicationContextEvent(ApplicationContextEvent event) {

@@ -2,7 +2,6 @@ package io.microsphere.spring.core.annotation;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -14,7 +13,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +23,13 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute
 import static io.microsphere.spring.core.annotation.AnnotationUtils.isPresent;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
 import static io.microsphere.util.ArrayUtils.of;
+import static java.util.Arrays.deepEquals;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.beans.factory.support.AbstractBeanDefinition.INFER_METHOD;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
 /**
@@ -153,7 +153,7 @@ class AnnotationUtilsTest {
             assertEquals(Autowire.NO, attributes.get("autowire"));
         }
         assertEquals("", attributes.get("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, attributes.get("destroyMethod"));
+        assertEquals(INFER_METHOD, attributes.get("destroyMethod"));
 
         MockEnvironment environment = new MockEnvironment();
 
@@ -162,7 +162,7 @@ class AnnotationUtilsTest {
             assertEquals(Autowire.NO, attributes.get("autowire"));
         }
         assertEquals("", attributes.get("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, attributes.get("destroyMethod"));
+        assertEquals(INFER_METHOD, attributes.get("destroyMethod"));
 
         annotation = getAnnotation("dummyBean2", Bean.class);
 
@@ -176,7 +176,7 @@ class AnnotationUtilsTest {
 
         annotation = getAnnotation("dummyBean3", Bean.class);
         attributes = getAttributes(annotation, environment, true);
-        assertTrue(Arrays.deepEquals(of(environment.getProperty("beanName")), (String[]) attributes.get("name")));
+        assertTrue(deepEquals(of(environment.getProperty("beanName")), (String[]) attributes.get("name")));
 
     }
 
@@ -217,7 +217,7 @@ class AnnotationUtilsTest {
             assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
         }
         assertEquals("", annotationAttributes.getString("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
+        assertEquals(INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 
         // case 5 : PropertyResolver , ignoreDefaultValue(false) , ignoreAttributeName(empty)
         annotationAttributes = getAnnotationAttributes(annotation, environment, false);
@@ -226,11 +226,11 @@ class AnnotationUtilsTest {
             assertEquals(Autowire.NO, annotationAttributes.get("autowire"));
         }
         assertEquals("", annotationAttributes.getString("initMethod"));
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
+        assertEquals(INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 
         // case 6 : PropertyResolver , ignoreDefaultValue(false) , ignoreAttributeName(name,autowire,initMethod)
         annotationAttributes = getAnnotationAttributes(annotation, environment, false, "name", "autowire", "initMethod");
-        assertEquals(AbstractBeanDefinition.INFER_METHOD, annotationAttributes.getString("destroyMethod"));
+        assertEquals(INFER_METHOD, annotationAttributes.getString("destroyMethod"));
 
         // getAnnotationAttributes(AnnotatedElement, java.lang.Class, PropertyResolver, boolean, String...)
         annotationAttributes = getAnnotationAttributes(getMethod("dummyBean"), Bean.class, environment, true);

@@ -57,7 +57,7 @@ public class EnableEventExtensionTest {
 
     private static final Logger logger = getLogger(EnableEventExtensionTest.class);
 
-    private static AtomicInteger eventValueRef = new AtomicInteger();
+    private static final AtomicInteger eventValueRef = new AtomicInteger();
 
     @Bean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
     public static ApplicationEventMulticaster applicationEventMulticaster() {
@@ -120,7 +120,7 @@ public class EnableEventExtensionTest {
     }
 
     @AfterEach
-    public void rest() {
+    void tearDown() {
         eventValueRef.set(0);
     }
 

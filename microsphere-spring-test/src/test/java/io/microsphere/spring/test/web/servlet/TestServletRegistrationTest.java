@@ -32,15 +32,12 @@ import static io.microsphere.spring.test.web.servlet.TestServletContextTest.test
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Collections.emptySet;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-;
 
 /**
  * {@link TestServletRegistration} Test
@@ -94,7 +91,7 @@ public class TestServletRegistrationTest {
     void testAddMapping() {
         String[] urlPatterns = ofArray("/a", "/b", "c");
         this.registration.addMapping(urlPatterns);
-        assertArrayEquals(urlPatterns, this.registration.getMappings().toArray(EMPTY_STRING_ARRAY));
+        assertEquals(urlPatterns, this.registration.getMappings().toArray(EMPTY_STRING_ARRAY));
     }
 
     @Test

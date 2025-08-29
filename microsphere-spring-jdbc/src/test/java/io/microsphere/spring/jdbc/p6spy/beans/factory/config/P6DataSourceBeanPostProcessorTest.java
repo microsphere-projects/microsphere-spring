@@ -53,7 +53,7 @@
 //    private DataSource wrappedDataSource;
 //
 //    @Test
-//    public void test() throws Exception {
+//    void test() throws Exception {
 //        assertEquals(DriverManagerDataSource.class, nonWrappedDataSource.getClass());
 //        assertEquals(P6DataSource.class, wrappedDataSource.getClass());
 //        assertEquals(DriverManagerDataSource.class, wrappedDataSource.unwrap(DataSource.class).getClass());

@@ -64,7 +64,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
      * @param handlerMethod {@link HandlerMethod}
      * @return non-null
      */
-    protected Object[] getHandlerMethodArguments(ServletRequest request, HandlerMethod handlerMethod) {
+    protected Object[] getHandlerMethodArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
         return WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
     }
 
@@ -76,7 +76,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
      * @param <T>           Method return value type
      * @return {@link HandlerMethod} Method return value
      */
-    protected <T> T getHandlerMethodReturnValue(ServletRequest request, HandlerMethod handlerMethod) {
+    protected <T> T getHandlerMethodReturnValue(HttpServletRequest request, HandlerMethod handlerMethod) {
         return WebMvcUtils.getHandlerMethodReturnValue(request, handlerMethod);
     }
 
@@ -88,7 +88,7 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
      * @param <T>           {@link RequestBody @RequestBody} Method parameter Types
      * @return {@link RequestBody @RequestBody} Method argument if present, otherwise <code>null<code>
      */
-    protected <T> T getHandlerMethodRequestBodyArgument(ServletRequest request, HandlerMethod handlerMethod) {
+    protected <T> T getHandlerMethodRequestBodyArgument(HttpServletRequest request, HandlerMethod handlerMethod) {
         return WebMvcUtils.getHandlerMethodRequestBodyArgument(request, handlerMethod);
     }
 }

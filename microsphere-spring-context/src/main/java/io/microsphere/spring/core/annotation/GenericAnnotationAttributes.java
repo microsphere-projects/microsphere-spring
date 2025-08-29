@@ -23,6 +23,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
@@ -84,7 +85,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
         }
 
         if (this.size() == that.size()) {
-            for (Map.Entry<String, Object> entry : this.entrySet()) {
+            for (Entry<String, Object> entry : this.entrySet()) {
                 String attributeName = entry.getKey();
                 Object attributeValue = entry.getValue();
                 Object thatAttributeValue = that.get(attributeName);
@@ -99,7 +100,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
     @Override
     public int hashCode() {
         int h = 0;
-        for (Map.Entry<String, Object> entry : this.entrySet()) {
+        for (Entry<String, Object> entry : this.entrySet()) {
             String attributeName = entry.getKey();
             h += 31 * attributeName.hashCode();
             Object attributeValue = entry.getValue();
@@ -120,7 +121,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
         StringBuilder stringBuilder = new StringBuilder("@")
                 .append(annotationType().getName())
                 .append("(");
-        for (Map.Entry<String, Object> entry : entrySet()) {
+        for (Entry<String, Object> entry : entrySet()) {
             String name = entry.getKey();
             Object value = entry.getValue();
             Class<?> valueType = value.getClass();

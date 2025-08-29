@@ -52,7 +52,7 @@
 //    private DataSource dataSource;
 //
 //    @Test
-//    public void test() throws Exception {
+//    void test() throws Exception {
 //        Connection connection = dataSource.getConnection();
 //        assertNotNull(connection);
 //    }

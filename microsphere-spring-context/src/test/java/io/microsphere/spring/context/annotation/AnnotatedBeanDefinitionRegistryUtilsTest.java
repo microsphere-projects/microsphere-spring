@@ -1,7 +1,7 @@
 package io.microsphere.spring.context.annotation;
 
-import io.microsphere.spring.test.TestBean;
-import io.microsphere.spring.test.TestBean2;
+import io.microsphere.spring.beans.test.TestBean;
+import io.microsphere.spring.beans.test.TestBean2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -25,7 +25,7 @@ class AnnotatedBeanDefinitionRegistryUtilsTest {
     private DefaultListableBeanFactory registry = null;
 
     @BeforeEach
-    public void init() {
+    void setUp() {
         registry = new DefaultListableBeanFactory();
         registry.setAllowBeanDefinitionOverriding(false);
         registerAnnotationConfigProcessors(registry);

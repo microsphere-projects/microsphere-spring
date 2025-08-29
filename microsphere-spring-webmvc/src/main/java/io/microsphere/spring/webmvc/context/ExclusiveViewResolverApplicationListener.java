@@ -25,9 +25,12 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
 
     private static final Class<ViewResolver> VIEW_RESOLVER_CLASS = ViewResolver.class;
 
-    private final String exclusiveViewResolverBeanName;
+    private String exclusiveViewResolverBeanName;
 
-    public ExclusiveViewResolverApplicationListener(String exclusiveViewResolverBeanName) {
+    public ExclusiveViewResolverApplicationListener() {
+    }
+
+    public void setExclusiveViewResolverBeanName(String exclusiveViewResolverBeanName) {
         this.exclusiveViewResolverBeanName = exclusiveViewResolverBeanName;
     }
 

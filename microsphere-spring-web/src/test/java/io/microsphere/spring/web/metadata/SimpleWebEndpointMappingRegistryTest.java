@@ -21,10 +21,11 @@ package io.microsphere.spring.web.metadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpMethod.GET;
 
 /**
  * {@link SimpleWebEndpointMappingRegistry} Test
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class SimpleWebEndpointMappingRegistryTest {
 
-    private static final WebEndpointMapping mapping = of("/*").build();
+    private static final WebEndpointMapping mapping = servlet().endpoint(Object.class).pattern("/*").method(GET).build();
 
     private SimpleWebEndpointMappingRegistry registry;
 

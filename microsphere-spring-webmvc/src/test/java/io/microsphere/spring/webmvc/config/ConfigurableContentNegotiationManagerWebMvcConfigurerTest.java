@@ -18,7 +18,7 @@
 package io.microsphere.spring.webmvc.config;
 
 
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
-        TestRestController.class,
+        TestController.class,
         ConfigurableContentNegotiationManagerWebMvcConfigurer.class,
         ConfigurableContentNegotiationManagerWebMvcConfigurerTest.class
 })

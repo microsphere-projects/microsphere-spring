@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
@@ -941,7 +942,7 @@ public abstract class BeanUtils implements Utils {
 
         List<NamingBean<T>> namingBeans = new ArrayList<NamingBean<T>>(unmodifiableBeansMap.size());
 
-        for (Map.Entry<String, T> entry : unmodifiableBeansMap.entrySet()) {
+        for (Entry<String, T> entry : unmodifiableBeansMap.entrySet()) {
             String beanName = entry.getKey();
             T bean = entry.getValue();
             NamingBean<T> namingBean = new NamingBean<T>(beanName, bean);

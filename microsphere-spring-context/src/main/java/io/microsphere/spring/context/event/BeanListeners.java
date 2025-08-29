@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -84,7 +85,7 @@ class BeanListeners implements BeanListener {
         registerSpringFactoriesBeans(beanFactory, BeanListener.class);
         Map<String, BeanListener> beanEventListenersMap = beanFactory.getBeansOfType(BeanListener.class);
         List<NamedBeanHolder<BeanListener>> namedListeners = new ArrayList<>(beanEventListenersMap.size());
-        for (Map.Entry<String, BeanListener> entry : beanEventListenersMap.entrySet()) {
+        for (Entry<String, BeanListener> entry : beanEventListenersMap.entrySet()) {
             NamedBeanHolder<BeanListener> namedListener = new NamedBeanHolder<>(entry.getKey(), entry.getValue());
             namedListeners.add(namedListener);
         }

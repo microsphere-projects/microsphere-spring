@@ -1,7 +1,7 @@
 package io.microsphere.spring.beans;
 
-import io.microsphere.spring.test.TestBean;
-import io.microsphere.spring.test.TestBean2;
+import io.microsphere.spring.beans.test.TestBean;
+import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
@@ -172,7 +172,7 @@ class BeanUtilsTest {
 
         assertEquals("testBean2", beanName);
 
-        beanNames = getBeanNames(listableBeanFactory, io.microsphere.spring.test.Bean.class, true);
+        beanNames = getBeanNames(listableBeanFactory, io.microsphere.spring.beans.test.Bean.class, true);
 
         assertEquals(2, beanNames.length);
 
@@ -184,7 +184,7 @@ class BeanUtilsTest {
 
         assertEquals("testBean", beanName);
 
-        beanNames = getBeanNames(beanFactory, io.microsphere.spring.test.Bean.class, true);
+        beanNames = getBeanNames(beanFactory, io.microsphere.spring.beans.test.Bean.class, true);
 
         assertEquals(2, beanNames.length);
 
@@ -196,7 +196,7 @@ class BeanUtilsTest {
 
         assertEquals("testBean", beanName);
 
-        beanNames = getBeanNames(beanFactory, io.microsphere.spring.test.Bean.class);
+        beanNames = getBeanNames(beanFactory, io.microsphere.spring.beans.test.Bean.class);
 
         assertEquals(1, beanNames.length);
 
@@ -251,7 +251,7 @@ class BeanUtilsTest {
 
         registerBeans(registry, TestBean.class, TestBean2.class);
 
-        List<io.microsphere.spring.test.Bean> beans = getSortedBeans(registry, io.microsphere.spring.test.Bean.class);
+        List<io.microsphere.spring.beans.test.Bean> beans = getSortedBeans(registry, io.microsphere.spring.beans.test.Bean.class);
 
         assertEquals(2, beans.size());
 

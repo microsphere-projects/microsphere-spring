@@ -20,7 +20,7 @@ package io.microsphere.spring.webmvc.advice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
-import io.microsphere.spring.test.web.controller.TestRestController;
+import io.microsphere.spring.test.web.controller.TestController;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,7 +41,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Enumeration;
 
 import static io.microsphere.spring.web.servlet.util.WebUtils.getServletContext;
-import static io.microsphere.spring.webmvc.util.WebMvcUtils.HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -59,7 +59,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
-        TestRestController.class,
+        TestController.class,
         StoringRequestBodyArgumentAdvice.class,
         StoringRequestBodyArgumentAdviceTest.class
 })

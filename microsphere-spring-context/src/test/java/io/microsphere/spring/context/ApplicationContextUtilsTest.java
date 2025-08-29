@@ -20,11 +20,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS;
+import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,13 +44,13 @@ class ApplicationContextUtilsTest {
     private GenericApplicationContext context;
 
     @BeforeEach
-    public void init() {
+    void setUp() {
         context = new GenericApplicationContext();
         context.refresh();
     }
 
     @AfterEach
-    public void destroy() {
+    void tearDown() {
         context.close();
     }
 
@@ -59,15 +61,21 @@ class ApplicationContextUtilsTest {
     }
 
     @Test
-    public void testAsConfigurableApplicationContextWithContext() {
+    void testAsConfigurableApplicationContextWithContext() {
         ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
         assertSame(context, applicationContext);
     }
 
     @Test
-    public void testAsConfigurableApplicationContextWithObject() {
+    void testAsConfigurableApplicationContextWithObject() {
         ResourceLoader resourceLoader = this.context;
         assertSame(this.context, asConfigurableApplicationContext(resourceLoader));
+    }
+
+    @Test
+    void testAsApplicationContext() {
+        ApplicationContext applicationContext = asApplicationContext(context);
+        assertSame(context, applicationContext);
     }
 
     @Test

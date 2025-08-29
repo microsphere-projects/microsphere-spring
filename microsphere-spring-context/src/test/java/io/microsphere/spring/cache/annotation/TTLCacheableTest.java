@@ -87,7 +87,7 @@
 //    private CachingData testData;
 //
 //    @Test
-//    public void test() throws InterruptedException {
+//    void test() throws InterruptedException {
 //        int value = testData.randomInt(100);
 //        assertEquals(value, testData.randomInt(100));
 //

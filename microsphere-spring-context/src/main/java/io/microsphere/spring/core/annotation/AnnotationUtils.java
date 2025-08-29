@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.isNotEmpty;
@@ -67,8 +68,7 @@ public abstract class AnnotationUtils {
      * If {@link Annotation} was annotated on {@link Method}'s parameters{@link ElementType#PARAMETER} ,
      * the associated {@link Annotation} list may contain multiple elements.
      */
-    public static <A extends Annotation> Map<ElementType, List<A>> findAnnotations(Method method,
-                                                                                   Class<A> annotationClass) {
+    public static <A extends Annotation> Map<ElementType, List<A>> findAnnotations(Method method, Class<A> annotationClass) {
 
         Retention retention = annotationClass.getAnnotation(Retention.class);
 
@@ -133,8 +133,7 @@ public abstract class AnnotationUtils {
      * @param ignoreAttributeNames the attribute names of annotation should be ignored
      * @return non-null
      */
-    public static Map<String, Object> getAttributes(Annotation annotation, boolean ignoreDefaultValue,
-                                                    String... ignoreAttributeNames) {
+    public static Map<String, Object> getAttributes(Annotation annotation, boolean ignoreDefaultValue, String... ignoreAttributeNames) {
         return getAttributes(annotation, null, ignoreDefaultValue, ignoreAttributeNames);
     }
 
@@ -147,8 +146,7 @@ public abstract class AnnotationUtils {
      * @param ignoreAttributeNames the attribute names of annotation should be ignored
      * @return non-null
      */
-    public static Map<String, Object> getAttributes(Annotation annotation, PropertyResolver propertyResolver,
-                                                    boolean ignoreDefaultValue, String... ignoreAttributeNames) {
+    public static Map<String, Object> getAttributes(Annotation annotation, PropertyResolver propertyResolver, boolean ignoreDefaultValue, String... ignoreAttributeNames) {
         return getAttributes(annotation, propertyResolver, false, false, ignoreDefaultValue, ignoreAttributeNames);
     }
 
@@ -160,14 +158,13 @@ public abstract class AnnotationUtils {
      * @param ignoreAttributeNames the attribute names of annotation should be ignored
      * @return non-null
      */
-    public static Map<String, Object> getAttributes(Map<String, Object> annotationAttributes,
-                                                    PropertyResolver propertyResolver, String... ignoreAttributeNames) {
+    public static Map<String, Object> getAttributes(Map<String, Object> annotationAttributes, PropertyResolver propertyResolver, String... ignoreAttributeNames) {
 
         Set<String> ignoreAttributeNamesSet = new HashSet<>(asList(ignoreAttributeNames));
 
         Map<String, Object> actualAttributes = new LinkedHashMap<>();
 
-        for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
+        for (Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
 
             String attributeName = annotationAttribute.getKey();
             Object attributeValue = annotationAttribute.getValue();
@@ -204,12 +201,7 @@ public abstract class AnnotationUtils {
      * @param ignoreAttributeNames   the attribute names of annotation should be ignored
      * @return non-null
      */
-    public static Map<String, Object> getAttributes(Annotation annotation,
-                                                    PropertyResolver propertyResolver,
-                                                    boolean classValuesAsString,
-                                                    boolean nestedAnnotationsAsMap,
-                                                    boolean ignoreDefaultValue,
-                                                    String... ignoreAttributeNames) {
+    public static Map<String, Object> getAttributes(Annotation annotation, PropertyResolver propertyResolver, boolean classValuesAsString, boolean nestedAnnotationsAsMap, boolean ignoreDefaultValue, String... ignoreAttributeNames) {
 
         Map<String, Object> annotationAttributes = org.springframework.core.annotation.AnnotationUtils.getAnnotationAttributes(annotation, classValuesAsString, nestedAnnotationsAsMap);
 
@@ -219,7 +211,7 @@ public abstract class AnnotationUtils {
 
             List<String> attributeNamesToIgnore = new LinkedList<>(asList(ignoreAttributeNames));
 
-            for (Map.Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
+            for (Entry<String, Object> annotationAttribute : annotationAttributes.entrySet()) {
                 String attributeName = annotationAttribute.getKey();
                 Object attributeValue = annotationAttribute.getValue();
                 if (nullSafeEquals(attributeValue, getDefaultValue(annotation, attributeName))) {
@@ -528,13 +520,8 @@ public abstract class AnnotationUtils {
      * @param ignoreAttributeNames the attribute names of annotation should be ignored
      * @return If the specified annotation type is not found, return <code>null</code>
      */
-    public static AnnotationAttributes tryGetMergedAnnotationAttributes(AnnotatedElement annotatedElement,
-                                                                        Class<? extends Annotation> annotationType,
-                                                                        PropertyResolver propertyResolver,
-                                                                        boolean ignoreDefaultValue,
-                                                                        String... ignoreAttributeNames) {
-        return tryGetMergedAnnotationAttributes(annotatedElement, annotationType, propertyResolver,
-                false, false, ignoreDefaultValue, ignoreAttributeNames);
+    public static AnnotationAttributes tryGetMergedAnnotationAttributes(AnnotatedElement annotatedElement, Class<? extends Annotation> annotationType, PropertyResolver propertyResolver, boolean ignoreDefaultValue, String... ignoreAttributeNames) {
+        return tryGetMergedAnnotationAttributes(annotatedElement, annotationType, propertyResolver, false, false, ignoreDefaultValue, ignoreAttributeNames);
     }
 
     /**
@@ -554,16 +541,9 @@ public abstract class AnnotationUtils {
      * @param ignoreAttributeNames   the attribute names of annotation should be ignored
      * @return If the specified annotation type is not found, return <code>null</code>
      */
-    public static AnnotationAttributes tryGetMergedAnnotationAttributes(AnnotatedElement annotatedElement,
-                                                                        Class<? extends Annotation> annotationType,
-                                                                        PropertyResolver propertyResolver,
-                                                                        boolean classValuesAsString,
-                                                                        boolean nestedAnnotationsAsMap,
-                                                                        boolean ignoreDefaultValue,
-                                                                        String... ignoreAttributeNames) {
+    public static AnnotationAttributes tryGetMergedAnnotationAttributes(AnnotatedElement annotatedElement, Class<? extends Annotation> annotationType, PropertyResolver propertyResolver, boolean classValuesAsString, boolean nestedAnnotationsAsMap, boolean ignoreDefaultValue, String... ignoreAttributeNames) {
         Annotation annotation = tryGetMergedAnnotation(annotatedElement, annotationType, classValuesAsString, nestedAnnotationsAsMap);
-        return annotation == null ? null : getAnnotationAttributes(annotation, propertyResolver,
-                classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, ignoreAttributeNames);
+        return annotation == null ? null : getAnnotationAttributes(annotation, propertyResolver, classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, ignoreAttributeNames);
     }
 
     /**

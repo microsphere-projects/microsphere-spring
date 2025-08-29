@@ -39,7 +39,7 @@ class SpringVersionTest {
         // Spring Framework 6.1 -> [6.1.0, 6.0.16]
         testVersionRange(SpringVersion.SPRING_6_1, 0, 21);
         // Spring Framework 6.2 -> [6.2.0, 6.2.1]
-        testVersionRange(SpringVersion.SPRING_6_2, 0, 9);
+        testVersionRange(SpringVersion.SPRING_6_2, 0, 10);
     }
 
     private void testVersionRange(SpringVersion baseVersion, int start, int end) {

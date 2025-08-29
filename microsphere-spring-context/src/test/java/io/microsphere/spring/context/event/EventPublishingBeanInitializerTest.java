@@ -17,7 +17,7 @@
 package io.microsphere.spring.context.event;
 
 /**
- * {@link BeanListener} Test
+ * {@link EventPublishingBeanInitializer} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanInitializer

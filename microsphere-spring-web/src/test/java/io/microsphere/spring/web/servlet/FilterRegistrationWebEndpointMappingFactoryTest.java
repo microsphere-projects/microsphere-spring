@@ -58,7 +58,7 @@
 //    }
 //
 //    @Test
-//    public void testCreate() {
+//    void testCreate() {
 //        Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
 //        webEndpointMapping.ifPresent(mapping -> {
 //            assertEquals(this.filterName, mapping.getEndpoint());

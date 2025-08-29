@@ -34,7 +34,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  */
 public class CompositeWebRequestRule implements WebRequestRule {
 
-    private List<WebRequestRule> webRequestRules;
+    private final List<WebRequestRule> webRequestRules;
 
     public CompositeWebRequestRule(WebRequestRule... requestRules) {
         this.webRequestRules = isEmpty(requestRules) ? emptyList() : asList(requestRules);

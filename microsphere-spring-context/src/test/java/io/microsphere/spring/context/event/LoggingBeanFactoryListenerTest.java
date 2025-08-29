@@ -16,25 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 /**
  * {@link LoggingBeanFactoryListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        LoggingBeanFactoryListener.class,
-        LoggingBeanFactoryListenerTest.class},
-        initializers = {EventPublishingBeanInitializer.class})
-class LoggingBeanFactoryListenerTest {
-
-    @Test
-    void test() {
-    }
+public class LoggingBeanFactoryListenerTest extends AbstractEventListenerTest<LoggingBeanFactoryListener> {
 }

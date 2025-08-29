@@ -25,6 +25,7 @@ import org.springframework.mock.web.MockServletContext;
 
 import java.util.Collection;
 
+import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -43,6 +44,11 @@ public class RegistrationWebEndpointMappingFactoryTest {
 
         public RegistrationWebEndpointMappingFactoryImpl(ServletContext servletContext) {
             super(servletContext);
+        }
+
+        @Override
+        protected Collection<String> getMethods(Registration registration) {
+            return ALL_HTTP_METHODS;
         }
 
         @Override
@@ -74,6 +80,11 @@ public class RegistrationWebEndpointMappingFactoryTest {
     @Test
     void testGetRegistration() {
         assertNull(this.factory.getRegistration(null, this.servletContext));
+    }
+
+    @Test
+    void testGetMethods() {
+        assertSame(ALL_HTTP_METHODS, this.factory.getMethods(null));
     }
 
     @Test
