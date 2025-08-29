@@ -33,7 +33,10 @@ import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.sort;
 import static org.springframework.http.MediaType.ALL;
+import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 
@@ -60,7 +63,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
             new ContentNegotiationManager();
 
     private static final List<ProduceMediaTypeExpression> MEDIA_TYPE_ALL_LIST =
-            Collections.singletonList(new ProduceMediaTypeExpression(MediaType.ALL_VALUE));
+            singletonList(new ProduceMediaTypeExpression(ALL_VALUE));
 
     private static final String MEDIA_TYPES_ATTRIBUTE = WebRequestProducesRule.class.getName() + ".MEDIA_TYPES";
 
@@ -80,7 +83,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
                                   @Nullable ContentNegotiationManager manager) {
         this.expressions = parseExpressions(produces, headers);
         if (this.expressions.size() > 1) {
-            Collections.sort(this.expressions);
+            sort(this.expressions);
         }
         this.contentNegotiationManager = manager != null ? manager : DEFAULT_CONTENT_NEGOTIATION_MANAGER;
     }
