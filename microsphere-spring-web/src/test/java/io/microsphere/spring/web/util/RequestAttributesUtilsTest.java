@@ -37,7 +37,6 @@ import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMe
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodReturnValue;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.core.MethodParameter.forExecutable;
 import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 import static org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes;
 import static org.springframework.web.context.request.RequestContextHolder.setRequestAttributes;
@@ -70,7 +69,7 @@ public class RequestAttributesUtilsTest {
         setRequestAttributes(this.requestAttributes);
         this.handlerMethod = new HandlerMethod(new TestController(), "user", User.class);
         this.method = this.handlerMethod.getMethod();
-        this.methodParameter = forExecutable(this.method, 0);
+        this.methodParameter = new MethodParameter(this.method, 0);
         this.user = new User();
         this.user.setName("Mercy");
         this.user.setAge(18);
