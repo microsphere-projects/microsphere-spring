@@ -128,7 +128,7 @@ public @interface EnableWebMvcExtension {
     Class<? extends HandlerInterceptor>[] handlerInterceptors() default {};
 
     /**
-     * Indicate that Stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}
+     * Indicate that {@link RequestAttributes} stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}
      *
      * @return <code>false</code> as default
      * @see RequestBody
@@ -140,7 +140,7 @@ public @interface EnableWebMvcExtension {
     boolean storeRequestBodyArgument() default false;
 
     /**
-     * Stores the return value of {@link HandlerMethod} before write as the {@link ResponseBody}
+     * Indicate that {@link RequestAttributes} stores the return value of {@link HandlerMethod} before write as the {@link ResponseBody}
      *
      * @return <code>false</code> as default
      * @see ResponseBody
