@@ -154,6 +154,8 @@ public class WebEndpointMapping<E> {
     @Nullable
     private final String[] produces;
 
+    private final boolean negated;
+
     @Nullable
     private transient final Object source;
 
@@ -222,6 +224,8 @@ public class WebEndpointMapping<E> {
 
         @Nullable
         private Set<String> produces;
+
+        private boolean negated;
 
         /**
          * Create a new {@link Builder} instance.
@@ -967,6 +971,12 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        @Nonnull
+        public Builder<E> negate() {
+            this.negated = !this.negated;
+            return this;
+        }
+
         /**
          * Set the source of the endpoint mapping.
          *
@@ -1103,6 +1113,7 @@ public class WebEndpointMapping<E> {
             return new WebEndpointMapping(
                     this.kind,
                     this.endpoint,
+                    this.negated,
                     this.source,
                     toStrings(this.patterns),
                     toStrings(this.methods),
@@ -1190,6 +1201,7 @@ public class WebEndpointMapping<E> {
     private WebEndpointMapping(
             @Nonnull Kind kind,
             @Nonnull E endpoint,
+            boolean negated,
             @Nullable Object source,
             @Nonnull String[] patterns,
             @Nullable String[] methods,
@@ -1201,6 +1213,7 @@ public class WebEndpointMapping<E> {
         this.endpoint = endpoint;
         // id is a hash code of the endpoint
         this.id = endpoint == null ? 0 : endpoint.hashCode();
+        this.negated = negated;
         this.source = source == null ? UNKNOWN_SOURCE : source;
         this.patterns = patterns;
         this.methods = methods;
@@ -1214,7 +1227,7 @@ public class WebEndpointMapping<E> {
      * For serialization
      */
     private WebEndpointMapping() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, false, null, null, null, null, null, null, null);
     }
 
     /**
@@ -1270,6 +1283,15 @@ public class WebEndpointMapping<E> {
      */
     public int getId() {
         return id;
+    }
+
+    /**
+     * Get the 'negated' status
+     *
+     * @return <code>false</code> as default
+     */
+    public boolean isNegated() {
+        return this.negated;
     }
 
     /**
@@ -1379,6 +1401,7 @@ public class WebEndpointMapping<E> {
         sb.append("kind=").append(kind);
         sb.append(", endpoint=").append(endpoint);
         sb.append(", id=").append(id);
+        sb.append(", negated=").append(negated);
         sb.append(", source=").append(source);
         sb.append(", patterns=").append(arrayToString(patterns));
         sb.append(", methods=").append(arrayToString(methods));
@@ -1393,6 +1416,7 @@ public class WebEndpointMapping<E> {
     public String toJSON() {
         StringBuilder stringBuilder = new StringBuilder(LEFT_CURLY_BRACE).append(LINE_SEPARATOR);
         append(stringBuilder, "id", this.id);
+        append(stringBuilder, "negated", this.negated, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "patterns", this.patterns, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "methods", this.methods, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "params", this.params, COMMA, LINE_SEPARATOR);
@@ -1404,6 +1428,11 @@ public class WebEndpointMapping<E> {
     }
 
     private void append(StringBuilder appendable, String name, int value) {
+        JSONUtils.append(appendable, name, value);
+    }
+
+    private void append(StringBuilder appendable, String name, boolean value, String... prefixes) {
+        append(prefixes, appendable);
         JSONUtils.append(appendable, name, value);
     }
 
