@@ -103,7 +103,7 @@ class RequestPredicateKindTest {
     }
 
     @Test
-    void testValueOfOnUnsupported() {
+    void testValueOfOnUnknown() {
         assertSame(UNKNOWN, valueOf(request -> false));
     }
 }
