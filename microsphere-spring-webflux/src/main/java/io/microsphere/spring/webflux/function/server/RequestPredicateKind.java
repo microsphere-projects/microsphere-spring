@@ -126,7 +126,7 @@ public enum RequestPredicateKind {
     public static RequestPredicateKind valueOf(RequestPredicate predicate) {
         String className = predicate.getClass().getCanonicalName();
         for (RequestPredicateKind kind : values()) {
-            if (kind.implementationClassName.equals(className)) {
+            if (kind.getImplementationClassName().equals(className)) {
                 return kind;
             }
         }
