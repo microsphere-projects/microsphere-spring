@@ -50,7 +50,7 @@ import static java.util.Optional.of;
  * collecting metadata about web endpoints. It implements both visitor interfaces to capture information such as
  * HTTP methods, path patterns, headers, and query parameters.</p>
  *
- * <h3>Example Usage:</h3>
+ * <h3>Example Usage</h3>
  * <pre>{@code
  * // Create a consumer to handle the generated WebEndpointMappings
  * Consumer<WebEndpointMapping> mappingConsumer = mapping -> {
@@ -125,7 +125,7 @@ public class ConsumingWebEndpointMappingAdapter implements RequestPredicateVisit
     @Override
     public void startNested(RequestPredicate predicate) {
         pushRequestPredicateToBuilder(predicate);
-        predicate.accept(this);
+        visit(predicate);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class ConsumingWebEndpointMappingAdapter implements RequestPredicateVisit
     @Override
     public void route(RequestPredicate predicate, HandlerFunction<?> handlerFunction) {
         Entry<RequestPredicate, Builder<?>> entry = pushRequestPredicateToBuilder(predicate);
-        predicate.accept(this);
+        visit(predicate);
         popRequestPredicateToBuilder(predicate);
         buildAndConsumeWebEndpointMapping(entry, handlerFunction);
     }
