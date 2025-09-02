@@ -28,6 +28,7 @@ import org.springframework.web.method.HandlerMethod;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -56,6 +57,7 @@ import static io.microsphere.util.Assert.assertNotNull;
 import static io.microsphere.util.Assert.assertTrue;
 import static io.microsphere.util.IterableUtils.iterate;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
+import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -1001,8 +1003,26 @@ public class WebEndpointMapping<E> {
         }
 
         @Nonnull
+        public Builder<E> and(Builder<?> other) {
+            assertBuilders(this, other);
+            iterate(other.patterns, this::pattern);
+            iterate(other.methods, this::methods);
+            iterate(other.params, this::params);
+            iterate(other.headers, this::headers);
+            iterate(other.consumes, this::consumes);
+            iterate(other.produces, this::produces);
+            return this;
+        }
+
+        @Nonnull
+        public List<Builder<?>> or(Builder<?> other) {
+
+            return emptyList();
+        }
+
+        @Nonnull
         public Builder<E> nestPatterns(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             Set<String> patterns = newSet();
             iterate(this.patterns, pattern -> {
                 iterate(other.patterns, otherPattern -> {
@@ -1015,35 +1035,35 @@ public class WebEndpointMapping<E> {
 
         @Nonnull
         public Builder<E> nestMethods(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.methods, this::method);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestParams(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.params, this::param);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestHeaders(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.headers, this::header);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestConsumes(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.consumes, this::consume);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestProduces(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.produces, this::produce);
             return this;
         }
@@ -1069,7 +1089,7 @@ public class WebEndpointMapping<E> {
             return value == null ? name : name + EQUAL_CHAR + value;
         }
 
-        static void assertNest(Builder<?> one, Builder<?> other) {
+        static void assertBuilders(Builder<?> one, Builder<?> other) {
             assertNotNull(one, () -> "The 'one' Builder must not be null!");
             assertNotNull(other, () -> "The 'other' Builder must not be null!");
             assertTrue(one.kind == other.kind, () -> format("The Kind does not match[one : {} , other : {}]", one.kind, other.kind));
