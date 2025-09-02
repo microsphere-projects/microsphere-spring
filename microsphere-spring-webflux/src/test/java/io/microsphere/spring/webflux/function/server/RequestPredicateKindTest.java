@@ -19,6 +19,7 @@ package io.microsphere.spring.webflux.function.server;
 
 
 import org.junit.jupiter.api.Test;
+import org.springframework.web.reactive.function.server.RequestPredicate;
 
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.ACCEPT;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.AND;
@@ -31,10 +32,17 @@ import static io.microsphere.spring.webflux.function.server.RequestPredicateKind
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.PATH_EXTENSION;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.QUERY_PARAM;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.UNKNOWN;
+import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.acceptVisitor;
+import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.parseRequestPredicate;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.valueOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_PDF;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
 import static org.springframework.web.reactive.function.server.RequestPredicates.headers;
@@ -105,5 +113,59 @@ class RequestPredicateKindTest {
     @Test
     void testValueOfOnUnknown() {
         assertSame(UNKNOWN, valueOf(request -> false));
+    }
+
+    @Test
+    void testAcceptVisitor() {
+        RequestPredicate predicate = GET("/test")
+                .and(method(PUT))
+                .and(method(POST))
+                .and(accept(APPLICATION_JSON))
+                .and(contentType(APPLICATION_JSON))
+                .or(queryParam("name", "test"));
+
+        RequestPredicateVisitorAdapter visitor = new RequestPredicateVisitorAdapter() {
+        };
+        acceptVisitor(predicate, visitor);
+    }
+
+    @Test
+    void testParseRequestPredicate() {
+        String expression = "(!((/root && GET) && Accept: application/json) || (?name test && Content-Type: application/json))";
+        RequestPredicate predicate = parseRequestPredicate(expression);
+        assertEquals(expression, predicate.toString());
+    }
+
+    @Test
+    void testParseRequestPredicateBySource() {
+        RequestPredicate predicate = path("/test");
+        assertRequestPredicate(predicate);
+
+        predicate = predicate.and(method(GET));
+        assertRequestPredicate(predicate);
+
+        predicate = predicate.negate();
+        assertRequestPredicate(predicate);
+
+        predicate = predicate.and(accept(APPLICATION_JSON));
+        assertRequestPredicate(predicate);
+
+        predicate = predicate.and(contentType(APPLICATION_PDF));
+        assertRequestPredicate(predicate);
+
+        predicate = predicate.or(predicate);
+        assertRequestPredicate(predicate);
+
+        predicate = predicate.negate();
+        assertRequestPredicate(predicate);
+
+        predicate = predicate.and(method(POST));
+        assertRequestPredicate(predicate);
+    }
+
+    private void assertRequestPredicate(RequestPredicate source) {
+        String expression = source.toString();
+        RequestPredicate predicate = parseRequestPredicate(expression);
+        assertEquals(expression, predicate.toString());
     }
 }
