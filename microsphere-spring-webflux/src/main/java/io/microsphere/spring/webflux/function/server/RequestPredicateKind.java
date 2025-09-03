@@ -169,23 +169,6 @@ public enum RequestPredicateKind {
     },
 
     /**
-     * @see RequestPredicates#headers(Predicate)
-     * @see RequestPredicates.HeadersPredicate
-     */
-    HEADERS {
-        @Override
-        public boolean matches(RequestPredicate predicate) {
-            String className = getTypeName(predicate);
-            return "org.springframework.web.reactive.function.server.RequestPredicates$HeadersPredicate".equals(className);
-        }
-
-        @Override
-        public boolean matches(String expression) {
-            return contains(expression, "$$Lambda/");
-        }
-    },
-
-    /**
      * @see RequestPredicates#queryParam(String, String)
      * @see RequestPredicates.QueryParamPredicate
      */
@@ -290,6 +273,23 @@ public enum RequestPredicateKind {
 
         String parseMediaTypesString(String expression) {
             return expression.substring(prefix.length());
+        }
+    },
+
+    /**
+     * @see RequestPredicates#headers(Predicate)
+     * @see RequestPredicates.HeadersPredicate
+     */
+    HEADERS {
+        @Override
+        public boolean matches(RequestPredicate predicate) {
+            String className = getTypeName(predicate);
+            return "org.springframework.web.reactive.function.server.RequestPredicates$HeadersPredicate".equals(className);
+        }
+
+        @Override
+        public boolean matches(String expression) {
+            return contains(expression, "$$Lambda/");
         }
     },
 
