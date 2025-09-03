@@ -66,6 +66,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RequestPredicates.path;
 import static org.springframework.web.reactive.function.server.RequestPredicates.pathExtension;
 import static org.springframework.web.reactive.function.server.RequestPredicates.queryParam;
+import static org.springframework.web.util.UriUtils.extractFileExtension;
 
 /**
  * The kind of {@link RequestPredicate} implementation
@@ -153,7 +154,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, prefix);
+            return getExtension(expression) != null;
         }
 
         @Override
@@ -163,7 +164,7 @@ public enum RequestPredicateKind {
         }
 
         String getExtension(String expression) {
-            return expression.substring(prefix.length());
+            return extractFileExtension(expression);
         }
     },
 
@@ -216,7 +217,7 @@ public enum RequestPredicateKind {
 
         String[] getNameAndValue(String expression) {
             String nameAndValue = expression.substring(prefix.length());
-            return split(nameAndValue, SPACE);
+            return split(nameAndValue, " == ");
         }
     },
 
@@ -459,7 +460,7 @@ public enum RequestPredicateKind {
      * @return the {@link RequestPredicate} if matches, or <code>null</code>
      */
     public RequestPredicate predicate(@Nullable String expression) {
-        return null;
+        return r -> false;
     }
 
     /**
