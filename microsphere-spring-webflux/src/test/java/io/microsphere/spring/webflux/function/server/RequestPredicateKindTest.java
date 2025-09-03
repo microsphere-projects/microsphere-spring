@@ -19,6 +19,7 @@ package io.microsphere.spring.webflux.function.server;
 
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.server.RequestPredicate;
 
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.ACCEPT;
@@ -34,16 +35,21 @@ import static io.microsphere.spring.webflux.function.server.RequestPredicateKind
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.UNKNOWN;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.acceptVisitor;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.parseRequestPredicate;
+import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.toExpression;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.values;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
+import static org.springframework.web.reactive.function.server.RequestPredicates.all;
 import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
 import static org.springframework.web.reactive.function.server.RequestPredicates.headers;
 import static org.springframework.web.reactive.function.server.RequestPredicates.method;
@@ -60,6 +66,286 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
  */
 class RequestPredicateKindTest {
 
+    public static final String TEST_PATH = "/test";
+
+    public static final String TEST_PATH_EXTENSION = "txt";
+
+    // Test RequestPredicateKind#accept(RequestPredicate, RequestPredicateVisitorAdapter)
+
+    @Test
+    void testAcceptOnMethod() {
+    }
+
+    @Test
+    void testAcceptOnPath() {
+    }
+
+    @Test
+    void testAcceptOnPathExtension() {
+    }
+
+    @Test
+    void testAcceptOnHeaders() {
+    }
+
+    @Test
+    void testAcceptOnQueryParam() {
+    }
+
+    @Test
+    void testAcceptOnAccept() {
+    }
+
+    @Test
+    void testAcceptOnContentType() {
+    }
+
+    @Test
+    void testAcceptOnAnd() {
+    }
+
+    @Test
+    void testAcceptOnOr() {
+    }
+
+    @Test
+    void testAcceptOnNegate() {
+    }
+
+    @Test
+    void testAcceptOnUnknown() {
+    }
+
+    // Test RequestPredicateKind#matches(RequestPredicate)
+
+    @Test
+    void testMatchesWithPredicateOnMethod() {
+        assertTrue(METHOD.matches(method(GET)));
+        assertFalse(METHOD.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnPath() {
+        assertTrue(PATH.matches(path(TEST_PATH)));
+        assertFalse(PATH.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnPathExtension() {
+        assertTrue(PATH_EXTENSION.matches(pathExtension(TEST_PATH_EXTENSION)));
+        assertFalse(PATH_EXTENSION.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnHeaders() {
+        assertTrue(HEADERS.matches(headers(t -> true)));
+        assertFalse(HEADERS.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnQueryParam() {
+        assertTrue(QUERY_PARAM.matches(queryParam("name", "value")));
+        assertFalse(QUERY_PARAM.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnAccept() {
+        assertTrue(ACCEPT.matches(accept(APPLICATION_JSON)));
+        assertFalse(ACCEPT.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnContentType() {
+        assertTrue(CONTENT_TYPE.matches(contentType(APPLICATION_JSON)));
+        assertFalse(CONTENT_TYPE.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnAnd() {
+        assertTrue(AND.matches(method(GET).and(path(TEST_PATH))));
+        assertFalse(AND.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnOr() {
+        assertTrue(OR.matches(method(GET).or(path(TEST_PATH))));
+        assertFalse(OR.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnNegate() {
+        assertTrue(NEGATE.matches(method(GET).negate()));
+        assertFalse(NEGATE.matches(all()));
+    }
+
+    @Test
+    void testMatchesWithPredicateOnUnknown() {
+        assertFalse(UNKNOWN.matches(request -> false));
+        assertFalse(UNKNOWN.matches(all()));
+    }
+
+    // Test RequestPredicateKind#matches(String)
+
+    @Test
+    void testMatchesWithExpressionOnMethod() {
+        for (HttpMethod httpMethod : values()) {
+            assertTrue(METHOD.matches(httpMethod.name()));
+        }
+        assertFalse(METHOD.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnPath() {
+        assertFalse(PATH.matches(TEST_PATH));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnPathExtension() {
+        assertTrue(PATH_EXTENSION.matches("*." + TEST_PATH_EXTENSION));
+        assertFalse(PATH_EXTENSION.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnHeaders() {
+        assertFalse(HEADERS.matches("Accept"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnQueryParam() {
+        assertTrue(QUERY_PARAM.matches("?name value"));
+        assertFalse(QUERY_PARAM.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnAccept() {
+        assertTrue(ACCEPT.matches("Accept: application/json"));
+        assertFalse(ACCEPT.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnContentType() {
+        assertTrue(CONTENT_TYPE.matches("Content-Type: application/json"));
+        assertFalse(CONTENT_TYPE.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnAnd() {
+        assertTrue(AND.matches("(GET && /test)"));
+        assertFalse(AND.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnOr() {
+        assertTrue(OR.matches("(GET || /test)"));
+        assertFalse(OR.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnNegate() {
+        assertTrue(NEGATE.matches("!GET"));
+        assertFalse(NEGATE.matches("UNKNOWN"));
+    }
+
+    @Test
+    void testMatchesWithExpressionOnUnknown() {
+        assertFalse(UNKNOWN.matches(""));
+        assertFalse(UNKNOWN.matches("UNKNOWN"));
+    }
+
+    // Test RequestPredicateKind#predicate(String)
+
+    @Test
+    void testPredicateOnMethod() {
+    }
+
+    @Test
+    void testPredicateOnPath() {
+    }
+
+    @Test
+    void testPredicateOnPathExtension() {
+    }
+
+    @Test
+    void testPredicateOnHeaders() {
+    }
+
+    @Test
+    void testPredicateOnQueryParam() {
+    }
+
+    @Test
+    void testPredicateOnAccept() {
+    }
+
+    @Test
+    void testPredicateOnContentType() {
+    }
+
+    @Test
+    void testPredicateOnAnd() {
+    }
+
+    @Test
+    void testPredicateOnOr() {
+    }
+
+    @Test
+    void testPredicateOnNegate() {
+    }
+
+    @Test
+    void testPredicateOnUnknown() {
+    }
+
+    // Test RequestPredicateKind#expression(RequestPredicate)
+
+    @Test
+    void testExpressionOnMethod() {
+    }
+
+    @Test
+    void testExpressionOnPath() {
+    }
+
+    @Test
+    void testExpressionOnPathExtension() {
+    }
+
+    @Test
+    void testExpressionOnHeaders() {
+    }
+
+    @Test
+    void testExpressionOnQueryParam() {
+    }
+
+    @Test
+    void testExpressionOnAccept() {
+    }
+
+    @Test
+    void testExpressionOnContentType() {
+    }
+
+    @Test
+    void testExpressionOnAnd() {
+    }
+
+    @Test
+    void testExpressionOnOr() {
+    }
+
+    @Test
+    void testExpressionOnNegate() {
+    }
+
+    @Test
+    void testExpressionOnUnknown() {
+    }
+
+    // Test RequestPredicateKind#valueOf(RequestPredicate)
+
     @Test
     void testValueOfOnMethod() {
         assertSame(METHOD, valueOf(method(GET)));
@@ -67,12 +353,12 @@ class RequestPredicateKindTest {
 
     @Test
     void testValueOfOnPath() {
-        assertSame(PATH, valueOf(path("/test")));
+        assertSame(PATH, valueOf(path(TEST_PATH)));
     }
 
     @Test
     void testValueOfOnPathExtension() {
-        assertSame(PATH_EXTENSION, valueOf(pathExtension("/test")));
+        assertSame(PATH_EXTENSION, valueOf(pathExtension(TEST_PATH)));
     }
 
     @Test
@@ -97,12 +383,12 @@ class RequestPredicateKindTest {
 
     @Test
     void testValueOfOnAnd() {
-        assertSame(AND, valueOf(method(GET).and(path("/test"))));
+        assertSame(AND, valueOf(method(GET).and(path(TEST_PATH))));
     }
 
     @Test
     void testValueOfOnOr() {
-        assertSame(OR, valueOf(method(GET).or(path("/test"))));
+        assertSame(OR, valueOf(method(GET).or(path(TEST_PATH))));
     }
 
     @Test
@@ -115,9 +401,11 @@ class RequestPredicateKindTest {
         assertSame(UNKNOWN, valueOf(request -> false));
     }
 
+    // Test RequestPredicateKind#acceptVisitor(RequestPredicate, RequestPredicateVisitor)
+
     @Test
     void testAcceptVisitor() {
-        RequestPredicate predicate = GET("/test")
+        RequestPredicate predicate = GET(TEST_PATH)
                 .and(method(PUT))
                 .and(method(POST))
                 .and(accept(APPLICATION_JSON))
@@ -129,16 +417,20 @@ class RequestPredicateKindTest {
         acceptVisitor(predicate, visitor);
     }
 
+    // Test RequestPredicateKind#toExpression(RequestPredicate)
+
     @Test
-    void testParseRequestPredicate() {
+    void testToExpression() {
         String expression = "(!((/root && GET) && Accept: application/json) || (?name test && Content-Type: application/json))";
         RequestPredicate predicate = parseRequestPredicate(expression);
-        assertEquals(expression, predicate.toString());
+        assertEquals(expression, toExpression(predicate));
     }
+
+    // Test RequestPredicateKind#parseRequestPredicate(String)
 
     @Test
     void testParseRequestPredicateBySource() {
-        RequestPredicate predicate = path("/test");
+        RequestPredicate predicate = path(TEST_PATH);
         assertRequestPredicate(predicate);
 
         predicate = predicate.and(method(GET));
@@ -164,8 +456,8 @@ class RequestPredicateKindTest {
     }
 
     private void assertRequestPredicate(RequestPredicate source) {
-        String expression = source.toString();
+        String expression = toExpression(source);
         RequestPredicate predicate = parseRequestPredicate(expression);
-        assertEquals(expression, predicate.toString());
+        assertEquals(expression, toExpression(predicate));
     }
 }
