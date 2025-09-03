@@ -413,7 +413,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testValueOfOnPathExtension() {
-        assertSame(PATH_EXTENSION, valueOf(pathExtension(TEST_ROOT_PATH)));
+        assertSame(PATH_EXTENSION, valueOf(pathExtension(TEST_PATH_EXTENSION)));
     }
 
     @Test
