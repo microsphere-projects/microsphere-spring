@@ -19,9 +19,11 @@ package io.microsphere.spring.webflux.function.server;
 
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.server.RequestPredicate;
 
+import static io.microsphere.constants.SymbolConstants.DOT;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.ACCEPT;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.AND;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.CONTENT_TYPE;
@@ -37,16 +39,23 @@ import static io.microsphere.spring.webflux.function.server.RequestPredicateKind
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.parseRequestPredicate;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.toExpression;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.valueOf;
+import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
+import static java.net.URI.create;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpMethod.values;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+import static org.springframework.mock.web.reactive.function.server.MockServerRequest.builder;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
@@ -66,9 +75,9 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
  */
 class RequestPredicateKindTest {
 
-    public static final String TEST_PATH = "/test";
-
     public static final String TEST_PATH_EXTENSION = "txt";
+
+    public static final String TEST_EXTENSION_PATH = TEST_ROOT_PATH + DOT + TEST_PATH_EXTENSION;
 
     // Test RequestPredicateKind#accept(RequestPredicate, RequestPredicateVisitorAdapter)
 
@@ -126,7 +135,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testMatchesWithPredicateOnPath() {
-        assertTrue(PATH.matches(path(TEST_PATH)));
+        assertTrue(PATH.matches(path(TEST_ROOT_PATH)));
         assertFalse(PATH.matches(all()));
     }
 
@@ -162,13 +171,13 @@ class RequestPredicateKindTest {
 
     @Test
     void testMatchesWithPredicateOnAnd() {
-        assertTrue(AND.matches(method(GET).and(path(TEST_PATH))));
+        assertTrue(AND.matches(method(GET).and(path(TEST_ROOT_PATH))));
         assertFalse(AND.matches(all()));
     }
 
     @Test
     void testMatchesWithPredicateOnOr() {
-        assertTrue(OR.matches(method(GET).or(path(TEST_PATH))));
+        assertTrue(OR.matches(method(GET).or(path(TEST_ROOT_PATH))));
         assertFalse(OR.matches(all()));
     }
 
@@ -196,12 +205,12 @@ class RequestPredicateKindTest {
 
     @Test
     void testMatchesWithExpressionOnPath() {
-        assertFalse(PATH.matches(TEST_PATH));
+        assertFalse(PATH.matches(TEST_ROOT_PATH));
     }
 
     @Test
     void testMatchesWithExpressionOnPathExtension() {
-        assertTrue(PATH_EXTENSION.matches("*." + TEST_PATH_EXTENSION));
+        assertTrue(PATH_EXTENSION.matches(TEST_EXTENSION_PATH));
         assertFalse(PATH_EXTENSION.matches("UNKNOWN"));
     }
 
@@ -256,46 +265,92 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnMethod() {
+        for (HttpMethod httpMethod : values()) {
+            RequestPredicate predicate = METHOD.predicate(httpMethod.name());
+            assertTrue(predicate.test(builder().method(httpMethod).build()));
+        }
+    }
+
+    @Test
+    void testPredicateOnMethodOnInvalidMethod() {
+        assertThrows(IllegalArgumentException.class, () -> METHOD.predicate("A"));
     }
 
     @Test
     void testPredicateOnPath() {
+        RequestPredicate predicate = PATH.predicate(TEST_ROOT_PATH);
+        assertTrue(predicate.test(builder().uri(create(TEST_ROOT_PATH)).build()));
     }
 
     @Test
     void testPredicateOnPathExtension() {
+        RequestPredicate predicate = PATH_EXTENSION.predicate(TEST_EXTENSION_PATH);
+        assertTrue(predicate.test(builder().uri(create(TEST_EXTENSION_PATH)).build()));
     }
 
     @Test
     void testPredicateOnHeaders() {
+        RequestPredicate predicate = HEADERS.predicate("");
+        assertFalse(predicate.test(builder().method(POST).build()));
     }
 
     @Test
     void testPredicateOnQueryParam() {
+        RequestPredicate predicate = QUERY_PARAM.predicate("?name == value");
+        assertTrue(predicate.test(builder().queryParam("name", "value").build()));
     }
 
     @Test
     void testPredicateOnAccept() {
+        RequestPredicate predicate = ACCEPT.predicate("Accept: " + APPLICATION_JSON_VALUE);
+        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
+
+        predicate = ACCEPT.predicate("Accept: " + "[" + APPLICATION_JSON_VALUE + "]");
+        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
+
+        predicate = ACCEPT.predicate("Accept: " + "[" + APPLICATION_JSON_VALUE + "," + APPLICATION_PDF_VALUE + "]");
+        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_PDF_VALUE).build()));
     }
 
     @Test
     void testPredicateOnContentType() {
+        RequestPredicate predicate = CONTENT_TYPE.predicate("Content-Type: " + APPLICATION_JSON_VALUE);
+        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
+
+        predicate = CONTENT_TYPE.predicate("Content-Type: " + "[" + APPLICATION_JSON_VALUE + "]");
+        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
+
+        predicate = CONTENT_TYPE.predicate("Content-Type: " + "[" + APPLICATION_JSON_VALUE + "," + APPLICATION_PDF_VALUE + "]");
+        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE).build()));
     }
 
     @Test
     void testPredicateOnAnd() {
+        RequestPredicate predicate = AND.predicate("(GET && /test)");
+        assertTrue(predicate.test(builder().method(GET).uri(create(TEST_ROOT_PATH)).build()));
     }
 
     @Test
     void testPredicateOnOr() {
+        RequestPredicate predicate = OR.predicate("(GET || /test)");
+        assertTrue(predicate.test(builder().method(GET).build()));
+        assertTrue(predicate.test(builder().uri(create(TEST_ROOT_PATH)).build()));
     }
 
     @Test
     void testPredicateOnNegate() {
+        RequestPredicate predicate = NEGATE.predicate("!GET");
+        assertTrue(predicate.test(builder().method(POST).build()));
+        assertTrue(predicate.test(builder().method(PUT).build()));
+        assertTrue(predicate.test(builder().method(DELETE).build()));
     }
 
     @Test
     void testPredicateOnUnknown() {
+        RequestPredicate predicate = UNKNOWN.predicate("!GET");
+        assertFalse(predicate.test(builder().method(POST).build()));
     }
 
     // Test RequestPredicateKind#expression(RequestPredicate)
@@ -353,12 +408,12 @@ class RequestPredicateKindTest {
 
     @Test
     void testValueOfOnPath() {
-        assertSame(PATH, valueOf(path(TEST_PATH)));
+        assertSame(PATH, valueOf(path(TEST_ROOT_PATH)));
     }
 
     @Test
     void testValueOfOnPathExtension() {
-        assertSame(PATH_EXTENSION, valueOf(pathExtension(TEST_PATH)));
+        assertSame(PATH_EXTENSION, valueOf(pathExtension(TEST_ROOT_PATH)));
     }
 
     @Test
@@ -383,12 +438,12 @@ class RequestPredicateKindTest {
 
     @Test
     void testValueOfOnAnd() {
-        assertSame(AND, valueOf(method(GET).and(path(TEST_PATH))));
+        assertSame(AND, valueOf(method(GET).and(path(TEST_ROOT_PATH))));
     }
 
     @Test
     void testValueOfOnOr() {
-        assertSame(OR, valueOf(method(GET).or(path(TEST_PATH))));
+        assertSame(OR, valueOf(method(GET).or(path(TEST_ROOT_PATH))));
     }
 
     @Test
@@ -405,7 +460,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testAcceptVisitor() {
-        RequestPredicate predicate = GET(TEST_PATH)
+        RequestPredicate predicate = GET(TEST_ROOT_PATH)
                 .and(method(PUT))
                 .and(method(POST))
                 .and(accept(APPLICATION_JSON))
@@ -430,7 +485,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testParseRequestPredicateBySource() {
-        RequestPredicate predicate = path(TEST_PATH);
+        RequestPredicate predicate = path(TEST_ROOT_PATH);
         assertRequestPredicate(predicate);
 
         predicate = predicate.and(method(GET));
