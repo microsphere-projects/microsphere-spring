@@ -30,6 +30,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -52,12 +53,14 @@ import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ClassUtils.getTypeName;
 import static io.microsphere.util.StringUtils.contains;
 import static io.microsphere.util.StringUtils.endsWith;
+import static io.microsphere.util.StringUtils.replace;
 import static io.microsphere.util.StringUtils.split;
 import static io.microsphere.util.StringUtils.startsWith;
 import static io.microsphere.util.StringUtils.substringAfter;
 import static io.microsphere.util.StringUtils.substringBetween;
 import static java.lang.Integer.parseInt;
 import static java.lang.reflect.Array.newInstance;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.of;
 import static org.springframework.http.HttpMethod.resolve;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
@@ -142,9 +145,6 @@ public enum RequestPredicateKind {
      * @see RequestPredicates#pathExtension(String)
      */
     PATH_EXTENSION {
-
-        private static final String prefix = "*.";
-
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
             String expression = expression(predicate);
@@ -192,15 +192,29 @@ public enum RequestPredicateKind {
 
         @Override
         public RequestPredicate predicate(String expression) {
-            String[] nameAndValue = getNameAndValue(expression);
+            String[] nameAndValue = getNameAndValue(normalize(expression));
             String name = nameAndValue[0];
             String value = nameAndValue[1];
             return queryParam(name, value);
         }
 
+        @Override
+        public String expression(RequestPredicate predicate) {
+            return normalize(super.expression(predicate));
+        }
+
+        /**
+         * Normalize the expression in order to compatible with Spring WebFlux 5.0
+         * @param expression
+         * @return
+         */
+        String normalize(String expression) {
+            return replace(expression, " == ", SPACE);
+        }
+
         String[] getNameAndValue(String expression) {
             String nameAndValue = expression.substring(prefix.length());
-            return split(nameAndValue, " == ");
+            return split(nameAndValue, SPACE);
         }
     },
 
@@ -225,14 +239,22 @@ public enum RequestPredicateKind {
 
         @Override
         public RequestPredicate predicate(String expression) {
-            String mediaTypesAsString = parseMediaTypesString(expression);
-            MediaType[] mediaTypes = resolveValues(mediaTypesAsString, MediaType.class, MediaType::parseMediaType);
-            return RequestPredicates.accept(mediaTypes);
+            Set<MediaType> mediaTypes = mediaTypes(expression);
+            MediaType[] mediaTypesArray = mediaTypes.stream().toArray(MediaType[]::new);
+            return RequestPredicates.accept(mediaTypesArray);
         }
 
         @Override
         public String expression(RequestPredicate predicate) {
-            return super.expression(predicate);
+            String expression = super.expression(predicate);
+            Set<MediaType> mediaTypes = mediaTypes(expression);
+            String mediaTypesAsString = toString(mediaTypes);
+            return prefix + mediaTypesAsString;
+        }
+
+        Set<MediaType> mediaTypes(String expression) {
+            String mediaTypesAsString = parseMediaTypesString(expression);
+            return resolveValues(mediaTypesAsString, MediaType::parseMediaType);
         }
 
         String parseMediaTypesString(String expression) {
@@ -261,14 +283,22 @@ public enum RequestPredicateKind {
 
         @Override
         public RequestPredicate predicate(String expression) {
-            String mediaTypesAsString = parseMediaTypesString(expression);
-            MediaType[] mediaTypes = resolveValues(mediaTypesAsString, MediaType.class, MediaType::parseMediaType);
-            return contentType(mediaTypes);
+            Set<MediaType> mediaTypes = mediaTypes(expression);
+            MediaType[] mediaTypesArray = mediaTypes.stream().toArray(MediaType[]::new);
+            return contentType(mediaTypesArray);
         }
 
         @Override
         public String expression(RequestPredicate predicate) {
-            return super.expression(predicate);
+            String expression = super.expression(predicate);
+            Set<MediaType> mediaTypes = mediaTypes(expression);
+            String mediaTypesAsString = toString(mediaTypes);
+            return prefix + mediaTypesAsString;
+        }
+
+        Set<MediaType> mediaTypes(String expression) {
+            String mediaTypesAsString = parseMediaTypesString(expression);
+            return resolveValues(mediaTypesAsString, MediaType::parseMediaType);
         }
 
         String parseMediaTypesString(String expression) {
@@ -281,15 +311,23 @@ public enum RequestPredicateKind {
      * @see RequestPredicates.HeadersPredicate
      */
     HEADERS {
+
+        private static final String CLASS_NAME = "org.springframework.web.reactive.function.server.RequestPredicates$HeadersPredicate";
+
         @Override
         public boolean matches(RequestPredicate predicate) {
             String className = getTypeName(predicate);
-            return "org.springframework.web.reactive.function.server.RequestPredicates$HeadersPredicate".equals(className);
+            return CLASS_NAME.equals(className);
         }
 
         @Override
         public boolean matches(String expression) {
-            return contains(expression, "$$Lambda/");
+            return startsWith(expression, CLASS_NAME);
+        }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            return getTypeName(predicate) + "@" + predicate.hashCode();
         }
     },
 
@@ -440,7 +478,7 @@ public enum RequestPredicateKind {
      * @return <code>true</code> if matches, or <code>false</code>
      */
     public boolean matches(RequestPredicate predicate) {
-        return matches(expression(predicate));
+        return matches(predicate.toString());
     }
 
     /**
@@ -648,6 +686,16 @@ public enum RequestPredicateKind {
 
     static String toString(Collection<?> values) {
         return values.size() == 1 ? values.iterator().next().toString() : values.toString();
+    }
+
+    <V> Set<V> resolveValues(String expression, Function<String, V> valueFunction) {
+        String values = substringBetween(expression, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET);
+        String[] elements = values == null ? ofArray(expression) : split(values, COMMA);
+        return of(elements)
+                .filter(Objects::nonNull)
+                .map(valueFunction::apply)
+                .filter(Objects::nonNull)
+                .collect(toSet());
     }
 
     <V> V[] resolveValues(String expression, Class<V> valueType, Function<String, V> valueFunction) {
