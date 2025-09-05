@@ -24,8 +24,13 @@ import org.springframework.web.reactive.function.server.RequestPredicate;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerRequest.Headers;
 
+import java.lang.reflect.Method;
+import java.util.Objects;
+
 import static io.microsphere.collection.ListUtils.ofList;
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.constants.SymbolConstants.DOT;
+import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.ACCEPT;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.AND;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.CONTENT_TYPE;
@@ -42,6 +47,7 @@ import static io.microsphere.spring.webflux.function.server.RequestPredicateKind
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.toExpression;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.valueOf;
 import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
+import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -50,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
@@ -270,7 +277,7 @@ class RequestPredicateKindTest {
     void testPredicateOnMethod() {
         for (HttpMethod httpMethod : values()) {
             RequestPredicate predicate = METHOD.predicate(httpMethod.name());
-            ServerRequest request = mock(ServerRequest.class);
+            ServerRequest request = mockServerRequest();
             when(request.method()).thenReturn(httpMethod);
             assertTrue(predicate.test(request));
         }
@@ -283,7 +290,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnPath() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         when(request.pathContainer()).thenReturn(parsePath(TEST_ROOT_PATH));
         RequestPredicate predicate = PATH.predicate(TEST_ROOT_PATH);
         assertTrue(predicate.test(request));
@@ -291,7 +298,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnPathExtension() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         when(request.path()).thenReturn(TEST_EXTENSION_PATH);
         RequestPredicate predicate = PATH_EXTENSION.predicate(TEST_EXTENSION_PATH);
         assertTrue(predicate.test(request));
@@ -299,7 +306,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnHeaders() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         when(request.headers()).thenReturn(null);
         RequestPredicate predicate = HEADERS.predicate("");
         assertFalse(predicate.test(request));
@@ -307,7 +314,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnQueryParam() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         when(request.queryParam("name")).thenReturn(of("value"));
         RequestPredicate predicate = QUERY_PARAM.predicate("?name == value");
         assertTrue(predicate.test(request));
@@ -315,7 +322,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnAccept() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         Headers headers = mock(Headers.class);
 
         when(request.headers()).thenReturn(headers);
@@ -336,7 +343,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnContentType() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         Headers headers = mock(Headers.class);
 
         when(request.headers()).thenReturn(headers);
@@ -357,7 +364,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnAnd() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         when(request.method()).thenReturn(GET);
         when(request.pathContainer()).thenReturn(parsePath(TEST_ROOT_PATH));
         RequestPredicate predicate = AND.predicate("(GET && /test)");
@@ -366,7 +373,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnOr() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         when(request.method()).thenReturn(GET);
         when(request.pathContainer()).thenReturn(parsePath(TEST_EXTENSION_PATH));
         RequestPredicate predicate = OR.predicate("(GET || /test)");
@@ -375,7 +382,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnNegate() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         when(request.method()).thenReturn(POST);
         RequestPredicate predicate = NEGATE.predicate("!GET");
         assertTrue(predicate.test(request));
@@ -383,9 +390,28 @@ class RequestPredicateKindTest {
 
     @Test
     void testPredicateOnUnknown() {
-        ServerRequest request = mock(ServerRequest.class);
+        ServerRequest request = mockServerRequest();
         RequestPredicate predicate = UNKNOWN.predicate("!GET");
         assertFalse(predicate.test(request));
+    }
+
+    ServerRequest mockServerRequest() {
+        final Method exchangeMethod = findMethod(ServerRequest.class, "exchange");
+
+        ServerRequest request = mock(ServerRequest.class, withSettings().defaultAnswer(invocation -> {
+            Method method = invocation.getMethod();
+            String methodName = method.getName();
+            if (Objects.equals("exchange", methodName)) {
+                return mockServerWebExchange();
+            } else if (Objects.equals("requestPath", methodName)) {
+                return mockServerWebExchange().getRequest().getPath();
+            }
+            return null;
+        }));
+
+        when(request.attributes()).thenReturn(newHashMap());
+        when(request.pathVariables()).thenReturn(newHashMap());
+        return request;
     }
 
     // Test RequestPredicateKind#expression(RequestPredicate)
