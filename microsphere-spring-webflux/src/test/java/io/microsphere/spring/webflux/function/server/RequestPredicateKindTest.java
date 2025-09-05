@@ -21,6 +21,9 @@ package io.microsphere.spring.webflux.function.server;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
+import org.springframework.mock.web.reactive.function.server.MockServerRequest;
+import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.reactive.function.server.RequestPredicate;
 
 import static io.microsphere.constants.SymbolConstants.DOT;
@@ -55,7 +58,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
 import static org.springframework.mock.web.reactive.function.server.MockServerRequest.builder;
+import static org.springframework.mock.web.server.MockServerWebExchange.from;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
@@ -267,7 +272,7 @@ class RequestPredicateKindTest {
     void testPredicateOnMethod() {
         for (HttpMethod httpMethod : values()) {
             RequestPredicate predicate = METHOD.predicate(httpMethod.name());
-            assertTrue(predicate.test(builder().method(httpMethod).build()));
+            assertTrue(predicate.test(newBuilder().method(httpMethod).build()));
         }
     }
 
@@ -279,78 +284,78 @@ class RequestPredicateKindTest {
     @Test
     void testPredicateOnPath() {
         RequestPredicate predicate = PATH.predicate(TEST_ROOT_PATH);
-        assertTrue(predicate.test(builder().uri(create(TEST_ROOT_PATH)).build()));
+        assertTrue(predicate.test(newBuilder().uri(create(TEST_ROOT_PATH)).build()));
     }
 
     @Test
     void testPredicateOnPathExtension() {
         RequestPredicate predicate = PATH_EXTENSION.predicate(TEST_EXTENSION_PATH);
-        assertTrue(predicate.test(builder().uri(create(TEST_EXTENSION_PATH)).build()));
+        assertTrue(predicate.test(newBuilder().uri(create(TEST_EXTENSION_PATH)).build()));
     }
 
     @Test
     void testPredicateOnHeaders() {
         RequestPredicate predicate = HEADERS.predicate("");
-        assertFalse(predicate.test(builder().method(POST).build()));
+        assertFalse(predicate.test(newBuilder().method(POST).build()));
     }
 
     @Test
     void testPredicateOnQueryParam() {
         RequestPredicate predicate = QUERY_PARAM.predicate("?name == value");
-        assertTrue(predicate.test(builder().queryParam("name", "value").build()));
+        assertTrue(predicate.test(newBuilder().queryParam("name", "value").build()));
     }
 
     @Test
     void testPredicateOnAccept() {
         RequestPredicate predicate = ACCEPT.predicate("Accept: " + APPLICATION_JSON_VALUE);
-        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
 
         predicate = ACCEPT.predicate("Accept: " + "[" + APPLICATION_JSON_VALUE + "]");
-        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
 
         predicate = ACCEPT.predicate("Accept: " + "[" + APPLICATION_JSON_VALUE + "," + APPLICATION_PDF_VALUE + "]");
-        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
-        assertTrue(predicate.test(builder().header(HttpHeaders.ACCEPT, APPLICATION_PDF_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.ACCEPT, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.ACCEPT, APPLICATION_PDF_VALUE).build()));
     }
 
     @Test
     void testPredicateOnContentType() {
         RequestPredicate predicate = CONTENT_TYPE.predicate("Content-Type: " + APPLICATION_JSON_VALUE);
-        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
 
         predicate = CONTENT_TYPE.predicate("Content-Type: " + "[" + APPLICATION_JSON_VALUE + "]");
-        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
 
         predicate = CONTENT_TYPE.predicate("Content-Type: " + "[" + APPLICATION_JSON_VALUE + "," + APPLICATION_PDF_VALUE + "]");
-        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
-        assertTrue(predicate.test(builder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE).build()));
+        assertTrue(predicate.test(newBuilder().header(HttpHeaders.CONTENT_TYPE, APPLICATION_PDF_VALUE).build()));
     }
 
     @Test
     void testPredicateOnAnd() {
         RequestPredicate predicate = AND.predicate("(GET && /test)");
-        assertTrue(predicate.test(builder().method(GET).uri(create(TEST_ROOT_PATH)).build()));
+        assertTrue(predicate.test(newBuilder().method(GET).uri(create(TEST_ROOT_PATH)).build()));
     }
 
     @Test
     void testPredicateOnOr() {
         RequestPredicate predicate = OR.predicate("(GET || /test)");
-        assertTrue(predicate.test(builder().method(GET).build()));
-        assertTrue(predicate.test(builder().uri(create(TEST_ROOT_PATH)).build()));
+        assertTrue(predicate.test(newBuilder().method(GET).build()));
+        assertTrue(predicate.test(newBuilder().uri(create(TEST_ROOT_PATH)).build()));
     }
 
     @Test
     void testPredicateOnNegate() {
         RequestPredicate predicate = NEGATE.predicate("!GET");
-        assertTrue(predicate.test(builder().method(POST).build()));
-        assertTrue(predicate.test(builder().method(PUT).build()));
-        assertTrue(predicate.test(builder().method(DELETE).build()));
+        assertTrue(predicate.test(newBuilder().method(POST).build()));
+        assertTrue(predicate.test(newBuilder().method(PUT).build()));
+        assertTrue(predicate.test(newBuilder().method(DELETE).build()));
     }
 
     @Test
     void testPredicateOnUnknown() {
         RequestPredicate predicate = UNKNOWN.predicate("!GET");
-        assertFalse(predicate.test(builder().method(POST).build()));
+        assertFalse(predicate.test(newBuilder().method(POST).build()));
     }
 
     // Test RequestPredicateKind#expression(RequestPredicate)
@@ -514,5 +519,13 @@ class RequestPredicateKindTest {
         String expression = toExpression(source);
         RequestPredicate predicate = parseRequestPredicate(expression);
         assertEquals(expression, toExpression(predicate));
+    }
+
+    MockServerRequest.Builder newBuilder() {
+        MockServerHttpRequest request = get(TEST_ROOT_PATH)
+                .build();
+        MockServerWebExchange serverWebExchange = from(request);
+        return builder()
+                .exchange(serverWebExchange);
     }
 }
