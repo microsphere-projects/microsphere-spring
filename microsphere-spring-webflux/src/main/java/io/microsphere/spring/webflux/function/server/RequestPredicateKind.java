@@ -92,6 +92,154 @@ import static org.springframework.web.util.UriUtils.extractFileExtension;
 public enum RequestPredicateKind {
 
     /**
+     * @see RequestPredicate#and(RequestPredicate)
+     * @see RequestPredicates.AndRequestPredicate
+     */
+    AND {
+
+        private static final String prefix = "(";
+
+        private static final String infix = " && ";
+
+        private static final String postfix = ")";
+
+        @Override
+        void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
+            RequestPredicate left = getFieldValue(predicate, "left");
+            RequestPredicate right = getFieldValue(predicate, "right");
+
+            visitor.startAnd();
+            acceptVisitor(left, visitor);
+            visitor.and();
+            acceptVisitor(right, visitor);
+            visitor.endAnd();
+        }
+
+        @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$AndRequestPredicate");
+        }
+
+        @Override
+        public boolean matches(String expression) {
+            return startsWith(expression, prefix) && contains(expression, infix) && endsWith(expression, postfix);
+        }
+
+        @Override
+        public RequestPredicate predicate(String expression) {
+            String leftAndRightExp = substringBetween(expression, prefix, postfix);
+            String[] leftAndRight = StringUtils.split(leftAndRightExp, infix);
+            RequestPredicate left = buildRequestPredicate(leftAndRight[0]);
+            RequestPredicate right = buildRequestPredicate(leftAndRight[1]);
+            return left.and(right);
+        }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            RequestPredicate left = getFieldValue(predicate, "left");
+            RequestPredicate right = getFieldValue(predicate, "right");
+            return prefix + toExpression(left) + infix + toExpression(right) + postfix;
+        }
+    },
+
+    /**
+     * @see RequestPredicate#or(RequestPredicate)
+     * @see RequestPredicates.OrRequestPredicate
+     */
+    OR {
+
+        private static final String prefix = LEFT_PARENTHESIS;
+
+        private static final String infix = " || ";
+
+        private static final String postfix = RIGHT_PARENTHESIS;
+
+        @Override
+        void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
+            RequestPredicate left = getFieldValue(predicate, "left");
+            RequestPredicate right = getFieldValue(predicate, "right");
+
+            visitor.startOr();
+            acceptVisitor(left, visitor);
+            visitor.or();
+            acceptVisitor(right, visitor);
+            visitor.endOr();
+        }
+
+        @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$OrRequestPredicate");
+        }
+
+        @Override
+        public boolean matches(String expression) {
+            return startsWith(expression, prefix) && contains(expression, infix) && endsWith(expression, postfix);
+        }
+
+        @Override
+        public RequestPredicate predicate(String expression) {
+            String leftAndRightExp = substringBetween(expression, prefix, postfix);
+            String[] leftAndRight = split(leftAndRightExp, infix);
+            RequestPredicate left = buildRequestPredicate(leftAndRight[0]);
+            RequestPredicate right = buildRequestPredicate(leftAndRight[1]);
+            return left.or(right);
+        }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            RequestPredicate left = getFieldValue(predicate, "left");
+            RequestPredicate right = getFieldValue(predicate, "right");
+            String expression = LEFT_PARENTHESIS + toExpression(left) + infix + toExpression(right) + RIGHT_PARENTHESIS;
+            return expression;
+        }
+    },
+
+    /**
+     * @see RequestPredicate#negate()
+     */
+    NEGATE {
+
+        private static final String prefix = EXCLAMATION;
+
+        private final String implementationClassName = all().negate().getClass().getName();
+
+        @Override
+        void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
+            RequestPredicate delegate = getDelegate(predicate);
+            visitor.startNegate();
+            acceptVisitor(delegate, visitor);
+            visitor.endNegate();
+        }
+
+        @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate, implementationClassName);
+        }
+
+        @Override
+        public boolean matches(String expression) {
+            return startsWith(expression, prefix);
+        }
+
+        @Override
+        public RequestPredicate predicate(String expression) {
+            String exp = expression.substring(prefix.length());
+            RequestPredicate delegate = buildRequestPredicate(exp);
+            return delegate.negate();
+        }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            RequestPredicate delegate = getDelegate(predicate);
+            return prefix + toExpression(delegate);
+        }
+
+        RequestPredicate getDelegate(RequestPredicate requestPredicate) {
+            return getFieldValue(requestPredicate, "arg$1");
+        }
+    },
+
+    /**
      * @see RequestPredicates#method(HttpMethod)
      * @see RequestPredicates.HttpMethodPredicate
      */
@@ -104,6 +252,11 @@ public enum RequestPredicateKind {
         }
 
         @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$HttpMethodPredicate");
+        }
+
+        @Override
         public boolean matches(String expression) {
             return resolve(expression) != null;
         }
@@ -113,6 +266,11 @@ public enum RequestPredicateKind {
             HttpMethod httpMethod = resolve(expression);
             return method(httpMethod);
         }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            return predicate.toString();
+        }
     },
 
     /**
@@ -121,7 +279,7 @@ public enum RequestPredicateKind {
      */
     PATH {
 
-        private final Class<? extends RequestPredicate> implementationClass = path(SLASH).getClass();
+        private final String implementationClassName = path(SLASH).getClass().getName();
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
@@ -131,13 +289,22 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(RequestPredicate predicate) {
-            Class<?> predicateClass = predicate.getClass();
-            return implementationClass.equals(predicateClass);
+            return matches(predicate, implementationClassName);
+        }
+
+        @Override
+        public boolean matches(String expression) {
+            return false;
         }
 
         @Override
         public RequestPredicate predicate(String expression) {
             return path(expression);
+        }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            return predicate.toString();
         }
     },
 
@@ -153,6 +320,11 @@ public enum RequestPredicateKind {
         }
 
         @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$PathExtensionPredicate");
+        }
+
+        @Override
         public boolean matches(String expression) {
             return getExtension(expression) != null;
         }
@@ -161,6 +333,11 @@ public enum RequestPredicateKind {
         public RequestPredicate predicate(String expression) {
             String extension = getExtension(expression);
             return pathExtension(extension);
+        }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            return "";
         }
 
         String getExtension(String expression) {
@@ -186,6 +363,11 @@ public enum RequestPredicateKind {
         }
 
         @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$QueryParamPredicate");
+        }
+
+        @Override
         public boolean matches(String expression) {
             return startsWith(expression, prefix) && contains(expression, SPACE);
         }
@@ -200,7 +382,7 @@ public enum RequestPredicateKind {
 
         @Override
         public String expression(RequestPredicate predicate) {
-            return normalize(super.expression(predicate));
+            return normalize(predicate.toString());
         }
 
         /**
@@ -233,6 +415,11 @@ public enum RequestPredicateKind {
         }
 
         @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate.toString());
+        }
+
+        @Override
         public boolean matches(String expression) {
             return startsWith(expression, prefix);
         }
@@ -246,7 +433,7 @@ public enum RequestPredicateKind {
 
         @Override
         public String expression(RequestPredicate predicate) {
-            String expression = super.expression(predicate);
+            String expression = predicate.toString();
             Set<MediaType> mediaTypes = mediaTypes(expression);
             String mediaTypesAsString = toString(mediaTypes);
             return prefix + mediaTypesAsString;
@@ -277,6 +464,11 @@ public enum RequestPredicateKind {
         }
 
         @Override
+        public boolean matches(RequestPredicate predicate) {
+            return matches(predicate.toString());
+        }
+
+        @Override
         public boolean matches(String expression) {
             return startsWith(expression, prefix);
         }
@@ -290,7 +482,7 @@ public enum RequestPredicateKind {
 
         @Override
         public String expression(RequestPredicate predicate) {
-            String expression = super.expression(predicate);
+            String expression = predicate.toString();
             Set<MediaType> mediaTypes = mediaTypes(expression);
             String mediaTypesAsString = toString(mediaTypes);
             return prefix + mediaTypesAsString;
@@ -326,138 +518,41 @@ public enum RequestPredicateKind {
         }
 
         @Override
-        public String expression(RequestPredicate predicate) {
-            return getTypeName(predicate) + "@" + predicate.hashCode();
-        }
-    },
-
-    /**
-     * @see RequestPredicate#and(RequestPredicate)
-     * @see RequestPredicates.AndRequestPredicate
-     */
-    AND {
-
-        private static final String prefix = "(";
-
-        private static final String infix = " && ";
-
-        private static final String postfix = ")";
-
-        @Override
-        void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
-            RequestPredicate left = getFieldValue(predicate, "left");
-            RequestPredicate right = getFieldValue(predicate, "right");
-
-            visitor.startAnd();
-            acceptVisitor(left, visitor);
-            visitor.and();
-            acceptVisitor(right, visitor);
-            visitor.endAnd();
-        }
-
-        @Override
-        public boolean matches(String expression) {
-            return startsWith(expression, prefix) && contains(expression, infix) && endsWith(expression, postfix);
-        }
-
-        @Override
         public RequestPredicate predicate(String expression) {
-            String leftAndRightExp = substringBetween(expression, prefix, postfix);
-            String[] leftAndRight = StringUtils.split(leftAndRightExp, infix);
-            RequestPredicate left = buildRequestPredicate(leftAndRight[0]);
-            RequestPredicate right = buildRequestPredicate(leftAndRight[1]);
-            return left.and(right);
-        }
-    },
-
-    /**
-     * @see RequestPredicate#or(RequestPredicate)
-     * @see RequestPredicates.OrRequestPredicate
-     */
-    OR {
-
-        private static final String prefix = LEFT_PARENTHESIS;
-
-        private static final String infix = " || ";
-
-        private static final String postfix = RIGHT_PARENTHESIS;
-
-        @Override
-        void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
-            RequestPredicate left = getFieldValue(predicate, "left");
-            RequestPredicate right = getFieldValue(predicate, "right");
-
-            visitor.startOr();
-            acceptVisitor(left, visitor);
-            visitor.or();
-            acceptVisitor(right, visitor);
-            visitor.endOr();
-        }
-
-        @Override
-        public boolean matches(String expression) {
-            return startsWith(expression, prefix) && contains(expression, infix) && endsWith(expression, postfix);
-        }
-
-        @Override
-        public RequestPredicate predicate(String expression) {
-            String leftAndRightExp = substringBetween(expression, prefix, postfix);
-            String[] leftAndRight = split(leftAndRightExp, infix);
-            RequestPredicate left = buildRequestPredicate(leftAndRight[0]);
-            RequestPredicate right = buildRequestPredicate(leftAndRight[1]);
-            return left.or(right);
-        }
-    },
-
-    /**
-     * @see RequestPredicate#negate()
-     */
-    NEGATE {
-
-        private static final String prefix = EXCLAMATION;
-
-        private final Class<? extends RequestPredicate> implementationClass = all().negate().getClass();
-
-        @Override
-        void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
-            RequestPredicate delegate = getDelegate(predicate);
-            visitor.startNegate();
-            acceptVisitor(delegate, visitor);
-            visitor.endNegate();
-        }
-
-        @Override
-        public boolean matches(RequestPredicate predicate) {
-            return implementationClass.getName().equals(predicate.getClass().getName());
-        }
-
-        @Override
-        public boolean matches(String expression) {
-            return startsWith(expression, prefix);
-        }
-
-        @Override
-        public RequestPredicate predicate(String expression) {
-            String exp = expression.substring(prefix.length());
-            RequestPredicate delegate = buildRequestPredicate(exp);
-            return delegate.negate();
+            return t -> false;
         }
 
         @Override
         public String expression(RequestPredicate predicate) {
-            RequestPredicate delegate = getDelegate(predicate);
-            return prefix + delegate.toString();
+            return getTypeName(predicate) + "@" + predicate.hashCode();
         }
 
-        RequestPredicate getDelegate(RequestPredicate requestPredicate) {
-            return getFieldValue(requestPredicate, "arg$1");
-        }
     },
 
     /**
      * Unknown
      */
-    UNKNOWN;
+    UNKNOWN {
+        @Override
+        public boolean matches(RequestPredicate predicate) {
+            return false;
+        }
+
+        @Override
+        public boolean matches(String expression) {
+            return false;
+        }
+
+        @Override
+        public RequestPredicate predicate(String expression) {
+            return t -> false;
+        }
+
+        @Override
+        public String expression(RequestPredicate predicate) {
+            return predicate.toString();
+        }
+    };
 
     private static ThreadLocal<List<RequestPredicate>> requestPredicateThreadLocal = new ThreadLocal<>();
 
@@ -477,9 +572,7 @@ public enum RequestPredicateKind {
      * @param predicate the {@link RequestPredicate}
      * @return <code>true</code> if matches, or <code>false</code>
      */
-    public boolean matches(RequestPredicate predicate) {
-        return matches(predicate.toString());
-    }
+    public abstract boolean matches(RequestPredicate predicate);
 
     /**
      * Determines whether the given {@code expression} matches the current {@link RequestPredicateKind}
@@ -487,9 +580,7 @@ public enum RequestPredicateKind {
      * @param expression the expression, like : "GET"
      * @return <code>true</code> if matches, or <code>false</code>
      */
-    public boolean matches(@Nullable String expression) {
-        return false;
-    }
+    public abstract boolean matches(@Nullable String expression);
 
     /**
      * Builds a {@link RequestPredicate} from the given {@code expression}
@@ -497,9 +588,7 @@ public enum RequestPredicateKind {
      * @param expression the expression, like : "GET"
      * @return the {@link RequestPredicate} if matches, or <code>null</code>
      */
-    public RequestPredicate predicate(@Nullable String expression) {
-        return r -> false;
-    }
+    public abstract RequestPredicate predicate(@Nullable String expression);
 
     /**
      * Generates an expression string representation of the given {@link RequestPredicate}.
@@ -525,8 +614,10 @@ public enum RequestPredicateKind {
      * @throws NullPointerException if the {@code requestPredicate} is {@code null}
      * @see #parseRequestPredicate(String)
      */
-    public String expression(RequestPredicate predicate) {
-        return predicate.toString();
+    public abstract String expression(RequestPredicate predicate);
+
+    static boolean matches(RequestPredicate predicate, String className) {
+        return Objects.equals(getTypeName(predicate), className);
     }
 
     /**
