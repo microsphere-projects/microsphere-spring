@@ -235,7 +235,8 @@ public enum RequestPredicateKind {
         }
 
         RequestPredicate getDelegate(RequestPredicate requestPredicate) {
-            return getFieldValue(requestPredicate, "arg$1");
+            RequestPredicate delegate = getFieldValue(requestPredicate, "arg$1");
+            return delegate == null ? getFieldValue(requestPredicate, "delegate") : delegate;
         }
     },
 
