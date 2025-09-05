@@ -59,7 +59,6 @@ import static io.microsphere.util.StringUtils.startsWith;
 import static io.microsphere.util.StringUtils.substringAfter;
 import static io.microsphere.util.StringUtils.substringBetween;
 import static java.lang.Integer.parseInt;
-import static java.lang.reflect.Array.newInstance;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.of;
 import static org.springframework.http.HttpMethod.resolve;
@@ -97,16 +96,16 @@ public enum RequestPredicateKind {
      */
     AND {
 
-        private static final String prefix = "(";
+        private static final String prefix = LEFT_PARENTHESIS;
 
         private static final String infix = " && ";
 
-        private static final String postfix = ")";
+        private static final String postfix = RIGHT_PARENTHESIS;
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
-            RequestPredicate left = getFieldValue(predicate, "left");
-            RequestPredicate right = getFieldValue(predicate, "right");
+            RequestPredicate left = left(predicate);
+            RequestPredicate right = right(predicate);
 
             visitor.startAnd();
             acceptVisitor(left, visitor);
@@ -136,9 +135,17 @@ public enum RequestPredicateKind {
 
         @Override
         public String expression(RequestPredicate predicate) {
-            RequestPredicate left = getFieldValue(predicate, "left");
-            RequestPredicate right = getFieldValue(predicate, "right");
+            RequestPredicate left = left(predicate);
+            RequestPredicate right = right(predicate);
             return prefix + toExpression(left) + infix + toExpression(right) + postfix;
+        }
+
+        RequestPredicate left(RequestPredicate predicate) {
+            return getFieldValue(predicate, "left");
+        }
+
+        RequestPredicate right(RequestPredicate predicate) {
+            return getFieldValue(predicate, "right");
         }
     },
 
@@ -156,8 +163,8 @@ public enum RequestPredicateKind {
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
-            RequestPredicate left = getFieldValue(predicate, "left");
-            RequestPredicate right = getFieldValue(predicate, "right");
+            RequestPredicate left = left(predicate);
+            RequestPredicate right = right(predicate);
 
             visitor.startOr();
             acceptVisitor(left, visitor);
@@ -187,10 +194,18 @@ public enum RequestPredicateKind {
 
         @Override
         public String expression(RequestPredicate predicate) {
-            RequestPredicate left = getFieldValue(predicate, "left");
-            RequestPredicate right = getFieldValue(predicate, "right");
-            String expression = LEFT_PARENTHESIS + toExpression(left) + infix + toExpression(right) + RIGHT_PARENTHESIS;
+            RequestPredicate left = left(predicate);
+            RequestPredicate right = right(predicate);
+            String expression = prefix + toExpression(left) + infix + toExpression(right) + postfix;
             return expression;
+        }
+
+        RequestPredicate left(RequestPredicate predicate) {
+            return getFieldValue(predicate, "left");
+        }
+
+        RequestPredicate right(RequestPredicate predicate) {
+            return getFieldValue(predicate, "right");
         }
     },
 
@@ -788,15 +803,5 @@ public enum RequestPredicateKind {
                 .map(valueFunction::apply)
                 .filter(Objects::nonNull)
                 .collect(toSet());
-    }
-
-    <V> V[] resolveValues(String expression, Class<V> valueType, Function<String, V> valueFunction) {
-        String values = substringBetween(expression, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET);
-        String[] elements = values == null ? ofArray(expression) : split(values, COMMA);
-        return of(elements)
-                .filter(Objects::nonNull)
-                .map(valueFunction::apply)
-                .filter(Objects::nonNull)
-                .toArray(length -> (V[]) newInstance(valueType, length));
     }
 }
