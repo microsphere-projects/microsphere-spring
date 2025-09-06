@@ -343,7 +343,7 @@ public enum RequestPredicateKind {
 
         @Override
         public String expression(RequestPredicate predicate) {
-            return "";
+            return predicate.toString();
         }
 
         String getExtension(String expression) {
