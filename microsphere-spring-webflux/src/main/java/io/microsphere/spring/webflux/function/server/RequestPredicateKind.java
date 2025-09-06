@@ -96,11 +96,7 @@ public enum RequestPredicateKind {
      */
     AND {
 
-        private static final String prefix = LEFT_PARENTHESIS;
-
-        private static final String infix = " && ";
-
-        private static final String postfix = RIGHT_PARENTHESIS;
+        private static final String AND_INFIX = " && ";
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
@@ -121,13 +117,13 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, prefix) && contains(expression, infix) && endsWith(expression, postfix);
+            return startsWith(expression, LEFT_PARENTHESIS) && contains(expression, AND_INFIX) && endsWith(expression, RIGHT_PARENTHESIS);
         }
 
         @Override
         public RequestPredicate predicate(String expression) {
-            String leftAndRightExp = substringBetween(expression, prefix, postfix);
-            String[] leftAndRight = StringUtils.split(leftAndRightExp, infix);
+            String leftAndRightExp = substringBetween(expression, LEFT_PARENTHESIS, RIGHT_PARENTHESIS);
+            String[] leftAndRight = StringUtils.split(leftAndRightExp, AND_INFIX);
             RequestPredicate left = buildRequestPredicate(leftAndRight[0]);
             RequestPredicate right = buildRequestPredicate(leftAndRight[1]);
             return left.and(right);
@@ -137,7 +133,7 @@ public enum RequestPredicateKind {
         public String expression(RequestPredicate predicate) {
             RequestPredicate left = left(predicate);
             RequestPredicate right = right(predicate);
-            return prefix + toExpression(left) + infix + toExpression(right) + postfix;
+            return LEFT_PARENTHESIS + toExpression(left) + AND_INFIX + toExpression(right) + RIGHT_PARENTHESIS;
         }
 
         RequestPredicate left(RequestPredicate predicate) {
@@ -155,11 +151,7 @@ public enum RequestPredicateKind {
      */
     OR {
 
-        private static final String prefix = LEFT_PARENTHESIS;
-
-        private static final String infix = " || ";
-
-        private static final String postfix = RIGHT_PARENTHESIS;
+        private static final String OR_INFIX = " || ";
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
@@ -180,13 +172,13 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, prefix) && contains(expression, infix) && endsWith(expression, postfix);
+            return startsWith(expression, LEFT_PARENTHESIS) && contains(expression, OR_INFIX) && endsWith(expression, RIGHT_PARENTHESIS);
         }
 
         @Override
         public RequestPredicate predicate(String expression) {
-            String leftAndRightExp = substringBetween(expression, prefix, postfix);
-            String[] leftAndRight = split(leftAndRightExp, infix);
+            String leftAndRightExp = substringBetween(expression, LEFT_PARENTHESIS, RIGHT_PARENTHESIS);
+            String[] leftAndRight = split(leftAndRightExp, OR_INFIX);
             RequestPredicate left = buildRequestPredicate(leftAndRight[0]);
             RequestPredicate right = buildRequestPredicate(leftAndRight[1]);
             return left.or(right);
@@ -196,7 +188,7 @@ public enum RequestPredicateKind {
         public String expression(RequestPredicate predicate) {
             RequestPredicate left = left(predicate);
             RequestPredicate right = right(predicate);
-            String expression = prefix + toExpression(left) + infix + toExpression(right) + postfix;
+            String expression = LEFT_PARENTHESIS + toExpression(left) + OR_INFIX + toExpression(right) + RIGHT_PARENTHESIS;
             return expression;
         }
 
@@ -213,8 +205,6 @@ public enum RequestPredicateKind {
      * @see RequestPredicate#negate()
      */
     NEGATE {
-
-        private static final String prefix = EXCLAMATION;
 
         private final String implementationClassName = all().negate().getClass().getName();
 
@@ -233,12 +223,12 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, prefix);
+            return startsWith(expression, EXCLAMATION);
         }
 
         @Override
         public RequestPredicate predicate(String expression) {
-            String exp = expression.substring(prefix.length());
+            String exp = expression.substring(EXCLAMATION.length());
             RequestPredicate delegate = buildRequestPredicate(exp);
             return delegate.negate();
         }
@@ -246,7 +236,7 @@ public enum RequestPredicateKind {
         @Override
         public String expression(RequestPredicate predicate) {
             RequestPredicate delegate = getDelegate(predicate);
-            return prefix + toExpression(delegate);
+            return EXCLAMATION + toExpression(delegate);
         }
 
         RequestPredicate getDelegate(RequestPredicate requestPredicate) {
@@ -366,9 +356,6 @@ public enum RequestPredicateKind {
      * @see RequestPredicates.QueryParamPredicate
      */
     QUERY_PARAM {
-
-        private static final String prefix = QUESTION_MARK;
-
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
             String expression = expression(predicate);
@@ -385,7 +372,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, prefix) && contains(expression, SPACE);
+            return startsWith(expression, QUESTION_MARK) && contains(expression, SPACE);
         }
 
         @Override
@@ -411,7 +398,7 @@ public enum RequestPredicateKind {
         }
 
         String[] getNameAndValue(String expression) {
-            String nameAndValue = expression.substring(prefix.length());
+            String nameAndValue = expression.substring(QUESTION_MARK.length());
             return split(nameAndValue, SPACE);
         }
     },
@@ -421,7 +408,7 @@ public enum RequestPredicateKind {
      */
     ACCEPT {
 
-        private static final String prefix = "Accept: ";
+        private static final String ACCEPT_PREFIX = "Accept: ";
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
@@ -437,7 +424,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, prefix);
+            return startsWith(expression, ACCEPT_PREFIX);
         }
 
         @Override
@@ -452,7 +439,7 @@ public enum RequestPredicateKind {
             String expression = predicate.toString();
             Set<MediaType> mediaTypes = mediaTypes(expression);
             String mediaTypesAsString = toString(mediaTypes);
-            return prefix + mediaTypesAsString;
+            return ACCEPT_PREFIX + mediaTypesAsString;
         }
 
         Set<MediaType> mediaTypes(String expression) {
@@ -461,7 +448,7 @@ public enum RequestPredicateKind {
         }
 
         String parseMediaTypesString(String expression) {
-            return expression.substring(prefix.length());
+            return expression.substring(ACCEPT_PREFIX.length());
         }
     },
 
@@ -470,7 +457,7 @@ public enum RequestPredicateKind {
      */
     CONTENT_TYPE {
 
-        private static final String prefix = "Content-Type: ";
+        private static final String CONTENT_TYPE_PREFIX = "Content-Type: ";
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
@@ -486,7 +473,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, prefix);
+            return startsWith(expression, CONTENT_TYPE_PREFIX);
         }
 
         @Override
@@ -501,7 +488,7 @@ public enum RequestPredicateKind {
             String expression = predicate.toString();
             Set<MediaType> mediaTypes = mediaTypes(expression);
             String mediaTypesAsString = toString(mediaTypes);
-            return prefix + mediaTypesAsString;
+            return CONTENT_TYPE_PREFIX + mediaTypesAsString;
         }
 
         Set<MediaType> mediaTypes(String expression) {
@@ -510,7 +497,7 @@ public enum RequestPredicateKind {
         }
 
         String parseMediaTypesString(String expression) {
-            return expression.substring(prefix.length());
+            return expression.substring(CONTENT_TYPE_PREFIX.length());
         }
     },
 
