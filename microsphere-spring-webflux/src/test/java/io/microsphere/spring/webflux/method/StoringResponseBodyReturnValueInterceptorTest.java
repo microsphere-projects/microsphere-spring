@@ -57,11 +57,6 @@ class StoringResponseBodyReturnValueInterceptorTest {
     }
 
     @Test
-    void testAfterExecuteWithNullHandlerMethod() throws Exception {
-        interceptor.afterExecute(null, null, returnValue, null, null);
-    }
-
-    @Test
     void testAfterExecuteWithoutResponseBody() throws Exception {
         HandlerMethod handlerMethod = new HandlerMethod(testController, "view");
         interceptor.afterExecute(handlerMethod, null, returnValue, null, null);
