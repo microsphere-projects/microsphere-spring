@@ -381,8 +381,10 @@ class RequestPredicateKindTest {
 
     @Test
     void testMatchesWithExpressionOnOr() {
+        assertFalse(OR.matches("("));
+        assertFalse(OR.matches("(GET || "));
+        assertFalse(OR.matches("(GET || /test"));
         assertTrue(OR.matches("(GET || /test)"));
-        assertFalse(OR.matches("UNKNOWN"));
     }
 
     @Test
@@ -726,6 +728,10 @@ class RequestPredicateKindTest {
         StringBuilder expression = new StringBuilder();
         MutableInteger index = MutableInteger.of(0);
 
+        assertNull(getComposeExpression(new StringBuilder(")"), index));
+
+        assertEquals("()", getComposeExpression(new StringBuilder("()"), index));
+
         assertNull(getComposeExpression(expression, index));
 
         expression.append("(GET && /test");
@@ -733,6 +739,12 @@ class RequestPredicateKindTest {
 
         expression.append(")");
         assertNotNull(getComposeExpression(expression, index));
+    }
+
+    @Test
+    void testToString() {
+        assertEquals("a", RequestPredicateKind.toString(ofList("a")));
+        assertEquals("[a, b]", RequestPredicateKind.toString(ofList("a", "b")));
     }
 
     private void assertRequestPredicate(RequestPredicate source) {
