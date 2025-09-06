@@ -161,7 +161,16 @@ class RequestPredicateVisitorAdapterTest {
     }
 
     @Test
-    void testVisit() {
+    void testVisitOnVisitorSupported() {
+        testVisit(true);
+    }
+
+    @Test
+    void testVisitOnVisitorNotSupported() {
+        testVisit(false);
+    }
+
+    void testVisit(final boolean isVisitorSupported) {
         RequestPredicate methodPredicate = method(GET);
         RequestPredicate pathPredicate = path(TEST_ROOT_PATH);
         RequestPredicate pathExtensionPredicate = pathExtension(TEST_PATH_EXTENSION);
@@ -177,6 +186,11 @@ class RequestPredicateVisitorAdapterTest {
         ThreadLocal<RequestPredicate> threadLocal = new ThreadLocal<>();
 
         this.adapter = new RequestPredicateVisitorAdapter() {
+            @Override
+            public boolean isVisitorSupported() {
+                return isVisitorSupported;
+            }
+
             @Override
             public void method(Set<HttpMethod> methods) {
                 assertEquals(singleton(GET), methods);
