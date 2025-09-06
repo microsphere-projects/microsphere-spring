@@ -162,7 +162,9 @@ class RequestPredicateVisitorAdapterTest {
 
     @Test
     void testVisitOnVisitorSupported() {
-        testVisit(true);
+        if (VISITOR_CLASS != null) {
+            testVisit(true);
+        }
     }
 
     @Test
