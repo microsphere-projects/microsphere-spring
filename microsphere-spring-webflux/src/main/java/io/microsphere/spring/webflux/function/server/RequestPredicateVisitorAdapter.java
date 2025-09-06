@@ -63,7 +63,7 @@ public interface RequestPredicateVisitorAdapter extends InvocationHandler {
      * @since Spring Framework 5.1
      */
     @Nullable
-    Method ACCEPT_METHOD = VISITOR_CLASS == null ? null : findMethod(RequestPredicate.class, "accept", VISITOR_CLASS);
+    Method ACCEPT_METHOD = findMethod(RequestPredicate.class, "accept", VISITOR_CLASS);
 
     /**
      * Receive notification of an HTTP method predicate.
