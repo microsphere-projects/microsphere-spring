@@ -18,7 +18,9 @@
 package io.microsphere.spring.webflux.function.server;
 
 
+import io.microsphere.lang.MutableInteger;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.server.RequestPredicate;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -26,6 +28,7 @@ import org.springframework.web.reactive.function.server.ServerRequest.Headers;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
+import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.ofList;
 import static io.microsphere.collection.MapUtils.newHashMap;
@@ -43,14 +46,19 @@ import static io.microsphere.spring.webflux.function.server.RequestPredicateKind
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.QUERY_PARAM;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.UNKNOWN;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.acceptVisitor;
+import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.getComposeExpression;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.parseRequestPredicate;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.toExpression;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.valueOf;
 import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
 import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
+import static java.lang.ThreadLocal.withInitial;
+import static java.util.Collections.singleton;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -93,46 +101,164 @@ class RequestPredicateKindTest {
 
     @Test
     void testAcceptOnMethod() {
+        RequestPredicate predicate = method(GET);
+        METHOD.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void method(Set<HttpMethod> methods) {
+                assertEquals(singleton(GET), methods);
+            }
+        });
     }
 
     @Test
     void testAcceptOnPath() {
+        RequestPredicate predicate = path(TEST_ROOT_PATH);
+        PATH.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void path(String pattern) {
+                assertEquals(TEST_ROOT_PATH, pattern);
+            }
+        });
     }
 
     @Test
     void testAcceptOnPathExtension() {
+        RequestPredicate predicate = pathExtension(TEST_PATH_EXTENSION);
+        PATH_EXTENSION.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void pathExtension(String extension) {
+                assertEquals(TEST_PATH_EXTENSION, extension);
+            }
+        });
     }
 
     @Test
     void testAcceptOnHeaders() {
+        RequestPredicate predicate = headers(headers -> true);
+        HEADERS.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void unknown(RequestPredicate p) {
+                assertSame(predicate, p);
+            }
+        });
     }
 
     @Test
     void testAcceptOnQueryParam() {
+        RequestPredicate predicate = queryParam("name", "value");
+        QUERY_PARAM.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void queryParam(String name, String value) {
+                assertEquals("name", name);
+                assertEquals("value", value);
+            }
+        });
     }
 
     @Test
     void testAcceptOnAccept() {
+        RequestPredicate predicate = accept(APPLICATION_JSON);
+        ACCEPT.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void header(String name, String value) {
+                assertEquals(HttpHeaders.ACCEPT, name);
+                assertEquals(APPLICATION_JSON_VALUE, value);
+            }
+        });
     }
 
     @Test
     void testAcceptOnContentType() {
+        RequestPredicate predicate = contentType(APPLICATION_JSON);
+        CONTENT_TYPE.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void header(String name, String value) {
+                assertEquals(HttpHeaders.CONTENT_TYPE, name);
+                assertEquals(APPLICATION_JSON_VALUE, value);
+            }
+        });
     }
 
     @Test
     void testAcceptOnAnd() {
+        RequestPredicate left = method(GET);
+        RequestPredicate right = path(TEST_ROOT_PATH);
+        RequestPredicate predicate = left.and(right);
+        ThreadLocal<RequestPredicate> threadLocal = withInitial(() -> predicate);
+        AND.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void startAnd() {
+                assertSame(predicate, threadLocal.get());
+            }
+
+            @Override
+            public void and() {
+                assertSame(predicate, threadLocal.get());
+            }
+
+            @Override
+            public void endAnd() {
+                assertSame(predicate, threadLocal.get());
+            }
+        });
+
+        threadLocal.remove();
     }
 
     @Test
     void testAcceptOnOr() {
+        RequestPredicate left = method(GET);
+        RequestPredicate right = path(TEST_ROOT_PATH);
+        RequestPredicate predicate = left.or(right);
+        ThreadLocal<RequestPredicate> threadLocal = withInitial(() -> predicate);
+        OR.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void startOr() {
+                assertSame(predicate, threadLocal.get());
+            }
+
+            @Override
+            public void or() {
+                assertSame(predicate, threadLocal.get());
+            }
+
+            @Override
+            public void endOr() {
+                assertSame(predicate, threadLocal.get());
+            }
+        });
+
+        threadLocal.remove();
     }
 
     @Test
     void testAcceptOnNegate() {
+        RequestPredicate predicate = method(GET).negate();
+        ThreadLocal<RequestPredicate> threadLocal = withInitial(() -> predicate);
+        NEGATE.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void startNegate() {
+                assertSame(predicate, threadLocal.get());
+            }
+
+            @Override
+            public void endNegate() {
+                assertSame(predicate, threadLocal.get());
+            }
+        });
+
+        threadLocal.remove();
     }
 
     @Test
     void testAcceptOnUnknown() {
+        RequestPredicate predicate = method(GET);
+        UNKNOWN.accept(predicate, new RequestPredicateVisitorAdapter() {
+            @Override
+            public void unknown(RequestPredicate p) {
+                assertSame(predicate, p);
+            }
+        });
     }
 
     // Test RequestPredicateKind#matches(RequestPredicate)
@@ -418,46 +544,68 @@ class RequestPredicateKindTest {
 
     @Test
     void testExpressionOnMethod() {
+        RequestPredicate predicate = method(GET);
+        assertEquals(GET.name(), METHOD.expression(predicate));
     }
 
     @Test
     void testExpressionOnPath() {
+        RequestPredicate predicate = path(TEST_ROOT_PATH);
+        assertEquals(TEST_ROOT_PATH, PATH.expression(predicate));
     }
 
     @Test
     void testExpressionOnPathExtension() {
+        RequestPredicate predicate = pathExtension(TEST_PATH_EXTENSION);
+        assertEquals("*." + TEST_PATH_EXTENSION, PATH_EXTENSION.expression(predicate));
     }
 
     @Test
     void testExpressionOnHeaders() {
+        RequestPredicate predicate = headers(headers -> true);
+        assertTrue(HEADERS.expression(predicate).contains("@"));
     }
 
     @Test
     void testExpressionOnQueryParam() {
+        RequestPredicate predicate = queryParam("name", "value");
+        assertEquals("?name value", QUERY_PARAM.expression(predicate));
     }
 
     @Test
     void testExpressionOnAccept() {
+        RequestPredicate predicate = accept(APPLICATION_JSON);
+        assertEquals("Accept: " + APPLICATION_JSON_VALUE, ACCEPT.expression(predicate));
     }
 
     @Test
     void testExpressionOnContentType() {
+        RequestPredicate predicate = contentType(APPLICATION_JSON);
+        assertEquals("Content-Type: " + APPLICATION_JSON_VALUE, CONTENT_TYPE.expression(predicate));
     }
 
     @Test
     void testExpressionOnAnd() {
+        RequestPredicate predicate = method(GET).and(path(TEST_ROOT_PATH));
+        assertEquals("(GET && /test)", AND.expression(predicate));
     }
 
     @Test
     void testExpressionOnOr() {
+        RequestPredicate predicate = method(GET).or(path(TEST_ROOT_PATH));
+        assertEquals("(GET || /test)", OR.expression(predicate));
     }
 
     @Test
     void testExpressionOnNegate() {
+        RequestPredicate predicate = method(GET).negate();
+        assertEquals("!GET", NEGATE.expression(predicate));
     }
 
     @Test
     void testExpressionOnUnknown() {
+        RequestPredicate predicate = r -> true;
+        assertTrue(UNKNOWN.expression(predicate).contains("Lambda"));
     }
 
     // Test RequestPredicateKind#valueOf(RequestPredicate)
@@ -569,6 +717,22 @@ class RequestPredicateKindTest {
 
         predicate = predicate.and(method(POST));
         assertRequestPredicate(predicate);
+    }
+
+    // RequestPredicateKind#getComposeExpression(StringBuilder,MutableInteger)
+
+    @Test
+    void testGetComposeExpression() {
+        StringBuilder expression = new StringBuilder();
+        MutableInteger index = MutableInteger.of(0);
+
+        assertNull(getComposeExpression(expression, index));
+
+        expression.append("(GET && /test");
+        assertNull(getComposeExpression(expression, index));
+
+        expression.append(")");
+        assertNotNull(getComposeExpression(expression, index));
     }
 
     private void assertRequestPredicate(RequestPredicate source) {
