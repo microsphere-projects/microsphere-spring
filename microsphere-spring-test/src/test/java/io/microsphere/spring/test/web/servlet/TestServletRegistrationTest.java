@@ -32,6 +32,7 @@ import static io.microsphere.spring.test.web.servlet.TestServletContextTest.test
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Collections.emptySet;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -91,15 +92,17 @@ public class TestServletRegistrationTest {
     public void testAddMapping() {
         String[] urlPatterns = ofArray("/a", "/b", "c");
         this.registration.addMapping(urlPatterns);
-        assertEquals(urlPatterns, this.registration.getMappings().toArray(EMPTY_STRING_ARRAY));
+        assertArrayEquals(urlPatterns, this.registration.getMappings().toArray(EMPTY_STRING_ARRAY));
     }
 
     @Test
     public void testGetMappings() {
+        assertTrue(this.registration.getMappings().isEmpty());
     }
 
     @Test
     public void testGetRunAsRole() {
+        assertNull(this.registration.getRunAsRole());
     }
 
     @Test
