@@ -21,7 +21,6 @@ import io.microsphere.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import static io.microsphere.collection.CollectionUtils.size;
 import static io.microsphere.collection.ListUtils.newArrayList;
@@ -152,7 +151,7 @@ public class Dependency {
 
     @Override
     public int hashCode() {
-        return Objects.hash(beanName);
+        return beanName.hashCode();
     }
 
     @Override
