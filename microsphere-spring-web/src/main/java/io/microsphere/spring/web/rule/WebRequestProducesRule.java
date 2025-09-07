@@ -59,8 +59,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
     private static final ContentNegotiationManager DEFAULT_CONTENT_NEGOTIATION_MANAGER =
             new ContentNegotiationManager();
 
-    private static final List<ProduceMediaTypeExpression> MEDIA_TYPE_ALL_LIST =
-            Collections.singletonList(new ProduceMediaTypeExpression(MediaType.ALL_VALUE));
+    // private static final List<ProduceMediaTypeExpression> MEDIA_TYPE_ALL_LIST = ofList(new ProduceMediaTypeExpression(ALL_VALUE));
 
     private static final String MEDIA_TYPES_ATTRIBUTE = WebRequestProducesRule.class.getName() + ".MEDIA_TYPES";
 
