@@ -29,7 +29,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 /**
  * {@link AnnotatedTypeMetadataTestFactory} Test
  *
@@ -42,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         AnnotatedTypeMetadataTestFactory.class,
         AnnotatedTypeMetadataTestFactoryTest.class
 })
-public class AnnotatedTypeMetadataTestFactoryTest {
+class AnnotatedTypeMetadataTestFactoryTest {
 
     @Autowired
     private AnnotatedTypeMetadataTestFactory factory;
