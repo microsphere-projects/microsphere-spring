@@ -39,7 +39,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
                 DelegatingHandlerMethodAdviceTest.class
         }
 )
-public class DelegatingHandlerMethodAdviceTest {
+class DelegatingHandlerMethodAdviceTest {
 
     @Bean
     public static HandlerMethodArgumentInterceptor handlerMethodArgumentInterceptor() {
