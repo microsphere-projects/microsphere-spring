@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebUtils
  * @since 1.0.0
  */
-public class WebUtilsTest {
+class WebUtilsTest {
 
     static final String testServletName = "testServlet";
 
