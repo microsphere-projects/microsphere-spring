@@ -219,12 +219,12 @@ class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLCo
     }
 
     @Test
-    void testGetContentOnIOException() throws IOException {
+    void testGetContentOnIOException() {
         assertThrows(IOException.class, this.readonly::getContent);
     }
 
     @Test
-    void testGetContentOnNotFoundException() throws IOException {
+    void testGetContentOnNotFoundException() {
         assertThrows(IOException.class, this.notFound::getContent);
     }
 
@@ -235,7 +235,7 @@ class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLCo
     }
 
     @Test
-    void testGetContentWithClassOnIOException() throws IOException {
+    void testGetContentWithClassOnIOException() {
         assertThrows(IOException.class, () -> this.readonly.getContent(ofArray(InputStream.class)));
     }
 
@@ -285,7 +285,7 @@ class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLCo
     }
 
     @Test
-    void testGetOutputStreamOnIOException() throws IOException {
+    void testGetOutputStreamOnIOException() {
         assertThrows(IOException.class, this.readonly::getOutputStream);
     }
 
