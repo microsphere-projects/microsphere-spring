@@ -30,35 +30,35 @@ import org.junit.jupiter.api.Test;
 public abstract class BaseNameValueExpressionTest<E extends AbstractNameValueExpression<String>> {
 
     @Test
-    public abstract void testGetName();
+    abstract void testGetName();
 
     @Test
-    public abstract void testGetValue();
+    abstract void testGetValue();
 
     @Test
-    public abstract void testIsNegated();
+    abstract void testIsNegated();
 
     @Test
-    public abstract void testMatch();
+    abstract void testMatch();
 
     @Test
-    public abstract void testIsCaseSensitiveName();
+    abstract void testIsCaseSensitiveName();
 
     @Test
-    public abstract void testParseValue();
+    abstract void testParseValue();
 
     @Test
-    public abstract void testMatchName();
+    abstract void testMatchName();
 
     @Test
-    public abstract void testMatchValue();
+    abstract void testMatchValue();
 
     @Test
-    public abstract void testEquals();
+    abstract void testEquals();
 
     @Test
-    public abstract void testHashCode();
+    abstract void testHashCode();
 
     @Test
-    public abstract void testToString();
+    abstract void testToString();
 }
