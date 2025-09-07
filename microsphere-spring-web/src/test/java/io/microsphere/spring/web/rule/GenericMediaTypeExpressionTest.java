@@ -34,7 +34,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class GenericMediaTypeExpressionTest {
+class GenericMediaTypeExpressionTest {
 
     @Test
     void testConstructor() {
