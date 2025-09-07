@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @see CompositeWebRequestRule
  * @since 1.0.0
  */
-public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
+class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
 
     @Test
     void testEmptyRules() {
