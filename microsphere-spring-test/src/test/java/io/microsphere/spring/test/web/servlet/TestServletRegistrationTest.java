@@ -52,7 +52,7 @@ public class TestServletRegistrationTest {
     private TestServletRegistration registration;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         TestServletContext servletContext = new TestServletContext();
         this.registration = (TestServletRegistration) servletContext.addServlet(testServletName, testServletClass);
     }
