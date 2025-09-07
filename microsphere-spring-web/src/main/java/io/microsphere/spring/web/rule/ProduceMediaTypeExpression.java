@@ -20,12 +20,12 @@ import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.parseMediaTypes;
 import static org.springframework.util.StringUtils.hasText;
@@ -93,6 +93,6 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
                 result.add(new ProduceMediaTypeExpression(produce));
             }
         }
-        return (result != null ? new ArrayList<>(result) : Collections.emptyList());
+        return (result != null ? new ArrayList<>(result) : emptyList());
     }
 }
