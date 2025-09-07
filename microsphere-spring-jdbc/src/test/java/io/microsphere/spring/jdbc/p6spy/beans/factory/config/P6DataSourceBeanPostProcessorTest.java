@@ -42,7 +42,7 @@
 //@TestPropertySource(properties = {"microsphere.jdbc.p6spy.excluded-datasource-beans=nonWrappedDataSource"})
 //@EnableEmbeddedDatabase(dataSource = "nonWrappedDataSource")
 //@EnableEmbeddedDatabase(dataSource = "wrappedDataSource")
-//public class P6DataSourceBeanPostProcessorTest {
+//class P6DataSourceBeanPostProcessorTest {
 //
 //    @Autowired
 //    @Qualifier("nonWrappedDataSource")
