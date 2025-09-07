@@ -28,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-;
-
 /**
  * {@link User} Test
  *
@@ -37,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @see User
  * @since 1.0.0
  */
-public class UserTest {
+class UserTest {
 
     private User user;
 
