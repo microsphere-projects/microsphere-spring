@@ -33,8 +33,6 @@ import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_U
 import static io.microsphere.spring.test.web.servlet.TestFilter.FILTER_CLASS_NAME;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-;
-
 /**
  * {@link TestFilter} Test
  *
