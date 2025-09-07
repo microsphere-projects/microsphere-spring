@@ -55,7 +55,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         TestControllerTest.class
 })
 @EnableWebMvc
-public class TestControllerTest {
+class TestControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
