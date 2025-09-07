@@ -23,9 +23,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpMethod.GET;
 
 /**
  * {@link AbstractWebEndpointMappingFactory} Test
