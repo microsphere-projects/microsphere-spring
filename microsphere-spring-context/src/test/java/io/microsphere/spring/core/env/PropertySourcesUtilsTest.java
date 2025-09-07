@@ -15,7 +15,6 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProp
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getMapPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -160,7 +160,7 @@ class PropertySourcesUtilsTest {
 
         Map<String, Object> result = getSubProperties(propertySources, "user");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         source.put("age", "31");
         source.put("user.name", "Mercy");
@@ -183,11 +183,11 @@ class PropertySourcesUtilsTest {
 
         result = getSubProperties(propertySources, "");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         result = getSubProperties(propertySources, "no-exists");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
     }
 
