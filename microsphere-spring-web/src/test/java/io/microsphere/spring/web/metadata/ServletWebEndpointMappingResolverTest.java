@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see ServletWebEndpointMappingResolver
  * @since 1.0.0
  */
-public class ServletWebEndpointMappingResolverTest {
+class ServletWebEndpointMappingResolverTest {
 
     private TestServletContext servletContext;
 
