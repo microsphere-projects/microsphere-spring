@@ -45,7 +45,7 @@
 //})
 //@EnableP6DataSource
 //@EnableEmbeddedDatabase(dataSource = "testDataSource")
-//public class EnableP6DataSourceTest extends LoggingEventListener {
+//class EnableP6DataSourceTest extends LoggingEventListener {
 //
 //    @Autowired
 //    @Qualifier("testDataSource")
