@@ -97,6 +97,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Jakarta WebSocket Client API -->
+        <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-client-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Jakarta WebSocket Server API -->
+        <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- JSON Assert -->
         <dependency>
             <groupId>org.skyscreamer</groupId>
