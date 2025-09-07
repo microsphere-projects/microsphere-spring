@@ -36,7 +36,7 @@ import static org.springframework.http.HttpMethod.values;
  * @see HttpUtils
  * @since 1.0.0
  */
-public class HttpUtilsTest {
+class HttpUtilsTest {
 
     @Test
     void testALL_HTTP_METHODS() {
