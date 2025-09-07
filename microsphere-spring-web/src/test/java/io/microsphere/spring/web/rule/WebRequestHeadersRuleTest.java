@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebRequestHeadersRule
  * @since 1.0.0
  */
-public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
+class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
 
     @Test
     void testGetContent() {
