@@ -3,10 +3,11 @@ package io.microsphere.spring.beans.factory.annotation;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,7 +32,7 @@ class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableConfigura
     }
 
     private List<String> ofList(String... names) {
-        return Arrays.stream(names).collect(Collectors.toList());
+        return stream(names).collect(toList());
     }
 
     private void testAlice(String beanName, Supplier<List<String>> aliasSupplier) {
