@@ -81,7 +81,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
         }
 )
 @EnableWebMvc
-public class ConfigurableContentNegotiationManagerWebMvcConfigurerTest {
+class ConfigurableContentNegotiationManagerWebMvcConfigurerTest {
 
     static final String MEDIA_TYPES_JSON = "{" +
             "  \"json\": \"application/json\"," +
