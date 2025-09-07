@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.util;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -32,11 +32,12 @@ import static io.microsphere.spring.web.util.WebScope.getAttributeNames;
 import static io.microsphere.spring.web.util.WebScope.removeAttribute;
 import static io.microsphere.spring.web.util.WebScope.setAttribute;
 import static io.microsphere.spring.web.util.WebScope.valueOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
@@ -47,7 +48,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @see WebScope
  * @since 1.0.0
  */
-public class WebScopeTest {
+class WebScopeTest {
 
     public static final String ATTRIBUTE_NAME = "test-name";
 
@@ -59,7 +60,7 @@ public class WebScopeTest {
 
     private RequestAttributes requestAttributes;
 
-    @Before
+    @BeforeEach
     void setUp() {
         this.servletRequest = new MockHttpServletRequest();
         this.requestAttributes = new ServletWebRequest(this.servletRequest);
