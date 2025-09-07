@@ -43,7 +43,7 @@ import static org.springframework.core.ResolvableType.forClass;
         classes = {
                 GenericApplicationListenerAdapterTest.GenericApplicationListenerAdapterImpl.class
         })
-public class GenericApplicationListenerAdapterTest {
+class GenericApplicationListenerAdapterTest {
 
     static class GenericApplicationListenerAdapterImpl implements GenericApplicationListenerAdapter {
 
