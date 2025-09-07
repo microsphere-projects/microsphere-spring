@@ -23,10 +23,10 @@ import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 
 /**
  * {@link PropertyResolverListener} class for logging
@@ -85,7 +85,7 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
 
     @Override
     public void afterGetActiveProfiles(Environment environment, String[] activeProfiles) {
-        log("afterGetActiveProfiles() : {}", Arrays.toString(activeProfiles));
+        log("afterGetActiveProfiles() : {}", arrayToString(activeProfiles));
     }
 
     @Override
@@ -95,17 +95,17 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
 
     @Override
     public void afterGetDefaultProfiles(Environment environment, String[] defaultProfiles) {
-        log("afterGetDefaultProfiles() : {}", Arrays.toString(defaultProfiles));
+        log("afterGetDefaultProfiles() : {}", arrayToString(defaultProfiles));
     }
 
     @Override
     public void beforeSetActiveProfiles(ConfigurableEnvironment environment, String[] profiles) {
-        log("beforeSetActiveProfiles() : {}", Arrays.toString(profiles));
+        log("beforeSetActiveProfiles() : {}", arrayToString(profiles));
     }
 
     @Override
     public void afterSetActiveProfiles(ConfigurableEnvironment environment, String[] profiles) {
-        log("afterSetActiveProfiles(profiles : {})", Arrays.toString(profiles));
+        log("afterSetActiveProfiles(profiles : {})", arrayToString(profiles));
     }
 
     @Override
@@ -120,12 +120,12 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
 
     @Override
     public void beforeSetDefaultProfiles(ConfigurableEnvironment environment, String[] profiles) {
-        log("beforeSetDefaultProfiles(profiles : {})", Arrays.toString(profiles));
+        log("beforeSetDefaultProfiles(profiles : {})", arrayToString(profiles));
     }
 
     @Override
     public void afterSetDefaultProfiles(ConfigurableEnvironment environment, String[] profiles) {
-        log("afterSetDefaultProfiles(profiles : {})", Arrays.toString(profiles));
+        log("afterSetDefaultProfiles(profiles : {})", arrayToString(profiles));
     }
 
     @Override
@@ -170,12 +170,12 @@ public class LoggingEnvironmentListener implements EnvironmentListener {
 
     @Override
     public void beforeSetRequiredProperties(ConfigurablePropertyResolver propertyResolver, String[] properties) {
-        log("beforeSetRequiredProperties(properties : {})", Arrays.toString(properties));
+        log("beforeSetRequiredProperties(properties : {})", arrayToString(properties));
     }
 
     @Override
     public void afterSetRequiredProperties(ConfigurablePropertyResolver propertyResolver, String[] properties) {
-        log("afterSetRequiredProperties(properties : {})", Arrays.toString(properties));
+        log("afterSetRequiredProperties(properties : {})", arrayToString(properties));
     }
 
     @Override
