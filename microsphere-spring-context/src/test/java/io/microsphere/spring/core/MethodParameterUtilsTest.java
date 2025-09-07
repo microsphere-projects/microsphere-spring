@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see MethodParameterUtils
  * @since 1.0.0
  */
-public class MethodParameterUtilsTest {
+class MethodParameterUtilsTest {
 
     private Constructor constructor;
 
