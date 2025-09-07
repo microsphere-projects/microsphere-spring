@@ -18,7 +18,6 @@ package io.microsphere.spring.web.rule;
 
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -26,6 +25,8 @@ import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightR
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link WebRequestMethodsRule} Test
@@ -37,7 +38,7 @@ public class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
 
     @Test
     public void testConstructorWithRequestMethods() {
-        WebRequestMethodsRule rule = new WebRequestMethodsRule(RequestMethod.GET, RequestMethod.POST);
+        WebRequestMethodsRule rule = new WebRequestMethodsRule(GET, POST);
         assertEquals(2, rule.getContent().size());
         assertTrue(rule.getContent().contains("GET"));
         assertTrue(rule.getContent().contains("POST"));
