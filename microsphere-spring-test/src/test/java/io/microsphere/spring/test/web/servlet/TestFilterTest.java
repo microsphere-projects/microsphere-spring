@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see TestFilter
  * @since 1.0.0
  */
-public class TestFilterTest {
+class TestFilterTest {
 
     private TestFilter testFilter;
 
