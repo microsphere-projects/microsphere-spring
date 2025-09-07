@@ -25,8 +25,6 @@ import static io.microsphere.util.ExceptionUtils.create;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-;
-
 /**
  * {@link SpringTestUtils} Test
  *
@@ -34,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see SpringTestUtils
  * @since 1.0.0
  */
-public class SpringTestUtilsTest {
+class SpringTestUtilsTest {
 
     @Test
     void testTestInSpringContainer() {
