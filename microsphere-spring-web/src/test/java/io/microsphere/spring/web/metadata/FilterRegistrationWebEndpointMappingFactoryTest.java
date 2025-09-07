@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see FilterRegistrationWebEndpointMappingFactory
  * @since 1.0.0
  */
-public class FilterRegistrationWebEndpointMappingFactoryTest {
+class FilterRegistrationWebEndpointMappingFactoryTest {
 
     private ServletContext servletContext;
 
