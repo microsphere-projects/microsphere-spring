@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @see ContentCachingFilter
  * @since 1.0.0
  */
-public class ContentCachingFilterTest {
+class ContentCachingFilterTest {
 
     private HttpServletRequest request;
 
