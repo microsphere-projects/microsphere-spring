@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see RequestBodyAdviceAdapter
  * @since 1.0.0
  */
-public class RequestBodyAdviceAdapterTest {
+class RequestBodyAdviceAdapterTest {
 
     private ServletServerHttpRequest httpRequest;
 
