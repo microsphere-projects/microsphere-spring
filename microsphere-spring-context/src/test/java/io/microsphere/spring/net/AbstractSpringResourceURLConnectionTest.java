@@ -34,6 +34,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.net.URLConnection.getDefaultAllowUserInteraction;
 import static java.net.URLConnection.setDefaultAllowUserInteraction;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -112,16 +113,16 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     abstract void testGetContent() throws IOException;
 
     @Test
-    abstract void testGetContentOnIOException() throws IOException;
+    abstract void testGetContentOnIOException();
 
     @Test
-    abstract void testGetContentOnNotFoundException() throws IOException;
+    abstract void testGetContentOnNotFoundException();
 
     @Test
     abstract void testGetContentWithClass() throws IOException;
 
     @Test
-    abstract void testGetContentWithClassOnIOException() throws IOException;
+    abstract void testGetContentWithClassOnIOException();
 
     @Test
     abstract void testGetPermission() throws IOException;
@@ -130,7 +131,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     abstract void testGetInputStream() throws IOException;
 
     @Test
-    abstract void testGetInputStreamOnIOException() throws IOException;
+    abstract void testGetInputStreamOnIOException();
 
     @Test
     abstract void testGetHeaderFieldByIndex();
@@ -139,7 +140,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     abstract void testGetOutputStream() throws IOException;
 
     @Test
-    abstract void testGetOutputStreamOnIOException() throws IOException;
+    abstract void testGetOutputStreamOnIOException();
 
     @Test
     abstract void testToString();
@@ -194,7 +195,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
         String name = "name";
         String value = "value";
         adapter.addHeader(name, value);
-        assertEquals(singletonMap(name, List.of(value)), adapter.getHeaderFields());
+        assertEquals(singletonMap(name, singletonList(value)), adapter.getHeaderFields());
     }
 
     void testGetPermission(URLConnection urlConnection) throws IOException {
