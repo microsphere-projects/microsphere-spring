@@ -14,29 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.jdbc.p6spy;
 
-import com.p6spy.engine.spy.P6LoadableOptions;
+package io.microsphere.spring.webflux.annotation;
 
-import java.util.Map;
-
-import static java.util.Collections.emptyMap;
+import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
+import org.springframework.test.context.ContextConfiguration;
 
 /**
- * No-Operation {@link P6LoadableOptions}
+ * Disable {@link EnableWebFluxExtension} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EnableWebFluxExtension
  * @since 1.0.0
  */
-public class NoOpP6LoadableOptions implements P6LoadableOptions {
-
-    @Override
-    public void load(Map<String, String> options) {
-        // DO NOTHING
-    }
-
-    @Override
-    public Map<String, String> getDefaults() {
-        return emptyMap();
-    }
+@ContextConfiguration(classes = {
+        DisableWebFluxExtensionTest.class,
+        RouterFunctionTestConfig.class
+})
+@EnableWebFluxExtension(
+        registerWebEndpointMappings = false,
+        interceptHandlerMethods = false,
+        publishEvents = false,
+        storeRequestBodyArgument = false,
+        storeResponseBodyReturnValue = false
+)
+public class DisableWebFluxExtensionTest extends AbstractEnableWebFluxExtensionTest {
 }

@@ -5,8 +5,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.Assert.assertNotNull;
 
 /**
@@ -67,7 +67,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
         return "HandlerMethodArgumentsResolvedEvent{" +
                 "source=" + getSource() +
                 ", handlerMethod=" + handlerMethod +
-                ", arguments=" + Arrays.toString(arguments) +
+                ", arguments=" + arrayToString(arguments) +
                 '}';
     }
 }

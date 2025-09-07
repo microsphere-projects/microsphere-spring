@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.util.Date;
 import java.util.Objects;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -74,6 +75,6 @@ public class YamlPropertySourceTest {
     private void write(int resourceIndex, String content) throws Exception {
         Resource resource = resources[resourceIndex];
         File file = resource.getFile();
-        Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
+        Files.write(file.toPath(), content.getBytes(UTF_8));
     }
 }

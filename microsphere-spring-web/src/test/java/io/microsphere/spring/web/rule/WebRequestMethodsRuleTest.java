@@ -67,7 +67,7 @@ public class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
     public void testMatchesOnPreflightRequest() {
         NativeWebRequest request = createPreFightRequest();
         WebRequestMethodsRule rule = new WebRequestMethodsRule("GET", "POST");
-        assertFalse("Preflight request should return false", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     @Test
@@ -77,7 +77,7 @@ public class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
         NativeWebRequest request = new ServletWebRequest(mockRequest);
 
         WebRequestMethodsRule rule = new WebRequestMethodsRule("GET", "POST");
-        assertTrue("Should match POST method", rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
     @Test
@@ -87,37 +87,37 @@ public class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
         NativeWebRequest request = new ServletWebRequest(mockRequest);
 
         WebRequestMethodsRule rule = new WebRequestMethodsRule("GET", "POST");
-        assertFalse("Should not match PUT method", rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     @Test
     public void testMatchesStringMethodOnEmptyRuleWithOptions() {
         WebRequestMethodsRule rule = new WebRequestMethodsRule();
-        assertFalse("OPTIONS should return false for empty rule", rule.matches("OPTIONS"));
+        assertFalse(rule.matches("OPTIONS"));
     }
 
     @Test
     public void testMatchesStringMethodOnEmptyRuleWithGet() {
         WebRequestMethodsRule rule = new WebRequestMethodsRule();
-        assertTrue("GET should return true for empty rule", rule.matches("GET"));
+        assertTrue(rule.matches("GET"));
     }
 
     @Test
     public void testMatchesStringMethodOnMatchingMethod() {
         WebRequestMethodsRule rule = new WebRequestMethodsRule("DELETE", "PATCH");
-        assertTrue("Should match DELETE method", rule.matches("DELETE"));
+        assertTrue(rule.matches("DELETE"));
     }
 
     @Test
     public void testMatchesStringMethodOnNonMatchingMethod() {
         WebRequestMethodsRule rule = new WebRequestMethodsRule("HEAD", "TRACE");
-        assertFalse("Should not match PUT method", rule.matches("PUT"));
+        assertFalse(rule.matches("PUT"));
     }
 
     @Test
     public void testMatchRequestMethodOnCaseInsensitive() {
         WebRequestMethodsRule rule = new WebRequestMethodsRule("get", "post");
-        assertTrue("Should match 'get' ignoring case", rule.matches("GET"));
-        assertTrue("Should match 'post' ignoring case", rule.matches("Post"));
+        assertTrue(rule.matches("GET"));
+        assertTrue(rule.matches("Post"));
     }
 }

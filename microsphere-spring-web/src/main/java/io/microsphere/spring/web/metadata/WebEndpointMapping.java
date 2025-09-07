@@ -28,6 +28,7 @@ import org.springframework.web.method.HandlerMethod;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -46,6 +47,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_FLUX;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.ArrayUtils.arrayEquals;
 import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.Assert.assertNoNullElements;
@@ -55,6 +57,7 @@ import static io.microsphere.util.Assert.assertNotNull;
 import static io.microsphere.util.Assert.assertTrue;
 import static io.microsphere.util.IterableUtils.iterate;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
+import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -153,6 +156,8 @@ public class WebEndpointMapping<E> {
     @Nullable
     private final String[] produces;
 
+    private final boolean negated;
+
     @Nullable
     private transient final Object source;
 
@@ -221,6 +226,8 @@ public class WebEndpointMapping<E> {
 
         @Nullable
         private Set<String> produces;
+
+        private boolean negated;
 
         /**
          * Create a new {@link Builder} instance.
@@ -966,6 +973,12 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        @Nonnull
+        public Builder<E> negate() {
+            this.negated = !this.negated;
+            return this;
+        }
+
         /**
          * Set the source of the endpoint mapping.
          *
@@ -990,8 +1003,26 @@ public class WebEndpointMapping<E> {
         }
 
         @Nonnull
+        public Builder<E> and(Builder<?> other) {
+            assertBuilders(this, other);
+            iterate(other.patterns, this::pattern);
+            iterate(other.methods, this::methods);
+            iterate(other.params, this::params);
+            iterate(other.headers, this::headers);
+            iterate(other.consumes, this::consumes);
+            iterate(other.produces, this::produces);
+            return this;
+        }
+
+        @Nonnull
+        public List<Builder<?>> or(Builder<?> other) {
+
+            return emptyList();
+        }
+
+        @Nonnull
         public Builder<E> nestPatterns(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             Set<String> patterns = newSet();
             iterate(this.patterns, pattern -> {
                 iterate(other.patterns, otherPattern -> {
@@ -1004,35 +1035,35 @@ public class WebEndpointMapping<E> {
 
         @Nonnull
         public Builder<E> nestMethods(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.methods, this::method);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestParams(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.params, this::param);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestHeaders(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.headers, this::header);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestConsumes(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.consumes, this::consume);
             return this;
         }
 
         @Nonnull
         public Builder<E> nestProduces(@Nonnull Builder<?> other) {
-            assertNest(this, other);
+            assertBuilders(this, other);
             iterate(other.produces, this::produce);
             return this;
         }
@@ -1058,7 +1089,7 @@ public class WebEndpointMapping<E> {
             return value == null ? name : name + EQUAL_CHAR + value;
         }
 
-        static void assertNest(Builder<?> one, Builder<?> other) {
+        static void assertBuilders(Builder<?> one, Builder<?> other) {
             assertNotNull(one, () -> "The 'one' Builder must not be null!");
             assertNotNull(other, () -> "The 'other' Builder must not be null!");
             assertTrue(one.kind == other.kind, () -> format("The Kind does not match[one : {} , other : {}]", one.kind, other.kind));
@@ -1102,6 +1133,7 @@ public class WebEndpointMapping<E> {
             return new WebEndpointMapping(
                     this.kind,
                     this.endpoint,
+                    this.negated,
                     this.source,
                     toStrings(this.patterns),
                     toStrings(this.methods),
@@ -1189,6 +1221,7 @@ public class WebEndpointMapping<E> {
     private WebEndpointMapping(
             @Nonnull Kind kind,
             @Nonnull E endpoint,
+            boolean negated,
             @Nullable Object source,
             @Nonnull String[] patterns,
             @Nullable String[] methods,
@@ -1200,6 +1233,7 @@ public class WebEndpointMapping<E> {
         this.endpoint = endpoint;
         // id is a hash code of the endpoint
         this.id = endpoint == null ? 0 : endpoint.hashCode();
+        this.negated = negated;
         this.source = source == null ? UNKNOWN_SOURCE : source;
         this.patterns = patterns;
         this.methods = methods;
@@ -1213,7 +1247,7 @@ public class WebEndpointMapping<E> {
      * For serialization
      */
     private WebEndpointMapping() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, false, null, null, null, null, null, null, null);
     }
 
     /**
@@ -1269,6 +1303,15 @@ public class WebEndpointMapping<E> {
      */
     public int getId() {
         return id;
+    }
+
+    /**
+     * Get the 'negated' status
+     *
+     * @return <code>false</code> as default
+     */
+    public boolean isNegated() {
+        return this.negated;
     }
 
     /**
@@ -1339,12 +1382,12 @@ public class WebEndpointMapping<E> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WebEndpointMapping that = (WebEndpointMapping) o;
-        return Arrays.equals(patterns, that.patterns)
-                && Arrays.equals(methods, that.methods)
-                && Arrays.equals(params, that.params)
-                && Arrays.equals(headers, that.headers)
-                && Arrays.equals(consumes, that.consumes)
-                && Arrays.equals(produces, that.produces);
+        return arrayEquals(patterns, that.patterns)
+                && arrayEquals(methods, that.methods)
+                && arrayEquals(params, that.params)
+                && arrayEquals(headers, that.headers)
+                && arrayEquals(consumes, that.consumes)
+                && arrayEquals(produces, that.produces);
     }
 
     @Override
@@ -1378,6 +1421,7 @@ public class WebEndpointMapping<E> {
         sb.append("kind=").append(kind);
         sb.append(", endpoint=").append(endpoint);
         sb.append(", id=").append(id);
+        sb.append(", negated=").append(negated);
         sb.append(", source=").append(source);
         sb.append(", patterns=").append(arrayToString(patterns));
         sb.append(", methods=").append(arrayToString(methods));
@@ -1392,6 +1436,7 @@ public class WebEndpointMapping<E> {
     public String toJSON() {
         StringBuilder stringBuilder = new StringBuilder(LEFT_CURLY_BRACE).append(LINE_SEPARATOR);
         append(stringBuilder, "id", this.id);
+        append(stringBuilder, "negated", this.negated, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "patterns", this.patterns, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "methods", this.methods, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "params", this.params, COMMA, LINE_SEPARATOR);
@@ -1403,6 +1448,11 @@ public class WebEndpointMapping<E> {
     }
 
     private void append(StringBuilder appendable, String name, int value) {
+        JSONUtils.append(appendable, name, value);
+    }
+
+    private void append(StringBuilder appendable, String name, boolean value, String... prefixes) {
+        append(prefixes, appendable);
         JSONUtils.append(appendable, name, value);
     }
 

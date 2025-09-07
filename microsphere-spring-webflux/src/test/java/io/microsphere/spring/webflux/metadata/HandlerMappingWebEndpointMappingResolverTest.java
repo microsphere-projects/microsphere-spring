@@ -27,10 +27,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
+import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Collection;
 
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link HandlerMappingWebEndpointMappingResolver} Test
@@ -56,6 +61,22 @@ class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
     void testResolve() {
         Collection<WebEndpointMapping> webEndpointMappings = resolver.resolve(context);
         assertFalse(webEndpointMappings.isEmpty());
+    }
+
+    @Test
+    void testResolveWithoutHandlerMappings() {
+        testInSpringContainer(context -> {
+            Collection<WebEndpointMapping> webEndpointMappings = resolver.resolve(context);
+            assertTrue(webEndpointMappings.isEmpty());
+        });
+    }
+
+    @Test
+    void testResolveWithEmptyHandlerMappings() {
+        testInSpringContainer(context -> {
+            Collection<WebEndpointMapping> webEndpointMappings = resolver.resolve(context);
+            assertTrue(webEndpointMappings.isEmpty());
+        }, SimpleUrlHandlerMapping.class, RequestMappingHandlerMapping.class, RouterFunctionMapping.class);
     }
 
 }

@@ -1,5 +1,6 @@
 {
 "id":1,
+"negated":true,
 "patterns":["/a","/b","/c"],
 "methods":["GET","POST"],
 "params":["a=1","b=2"],

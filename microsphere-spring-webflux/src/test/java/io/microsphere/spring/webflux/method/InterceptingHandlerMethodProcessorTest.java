@@ -31,6 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerResult;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
 
@@ -42,8 +43,8 @@ import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.core.MethodParameter.forExecutable;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+import static reactor.core.publisher.Mono.just;
 
 /**
  * {@link InterceptingHandlerMethodProcessor} Test
@@ -75,7 +76,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     void setUp() {
         this.greetingMethod = findMethod(TestController.class, "greeting", String.class);
         this.greetingHandlerMethod = new HandlerMethod(testController, greetingMethod);
-        this.greetingMethodParameter0 = forExecutable(greetingMethod, 0);
+        this.greetingMethodParameter0 = new MethodParameter(greetingMethod, 0);
     }
 
     @Test
@@ -86,7 +87,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Test
     void testSupportsParameterWithUnsupportedMethodParameter() {
         Method helloWorldMethod = findMethod(TestController.class, "helloWorld");
-        MethodParameter methodParameter = forExecutable(helloWorldMethod, -1);
+        MethodParameter methodParameter = new MethodParameter(helloWorldMethod, -1);
         assertFalse(processor.supportsParameter(methodParameter));
     }
 
@@ -104,7 +105,8 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
 
     @Test
     void testSupportsWithServerResponseResult() {
-        HandlerResult handlerResult = new HandlerResult(this, ok().bodyValue("OK").block(), greetingMethodParameter0);
+        Mono<String> stringMono = just("OK");
+        HandlerResult handlerResult = new HandlerResult(this, ok().body(stringMono, String.class).block(), greetingMethodParameter0);
         assertTrue(processor.supports(handlerResult));
     }
 
@@ -117,7 +119,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Test
     void testSupportsWithUnsupportedHandlerResult() {
         Method method = findMethod(Object.class, "hashCode");
-        HandlerResult handlerResult = new HandlerResult(method, null, forExecutable(method, -1));
+        HandlerResult handlerResult = new HandlerResult(method, null, new MethodParameter(method, -1));
         assertFalse(processor.supports(handlerResult));
     }
 

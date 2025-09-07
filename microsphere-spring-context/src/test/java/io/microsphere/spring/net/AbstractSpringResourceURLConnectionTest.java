@@ -112,17 +112,17 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     @Test
     public abstract void testGetContent() throws IOException;
 
-    @Test(expected = IOException.class)
-    public abstract void testGetContentOnIOException() throws IOException;
+    @Test
+    public abstract void testGetContentOnIOException();
 
-    @Test(expected = IOException.class)
-    public abstract void testGetContentOnNotFoundException() throws IOException;
+    @Test
+    public abstract void testGetContentOnNotFoundException();
 
     @Test
     public abstract void testGetContentWithClass() throws IOException;
 
-    @Test(expected = IOException.class)
-    public abstract void testGetContentWithClassOnIOException() throws IOException;
+    @Test
+    public abstract void testGetContentWithClassOnIOException();
 
     @Test
     public abstract void testGetPermission() throws IOException;
@@ -130,8 +130,8 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     @Test
     public abstract void testGetInputStream() throws IOException;
 
-    @Test(expected = IOException.class)
-    public abstract void testGetInputStreamOnIOException() throws IOException;
+    @Test
+    public abstract void testGetInputStreamOnIOException();
 
     @Test
     public abstract void testGetHeaderFieldByIndex();
@@ -139,8 +139,8 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     @Test
     public abstract void testGetOutputStream() throws IOException;
 
-    @Test(expected = IOException.class)
-    public abstract void testGetOutputStreamOnIOException() throws IOException;
+    @Test
+    public abstract void testGetOutputStreamOnIOException();
 
     @Test
     public abstract void testToString();
@@ -148,7 +148,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     @Test
     public abstract void testDoInput();
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public abstract void testDoInputOnIOException();
 
     @Test

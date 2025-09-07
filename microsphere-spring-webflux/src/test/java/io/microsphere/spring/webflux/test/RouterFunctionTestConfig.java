@@ -24,9 +24,15 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.PUT;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
+import static org.springframework.web.reactive.function.server.RequestPredicates.path;
 import static org.springframework.web.reactive.function.server.RequestPredicates.queryParam;
+import static org.springframework.web.reactive.function.server.RouterFunctions.nest;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 /**
@@ -53,19 +59,15 @@ public class RouterFunctionTestConfig {
 
     @Bean
     public RouterFunction<ServerResponse> personRouterFunction(PersonHandler handler) {
-        return route()
-                .GET(GET_PERSON_PATH, accept(APPLICATION_JSON), handler::getPerson)
-                .GET(PERSON_TEST_PATH, contentType(APPLICATION_JSON), handler::listPeople)
-                .POST(PERSON_TEST_PATH, queryParam(AUTH_NAME, AUTH_VALUE), handler::createPerson)
-                .build();
+        return route(GET(GET_PERSON_PATH).and(accept(APPLICATION_JSON)), handler::getPerson)
+                .andRoute(GET(PERSON_TEST_PATH).and(contentType(APPLICATION_JSON)), handler::listPeople)
+                .andRoute(POST(PERSON_TEST_PATH).and(queryParam(AUTH_NAME, AUTH_VALUE)), handler::createPerson);
     }
 
     @Bean
     public RouterFunction<ServerResponse> nestedPersonRouterFunction(PersonHandler handler) {
-        return route().path(TEST_ROOT_PATH, builder ->
-                        builder.path(PERSON_PATH, b -> b
-                                .PUT(PERSON_ID_PATH, handler::updatePerson)
-                                .DELETE(PERSON_ID_PATH, handler::deletePerson)))
-                .build();
+        RouterFunction<ServerResponse> routes = route(PUT(PERSON_ID_PATH), handler::updatePerson)
+                .andRoute(DELETE(PERSON_ID_PATH), handler::deletePerson);
+        return nest(path(TEST_ROOT_PATH), nest(path(PERSON_PATH), routes));
     }
 }

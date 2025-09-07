@@ -82,6 +82,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Microsphere Spring Test -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>

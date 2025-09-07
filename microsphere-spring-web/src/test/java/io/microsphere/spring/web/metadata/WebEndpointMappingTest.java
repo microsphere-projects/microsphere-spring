@@ -539,6 +539,7 @@ public class WebEndpointMappingTest {
         String fullJson = copyToString(fullJsonResource.getInputStream(), UTF_8);
         WebEndpointMapping mapping = of(CUSTOMIZED)
                 .endpoint(1)
+                .negate()
                 .patterns("/a", "/b", "/c")
                 .methods("GET", "POST")
                 .params("a=1", "b=2")

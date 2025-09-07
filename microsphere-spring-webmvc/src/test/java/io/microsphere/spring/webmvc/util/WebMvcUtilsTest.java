@@ -72,7 +72,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.core.MethodParameter.forExecutable;
 import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 import static org.springframework.web.context.ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM;
 import static org.springframework.web.context.ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM;
@@ -115,7 +114,7 @@ public class WebMvcUtilsTest {
         setRequestAttributes(this.requestAttributes);
         this.handlerMethod = new HandlerMethod(new TestController(), "user", User.class);
         this.method = this.handlerMethod.getMethod();
-        this.methodParameter = forExecutable(this.method, 0);
+        this.methodParameter = new MethodParameter(this.method, 0);
         this.user = new User();
         this.user.setName("Mercy");
         this.user.setAge(18);

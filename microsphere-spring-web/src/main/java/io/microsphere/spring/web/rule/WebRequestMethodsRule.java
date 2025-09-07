@@ -23,7 +23,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static io.microsphere.collection.SetUtils.ofSet;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
@@ -32,6 +31,7 @@ import static io.microsphere.util.ArrayUtils.combine;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.of;
 import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 
 /**
@@ -52,7 +52,7 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
 
     public WebRequestMethodsRule(RequestMethod... requestMethods) {
         this.methods = ObjectUtils.isEmpty(requestMethods) ? emptySet() :
-                Stream.of(requestMethods).map(RequestMethod::name).collect(toSet());
+                of(requestMethods).map(RequestMethod::name).collect(toSet());
     }
 
     public WebRequestMethodsRule(String method, String... others) {

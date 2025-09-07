@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,6 @@ import org.springframework.context.annotation.Role;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -50,6 +50,7 @@ import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -276,7 +277,7 @@ public class BeanDefinitionUtilsTest {
         int length = constructorArguments.length;
         assertEquals(length, argumentValues.getArgumentCount());
         for (int i = 0; i < length; i++) {
-            ConstructorArgumentValues.ValueHolder argumentValue = argumentValues.getArgumentValue(i, Object.class);
+            ValueHolder argumentValue = argumentValues.getArgumentValue(i, Object.class);
             assertEquals(constructorArguments[i], argumentValue.getValue());
         }
     }
@@ -292,7 +293,7 @@ public class BeanDefinitionUtilsTest {
 
         @Bean(name = USERS_BEAN_NAME)
         public List<User> users() {
-            return Collections.singletonList(new User());
+            return singletonList(new User());
         }
     }
 }

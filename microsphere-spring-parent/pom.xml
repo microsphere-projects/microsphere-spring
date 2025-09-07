@@ -123,20 +123,20 @@
                 <version>${logback.version}</version>
             </dependency>
 
-            <!-- Microsphere Dependencies -->
-            <dependency>
-                <groupId>io.github.microsphere-projects</groupId>
-                <artifactId>microsphere-java-dependencies</artifactId>
-                <version>${microsphere-java.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <!-- Spring Framework BOM -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
                 <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Microsphere Dependencies -->
+            <dependency>
+                <groupId>io.github.microsphere-projects</groupId>
+                <artifactId>microsphere-java-dependencies</artifactId>
+                <version>${microsphere-java.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

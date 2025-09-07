@@ -56,7 +56,6 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -74,6 +73,7 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotatio
 import static java.lang.Integer.getInteger;
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.copyOf;
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.beans.BeanUtils.findPropertyForMethod;
@@ -865,7 +865,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 synchronized (this) {
                     if (!this.cached) {
                         if (arguments != null) {
-                            DependencyDescriptor[] cachedMethodArguments = Arrays.copyOf(descriptors, arguments.length);
+                            DependencyDescriptor[] cachedMethodArguments = copyOf(descriptors, arguments.length);
                             registerDependentBeans(beanName, injectedBeanNames);
                             if (injectedBeanNames.size() == argumentCount) {
                                 Iterator<String> it = injectedBeanNames.iterator();

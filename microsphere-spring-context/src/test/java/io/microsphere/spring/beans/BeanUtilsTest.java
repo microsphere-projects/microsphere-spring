@@ -1,5 +1,6 @@
 package io.microsphere.spring.beans;
 
+import io.microsphere.spring.beans.BeanUtils.NamingBean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
@@ -360,11 +361,11 @@ public class BeanUtilsTest {
     @Test
     public void testNamingBean() {
 
-        BeanUtils.NamingBean namingBean = new BeanUtils.NamingBean("testBean", new TestBean());
+        NamingBean namingBean = new NamingBean("testBean", new TestBean());
 
-        BeanUtils.NamingBean namingBean2 = new BeanUtils.NamingBean("testBean2", new TestBean2());
+        NamingBean namingBean2 = new NamingBean("testBean2", new TestBean2());
 
-        List<BeanUtils.NamingBean> namingBeans = asList(namingBean, namingBean2);
+        List<NamingBean> namingBeans = asList(namingBean, namingBean2);
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 

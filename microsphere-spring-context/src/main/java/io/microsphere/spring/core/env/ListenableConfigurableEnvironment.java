@@ -31,7 +31,6 @@ import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertyResolver;
 
 import java.lang.invoke.MethodHandle;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +40,7 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static java.lang.Boolean.parseBoolean;
 import static java.util.Arrays.asList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -221,7 +221,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
                 return (boolean) MATCHES_PROFILES_METHOD_HANDLE.invokeExact((Environment) delegate, profileExpressions);
             } catch (Throwable e) {
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Failed to invoke {} with args : '{}'", MATCHES_PROFILES_METHOD_HANDLE, Arrays.toString(profileExpressions), e);
+                    logger.warn("Failed to invoke {} with args : '{}'", MATCHES_PROFILES_METHOD_HANDLE, arrayToString(profileExpressions), e);
                 }
             }
         }
