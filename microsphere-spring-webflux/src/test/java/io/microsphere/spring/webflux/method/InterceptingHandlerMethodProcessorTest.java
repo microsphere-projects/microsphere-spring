@@ -31,6 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerResult;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
 
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.core.MethodParameter.forExecutable;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+import static reactor.core.publisher.Mono.just;
 
 /**
  * {@link InterceptingHandlerMethodProcessor} Test
@@ -104,7 +106,8 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
 
     @Test
     void testSupportsWithServerResponseResult() {
-        HandlerResult handlerResult = new HandlerResult(this, ok().bodyValue("OK").block(), greetingMethodParameter0);
+        Mono<String> stringMono = just("OK");
+        HandlerResult handlerResult = new HandlerResult(this, ok().body(stringMono, String.class).block(), greetingMethodParameter0);
         assertTrue(processor.supports(handlerResult));
     }
 
