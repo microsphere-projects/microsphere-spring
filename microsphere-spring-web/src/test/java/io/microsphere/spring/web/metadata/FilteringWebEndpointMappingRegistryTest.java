@@ -43,7 +43,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @see FilteringWebEndpointMappingRegistry
  * @since 1.0.0
  */
-public class FilteringWebEndpointMappingRegistryTest {
+class FilteringWebEndpointMappingRegistryTest {
 
     private Set<WebEndpointMapping> webEndpointMappings;
 
