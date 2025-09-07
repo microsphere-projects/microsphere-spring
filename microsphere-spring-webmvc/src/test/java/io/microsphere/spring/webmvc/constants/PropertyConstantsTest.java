@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see PropertyConstants
  * @since 1.0.0
  */
-public class PropertyConstantsTest {
+class PropertyConstantsTest {
 
     @Test
     void testConstants() {
