@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @see ConversionServiceUtils
  * @since 1.0.0
  */
-public class ConversionServiceUtilsTest {
+class ConversionServiceUtilsTest {
 
     @Test
     void testGetSharedInstance() {
