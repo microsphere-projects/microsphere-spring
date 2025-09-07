@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * {@link WebRequestParamsRule} Test
  */
-public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
+class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
 
 
     // ==================== Constructor ====================
