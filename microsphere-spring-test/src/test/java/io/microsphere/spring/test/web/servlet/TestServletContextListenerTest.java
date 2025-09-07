@@ -30,7 +30,7 @@ import org.springframework.mock.web.MockServletContext;
  * @see TestServletContextListener
  * @since 1.0.0
  */
-public class TestServletContextListenerTest {
+class TestServletContextListenerTest {
 
     private TestServletContextListener listener;
 
