@@ -49,7 +49,7 @@ import static org.springframework.web.context.request.RequestContextHolder.setRe
  * @see RequestAttributesUtils
  * @since 1.0.0
  */
-public class RequestAttributesUtilsTest {
+class RequestAttributesUtilsTest {
 
     private MockHttpServletRequest servletRequest;
 
