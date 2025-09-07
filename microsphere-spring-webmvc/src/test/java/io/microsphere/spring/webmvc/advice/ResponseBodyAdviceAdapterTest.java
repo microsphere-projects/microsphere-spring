@@ -40,7 +40,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  * @see ResponseBodyAdviceAdapter
  * @since 1.0.0
  */
-public class ResponseBodyAdviceAdapterTest {
+class ResponseBodyAdviceAdapterTest {
 
     private MethodParameter returnType;
 
