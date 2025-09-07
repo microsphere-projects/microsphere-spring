@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.List;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ClassLoaderUtils.getClassResource;
 import static java.net.URLConnection.getDefaultAllowUserInteraction;
@@ -268,7 +268,7 @@ class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLCo
         String name = "name";
         String value = "value";
         adapter.addHeader(name, value);
-        assertEquals(singletonMap(name, List.of(value)), adapter.getHeaderFields());
+        assertEquals(singletonMap(name, ofList(value)), adapter.getHeaderFields());
     }
 
     @Test
