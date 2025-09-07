@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration(initializers = {
         ListenableConfigurableEnvironmentInitializer.class
 })
-public class ListenableConfigurableEnvironmentInitializerTest {
+class ListenableConfigurableEnvironmentInitializerTest {
 
     @Autowired
     private Environment environment;
