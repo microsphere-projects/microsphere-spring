@@ -38,7 +38,7 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
  * @see SpringTestWebUtils
  * @since 1.0.0
  */
-public class SpringTestWebUtilsTest {
+class SpringTestWebUtilsTest {
 
     @Test
     void testCreateWebRequest() {
