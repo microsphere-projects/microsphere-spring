@@ -43,8 +43,8 @@ import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter.get;
+import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
 import static java.util.Collections.addAll;
-import static org.springframework.core.MethodParameter.forParameter;
 
 /**
  * Abstract base class for implementing {@link InjectionPointDependencyResolver}.
