@@ -20,8 +20,8 @@ package io.microsphere.spring.web.metadata;
 
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import jakarta.servlet.FilterRegistration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
@@ -39,10 +39,10 @@ import static io.microsphere.util.ArrayUtils.ofArray;
 import static jakarta.servlet.DispatcherType.REQUEST;
 import static java.util.Collections.emptyList;
 import static java.util.EnumSet.of;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link ServletWebEndpointMappingResolver} Test
@@ -59,7 +59,7 @@ public class ServletWebEndpointMappingResolverTest {
 
     private ServletWebEndpointMappingResolver webEndpointMappingResolver;
 
-    @Before
+    @BeforeEach
     void setUp() throws Exception {
         this.servletContext = new TestServletContext();
         this.context = new GenericWebApplicationContext(servletContext);
