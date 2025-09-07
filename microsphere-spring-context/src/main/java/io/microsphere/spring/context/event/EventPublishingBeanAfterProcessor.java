@@ -64,7 +64,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
 
     public EventPublishingBeanAfterProcessor(ConfigurableApplicationContext context) {
         this.context = context;
-        this.beanEventListeners = BeanListeners.getBean(context);
+        this.beanEventListeners = getBean(context);
     }
 
     @Override
