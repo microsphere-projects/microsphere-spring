@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_XML;
 import static org.springframework.http.MediaType.parseMediaType;
 
@@ -41,15 +42,15 @@ public class ProduceMediaTypeExpressionTest {
     @Test
     public void testMatchPositive() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain");
-        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
+        List<MediaType> acceptedTypes = ofList(TEXT_PLAIN);
         assertTrue(expr.match(acceptedTypes));
     }
 
     // Test negation case
     @Test
     public void testNegatedExpression() {
-        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression(MediaType.TEXT_PLAIN, true);
-        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
+        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression(TEXT_PLAIN, true);
+        List<MediaType> acceptedTypes = ofList(TEXT_PLAIN);
         assertFalse(expr.match(acceptedTypes));
     }
 
