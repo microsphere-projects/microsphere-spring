@@ -49,7 +49,6 @@ import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContai
 import static java.lang.Thread.sleep;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -229,7 +228,7 @@ class ResourcePropertySourceLoaderTest {
         assertEquals(3, propertySources.size());
 
         Iterator<PropertySource<?>> iterator = propertySources.iterator();
-        assertInstanceOf(ListIterator.class, iterator);
+        assertTrue(iterator instanceof ListIterator);
         ListIterator<PropertySource<?>> listIterator = (ListIterator<PropertySource<?>>) iterator;
         ResourcePropertySource resourcePropertySource = introspectedClass.getAnnotation(RESOURCE_PROPERTY_SOURCE_CLASS);
         String before = resourcePropertySource.before();
@@ -282,7 +281,7 @@ class ResourcePropertySourceLoaderTest {
     }
 
     void assertPropertySource(PropertySource<?> propertySource) {
-        assertInstanceOf(CompositePropertySource.class, propertySource);
+        assertTrue(propertySource instanceof CompositePropertySource);
         CompositePropertySource compositePropertySource = (CompositePropertySource) propertySource;
         Collection<PropertySource<?>> internalPropertySources = compositePropertySource.getPropertySources();
         assertEquals(2, internalPropertySources.size());
