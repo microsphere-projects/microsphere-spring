@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.initBeanMetadataAttributes;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
@@ -50,7 +51,6 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperti
 import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefix;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.lang.Boolean.valueOf;
-import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.StringUtils.hasText;
@@ -141,7 +141,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
         Map<String, Object> configurationProperties = getSubProperties(environment.getPropertySources(), environment, prefix);
 
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(configurationProperties) :
-                singleton(resolveSingleBeanName(configurationProperties, configClass, registry));
+                ofSet(resolveSingleBeanName(configurationProperties, configClass, registry));
 
         for (String beanName : beanNames) {
             registerConfigurationBean(beanName, configClass, multiple, ignoreUnknownFields, ignoreInvalidFields,

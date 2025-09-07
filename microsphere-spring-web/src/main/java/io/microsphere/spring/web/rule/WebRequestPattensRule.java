@@ -29,11 +29,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
 import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -54,7 +54,7 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
 
-    private final static Set<String> EMPTY_PATH_PATTERN = singleton("");
+    private final static Set<String> EMPTY_PATH_PATTERN = ofSet("");
 
     private final Set<String> patterns;
 

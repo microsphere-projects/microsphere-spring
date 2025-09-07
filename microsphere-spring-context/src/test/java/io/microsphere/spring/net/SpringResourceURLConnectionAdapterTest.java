@@ -28,12 +28,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ClassLoaderUtils.getClassResource;
 import static java.net.URLConnection.getDefaultAllowUserInteraction;
 import static java.net.URLConnection.setDefaultAllowUserInteraction;
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -267,7 +267,7 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
         String name = "name";
         String value = "value";
         adapter.addHeader(name, value);
-        assertEquals(singletonMap(name, singletonList(value)), adapter.getHeaderFields());
+        assertEquals(singletonMap(name, ofList(value)), adapter.getHeaderFields());
     }
 
     @Override

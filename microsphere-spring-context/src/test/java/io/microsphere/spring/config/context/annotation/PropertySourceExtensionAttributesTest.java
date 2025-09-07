@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -62,9 +63,9 @@ public class PropertySourceExtensionAttributesTest {
         assertSame(annotationType, validateAnnotationType(annotationType));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testValidateAnnotationTypeOnIllegalArgumentException() {
-        validateAnnotationType(Override.class);
+        assertThrows(IllegalArgumentException.class, () -> validateAnnotationType(Override.class));
     }
 
     @Test

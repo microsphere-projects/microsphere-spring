@@ -23,8 +23,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.Collection;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.Sets.ofSet;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -67,7 +67,7 @@ public class AbstractWebRequestRuleTest {
 
     @Test
     public void testIsEmptyWhenContentIsNotEmpty() {
-        AbstractWebRequestRule<String> rule = createRule(singleton("test"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("test"), "||");
         assertFalse(rule.isEmpty());
     }
 
@@ -96,19 +96,19 @@ public class AbstractWebRequestRuleTest {
     // equals() ================================
     @Test
     public void testEqualsWithSameInstance() {
-        AbstractWebRequestRule<String> rule = createRule(singleton("a"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
         assertTrue(rule.equals(rule));
     }
 
     @Test
     public void testEqualsWithNull() {
-        AbstractWebRequestRule<String> rule = createRule(singleton("a"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
         assertFalse(rule.equals(null));
     }
 
     @Test
     public void testEqualsWithDifferentClass() {
-        AbstractWebRequestRule<String> rule = createRule(singleton("a"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
         Object other = new Object();
         assertFalse(rule.equals(other));
     }
@@ -137,8 +137,8 @@ public class AbstractWebRequestRuleTest {
 
     @Test
     public void testHashCodeForUnequalObjects() {
-        AbstractWebRequestRule<String> rule1 = createRule(singleton("a"), "||");
-        AbstractWebRequestRule<String> rule2 = createRule(singleton("b"), "||");
+        AbstractWebRequestRule<String> rule1 = createRule(ofSet("a"), "||");
+        AbstractWebRequestRule<String> rule2 = createRule(ofSet("b"), "||");
         assertNotEquals(rule1.hashCode(), rule2.hashCode());
     }
 
@@ -151,7 +151,7 @@ public class AbstractWebRequestRuleTest {
 
     @Test
     public void testToStringWithSingleContent() {
-        AbstractWebRequestRule<String> rule = createRule(singleton("test"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("test"), "||");
         assertEquals("[test]", rule.toString());
     }
 

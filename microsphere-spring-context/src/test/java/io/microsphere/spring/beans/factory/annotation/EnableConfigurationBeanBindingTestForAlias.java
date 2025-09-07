@@ -3,10 +3,8 @@ package io.microsphere.spring.beans.factory.annotation;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;

@@ -51,6 +51,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
@@ -61,7 +62,6 @@ import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singletonList;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -297,7 +297,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
             return asList(beanNames);
         } else {
-            return singletonList(dependentBeanName);
+            return ofList(dependentBeanName);
         }
     }
 

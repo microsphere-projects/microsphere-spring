@@ -51,6 +51,7 @@ import static java.util.UUID.randomUUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME;
 import static org.springframework.core.env.StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME;
@@ -127,10 +128,11 @@ public class ResourcePropertySourceLoaderTest {
         }, IgnoreResourceNotFoundConfig.class);
     }
 
-    @Test(expected = BeanDefinitionStoreException.class)
+    @Test
     public void testOnNotFoundConfig() {
-        testInSpringContainer((context, environment) -> {
-        }, NotFoundConfig.class);
+        assertThrows(BeanDefinitionStoreException.class,
+                () -> testInSpringContainer((context, environment) -> {
+                }, NotFoundConfig.class));
     }
 
     @Test
