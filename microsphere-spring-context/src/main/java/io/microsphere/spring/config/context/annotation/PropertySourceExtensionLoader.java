@@ -49,13 +49,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.added;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.replaced;
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
 import static java.util.Collections.sort;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 import static org.springframework.core.ResolvableType.forType;
@@ -275,7 +275,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         if (resource.exists()) { // Resource exists
             PropertySourceResource propertySourceResource = createPropertySourceResource(resourceValue, resource, resourceComparator);
             ResourcePropertySource newResourcePropertySource = createResourcePropertySource(extensionAttributes, propertySourceName, factory, propertySourceResource);
-            updateResourcePropertySources(singleton(newResourcePropertySource), resourcePropertySources, subEvents);
+            updateResourcePropertySources(ofSet(newResourcePropertySource), resourcePropertySources, subEvents);
         } else {
             removeResourcePropertySource(propertySourceName, resourceValue, resource, resourcePropertySources, subEvents);
         }
