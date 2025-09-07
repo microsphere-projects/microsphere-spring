@@ -61,7 +61,6 @@ import static io.microsphere.util.StringUtils.substringBetween;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.of;
-import static org.springframework.http.HttpMethod.resolve;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
 import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
 import static org.springframework.web.reactive.function.server.RequestPredicates.method;
@@ -253,7 +252,7 @@ public enum RequestPredicateKind {
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
             String method = expression(predicate);
-            HttpMethod httpMethod = resolve(method);
+            HttpMethod httpMethod = HttpMethod.valueOf(method);
             visitor.method(ofSet(httpMethod));
         }
 
@@ -264,12 +263,12 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(String expression) {
-            return resolve(expression) != null;
+            return HttpMethod.valueOf(expression) != null;
         }
 
         @Override
         public RequestPredicate predicate(String expression) {
-            HttpMethod httpMethod = resolve(expression);
+            HttpMethod httpMethod = HttpMethod.valueOf(expression);
             return method(httpMethod);
         }
 
