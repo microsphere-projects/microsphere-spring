@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see EventExtensionRegistrar
  * @since 1.0.0
  */
-public class EventExtensionRegistrarTest {
+class EventExtensionRegistrarTest {
 
     static class ExecutorConfig {
         @Bean
