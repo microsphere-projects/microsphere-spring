@@ -33,6 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -78,9 +79,9 @@ public class ResolvableDependencyTypeFilterTest {
         assertFalse(filter.accept(getClass()));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testAcceptOnNPE() {
-        filter.accept(null);
+        assertThrows(NullPointerException.class, () -> filter.accept(null));
     }
 
     @Test
