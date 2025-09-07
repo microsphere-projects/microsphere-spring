@@ -27,8 +27,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-;
-
 /**
  * {@link TestConditionContext} Test
  *
@@ -40,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @ContextConfiguration(classes = {
         TestConditionContext.class
 })
-public class TestConditionContextTest {
+class TestConditionContextTest {
 
     @Autowired
     private ConfigurableApplicationContext context;
