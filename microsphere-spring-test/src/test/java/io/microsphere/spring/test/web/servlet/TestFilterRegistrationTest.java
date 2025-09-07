@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see TestFilterRegistration
  * @since 1.0.0
  */
-public class TestFilterRegistrationTest {
+class TestFilterRegistrationTest {
 
     private TestFilterRegistration registration;
 
