@@ -36,7 +36,7 @@ import static io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolv
  * @see WebEndpointMappingRegistrar
  * @since 1.0.0
  */
-public class WebEndpointMappingRegistrarTest {
+class WebEndpointMappingRegistrarTest {
 
     private AnnotationConfigWebApplicationContext context;
 
