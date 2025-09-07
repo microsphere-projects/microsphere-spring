@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
         EnableWebExtensionTest.class
 })
 @EnableWebExtension
-public class EnableWebExtensionTest {
+class EnableWebExtensionTest {
 
     private MockMvc mockMvc;
 
