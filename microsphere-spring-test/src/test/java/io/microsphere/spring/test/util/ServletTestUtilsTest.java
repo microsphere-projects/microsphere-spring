@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see ServletTestUtils
  * @since 1.0.0
  */
-public class ServletTestUtilsTest {
+class ServletTestUtilsTest {
 
     private TestServletContext servletContext;
 
