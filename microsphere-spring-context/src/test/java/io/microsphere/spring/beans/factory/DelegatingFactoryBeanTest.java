@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see DelegatingFactoryBean
  * @since 1.0.0
  */
-public class DelegatingFactoryBeanTest implements DisposableBean {
+class DelegatingFactoryBeanTest implements DisposableBean {
 
     private static final Logger logger = getLogger(DelegatingFactoryBeanTest.class);
 
