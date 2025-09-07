@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.doGetResolvableType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
@@ -50,7 +51,6 @@ import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -293,7 +293,7 @@ public class BeanDefinitionUtilsTest {
 
         @Bean(name = USERS_BEAN_NAME)
         public List<User> users() {
-            return singletonList(new User());
+            return ofList(new User());
         }
     }
 }
