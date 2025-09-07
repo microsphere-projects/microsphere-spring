@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see HandlerMethodArgumentsResolvedEvent
  * @since 1.0.0
  */
-public class HandlerMethodArgumentsResolvedEventTest {
+class HandlerMethodArgumentsResolvedEventTest {
 
     private HandlerMethod handlerMethod;
 
