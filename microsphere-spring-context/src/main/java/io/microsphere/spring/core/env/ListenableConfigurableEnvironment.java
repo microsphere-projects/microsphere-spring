@@ -87,11 +87,6 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     @Nullable
     private static final MethodHandle SET_ESCAPE_CHARACTER_METHOD_HANDLE = findVirtual(ConfigurablePropertyResolver.class, "setEscapeCharacter", Character.class);
 
-    /**
-     * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
-     */
-    public static final boolean ENABLED_PROPERTY_VALUE = false;
-
     private final ConfigurableEnvironment delegate;
 
     private List<EnvironmentListener> environmentListeners;
