@@ -20,6 +20,7 @@ import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static org.springframework.http.MediaType.SPECIFICITY_COMPARATOR;
 import static org.springframework.http.MediaType.parseMediaType;
 
 /**
@@ -78,7 +79,7 @@ public class GenericMediaTypeExpression implements MediaTypeExpression, Comparab
 
     @Override
     public int compareTo(GenericMediaTypeExpression other) {
-        return MediaType.SPECIFICITY_COMPARATOR.compare(this.getMediaType(), other.getMediaType());
+        return SPECIFICITY_COMPARATOR.compare(this.getMediaType(), other.getMediaType());
     }
 
     @Override
