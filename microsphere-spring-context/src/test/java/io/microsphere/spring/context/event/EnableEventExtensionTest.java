@@ -53,7 +53,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
         DefaultAdvisorAutoProxyCreator.class
 })
 @EnableEventExtension(executorForListener = "taskExecutor")
-public class EnableEventExtensionTest {
+class EnableEventExtensionTest {
 
     private static final Logger logger = getLogger(EnableEventExtensionTest.class);
 
