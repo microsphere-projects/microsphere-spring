@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see ServletRegistrationWebEndpointMappingFactory
  * @since 1.0.0
  */
-public class ServletRegistrationWebEndpointMappingFactoryTest {
+class ServletRegistrationWebEndpointMappingFactoryTest {
 
     private ServletContext servletContext;
 
