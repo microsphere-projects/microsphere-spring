@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
@@ -33,6 +32,7 @@ import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static java.util.Collections.sort;
 import static org.springframework.http.MediaType.ALL;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
@@ -79,7 +79,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
                                   @Nullable ContentNegotiationManager manager) {
         this.expressions = parseExpressions(produces, headers);
         if (this.expressions.size() > 1) {
-            Collections.sort(this.expressions);
+            sort(this.expressions);
         }
         this.contentNegotiationManager = manager != null ? manager : DEFAULT_CONTENT_NEGOTIATION_MANAGER;
     }
