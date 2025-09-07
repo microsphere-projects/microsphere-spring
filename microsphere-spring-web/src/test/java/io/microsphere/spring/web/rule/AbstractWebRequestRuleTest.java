@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see AbstractWebRequestRule
  * @since 1.0.0
  */
-public class AbstractWebRequestRuleTest {
+class AbstractWebRequestRuleTest {
 
     AbstractWebRequestRule<String> createRule(Collection<String> content, String infix) {
         return new AbstractWebRequestRule<String>() {
