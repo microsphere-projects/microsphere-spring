@@ -24,7 +24,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.Collection;
 import java.util.Set;
 
-import static io.microsphere.collection.SetUtils.ofSet;
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.util.ArrayUtils.combine;

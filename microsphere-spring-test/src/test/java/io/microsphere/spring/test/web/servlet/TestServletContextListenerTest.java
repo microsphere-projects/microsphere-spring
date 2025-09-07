@@ -36,7 +36,7 @@ public class TestServletContextListenerTest {
     private TestServletContextListener listener;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.listener = new TestServletContextListener();
     }
 

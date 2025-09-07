@@ -50,7 +50,7 @@ public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testGetToStringInfix() {
         WebRequestHeadersRule rule = new WebRequestHeadersRule();
-        assertEquals("Should return ' && '", " && ", rule.getToStringInfix());
+        assertEquals(" && ", rule.getToStringInfix());
     }
 
     @Test

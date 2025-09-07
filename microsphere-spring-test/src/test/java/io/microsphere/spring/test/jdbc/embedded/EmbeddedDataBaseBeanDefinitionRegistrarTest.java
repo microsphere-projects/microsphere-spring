@@ -34,7 +34,7 @@ import static org.junit.Assert.assertThrows;
 public class EmbeddedDataBaseBeanDefinitionRegistrarTest {
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         assertThrows(BeanCreationException.class, () -> {
             testInSpringContainer(context -> {
             }, Config.class);

@@ -68,7 +68,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testGetToStringInfix() {
         WebRequestProducesRule rule = new WebRequestProducesRule();
-        assertEquals("Should return ' || '", " || ", rule.getToStringInfix());
+        assertEquals(" || ", rule.getToStringInfix());
     }
 
     // Test pre-flight request returns false

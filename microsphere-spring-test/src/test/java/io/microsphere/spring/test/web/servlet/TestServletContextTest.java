@@ -62,7 +62,7 @@ public class TestServletContextTest {
     private TestServletContext servletContext;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.servletContext = new TestServletContext();
     }
 

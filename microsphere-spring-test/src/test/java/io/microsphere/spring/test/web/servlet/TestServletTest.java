@@ -50,7 +50,7 @@ public class TestServletTest {
     private TestServlet testServlet;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
         this.testServlet = new TestServlet();
