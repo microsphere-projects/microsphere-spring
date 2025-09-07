@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         EnableGuiceTest.class
 })
 @EnableGuice
-public class EnableGuiceTest {
+class EnableGuiceTest {
 
     @Inject
     private ApplicationContext context;
