@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebRequestParamExpression
  * @since 1.0.0
  */
-public class WebRequestParamExpressionTest extends BaseNameValueExpressionTest<WebRequestParamExpression> {
+class WebRequestParamExpressionTest extends BaseNameValueExpressionTest<WebRequestParamExpression> {
 
     WebRequestParamExpression nameOnlyExpression;
 
