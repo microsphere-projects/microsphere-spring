@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
-public class WebExtensionBeanDefinitionRegistrarTest {
+class WebExtensionBeanDefinitionRegistrarTest {
 
 
     @EnableWebExtension
