@@ -34,7 +34,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @see SimpleWebEndpointMappingRegistry
  * @since 1.0.0
  */
-public class SimpleWebEndpointMappingRegistryTest {
+class SimpleWebEndpointMappingRegistryTest {
 
     private static final WebEndpointMapping mapping = servlet().endpoint(Object.class).pattern("/*").method(GET).build();
 
