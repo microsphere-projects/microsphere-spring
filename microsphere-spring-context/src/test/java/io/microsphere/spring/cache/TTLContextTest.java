@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @see TTLContext
  * @since 1.0.0
  */
-public class TTLContextTest {
+class TTLContextTest {
 
     private static final Logger logger = getLogger(TTLContextTest.class);
 
