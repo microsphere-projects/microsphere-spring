@@ -21,8 +21,8 @@ package io.microsphere.spring.web.metadata;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
@@ -33,10 +33,10 @@ import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET
 import static io.microsphere.spring.test.web.servlet.TestServlet.SERVLET_CLASS_NAME;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link ServletRegistrationWebEndpointMappingFactory} Test
@@ -51,7 +51,7 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
 
     private ServletRegistrationWebEndpointMappingFactory factory;
 
-    @Before
+    @BeforeEach
     void setUp() throws Exception {
         this.servletContext = new TestServletContext();
         this.factory = new ServletRegistrationWebEndpointMappingFactory(this.servletContext);
