@@ -28,9 +28,9 @@ import io.microsphere.spring.test.web.servlet.TestServletContext;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -66,12 +66,12 @@ import static io.microsphere.spring.webmvc.util.WebMvcUtils.setHandlerMethodRequ
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.setHandlerMethodReturnValue;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.setInitParameters;
 import static io.microsphere.util.ArrayUtils.ofArray;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.core.MethodParameter.forExecutable;
 import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 import static org.springframework.web.context.ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM;
@@ -88,7 +88,7 @@ import static org.springframework.web.context.request.RequestContextHolder.setRe
  * @since 1.0.0
  */
 @ControllerAdvice
-public class WebMvcUtilsTest {
+class WebMvcUtilsTest {
 
     private static final Class<? extends ApplicationContextInitializer>[] INITIALIZER_CLASSES = ofArray(
             ListenableConfigurableEnvironmentInitializer.class,
@@ -108,7 +108,7 @@ public class WebMvcUtilsTest {
 
     private User user;
 
-    @Before
+    @BeforeEach
     public void setUp() throws NoSuchMethodException {
         this.servletRequest = new MockHttpServletRequest();
         this.requestAttributes = new ServletWebRequest(this.servletRequest);
@@ -121,7 +121,7 @@ public class WebMvcUtilsTest {
         this.user.setAge(18);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         resetRequestAttributes();
     }
