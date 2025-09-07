@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 
-public class AbstractNameValueExpressionTest {
+class AbstractNameValueExpressionTest {
 
     // Concrete implementation for testing
     static class TestExpression extends AbstractNameValueExpression<String> {
