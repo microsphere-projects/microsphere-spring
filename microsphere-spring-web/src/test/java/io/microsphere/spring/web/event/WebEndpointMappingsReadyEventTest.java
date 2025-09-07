@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebEndpointMappingsReadyEvent
  * @since 1.0.0
  */
-public class WebEndpointMappingsReadyEventTest {
+class WebEndpointMappingsReadyEventTest {
 
     private ApplicationContext context;
 
