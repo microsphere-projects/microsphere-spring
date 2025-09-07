@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
+class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
 
     // Test empty patterns match all requests
     @Test
