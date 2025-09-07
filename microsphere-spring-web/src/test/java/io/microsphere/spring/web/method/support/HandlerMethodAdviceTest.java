@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * @see HandlerMethodAdvice
  * @since 1.0.0
  */
-public class HandlerMethodAdviceTest {
+class HandlerMethodAdviceTest {
 
     private HandlerMethodAdvice handlerMethodAdvice;
 
