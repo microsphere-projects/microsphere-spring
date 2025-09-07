@@ -35,7 +35,7 @@ import static org.springframework.http.MediaType.valueOf;
  *
  * @since 1.0.0
  */
-public class ConsumeMediaTypeExpressionTest {
+class ConsumeMediaTypeExpressionTest {
 
     @Test
     void testMatchWhenPositiveMatch() {
