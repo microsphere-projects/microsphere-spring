@@ -48,6 +48,7 @@ import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
@@ -938,9 +939,9 @@ public abstract class BeanUtils implements Utils {
      */
     static <T> Map<String, T> sort(final Map<String, T> beansMap) {
 
-        Map<String, T> unmodifiableBeansMap = Collections.unmodifiableMap(beansMap);
+        Map<String, T> unmodifiableBeansMap = unmodifiableMap(beansMap);
 
-        List<NamingBean<T>> namingBeans = new ArrayList<NamingBean<T>>(unmodifiableBeansMap.size());
+        List<NamingBean<T>> namingBeans = new ArrayList<>(unmodifiableBeansMap.size());
 
         for (Entry<String, T> entry : unmodifiableBeansMap.entrySet()) {
             String beanName = entry.getKey();
