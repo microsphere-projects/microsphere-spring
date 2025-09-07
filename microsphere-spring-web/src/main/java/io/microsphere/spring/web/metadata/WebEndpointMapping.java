@@ -1382,7 +1382,8 @@ public class WebEndpointMapping<E> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WebEndpointMapping that = (WebEndpointMapping) o;
-        return arrayEquals(patterns, that.patterns)
+        return this.negated == that.negated
+                && arrayEquals(patterns, that.patterns)
                 && arrayEquals(methods, that.methods)
                 && arrayEquals(params, that.params)
                 && arrayEquals(headers, that.headers)
