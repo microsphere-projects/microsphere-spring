@@ -30,7 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -294,7 +293,7 @@ class ListenableConfigurableEnvironmentTest {
 
     @Test
     void testGetDelegate() {
-        assertInstanceOf(ListenableConfigurableEnvironment.class, environment);
+        assertTrue(environment instanceof ListenableConfigurableEnvironment);
         assertNotSame(environment, environment.getDelegate());
     }
 }
