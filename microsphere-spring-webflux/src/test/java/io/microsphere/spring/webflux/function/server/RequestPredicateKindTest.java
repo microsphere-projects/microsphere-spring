@@ -32,6 +32,7 @@ import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.ofList;
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.constants.SymbolConstants.DOT;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.ACCEPT;
@@ -53,7 +54,6 @@ import static io.microsphere.spring.webflux.function.server.RequestPredicateKind
 import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
 import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static java.lang.ThreadLocal.withInitial;
-import static java.util.Collections.singleton;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -105,7 +105,7 @@ class RequestPredicateKindTest {
         METHOD.accept(predicate, new RequestPredicateVisitorAdapter() {
             @Override
             public void method(Set<HttpMethod> methods) {
-                assertEquals(singleton(GET), methods);
+                assertEquals(ofSet(GET), methods);
             }
         });
     }
