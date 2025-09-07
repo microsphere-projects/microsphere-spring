@@ -47,7 +47,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  * @see WebRequestUtils
  * @since 1.0.0
  */
-public class WebRequestUtilsTest {
+class WebRequestUtilsTest {
 
     @Test
     void testGetMethod() {
