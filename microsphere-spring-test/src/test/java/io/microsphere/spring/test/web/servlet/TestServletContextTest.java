@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see TestServletContext
  * @since 1.0.0
  */
-public class TestServletContextTest {
+class TestServletContextTest {
 
     static final String testServletName = "testServlet";
 
