@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see RegistrationWebEndpointMappingFactory
  * @since 1.0.0
  */
-public class RegistrationWebEndpointMappingFactoryTest {
+class RegistrationWebEndpointMappingFactoryTest {
 
     static class RegistrationWebEndpointMappingFactoryImpl extends RegistrationWebEndpointMappingFactory<Registration> {
 
