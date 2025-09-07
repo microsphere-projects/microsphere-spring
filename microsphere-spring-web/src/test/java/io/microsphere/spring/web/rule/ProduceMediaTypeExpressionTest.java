@@ -23,13 +23,14 @@ import org.springframework.http.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_XML;
+import static org.springframework.http.MediaType.parseMediaType;
 
 /**
  * {@link ProduceMediaTypeExpression} Test
@@ -40,7 +41,7 @@ public class ProduceMediaTypeExpressionTest {
     @Test
     public void testMatchPositive() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain");
-        List<MediaType> acceptedTypes = singletonList(MediaType.TEXT_PLAIN);
+        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
         assertTrue(expr.match(acceptedTypes));
     }
 
@@ -48,7 +49,7 @@ public class ProduceMediaTypeExpressionTest {
     @Test
     public void testNegatedExpression() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression(MediaType.TEXT_PLAIN, true);
-        List<MediaType> acceptedTypes = singletonList(MediaType.TEXT_PLAIN);
+        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
         assertFalse(expr.match(acceptedTypes));
     }
 
@@ -56,16 +57,16 @@ public class ProduceMediaTypeExpressionTest {
     @Test
     public void testMatchWithParameters() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;charset=utf-8");
-        MediaType acceptedType = MediaType.parseMediaType("text/plain;charset=UTF-8");
-        assertTrue(expr.match(singletonList(acceptedType)));
+        MediaType acceptedType = parseMediaType("text/plain;charset=UTF-8");
+        assertTrue(expr.match(ofList(acceptedType)));
     }
 
     // Test parameter mismatch
     @Test
     public void testParameterMismatch() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;version=1");
-        MediaType acceptedType = MediaType.parseMediaType("text/plain;version=2");
-        assertFalse(expr.match(singletonList(acceptedType)));
+        MediaType acceptedType = parseMediaType("text/plain;version=2");
+        assertFalse(expr.match(ofList(acceptedType)));
     }
 
     // Test empty input handling
