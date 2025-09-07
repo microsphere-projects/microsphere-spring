@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
  * @see NameValueExpression
  * @since 1.0.0
  */
-public class NameValueExpressionTest {
+class NameValueExpressionTest {
 
     @Test
     void testGetName() {
