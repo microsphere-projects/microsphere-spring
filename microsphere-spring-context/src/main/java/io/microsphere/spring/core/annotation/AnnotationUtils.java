@@ -68,7 +68,8 @@ public abstract class AnnotationUtils {
      * If {@link Annotation} was annotated on {@link Method}'s parameters{@link ElementType#PARAMETER} ,
      * the associated {@link Annotation} list may contain multiple elements.
      */
-    public static <A extends Annotation> Map<ElementType, List<A>> findAnnotations(Method method, Class<A> annotationClass) {
+    public static <A extends Annotation> Map<ElementType, List<A>> findAnnotations(Method method,
+                                                                                   Class<A> annotationClass) {
 
         Retention retention = annotationClass.getAnnotation(Retention.class);
 
