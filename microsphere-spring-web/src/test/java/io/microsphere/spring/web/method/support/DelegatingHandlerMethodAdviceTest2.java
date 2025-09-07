@@ -39,7 +39,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
                 DelegatingHandlerMethodAdviceTest2.class
         }
 )
-public class DelegatingHandlerMethodAdviceTest2 {
+class DelegatingHandlerMethodAdviceTest2 {
 
     @Autowired
     private DelegatingHandlerMethodAdvice handlerMethodAdvice;
