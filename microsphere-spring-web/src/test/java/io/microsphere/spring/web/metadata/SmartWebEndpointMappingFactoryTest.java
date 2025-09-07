@@ -42,7 +42,7 @@ import static org.springframework.util.StreamUtils.copyToString;
 @ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
 class SmartWebEndpointMappingFactoryTest {
 
-    private final WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory();
+    private WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory();
 
     @Value("classpath:META-INF/web-mapping-descriptor.json")
     private Resource fullJsonResource;
