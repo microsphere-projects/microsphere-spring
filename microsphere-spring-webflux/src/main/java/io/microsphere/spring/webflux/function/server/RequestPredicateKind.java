@@ -51,6 +51,7 @@ import static io.microsphere.constants.SymbolConstants.SPACE;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ClassUtils.getTypeName;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static io.microsphere.util.StringUtils.contains;
 import static io.microsphere.util.StringUtils.endsWith;
 import static io.microsphere.util.StringUtils.replace;
@@ -61,8 +62,10 @@ import static io.microsphere.util.StringUtils.substringBetween;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.of;
+import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
 import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
+import static org.springframework.web.reactive.function.server.RequestPredicates.headers;
 import static org.springframework.web.reactive.function.server.RequestPredicates.method;
 import static org.springframework.web.reactive.function.server.RequestPredicates.path;
 import static org.springframework.web.reactive.function.server.RequestPredicates.pathExtension;
@@ -95,6 +98,8 @@ public enum RequestPredicateKind {
      */
     AND {
 
+        private final String implementationClassName = getTypeName(all().and(all()));
+
         private static final String AND_INFIX = " && ";
 
         @Override
@@ -111,7 +116,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(RequestPredicate predicate) {
-            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$AndRequestPredicate");
+            return matches(predicate, implementationClassName);
         }
 
         @Override
@@ -150,6 +155,8 @@ public enum RequestPredicateKind {
      */
     OR {
 
+        private final String implementationClassName = getTypeName(all().or(all()));
+
         private static final String OR_INFIX = " || ";
 
         @Override
@@ -166,7 +173,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(RequestPredicate predicate) {
-            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$OrRequestPredicate");
+            return matches(predicate, implementationClassName);
         }
 
         @Override
@@ -205,7 +212,7 @@ public enum RequestPredicateKind {
      */
     NEGATE {
 
-        private final String implementationClassName = all().negate().getClass().getName();
+        private final String implementationClassName = getTypeName(all().negate());
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
@@ -249,32 +256,45 @@ public enum RequestPredicateKind {
      * @see RequestPredicates.HttpMethodPredicate
      */
     METHOD {
+
+        private final String implementationClassName = getTypeName(method(OPTIONS));
+
+
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
             String method = expression(predicate);
-            HttpMethod httpMethod = HttpMethod.valueOf(method);
+            HttpMethod httpMethod = resolveMethod(method);
             visitor.method(ofSet(httpMethod));
         }
 
         @Override
         public boolean matches(RequestPredicate predicate) {
-            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$HttpMethodPredicate");
+            return matches(predicate, implementationClassName);
         }
 
         @Override
         public boolean matches(String expression) {
-            return HttpMethod.valueOf(expression) != null;
+            return resolveMethod(expression) != null;
         }
 
         @Override
         public RequestPredicate predicate(String expression) {
-            HttpMethod httpMethod = HttpMethod.valueOf(expression);
+            HttpMethod httpMethod = resolveMethod(expression);
             return method(httpMethod);
         }
 
         @Override
         public String expression(RequestPredicate predicate) {
             return predicate.toString();
+        }
+
+        private HttpMethod resolveMethod(String method) {
+            for (HttpMethod httpMethod : HttpMethod.values()) {
+                if (httpMethod.name().equals(method)) {
+                    return httpMethod;
+                }
+            }
+            return null;
         }
     },
 
@@ -284,7 +304,7 @@ public enum RequestPredicateKind {
      */
     PATH {
 
-        private final String implementationClassName = path(SLASH).getClass().getName();
+        private final String implementationClassName = getTypeName(path(SLASH));
 
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
@@ -317,6 +337,9 @@ public enum RequestPredicateKind {
      * @see RequestPredicates#pathExtension(String)
      */
     PATH_EXTENSION {
+
+        private final String implementationClassName = getTypeName(pathExtension(t -> true));
+
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
             String expression = expression(predicate);
@@ -326,7 +349,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(RequestPredicate predicate) {
-            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$PathExtensionPredicate");
+            return matches(predicate, implementationClassName);
         }
 
         @Override
@@ -355,6 +378,9 @@ public enum RequestPredicateKind {
      * @see RequestPredicates.QueryParamPredicate
      */
     QUERY_PARAM {
+
+        private final String implementationClassName = getTypeName(queryParam(EMPTY_STRING, EMPTY_STRING));
+
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
             String expression = expression(predicate);
@@ -366,7 +392,7 @@ public enum RequestPredicateKind {
 
         @Override
         public boolean matches(RequestPredicate predicate) {
-            return matches(predicate, "org.springframework.web.reactive.function.server.RequestPredicates$QueryParamPredicate");
+            return matches(predicate, implementationClassName);
         }
 
         @Override
@@ -506,17 +532,16 @@ public enum RequestPredicateKind {
      */
     HEADERS {
 
-        private static final String CLASS_NAME = "org.springframework.web.reactive.function.server.RequestPredicates$HeadersPredicate";
+        private final String implementationClassName = getTypeName(headers(h -> true));
 
         @Override
         public boolean matches(RequestPredicate predicate) {
-            String className = getTypeName(predicate);
-            return CLASS_NAME.equals(className);
+            return matches(predicate, implementationClassName);
         }
 
         @Override
         public boolean matches(String expression) {
-            return startsWith(expression, CLASS_NAME);
+            return startsWith(expression, implementationClassName);
         }
 
         @Override
