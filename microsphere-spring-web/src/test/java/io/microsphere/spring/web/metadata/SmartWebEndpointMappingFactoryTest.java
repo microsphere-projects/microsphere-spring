@@ -40,7 +40,7 @@ import static org.springframework.util.StreamUtils.copyToString;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
-public class SmartWebEndpointMappingFactoryTest {
+class SmartWebEndpointMappingFactoryTest {
 
     private final WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory();
 
