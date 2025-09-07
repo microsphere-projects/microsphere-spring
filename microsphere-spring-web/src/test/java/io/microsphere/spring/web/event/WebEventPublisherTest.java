@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebEventPublisher
  * @since 1.0.0
  */
-public class WebEventPublisherTest {
+class WebEventPublisherTest {
 
     @Test
     void testBeforeExecute() {
