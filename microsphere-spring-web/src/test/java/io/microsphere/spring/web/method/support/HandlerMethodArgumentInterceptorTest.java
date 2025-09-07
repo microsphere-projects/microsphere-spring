@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * @see HandlerMethodArgumentInterceptor
  * @since 1.0.0
  */
-public class HandlerMethodArgumentInterceptorTest {
+class HandlerMethodArgumentInterceptorTest {
 
     private HandlerMethodArgumentInterceptor interceptor;
 
