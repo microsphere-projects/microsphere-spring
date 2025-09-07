@@ -36,7 +36,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @see AbstractWebEndpointMappingFactory
  * @since 1.0.0
  */
-public class AbstractWebEndpointMappingFactoryTest {
+class AbstractWebEndpointMappingFactoryTest {
 
     private AbstractWebEndpointMappingFactory<String> factory;
 
