@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * {@link AnnotatedInjectionBeanPostProcessor} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
