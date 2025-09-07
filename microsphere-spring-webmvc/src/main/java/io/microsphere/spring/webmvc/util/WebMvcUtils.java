@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.method.HandlerMethod;
@@ -81,8 +82,8 @@ public abstract class WebMvcUtils implements Utils {
     @Nullable
     public static HttpServletRequest getHttpServletRequest(RequestAttributes requestAttributes) {
         HttpServletRequest request = null;
-        if (requestAttributes instanceof ServletWebRequest servletWebRequest) {
-            request = servletWebRequest.getRequest();
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            request = ((ServletRequestAttributes) requestAttributes).getRequest();
         }
         return request;
     }
