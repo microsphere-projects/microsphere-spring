@@ -52,7 +52,7 @@ class TestServletRegistrationTest {
     private TestServletRegistration registration;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         TestServletContext servletContext = new TestServletContext();
         this.registration = (TestServletRegistration) servletContext.addServlet(testServletName, testServletClass);
     }
@@ -97,10 +97,12 @@ class TestServletRegistrationTest {
 
     @Test
     void testGetMappings() {
+        assertTrue(this.registration.getMappings().isEmpty());
     }
 
     @Test
     void testGetRunAsRole() {
+        assertNull(this.registration.getRunAsRole());
     }
 
     @Test
