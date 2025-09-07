@@ -24,8 +24,6 @@ import org.springframework.beans.factory.BeanCreationException;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-;
-
 /**
  * {@link EmbeddedDataBaseBeanDefinitionRegistrar} Test
  *
@@ -33,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see EmbeddedDataBaseBeanDefinitionRegistrar
  * @since 1.0.0
  */
-public class EmbeddedDataBaseBeanDefinitionRegistrarTest {
+class EmbeddedDataBaseBeanDefinitionRegistrarTest {
 
     @Test
     void test() throws Exception {
