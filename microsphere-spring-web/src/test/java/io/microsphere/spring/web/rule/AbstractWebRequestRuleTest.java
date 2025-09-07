@@ -23,6 +23,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.Collection;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.Sets.ofSet;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -95,19 +96,19 @@ class AbstractWebRequestRuleTest {
     // equals() ================================
     @Test
     void testEqualsWithSameInstance() {
-        AbstractWebRequestRule<String> rule = createRule(ofList("a"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
         assertTrue(rule.equals(rule));
     }
 
     @Test
     void testEqualsWithNull() {
-        AbstractWebRequestRule<String> rule = createRule(ofList("a"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
         assertFalse(rule.equals(null));
     }
 
     @Test
     void testEqualsWithDifferentClass() {
-        AbstractWebRequestRule<String> rule = createRule(ofList("a"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
         Object other = new Object();
         assertFalse(rule.equals(other));
     }
@@ -136,8 +137,8 @@ class AbstractWebRequestRuleTest {
 
     @Test
     void testHashCodeForUnequalObjects() {
-        AbstractWebRequestRule<String> rule1 = createRule(ofList("a"), "||");
-        AbstractWebRequestRule<String> rule2 = createRule(ofList("b"), "||");
+        AbstractWebRequestRule<String> rule1 = createRule(ofSet("a"), "||");
+        AbstractWebRequestRule<String> rule2 = createRule(ofSet("b"), "||");
         assertNotEquals(rule1.hashCode(), rule2.hashCode());
     }
 
@@ -150,7 +151,7 @@ class AbstractWebRequestRuleTest {
 
     @Test
     void testToStringWithSingleContent() {
-        AbstractWebRequestRule<String> rule = createRule(ofList("test"), "||");
+        AbstractWebRequestRule<String> rule = createRule(ofSet("test"), "||");
         assertEquals("[test]", rule.toString());
     }
 
