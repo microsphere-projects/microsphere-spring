@@ -28,10 +28,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
+import static io.microsphere.collection.Lists.ofList;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -50,7 +49,7 @@ class EnableTTLCachingTest {
 
     @Bean
     public static CacheManager cacheManager() {
-        Collection<? extends Cache> caches = singletonList(new ConcurrentMapCache("test"));
+        Collection<? extends Cache> caches = ofList(new ConcurrentMapCache("test"));
         SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
         simpleCacheManager.setCaches(caches);
         return simpleCacheManager;
@@ -59,7 +58,7 @@ class EnableTTLCachingTest {
     static class TestData {
         @TTLCacheable(cacheNames = "test", timeUnit = MINUTES, expire = 1)
         public List<String> getNames() {
-            return singletonList("a");
+            return ofList("a");
         }
     }
 
