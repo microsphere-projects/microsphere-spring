@@ -93,7 +93,7 @@ public class StoringRequestBodyArgumentAdviceTest extends WebMvcConfigurerAdapte
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.mockMvc = webAppContextSetup(this.context).build();
         this.servletContext = this.context.getServletContext();
     }
