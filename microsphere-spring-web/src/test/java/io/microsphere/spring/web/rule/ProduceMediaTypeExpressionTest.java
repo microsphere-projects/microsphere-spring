@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * {@link ProduceMediaTypeExpression} Test
  */
-public class ProduceMediaTypeExpressionTest {
+class ProduceMediaTypeExpressionTest {
 
     // Test basic match without negation
     @Test
