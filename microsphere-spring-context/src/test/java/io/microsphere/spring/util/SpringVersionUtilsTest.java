@@ -40,16 +40,12 @@ class SpringVersionUtilsTest {
 
     @Test
     void testGetSpringVersionOnNPE() {
-        assertThrows(NullPointerException.class, () -> {
-            getSpringVersion((Class) null);
-        });
+        assertThrows(NullPointerException.class, () -> getSpringVersion((Class) null));
     }
 
     @Test
     void testGetSpringVersionOnIAE() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            getSpringVersion(String.class);
-        });
+        assertThrows(IllegalArgumentException.class, () -> getSpringVersion(String.class));
     }
 
     @Test
