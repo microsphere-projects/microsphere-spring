@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see TestServletRegistration
  * @since 1.0.0
  */
-public class TestServletRegistrationTest {
+class TestServletRegistrationTest {
 
     private TestServletRegistration registration;
 
