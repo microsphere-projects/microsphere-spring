@@ -29,8 +29,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-;
-
 /**
  * {@link EnableEmbeddedDatabase} Test
  *
@@ -45,7 +43,7 @@ import java.sql.Statement;
         properties = {
                 "username=admin"
         })
-public class EnableEmbeddedDatabaseTest {
+class EnableEmbeddedDatabaseTest {
 
     @Autowired
     @Qualifier("primary")
