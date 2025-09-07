@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see TestServlet
  * @since 1.0.0
  */
-public class TestServletTest {
+class TestServletTest {
 
     private MockHttpServletRequest request;
 
@@ -50,7 +50,7 @@ public class TestServletTest {
     private TestServlet testServlet;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.testServlet = new TestServlet();
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
