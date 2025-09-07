@@ -18,7 +18,7 @@
 package io.microsphere.spring.webmvc.util;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.FREEMARKER_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.GROOVY_MARKUP_VIEW_RESOLVER_BEAN_NAME;
@@ -26,7 +26,7 @@ import static io.microsphere.spring.webmvc.util.ViewResolverUtils.INTERNAL_RESOU
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.MUSTACHE_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.THYMELEAF_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.VELOCITY_VIEW_RESOLVER_BEAN_NAME;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link ViewResolverUtils}
@@ -35,10 +35,10 @@ import static org.junit.Assert.assertEquals;
  * @see ViewResolverUtils
  * @since 1.0.0
  */
-public class ViewResolverUtilsTest {
+class ViewResolverUtilsTest {
 
     @Test
-    public void testConstants() {
+    void testConstants() {
         assertEquals("defaultViewResolver", INTERNAL_RESOURCE_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("velocityViewResolver", VELOCITY_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("thymeleafViewResolver", THYMELEAF_VIEW_RESOLVER_BEAN_NAME);
