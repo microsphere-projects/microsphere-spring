@@ -28,6 +28,10 @@ import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExp
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.MediaType.TEXT_XML;
+import static org.springframework.http.MediaType.parseMediaType;
 
 /**
  * {@link ProduceMediaTypeExpression} Test
@@ -38,15 +42,15 @@ class ProduceMediaTypeExpressionTest {
     @Test
     void testMatchPositive() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain");
-        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
+        List<MediaType> acceptedTypes = ofList(TEXT_PLAIN);
         assertTrue(expr.match(acceptedTypes));
     }
 
     // Test negation case
     @Test
     void testNegatedExpression() {
-        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression(MediaType.TEXT_PLAIN, true);
-        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
+        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression(TEXT_PLAIN, true);
+        List<MediaType> acceptedTypes = ofList(TEXT_PLAIN);
         assertFalse(expr.match(acceptedTypes));
     }
 
@@ -54,7 +58,7 @@ class ProduceMediaTypeExpressionTest {
     @Test
     void testMatchWithParameters() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;charset=utf-8");
-        MediaType acceptedType = MediaType.parseMediaType("text/plain;charset=UTF-8");
+        MediaType acceptedType = parseMediaType("text/plain;charset=UTF-8");
         assertTrue(expr.match(ofList(acceptedType)));
     }
 
@@ -62,7 +66,7 @@ class ProduceMediaTypeExpressionTest {
     @Test
     void testParameterMismatch() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;version=1");
-        MediaType acceptedType = MediaType.parseMediaType("text/plain;version=2");
+        MediaType acceptedType = parseMediaType("text/plain;version=2");
         assertFalse(expr.match(ofList(acceptedType)));
     }
 
@@ -81,7 +85,7 @@ class ProduceMediaTypeExpressionTest {
 
         assertEquals(1, result.size());
         assertTrue(result.get(0).isNegated());
-        assertEquals(MediaType.APPLICATION_JSON, result.get(0).getMediaType());
+        assertEquals(APPLICATION_JSON, result.get(0).getMediaType());
     }
 
     // Test combined produces and headers
@@ -97,7 +101,7 @@ class ProduceMediaTypeExpressionTest {
         for (ProduceMediaTypeExpression expr : result) {
             types.add(expr.getMediaType());
         }
-        assertTrue(types.contains(MediaType.APPLICATION_JSON));
-        assertTrue(types.contains(MediaType.TEXT_XML));
+        assertTrue(types.contains(APPLICATION_JSON));
+        assertTrue(types.contains(TEXT_XML));
     }
 }
