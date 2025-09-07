@@ -1,11 +1,8 @@
 package io.microsphere.spring.webmvc.interceptor;
 
 import io.microsphere.annotation.Nullable;
-import io.microsphere.spring.webmvc.util.WebMvcUtils;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,40 +52,5 @@ public abstract class MethodHandlerInterceptor implements HandlerInterceptor {
 
     protected boolean supports(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         return true;
-    }
-
-    /**
-     * Gets the {@link HandlerMethod} method parameter
-     *
-     * @param request       {@link ServletRequest}
-     * @param handlerMethod {@link HandlerMethod}
-     * @return non-null
-     */
-    protected Object[] getHandlerMethodArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
-        return WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
-    }
-
-    /**
-     * Gets the value returned by the {@link HandlerMethod} method
-     *
-     * @param request       {@link ServletRequest}
-     * @param handlerMethod {@link HandlerMethod}
-     * @param <T>           Method return value type
-     * @return {@link HandlerMethod} Method return value
-     */
-    protected <T> T getHandlerMethodReturnValue(HttpServletRequest request, HandlerMethod handlerMethod) {
-        return WebMvcUtils.getHandlerMethodReturnValue(request, handlerMethod);
-    }
-
-    /**
-     * Gets the {@link RequestBody @RequestBody} method parameter from the {@link ServletRequest} context
-     *
-     * @param request       {@link ServletRequest}
-     * @param handlerMethod {@link HandlerMethod}
-     * @param <T>           {@link RequestBody @RequestBody} Method parameter Types
-     * @return {@link RequestBody @RequestBody} Method argument if present, otherwise <code>null<code>
-     */
-    protected <T> T getHandlerMethodRequestBodyArgument(HttpServletRequest request, HandlerMethod handlerMethod) {
-        return WebMvcUtils.getHandlerMethodRequestBodyArgument(request, handlerMethod);
     }
 }
