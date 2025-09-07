@@ -64,7 +64,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         StoringRequestBodyArgumentAdviceTest.class
 })
 @EnableWebMvc
-public class StoringRequestBodyArgumentAdviceTest implements WebMvcConfigurer {
+class StoringRequestBodyArgumentAdviceTest implements WebMvcConfigurer {
 
     private static final String USER_ATTRIBUTE_NAME = "user";
 
@@ -93,7 +93,7 @@ public class StoringRequestBodyArgumentAdviceTest implements WebMvcConfigurer {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.mockMvc = webAppContextSetup(this.context).build();
         this.servletContext = this.context.getServletContext();
     }
