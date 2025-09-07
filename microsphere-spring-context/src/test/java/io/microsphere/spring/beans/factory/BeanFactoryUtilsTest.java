@@ -88,7 +88,7 @@ class BeanFactoryUtilsTest {
 
         this.applicationContext.refresh();
 
-        BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
+        BaseTestBean testBean = getOptionalBean(this.applicationContext, "baseTestBean", BaseTestBean.class);
 
         assertNotNull(testBean);
 
@@ -101,15 +101,15 @@ class BeanFactoryUtilsTest {
 
         this.applicationContext.refresh();
 
-        BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
+        BaseTestBean testBean = getOptionalBean(this.applicationContext, "baseTestBean", BaseTestBean.class);
 
         assertNull(testBean);
 
-        testBean = getOptionalBean(applicationContext, "1", BaseTestBean.class);
+        testBean = getOptionalBean(this.applicationContext, "1", BaseTestBean.class);
 
         assertNull(testBean);
 
-        testBean = getOptionalBean(applicationContext, null, BaseTestBean.class);
+        testBean = getOptionalBean(this.applicationContext, null, BaseTestBean.class);
 
         assertNull(testBean);
     }
@@ -121,21 +121,21 @@ class BeanFactoryUtilsTest {
 
         this.applicationContext.refresh();
 
-        List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
+        List<BaseTestBean> testBeans = getBeans(this.applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
         assertEquals(1, testBeans.size());
 
         assertEquals("Hello,World", testBeans.get(0).getName());
 
-        testBeans = getBeans(applicationContext, null, BaseTestBean.class);
+        testBeans = getBeans(this.applicationContext, null, BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
 
-        testBeans = getBeans(applicationContext, of((String) null), BaseTestBean.class);
+        testBeans = getBeans(this.applicationContext, of((String) null), BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
 
-        testBeans = getBeans(applicationContext, of("abc"), BaseTestBean.class);
+        testBeans = getBeans(this.applicationContext, of("abc"), BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
     }
@@ -145,7 +145,7 @@ class BeanFactoryUtilsTest {
 
         this.applicationContext.refresh();
 
-        List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
+        List<BaseTestBean> testBeans = getBeans(this.applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
         assertTrue(testBeans.isEmpty());
 
