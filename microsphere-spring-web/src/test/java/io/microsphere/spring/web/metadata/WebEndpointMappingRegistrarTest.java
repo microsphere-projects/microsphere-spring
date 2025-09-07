@@ -19,8 +19,8 @@ package io.microsphere.spring.web.metadata;
 
 
 import io.microsphere.spring.test.web.servlet.TestServletContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class WebEndpointMappingRegistrarTest {
 
     private AnnotationConfigWebApplicationContext context;
 
-    @Before
+    @BeforeEach
     void setUp() throws Exception {
         TestServletContext servletContext = new TestServletContext();
 
