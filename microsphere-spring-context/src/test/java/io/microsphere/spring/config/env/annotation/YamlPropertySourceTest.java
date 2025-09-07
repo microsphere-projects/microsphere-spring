@@ -26,11 +26,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.Objects;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -67,13 +67,13 @@ class YamlPropertySourceTest {
         write(1, "my.name2 : " + name);
 
         while (!Objects.equals(name, environment.getProperty("my.name2"))) {
-            Thread.sleep(1000 * 1L);
+            Thread.sleep((long) 1000);
         }
     }
 
     private void write(int resourceIndex, String content) throws Exception {
         Resource resource = resources[resourceIndex];
         File file = resource.getFile();
-        Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
+        Files.write(file.toPath(), content.getBytes(UTF_8));
     }
 }
