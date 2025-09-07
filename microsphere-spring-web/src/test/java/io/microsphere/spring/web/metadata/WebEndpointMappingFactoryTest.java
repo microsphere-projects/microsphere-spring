@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebEndpointMappingFactory
  * @since 1.0.0
  */
-public class WebEndpointMappingFactoryTest {
+class WebEndpointMappingFactoryTest {
 
     private WebEndpointMappingFactory factory;
 
