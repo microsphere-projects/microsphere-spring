@@ -21,9 +21,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,7 +38,7 @@ public class ProduceMediaTypeExpressionTest {
     @Test
     void testMatchPositive() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain");
-        List<MediaType> acceptedTypes = Collections.singletonList(MediaType.TEXT_PLAIN);
+        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
         assertTrue(expr.match(acceptedTypes));
     }
 
@@ -46,7 +46,7 @@ public class ProduceMediaTypeExpressionTest {
     @Test
     void testNegatedExpression() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression(MediaType.TEXT_PLAIN, true);
-        List<MediaType> acceptedTypes = Collections.singletonList(MediaType.TEXT_PLAIN);
+        List<MediaType> acceptedTypes = ofList(MediaType.TEXT_PLAIN);
         assertFalse(expr.match(acceptedTypes));
     }
 
@@ -55,7 +55,7 @@ public class ProduceMediaTypeExpressionTest {
     void testMatchWithParameters() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;charset=utf-8");
         MediaType acceptedType = MediaType.parseMediaType("text/plain;charset=UTF-8");
-        assertTrue(expr.match(Collections.singletonList(acceptedType)));
+        assertTrue(expr.match(ofList(acceptedType)));
     }
 
     // Test parameter mismatch
@@ -63,7 +63,7 @@ public class ProduceMediaTypeExpressionTest {
     void testParameterMismatch() {
         ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;version=1");
         MediaType acceptedType = MediaType.parseMediaType("text/plain;version=2");
-        assertFalse(expr.match(Collections.singletonList(acceptedType)));
+        assertFalse(expr.match(ofList(acceptedType)));
     }
 
     // Test empty input handling
