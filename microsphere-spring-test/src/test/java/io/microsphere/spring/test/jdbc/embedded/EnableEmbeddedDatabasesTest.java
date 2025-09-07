@@ -29,8 +29,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-;
-
 /**
  * {@link EnableEmbeddedDatabases} Test
  *
@@ -41,7 +39,7 @@ import java.sql.Statement;
 @ContextConfiguration(classes = EnableEmbeddedDatabasesTest.class)
 @EnableEmbeddedDatabase(dataSource = "primary", primary = true)
 @EnableEmbeddedDatabase(dataSource = "secondary")
-public class EnableEmbeddedDatabasesTest {
+class EnableEmbeddedDatabasesTest {
 
     @Autowired
     @Qualifier("primary")
