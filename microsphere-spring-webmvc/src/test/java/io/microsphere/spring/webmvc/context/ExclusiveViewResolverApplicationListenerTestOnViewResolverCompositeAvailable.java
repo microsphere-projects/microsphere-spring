@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -34,11 +33,12 @@ import org.springframework.web.servlet.view.ViewResolverComposite;
 
 import java.util.List;
 
+import static io.microsphere.spring.webmvc.util.ViewResolverUtils.VIEW_RESOLVER_COMPOSITE_BEAN_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link ExclusiveViewResolverApplicationListener} Test
+ * {@link ExclusiveViewResolverApplicationListener} Test on {@link ViewResolverComposite} available
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ExclusiveViewResolverApplicationListener
@@ -47,9 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
+        ViewResolverConfig.class,
         ExclusiveViewResolverApplicationListener.class,
-        ExclusiveViewResolverApplicationListenerTestOnViewResolverCompositeAvailable.class,
-        ExclusiveViewResolverApplicationListenerTestOnViewResolverCompositeAvailable.Config.class
+        ExclusiveViewResolverApplicationListenerTestOnViewResolverCompositeAvailable.class
 })
 @TestPropertySource(
         properties = {
@@ -65,18 +65,9 @@ class ExclusiveViewResolverApplicationListenerTestOnViewResolverCompositeAvailab
     @Autowired
     private BeanNameViewResolver beanNameViewResolver;
 
-    static class Config {
-        @Bean
-        public BeanNameViewResolver beanNameViewResolver() {
-            return new BeanNameViewResolver();
-        }
-
-    }
-
     @Test
     void test() {
-        ViewResolver viewResolver = this.context.getBean("mvcViewResolver", ViewResolver.class);
-        ViewResolverComposite composite = (ViewResolverComposite) viewResolver;
+        ViewResolverComposite composite = this.context.getBean(VIEW_RESOLVER_COMPOSITE_BEAN_NAME, ViewResolverComposite.class);
         List<ViewResolver> viewResolvers = composite.getViewResolvers();
         assertEquals(1, viewResolvers.size());
         assertTrue(viewResolvers.contains(this.beanNameViewResolver));
