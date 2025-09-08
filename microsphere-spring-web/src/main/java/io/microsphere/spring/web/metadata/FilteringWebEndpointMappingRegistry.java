@@ -21,6 +21,7 @@ import io.microsphere.filter.FilterOperator;
 
 import java.util.List;
 
+import static io.microsphere.filter.FilterOperator.OR;
 import static io.microsphere.lang.function.Streams.filterList;
 import static io.microsphere.util.ArrayUtils.asArray;
 
@@ -36,11 +37,11 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
 
     protected static final Filter<WebEndpointMapping> DEFAULT_FILTER = e -> true;
 
-    protected static final FilterOperator DEFAULT_FILTER_OPERATOR = FilterOperator.OR;
+    protected static final FilterOperator DEFAULT_FILTER_OPERATOR = OR;
 
-    private Filter<WebEndpointMapping> compositeFilter = DEFAULT_FILTER;
+    private Filter<WebEndpointMapping> filter;
 
-    private FilterOperator filterOperator = DEFAULT_FILTER_OPERATOR;
+    private FilterOperator filterOperator;
 
     @Override
     public final int register(Iterable<WebEndpointMapping> webEndpointMappings) {
@@ -57,7 +58,7 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
     }
 
     protected List<WebEndpointMapping> filterWebEndpointMappings(Iterable<WebEndpointMapping> webEndpointMappings) {
-        return filterList(webEndpointMappings, getCompositeFilter()::accept);
+        return filterList(webEndpointMappings, getFilter()::accept);
     }
 
     public void setFilterOperator(FilterOperator filterOperator) {
@@ -69,14 +70,14 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
     }
 
     public void setWebEndpointMappingFilters(WebEndpointMappingFilter... filters) {
-        compositeFilter = getFilterOperator().createFilter(filters);
+        filter = getFilterOperator().createFilter(filters);
     }
 
-    public Filter<WebEndpointMapping> getCompositeFilter() {
-        if (compositeFilter == null) {
+    public Filter<WebEndpointMapping> getFilter() {
+        if (filter == null) {
             return DEFAULT_FILTER;
         }
-        return compositeFilter;
+        return filter;
     }
 
     public FilterOperator getFilterOperator() {

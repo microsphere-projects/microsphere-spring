@@ -26,10 +26,10 @@ import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Set;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static java.util.Collections.emptySet;
 
 /**
  * {@link P6DataSource} {@link BeanPostProcessor}
@@ -70,6 +70,6 @@ public class P6DataSourceBeanPostProcessor extends GenericBeanPostProcessorAdapt
 
     @Override
     public void setEnvironment(Environment environment) {
-        this.excludedDataSourceBeanNames = environment.getProperty(EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME, Set.class, Collections.emptySet());
+        this.excludedDataSourceBeanNames = environment.getProperty(EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME, Set.class, emptySet());
     }
 }

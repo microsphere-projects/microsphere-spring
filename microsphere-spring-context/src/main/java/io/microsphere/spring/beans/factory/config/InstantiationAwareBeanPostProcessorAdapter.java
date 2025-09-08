@@ -26,10 +26,22 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 
 /**
- * The Adapter class of {@link SmartInstantiationAwareBeanPostProcessor} is compatible with
- * Spring [3.x,)
+ * The Adapter class of {@link SmartInstantiationAwareBeanPostProcessor} is compatible with Spring [3.x,)
  * {@linkplain org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter} was deprecated
  * since Spring 5.3, and removed since Spring 6.x.
+ * This class serves as a base for implementing custom bean post-processing logic
+ * during instantiation.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
+ *     @Override
+ *     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
+ *         // Custom logic to execute before bean instantiation.
+ *         return super.postProcessBeforeInstantiation(beanClass, beanName);
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see SmartInstantiationAwareBeanPostProcessor

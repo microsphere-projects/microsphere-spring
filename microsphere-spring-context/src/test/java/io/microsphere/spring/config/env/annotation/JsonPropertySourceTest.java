@@ -40,13 +40,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         "${value}"
 })
 @TestPropertySource(properties = "value=classpath*:/META-INF/test/json/*.json")
-public class JsonPropertySourceTest {
+class JsonPropertySourceTest {
 
     @Value("${my.name}")
     private String myName;
 
     @Test
-    public void test() {
+    void test() {
         assertEquals("mercyblitz", myName);
     }
 }

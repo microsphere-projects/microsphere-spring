@@ -17,7 +17,7 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 /**
- * {@link EnableConfigurationBeanBinding} Test
+ * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -26,7 +26,7 @@ package io.microsphere.spring.beans.factory.annotation;
 import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
-public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBeanBindingTest {
+class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBeanBindingTest {
 
     @Bean
     public ConfigurationBeanCustomizer customizer() {
@@ -60,7 +60,7 @@ public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurat
     }
 
     @Test
-    public void testUser() {
+    void testUser() {
         User user = context.getBean("m", User.class);
         assertEquals("mercyblitz", user.getName());
         assertEquals(19, user.getAge());

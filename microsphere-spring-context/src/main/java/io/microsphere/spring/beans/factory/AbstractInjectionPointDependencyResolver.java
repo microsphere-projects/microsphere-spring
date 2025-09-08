@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.BeansException;
@@ -37,22 +38,75 @@ import java.util.function.Supplier;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.asClass;
+import static io.microsphere.reflect.TypeUtils.isClass;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArguments;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
-import static org.springframework.core.MethodParameter.forParameter;
+import static io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter.get;
+import static io.microsphere.spring.core.MethodParameterUtils.forParameter;
+import static java.util.Collections.addAll;
 
 /**
- * Abstract {@link InjectionPointDependencyResolver}
+ * Abstract base class for implementing {@link InjectionPointDependencyResolver}.
+ * <p>
+ * This class provides a foundation for resolving dependencies at injection points within Spring-managed beans.
+ * It handles common tasks such as bean factory awareness, dependency type resolution, and logging using the
+ * {@link Logger} interface.
+ * </p>
+ *
+ * <h3>Key Responsibilities</h3>
+ * <ul>
+ *     <li>Tracking and resolving dependencies based on injection points (fields, methods, constructors).</li>
+ *     <li>Filtering resolvable dependency types via the configured {@link ResolvableDependencyTypeFilter}.</li>
+ *     <li>Providing consistent logging capabilities through the injected logger.</li>
+ *     <li>Supporting custom resolution logic by allowing subclasses to implement specific strategies.</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Basic Implementation</h4>
+ * <pre>{@code
+ * public class MyDependencyResolver extends AbstractInjectionPointDependencyResolver {
+ *     // Custom implementation details here
+ * }
+ * }</pre>
+ *
+ * <h4>Resolving Dependencies from a Field</h4>
+ * <pre>{@code
+ * public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+ *     String dependentBeanName = resolveDependentBeanNameByName(field, beanFactory);
+ *     if (dependentBeanName == null) {
+ *         resolveDependentBeanNamesByType(field::getGenericType, beanFactory, dependentBeanNames);
+ *     } else {
+ *         dependentBeanNames.add(dependentBeanName);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h4>Resolving Dependencies from a Method Parameter</h4>
+ * <pre>{@code
+ * public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
+ *     String dependentBeanName = resolveDependentBeanNameByName(parameter, beanFactory);
+ *     if (dependentBeanName == null) {
+ *         resolveDependentBeanNamesByType(parameter::getParameterizedType, beanFactory, dependentBeanNames);
+ *     } else {
+ *         dependentBeanNames.add(dependentBeanName);
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 public abstract class AbstractInjectionPointDependencyResolver implements InjectionPointDependencyResolver, BeanFactoryAware {
 
-    private final Logger logger = getLogger(getClass());
+    protected final Logger logger = getLogger(getClass());
 
-    private ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
+    @Nonnull
+    protected ResolvableDependencyTypeFilter resolvableDependencyTypeFilter;
+
+    @Nonnull
+    protected AutowireCandidateResolver autowireCandidateResolver;
 
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
@@ -102,31 +156,25 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
         }
     }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.resolvableDependencyTypeFilter = get(beanFactory);
+        this.autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
+    }
+
     protected String resolveDependentBeanNameByName(Field field, ConfigurableListableBeanFactory beanFactory) {
-        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true, false);
-        return resolveDependentBeanNameByName(dependencyDescriptor, autowireCandidateResolver);
+        return resolveDependentBeanNameByName(dependencyDescriptor);
     }
 
     protected String resolveDependentBeanNameByName(Parameter parameter, ConfigurableListableBeanFactory beanFactory) {
-        AutowireCandidateResolver autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
-        return resolveDependentBeanNameByName(dependencyDescriptor, autowireCandidateResolver);
+        return resolveDependentBeanNameByName(dependencyDescriptor);
     }
 
-    protected String resolveDependentBeanNameByName(DependencyDescriptor dependencyDescriptor,
-                                                    AutowireCandidateResolver autowireCandidateResolver) {
-        if (autowireCandidateResolver == null) {
-            return null;
-        }
+    protected String resolveDependentBeanNameByName(DependencyDescriptor dependencyDescriptor) {
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
-        return suggestedValue instanceof String value ? value : null;
+        return suggestedValue instanceof String ? (String) suggestedValue : null;
     }
 
     protected void resolveDependentBeanNamesByType(Supplier<Type> typeSupplier, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
@@ -136,15 +184,12 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             return;
         }
         String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
-        for (int i = 0; i < beanNames.length; i++) {
-            String beanName = beanNames[i];
-            dependentBeanNames.add(beanName);
-        }
+        addAll(dependentBeanNames, beanNames);
     }
 
-    protected AutowireCandidateResolver getAutowireCandidateResolver(ConfigurableListableBeanFactory beanFactory) {
+    private AutowireCandidateResolver getAutowireCandidateResolver(BeanFactory beanFactory) {
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
-        return dbf == null ? null : dbf.getAutowireCandidateResolver();
+        return dbf.getAutowireCandidateResolver();
     }
 
     private Class<?> resolveDependentType(Supplier<Type> typeSupplier) {
@@ -153,9 +198,13 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
     }
 
     protected Class<?> resolveDependentType(Type type) {
-        Class klass = asClass(type);
-        Class dependentType = klass;
-        if (isParameterizedType(type)) {
+        if (isClass(type)) {
+            Class klass = (Class) type;
+            if (klass.isArray()) {
+                return resolveDependentType(klass.getComponentType());
+            }
+            return klass;
+        } else if (isParameterizedType(type)) {
             // ObjectProvider<SomeBean> == arguments == [SomeBean.class]
             // ObjectFactory<SomeBean> == arguments == [SomeBean.class]
             // Optional<SomeBean> == arguments == [SomeBean.class]
@@ -163,28 +212,11 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
             // Map<String,SomeBean> == arguments == [SomeBean.class]
             // List<SomeBean> == arguments= [SomeBean.class]
             // Set<SomeBean> == arguments= [SomeBean.class]
-            List<Type> arguments = resolveActualTypeArguments(type, klass);
-            int argumentsSize = arguments.size();
-            if (argumentsSize > 0) {
-                // Last argument
-                Type argumentType = arguments.get(argumentsSize - 1);
-                Class<?> argumentClass = asClass(argumentType);
-                if (argumentClass == null) {
-                    dependentType = resolveDependentType(argumentType);
-                } else {
-                    if (argumentClass.isArray()) {
-                        return argumentClass.getComponentType();
-                    } else {
-                        return argumentClass;
-                    }
-                }
-            }
+            List<Type> arguments = resolveActualTypeArguments(type, asClass(type));
+            // Last argument
+            Type argumentType = arguments.get(arguments.size() - 1);
+            return resolveDependentType(argumentType);
         }
-        return dependentType;
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.resolvableDependencyTypeFilter = ResolvableDependencyTypeFilter.getSingleton(beanFactory);
+        return null;
     }
 }

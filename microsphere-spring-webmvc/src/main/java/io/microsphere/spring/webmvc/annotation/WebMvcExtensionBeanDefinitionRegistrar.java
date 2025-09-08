@@ -19,10 +19,11 @@ package io.microsphere.spring.webmvc.annotation;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
+import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
-import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
+import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -31,12 +32,11 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.Arrays;
-
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
+import static io.microsphere.util.ArrayUtils.arrayEquals;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ArrayUtils.of;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
@@ -80,7 +80,8 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     private void registerWebEndpointMappingRegistrar(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
-            registerBeanDefinition(registry, WebEndpointMappingRegistrar.class);
+            registerBeanDefinition(registry, ServletWebEndpointMappingResolver.class);
+            registerBeanDefinition(registry, HandlerMappingWebEndpointMappingResolver.class);
         }
         if (logger.isTraceEnabled()) {
             logger.trace("@EnableWebMvcExtension.registerWebEndpointMappings = {}", registerWebEndpointMappings);
@@ -131,7 +132,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
     }
 
     private void registerInterceptors(BeanDefinitionRegistry registry, Class<? extends HandlerInterceptor>[] interceptorClasses) {
-        if (Arrays.equals(ALL_HANDLER_INTERCEPTOR_CLASSES, interceptorClasses)) {
+        if (arrayEquals(ALL_HANDLER_INTERCEPTOR_CLASSES, interceptorClasses)) {
             return;
         }
         for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {

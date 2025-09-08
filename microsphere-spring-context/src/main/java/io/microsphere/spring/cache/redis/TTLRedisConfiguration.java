@@ -1,4 +1,4 @@
-///*
+/// *
 // * Licensed to the Apache Software Foundation (ASF) under one or more
 // * contributor license agreements.  See the NOTICE file distributed with
 // * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@
 //import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 //import static io.microsphere.util.ClassLoaderUtils.isPresent;
 //
-///**
+/// **
 // * Redis Configuration with TTL features
 // *
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>

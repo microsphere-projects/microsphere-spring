@@ -18,6 +18,7 @@ package io.microsphere.spring.web.annotation;
 
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
+import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -45,7 +46,7 @@ public class WebExtensionBeanDefinitionRegistrar implements ImportBeanDefinition
 
         AnnotationAttributes attributes = getAttributes(metadata);
 
-        registerWebEndpointMappingRegistry(attributes, registry);
+        registerWebEndpointMappings(attributes, registry);
 
         registerDelegatingHandlerMethodAdvice(attributes, registry);
 
@@ -57,10 +58,11 @@ public class WebExtensionBeanDefinitionRegistrar implements ImportBeanDefinition
         return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
     }
 
-    private void registerWebEndpointMappingRegistry(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+    private void registerWebEndpointMappings(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
             registerBeanDefinition(registry, SimpleWebEndpointMappingRegistry.class);
+            registerBeanDefinition(registry, WebEndpointMappingRegistrar.class);
         }
     }
 

@@ -16,9 +16,9 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;

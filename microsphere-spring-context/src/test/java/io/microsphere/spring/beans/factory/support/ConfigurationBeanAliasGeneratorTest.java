@@ -7,13 +7,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConfigurationBeanAliasGeneratorTest {
+class ConfigurationBeanAliasGeneratorTest {
 
     private final Class<?> clazz = Foo.class;
     private final String beanName = "bean";
 
     @Test
-    public void testClassNameAndBeanNameConnect() {
+    void testClassNameAndBeanNameConnect() {
         ConfigurationBeanAliasGenerator generator = new DefaultConfigurationBeanAliasGenerator();
         String prefix = "any";
 
@@ -25,9 +25,8 @@ public class ConfigurationBeanAliasGeneratorTest {
 
     }
 
-
     @Test
-    public void testPrefixAndBeanNameConnectUseLine() {
+    void testPrefixAndBeanNameConnectUseLine() {
         JoinAliasGenerator generator = new HyphenAliasGenerator();
         Map<String, String> table = new HashMap<>();
         table.put("users", "users-bean");
@@ -40,8 +39,9 @@ public class ConfigurationBeanAliasGeneratorTest {
         });
 
     }
+
     @Test
-    public void testPrefixAndBeanNameConnectUseUnderscore() {
+    void testPrefixAndBeanNameConnectUseUnderscore() {
         JoinAliasGenerator generator = new UnderScoreJoinAliasGenerator();
 
         Map<String, String> table = new HashMap<>();
@@ -55,7 +55,6 @@ public class ConfigurationBeanAliasGeneratorTest {
         });
 
     }
-
 
     static class Foo {
     }

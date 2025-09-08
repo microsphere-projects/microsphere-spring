@@ -22,24 +22,48 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
+import static io.microsphere.spring.cache.intereptor.TTLCacheResolver.BEAN_NAME;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 /**
- * {@link CachePut @CachePut} with TTL
+ * A variant of {@link CachePut} that supports time-to-live (TTL) settings for cache entries.
+ *
+ * <p>This annotation can be used on types and methods to indicate that the result of
+ * invoking a method should be cached with a specific time-to-live duration. Unlike the
+ * standard {@link CachePut}, this annotation allows specifying an expiration time after
+ * which the cached value will be automatically invalidated.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * @TTLCachePut(cacheNames = "userCache", expire = 10, timeUnit = TimeUnit.SECONDS)
+ * public User getUser(String id) {
+ *     return findUserById(id);
+ * }
+ * }</pre>
+ *
+ * <p>In the example above, the result of the {@code getUser} method will be stored in the
+ * cache named "userCache" and will expire after 10 seconds. Subsequent calls will re-cache
+ * the result after expiration.
+ *
+ * <p>When using this annotation, the cache resolver is set to a TTL-aware implementation,
+ * such as {@link TTLCacheResolver}, which ensures that the specified TTL is respected.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE, METHOD})
+@Retention(RUNTIME)
 @Inherited
 @Documented
-@CachePut(cacheResolver = TTLCacheResolver.BEAN_NAME)
+@CachePut(cacheResolver = BEAN_NAME)
 public @interface TTLCachePut {
 
     /**
@@ -151,5 +175,5 @@ public @interface TTLCachePut {
     /**
      * The {@link TimeUnit timeunit} of expire
      */
-    TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
+    TimeUnit timeUnit() default MILLISECONDS;
 }

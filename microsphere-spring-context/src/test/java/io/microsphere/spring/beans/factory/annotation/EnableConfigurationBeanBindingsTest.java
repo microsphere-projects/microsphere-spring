@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
 )
 @Configuration
-public class EnableConfigurationBeanBindingsTest extends AbstractEnableConfigurationBeanBindingTest {
+class EnableConfigurationBeanBindingsTest extends AbstractEnableConfigurationBeanBindingTest {
 
     @Test
-    public void testUser() {
+    void testUser() {
         User user = context.getBean("m", User.class);
         assertEquals("mercyblitz", user.getName());
         assertEquals(34, user.getAge());

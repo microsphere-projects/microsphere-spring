@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.handler;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -33,9 +34,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +42,7 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.of;
 
 /**
@@ -90,7 +90,7 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         try {
             methodHandle = findVirtual(RequestMappingHandlerMapping.class, methodName, parameterTypes);
         } catch (Throwable e) {
-            logger.error("The method {}{} can't be found in the {}", methodName, Arrays.toString(parameterTypes), declaredClass.getName(), e);
+            logger.error("The method {}{} can't be found in the {}", methodName, arrayToString(parameterTypes), declaredClass.getName(), e);
         }
         getHandlerExecutionChainMethodHandle = methodHandle;
     }

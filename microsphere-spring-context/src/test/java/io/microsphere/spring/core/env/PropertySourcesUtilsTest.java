@@ -15,7 +15,6 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProp
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getMapPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -47,12 +47,12 @@ import static org.springframework.core.convert.support.DefaultConversionService.
  * @since 2017.01.13
  */
 @SuppressWarnings("unchecked")
-public class PropertySourcesUtilsTest {
+class PropertySourcesUtilsTest {
 
     private ConfigurableEnvironment environment;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty("test-key", "test-value");
         mockEnvironment.setProperty("test-key2", "test-value2");
@@ -61,7 +61,7 @@ public class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testGetPropertySource() {
+    void testGetPropertySource() {
         PropertySource propertySource = getPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME, PropertySource.class);
         assertNotNull(propertySource);
 
@@ -88,7 +88,7 @@ public class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testGetMapPropertySource() {
+    void testGetMapPropertySource() {
         PropertySource propertySource = getMapPropertySource(environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME);
         assertNotNull(propertySource);
 
@@ -103,7 +103,7 @@ public class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testFindConfiguredPropertySource() {
+    void testFindConfiguredPropertySource() {
         PropertySource propertySource = findConfiguredPropertySource(environment, "test-key");
         assertNotNull(propertySource);
 
@@ -112,7 +112,7 @@ public class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testFindConfiguredPropertySourceName() {
+    void testFindConfiguredPropertySourceName() {
         String propertySourceName = findConfiguredPropertySourceName(environment, "test-key");
         assertNotNull(propertySourceName, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME);
 
@@ -121,20 +121,20 @@ public class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testResolveCommaDelimitedValueToList() {
+    void testResolveCommaDelimitedValueToList() {
         List<String> values = resolveCommaDelimitedValueToList(environment, "${test-key},${test-key2}");
         assertEquals("test-value", values.get(0));
         assertEquals("test-value2", values.get(1));
     }
 
     @Test
-    public void testGetConversionService() {
+    void testGetConversionService() {
         ConversionService conversionService = getConversionService(environment);
         assertEquals(getSharedInstance(), conversionService);
     }
 
     @Test
-    public void testFindPropertyNamesByPrefix() {
+    void testFindPropertyNamesByPrefix() {
         Set<String> propertyNames = findPropertyNamesByPrefix(environment, "test-");
         assertEquals(2, propertyNames.size());
         assertTrue(propertyNames.contains("test-key"));
@@ -142,7 +142,7 @@ public class PropertySourcesUtilsTest {
     }
 
     @Test
-    public void testGetSubProperties() {
+    void testGetSubProperties() {
 
         ConfigurableEnvironment environment = new AbstractEnvironment() {
         };
@@ -160,7 +160,7 @@ public class PropertySourcesUtilsTest {
 
         Map<String, Object> result = getSubProperties(propertySources, "user");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         source.put("age", "31");
         source.put("user.name", "Mercy");
@@ -183,16 +183,16 @@ public class PropertySourcesUtilsTest {
 
         result = getSubProperties(propertySources, "");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         result = getSubProperties(propertySources, "no-exists");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
     }
 
     @Test
-    public void testDefaultProperties() {
+    void testDefaultProperties() {
         MockEnvironment environment = new MockEnvironment();
         addDefaultProperties(environment, "key-1", "value-1", "key-2", "value-2");
 

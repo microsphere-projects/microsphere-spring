@@ -19,28 +19,23 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.0.9</microsphere-java.version>
+        <microsphere-java.version>0.1.5</microsphere-java.version>
         <servlet-api.version>6.1.0</servlet-api.version>
+        <websocket-api.version>2.2.0</websocket-api.version>
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
         <slf4j.version>2.0.16</slf4j.version>
+        <p6spy.version>3.9.1</p6spy.version>
         <logback.version>1.5.15</logback.version>
         <junit.version>5.11.4</junit.version>
         <mockito.version>5.14.2</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
+        <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
+        <hamcrest.version>3.0</hamcrest.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Spring Framework BOM -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Jackson BOM -->
             <dependency>
@@ -63,6 +58,26 @@
                 <groupId>jakarta.servlet</groupId>
                 <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet-api.version}</version>
+            </dependency>
+
+            <!-- Jakarta WebSocket Client API -->
+            <dependency>
+                <groupId>jakarta.websocket</groupId>
+                <artifactId>jakarta.websocket-client-api</artifactId>
+                <version>${websocket-api.version}</version>
+            </dependency>
+
+            <!-- Jakarta WebSocket Server API -->
+            <dependency>
+                <groupId>jakarta.websocket</groupId>
+                <artifactId>jakarta.websocket-api</artifactId>
+                <version>${websocket-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>p6spy</groupId>
+                <artifactId>p6spy</artifactId>
+                <version>${p6spy.version}</version>
             </dependency>
 
             <!-- JUnit BOM -->
@@ -90,6 +105,20 @@
                 <version>${jsonassert.version}</version>
             </dependency>
 
+            <!-- Hamcrest -->
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+
+            <!-- SQLite -->
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>${sqlite-jdbc.version}</version>
+            </dependency>
+
             <!-- Slf4j -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -102,6 +131,21 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <!-- Spring Framework BOM -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- Microsphere Dependencies -->
@@ -127,7 +171,7 @@
         <profile>
             <id>spring-framework-6.1</id>
             <properties>
-                <spring.version>6.1.16</spring.version>
+                <spring.version>6.1.21</spring.version>
             </properties>
         </profile>
 
@@ -137,7 +181,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.version>6.2.1</spring.version>
+                <spring.version>6.2.10</spring.version>
             </properties>
         </profile>
     </profiles>

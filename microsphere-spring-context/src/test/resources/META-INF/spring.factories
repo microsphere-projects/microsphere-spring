@@ -1,6 +1,9 @@
-io.microsphere.spring.test.Bean=\
-io.microsphere.spring.test.TestBean,\
-io.microsphere.spring.test.TestBean2
+io.microsphere.spring.beans.test.Bean=\
+io.microsphere.spring.beans.test.TestBean,\
+io.microsphere.spring.beans.test.TestBean2
+
+io.microsphere.spring.test.domain.User=\
+io.microsphere.spring.test.domain.User
 
 io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
 io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\
@@ -16,3 +19,6 @@ io.microsphere.spring.core.env.ThrowableErrorLoggingEnvironmentListener
 
 io.microsphere.spring.core.env.PropertyResolverListener=\
 io.microsphere.spring.config.CollectingConfigurationPropertyListener
+
+org.springframework.test.context.ContextCustomizerFactory=\
+io.microsphere.spring.context.event.AbstractEventListenerTest.Factory

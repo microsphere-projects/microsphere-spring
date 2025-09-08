@@ -23,6 +23,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
@@ -38,35 +39,47 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see ApplicationContextUtils
  * @since 1.0.0
  */
-public class ApplicationContextUtilsTest {
+class ApplicationContextUtilsTest {
 
     private GenericApplicationContext context;
 
     @BeforeEach
-    public void init() {
+    void setUp() {
         context = new GenericApplicationContext();
         context.refresh();
     }
 
     @AfterEach
-    public void destroy() {
+    void tearDown() {
         context.close();
     }
 
     @Test
-    public void testAsConfigurableApplicationContext() {
+    void testAsConfigurableApplicationContext() {
         ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
         assertSame(context, applicationContext);
     }
 
     @Test
-    public void testAsApplicationContext() {
+    void testAsConfigurableApplicationContextWithContext() {
+        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
+        assertSame(context, applicationContext);
+    }
+
+    @Test
+    void testAsConfigurableApplicationContextWithObject() {
+        ResourceLoader resourceLoader = this.context;
+        assertSame(this.context, asConfigurableApplicationContext(resourceLoader));
+    }
+
+    @Test
+    void testAsApplicationContext() {
         ApplicationContext applicationContext = asApplicationContext(context);
         assertSame(context, applicationContext);
     }
 
     @Test
-    public void testGetApplicationContextAwareProcessor() {
+    void testGetApplicationContextAwareProcessor() {
         BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(context);
         assertEquals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS, beanPostProcessor.getClass());
     }

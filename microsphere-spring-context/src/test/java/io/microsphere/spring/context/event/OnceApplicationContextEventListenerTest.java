@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see OnceApplicationContextEventListener
  * @since 1.0.0
  */
-public class OnceApplicationContextEventListenerTest {
+class OnceApplicationContextEventListenerTest {
 
     @Test
-    public void test() {
+    void test() {
 
         for (int levels = 1; levels < 10; levels++) {
             testOnceApplicationContextEventListener(levels, true);
@@ -91,7 +91,7 @@ public class OnceApplicationContextEventListenerTest {
         }
 
 
-        private Map<EventObject, AtomicInteger> eventsHandledCount = new LinkedHashMap<EventObject, AtomicInteger>();
+        private final Map<EventObject, AtomicInteger> eventsHandledCount = new LinkedHashMap<EventObject, AtomicInteger>();
 
         @Override
         protected void onApplicationContextEvent(ApplicationContextEvent event) {

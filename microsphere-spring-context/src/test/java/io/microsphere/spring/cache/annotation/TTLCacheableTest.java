@@ -1,4 +1,4 @@
-///*
+/// *
 // * Licensed to the Apache Software Foundation (ASF) under one or more
 // * contributor license agreements.  See the NOTICE file distributed with
 // * this work for additional information regarding copyright ownership.
@@ -40,7 +40,7 @@
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.junit.jupiter.api.Assertions.assertNotEquals;
 //
-///**
+/// **
 // * {@link TTLCacheable} Test
 // *
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -52,7 +52,7 @@
 //})
 //@EnableTTLCaching(proxyTargetClass = true)
 //@EnableRedisTest
-//public class TTLCacheableTest {
+//class TTLCacheableTest {
 //
 //    @Bean
 //    public static CacheManager simpleCacheManager() {
@@ -87,7 +87,7 @@
 //    private CachingData testData;
 //
 //    @Test
-//    public void test() throws InterruptedException {
+//    void test() throws InterruptedException {
 //        int value = testData.randomInt(100);
 //        assertEquals(value, testData.randomInt(100));
 //

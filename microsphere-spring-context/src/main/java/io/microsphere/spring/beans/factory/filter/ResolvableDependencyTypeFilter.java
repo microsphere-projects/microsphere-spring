@@ -29,7 +29,20 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvable
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSingleton;
 
 /**
- * A class to filter {@link ConfigurableListableBeanFactory#registerResolvableDependency(Class, Object) Resolvable Dependency Type}
+ * A {@link Filter} implementation that evaluates whether a given class is a resolvable dependency type.
+ * <p>
+ * This class is used to determine if a specified class can be resolved as a dependency by checking it against a set of known resolvable dependency types.
+ * It is particularly useful in Spring contexts where certain types need to be filtered based on their resolvability.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * ConfigurableListableBeanFactory beanFactory = ...; // Obtain from Spring context
+ * ResolvableDependencyTypeFilter filter = new ResolvableDependencyTypeFilter(beanFactory);
+ *
+ * Class<?> dependencyType = MyService.class;
+ * boolean isResolvable = filter.accept(dependencyType);  // Returns true if MyService is a resolvable dependency
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -49,17 +62,17 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
         register(beanFactory);
     }
 
-
     private void register(SingletonBeanRegistry registry) {
         registerSingleton(registry, BEAN_NAME, this);
     }
 
-    public static ResolvableDependencyTypeFilter getSingleton(BeanFactory beanFactory) {
-        return getSingleton((SingletonBeanRegistry) beanFactory);
+    public static ResolvableDependencyTypeFilter get(BeanFactory beanFactory) {
+        return get(asDefaultListableBeanFactory(beanFactory));
     }
 
-    public static ResolvableDependencyTypeFilter getSingleton(SingletonBeanRegistry registry) {
-        return (ResolvableDependencyTypeFilter) registry.getSingleton(BEAN_NAME);
+    static ResolvableDependencyTypeFilter get(DefaultListableBeanFactory beanFactory) {
+        ResolvableDependencyTypeFilter filter = (ResolvableDependencyTypeFilter) beanFactory.getSingleton(BEAN_NAME);
+        return filter == null ? new ResolvableDependencyTypeFilter(beanFactory) : filter;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package io.microsphere.spring.beans.factory.config;
 
-import io.microsphere.spring.test.Bean;
-import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.beans.test.Bean;
+import io.microsphere.spring.beans.test.TestBean;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeansException;
 
@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see GenericBeanPostProcessorAdapter
- * @since 2017.01.22
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-public class GenericBeanPostProcessorAdapterTest {
+class GenericBeanPostProcessorAdapterTest {
 
     @Test
-    public void testPostProcessBeforeInitialization() {
+    void testPostProcessBeforeInitialization() {
 
         TestBean testBean = new TestBean();
 
@@ -47,7 +47,7 @@ public class GenericBeanPostProcessorAdapterTest {
     }
 
     @Test
-    public void testPostProcessAfterInitialization() {
+    void testPostProcessAfterInitialization() {
 
         TestBean testBean = new TestBean();
 
@@ -84,7 +84,7 @@ public class GenericBeanPostProcessorAdapterTest {
     }
 
     @Test
-    public void testPostProcess() {
+    void testPostProcess() {
 
         GenericBeanPostProcessorAdapter<Bean> beanPostProcessor = new GenericBeanPostProcessorAdapter<Bean>() {
         };
@@ -96,7 +96,7 @@ public class GenericBeanPostProcessorAdapterTest {
     }
 
     @Test
-    public void testGetBeanType() {
+    void testGetBeanType() {
 
         assertEquals(Bean.class, new GenericBeanPostProcessorAdapter<Bean>() {
         }.getBeanType());

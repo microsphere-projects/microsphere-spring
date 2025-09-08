@@ -26,6 +26,11 @@ import java.lang.reflect.Method;
  * {@link BeanListener} Adapter
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanListener
+ * @see BeanListeners
  * @since 1.0.0
  */
 public interface BeanListenerAdapter extends BeanListener {

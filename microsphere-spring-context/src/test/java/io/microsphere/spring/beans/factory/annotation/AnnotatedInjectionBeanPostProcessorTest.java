@@ -16,45 +16,50 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Child;
+import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Parent;
+import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.UserHolder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link AnnotatedInjectionBeanPostProcessor} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-        AnnotationInjectedBeanPostProcessorTest.TestConfiguration.class,
+        AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.class,
         AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
-public class AnnotatedInjectionBeanPostProcessorTest {
+class AnnotatedInjectionBeanPostProcessorTest {
 
     @Autowired
     @Qualifier("parent")
-    private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.Parent parent;
+    private Parent parent;
 
     @Autowired
     @Qualifier("child")
-    private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.Child child;
+    private Child child;
 
     @Autowired
-    private AnnotationInjectedBeanPostProcessorTest.TestConfiguration.UserHolder userHolder;
+    private UserHolder userHolder;
 
     @Autowired
     private AnnotatedInjectionBeanPostProcessor processor;
@@ -69,7 +74,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
     private GenericChild genericChild;
 
     @Test
-    public void testCustomizedAnnotationBeanPostProcessor() {
+    void testCustomizedAnnotationBeanPostProcessor() {
 
         assertEquals(environment, processor.getEnvironment());
         assertEquals(beanFactory.getBeanClassLoader(), processor.getClassLoader());
@@ -81,7 +86,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
     }
 
     @Test
-    public void testReferencedUser() {
+    void testReferencedUser() {
         assertEquals("mercyblitz", parent.user.getName());
         assertEquals(32, parent.user.getAge());
         assertEquals(parent.user, parent.parentUser);
@@ -103,6 +108,71 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
     @Import(GenericChild.class)
     public static class GenericConfiguration {
+
+    }
+
+    static class TestConfiguration {
+
+        static class Parent {
+
+            @Referenced
+            User parentUser;
+
+            User user;
+
+            @Referenced
+            public void setUser(User user) {
+                this.user = user;
+            }
+        }
+
+        static class Child extends Parent {
+
+            @Referenced
+            User childUser;
+
+            @Referenced
+            static User invalidUser;
+
+
+            @Referenced
+            static void init(User user) {
+            }
+
+
+        }
+
+        static class UserHolder {
+
+            User user;
+        }
+
+
+        @Bean
+        public Parent parent() {
+            return new Parent();
+        }
+
+        @Bean
+        public Child child() {
+            return new Child();
+        }
+
+
+        @Bean
+        public User user() {
+            User user = new User();
+            user.setName("mercyblitz");
+            user.setAge(32);
+            return user;
+        }
+
+        @Bean
+        public UserHolder userHolder(User user) {
+            UserHolder userHolder = new UserHolder();
+            userHolder.user = user;
+            return userHolder;
+        }
 
     }
 

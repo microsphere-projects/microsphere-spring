@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -23,16 +24,16 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
-import static org.springframework.util.MimeTypeUtils.ALL;
+import static java.util.Collections.sort;
+import static org.springframework.http.MediaType.ALL;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 
@@ -51,15 +52,14 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
  * @see WebRequestRule
  * @see org.springframework.web.servlet.mvc.condition.ProducesRequestCondition
  * @see org.springframework.web.reactive.result.condition.ProducesRequestCondition
- * @since 1.0.066
+ * @since 1.0.0
  */
 public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaTypeExpression> {
 
     private static final ContentNegotiationManager DEFAULT_CONTENT_NEGOTIATION_MANAGER =
             new ContentNegotiationManager();
 
-    private static final List<ProduceMediaTypeExpression> MEDIA_TYPE_ALL_LIST =
-            Collections.singletonList(new ProduceMediaTypeExpression(MediaType.ALL_VALUE));
+    // private static final List<ProduceMediaTypeExpression> MEDIA_TYPE_ALL_LIST = ofList(new ProduceMediaTypeExpression(ALL_VALUE));
 
     private static final String MEDIA_TYPES_ATTRIBUTE = WebRequestProducesRule.class.getName() + ".MEDIA_TYPES";
 
@@ -79,7 +79,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
                                   @Nullable ContentNegotiationManager manager) {
         this.expressions = parseExpressions(produces, headers);
         if (this.expressions.size() > 1) {
-            Collections.sort(this.expressions);
+            sort(this.expressions);
         }
         this.contentNegotiationManager = manager != null ? manager : DEFAULT_CONTENT_NEGOTIATION_MANAGER;
     }
@@ -112,18 +112,13 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
         List<ProduceMediaTypeExpression> result = getMatchingExpressions(acceptedMediaTypes);
         if (isNotEmpty(result)) {
             return false;
-        } else if (ALL.isPresentIn(acceptedMediaTypes)) {
-            return false;
-        }
-        return true;
+        } else return !isPresentIn(ALL, acceptedMediaTypes);
     }
 
-    @Nullable
     private List<ProduceMediaTypeExpression> getMatchingExpressions(List<MediaType> acceptedMediaTypes) {
-        List<ProduceMediaTypeExpression> result = null;
+        List<ProduceMediaTypeExpression> result = newArrayList(this.expressions.size());
         for (ProduceMediaTypeExpression expression : this.expressions) {
             if (expression.match(acceptedMediaTypes)) {
-                result = result != null ? result : new ArrayList<>();
                 result.add(expression);
             }
         }

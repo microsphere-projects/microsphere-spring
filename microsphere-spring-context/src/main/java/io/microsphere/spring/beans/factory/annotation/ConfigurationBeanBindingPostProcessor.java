@@ -33,20 +33,51 @@ import org.springframework.core.convert.ConversionService;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingRegistrar.ENABLE_CONFIGURATION_BINDING_CLASS;
+import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 import static org.springframework.util.ClassUtils.getUserClass;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
- * The {@link BeanPostProcessor} class to bind the configuration bean
+ * A {@link BeanPostProcessor} implementation that binds configuration beans with their corresponding properties.
+ *
+ * <p>This class processes beans annotated or registered as configuration beans, applying the relevant property values
+ * during initialization. It also supports customization through a list of {@link ConfigurationBeanCustomizer} instances,
+ * which can modify the configuration beans after binding.</p>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Basic Binding</h4>
+ * <pre>{@code
+ * @Component
+ * public class MyConfig {
+ *     private String appName;
+ *
+ *     // Getters and setters
+ * }
+ *
+ * // In Spring configuration:
+ * configurationProperties.put("appName", "MyApplication");
+ * }</pre>
+ *
+ * <h4>Customizing Configuration Beans</h4>
+ * <pre>{@code
+ * public class MyCustomizer implements ConfigurationBeanCustomizer {
+ *     @Override
+ *     public void customize(String beanName, Object bean) {
+ *         if (bean instanceof MyConfig) {
+ *             ((MyConfig) bean).setAppName("CustomizedApp");
+ *         }
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -129,7 +160,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     public void setConfigurationBeanCustomizers(Collection<ConfigurationBeanCustomizer> configurationBeanCustomizers) {
         List<ConfigurationBeanCustomizer> customizers = new ArrayList<ConfigurationBeanCustomizer>(configurationBeanCustomizers);
         sort(customizers);
-        this.configurationBeanCustomizers = Collections.unmodifiableList(customizers);
+        this.configurationBeanCustomizers = unmodifiableList(customizers);
     }
 
     private BeanDefinition getNullableBeanDefinition(String beanName) {

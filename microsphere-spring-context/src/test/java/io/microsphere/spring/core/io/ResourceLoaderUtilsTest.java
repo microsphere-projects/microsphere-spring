@@ -16,11 +16,15 @@
  */
 package io.microsphere.spring.core.io;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import static io.microsphere.spring.core.io.ResourceLoaderUtils.clearResourceLoadersCache;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourcePatternResolver;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static java.lang.Thread.currentThread;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -31,21 +35,47 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see 1.0.0
  * @since 1.0.0
  */
-public class ResourceLoaderUtilsTest {
+class ResourceLoaderUtilsTest {
 
-    @Test
-    public void testGetResourceLoader() {
-        assertNotNull(getResourceLoader());
-        assertSame(getResourceLoader(), getResourceLoader(null));
-        assertSame(getResourceLoader(), getResourceLoader(getDefaultClassLoader()));
-        assertSame(getResourceLoader(), getResourceLoader(Thread.currentThread().getContextClassLoader()));
+    @BeforeEach
+    void setUp() {
+        clearResourceLoadersCache();
     }
 
     @Test
-    public void testGetResourcePatternResolver() {
+    void testGetResourceLoader() {
+        assertNotNull(getResourceLoader());
+    }
+
+    @Test
+    void testGetResourceLoaderWithDefaultClassLoader() {
+        assertSame(getResourceLoader(), getResourceLoader(getDefaultClassLoader()));
+    }
+
+    @Test
+    void testGetResourceLoaderWithContextClassLoader() {
+        assertSame(getResourceLoader(), getResourceLoader(currentThread().getContextClassLoader()));
+    }
+
+    @Test
+    void testGetResourceLoaderWithNullClassLoader() {
+        assertSame(getResourceLoader(), getResourceLoader(null));
+    }
+
+    @Test
+    void testGetResourcePatternResolver() {
         assertNotNull(getResourcePatternResolver());
+        assertNotNull(getResourcePatternResolver());
+    }
+
+    @Test
+    void testGetResourcePatternResolverWithResourceLoader() {
+        assertSame(getResourcePatternResolver(new PathMatchingResourcePatternResolver()), getResourcePatternResolver());
+    }
+
+    @Test
+    void testGetResourcePatternResolverWithNullResourceLoader() {
         assertNotNull(getResourcePatternResolver(null));
         assertSame(getResourcePatternResolver(), getResourcePatternResolver(null));
-        assertSame(getResourcePatternResolver(), getResourcePatternResolver(getResourcePatternResolver()));
     }
 }

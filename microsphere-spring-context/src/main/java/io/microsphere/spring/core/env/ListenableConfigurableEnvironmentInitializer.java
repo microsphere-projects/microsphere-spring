@@ -25,6 +25,10 @@ import static io.microsphere.spring.core.env.ListenableConfigurableEnvironment.s
  * The Initializer of {@link ListenableConfigurableEnvironment} based on {@link ApplicationContextInitializer}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see ListenableConfigurableEnvironment
+ * @see EnvironmentListener
+ * @see ProfileListener
+ * @see PropertyResolverListener
  * @see ApplicationContextInitializer
  * @since 1.0.0
  */

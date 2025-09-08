@@ -21,25 +21,25 @@ import io.microsphere.io.event.FileChangedEvent;
 import io.microsphere.io.event.FileChangedListener;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.PropertySourceFactory;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.PathMatcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static io.microsphere.lang.function.ThrowableAction.execute;
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
 
 /**
@@ -51,23 +51,31 @@ import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
  * @since 1.0.0
  */
 public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource,
-        PropertySourceExtensionAttributes<ResourcePropertySource>>
-        implements ResourceLoaderAware, BeanClassLoaderAware, DisposableBean {
+        PropertySourceExtensionAttributes<ResourcePropertySource>> implements InitializingBean, ResourceLoaderAware,
+        BeanClassLoaderAware, DisposableBean {
 
     private ResourcePatternResolver resourcePatternResolver;
+
+    private PathMatcher pathMatcher;
 
     private StandardFileWatchService fileWatchService;
 
     @Override
+    public void afterPropertiesSet() throws Exception {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getResourceLoader());
+        this.resourcePatternResolver = resolver;
+        this.pathMatcher = resolver.getPathMatcher();
+    }
+
+    @Override
     protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
-                                          String propertySourceName, String resourceValue)
-            throws Throwable {
-        ResourcePatternResolver resourcePatternResolver = this.resourcePatternResolver;
-        if (resourcePatternResolver == null) {
-            resourcePatternResolver = new PathMatchingResourcePatternResolver(getResourceLoader());
-            this.resourcePatternResolver = resourcePatternResolver;
-        }
-        return resourcePatternResolver.getResources(resourceValue);
+                                          String propertySourceName, String resourceValue) throws Throwable {
+        return this.resourcePatternResolver.getResources(resourceValue);
+    }
+
+    @Override
+    public boolean isResourcePattern(String resourceValue) {
+        return pathMatcher.isPattern(resourceValue);
     }
 
     @Override
@@ -86,7 +94,7 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             if (isFileBasedResource(resource)) {
                 File resourceFile = resource.getFile();
                 listenerAdapter.register(resourceFile, propertySourceResource.getResourceValue());
-                fileWatchService.watch(resourceFile, listenerAdapter, FileChangedEvent.Kind.MODIFIED);
+                fileWatchService.watch(resourceFile, listenerAdapter);
             }
         }
 
@@ -94,19 +102,55 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     }
 
+
     class ListenerAdapter implements FileChangedListener {
 
         private final ResourcePropertySourcesRefresher refresher;
 
         private final Map<File, String> fileToResourceValues;
 
+        private final Set<String> resourceValues;
+
         ListenerAdapter(ResourcePropertySourcesRefresher refresher, int initialCapacity) {
             this.refresher = refresher;
             this.fileToResourceValues = new HashMap<>(initialCapacity);
+            this.resourceValues = new HashSet<>(initialCapacity);
         }
 
         public void register(File file, String resourceValue) {
-            fileToResourceValues.put(file, resourceValue);
+            this.fileToResourceValues.put(file, resourceValue);
+            this.resourceValues.add(resourceValue);
+        }
+
+        @Override
+        public void onFileCreated(FileChangedEvent event) {
+            // new file created
+            File resourceFile = event.getFile();
+            for (String resourceValue : resourceValues) {
+                if (isResourcePattern(resourceValue)) {
+                    boolean found = execute(() -> {
+                        Resource[] resources = resourcePatternResolver.getResources(resourceValue);
+                        Resource resource = findResource(resourceFile, resources);
+                        if (resource != null) {
+                            refresher.refresh(resourceValue, resource);
+                            return true;
+                        }
+                        return false;
+                    });
+                    if (found) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        private Resource findResource(File resourceFile, Resource[] resources) throws IOException {
+            for (Resource resource : resources) {
+                if (resourceFile.equals(resource.getFile())) {
+                    return resource;
+                }
+            }
+            return null;
         }
 
         @Override
@@ -114,49 +158,18 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             File resourceFile = event.getFile();
             String resourceValue = fileToResourceValues.get(resourceFile);
             if (resourceValue != null) {
-                Resource resource = new FileSystemResource(resourceFile);
-                try {
-                    refresher.refresh(resourceValue, resource);
-                } catch (Throwable e) {
-                    throw new RuntimeException(e);
-                }
+                refreshResource(resourceValue, resourceFile);
             }
-        }
-    }
-
-    class Listener implements FileChangedListener {
-
-        private final PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes;
-
-        private final CompositePropertySource compositePropertySource;
-
-        private final Comparator<Resource> resourceComparator;
-
-        private final PropertySourceFactory factory;
-
-        Listener(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes, CompositePropertySource propertySource, Comparator<Resource> resourceComparator, PropertySourceFactory factory) {
-            this.extensionAttributes = extensionAttributes;
-            this.compositePropertySource = propertySource;
-            this.resourceComparator = resourceComparator;
-            this.factory = factory;
         }
 
         @Override
-        public void onFileModified(FileChangedEvent event) {
-            // PropertySource file has been modified
-            ConfigurableEnvironment environment = getEnvironment();
-            MutablePropertySources propertySources = environment.getPropertySources();
-            File resourceFile = event.getFile();
+        public void onFileDeleted(FileChangedEvent event) {
+            onFileModified(event);
+        }
+
+        void refreshResource(String resourceValue, File resourceFile) {
             Resource resource = new FileSystemResource(resourceFile);
-            String encoding = extensionAttributes.getEncoding();
-            EncodedResource encodedResource = new EncodedResource(resource, encoding);
-            String propertySourceName = resourceFile.getAbsolutePath();
-            try {
-                PropertySource propertySource = factory.createPropertySource(propertySourceName, encodedResource);
-                propertySources.addFirst(propertySource);
-            } catch (IOException e) {
-                logger.error("TODO message", e);
-            }
+            execute(() -> refresher.refresh(resourceValue, resource));
         }
     }
 

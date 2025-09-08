@@ -16,7 +16,8 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import javax.annotation.Nonnull;
+import io.microsphere.annotation.Nonnull;
+
 import java.util.Optional;
 
 import static org.springframework.core.ResolvableType.forClass;
@@ -28,6 +29,7 @@ import static org.springframework.core.ResolvableType.forClass;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
+@FunctionalInterface
 public interface WebEndpointMappingFactory<E> {
 
     /**

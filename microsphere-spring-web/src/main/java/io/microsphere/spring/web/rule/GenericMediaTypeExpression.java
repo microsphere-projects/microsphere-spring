@@ -16,14 +16,30 @@
 
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.annotation.Nullable;
+import static org.springframework.http.MediaType.SPECIFICITY_COMPARATOR;
+import static org.springframework.http.MediaType.parseMediaType;
 
 /**
- * Supports media type expressions as described in:
+ * A {@link MediaTypeExpression} implementation that supports matching
+ * against a specific media type, with optional negation.
+ *
+ * <p>This class is used to represent media type expressions as described
+ * in Spring's {@link RequestMapping} annotations, such as those used in
  * {@link RequestMapping#consumes()} and {@link RequestMapping#produces()}.
+ *
+ * <p>Examples of media type expressions include:
+ * <ul>
+ *     <li>{@code "application/json"} - Matches JSON content.</li>
+ *     <li>{@code "!text/plain"} - Matches anything <em>except</em> plain text.</li>
+ *     <li>{@code "application/*+xml"} - Matches XML-based content types such as
+ *         {@code "application/xml"} or {@code "application/atom+xml"}.</li>
+ * </ul>
+ *
+ * <p>Instances of this class are immutable and can be safely shared.
  *
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
@@ -42,7 +58,7 @@ public class GenericMediaTypeExpression implements MediaTypeExpression, Comparab
         } else {
             this.isNegated = false;
         }
-        this.mediaType = MediaType.parseMediaType(expression);
+        this.mediaType = parseMediaType(expression);
     }
 
     GenericMediaTypeExpression(MediaType mediaType, boolean negated) {
@@ -63,7 +79,7 @@ public class GenericMediaTypeExpression implements MediaTypeExpression, Comparab
 
     @Override
     public int compareTo(GenericMediaTypeExpression other) {
-        return MediaType.SPECIFICITY_COMPARATOR.compare(this.getMediaType(), other.getMediaType());
+        return SPECIFICITY_COMPARATOR.compare(this.getMediaType(), other.getMediaType());
     }
 
     @Override

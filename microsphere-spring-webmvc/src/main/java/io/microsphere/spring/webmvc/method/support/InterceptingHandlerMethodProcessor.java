@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.method.support;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -23,6 +24,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
@@ -40,7 +42,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,10 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
-import static io.microsphere.spring.webmvc.util.WebMvcUtils.getHandlerMethodArguments;
-import static java.util.Collections.emptyList;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
@@ -79,12 +78,9 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private final Map<MethodParameter, ReturnTypeContext> returnTypeContextsCache = new HashMap<>(256);
 
-    @Nullable
-    private HandlerMethodAdvice handlerMethodAdvice;
+    private List<HandlerMethodAdvice> handlerMethodAdvices;
 
-    private List<HandlerMethodArgumentResolverAdvice> advices = emptyList();
-
-    private int advicesSize = 0;
+    private List<HandlerMethodArgumentResolverAdvice> handlerMethodArgumentResolverAdvices;
 
     static class MethodParameterContext {
 
@@ -107,8 +103,8 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     @Override
     protected void onApplicationContextEvent(WebEndpointMappingsReadyEvent event) {
         ApplicationContext context = event.getApplicationContext();
-        initAdvices(context);
-        initHandlerMethodAdvice(context);
+        initHandlerMethodAdvices(context);
+        initHandlerMethodArgumentResolverAdvices(context);
         initRequestMappingHandlerAdapters(event, context);
     }
 
@@ -163,13 +159,12 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        // TODO NOTHING
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
     }
 
     @Override
@@ -179,14 +174,13 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         }
     }
 
-    private void initAdvices(ApplicationContext context) {
+    private void initHandlerMethodArgumentResolverAdvices(ApplicationContext context) {
         List<HandlerMethodArgumentResolverAdvice> advices = getSortedBeans(context, HandlerMethodArgumentResolverAdvice.class);
-        this.advices = advices;
-        this.advicesSize = advices.size();
+        this.handlerMethodArgumentResolverAdvices = advices;
     }
 
-    private void initHandlerMethodAdvice(ApplicationContext context) {
-        this.handlerMethodAdvice = getOptionalBean(context, HandlerMethodAdvice.class);
+    private void initHandlerMethodAdvices(ApplicationContext context) {
+        this.handlerMethodAdvices = getSortedBeans(context, HandlerMethodAdvice.class);
     }
 
     private void initRequestMappingHandlerAdapters(WebEndpointMappingsReadyEvent event, ApplicationContext context) {
@@ -268,45 +262,42 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     private void beforeResolveArgument(MethodParameter parameter, MethodParameterContext methodParameterContext,
                                        ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
                                        WebDataBinderFactory binderFactory) throws Exception {
-        for (int i = 0; i < advicesSize; i++) {
-            HandlerMethodArgumentResolverAdvice advice = advices.get(i);
+        for (int i = 0; i < handlerMethodArgumentResolverAdvices.size(); i++) {
+            HandlerMethodArgumentResolverAdvice advice = handlerMethodArgumentResolverAdvices.get(i);
             advice.beforeResolveArgument(parameter, mavContainer, webRequest, binderFactory);
         }
 
-        HandlerMethodAdvice facade = this.handlerMethodAdvice;
-        if (facade != null) {
-            HandlerMethod handlerMethod = methodParameterContext.method;
-            facade.beforeResolveArgument(parameter, handlerMethod, webRequest);
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
+            HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
+            advice.beforeResolveArgument(parameter, methodParameterContext.method, webRequest);
         }
     }
 
     private void afterResolveArgument(MethodParameter parameter, Object argument, MethodParameterContext methodParameterContext,
                                       ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
                                       WebDataBinderFactory binderFactory) throws Exception {
-        for (int i = 0; i < advicesSize; i++) {
-            HandlerMethodArgumentResolverAdvice advice = advices.get(i);
+        for (int i = 0; i < handlerMethodArgumentResolverAdvices.size(); i++) {
+            HandlerMethodArgumentResolverAdvice advice = handlerMethodArgumentResolverAdvices.get(i);
             advice.afterResolveArgument(parameter, argument, mavContainer, webRequest, binderFactory);
         }
 
-        HandlerMethodAdvice facade = this.handlerMethodAdvice;
-        if (facade != null) {
-            HandlerMethod handlerMethod = methodParameterContext.method;
-            facade.afterResolveArgument(parameter, argument, handlerMethod, webRequest);
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
+            HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
+            advice.afterResolveArgument(parameter, argument, methodParameterContext.method, webRequest);
         }
     }
 
-
     private void beforeExecute(MethodParameter parameter, MethodParameterContext methodParameterContext,
                                NativeWebRequest webRequest, Object argument) throws Exception {
-        HandlerMethodAdvice facade = this.handlerMethodAdvice;
-        if (facade != null) {
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
+            HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
             int parameterCount = methodParameterContext.parameterCount;
             Object[] arguments = resolveArguments(parameter, argument, webRequest);
 
             int parameterIndex = parameter.getParameterIndex();
             if (parameterIndex == parameterCount - 1) {
                 HandlerMethod handlerMethod = methodParameterContext.method;
-                facade.beforeExecuteMethod(handlerMethod, arguments, webRequest);
+                advice.beforeExecuteMethod(handlerMethod, arguments, webRequest);
             }
         }
     }
@@ -333,9 +324,9 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments,
                               @Nullable Object returnValue, @Nullable Exception error) throws Exception {
-        HandlerMethodAdvice facade = this.handlerMethodAdvice;
-        if (facade != null) {
-            facade.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
+            HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
+            advice.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
         }
     }
 
@@ -344,7 +335,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private Object[] getArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
-        return getHandlerMethodArguments(request, handlerMethod);
+        return WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
     }
 
     private Object[] resolveArguments(MethodParameter parameter, Object argument, NativeWebRequest webRequest) {

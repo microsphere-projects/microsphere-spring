@@ -17,6 +17,11 @@ import java.lang.reflect.Type;
 public abstract class RequestBodyAdviceAdapter implements RequestBodyAdvice {
 
     @Override
+    public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+        return false;
+    }
+
+    @Override
     public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
         return inputMessage;
     }

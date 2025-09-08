@@ -16,6 +16,9 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.ConfigurationProperty;
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -26,9 +29,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
+import org.springframework.core.env.PropertyResolver;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,14 +41,18 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static java.lang.Boolean.parseBoolean;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
  * {@link ConfigurableEnvironment} with intercepting features
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see ConfigurableEnvironment
  * @see ListenableConfigurableEnvironmentInitializer
+ * @see EnvironmentListener
+ * @see ProfileListener
+ * @see PropertyResolverListener
+ * @see ConfigurableEnvironment
  * @since 1.0.0
  */
 public class ListenableConfigurableEnvironment implements ConfigurableEnvironment {
@@ -58,21 +64,28 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      */
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-environment.";
 
+    private static final String DEFAULT_ENABLED = "false";
+
     /**
      * The property name of {@link ListenableConfigurableEnvironment} to be 'enabled'
      */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_ENABLED,
+            description = "Whether to enable the ListenableConfigurableEnvironment"
+    )
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
-
-    /**
-     * The {@link MethodHandle} of {@link ConfigurablePropertyResolver#setEscapeCharacter(Character)} since Spring Framework 6.2
-     */
-    @Nullable
-    private static final MethodHandle SET_ESCAPE_CHARACTER_METHOD_HANDLE = findVirtual(ConfigurablePropertyResolver.class, "setEscapeCharacter", Character.class);
 
     /**
      * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
      */
-    public static final boolean ENABLED_PROPERTY_VALUE = false;
+    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
+
+    /**
+     * The {@link MethodHandle} of {@linkplain PropertyResolver#getPropertyAsClass(String, Class)} was removed from Spring Framework 5.0
+     */
+    @Nullable
+    private static final MethodHandle SET_ESCAPE_CHARACTER_METHOD_HANDLE = findVirtual(ConfigurablePropertyResolver.class, "setEscapeCharacter", Character.class);
 
     private final ConfigurableEnvironment delegate;
 
@@ -296,23 +309,23 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
 
     @Override
     public void setPlaceholderPrefix(String placeholderPrefix) {
-        forEachEnvironmentListener(listener -> listener.beforeSetPlaceholderPrefix(delegate, placeholderPrefix));
+        forEachPropertyResolverListener(listener -> listener.beforeSetPlaceholderPrefix(delegate, placeholderPrefix));
         delegate.setPlaceholderPrefix(placeholderPrefix);
-        forEachEnvironmentListener(listener -> listener.afterSetPlaceholderPrefix(delegate, placeholderPrefix));
+        forEachPropertyResolverListener(listener -> listener.afterSetPlaceholderPrefix(delegate, placeholderPrefix));
     }
 
     @Override
     public void setPlaceholderSuffix(String placeholderSuffix) {
-        forEachEnvironmentListener(listener -> listener.beforeSetPlaceholderSuffix(delegate, placeholderSuffix));
+        forEachPropertyResolverListener(listener -> listener.beforeSetPlaceholderSuffix(delegate, placeholderSuffix));
         delegate.setPlaceholderSuffix(placeholderSuffix);
-        forEachEnvironmentListener(listener -> listener.afterSetPlaceholderSuffix(delegate, placeholderSuffix));
+        forEachPropertyResolverListener(listener -> listener.afterSetPlaceholderSuffix(delegate, placeholderSuffix));
     }
 
     @Override
     public void setValueSeparator(String valueSeparator) {
-        forEachEnvironmentListener(listener -> listener.beforeSetValueSeparator(delegate, valueSeparator));
+        forEachPropertyResolverListener(listener -> listener.beforeSetValueSeparator(delegate, valueSeparator));
         delegate.setValueSeparator(valueSeparator);
-        forEachEnvironmentListener(listener -> listener.afterSetValueSeparator(delegate, valueSeparator));
+        forEachPropertyResolverListener(listener -> listener.afterSetValueSeparator(delegate, valueSeparator));
     }
 
     /**
@@ -336,23 +349,23 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
 
     @Override
     public void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders) {
-        forEachEnvironmentListener(listener -> listener.beforeSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
+        forEachPropertyResolverListener(listener -> listener.beforeSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
         delegate.setIgnoreUnresolvableNestedPlaceholders(ignoreUnresolvableNestedPlaceholders);
-        forEachEnvironmentListener(listener -> listener.afterSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
+        forEachPropertyResolverListener(listener -> listener.afterSetIgnoreUnresolvableNestedPlaceholders(delegate, ignoreUnresolvableNestedPlaceholders));
     }
 
     @Override
     public void setRequiredProperties(String... requiredProperties) {
-        forEachEnvironmentListener(listener -> listener.beforeSetRequiredProperties(delegate, requiredProperties));
+        forEachPropertyResolverListener(listener -> listener.beforeSetRequiredProperties(delegate, requiredProperties));
         delegate.setRequiredProperties(requiredProperties);
-        forEachEnvironmentListener(listener -> listener.afterSetRequiredProperties(delegate, requiredProperties));
+        forEachPropertyResolverListener(listener -> listener.afterSetRequiredProperties(delegate, requiredProperties));
     }
 
     @Override
     public void validateRequiredProperties() throws MissingRequiredPropertiesException {
-        forEachEnvironmentListener(listener -> listener.beforeValidateRequiredProperties(delegate));
+        forEachPropertyResolverListener(listener -> listener.beforeValidateRequiredProperties(delegate));
         delegate.validateRequiredProperties();
-        forEachEnvironmentListener(listener -> listener.afterValidateRequiredProperties(delegate));
+        forEachPropertyResolverListener(listener -> listener.afterValidateRequiredProperties(delegate));
     }
 
     /**
@@ -390,7 +403,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
      * @return <code>true</code> if enabled, <code>false</code> otherwise
      */
     public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, ENABLED_PROPERTY_VALUE);
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, DEFAULT_ENABLED_PROPERTY_VALUE);
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {

@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.initBeanMetadataAttributes;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
@@ -50,15 +51,48 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperti
 import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefix;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.lang.Boolean.valueOf;
-import static java.util.Collections.singleton;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * The {@link ImportBeanDefinitionRegistrar} implementation for {@link EnableConfigurationBeanBinding @EnableConfigurationBinding}
+ * A registrar for registering {@link EnableConfigurationBeanBinding @EnableConfigurationBeanBinding}-annotated bean definitions.
+ * <p>
+ * This class processes the {@link EnableConfigurationBeanBinding} annotation, binding its attributes to corresponding Spring beans.
+ * It supports configuration options such as prefix resolution, bean naming strategies, and handling of unknown or invalid fields.
+ * </p>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Basic Configuration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "my.config", type = MyConfig.class)
+ * public class MyConfig {}
+ * }</pre>
+ *
+ * <h4>Multiple Bean Registration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "multi.config", type = MultiConfig.class, multiple = true)
+ * public class MultiConfig {}
+ * }</pre>
+ *
+ * <h4>Custom Ignore Behavior</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(
+ *     prefix = "strict.config",
+ *     type = StrictConfig.class,
+ *     ignoreUnknownFields = false,
+ *     ignoreInvalidFields = false
+ * )
+ * public class StrictConfig {}
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EnableConfigurationBeanBinding
+ * @see ConfigurationBeanBindingPostProcessor
  * @since 1.0.0
  */
 public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware,
@@ -107,7 +141,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
         Map<String, Object> configurationProperties = getSubProperties(environment.getPropertySources(), environment, prefix);
 
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(configurationProperties) :
-                singleton(resolveSingleBeanName(configurationProperties, configClass, registry));
+                ofSet(resolveSingleBeanName(configurationProperties, configClass, registry));
 
         for (String beanName : beanNames) {
             registerConfigurationBean(beanName, configClass, multiple, ignoreUnknownFields, ignoreInvalidFields,

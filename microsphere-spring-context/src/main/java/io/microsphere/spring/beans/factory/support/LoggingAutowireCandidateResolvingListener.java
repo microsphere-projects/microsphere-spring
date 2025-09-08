@@ -22,7 +22,27 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
- * {@link Logger logging} {@link AutowireCandidateResolvingListener}
+ * A logging implementation of the {@link AutowireCandidateResolvingListener} interface that logs events related to autowire
+ * candidate resolution in Spring bean factories.
+ *
+ * <p>This class provides detailed trace-level logging for two key resolution processes:
+ * <ul>
+ *     <li>{@link #suggestedValueResolved(DependencyDescriptor, Object) Suggested value resolution}</li>
+ *     <li>{@link #lazyProxyResolved(DependencyDescriptor, String, Object) Lazy proxy resolution}</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * When a suggested value is resolved:
+ * <pre>
+ * TRACE: The suggested value for field injection into [class io.microsphere.example.MyService] was resolved : someExpression
+ * </pre>
+ *
+ * <p>When a lazy proxy is resolved:
+ * <pre>
+ * TRACE: The lazy proxy[descriptor : method parameter in io.microsphere.example.MyService, bean name : 'myBean'] was resolved : com.sun.proxy.$Proxy12
+ * </pre>
+ *
+ * <p><strong>Note:</strong> This logger uses trace level logging, which should be enabled in your logging configuration to see these messages.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see AutowireCandidateResolvingListener

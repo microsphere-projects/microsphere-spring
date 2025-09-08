@@ -27,11 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class DependencyTreeWalkerTest {
+class DependencyTreeWalkerTest {
 
 
     @Test
-    public void testWalk() {
+    void testWalk() {
         DependencyTreeWalker walker = new DependencyTreeWalker();
         Dependency a = Dependency.create("A");
 

@@ -29,11 +29,52 @@ import static io.microsphere.spring.beans.BeanUtils.invokeBeanNameAware;
 import static io.microsphere.spring.beans.BeanUtils.invokeInitializingBean;
 import static org.springframework.aop.support.AopUtils.getTargetClass;
 
+
 /**
- * {@link FactoryBean} implementation based on delegate object that was instantiated
+ * A {@link FactoryBean} implementation that delegates to an existing object instance,
+ * providing lifecycle management and integration with Spring's {@link ApplicationContext}.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * <p>
+ * This class is useful when you want to expose an already instantiated object as a Spring bean,
+ * while still benefiting from Spring's lifecycle callbacks (e.g., {@link InitializingBean},
+ * {@link DisposableBean}, etc.).
+ * </p>
+ *
+ * <h3>Key Features:</h3>
+ * <ul>
+ *   <li>Delegates bean creation via the {@link #getObject()} method.</li>
+ *   <li>Supports initialization through {@link InitializingBean#afterPropertiesSet()}.</li>
+ *   <li>Supports destruction callback if the delegate implements {@link DisposableBean}.</li>
+ *   <li>Implements Spring's aware interfaces such as {@link ApplicationContextAware} and
+ *       {@link BeanNameAware}, delegating calls to the target object if applicable.</li>
+ * </ul>
+ *
+ * <h3>Usage Example:</h3>
+ *
+ * <pre>{@code
+ * MyService myService = new MyServiceImpl();
+ * DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myService);
+ *
+ * // When used in a Spring configuration:
+ * @Bean
+ * public FactoryBean<MyService> myServiceFactoryBean() {
+ *     return new DelegatingFactoryBean<>(myServiceInstance);
+ * }
+ * }</pre>
+ *
+ * <p>
+ * In this example, Spring will treat the returned {@link FactoryBean} as a bean definition,
+ * and the actual object returned by {@link #getObject()} will be registered in the context.
+ * If the delegate implements lifecycle or aware interfaces, they will be invoked at the
+ * appropriate time during bean creation and destruction.
+ * </p>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see FactoryBean
+ * @see InitializingBean
+ * @see DisposableBean
+ * @see ApplicationContextAware
+ * @see BeanNameAware
  * @since 1.0.0
  */
 public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingBean, DisposableBean,

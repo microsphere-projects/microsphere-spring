@@ -30,17 +30,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SpringVersionTest {
+class SpringVersionTest {
 
     @Test
-    public void testVersionRange() {
+    void testVersionRange() {
         // Spring Framework 6.0 -> [6.0.0, 6.0.23]
         testVersionRange(SpringVersion.SPRING_6_0, 0, 23);
         // Spring Framework 6.1 -> [6.1.0, 6.0.16]
-        testVersionRange(SpringVersion.SPRING_6_1, 0, 16);
+        testVersionRange(SpringVersion.SPRING_6_1, 0, 21);
         // Spring Framework 6.2 -> [6.2.0, 6.2.1]
-        testVersionRange(SpringVersion.SPRING_6_2, 0, 1);
-
+        testVersionRange(SpringVersion.SPRING_6_2, 0, 10);
     }
 
     private void testVersionRange(SpringVersion baseVersion, int start, int end) {
@@ -55,7 +54,7 @@ public class SpringVersionTest {
     }
 
     @Test
-    public void testGetVersion() {
+    void testGetVersion() {
         for (SpringVersion springVersion : SpringVersion.values()) {
             if (SpringVersion.CURRENT.equals(springVersion)) {
                 continue;

@@ -38,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = EnableSpringConverterAdapterTest.class)
 @EnableSpringConverterAdapter
-public class EnableSpringConverterAdapterTest {
+class EnableSpringConverterAdapterTest {
 
     @Autowired
     private ConfigurableBeanFactory beanFactory;
 
     @Test
-    public void test() {
+    void test() {
         ConversionService conversionService = new ConversionServiceResolver(beanFactory).resolve();
         assertTrue(conversionService.canConvert(String.class, Duration.class));
     }

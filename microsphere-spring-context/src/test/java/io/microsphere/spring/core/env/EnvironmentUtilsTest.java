@@ -31,6 +31,7 @@ import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimi
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolvePlaceholders;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -41,12 +42,12 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see EnvironmentUtils
  * @since 1.0.0
  */
-public class EnvironmentUtilsTest {
+class EnvironmentUtilsTest {
 
     private ConfigurableEnvironment environment;
 
     @BeforeEach
-    public void init() throws Exception {
+    void setUp() throws Exception {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty("a", "1");
         mockEnvironment.setProperty("b", "2");
@@ -55,17 +56,29 @@ public class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testGetProperties() {
+    void testGetPropertiesWithoutArgument() {
         Map<String, String> properties = getProperties(environment);
-        assertEquals(emptyMap(), properties);
+        assertSame(emptyMap(), properties);
+    }
 
-        properties = getProperties(environment, "a");
+    @Test
+    void testGetPropertiesWithOneNullArgument() {
+        Map<String, String> properties = getProperties(environment, (String) null);
+        assertSame(emptyMap(), properties);
+    }
+
+    @Test
+    void testGetPropertiesWithOneArgument() {
+        Map<String, String> properties = getProperties(environment, "a");
         assertEquals(1, properties.size());
         assertEquals("1", properties.get("a"));
         assertNull(properties.get("b"));
         assertNull(properties.get("c"));
+    }
 
-        properties = getProperties(environment, "a", "b");
+    @Test
+    void testGetPropertiesWithTwoAndMoreArguments() {
+        Map<String, String> properties = getProperties(environment, "a", "b");
         assertEquals(2, properties.size());
         assertEquals("1", properties.get("a"));
         assertEquals("2", properties.get("b"));
@@ -79,12 +92,17 @@ public class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testGetConversionService() {
-        assertEquals(environment.getConversionService(), getConversionService(environment));
+    void testGetConversionService() {
+        assertSame(environment.getConversionService(), getConversionService(environment));
     }
 
     @Test
-    public void testResolveCommaDelimitedValueToList() {
+    void testGetConversionServiceOnNull() {
+        assertNotNull(getConversionService(null));
+    }
+
+    @Test
+    void testResolveCommaDelimitedValueToList() {
         List<String> list = resolveCommaDelimitedValueToList(environment, "${a},${b},${c}");
         assertEquals(3, list.size());
         assertEquals("1", list.get(0));
@@ -93,7 +111,7 @@ public class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testResolvePlaceholders() {
+    void testResolvePlaceholders() {
         Object value = resolvePlaceholders(environment, null, Integer.class);
         assertNull(value);
 
@@ -105,7 +123,7 @@ public class EnvironmentUtilsTest {
     }
 
     @Test
-    public void testAsConfigurableEnvironment() {
+    void testAsConfigurableEnvironment() {
         ConfigurableEnvironment configurableEnvironment = asConfigurableEnvironment(environment);
         assertSame(environment, configurableEnvironment);
     }

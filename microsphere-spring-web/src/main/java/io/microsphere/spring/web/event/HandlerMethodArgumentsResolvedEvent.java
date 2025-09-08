@@ -5,7 +5,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+
+import static io.microsphere.util.ArrayUtils.arrayToString;
+import static io.microsphere.util.Assert.assertNotNull;
 
 /**
  * {@link HandlerMethod} Arguments Resolved Event
@@ -24,8 +26,10 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
      * @param handlerMethod {@link HandlerMethod}
      * @param arguments     {@link Object the argument object that was resolved}
      */
-    public HandlerMethodArgumentsResolvedEvent(WebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments) {
+    public HandlerMethodArgumentsResolvedEvent(WebRequest webRequest, HandlerMethod handlerMethod, Object... arguments) {
         super(webRequest);
+        assertNotNull(handlerMethod, () -> "The 'handlerMethod' argument must not be null");
+        assertNotNull(arguments, () -> "The 'arguments' argument must not be null");
         this.handlerMethod = handlerMethod;
         this.arguments = arguments;
     }
@@ -63,7 +67,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
         return "HandlerMethodArgumentsResolvedEvent{" +
                 "source=" + getSource() +
                 ", handlerMethod=" + handlerMethod +
-                ", arguments=" + Arrays.toString(arguments) +
+                ", arguments=" + arrayToString(arguments) +
                 '}';
     }
 }

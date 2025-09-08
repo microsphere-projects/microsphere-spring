@@ -23,14 +23,15 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Stream;
 
-import static io.microsphere.collection.SetUtils.ofSet;
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
+import static io.microsphere.util.ArrayUtils.combine;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.of;
+import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 
 /**
  * {@link NativeWebRequest WebRequest} {@link HttpMethod Methods} {@link WebRequestRule}
@@ -50,11 +51,11 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
 
     public WebRequestMethodsRule(RequestMethod... requestMethods) {
         this.methods = ObjectUtils.isEmpty(requestMethods) ? emptySet() :
-                Stream.of(requestMethods).map(RequestMethod::name).collect(toSet());
+                of(requestMethods).map(RequestMethod::name).collect(toSet());
     }
 
     public WebRequestMethodsRule(String method, String... others) {
-        this.methods = ObjectUtils.isEmpty(others) ? singleton(method) : ofSet(method, others);
+        this.methods = ObjectUtils.isEmpty(others) ? ofSet(method) : ofSet(combine(method, others));
     }
 
     @Override
@@ -79,15 +80,19 @@ public class WebRequestMethodsRule extends AbstractWebRequestRule<String> {
 
     public boolean matches(String method) {
         if (isEmpty()) {
-            if (RequestMethod.OPTIONS.name().equals(method)) {
-                return false;
-            }
-            return true;
+            return !OPTIONS.name().equals(method);
         }
         return matchRequestMethod(method);
     }
 
     private boolean matchRequestMethod(String method) {
-        return this.methods.contains(method);
+        boolean matched = false;
+        for (String requestMethod : this.methods) {
+            if (requestMethod.equalsIgnoreCase(method)) {
+                matched = true;
+                break;
+            }
+        }
+        return matched;
     }
 }

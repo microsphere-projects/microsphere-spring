@@ -1,4 +1,4 @@
-///*
+/// *
 // * Licensed to the Apache Software Foundation (ASF) under one or more
 // * contributor license agreements.  See the NOTICE file distributed with
 // * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@
 //
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //
-///**
+/// **
 // * {@link P6DataSourceBeanPostProcessor} Test
 // *
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -42,7 +42,7 @@
 //@TestPropertySource(properties = {"microsphere.jdbc.p6spy.excluded-datasource-beans=nonWrappedDataSource"})
 //@EnableEmbeddedDatabase(dataSource = "nonWrappedDataSource")
 //@EnableEmbeddedDatabase(dataSource = "wrappedDataSource")
-//public class P6DataSourceBeanPostProcessorTest {
+//class P6DataSourceBeanPostProcessorTest {
 //
 //    @Autowired
 //    @Qualifier("nonWrappedDataSource")
@@ -53,7 +53,7 @@
 //    private DataSource wrappedDataSource;
 //
 //    @Test
-//    public void test() throws Exception {
+//    void test() throws Exception {
 //        assertEquals(DriverManagerDataSource.class, nonWrappedDataSource.getClass());
 //        assertEquals(P6DataSource.class, wrappedDataSource.getClass());
 //        assertEquals(DriverManagerDataSource.class, wrappedDataSource.unwrap(DataSource.class).getClass());

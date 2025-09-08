@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.BeanDependencyResolver;
 import io.microsphere.spring.beans.factory.DefaultBeanDependencyResolver;
@@ -32,6 +33,7 @@ import org.springframework.util.StopWatch;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -41,23 +43,98 @@ import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.springframework.util.CollectionUtils.containsAny;
 
 /**
- * The {@link BeanFactoryListener} class {@link DefaultListableBeanFactory#preInstantiateSingletons() pre-instantiates singletons}
- * in parallel.
+ * A {@link BeanFactoryListener} implementation that pre-instantiates singleton beans in parallel
+ * to improve application startup performance. This class leverages multi-threading to initialize
+ * beans concurrently while respecting bean dependencies.
+ *
+ * <h3>Configuration Properties</h3>
+ *
+ * <dl>
+ *     <dt>{@value #THREADS_PROPERTY_NAME}</dt>
+ *     <dd>
+ *         The number of threads to use for parallel pre-instantiation. Default is based on the number of
+ *         available processors, with a minimum of 1 thread.
+ *     </dd>
+ *
+ *     <dt>{@value #THREAD_NAME_PREFIX_PROPERTY_NAME}</dt>
+ *     <dd>
+ *         The prefix for the thread names used during parallel pre-instantiation. Default is:
+ *         {@value #DEFAULT_THREAD_NAME_PREFIX}
+ *     </dd>
+ * </dl>
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <pre>{@code
+ * # application.properties
+ * microsphere.spring.pre-instantiation.singletons.threads=4
+ * microsphere.spring.pre-instantiation.singletons.thread.name-prefix=MyCustomThread-
+ * }</pre>
+ *
+ * <h3>Example Usage</h3>
+ * <p>
+ * This listener is typically registered in a Spring configuration class as follows:
+ *
+ * <pre>{@code
+ * @Configuration
+ * public class AppConfig {
+ *     @Bean
+ *     public BeanFactoryListener parallelPreInstantiationListener() {
+ *         return new ParallelPreInstantiationSingletonsBeanFactoryListener();
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>Once registered, the listener will automatically trigger parallel pre-instantiation
+ * when the bean factory configuration is frozen.</p>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 public class ParallelPreInstantiationSingletonsBeanFactoryListener implements BeanFactoryListenerAdapter,
         EnvironmentAware, BeanFactoryAware {
 
-    public static final String THREADS_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.threads";
-    public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = "microsphere.spring.pre-instantiation.singletons.thread.name-prefix";
+    /**
+     * The prefix of the property for {@link ParallelPreInstantiationSingletonsBeanFactoryListener} : "microsphere.spring.pre-instantiation.singletons.";
+     */
+    private static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "pre-instantiation.singletons.";
+
+    /**
+     * The property name of the number of threads to pre-instantiate singletons in parallel
+     */
+    @ConfigurationProperty(
+            type = int.class,
+            description = "the number of threads to pre-instantiate singletons in parallel"
+    )
+    public static final String THREADS_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "threads";
+
+    /**
+     * The default prefix of thread name to pre-instantiate singletons in parallel
+     */
     public static final String DEFAULT_THREAD_NAME_PREFIX = "Parallel-Pre-Instantiation-Singletons-Thread-";
+
+    /**
+     * The property name of the prefix of the thread name to pre-instantiate singletons in parallel
+     */
+    @ConfigurationProperty(
+            defaultValue = DEFAULT_THREAD_NAME_PREFIX,
+            description = "the prefix of the thread name to pre-instantiate singletons in parallel"
+    )
+    public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "thread.name-prefix";
 
     private static final Logger logger = getLogger(ParallelPreInstantiationSingletonsBeanFactoryListener.class);
 
@@ -163,7 +240,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
 
     private List<Set<String>> buildBeanNamesList(Map<String, Set<String>> dependentBeanNamesMap) {
         List<Set<String>> beanNamesList = newArrayList(dependentBeanNamesMap.size());
-        for (Map.Entry<String, Set<String>> dependentEntry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> dependentEntry : dependentBeanNamesMap.entrySet()) {
             String beanName = dependentEntry.getKey();
             Set<String> dependentBeanNames = dependentEntry.getValue();
             // reuse the space of dependentBeanNames
@@ -174,10 +251,10 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
         return beanNamesList;
     }
 
-    private void mergeBeanNames(Map.Entry<String, Set<String>> dependentEntry, List<Set<String>> allBeanNamesList,
+    private void mergeBeanNames(Entry<String, Set<String>> dependentEntry, List<Set<String>> allBeanNamesList,
                                 Map<String, Set<String>> dependentBeanNamesMap) {
 
-        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             if (dependentEntry.equals(entry)) {
                 continue;
             }

@@ -24,6 +24,7 @@ import io.microsphere.util.Version;
 
 import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.constants.SymbolConstants.UNDER_SCORE_CHAR;
+import static io.microsphere.util.Version.of;
 
 /**
  * The enumeration for the released Spring versions since 6.0
@@ -119,13 +120,41 @@ public enum SpringVersion {
 
     SPRING_6_1_16,
 
+    SPRING_6_1_17,
+
+    SPRING_6_1_18,
+
+    SPRING_6_1_19,
+
+    SPRING_6_1_20,
+
+    SPRING_6_1_21,
+
     SPRING_6_2,
 
     SPRING_6_2_0,
 
     SPRING_6_2_1,
 
-    CURRENT(Version.of(org.springframework.core.SpringVersion.getVersion()));;
+    SPRING_6_2_2,
+
+    SPRING_6_2_3,
+
+    SPRING_6_2_4,
+
+    SPRING_6_2_5,
+
+    SPRING_6_2_6,
+
+    SPRING_6_2_7,
+
+    SPRING_6_2_8,
+
+    SPRING_6_2_9,
+
+    SPRING_6_2_10,
+
+    CURRENT(of(org.springframework.core.SpringVersion.getVersion()));
 
     private final Version version;
 
@@ -139,7 +168,7 @@ public enum SpringVersion {
 
     static Version resolveVersion(String name) {
         String version = name.substring(7).replace(UNDER_SCORE_CHAR, DOT_CHAR);
-        return Version.of(version);
+        return of(version);
     }
 
     public Version getVersion() {
