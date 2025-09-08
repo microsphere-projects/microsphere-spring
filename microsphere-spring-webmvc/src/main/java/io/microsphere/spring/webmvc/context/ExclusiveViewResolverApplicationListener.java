@@ -18,6 +18,7 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
 import static io.microsphere.spring.webmvc.constants.PropertyConstants.MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX;
+import static io.microsphere.spring.webmvc.util.ViewResolverUtils.VIEW_RESOLVER_COMPOSITE_BEAN_NAME;
 import static io.microsphere.util.StringUtils.isBlank;
 
 /**
@@ -98,7 +99,7 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
     }
 
     private void configureViewResolverComposite(ViewResolver exclusiveViewResolver, ApplicationContext context) {
-        ViewResolverComposite viewResolverComposite = getOptionalBean(context, ViewResolverComposite.class);
+        ViewResolverComposite viewResolverComposite = getBeanIfAvailable(context, VIEW_RESOLVER_COMPOSITE_BEAN_NAME, ViewResolverComposite.class);
 
         if (viewResolverComposite == null) {
             logger.trace("No ViewResolverComposite was found in the application context : {}", context);
