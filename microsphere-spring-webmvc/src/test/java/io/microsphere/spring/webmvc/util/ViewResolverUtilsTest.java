@@ -20,12 +20,15 @@ package io.microsphere.spring.webmvc.util;
 
 import org.junit.jupiter.api.Test;
 
+import static io.microsphere.spring.webmvc.util.ViewResolverUtils.BEAN_NAME_VIEW_RESOLVER_BEAN_NAME;
+import static io.microsphere.spring.webmvc.util.ViewResolverUtils.CONTENT_NEGOTIATING_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.FREEMARKER_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.GROOVY_MARKUP_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.INTERNAL_RESOURCE_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.MUSTACHE_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.THYMELEAF_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.VELOCITY_VIEW_RESOLVER_BEAN_NAME;
+import static io.microsphere.spring.webmvc.util.ViewResolverUtils.VIEW_RESOLVER_COMPOSITE_BEAN_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -39,12 +42,15 @@ class ViewResolverUtilsTest {
 
     @Test
     void testConstants() {
+        assertEquals("beanNameViewResolver", BEAN_NAME_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("defaultViewResolver", INTERNAL_RESOURCE_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("velocityViewResolver", VELOCITY_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("thymeleafViewResolver", THYMELEAF_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("freeMarkerViewResolver", FREEMARKER_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("groovyMarkupViewResolver", GROOVY_MARKUP_VIEW_RESOLVER_BEAN_NAME);
         assertEquals("mustacheViewResolver", MUSTACHE_VIEW_RESOLVER_BEAN_NAME);
+        assertEquals("mvcViewResolver", VIEW_RESOLVER_COMPOSITE_BEAN_NAME);
+        assertEquals("viewResolver", CONTENT_NEGOTIATING_VIEW_RESOLVER_BEAN_NAME);
     }
 
 }
