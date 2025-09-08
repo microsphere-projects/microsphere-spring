@@ -49,14 +49,6 @@ class ExclusiveViewResolverApplicationListenerTest {
     @Autowired
     private ExclusiveViewResolverApplicationListener listener;
 
-    static class Config {
-
-        @Bean
-        public BeanNameViewResolver beanNameViewResolver() {
-            return new BeanNameViewResolver();
-        }
-    }
-
     @Test
     void test() {
         assertNotNull(listener);
