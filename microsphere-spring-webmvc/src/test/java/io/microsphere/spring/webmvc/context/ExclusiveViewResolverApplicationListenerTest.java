@@ -21,12 +21,27 @@ package io.microsphere.spring.webmvc.context;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.springframework.web.servlet.view.ViewResolverComposite;
 
+import java.util.List;
+
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
+import static io.microsphere.spring.webmvc.context.ExclusiveViewResolverApplicationListener.EXCLUSIVE_VIEW_RESOLVER_BEAN_NAME_PROPERTY_NAME;
+import static io.microsphere.spring.webmvc.util.ViewResolverUtils.BEAN_NAME_VIEW_RESOLVER_BEAN_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link ExclusiveViewResolverApplicationListener} Test on defaults
@@ -39,17 +54,94 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @WebAppConfiguration
 @ContextConfiguration(classes = {
         ExclusiveViewResolverApplicationListener.class,
-        ExclusiveViewResolverApplicationListenerTest.class
+        ExclusiveViewResolverApplicationListenerTest.class,
+        ExclusiveViewResolverApplicationListenerTest.ViewResolverConfig.class,
+        ExclusiveViewResolverApplicationListenerTest.ContentNegotiatingViewResolverConfig.class
 })
+@TestPropertySource(
+        properties = {
+                "microsphere.spring.webmvc.view-resolver.exclusive-bean-name=beanNameViewResolver"
+        }
+)
 @EnableWebMvc
 class ExclusiveViewResolverApplicationListenerTest {
 
     @Autowired
-    private ExclusiveViewResolverApplicationListener listener;
+    private ConfigurableApplicationContext context;
+
+    @Autowired
+    private ContentNegotiatingViewResolver contentNegotiatingViewResolver;
+
+    @Autowired
+    private BeanNameViewResolver beanNameViewResolver;
+
+    static class ViewResolverConfig {
+
+        @Bean(name = BEAN_NAME_VIEW_RESOLVER_BEAN_NAME)
+        public BeanNameViewResolver beanNameViewResolver() {
+            return new BeanNameViewResolver();
+        }
+    }
+
+    static class ContentNegotiatingViewResolverConfig {
+        @Bean
+        public ContentNegotiatingViewResolver contentNegotiatingViewResolver(
+                @Autowired ContentNegotiationManager contentNegotiationManager) {
+            ContentNegotiatingViewResolver viewResolver = new ContentNegotiatingViewResolver();
+            viewResolver.setContentNegotiationManager(contentNegotiationManager);
+            return viewResolver;
+        }
+    }
+
+    static class ViewResolverCompositeConfig {
+        @Bean
+        public ViewResolverComposite mvcViewResolver(List<ViewResolver> viewResolvers) {
+            ViewResolverComposite viewResolverComposite = new ViewResolverComposite();
+            viewResolverComposite.setViewResolvers(viewResolvers);
+            return viewResolverComposite;
+        }
+    }
 
     @Test
-    void test() {
-        assertNotNull(listener);
+    void testOnDefaults() {
+        testInSpringContainer(this::assertListener, ExclusiveViewResolverApplicationListener.class);
+    }
+
+    @Test
+    void testOnContentNegotiatingViewResolverAvailable() {
+        List<ViewResolver> viewResolvers = this.contentNegotiatingViewResolver.getViewResolvers();
+        assertEquals(1, viewResolvers.size());
+        assertTrue(viewResolvers.contains(this.beanNameViewResolver));
+    }
+
+    @Test
+    void testOnViewResolverCompositeAvailable() {
+        System.setProperty(EXCLUSIVE_VIEW_RESOLVER_BEAN_NAME_PROPERTY_NAME, BEAN_NAME_VIEW_RESOLVER_BEAN_NAME);
+        testInSpringContainer((context, env) -> {
+            assertListener(context);
+            assertNotNull(context.getBean(BEAN_NAME_VIEW_RESOLVER_BEAN_NAME));
+        }, ViewResolverConfig.class, ViewResolverCompositeConfig.class, ExclusiveViewResolverApplicationListener.class);
+    }
+
+    @Test
+    void testOnViewResolverCompositeNotAvailable() {
+        System.setProperty(EXCLUSIVE_VIEW_RESOLVER_BEAN_NAME_PROPERTY_NAME, BEAN_NAME_VIEW_RESOLVER_BEAN_NAME);
+        testInSpringContainer((context, env) -> {
+            assertListener(context);
+            assertNotNull(context.getBean(BEAN_NAME_VIEW_RESOLVER_BEAN_NAME));
+        }, ViewResolverConfig.class, ExclusiveViewResolverApplicationListener.class);
+    }
+
+    @Test
+    void testOnViewResolverNotFound() {
+        System.setProperty(EXCLUSIVE_VIEW_RESOLVER_BEAN_NAME_PROPERTY_NAME, "Not-Found");
+        testInSpringContainer((context, env) -> {
+            assertListener(context);
+        }, ExclusiveViewResolverApplicationListener.class);
+    }
+
+    void assertListener(ConfigurableApplicationContext context) {
+        assertNotNull(context.getBean(ExclusiveViewResolverApplicationListener.class));
     }
 
 }
