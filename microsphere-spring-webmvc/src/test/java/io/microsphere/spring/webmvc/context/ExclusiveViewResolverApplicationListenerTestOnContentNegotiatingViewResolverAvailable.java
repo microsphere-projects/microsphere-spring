@@ -48,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @WebAppConfiguration
 @ContextConfiguration(classes = {
         ExclusiveViewResolverApplicationListener.class,
+        ViewResolverConfig.class,
         ExclusiveViewResolverApplicationListenerTestOnContentNegotiatingViewResolverAvailable.class,
         ExclusiveViewResolverApplicationListenerTestOnContentNegotiatingViewResolverAvailable.Config.class
 })
@@ -73,11 +74,6 @@ class ExclusiveViewResolverApplicationListenerTestOnContentNegotiatingViewResolv
             ContentNegotiatingViewResolver viewResolver = new ContentNegotiatingViewResolver();
             viewResolver.setContentNegotiationManager(contentNegotiationManager);
             return viewResolver;
-        }
-
-        @Bean
-        public BeanNameViewResolver beanNameViewResolver() {
-            return new BeanNameViewResolver();
         }
 
     }
