@@ -39,11 +39,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
-import static io.microsphere.util.ArrayUtils.arrayToString;
-import static io.microsphere.util.ArrayUtils.of;
+import static io.microsphere.util.ArrayUtils.ofArray;
 
 /**
  * The performance optimization {@link HandlerMapping} to process the forwarded request
@@ -78,20 +78,21 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
 
     public static final int DEFAULT_ORDER = HIGHEST_PRECEDENCE + 1;
 
+    /**
+     * The method name of {@link AbstractHandlerMapping#getHandlerExecutionChain(Object, HttpServletRequest)}
+     */
     private static final String getHandlerExecutionChainMethodName = "getHandlerExecutionChain";
 
+    /**
+     * The {@link MethodHandle} of {@link AbstractHandlerMapping#getHandlerExecutionChain(Object, HttpServletRequest)}
+     */
+    @Nullable
     private static final MethodHandle getHandlerExecutionChainMethodHandle;
 
     static {
-        Class<?> declaredClass = AbstractHandlerMapping.class;
         String methodName = getHandlerExecutionChainMethodName;
-        MethodHandle methodHandle = null;
-        Class<?>[] parameterTypes = of(Object.class, HttpServletRequest.class);
-        try {
-            methodHandle = findVirtual(RequestMappingHandlerMapping.class, methodName, parameterTypes);
-        } catch (Throwable e) {
-            logger.error("The method {}{} can't be found in the {}", methodName, arrayToString(parameterTypes), declaredClass.getName(), e);
-        }
+        Class<?>[] parameterTypes = ofArray(Object.class, HttpServletRequest.class);
+        MethodHandle methodHandle = findVirtual(AbstractHandlerMapping.class, methodName, parameterTypes);
         getHandlerExecutionChainMethodHandle = methodHandle;
     }
 
@@ -105,11 +106,12 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         int webEndpointMappingId = request.getIntHeader(ID_HEADER_NAME);
         if (webEndpointMappingId == -1) {
-            // No WebEndpointMapping ID Header present
+            logger.trace("No request header of the WebEndpointMapping ID [name : '{}'] is present", ID_HEADER_NAME);
             return null;
         }
         WebEndpointMapping webEndpointMapping = webEndpointMappingsCache.get(webEndpointMappingId);
         if (webEndpointMapping == null) {
+            logger.trace("No WebEndpointMapping was found by the request header[name : '{}' , value : {}]", ID_HEADER_NAME, webEndpointMappingId);
             return null;
         }
         HandlerExecutionChain handlerExecutionChain = getHandlerExecutionChain(webEndpointMapping, request);
@@ -117,26 +119,34 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
     }
 
     @Nullable
-    protected HandlerExecutionChain getHandlerExecutionChain(WebEndpointMapping
-                                                                     webEndpointMapping, HttpServletRequest request) {
+    protected HandlerExecutionChain getHandlerExecutionChain(WebEndpointMapping webEndpointMapping, HttpServletRequest request) {
         HandlerExecutionChain handlerExecutionChain = null;
         Object source = webEndpointMapping.getSource();
-        if (source instanceof RequestMappingHandlerMapping handlerMapping) {
-            HandlerMethod handlerMethod = (HandlerMethod) webEndpointMapping.getEndpoint();
-            Object handler = handlerMethod;
-            MethodHandle methodHandle = getHandlerExecutionChainMethodHandle;
-            if (methodHandle != null) {
-                try {
-                    handlerExecutionChain = (HandlerExecutionChain) methodHandle.invokeExact(handlerMapping, handler, request);
-                } catch (Throwable e) {
-                    logger.error("The method {}{} can't be executed in the {}",
-                            getHandlerExecutionChainMethodName,
-                            methodHandle.type(),
-                            handlerMapping.getClass().getName());
-                }
+        if (source instanceof AbstractHandlerMapping handlerMapping) {
+            Object handler = webEndpointMapping.getEndpoint();
+            handlerExecutionChain = invokeGetHandlerExecutionChain(handlerMapping, handler, request);
+        }
+        return handlerExecutionChain;
+    }
+
+    /**
+     * Invoke {@link AbstractHandlerMapping#getHandlerExecutionChain(Object, HttpServletRequest)}
+     *
+     * @param handlerMapping {@link RequestMappingHandlerMapping}
+     * @param handler        {@link HandlerMethod}
+     * @param request        {@link HttpServletRequest}
+     * @return {@link HandlerExecutionChain} if invoke successfully, or <code>null</code>
+     */
+    HandlerExecutionChain invokeGetHandlerExecutionChain(AbstractHandlerMapping handlerMapping, Object handler, HttpServletRequest request) {
+        HandlerExecutionChain handlerExecutionChain = null;
+        MethodHandle methodHandle = getHandlerExecutionChainMethodHandle;
+        if (methodHandle != null) {
+            try {
+                handlerExecutionChain = (HandlerExecutionChain) methodHandle.invokeExact(handlerMapping, handler, request);
+            } catch (Throwable e) {
+                handleInvokeExactFailure(e, methodHandle, handler, request);
             }
         }
-
         return handlerExecutionChain;
     }
 
@@ -145,9 +155,7 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         Map<Integer, WebEndpointMapping> webEndpointMappingsMap = new HashMap<>();
         event.getMappings().stream()
                 .filter(this::isRequestMappingHandlerMapping)
-                .forEach(webEndpointMapping -> {
-                    webEndpointMappingsMap.put(webEndpointMapping.getId(), webEndpointMapping);
-                });
+                .forEach(mapping -> webEndpointMappingsMap.put(mapping.getId(), mapping));
 
         this.webEndpointMappingsCache = webEndpointMappingsMap;
     }
