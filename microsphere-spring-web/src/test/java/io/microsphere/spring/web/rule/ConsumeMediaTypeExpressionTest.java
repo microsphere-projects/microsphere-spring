@@ -31,6 +31,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.http.MediaType.valueOf;
 
 /**
@@ -66,6 +67,13 @@ class ConsumeMediaTypeExpressionTest {
         MediaType contentType = APPLICATION_JSON;
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(contentType, true);
         assertFalse(expression.match(contentType));
+    }
+
+    @Test
+    void testMatchWhenParametersNoMatch() {
+        MediaType contentType = parseMediaType("application/json;charset=UTF-8");
+        ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(contentType, false);
+        assertFalse(expression.match(parseMediaType("application/json;charset=GBK")));
     }
 
     @Test
