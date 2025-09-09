@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.ORIGIN;
@@ -57,6 +58,12 @@ class WebRequestUtilsTest {
 
         request = createWebRequest(r -> r.setMethod("POST"));
         assertEquals("POST", getMethod(request));
+    }
+
+    @Test
+    void testGetMethodOnNotHttpServletRequest() {
+        NativeWebRequest request = mock(NativeWebRequest.class);
+        assertNull(getMethod(request));
     }
 
     @Test
