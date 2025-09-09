@@ -109,7 +109,6 @@ class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
         assertNotEquals(composite, new CompositeWebRequestRule(rule1));
         assertNotEquals(composite, this);
         assertNotEquals(composite, null);
-
     }
 
     @Override
