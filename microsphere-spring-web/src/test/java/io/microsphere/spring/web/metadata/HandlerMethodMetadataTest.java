@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.method.HandlerMethod;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
 
 /**
  * {@link HandlerMethodMetadata} Test
