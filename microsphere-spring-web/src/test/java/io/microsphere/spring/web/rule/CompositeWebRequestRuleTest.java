@@ -21,11 +21,17 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 /**
  * {@link CompositeWebRequestRule} Test
@@ -86,21 +92,42 @@ public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
 
     @Override
     void doTestGetToStringInfix() {
-
+        CompositeWebRequestRule rule = new CompositeWebRequestRule();
+        assertNotNull(rule);
     }
 
     @Override
     protected void doTestEquals() {
+        WebRequestProducesRule rule1 = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+        WebRequestConsumesRule rule2 = new WebRequestConsumesRule(APPLICATION_XML_VALUE);
 
+        CompositeWebRequestRule composite = new CompositeWebRequestRule(rule1, rule2);
+
+        assertEquals(composite, composite);
+        assertEquals(composite, new CompositeWebRequestRule(rule1, rule2));
+
+        assertNotEquals(composite, new CompositeWebRequestRule(rule1));
+        assertNotEquals(composite, this);
+        assertNotEquals(composite, null);
     }
 
     @Override
     protected void doTestHashCode() {
+        WebRequestProducesRule rule1 = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+        WebRequestConsumesRule rule2 = new WebRequestConsumesRule(APPLICATION_XML_VALUE);
 
+        CompositeWebRequestRule composite = new CompositeWebRequestRule(rule1, rule2);
+
+        assertEquals(composite.hashCode(), ofList(rule1, rule2).hashCode());
     }
 
     @Override
     protected void doTestToString() {
+        WebRequestProducesRule rule1 = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+        WebRequestConsumesRule rule2 = new WebRequestConsumesRule(APPLICATION_XML_VALUE);
 
+        CompositeWebRequestRule composite = new CompositeWebRequestRule(rule1, rule2);
+
+        assertEquals("[[application/json], [application/xml]]", composite.toString());
     }
 }
