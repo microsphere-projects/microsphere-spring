@@ -137,9 +137,24 @@ class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
     }
 
     @Override
-    void testGetToStringInfix() {
+    void doTestGetToStringInfix() {
         WebRequestPattensRule rule = new WebRequestPattensRule();
         assertEquals(" || ", rule.getToStringInfix());
+    }
+
+    @Override
+    protected void doTestEquals() {
+
+    }
+
+    @Override
+    protected void doTestHashCode() {
+
+    }
+
+    @Override
+    protected void doTestToString() {
+
     }
 }
 
