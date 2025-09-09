@@ -24,6 +24,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -66,17 +67,26 @@ class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
 
     @Override
     protected void doTestEquals() {
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET");
 
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestMethodsRule("GET"));
+
+        assertNotEquals(rule, new WebRequestMethodsRule("POST"));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
     }
 
     @Override
     protected void doTestHashCode() {
-
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET");
+        assertEquals(rule.hashCode(), rule.getContent().hashCode());
     }
 
     @Override
     protected void doTestToString() {
-
+        WebRequestMethodsRule rule = new WebRequestMethodsRule("GET");
+        assertEquals("[GET]", rule.toString());
     }
 
     @Test
