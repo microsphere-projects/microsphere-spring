@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.rule;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
 
@@ -37,6 +38,53 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 class AbstractWebRequestRuleTest {
+
+    static class AbstractWebRequestRuleImpl extends AbstractWebRequestRule<String> {
+
+        private final Collection<String> content;
+
+        private final String infix;
+
+        public AbstractWebRequestRuleImpl(Collection<String> content, String infix) {
+            this.content = content;
+            this.infix = infix;
+        }
+
+        @Override
+        public boolean matches(NativeWebRequest request) {
+            return true;
+        }
+
+        @Override
+        protected Collection<String> getContent() {
+            return content;
+        }
+
+        @Override
+        protected String getToStringInfix() {
+            return infix;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return super.isEmpty();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return super.equals(other);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+    }
 
     AbstractWebRequestRule<String> createRule(Collection<String> content, String infix) {
         return new AbstractWebRequestRuleImpl(content, infix);
