@@ -83,4 +83,24 @@ public class CompositeWebRequestRuleTest extends BaseWebRequestRuleTest {
         NativeWebRequest request = createWebRequest();
         assertFalse(rule.matches(request));
     }
+
+    @Override
+    void doTestGetToStringInfix() {
+
+    }
+
+    @Override
+    protected void doTestEquals() {
+
+    }
+
+    @Override
+    protected void doTestHashCode() {
+
+    }
+
+    @Override
+    protected void doTestToString() {
+
+    }
 }
