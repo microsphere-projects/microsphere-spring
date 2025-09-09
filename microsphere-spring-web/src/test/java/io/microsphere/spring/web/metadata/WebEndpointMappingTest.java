@@ -49,6 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
@@ -230,19 +232,19 @@ class WebEndpointMappingTest {
     @Test
     void testHeaderWithContentType() {
         WebEndpointMapping mapping = minServletBuilder()
-                .header("Content-Type", "application/json")
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .build();
         assertArrayEquals(EMPTY_STRING_ARRAY, mapping.getHeaders());
-        assertArrayEquals(ofArray("application/json"), mapping.getConsumes());
+        assertArrayEquals(ofArray(APPLICATION_JSON_VALUE), mapping.getConsumes());
     }
 
     @Test
     void testHeaderWithAccept() {
         WebEndpointMapping mapping = minServletBuilder()
-                .header("Accept", "application/json")
+                .header(ACCEPT, APPLICATION_JSON_VALUE)
                 .build();
         assertArrayEquals(EMPTY_STRING_ARRAY, mapping.getHeaders());
-        assertArrayEquals(ofArray("application/json"), mapping.getProduces());
+        assertArrayEquals(ofArray(APPLICATION_JSON_VALUE), mapping.getProduces());
     }
 
     @Test
