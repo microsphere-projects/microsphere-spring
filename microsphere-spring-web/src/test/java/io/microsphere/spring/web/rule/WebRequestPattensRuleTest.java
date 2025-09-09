@@ -28,6 +28,7 @@ import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebReques
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -144,17 +145,26 @@ class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
 
     @Override
     protected void doTestEquals() {
+        WebRequestPattensRule rule = new WebRequestPattensRule("/api/*");
 
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestPattensRule("/api/*"));
+
+        assertNotEquals(rule, new WebRequestPattensRule("/test"));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
     }
 
     @Override
     protected void doTestHashCode() {
-
+        WebRequestPattensRule rule = new WebRequestPattensRule("/api/*");
+        assertEquals(rule.hashCode(), rule.getContent().hashCode());
     }
 
     @Override
     protected void doTestToString() {
-
+        WebRequestPattensRule rule = new WebRequestPattensRule("/api/*");
+        assertEquals("[/api/*]", rule.toString());
     }
 }
 
