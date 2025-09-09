@@ -59,9 +59,24 @@ class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
     }
 
     @Test
-    void testGetToStringInfix() {
+    void doTestGetToStringInfix() {
         WebRequestMethodsRule rule = new WebRequestMethodsRule("GET");
         assertEquals(" || ", rule.getToStringInfix());
+    }
+
+    @Override
+    protected void doTestEquals() {
+
+    }
+
+    @Override
+    protected void doTestHashCode() {
+
+    }
+
+    @Override
+    protected void doTestToString() {
+
     }
 
     @Test
