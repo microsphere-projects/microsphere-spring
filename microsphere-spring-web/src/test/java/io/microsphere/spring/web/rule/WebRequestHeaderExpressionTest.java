@@ -22,6 +22,7 @@ import io.microsphere.spring.web.context.request.MockServletWebRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * {@link WebRequestHeaderExpression} Test
@@ -107,6 +109,8 @@ public class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<
         assertTrue(nameOnlyExpression.matchName(request));
         assertTrue(expression.matchName(request));
         assertTrue(negatedExpression.matchName(request));
+
+        assertFalse(negatedExpression.matchName(mock(NativeWebRequest.class)));
     }
 
     @Test
