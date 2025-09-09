@@ -106,4 +106,17 @@ public class ProduceMediaTypeExpressionTest {
         assertTrue(types.contains(APPLICATION_JSON));
         assertTrue(types.contains(TEXT_XML));
     }
+
+    @Test
+    public void testMatchParameters() {
+        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;charset=utf-8");
+        MediaType acceptedMediaType = parseMediaType("text/plain;charset=UTF-8");
+        assertTrue(expr.matchParameters(acceptedMediaType));
+
+        expr = new ProduceMediaTypeExpression("text/plain;charset=GBK");
+        assertFalse(expr.matchParameters(acceptedMediaType));
+
+        acceptedMediaType = parseMediaType("text/plain;charset=UTF-16");
+        assertFalse(expr.matchParameters(acceptedMediaType));
+    }
 }
