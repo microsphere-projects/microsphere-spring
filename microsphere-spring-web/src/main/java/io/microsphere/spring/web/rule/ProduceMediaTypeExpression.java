@@ -28,7 +28,6 @@ import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.parseMediaTypes;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Parses and matches a single media type expression to a request's 'Accept' header.
@@ -53,24 +52,13 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
         return !isNegated() == match;
     }
 
-    private boolean matchMediaType(List<MediaType> acceptedMediaTypes) {
+    boolean matchMediaType(List<MediaType> acceptedMediaTypes) {
         for (MediaType acceptedMediaType : acceptedMediaTypes) {
             if (getMediaType().isCompatibleWith(acceptedMediaType) && matchParameters(acceptedMediaType)) {
                 return true;
             }
         }
         return false;
-    }
-
-    private boolean matchParameters(MediaType acceptedMediaType) {
-        for (String name : getMediaType().getParameters().keySet()) {
-            String s1 = getMediaType().getParameter(name);
-            String s2 = acceptedMediaType.getParameter(name);
-            if (hasText(s1) && hasText(s2) && !s1.equalsIgnoreCase(s2)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static List<ProduceMediaTypeExpression> parseExpressions(String[] produces, @Nullable String[] headers) {
