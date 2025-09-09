@@ -29,6 +29,30 @@ import org.junit.Test;
 public abstract class BaseWebRequestRuleTest {
 
     @Test
-    public void testGetToStringInfix() {
+    public final void testGetToStringInfix() {
+        doTestGetToStringInfix();
     }
+
+    @Test
+    public final void testEquals() {
+        doTestEquals();
+    }
+
+    @Test
+    public final void testHashCode() {
+        doTestHashCode();
+    }
+
+    @Test
+    public final void testToString() {
+        doTestToString();
+    }
+
+    abstract void doTestGetToStringInfix();
+
+    protected abstract void doTestEquals();
+
+    protected abstract void doTestHashCode();
+
+    protected abstract void doTestToString();
 }
