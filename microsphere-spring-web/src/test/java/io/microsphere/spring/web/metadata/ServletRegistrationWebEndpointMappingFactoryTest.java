@@ -30,6 +30,7 @@ import java.util.Collection;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
+import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_NAME;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_NAME;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
 import static io.microsphere.spring.test.web.servlet.TestServlet.SERVLET_CLASS;
@@ -39,6 +40,7 @@ import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,6 +67,13 @@ class ServletRegistrationWebEndpointMappingFactoryTest {
         this.factory = new ServletRegistrationWebEndpointMappingFactory(this.servletContext);
         addTestServlet(this.servletContext);
     }
+
+    @Test
+    void testSupports() {
+        assertTrue(factory.supports(DEFAULT_SERVLET_NAME));
+        assertFalse(factory.supports(DEFAULT_FILTER_NAME));
+    }
+
 
     @Test
     void testGetMethods() {
