@@ -116,7 +116,7 @@ class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<WebRequ
         assertTrue(negatedExpression.matchValue(request));
     }
 
-    @Override
+    @Test
     void testGetExpression() {
         assertEquals("name", this.nameOnlyExpression.getExpression());
         assertEquals("name=Mercy", this.expression.getExpression());
