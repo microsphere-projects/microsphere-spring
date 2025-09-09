@@ -30,7 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.MediaType.TEXT_XML;
+import static org.springframework.http.MediaType.TEXT_XML_VALUE;
 import static org.springframework.http.MediaType.parseMediaType;
 
 /**
@@ -41,7 +43,7 @@ class ProduceMediaTypeExpressionTest {
     // Test basic match without negation
     @Test
     void testMatchPositive() {
-        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain");
+        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression(TEXT_PLAIN_VALUE);
         List<MediaType> acceptedTypes = ofList(TEXT_PLAIN);
         assertTrue(expr.match(acceptedTypes));
     }
@@ -91,7 +93,7 @@ class ProduceMediaTypeExpressionTest {
     // Test combined produces and headers
     @Test
     void testParseCombinedSources() {
-        String[] produces = {"text/xml"};
+        String[] produces = {TEXT_XML_VALUE};
         String[] headers = {"Accept=application/json"};
 
         List<ProduceMediaTypeExpression> result = parseExpressions(produces, headers);
