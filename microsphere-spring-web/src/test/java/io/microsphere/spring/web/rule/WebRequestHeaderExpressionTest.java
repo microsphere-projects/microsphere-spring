@@ -116,14 +116,32 @@ public class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<
     }
 
     @Override
-    public void testEquals() {
-        assertNotEquals(this, this.nameOnlyExpression);
-        assertNotEquals(this.nameOnlyExpression, this.expression);
-        assertNotEquals(this.expression, this.negatedExpression);
+    public void testGetExpression() {
+        assertEquals("name", this.nameOnlyExpression.getExpression());
+        assertEquals("name=Mercy", this.expression.getExpression());
+        assertEquals("name!=Mercy", this.negatedExpression.getExpression());
+    }
 
+    @Override
+    public void testEquals() {
+        assertEquals(this.nameOnlyExpression, this.nameOnlyExpression);
         assertEquals(this.nameOnlyExpression, new WebRequestHeaderExpression("name"));
+        assertNotEquals(this.nameOnlyExpression, this.expression);
+        assertNotEquals(this.nameOnlyExpression, this);
+        assertNotEquals(this.nameOnlyExpression, null);
+
+        assertEquals(this.expression, this.expression);
         assertEquals(this.expression, new WebRequestHeaderExpression("name=Mercy"));
+        assertNotEquals(this.expression, this.negatedExpression);
+        assertNotEquals(this.expression, this);
+        assertNotEquals(this.expression, null);
+
+
+        assertEquals(this.negatedExpression, this.negatedExpression);
         assertEquals(this.negatedExpression, new WebRequestHeaderExpression("name!=Mercy"));
+        assertNotEquals(this.negatedExpression, this.nameOnlyExpression);
+        assertNotEquals(this.negatedExpression, this);
+        assertNotEquals(this.negatedExpression, null);
     }
 
     @Override
