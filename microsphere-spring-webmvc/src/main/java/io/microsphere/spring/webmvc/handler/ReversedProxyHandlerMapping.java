@@ -35,9 +35,10 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandle;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newFixedHashMap;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -153,16 +154,18 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
 
     @Override
     public void onApplicationEvent(WebEndpointMappingsReadyEvent event) {
-        Map<Integer, WebEndpointMapping> webEndpointMappingsMap = new HashMap<>();
+        Collection<WebEndpointMapping> webEndpointMappings = event.getMappings();
+        int size = webEndpointMappings.size();
+        Map<Integer, WebEndpointMapping> webEndpointMappingsMap = newFixedHashMap(size);
         event.getMappings().stream()
-                .filter(this::isRequestMappingHandlerMapping)
+                .filter(this::isAbstractHandlerMapping)
                 .forEach(mapping -> webEndpointMappingsMap.put(mapping.getId(), mapping));
 
         this.webEndpointMappingsCache = webEndpointMappingsMap;
     }
 
-    private boolean isRequestMappingHandlerMapping(WebEndpointMapping webEndpointMapping) {
+    private boolean isAbstractHandlerMapping(WebEndpointMapping webEndpointMapping) {
         return WEB_MVC.equals(webEndpointMapping.getKind()) &&
-                webEndpointMapping.getSource() instanceof RequestMappingHandlerMapping;
+                webEndpointMapping.getSource() instanceof AbstractHandlerMapping;
     }
 }
