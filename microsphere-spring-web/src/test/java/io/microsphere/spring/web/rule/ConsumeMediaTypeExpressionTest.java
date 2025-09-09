@@ -26,8 +26,11 @@ import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExp
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.http.MediaType.valueOf;
 
 /**
@@ -53,7 +56,7 @@ class ConsumeMediaTypeExpressionTest {
 
     @Test
     void testMatchWithWildcard() {
-        MediaType contentType = valueOf("application/json");
+        MediaType contentType = valueOf(APPLICATION_JSON_VALUE);
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(valueOf("application/*"), false);
         assertTrue(expression.match(contentType));
     }
@@ -75,7 +78,7 @@ class ConsumeMediaTypeExpressionTest {
 
     @Test
     void testParseExpressionsWithConsumes() {
-        String[] consumes = {"application/xml"};
+        String[] consumes = {APPLICATION_XML_VALUE};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, null);
         assertFalse(expressions.isEmpty());
         assertTrue(expressions.get(0).match(APPLICATION_XML));
@@ -84,7 +87,7 @@ class ConsumeMediaTypeExpressionTest {
     @Test
     void testParseExpressionsWithHeadersAndConsumes() {
         String[] headers = {"Content-Type=application/json"};
-        String[] consumes = {"application/xml"};
+        String[] consumes = {APPLICATION_XML_VALUE};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
         assertEquals(2, expressions.size());
         assertTrue(expressions.get(0).match(APPLICATION_JSON));
@@ -93,7 +96,7 @@ class ConsumeMediaTypeExpressionTest {
 
     @Test
     void testParseExpressionsWithNoValueHeaders() {
-        String[] headers = {"Content-Type"};
+        String[] headers = {CONTENT_TYPE};
         String[] consumes = {};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
         assertTrue(expressions.isEmpty());
