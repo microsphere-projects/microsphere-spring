@@ -134,7 +134,7 @@ public class SpringResourceURLConnectionAdapterTest extends AbstractSpringResour
     @Override
     public void testGetContentType() {
         assertNull(this.readonly.getContentType());
-        assertEquals("text/plain", this.writable.getContentType());
+        assertEquals(TEXT_PLAIN_VALUE, this.writable.getContentType());
         assertNull(this.notFound.getContentType());
     }
 
