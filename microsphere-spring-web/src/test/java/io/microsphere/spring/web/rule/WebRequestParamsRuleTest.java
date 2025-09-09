@@ -23,6 +23,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithParams;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -58,19 +59,29 @@ public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
         assertEquals(" && ", rule.getToStringInfix());
     }
 
+
     @Override
     protected void doTestEquals() {
+        WebRequestParamsRule rule = new WebRequestParamsRule("param1=value1", "param2=value2");
 
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestParamsRule("param1=value1", "param2=value2"));
+
+        assertNotEquals(rule, new WebRequestParamsRule("param1=value1"));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
     }
 
     @Override
     protected void doTestHashCode() {
-
+        WebRequestParamsRule rule = new WebRequestParamsRule("param1=value1", "param2=value2");
+        assertEquals(rule.hashCode(), rule.getContent().hashCode());
     }
 
     @Override
     protected void doTestToString() {
-
+        WebRequestParamsRule rule = new WebRequestParamsRule("param1=value1", "param2=value2");
+        assertEquals("[param1=value1 && param2=value2]", rule.toString());
     }
 
     // ==================== matches() ====================
