@@ -22,6 +22,7 @@ import io.microsphere.spring.web.context.request.MockServletWebRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * {@link WebRequestHeaderExpression} Test
@@ -107,6 +109,8 @@ class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<WebRequ
         assertTrue(nameOnlyExpression.matchName(request));
         assertTrue(expression.matchName(request));
         assertTrue(negatedExpression.matchName(request));
+
+        assertFalse(negatedExpression.matchName(mock(NativeWebRequest.class)));
     }
 
     @Test
