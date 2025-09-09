@@ -74,7 +74,6 @@ class ServletRegistrationWebEndpointMappingFactoryTest {
         assertFalse(factory.supports(DEFAULT_FILTER_NAME));
     }
 
-
     @Test
     void testGetMethods() {
         ServletRegistration servletRegistration = factory.getRegistration(DEFAULT_SERVLET_NAME, servletContext);
