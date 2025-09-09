@@ -18,6 +18,8 @@
 package io.microsphere.spring.web.metadata;
 
 
+import io.microsphere.spring.test.web.servlet.TestFilter;
+import io.microsphere.spring.test.web.servlet.TestFilterRegistration;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
@@ -37,6 +39,7 @@ import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET
 import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -67,6 +70,13 @@ class FilterRegistrationWebEndpointMappingFactoryTest {
         FilterRegistration registration = factory.getRegistration(DEFAULT_FILTER_NAME, this.servletContext);
         Collection<String> methods = factory.getMethods(registration);
         assertEquals(ALL_HTTP_METHODS, methods);
+    }
+
+    @Test
+    void testGetMethodsWithoutUrlPatternMappings() {
+        FilterRegistration registration = new TestFilterRegistration(DEFAULT_FILTER_NAME, FILTER_CLASS_NAME, new TestFilter());
+        Collection<String> methods = factory.getMethods(registration);
+        assertEquals(emptySet(), methods);
     }
 
     @Test
