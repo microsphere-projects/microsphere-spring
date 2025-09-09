@@ -21,15 +21,11 @@ package io.microsphere.spring.web.metadata;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -61,10 +57,6 @@ class ServletRegistrationWebEndpointMappingFactoryTest {
     private ServletRegistrationWebEndpointMappingFactory factory;
 
     static class MyHttpServlet extends HttpServlet {
-
-        @Override
-        protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        }
     }
 
     @BeforeEach
