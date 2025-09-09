@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -72,7 +73,7 @@ class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     void testMatchesOnNoContentTypeHeader() {
         NativeWebRequest request = createWebRequest();
-        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_OCTET_STREAM_VALUE);
         assertTrue(rule.matches(request));
     }
 
@@ -125,7 +126,7 @@ class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
 
     @Override
     void doTestGetToStringInfix() {
-        assertEquals("Should return ' || '", " || ", new WebRequestConsumesRule().getToStringInfix());
+        assertEquals(" || ", new WebRequestConsumesRule().getToStringInfix());
     }
 
     @Override
