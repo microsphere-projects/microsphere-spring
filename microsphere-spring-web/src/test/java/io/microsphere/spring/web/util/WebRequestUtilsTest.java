@@ -34,6 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.ORIGIN;
@@ -57,6 +58,12 @@ public class WebRequestUtilsTest {
 
         request = createWebRequest(r -> r.setMethod("POST"));
         assertEquals("POST", getMethod(request));
+    }
+
+    @Test
+    public void testGetMethodOnNotHttpServletRequest() {
+        NativeWebRequest request = mock(NativeWebRequest.class);
+        assertNull(getMethod(request));
     }
 
     @Test
