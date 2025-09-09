@@ -53,9 +53,24 @@ class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
 
     // ==================== getToStringInfix() ====================
     @Test
-    void testGetToStringInfix() {
+    void doTestGetToStringInfix() {
         WebRequestParamsRule rule = new WebRequestParamsRule();
         assertEquals(" && ", rule.getToStringInfix());
+    }
+
+    @Override
+    protected void doTestEquals() {
+
+    }
+
+    @Override
+    protected void doTestHashCode() {
+
+    }
+
+    @Override
+    protected void doTestToString() {
+
     }
 
     // ==================== matches() ====================
