@@ -352,7 +352,7 @@ class RequestPredicateKindTest {
 
     @Test
     void testMatchesWithExpressionOnHeaders() {
-        assertFalse(HEADERS.matches(ACCEPT));
+        assertFalse(HEADERS.matches(HttpHeaders.ACCEPT));
     }
 
     @Test
