@@ -18,7 +18,6 @@
 package io.microsphere.spring.web.rule;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
 
@@ -40,22 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AbstractWebRequestRuleTest {
 
     AbstractWebRequestRule<String> createRule(Collection<String> content, String infix) {
-        return new AbstractWebRequestRule<String>() {
-            @Override
-            public boolean matches(NativeWebRequest request) {
-                return true;
-            }
-
-            @Override
-            protected Collection<String> getContent() {
-                return content;
-            }
-
-            @Override
-            protected String getToStringInfix() {
-                return infix;
-            }
-        };
+        return new AbstractWebRequestRuleImpl(content, infix);
     }
 
     // isEmpty() ==============================
