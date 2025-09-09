@@ -20,6 +20,7 @@ package io.microsphere.spring.web.rule;
 
 import io.microsphere.spring.web.context.request.MockServletWebRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
@@ -116,14 +117,32 @@ class WebRequestParamExpressionTest extends BaseNameValueExpressionTest<WebReque
     }
 
     @Override
-    void testEquals() {
-        assertNotEquals(this, this.nameOnlyExpression);
-        assertNotEquals(this.nameOnlyExpression, this.expression);
-        assertNotEquals(this.expression, this.negatedExpression);
+    void testGetExpression() {
+        assertEquals("name", this.nameOnlyExpression.getExpression());
+        assertEquals("name=Mercy", this.expression.getExpression());
+        assertEquals("name!=Mercy", this.negatedExpression.getExpression());
+    }
 
+    @Test
+    void testEquals() {
+        assertEquals(this.nameOnlyExpression, this.nameOnlyExpression);
         assertEquals(this.nameOnlyExpression, new WebRequestParamExpression("name"));
+        assertNotEquals(this.nameOnlyExpression, this.expression);
+        assertNotEquals(this.nameOnlyExpression, this);
+        assertNotEquals(this.nameOnlyExpression, null);
+
+        assertEquals(this.expression, this.expression);
         assertEquals(this.expression, new WebRequestParamExpression("name=Mercy"));
+        assertNotEquals(this.expression, this.negatedExpression);
+        assertNotEquals(this.expression, this);
+        assertNotEquals(this.expression, null);
+
+
+        assertEquals(this.negatedExpression, this.negatedExpression);
         assertEquals(this.negatedExpression, new WebRequestParamExpression("name!=Mercy"));
+        assertNotEquals(this.negatedExpression, this.nameOnlyExpression);
+        assertNotEquals(this.negatedExpression, this);
+        assertNotEquals(this.negatedExpression, null);
     }
 
     @Override
