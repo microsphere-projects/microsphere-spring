@@ -20,11 +20,15 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import java.util.List;
+
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExpressions;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
@@ -131,16 +135,25 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
 
     @Override
     protected void doTestEquals() {
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestConsumesRule(APPLICATION_JSON_VALUE));
 
+        assertNotEquals(rule, new WebRequestConsumesRule(APPLICATION_XML_VALUE));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
     }
 
     @Override
     protected void doTestHashCode() {
-
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
+        List<ConsumeMediaTypeExpression> expressions = parseExpressions(ofArray(APPLICATION_JSON_VALUE), null);
+        assertEquals(rule.hashCode(), expressions.hashCode());
     }
 
     @Override
     protected void doTestToString() {
-
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
+        assertEquals("[application/json]", rule.toString());
     }
 }
