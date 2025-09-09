@@ -54,6 +54,9 @@ public abstract class BaseNameValueExpressionTest<E extends AbstractNameValueExp
     abstract void testMatchValue();
 
     @Test
+    abstract void testGetExpression();
+
+    @Test
     abstract void testEquals();
 
     @Test
