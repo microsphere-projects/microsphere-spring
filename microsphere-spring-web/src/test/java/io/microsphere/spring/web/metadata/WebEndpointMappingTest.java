@@ -58,8 +58,10 @@ import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
+import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.http.MediaType.TEXT_XML_VALUE;
 
 /**
  * {@link WebEndpointMapping} Test
@@ -544,8 +546,8 @@ class WebEndpointMappingTest {
                 .methods("GET", "POST")
                 .params("a=1", "b=2")
                 .headers("c=3", "d!=4")
-                .consumes("application/json", "application/xml")
-                .produces("text/html", "text/xml")
+                .consumes(APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE)
+                .produces(TEXT_HTML_VALUE, TEXT_XML_VALUE)
                 .build();
 
         assertEquals(fullJson, mapping.toJSON());
