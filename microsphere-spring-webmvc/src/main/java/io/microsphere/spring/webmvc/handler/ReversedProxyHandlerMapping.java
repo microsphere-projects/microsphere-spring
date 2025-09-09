@@ -154,15 +154,15 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
     public void onApplicationEvent(WebEndpointMappingsReadyEvent event) {
         Map<Integer, WebEndpointMapping> webEndpointMappingsMap = new HashMap<>();
         event.getMappings().stream()
-                .filter(this::isRequestMappingHandlerMapping)
+                .filter(this::isAbstractHandlerMapping)
                 .forEach(mapping -> webEndpointMappingsMap.put(mapping.getId(), mapping));
 
         this.webEndpointMappingsCache = webEndpointMappingsMap;
     }
 
-    private boolean isRequestMappingHandlerMapping(WebEndpointMapping webEndpointMapping) {
+    private boolean isAbstractHandlerMapping(WebEndpointMapping webEndpointMapping) {
         return WEB_MVC.equals(webEndpointMapping.getKind()) &&
-                webEndpointMapping.getSource() instanceof RequestMappingHandlerMapping;
+                webEndpointMapping.getSource() instanceof AbstractHandlerMapping;
     }
 
 }
