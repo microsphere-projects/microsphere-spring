@@ -76,9 +76,9 @@ class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<WebRequ
 
     @Test
     void testIsNegated() {
-        assertFalse(nameOnlyExpression.isNegated);
-        assertFalse(expression.isNegated);
-        assertTrue(negatedExpression.isNegated);
+        assertFalse(nameOnlyExpression.isNegated());
+        assertFalse(expression.isNegated());
+        assertTrue(negatedExpression.isNegated());
     }
 
     @Test
@@ -116,15 +116,33 @@ class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<WebRequ
         assertTrue(negatedExpression.matchValue(request));
     }
 
+    @Override
+    void testGetExpression() {
+        assertEquals("name", this.nameOnlyExpression.getExpression());
+        assertEquals("name=Mercy", this.expression.getExpression());
+        assertEquals("name!=Mercy", this.negatedExpression.getExpression());
+    }
+
     @Test
     void testEquals() {
-        assertNotEquals(this, this.nameOnlyExpression);
-        assertNotEquals(this.nameOnlyExpression, this.expression);
-        assertNotEquals(this.expression, this.negatedExpression);
-
+        assertEquals(this.nameOnlyExpression, this.nameOnlyExpression);
         assertEquals(this.nameOnlyExpression, new WebRequestHeaderExpression("name"));
+        assertNotEquals(this.nameOnlyExpression, this.expression);
+        assertNotEquals(this.nameOnlyExpression, this);
+        assertNotEquals(this.nameOnlyExpression, null);
+
+        assertEquals(this.expression, this.expression);
         assertEquals(this.expression, new WebRequestHeaderExpression("name=Mercy"));
+        assertNotEquals(this.expression, this.negatedExpression);
+        assertNotEquals(this.expression, this);
+        assertNotEquals(this.expression, null);
+
+
+        assertEquals(this.negatedExpression, this.negatedExpression);
         assertEquals(this.negatedExpression, new WebRequestHeaderExpression("name!=Mercy"));
+        assertNotEquals(this.negatedExpression, this.nameOnlyExpression);
+        assertNotEquals(this.negatedExpression, this);
+        assertNotEquals(this.negatedExpression, null);
     }
 
     @Test
