@@ -86,20 +86,20 @@ class AbstractWebRequestRuleTest {
         }
     }
 
-    AbstractWebRequestRule<String> createRule(Collection<String> content, String infix) {
+    AbstractWebRequestRuleImpl createRule(Collection<String> content, String infix) {
         return new AbstractWebRequestRuleImpl(content, infix);
     }
 
     // isEmpty() ==============================
     @Test
     void testIsEmptyWhenContentIsEmpty() {
-        AbstractWebRequestRule<String> rule = createRule(emptyList(), "||");
+        AbstractWebRequestRuleImpl rule = createRule(emptyList(), "||");
         assertTrue(rule.isEmpty());
     }
 
     @Test
     void testIsEmptyWhenContentIsNotEmpty() {
-        AbstractWebRequestRule<String> rule = createRule(ofList("test"), "||");
+        AbstractWebRequestRuleImpl rule = createRule(ofList("test"), "||");
         assertFalse(rule.isEmpty());
     }
 
@@ -107,95 +107,95 @@ class AbstractWebRequestRuleTest {
     @Test
     void testGetContentWhenEmpty() {
         Collection<String> content = emptyList();
-        AbstractWebRequestRule<String> rule = createRule(content, "||");
+        AbstractWebRequestRuleImpl rule = createRule(content, "||");
         assertTrue(rule.getContent().isEmpty());
     }
 
     @Test
     void testGetContentWhenNotEmpty() {
         Collection<String> content = ofList("a", "b");
-        AbstractWebRequestRule<String> rule = createRule(content, "||");
+        AbstractWebRequestRuleImpl rule = createRule(content, "||");
         assertEquals(2, rule.getContent().size());
     }
 
     // getToStringInfix() =====================
     @Test
     void testGetToStringInfix() {
-        AbstractWebRequestRule<String> rule = createRule(emptyList(), "&&");
+        AbstractWebRequestRuleImpl rule = createRule(emptyList(), "&&");
         assertEquals("&&", rule.getToStringInfix());
     }
 
     // equals() ================================
     @Test
     void testEqualsWithSameInstance() {
-        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
+        AbstractWebRequestRuleImpl rule = createRule(ofSet("a"), "||");
         assertTrue(rule.equals(rule));
     }
 
     @Test
     void testEqualsWithNull() {
-        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
+        AbstractWebRequestRuleImpl rule = createRule(ofSet("a"), "||");
         assertFalse(rule.equals(null));
     }
 
     @Test
     void testEqualsWithDifferentClass() {
-        AbstractWebRequestRule<String> rule = createRule(ofSet("a"), "||");
+        AbstractWebRequestRuleImpl rule = createRule(ofSet("a"), "||");
         Object other = new Object();
         assertFalse(rule.equals(other));
     }
 
     @Test
     void testEqualsWithSameClassAndSameContent() {
-        AbstractWebRequestRule<String> rule1 = createRule(ofList("a", "b"), "||");
-        AbstractWebRequestRule<String> rule2 = createRule(ofList("a", "b"), "||");
+        AbstractWebRequestRuleImpl rule1 = createRule(ofList("a", "b"), "||");
+        AbstractWebRequestRuleImpl rule2 = createRule(ofList("a", "b"), "||");
         assertTrue(rule1.equals(rule2));
     }
 
     @Test
     void testEqualsWithSameClassButDifferentContent() {
-        AbstractWebRequestRule<String> rule1 = createRule(ofList("a", "b"), "||");
-        AbstractWebRequestRule<String> rule2 = createRule(ofList("c", "d"), "||");
+        AbstractWebRequestRuleImpl rule1 = createRule(ofList("a", "b"), "||");
+        AbstractWebRequestRuleImpl rule2 = createRule(ofList("c", "d"), "||");
         assertFalse(rule1.equals(rule2));
     }
 
     // hashCode() ==============================
     @Test
     void testHashCodeForEqualObjects() {
-        AbstractWebRequestRule<String> rule1 = createRule(ofList("a", "b"), "||");
-        AbstractWebRequestRule<String> rule2 = createRule(ofList("a", "b"), "||");
+        AbstractWebRequestRuleImpl rule1 = createRule(ofList("a", "b"), "||");
+        AbstractWebRequestRuleImpl rule2 = createRule(ofList("a", "b"), "||");
         assertEquals(rule1.hashCode(), rule2.hashCode());
     }
 
     @Test
     void testHashCodeForUnequalObjects() {
-        AbstractWebRequestRule<String> rule1 = createRule(ofSet("a"), "||");
-        AbstractWebRequestRule<String> rule2 = createRule(ofSet("b"), "||");
+        AbstractWebRequestRuleImpl rule1 = createRule(ofSet("a"), "||");
+        AbstractWebRequestRuleImpl rule2 = createRule(ofSet("b"), "||");
         assertNotEquals(rule1.hashCode(), rule2.hashCode());
     }
 
     // toString() ==============================
     @Test
     void testToStringWithEmptyContent() {
-        AbstractWebRequestRule<String> rule = createRule(emptyList(), "||");
+        AbstractWebRequestRuleImpl rule = createRule(emptyList(), "||");
         assertEquals("[]", rule.toString());
     }
 
     @Test
     void testToStringWithSingleContent() {
-        AbstractWebRequestRule<String> rule = createRule(ofSet("test"), "||");
+        AbstractWebRequestRuleImpl rule = createRule(ofSet("test"), "||");
         assertEquals("[test]", rule.toString());
     }
 
     @Test
     void testToStringWithMultipleContents() {
-        AbstractWebRequestRule<String> rule = createRule(ofList("a", "b"), "||");
+        AbstractWebRequestRuleImpl rule = createRule(ofList("a", "b"), "||");
         assertEquals("[a||b]", rule.toString());
     }
 
     @Test
     void testToStringWithCustomInfix() {
-        AbstractWebRequestRule<String> rule = createRule(ofList("x", "y"), " && ");
+        AbstractWebRequestRuleImpl rule = createRule(ofList("x", "y"), " && ");
         assertEquals("[x && y]", rule.toString());
     }
 }
