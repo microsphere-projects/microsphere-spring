@@ -25,6 +25,7 @@ import org.junit.Test;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import javax.servlet.http.HttpServlet;
 import java.util.Collection;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -55,6 +56,9 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
 
     private ServletRegistrationWebEndpointMappingFactory factory;
 
+    static class MyHttpServlet extends HttpServlet {
+    }
+
     @Before
     public void setUp() {
         this.servletContext = new TestServletContext();
@@ -78,6 +82,12 @@ public class ServletRegistrationWebEndpointMappingFactoryTest {
     @Test
     public void testGetMethodsWithServletClass() {
         Collection<String> methods = this.factory.getMethods(Servlet.class);
+        assertSame(ALL_HTTP_METHODS, methods);
+    }
+
+    @Test
+    public void testGetMethodsWithMyHttpServletClass() {
+        Collection<String> methods = this.factory.getMethods(MyHttpServlet.class);
         assertSame(ALL_HTTP_METHODS, methods);
     }
 
