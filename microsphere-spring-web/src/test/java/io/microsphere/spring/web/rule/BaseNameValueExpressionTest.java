@@ -18,8 +18,6 @@
 package io.microsphere.spring.web.rule;
 
 
-import org.junit.jupiter.api.Test;
-
 /**
  * Base {@link NameValueExpression} Test
  *
@@ -29,39 +27,27 @@ import org.junit.jupiter.api.Test;
  */
 public abstract class BaseNameValueExpressionTest<E extends AbstractNameValueExpression<String>> {
 
-    @Test
     abstract void testGetName();
 
-    @Test
     abstract void testGetValue();
 
-    @Test
     abstract void testIsNegated();
 
-    @Test
     abstract void testMatch();
 
-    @Test
     abstract void testIsCaseSensitiveName();
 
-    @Test
     abstract void testParseValue();
 
-    @Test
     abstract void testMatchName();
 
-    @Test
     abstract void testMatchValue();
 
-    @Test
     abstract void testGetExpression();
 
-    @Test
     abstract void testEquals();
 
-    @Test
     abstract void testHashCode();
 
-    @Test
     abstract void testToString();
 }
