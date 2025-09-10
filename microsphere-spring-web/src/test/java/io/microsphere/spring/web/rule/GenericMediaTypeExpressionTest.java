@@ -20,7 +20,12 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
+import java.util.Map;
+
+import static io.microsphere.collection.MapUtils.ofMap;
+import static io.microsphere.spring.web.rule.GenericMediaTypeExpression.matchParameters;
 import static io.microsphere.spring.web.rule.GenericMediaTypeExpression.of;
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -28,6 +33,7 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.http.MediaType.parseMediaType;
 
 
 /**
@@ -169,5 +175,48 @@ public class GenericMediaTypeExpressionTest {
         GenericMediaTypeExpression expr = of("!text/plain");
         assertEquals(TEXT_PLAIN, expr.getMediaType());
         assertTrue(expr.isNegated());
+    }
+
+    // ==================== matchParameters() ====================
+    @Test
+    public void testMatchParameters() {
+        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;charset=utf-8");
+        MediaType acceptedMediaType = parseMediaType("text/plain;charset=UTF-8");
+        assertTrue(expr.matchParameters(acceptedMediaType));
+
+        expr = new ProduceMediaTypeExpression("text/plain;charset=GBK");
+        assertFalse(expr.matchParameters(acceptedMediaType));
+
+        acceptedMediaType = parseMediaType("text/plain;charset=UTF-16");
+        assertFalse(expr.matchParameters(acceptedMediaType));
+    }
+
+    // ==================== static matchParameters() ====================
+    @Test
+    public void testMatchParametersOnParameterMatch() {
+        Map<String, String> sourceParameters = ofMap("charset", "UTF-8");
+        Map<String, String> targetParameters = ofMap("charset", "UTF-8");
+        assertTrue(matchParameters(sourceParameters, targetParameters));
+    }
+
+    @Test
+    public void testMatchParametersOnNullEntry() {
+        Map<String, String> sourceParameters = ofMap("charset", null);
+        Map<String, String> targetParameters = ofMap("charset", "UTF-16");
+        assertTrue(matchParameters(sourceParameters, targetParameters));
+    }
+
+    @Test
+    public void testMatchParametersOnParameterMissing() {
+        Map<String, String> sourceParameters = ofMap("charset", "UTF-8");
+        Map<String, String> targetParameters = emptyMap();
+        assertTrue(matchParameters(sourceParameters, targetParameters));
+    }
+
+    @Test
+    public void testMatchParametersOnParameterNotMatch() {
+        Map<String, String> sourceParameters = ofMap("charset", "UTF-8");
+        Map<String, String> targetParameters = ofMap("charset", "UTF-16");
+        assertFalse(matchParameters(sourceParameters, targetParameters));
     }
 }
