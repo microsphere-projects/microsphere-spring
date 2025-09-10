@@ -68,7 +68,7 @@ public class ConsumeMediaTypeExpressionTest {
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(contentType, true);
         assertFalse(expression.match(contentType));
     }
-    
+
     @Test
     public void testMatchWhenParametersNoMatch() {
         MediaType contentType = parseMediaType("application/json;charset=UTF-8");
