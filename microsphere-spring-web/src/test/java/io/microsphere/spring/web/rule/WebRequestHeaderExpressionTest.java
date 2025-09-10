@@ -27,6 +27,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.List;
 
 import static io.microsphere.spring.web.rule.WebRequestHeaderExpression.parseExpressions;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -180,5 +181,13 @@ public class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<
         assertEquals(this.negatedNameOnlyExpression.toString(), "!name");
         assertEquals(this.expression.toString(), "name=Mercy");
         assertEquals(this.negatedExpression.toString(), "name!=Mercy");
+    }
+
+    @Test
+    public void testConstructorWithoutName() {
+        WebRequestHeaderExpression expression = new WebRequestHeaderExpression("=Mercy");
+        assertFalse(expression.isNegated());
+        assertEquals(EMPTY_STRING, expression.getName());
+        assertEquals("Mercy", expression.getValue());
     }
 }
