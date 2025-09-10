@@ -27,6 +27,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.List;
 
 import static io.microsphere.spring.web.rule.WebRequestParamExpression.parseExpressions;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -180,5 +181,13 @@ class WebRequestParamExpressionTest extends BaseNameValueExpressionTest<WebReque
         assertEquals(this.negatedNameOnlyExpression.toString(), "!name");
         assertEquals(this.expression.toString(), "name=Mercy");
         assertEquals(this.negatedExpression.toString(), "name!=Mercy");
+    }
+
+    @Test
+    void testConstructorWithoutName() {
+        WebRequestParamExpression expression = new WebRequestParamExpression("=Mercy");
+        assertFalse(expression.isNegated());
+        assertEquals(EMPTY_STRING, expression.getName());
+        assertEquals("Mercy", expression.getValue());
     }
 }
