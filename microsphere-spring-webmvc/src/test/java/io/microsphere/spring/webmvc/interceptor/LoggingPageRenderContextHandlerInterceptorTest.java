@@ -63,13 +63,13 @@ class LoggingPageRenderContextHandlerInterceptorTest {
     }
 
     @Test
-    void testPostHandle() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, this.handler, null);
+    void testPreHandle() throws Exception {
+        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handler));
     }
 
     @Test
-    void testPreHandle() throws Exception {
-        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handler));
+    void testPostHandle() throws Exception {
+        this.interceptor.postHandle(this.request, this.response, this.handler, null);
     }
 
     @Test
