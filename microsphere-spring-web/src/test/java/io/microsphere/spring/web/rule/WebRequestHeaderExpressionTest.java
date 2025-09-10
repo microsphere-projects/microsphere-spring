@@ -144,26 +144,38 @@ class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<WebRequ
     void testEquals() {
         assertEquals(this.nameOnlyExpression, this.nameOnlyExpression);
         assertEquals(this.nameOnlyExpression, new WebRequestHeaderExpression("name"));
+        assertNotEquals(this.nameOnlyExpression, new WebRequestHeaderExpression("otherName"));
+        assertNotEquals(this.nameOnlyExpression, this.negatedNameOnlyExpression);
         assertNotEquals(this.nameOnlyExpression, this.expression);
-        assertNotEquals(this.nameOnlyExpression, this);
+        assertNotEquals(this.nameOnlyExpression, this.negatedExpression);
+        assertNotEquals(this.nameOnlyExpression, new Object());
         assertNotEquals(this.nameOnlyExpression, null);
 
         assertEquals(this.negatedNameOnlyExpression, this.negatedNameOnlyExpression);
         assertEquals(this.negatedNameOnlyExpression, new WebRequestHeaderExpression("!name"));
+        assertNotEquals(this.negatedNameOnlyExpression, new WebRequestHeaderExpression("!otherName"));
         assertNotEquals(this.negatedNameOnlyExpression, this.nameOnlyExpression);
-        assertNotEquals(this.nameOnlyExpression, this);
+        assertNotEquals(this.negatedNameOnlyExpression, this.expression);
+        assertNotEquals(this.negatedNameOnlyExpression, this.negatedExpression);
+        assertNotEquals(this.nameOnlyExpression, new Object());
         assertNotEquals(this.nameOnlyExpression, null);
 
         assertEquals(this.expression, this.expression);
         assertEquals(this.expression, new WebRequestHeaderExpression("name=Mercy"));
+        assertNotEquals(this.expression, new WebRequestHeaderExpression("name=Ma"));
+        assertNotEquals(this.expression, this.nameOnlyExpression);
+        assertNotEquals(this.expression, this.negatedNameOnlyExpression);
         assertNotEquals(this.expression, this.negatedExpression);
-        assertNotEquals(this.expression, this);
+        assertNotEquals(this.expression, new Object());
         assertNotEquals(this.expression, null);
 
         assertEquals(this.negatedExpression, this.negatedExpression);
         assertEquals(this.negatedExpression, new WebRequestHeaderExpression("name!=Mercy"));
+        assertNotEquals(this.negatedExpression, new WebRequestHeaderExpression("name!=Ma"));
         assertNotEquals(this.negatedExpression, this.nameOnlyExpression);
-        assertNotEquals(this.negatedExpression, this);
+        assertNotEquals(this.negatedExpression, this.negatedNameOnlyExpression);
+        assertNotEquals(this.negatedExpression, this.expression);
+        assertNotEquals(this.negatedExpression, new Object());
         assertNotEquals(this.negatedExpression, null);
     }
 
