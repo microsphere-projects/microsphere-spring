@@ -18,8 +18,8 @@
 package io.microsphere.spring.webflux.metadata;
 
 import io.microsphere.spring.web.metadata.HandlerMetadata;
-import io.microsphere.spring.web.metadata.HandlerMethodMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
 import io.microsphere.spring.webflux.function.server.ConsumingWebEndpointMappingAdapter;
 import org.springframework.context.ApplicationContext;
@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.MapUtils.newFixedHashMap;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
@@ -71,18 +72,9 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         if (handlerMapping instanceof AbstractUrlHandlerMapping) {
             AbstractUrlHandlerMapping urlHandlerMapping = (AbstractUrlHandlerMapping) handlerMapping;
             Map<PathPattern, Object> handlerMap = urlHandlerMapping.getHandlerMap();
-            if (handlerMap.isEmpty()) {
-                return;
-            }
-
             HandlerMetadataWebEndpointMappingFactory factory = new HandlerMetadataWebEndpointMappingFactory(urlHandlerMapping);
-            for (Entry<PathPattern, Object> entry : handlerMap.entrySet()) {
-                PathPattern pathPattern = entry.getKey();
-                Object handler = entry.getValue();
-                HandlerMetadata<Object, String> metadata = new HandlerMetadata<>(handler, pathPattern.getPatternString());
-                Optional<WebEndpointMapping<HandlerMetadata<Object, String>>> webEndpointMapping = factory.create(metadata);
-                webEndpointMapping.ifPresent(webEndpointMappings::add);
-            }
+            Map<String, Object> newHandlerMap = buildNewHandlerMap(handlerMap);
+            resolveWebEndpointMappings(newHandlerMap, factory, webEndpointMappings);
         }
     }
 
@@ -92,16 +84,8 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
             RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
             Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
-            if (handlerMethodsMap.isEmpty()) {
-                return;
-            }
-
             RequestMappingMetadataWebEndpointMappingFactory factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
-            for (Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethodsMap.entrySet()) {
-                HandlerMethodMetadata<RequestMappingInfo> metadata = new HandlerMethodMetadata<>(entry.getValue(), entry.getKey());
-                Optional<WebEndpointMapping<HandlerMetadata<HandlerMethod, RequestMappingInfo>>> webEndpointMapping = factory.create(metadata);
-                webEndpointMapping.ifPresent(webEndpointMappings::add);
-            }
+            resolveWebEndpointMappings(handlerMethodsMap, factory, webEndpointMappings);
             requestMappingInfoHandlerMethods.putAll(handlerMethodsMap);
         }
     }
@@ -112,6 +96,29 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
             RouterFunction<?> routerFunction = routerFunctionMapping.getRouterFunction();
             if (routerFunction != null) {
                 routerFunction.accept(new ConsumingWebEndpointMappingAdapter(webEndpointMappings::add, routerFunction));
+            }
+        }
+    }
+
+    Map<String, Object> buildNewHandlerMap(Map<PathPattern, Object> handlerMap) {
+        Map<String, Object> newHandlerMap = newFixedHashMap(handlerMap.size());
+        for (Entry<PathPattern, Object> entry : handlerMap.entrySet()) {
+            PathPattern pathPattern = entry.getKey();
+            Object handler = entry.getValue();
+            newHandlerMap.put(pathPattern.getPatternString(), handler);
+        }
+        return newHandlerMap;
+    }
+
+    <H, M> void resolveWebEndpointMappings(Map<M, H> map, WebEndpointMappingFactory<HandlerMetadata<H, M>> factory,
+                                           List<WebEndpointMapping> webEndpointMappings) {
+        for (Entry<M, H> entry : map.entrySet()) {
+            H handler = entry.getValue();
+            M metadata = entry.getKey();
+            HandlerMetadata<H, M> handlerMetadata = new HandlerMetadata<>(handler, metadata);
+            if (factory.supports(handlerMetadata)) {
+                Optional<WebEndpointMapping<HandlerMetadata<H, M>>> webEndpointMapping = factory.create(handlerMetadata);
+                webEndpointMapping.ifPresent(webEndpointMappings::add);
             }
         }
     }
