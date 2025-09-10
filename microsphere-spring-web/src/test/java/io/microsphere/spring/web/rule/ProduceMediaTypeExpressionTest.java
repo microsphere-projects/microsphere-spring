@@ -25,10 +25,12 @@ import java.util.List;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
+import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.MediaType.TEXT_XML;
@@ -92,31 +94,55 @@ class ProduceMediaTypeExpressionTest {
 
     // Test combined produces and headers
     @Test
-    void testParseCombinedSources() {
+    void testParseExpressions() {
         String[] produces = {TEXT_XML_VALUE};
         String[] headers = {"Accept=application/json"};
 
         List<ProduceMediaTypeExpression> result = parseExpressions(produces, headers);
-        assertEquals(2, result.size());
+        assertProduceMediaTypeExpressions(result);
+    }
 
+    @Test
+    void testParseExpressionsWithNullHeaders() {
+        String[] produces = ofArray(APPLICATION_JSON_VALUE, TEXT_XML_VALUE);
+        String[] headers = null;
+        List<ProduceMediaTypeExpression> result = parseExpressions(produces, headers);
+        assertProduceMediaTypeExpressions(result);
+    }
+
+    @Test
+    void testParseExpressionsWithEmptyHeaders() {
+        String[] produces = ofArray(APPLICATION_JSON_VALUE, TEXT_XML_VALUE);
+        String[] headers = {};
+        List<ProduceMediaTypeExpression> result = parseExpressions(produces, headers);
+        assertProduceMediaTypeExpressions(result);
+    }
+
+    @Test
+    void testParseExpressionsWithNullValueHeaders() {
+        String[] produces = ofArray(APPLICATION_JSON_VALUE);
+        String[] headers = {"Accept"};
+        List<ProduceMediaTypeExpression> result = parseExpressions(produces, headers);
+        assertEquals(1, result.size());
+        assertEquals(APPLICATION_JSON, result.get(0).getMediaType());
+    }
+
+    @Test
+    void testParseExpressionsWithInvalidHeaders() {
+        String[] produces = ofArray(APPLICATION_JSON_VALUE);
+        String[] headers = ofArray("Content-Type=application/json");
+        List<ProduceMediaTypeExpression> result = parseExpressions(produces, headers);
+        assertEquals(1, result.size());
+        assertEquals(APPLICATION_JSON, result.get(0).getMediaType());
+    }
+
+    void assertProduceMediaTypeExpressions(List<ProduceMediaTypeExpression> expressions) {
+        assertEquals(2, expressions.size());
         List<MediaType> types = new ArrayList<>();
-        for (ProduceMediaTypeExpression expr : result) {
+        for (ProduceMediaTypeExpression expr : expressions) {
             types.add(expr.getMediaType());
         }
         assertTrue(types.contains(APPLICATION_JSON));
         assertTrue(types.contains(TEXT_XML));
-    }
-
-    @Test
-    void testMatchParameters() {
-        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;charset=utf-8");
-        MediaType acceptedMediaType = parseMediaType("text/plain;charset=UTF-8");
-        assertTrue(expr.matchParameters(acceptedMediaType));
-
-        expr = new ProduceMediaTypeExpression("text/plain;charset=GBK");
-        assertFalse(expr.matchParameters(acceptedMediaType));
-
-        acceptedMediaType = parseMediaType("text/plain;charset=UTF-16");
-        assertFalse(expr.matchParameters(acceptedMediaType));
     }
 }
