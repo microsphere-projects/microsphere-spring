@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static org.springframework.http.MediaType.SPECIFICITY_COMPARATOR;
 import static org.springframework.http.MediaType.parseMediaType;
@@ -80,12 +81,16 @@ public class GenericMediaTypeExpression implements MediaTypeExpression, Comparab
     }
 
     protected boolean matchParameters(MediaType mediaType) {
-        for (Map.Entry<String, String> entry : getMediaType().getParameters().entrySet()) {
-            if (hasText(entry.getValue())) {
-                String value = mediaType.getParameter(entry.getKey());
-                if (hasText(value) && !entry.getValue().equalsIgnoreCase(value)) {
-                    return false;
-                }
+        return matchParameters(this.getMediaType().getParameters(), mediaType.getParameters());
+    }
+
+    static boolean matchParameters(Map<String, String> sourceParameters, Map<String, String> targetParameters) {
+        for (Entry<String, String> entry : sourceParameters.entrySet()) {
+            String name = entry.getKey();
+            String s1 = entry.getValue();
+            String s2 = targetParameters.get(name);
+            if (hasText(s1) && hasText(s2) && !s1.equalsIgnoreCase(s2)) {
+                return false;
             }
         }
         return true;
