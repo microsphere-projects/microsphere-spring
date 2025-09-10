@@ -46,7 +46,7 @@ class LoggingPageRenderContextHandlerInterceptorTest {
 
     private HttpServletResponse response;
 
-    private Object handler;
+    private HandlerMethod handlerMethod;
 
     private ModelAndView modelAndView;
 
@@ -56,7 +56,7 @@ class LoggingPageRenderContextHandlerInterceptorTest {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
         TestController testController = new TestController();
-        this.handler = new HandlerMethod(testController, findMethod(TestController.class, "helloWorld"));
+        this.handlerMethod = new HandlerMethod(testController, findMethod(TestController.class, "helloWorld"));
         this.modelAndView = new ModelAndView();
         this.modelAndView.setViewName("test-view");
         this.modelAndView.addObject("name", "value");
@@ -64,21 +64,22 @@ class LoggingPageRenderContextHandlerInterceptorTest {
 
     @Test
     void testPreHandle() throws Exception {
-        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handler));
+        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handlerMethod));
     }
 
     @Test
     void testPostHandle() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, this.handler, null);
+        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, null);
+        this.interceptor.postHandle(this.request, this.response, (Object) null, null);
     }
 
     @Test
     void testAfterCompletion() throws Exception {
-        this.interceptor.afterCompletion(this.request, this.response, this.handler, null);
+        this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, null);
     }
 
     @Test
     void testPostHandleOnPageRenderContext() throws Exception {
-        this.interceptor.postHandleOnPageRenderContext(this.request, this.response, this.handler, this.modelAndView);
+        this.interceptor.postHandleOnPageRenderContext(this.request, this.response, this.handlerMethod, this.modelAndView);
     }
 }
