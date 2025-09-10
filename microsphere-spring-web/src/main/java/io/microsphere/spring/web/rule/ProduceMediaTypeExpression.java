@@ -20,11 +20,11 @@ import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
+import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.parseMediaTypes;
@@ -62,25 +62,27 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
     }
 
     public static List<ProduceMediaTypeExpression> parseExpressions(String[] produces, @Nullable String[] headers) {
-        Set<ProduceMediaTypeExpression> result = null;
-        if (isNotEmpty(headers)) {
-            for (String header : headers) {
-                WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
-                if (ACCEPT.equalsIgnoreCase(expression.name) && expression.value != null) {
-                    List<MediaType> mediaTypes = parseMediaTypes(expression.value);
-                    for (MediaType mediaType : mediaTypes) {
-                        result = (result != null ? result : new LinkedHashSet<>());
-                        result.add(new ProduceMediaTypeExpression(mediaType, expression.isNegated));
-                    }
+        int producesSize = length(produces);
+        int headersSize = length(headers);
+
+        Set<ProduceMediaTypeExpression> result = newFixedLinkedHashSet(producesSize + headersSize);
+
+        for (int i = 0; i < headersSize; i++) {
+            String header = headers[i];
+            WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
+            if (ACCEPT.equalsIgnoreCase(expression.name) && expression.value != null) {
+                List<MediaType> mediaTypes = parseMediaTypes(expression.value);
+                for (MediaType mediaType : mediaTypes) {
+                    result.add(new ProduceMediaTypeExpression(mediaType, expression.isNegated));
                 }
             }
         }
-        if (isNotEmpty(produces)) {
-            for (String produce : produces) {
-                result = (result != null ? result : new LinkedHashSet<>());
-                result.add(new ProduceMediaTypeExpression(produce));
-            }
+
+        for (int i = 0; i < producesSize; i++) {
+            String produce = produces[i];
+            result.add(new ProduceMediaTypeExpression(produce));
         }
-        return (result != null ? new ArrayList<>(result) : emptyList());
+
+        return result.isEmpty() ? emptyList() : new ArrayList<>(result);
     }
 }
