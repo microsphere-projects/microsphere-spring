@@ -46,7 +46,7 @@ import static java.util.Optional.of;
  * The adapter class of {@link RequestPredicateVisitorAdapter} and {@link RouterFunctionVisitorAdapter} to consume the
  * {@link WebEndpointMapping WebEndpointMappings} generated during the visiting process.
  *
- * <p>This class is designed to traverse Spring WebFlux router functions and their associated request predicates,
+ * <p>This class is designed to traverse Spring WebMVC router functions and their associated request predicates,
  * collecting metadata about web endpoints. It implements both visitor interfaces to capture information such as
  * HTTP methods, path patterns, headers, and query parameters.</p>
  *
