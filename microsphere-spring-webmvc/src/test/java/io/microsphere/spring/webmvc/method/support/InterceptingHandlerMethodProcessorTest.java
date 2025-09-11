@@ -21,7 +21,6 @@ package io.microsphere.spring.webmvc.method.support;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
-import io.microsphere.spring.webmvc.test.RouterFunctionTestConfig;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +52,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        RouterFunctionTestConfig.class,
         LoggingHandlerMethodArgumentResolverAdvice.class,
         InterceptingHandlerMethodProcessorTest.class,
 })
