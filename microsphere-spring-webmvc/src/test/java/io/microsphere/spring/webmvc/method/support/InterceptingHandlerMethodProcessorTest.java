@@ -53,8 +53,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
+        RouterFunctionTestConfig.class,
+        LoggingHandlerMethodArgumentResolverAdvice.class,
         InterceptingHandlerMethodProcessorTest.class,
-        RouterFunctionTestConfig.class
 })
 @EnableWebMvcExtension(registerHandlerInterceptors = true)
 @Import(TestController.class)
