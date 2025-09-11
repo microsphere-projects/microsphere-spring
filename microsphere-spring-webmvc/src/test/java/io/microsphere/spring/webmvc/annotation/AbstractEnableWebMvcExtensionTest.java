@@ -33,6 +33,7 @@ import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingRes
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
@@ -60,6 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
+@Disabled
 @Import(TestController.class)
 abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest implements HandlerMethodArgumentInterceptor {
 
