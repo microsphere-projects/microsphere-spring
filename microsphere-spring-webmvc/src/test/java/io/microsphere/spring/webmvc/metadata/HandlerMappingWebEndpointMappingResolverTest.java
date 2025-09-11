@@ -20,20 +20,12 @@ package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
+import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
+import io.microsphere.spring.webmvc.test.RouterFunctionTestConfig;
 import io.microsphere.spring.webmvc.test.SimpleUrlHandlerMappingTestConfig;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * {@link HandlerMappingWebEndpointMappingResolver} Test
@@ -42,28 +34,16 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @see HandlerMappingWebEndpointMappingResolver
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = {
+        RouterFunctionTestConfig.class,
         SimpleUrlHandlerMappingTestConfig.class,
         HandlerMappingWebEndpointMappingResolver.class,
         HandlerMappingWebEndpointMappingResolverTest.class,
 
 })
 @Import(TestController.class)
-@EnableWebMvc
 @EnableWebMvcExtension
-class HandlerMappingWebEndpointMappingResolverTest {
-
-    @Autowired
-    private WebApplicationContext context;
-
-    private MockMvc mockMvc;
-
-    @BeforeEach
-    void setUp() {
-        this.mockMvc = webAppContextSetup(this.context).build();
-    }
+class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebMvcTest {
 
     @Test
     void testResolve() {
