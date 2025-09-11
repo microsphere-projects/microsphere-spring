@@ -88,11 +88,10 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
     }
 
     protected void resolveFromRouterFunctionMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
-        if (handlerMapping instanceof RouterFunctionMapping) {
-            RouterFunctionMapping routerFunctionMapping = (RouterFunctionMapping) handlerMapping;
+        if (handlerMapping instanceof RouterFunctionMapping routerFunctionMapping) {
             RouterFunction<?> routerFunction = routerFunctionMapping.getRouterFunction();
             if (routerFunction != null) {
-                routerFunction.accept(new ConsumingWebEndpointMappingAdapter(webEndpointMappings::add, routerFunction));
+                routerFunction.accept(new ConsumingWebEndpointMappingAdapter(webEndpointMappings::add, routerFunctionMapping));
             }
         }
     }
