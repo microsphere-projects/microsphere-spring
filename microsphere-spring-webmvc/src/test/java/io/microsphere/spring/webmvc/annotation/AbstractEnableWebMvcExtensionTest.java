@@ -210,7 +210,6 @@ abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest impl
     }
 
     private void assertNativeWebRequest(NativeWebRequest webRequest) {
+        assertNotNull(webRequest);
     }
-
-
 }
