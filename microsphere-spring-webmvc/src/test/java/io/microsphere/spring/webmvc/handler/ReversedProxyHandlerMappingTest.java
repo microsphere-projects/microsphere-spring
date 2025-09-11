@@ -24,18 +24,12 @@ import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
+import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,7 +44,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * {@link ReversedProxyHandlerMapping} Test
@@ -59,22 +52,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @see ReversedProxyHandlerMapping
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@DirtiesContext
-@WebAppConfiguration
 @ContextConfiguration(classes = {
         TestController.class,
         ReversedProxyHandlerMapping.class,
         ReversedProxyHandlerMappingTest.class
 })
-@EnableWebMvc
 @EnableWebMvcExtension
-class ReversedProxyHandlerMappingTest {
-
-    private MockMvc mockMvc;
-
-    @Autowired
-    private WebApplicationContext context;
+class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
 
     @Autowired
     private WebEndpointMappingRegistry webEndpointMappingRegistry;
@@ -82,8 +66,8 @@ class ReversedProxyHandlerMappingTest {
     private Map<String, WebEndpointMapping> webEndpointMappingsMap;
 
     @BeforeEach
-    void setUp() {
-        this.mockMvc = webAppContextSetup(context).build();
+    protected void setUp() {
+        super.setUp();
         initWebEndpointMappingsMap();
     }
 
@@ -149,7 +133,7 @@ class ReversedProxyHandlerMappingTest {
     @Test
     void testView() throws Exception {
         String pattern = "/test/view";
-        this.mockMvc.perform(get("/test/view").header(ID_HEADER_NAME, getWebEndpointMappingId(pattern)))
+        this.mockMvc.perform(get(pattern).header(ID_HEADER_NAME, getWebEndpointMappingId(pattern)))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }
