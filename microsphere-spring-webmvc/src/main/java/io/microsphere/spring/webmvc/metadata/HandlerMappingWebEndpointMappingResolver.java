@@ -21,9 +21,12 @@ import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
+import io.microsphere.spring.web.servlet.function.ConsumingWebEndpointMappingAdapter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.support.RouterFunctionMapping;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
@@ -58,11 +61,12 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             resolveFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);
             resolveFromRequestMappingInfoHandlerMapping(handlerMapping, requestMappingInfoHandlerMethods, webEndpointMappings);
+            resolveFromRouterFunctionMapping(handlerMapping, webEndpointMappings);
         }
         return webEndpointMappings;
     }
 
-    void resolveFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
+    protected void resolveFromAbstractUrlHandlerMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
         if (handlerMapping instanceof AbstractUrlHandlerMapping) {
             AbstractUrlHandlerMapping urlHandlerMapping = (AbstractUrlHandlerMapping) handlerMapping;
             Map<String, Object> handlerMap = urlHandlerMapping.getHandlerMap();
@@ -71,15 +75,25 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
         }
     }
 
-    void resolveFromRequestMappingInfoHandlerMapping(HandlerMapping handlerMapping,
-                                                     Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods,
-                                                     List<WebEndpointMapping> webEndpointMappings) {
+    protected void resolveFromRequestMappingInfoHandlerMapping(HandlerMapping handlerMapping,
+                                                               Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods,
+                                                               List<WebEndpointMapping> webEndpointMappings) {
         if (handlerMapping instanceof RequestMappingInfoHandlerMapping) {
             RequestMappingInfoHandlerMapping requestMappingInfoHandlerMapping = (RequestMappingInfoHandlerMapping) handlerMapping;
             Map<RequestMappingInfo, HandlerMethod> handlerMethodsMap = requestMappingInfoHandlerMapping.getHandlerMethods();
             RequestMappingMetadataWebEndpointMappingFactory factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
             resolveWebEndpointMappings(handlerMethodsMap, factory, webEndpointMappings);
             requestMappingInfoHandlerMethods.putAll(handlerMethodsMap);
+        }
+    }
+
+    protected void resolveFromRouterFunctionMapping(HandlerMapping handlerMapping, List<WebEndpointMapping> webEndpointMappings) {
+        if (handlerMapping instanceof RouterFunctionMapping) {
+            RouterFunctionMapping routerFunctionMapping = (RouterFunctionMapping) handlerMapping;
+            RouterFunction<?> routerFunction = routerFunctionMapping.getRouterFunction();
+            if (routerFunction != null) {
+                routerFunction.accept(new ConsumingWebEndpointMappingAdapter(webEndpointMappings::add, routerFunction));
+            }
         }
     }
 
