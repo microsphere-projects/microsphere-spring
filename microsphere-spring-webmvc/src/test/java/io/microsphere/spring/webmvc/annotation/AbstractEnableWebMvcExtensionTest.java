@@ -31,21 +31,15 @@ import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
+import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.MethodParameter;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -59,7 +53,6 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Abstract {@link EnableWebMvcExtension} Test
@@ -68,17 +61,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
-@WebAppConfiguration
-@EnableWebMvc
 @Ignore
 @Import(TestController.class)
-abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumentInterceptor {
-
-    @Autowired
-    protected ConfigurableWebApplicationContext wac;
-
-    protected MockMvc mockMvc;
+abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest implements HandlerMethodArgumentInterceptor {
 
     protected boolean registerWebEndpointMappings;
 
@@ -94,7 +79,7 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
 
     @Before
     public void setup() {
-        this.mockMvc = webAppContextSetup(this.wac).build();
+        super.setUp();
         EnableWebMvcExtension enableWebMvcExtension = this.getClass().getAnnotation(EnableWebMvcExtension.class);
         this.registerWebEndpointMappings = enableWebMvcExtension.registerWebEndpointMappings();
         this.interceptHandlerMethods = enableWebMvcExtension.interceptHandlerMethods();
@@ -107,22 +92,22 @@ abstract class AbstractEnableWebMvcExtensionTest implements HandlerMethodArgumen
 
     @Test
     public void testRegisteredBeans() {
-        assertTrue(isBeanPresent(this.wac, WebMvcExtensionConfiguration.class));
+        assertTrue(isBeanPresent(this.context, WebMvcExtensionConfiguration.class));
         // From @EnableWebExtension
-        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, SimpleWebEndpointMappingRegistry.class));
-        assertEquals(this.interceptHandlerMethods, this.wac.containsBean(DelegatingHandlerMethodAdvice.BEAN_NAME));
-        assertEquals(this.publishEvents, isBeanPresent(this.wac, WebEventPublisher.class));
-        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, WebEndpointMappingRegistrar.class));
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, SimpleWebEndpointMappingRegistry.class));
+        assertEquals(this.interceptHandlerMethods, this.context.containsBean(DelegatingHandlerMethodAdvice.BEAN_NAME));
+        assertEquals(this.publishEvents, isBeanPresent(this.context, WebEventPublisher.class));
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, WebEndpointMappingRegistrar.class));
 
         // From @EnableWebMvcExtension
-        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, ServletWebEndpointMappingResolver.class));
-        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.wac, HandlerMappingWebEndpointMappingResolver.class));
-        assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, DelegatingHandlerMethodAdvice.class));
-        assertEquals(this.interceptHandlerMethods, this.wac.containsBean(InterceptingHandlerMethodProcessor.BEAN_NAME));
-        assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, InterceptingHandlerMethodProcessor.class));
-        assertEquals(this.registerHandlerInterceptors, isBeanPresent(this.wac, LazyCompositeHandlerInterceptor.class));
-        assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.wac, StoringRequestBodyArgumentAdvice.class));
-        assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.wac, StoringResponseBodyReturnValueAdvice.class));
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, ServletWebEndpointMappingResolver.class));
+        assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, HandlerMappingWebEndpointMappingResolver.class));
+        assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, DelegatingHandlerMethodAdvice.class));
+        assertEquals(this.interceptHandlerMethods, this.context.containsBean(InterceptingHandlerMethodProcessor.BEAN_NAME));
+        assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, InterceptingHandlerMethodProcessor.class));
+        assertEquals(this.registerHandlerInterceptors, isBeanPresent(this.context, LazyCompositeHandlerInterceptor.class));
+        assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.context, StoringRequestBodyArgumentAdvice.class));
+        assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueAdvice.class));
     }
 
     @Test
