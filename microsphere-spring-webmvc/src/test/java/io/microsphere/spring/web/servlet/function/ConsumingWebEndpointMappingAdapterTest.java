@@ -17,12 +17,9 @@
 
 package io.microsphere.spring.web.servlet.function;
 
-import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
-import io.microsphere.spring.webmvc.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.support.RouterFunctionMapping;
@@ -40,10 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        ConsumingWebEndpointMappingAdapterTest.class,
-        RouterFunctionTestConfig.class
+        ConsumingWebEndpointMappingAdapterTest.class
 })
-@Import(TestController.class)
 public class ConsumingWebEndpointMappingAdapterTest extends AbstractWebMvcTest {
 
     @Test
