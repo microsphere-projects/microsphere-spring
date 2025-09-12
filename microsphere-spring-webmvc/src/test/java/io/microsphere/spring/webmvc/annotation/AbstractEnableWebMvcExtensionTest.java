@@ -28,6 +28,7 @@ import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
+import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
@@ -77,8 +78,10 @@ abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest impl
 
     protected boolean storeResponseBodyReturnValue;
 
+    protected boolean reversedProxyHandlerMapping;
+
     @Before
-    public void setup() {
+    public void setUp() {
         super.setUp();
         EnableWebMvcExtension enableWebMvcExtension = this.getClass().getAnnotation(EnableWebMvcExtension.class);
         this.registerWebEndpointMappings = enableWebMvcExtension.registerWebEndpointMappings();
@@ -88,6 +91,7 @@ abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest impl
                 isNotEmpty(enableWebMvcExtension.handlerInterceptors());
         this.storeRequestBodyArgument = enableWebMvcExtension.storeRequestBodyArgument();
         this.storeResponseBodyReturnValue = enableWebMvcExtension.storeResponseBodyReturnValue();
+        this.reversedProxyHandlerMapping = enableWebMvcExtension.reversedProxyHandlerMapping();
     }
 
     @Test
@@ -108,6 +112,7 @@ abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest impl
         assertEquals(this.registerHandlerInterceptors, isBeanPresent(this.context, LazyCompositeHandlerInterceptor.class));
         assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.context, StoringRequestBodyArgumentAdvice.class));
         assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueAdvice.class));
+        assertEquals(this.reversedProxyHandlerMapping, isBeanPresent(this.context, ReversedProxyHandlerMapping.class));
     }
 
     @Test
@@ -212,7 +217,6 @@ abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest impl
     }
 
     private void assertNativeWebRequest(NativeWebRequest webRequest) {
+        assertNotNull(webRequest);
     }
-
-
 }
