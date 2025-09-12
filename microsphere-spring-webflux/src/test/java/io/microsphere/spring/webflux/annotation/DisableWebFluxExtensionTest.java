@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webflux.annotation;
 
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -28,8 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        DisableWebFluxExtensionTest.class,
-        RouterFunctionTestConfig.class
+        DisableWebFluxExtensionTest.class
 })
 @EnableWebFluxExtension(
         registerWebEndpointMappings = false,
