@@ -36,8 +36,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
 import static java.lang.System.currentTimeMillis;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,11 +58,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ContextConfiguration(classes = {
         TestController.class,
-        ReversedProxyHandlerMapping.class,
         ReversedProxyHandlerMappingTest.class
 })
-@EnableWebMvcExtension
+@EnableWebMvcExtension(reversedProxyHandlerMapping = true)
 class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
+
+    @Autowired
+    private ReversedProxyHandlerMapping mapping;
 
     @Autowired
     private WebEndpointMappingRegistry webEndpointMappingRegistry;
@@ -138,6 +144,28 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
                 .andExpect(content().string(""));
     }
 
+    @Test
+    void testHandlerExecutionChainWithServletWebEndpointMapping() {
+        WebEndpointMapping<?> webEndpointMapping = servlet()
+                .method(GET)
+                .pattern("/test/servlet")
+                .endpoint(this)
+                .source(this)
+                .build();
+        assertNull(this.mapping.getHandlerExecutionChain(webEndpointMapping, null));
+    }
+
+    @Test
+    void testHandlerExecutionChainWithWebMVCWebEndpointMapping() {
+        WebEndpointMapping<?> webEndpointMapping = webmvc()
+                .method(GET)
+                .pattern("/test/webflux")
+                .endpoint(this)
+                .source(this)
+                .build();
+        assertNull(this.mapping.getHandlerExecutionChain(webEndpointMapping, null));
+    }
+
 //    @Test
 //    void testInvokeGetHandlerExecutionChainOnFailed() {
 //        ReversedProxyHandlerMapping mapping = this.context.getBean(ReversedProxyHandlerMapping.class);
@@ -145,6 +173,11 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
 //        WebEndpointMapping webEndpointMapping = this.webEndpointMappingsMap.get(pattern);
 //        assertNull(mapping.invokeGetHandlerExecutionChain(mapping, webEndpointMapping.getEndpoint(), new MockHttpServletRequest()));
 //    }
+
+    @Test
+    void testIsAbstractHandlerMapping() {
+
+    }
 
     private int getWebEndpointMappingId(String pattern) {
         WebEndpointMapping webEndpointMapping = this.webEndpointMappingsMap.get(pattern);
