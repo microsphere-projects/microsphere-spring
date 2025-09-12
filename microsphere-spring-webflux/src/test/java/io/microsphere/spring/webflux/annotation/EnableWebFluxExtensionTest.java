@@ -20,7 +20,7 @@ package io.microsphere.spring.webflux.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebFluxExtension} Test
+ * {@link EnableWebFluxExtension} Test on default status.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebFluxExtension

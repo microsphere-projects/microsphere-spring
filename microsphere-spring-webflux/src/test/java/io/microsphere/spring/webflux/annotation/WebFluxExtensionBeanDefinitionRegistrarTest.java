@@ -22,7 +22,7 @@ import io.microsphere.spring.test.web.controller.TestController;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link WebFluxExtensionBeanDefinitionRegistrar} Test
+ * {@link WebFluxExtensionBeanDefinitionRegistrar} Test on enabled status(all attributes are <code>true</code>).
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebFluxExtensionBeanDefinitionRegistrar
@@ -33,6 +33,13 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = {
         WebFluxExtensionBeanDefinitionRegistrarTest.class
 })
-@EnableWebFluxExtension(storeResponseBodyReturnValue = true, storeRequestBodyArgument = true)
+@EnableWebFluxExtension(
+        registerWebEndpointMappings = true,
+        interceptHandlerMethods = true,
+        publishEvents = true,
+        storeRequestBodyArgument = true,
+        storeResponseBodyReturnValue = true,
+        reversedProxyHandlerMapping = true
+)
 class WebFluxExtensionBeanDefinitionRegistrarTest extends AbstractEnableWebFluxExtensionTest {
 }

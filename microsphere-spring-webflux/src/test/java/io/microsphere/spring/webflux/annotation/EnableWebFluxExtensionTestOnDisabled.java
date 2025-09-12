@@ -20,14 +20,14 @@ package io.microsphere.spring.webflux.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * Disable {@link EnableWebFluxExtension} Test
+ * {@link EnableWebFluxExtension} Test on disabled status(all attributes are <code>false</code>).
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebFluxExtension
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        DisableWebFluxExtensionTest.class
+        EnableWebFluxExtensionTestOnDisabled.class
 })
 @EnableWebFluxExtension(
         registerWebEndpointMappings = false,
@@ -36,5 +36,5 @@ import org.springframework.test.context.ContextConfiguration;
         storeRequestBodyArgument = false,
         storeResponseBodyReturnValue = false
 )
-public class DisableWebFluxExtensionTest extends AbstractEnableWebFluxExtensionTest {
+public class EnableWebFluxExtensionTestOnDisabled extends AbstractEnableWebFluxExtensionTest {
 }
