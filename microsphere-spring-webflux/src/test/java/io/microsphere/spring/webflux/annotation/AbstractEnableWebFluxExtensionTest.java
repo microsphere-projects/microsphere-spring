@@ -26,17 +26,15 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
 import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentInterceptor;
 import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
-import io.microsphere.spring.webflux.test.PersonHandler;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -58,11 +56,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @since 1.0.0
  */
 @Disabled
-@Import(TestController.class)
 public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements
         HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
-
-    protected static final String expectedReturnValue = "Greeting : hello";
 
     protected static final String expectedArgument0 = "hello";
 
@@ -76,6 +71,8 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
 
     protected boolean storeResponseBodyReturnValue;
 
+    protected boolean reversedProxyHandlerMapping;
+
     @BeforeEach
     protected void setup() {
         EnableWebFluxExtension enableWebFluxExtension = this.getClass().getAnnotation(EnableWebFluxExtension.class);
@@ -84,6 +81,7 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         this.publishEvents = enableWebFluxExtension.publishEvents();
         this.storeRequestBodyArgument = enableWebFluxExtension.storeRequestBodyArgument();
         this.storeResponseBodyReturnValue = enableWebFluxExtension.storeResponseBodyReturnValue();
+        this.reversedProxyHandlerMapping = enableWebFluxExtension.reversedProxyHandlerMapping();
     }
 
     @Test
@@ -100,36 +98,18 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, InterceptingHandlerMethodProcessor.class));
         assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.context, StoringRequestBodyArgumentInterceptor.class));
         assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueInterceptor.class));
+        assertEquals(this.reversedProxyHandlerMapping, isBeanPresent(this.context, ReversedProxyHandlerMapping.class));
     }
 
     /**
-     * @see TestController#greeting(String)
+     * Test the Web Endpoint with single parameter
      */
     @Test
-    void testGreeting() {
-        this.webTestClient.get().uri("/test/greeting/hello")
-                .exchange()
-                .expectBody(String.class).isEqualTo(expectedReturnValue);
-    }
-
-    /**
-     * @see TestController#error(String)
-     */
-    @Test
-    void testError() {
-        this.webTestClient.get().uri("/test/error?message=hello")
-                .exchange()
-                .expectStatus().is5xxServerError();
-    }
-
-    /**
-     * @see RouterFunctionTestConfig#nestedPersonRouterFunction(PersonHandler)
-     */
-    @Test
-    void testUpdatePerson() {
-        this.webTestClient.put().uri("/test/person/{id}", "1")
-                .exchange()
-                .expectStatus().isOk();
+    void test() {
+        this.testGreeting();
+        this.testUser();
+        this.testError();
+        this.testUpdatePerson();
     }
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
@@ -181,22 +161,22 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         }
     }
 
-    private void assertHandlerMethod(HandlerMethod handlerMethod) {
+    protected void assertHandlerMethod(HandlerMethod handlerMethod) {
         assertNotNull(handlerMethod);
         Object bean = handlerMethod.getBean();
         assertNotNull(bean);
         assertEquals(TestController.class, handlerMethod.getBeanType());
     }
 
-    private void assertArguments(Object[] arguments) {
+    protected void assertArguments(Object[] arguments) {
         assertEquals(1, arguments.length);
     }
 
-    private void assertReturnValue(Object returnValue) {
+    protected void assertReturnValue(Object returnValue) {
         assertNotNull(returnValue);
     }
 
-    private void assertNativeWebRequest(NativeWebRequest webRequest) {
+    protected void assertNativeWebRequest(NativeWebRequest webRequest) {
         assertNotNull(webRequest);
     }
 
