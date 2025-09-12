@@ -25,6 +25,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
+import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
@@ -112,4 +113,12 @@ public @interface EnableWebFluxExtension {
      * @see RequestAttributesUtils#getHandlerMethodReturnValue(RequestAttributes, HandlerMethod)
      */
     boolean storeResponseBodyReturnValue() default false;
+
+    /**
+     * Indicate whether the {@link ReversedProxyHandlerMapping} is enabled or not.
+     *
+     * @return <code>false</code> as default
+     * @see ReversedProxyHandlerMapping
+     */
+    boolean reversedProxyHandlerMapping() default false;
 }
