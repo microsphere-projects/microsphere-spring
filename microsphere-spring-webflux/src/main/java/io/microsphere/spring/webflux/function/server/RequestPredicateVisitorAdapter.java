@@ -24,9 +24,6 @@ import org.springframework.web.reactive.function.server.RequestPredicates.Visito
 
 import java.util.Set;
 
-import static io.microsphere.reflect.MethodUtils.invokeMethod;
-import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.acceptVisitor;
-
 /**
  * The adapter interface for {@link Visitor RequestPredicates.Visitor}
  *
