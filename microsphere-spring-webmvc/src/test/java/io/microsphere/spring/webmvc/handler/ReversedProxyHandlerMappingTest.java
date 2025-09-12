@@ -90,8 +90,7 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
      */
     @Test
     void testGreeting() throws Exception {
-        String pattern = "/test/greeting/{message}";
-        this.mockMvc.perform(get(pattern, "Mercy"))
+        this.mockMvc.perform(get("/test/greeting/Mercy"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Greeting : Mercy"));
     }
