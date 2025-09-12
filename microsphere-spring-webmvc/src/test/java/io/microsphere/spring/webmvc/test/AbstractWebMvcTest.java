@@ -17,9 +17,11 @@
 
 package io.microsphere.spring.webmvc.test;
 
+import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,8 +39,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  */
 @SpringJUnitConfig
 @WebAppConfiguration
-@EnableWebMvc
 @Disabled
+@EnableWebMvc
+@Import(value = {
+        TestController.class,           // Test Controller
+        RouterFunctionTestConfig.class  // Test RouterFunction
+})
 public abstract class AbstractWebMvcTest {
 
     @Autowired
