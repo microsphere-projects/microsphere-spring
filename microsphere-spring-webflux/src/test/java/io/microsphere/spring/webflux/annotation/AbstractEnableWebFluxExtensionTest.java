@@ -28,6 +28,8 @@ import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
+import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentInterceptor;
+import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import io.microsphere.spring.webflux.test.PersonHandler;
 import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
@@ -60,9 +62,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements
         HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
 
-    private static final String expectedReturnValue = "Greeting : hello";
+    protected static final String expectedReturnValue = "Greeting : hello";
 
-    private static final String expectedArgument0 = "hello";
+    protected static final String expectedArgument0 = "hello";
 
     protected boolean registerWebEndpointMappings;
 
@@ -75,7 +77,7 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
     protected boolean storeResponseBodyReturnValue;
 
     @BeforeEach
-    void setup() {
+    protected void setup() {
         EnableWebFluxExtension enableWebFluxExtension = this.getClass().getAnnotation(EnableWebFluxExtension.class);
         this.registerWebEndpointMappings = enableWebFluxExtension.registerWebEndpointMappings();
         this.interceptHandlerMethods = enableWebFluxExtension.interceptHandlerMethods();
@@ -96,10 +98,8 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, HandlerMappingWebEndpointMappingResolver.class));
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, DelegatingHandlerMethodAdvice.class));
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, InterceptingHandlerMethodProcessor.class));
-        // assertEquals(this.interceptHandlerMethods, isBeanPresent(this.wac, InterceptingHandlerMethodProcessor.class));
-        // assertEquals(this.registerHandlerInterceptors, isBeanPresent(this.wac, LazyCompositeHandlerInterceptor.class));
-        // assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.wac, StoringRequestBodyArgumentAdvice.class));
-        // assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.wac, StoringResponseBodyReturnValueAdvice.class));
+        assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.context, StoringRequestBodyArgumentInterceptor.class));
+        assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueInterceptor.class));
     }
 
     /**
