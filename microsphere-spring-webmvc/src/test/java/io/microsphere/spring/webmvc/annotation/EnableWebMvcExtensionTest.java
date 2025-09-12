@@ -31,7 +31,8 @@ import org.springframework.test.context.ContextConfiguration;
 @EnableWebMvcExtension(
         registerHandlerInterceptors = true,
         storeRequestBodyArgument = true,
-        storeResponseBodyReturnValue = true
+        storeResponseBodyReturnValue = true,
+        reversedProxyHandlerMapping = true
 )
 public class EnableWebMvcExtensionTest extends AbstractEnableWebMvcExtensionTest {
 }
