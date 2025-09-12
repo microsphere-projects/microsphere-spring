@@ -122,8 +122,8 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
     @Nullable
     protected HandlerExecutionChain getHandlerExecutionChain(WebEndpointMapping webEndpointMapping, HttpServletRequest request) {
         HandlerExecutionChain handlerExecutionChain = null;
-        Object source = webEndpointMapping.getSource();
-        if (source instanceof AbstractHandlerMapping handlerMapping) {
+        if (isAbstractHandlerMapping(webEndpointMapping)) {
+            AbstractHandlerMapping handlerMapping = (AbstractHandlerMapping) webEndpointMapping.getSource();
             Object handler = webEndpointMapping.getEndpoint();
             handlerExecutionChain = invokeGetHandlerExecutionChain(handlerMapping, handler, request);
         }
@@ -163,7 +163,7 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         this.webEndpointMappingsCache = webEndpointMappingsMap;
     }
 
-    private boolean isAbstractHandlerMapping(WebEndpointMapping webEndpointMapping) {
+    boolean isAbstractHandlerMapping(WebEndpointMapping webEndpointMapping) {
         return WEB_MVC.equals(webEndpointMapping.getKind()) &&
                 webEndpointMapping.getSource() instanceof AbstractHandlerMapping;
     }
