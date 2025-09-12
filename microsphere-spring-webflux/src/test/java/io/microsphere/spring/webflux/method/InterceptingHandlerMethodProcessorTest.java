@@ -22,7 +22,6 @@ import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +54,7 @@ import static reactor.core.publisher.Mono.just;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        InterceptingHandlerMethodProcessorTest.class,
-        RouterFunctionTestConfig.class
+        InterceptingHandlerMethodProcessorTest.class
 })
 @EnableWebFluxExtension
 class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtensionTest {
