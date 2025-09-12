@@ -40,10 +40,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        ConsumingWebEndpointMappingAdapterTest.class,
-        RouterFunctionTestConfig.class
+        ConsumingWebEndpointMappingAdapterTest.class
 })
-@Import(TestController.class)
+@Import(value = {
+        TestController.class,           // Test Controller
+        RouterFunctionTestConfig.class  // Test RouterFunction
+})
 public class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
 
     @Test

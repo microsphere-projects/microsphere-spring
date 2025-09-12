@@ -45,13 +45,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        RouterFunctionTestConfig.class,
         SimpleUrlHandlerMappingTestConfig.class,
         HandlerMappingWebEndpointMappingResolver.class,
         HandlerMappingWebEndpointMappingResolverTest.class,
 
 })
-@Import(TestController.class)
+@Import(value = {
+        TestController.class,           // Test Controller
+        RouterFunctionTestConfig.class  // Test RouterFunction
+})
 class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
 
     @Autowired

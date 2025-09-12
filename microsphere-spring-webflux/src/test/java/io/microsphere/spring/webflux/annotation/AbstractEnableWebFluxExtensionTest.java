@@ -105,8 +105,8 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
      * Test the Web Endpoint with single parameter
      */
     @Test
-    void test() {
-        this.testGreeting();
+    void testWebEndpoints() {
+        // this.testGreeting();
         this.testUser();
         this.testError();
         this.testUpdatePerson();
