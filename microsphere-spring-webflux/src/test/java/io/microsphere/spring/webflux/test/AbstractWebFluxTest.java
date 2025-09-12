@@ -84,6 +84,7 @@ public abstract class AbstractWebFluxTest {
         this.webTestClient.get()
                 .uri(pattern, message)
                 .exchange()
+                .expectStatus().isOk()
                 .expectBody(String.class)
                 .isEqualTo(this.testController.greeting(message));
     }
@@ -103,6 +104,7 @@ public abstract class AbstractWebFluxTest {
                 .accept(APPLICATION_JSON)
                 .body(userMono, User.class)
                 .exchange()
+                .expectStatus().isOk()
                 .expectBody(User.class)
                 .isEqualTo(this.testController.user(user));
     }
@@ -114,8 +116,7 @@ public abstract class AbstractWebFluxTest {
         this.webTestClient.get()
                 .uri("/test/error?message=hello")
                 .exchange()
-                .expectStatus()
-                .is5xxServerError();
+                .expectStatus().is5xxServerError();
     }
 
     /**
@@ -125,6 +126,7 @@ public abstract class AbstractWebFluxTest {
         this.webTestClient.put()
                 .uri("/test/response-entity")
                 .exchange()
+                .expectStatus().isOk()
                 .expectBody(String.class)
                 .isEqualTo(this.testController.responseEntity().getBody());
     }
