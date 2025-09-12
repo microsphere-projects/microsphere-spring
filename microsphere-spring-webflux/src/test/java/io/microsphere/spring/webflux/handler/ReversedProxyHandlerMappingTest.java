@@ -22,9 +22,8 @@ import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
-import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
+import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +38,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NA
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
 import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -53,12 +53,10 @@ import static reactor.core.publisher.Mono.just;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        RouterFunctionTestConfig.class,
-        ReversedProxyHandlerMapping.class,
         ReversedProxyHandlerMappingTest.class,
 })
-@EnableWebFluxExtension
-class ReversedProxyHandlerMappingTest extends AbstractEnableWebFluxExtensionTest {
+@EnableWebFluxExtension(reversedProxyHandlerMapping = true)
+class ReversedProxyHandlerMappingTest extends AbstractWebFluxTest {
 
     @Autowired
     private ReversedProxyHandlerMapping mapping;
@@ -69,8 +67,7 @@ class ReversedProxyHandlerMappingTest extends AbstractEnableWebFluxExtensionTest
     private Map<String, WebEndpointMapping> webEndpointMappingsMap;
 
     @BeforeEach
-    protected void setUp() {
-        super.setup();
+    void setUp() {
         initWebEndpointMappingsMap();
     }
 
@@ -83,23 +80,18 @@ class ReversedProxyHandlerMappingTest extends AbstractEnableWebFluxExtensionTest
     }
 
     /**
-     * @see TestController#greeting(String)
+     * Test {@link TestController#greeting(String)} without the header {@link WebEndpointMapping#ID_HEADER_NAME}
      */
     @Test
-    void testGreeting2() {
-        String pattern = "/test/greeting/{message}";
-        this.webTestClient.get()
-                .uri(pattern, "hello")
-                .header(ID_HEADER_NAME, valueOf(System.currentTimeMillis()))
-                .exchange()
-                .expectBody(String.class).isEqualTo(expectedReturnValue);
+    protected void testGreeting() {
+        super.testGreeting();
     }
 
     /**
-     * Test {@link TestController#user(User)}
+     * Test {@link TestController#user(User)} with the header {@link WebEndpointMapping#ID_HEADER_NAME}
      */
     @Test
-    void testUser() {
+    protected void testUser() {
         String pattern = "/test/user";
         User user = new User();
         user.setName("Mercy");
@@ -115,6 +107,19 @@ class ReversedProxyHandlerMappingTest extends AbstractEnableWebFluxExtensionTest
                 .expectBody(User.class);
     }
 
+    /**
+     * Test {@link TestController#responseEntity()} with the header {@link WebEndpointMapping#ID_HEADER_NAME}
+     * that was not found
+     */
+    @Test
+    protected void testResponseEntity() {
+        this.webTestClient.put()
+                .uri("/test/response-entity")
+                .header(ID_HEADER_NAME, valueOf(currentTimeMillis()))
+                .exchange()
+                .expectBody(String.class)
+                .isEqualTo("OK");
+    }
 
     @Test
     void testGetHandlerInternalOnServletWebEndpointMapping() {
