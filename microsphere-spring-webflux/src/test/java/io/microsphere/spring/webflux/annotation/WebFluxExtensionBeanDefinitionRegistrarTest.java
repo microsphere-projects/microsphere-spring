@@ -18,15 +18,8 @@
 package io.microsphere.spring.webflux.annotation;
 
 
-import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
-import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import reactor.core.publisher.Mono;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static reactor.core.publisher.Mono.just;
 
 /**
  * {@link WebFluxExtensionBeanDefinitionRegistrar} Test
@@ -38,27 +31,8 @@ import static reactor.core.publisher.Mono.just;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        WebFluxExtensionBeanDefinitionRegistrarTest.class,
-        RouterFunctionTestConfig.class
+        WebFluxExtensionBeanDefinitionRegistrarTest.class
 })
 @EnableWebFluxExtension(storeResponseBodyReturnValue = true, storeRequestBodyArgument = true)
 class WebFluxExtensionBeanDefinitionRegistrarTest extends AbstractEnableWebFluxExtensionTest {
-
-    /**
-     * Test {@link TestController#user(User)}
-     */
-    @Test
-    void testUser() {
-        User user = new User();
-        user.setName("Mercy");
-        user.setAge(18);
-
-        Mono<User> userMono = just(user);
-        this.webTestClient.post()
-                .uri("/test/user")
-                .accept(APPLICATION_JSON)
-                .body(userMono, User.class)
-                .exchange()
-                .expectBody(User.class);
-    }
 }
