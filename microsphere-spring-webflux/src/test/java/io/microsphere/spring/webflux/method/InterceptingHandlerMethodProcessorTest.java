@@ -64,9 +64,6 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Autowired
     private InterceptingHandlerMethodProcessor processor;
 
-    @Autowired
-    private TestController testController;
-
     private Method greetingMethod;
 
     private HandlerMethod greetingHandlerMethod;
