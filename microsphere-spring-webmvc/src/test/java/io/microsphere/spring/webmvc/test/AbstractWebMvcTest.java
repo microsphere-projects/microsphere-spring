@@ -24,7 +24,7 @@ import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,14 +48,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @see EnableWebMvc
  * @since 1.0.0
  */
+@Disabled
 @SpringJUnitConfig
 @WebAppConfiguration
-@Disabled
-@EnableWebMvc
-@Import(value = {
+@ContextConfiguration(classes = {
         TestController.class,           // Test Controller
         RouterFunctionTestConfig.class  // Test RouterFunction
 })
+@EnableWebMvc
 public abstract class AbstractWebMvcTest {
 
     @Autowired
