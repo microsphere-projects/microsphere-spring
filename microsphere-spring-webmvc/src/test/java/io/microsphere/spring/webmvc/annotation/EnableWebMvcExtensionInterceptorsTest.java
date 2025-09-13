@@ -42,8 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class EnableWebMvcExtensionInterceptorsTest extends AbstractEnableWebMvcExtensionTest {
 
     @Test
-    @Override
-    public void test() throws Exception {
+    public void testWebEndpoints() throws Exception {
         this.mockMvc.perform(get("/test/greeting/hello").header(TOKEN_HEADER_NAME, MOCK_TOKEN_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Greeting : hello"));
