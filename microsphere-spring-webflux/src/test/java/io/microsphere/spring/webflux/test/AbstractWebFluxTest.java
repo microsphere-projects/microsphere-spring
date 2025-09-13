@@ -62,7 +62,6 @@ public abstract class AbstractWebFluxTest {
         this.webTestClient = buildWebTestClient(this.context);
     }
 
-
     /**
      * Test {@link TestController#helloWorld()}
      */
