@@ -31,7 +31,6 @@ import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
@@ -46,7 +45,6 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 @Ignore
-@EnableWebMvc
 public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest {
 
     protected boolean registerWebEndpointMappings;
