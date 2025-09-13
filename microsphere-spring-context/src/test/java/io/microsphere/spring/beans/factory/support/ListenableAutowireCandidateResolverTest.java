@@ -57,8 +57,6 @@ import static org.junit.Assert.assertSame;
 )
 public class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolvingListener, EnvironmentAware {
 
-    private static final boolean isGESpring5 = CURRENT.gt(SPRING_5_0);
-
     private static final boolean isGESpring5_1 = CURRENT.gt(SPRING_5_1);
 
     @Value("${test.name}")
