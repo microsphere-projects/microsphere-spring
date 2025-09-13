@@ -30,16 +30,17 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.servlet.ServletException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
 import static java.lang.System.currentTimeMillis;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertNull;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -54,11 +55,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ContextConfiguration(classes = {
         TestController.class,
-        ReversedProxyHandlerMapping.class,
         ReversedProxyHandlerMappingTest.class
 })
-@EnableWebMvcExtension
+@EnableWebMvcExtension(reversedProxyHandlerMapping = true)
 public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
+
+    @Autowired
+    private ReversedProxyHandlerMapping mapping;
 
     @Autowired
     private WebEndpointMappingRegistry webEndpointMappingRegistry;
@@ -79,22 +82,21 @@ public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
         }
     }
 
-    @Test
-    public void testHelloWorld() throws Exception {
-        String pattern = "/test/helloworld";
-        this.mockMvc.perform(get(pattern).header(ID_HEADER_NAME, getWebEndpointMappingId(pattern)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello World"));
-    }
-
+    /**
+     * Test {@link TestController#greeting(String)} without the header {@link WebEndpointMapping#ID_HEADER_NAME}
+     *
+     * @throws Exception
+     */
     @Test
     public void testGreeting() throws Exception {
-        String pattern = "/test/greeting/{message}";
-        this.mockMvc.perform(get(pattern, "Mercy"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Greeting : Mercy"));
+        super.testGreeting();
     }
 
+    /**
+     * Test {@link TestController#user(User)} with the header {@link WebEndpointMapping#ID_HEADER_NAME}
+     *
+     * @throws Exception
+     */
     @Test
     public void testUser() throws Exception {
         String pattern = "/test/user";
@@ -111,17 +113,12 @@ public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
                 .andExpect(content().string(json));
     }
 
-    @Test
-    public void testError() {
-        String pattern = "/test/error";
-        assertThrows(ServletException.class, () ->
-                this.mockMvc.perform(get(pattern)
-                        .header(ID_HEADER_NAME, getWebEndpointMappingId(pattern))
-                        .param("message", "For testing")
-                        .header(ID_HEADER_NAME, currentTimeMillis())
-                ).andReturn());
-    }
-
+    /**
+     * Test {@link TestController#responseEntity()} with the header {@link WebEndpointMapping#ID_HEADER_NAME}
+     * that was not found
+     *
+     * @throws Exception
+     */
     @Test
     public void testResponseEntity() throws Exception {
         String pattern = "/test/response-entity";
@@ -131,11 +128,25 @@ public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
     }
 
     @Test
-    public void testView() throws Exception {
-        String pattern = "/test/view";
-        this.mockMvc.perform(get("/test/view").header(ID_HEADER_NAME, getWebEndpointMappingId(pattern)))
-                .andExpect(status().isOk())
-                .andExpect(content().string(""));
+    public void testHandlerExecutionChainWithServletWebEndpointMapping() {
+        WebEndpointMapping<?> webEndpointMapping = servlet()
+                .method(GET)
+                .pattern("/test/servlet")
+                .endpoint(this)
+                .source(this)
+                .build();
+        assertNull(this.mapping.getHandlerExecutionChain(webEndpointMapping, null));
+    }
+
+    @Test
+    public void testHandlerExecutionChainWithWebMVCWebEndpointMapping() {
+        WebEndpointMapping<?> webEndpointMapping = webmvc()
+                .method(GET)
+                .pattern("/test/webflux")
+                .endpoint(this)
+                .source(this)
+                .build();
+        assertNull(this.mapping.getHandlerExecutionChain(webEndpointMapping, null));
     }
 
 //    @Test
