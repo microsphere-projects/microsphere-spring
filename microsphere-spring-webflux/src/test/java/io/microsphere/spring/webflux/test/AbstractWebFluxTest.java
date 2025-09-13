@@ -142,7 +142,7 @@ public abstract class AbstractWebFluxTest {
     }
 
     /**
-     * @see RouterFunctionTestConfig#nestedPersonRouterFunction(PersonHandler)
+     * Test RouterFunctionTestConfig#nestedPersonRouterFunction(PersonHandler)
      */
     protected void testUpdatePerson() {
         this.webTestClient.put()
