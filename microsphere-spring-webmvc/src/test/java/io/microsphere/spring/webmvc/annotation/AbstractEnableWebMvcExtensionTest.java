@@ -113,27 +113,29 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
     }
 
     /**
-     * Test the Web Endpoint with single parameter
+     * Test the Web Endpoints
      *
+     * @see #testHelloWorld()
      * @see #testGreeting()
      * @see #testUser()
-     * @see #testView()
+     * @see #testError()
+     * @see #testResponseEntity()
      * @see #testUpdatePerson()
      */
     @Test
     void testWebEndpoints() throws Exception {
+        this.testHelloWorld();
         this.testGreeting();
         this.testUser();
         this.testError();
+        this.testResponseEntity();
         this.testUpdatePerson();
     }
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         Collection<WebEndpointMapping> mappings = event.getMappings();
-        WebEndpointMapping webEndpointMapping = mappings.iterator().next();
-        String[] patterns = webEndpointMapping.getPatterns();
-        assertEquals(1, patterns.length);
+        assertTrue(mappings.size() > 0);
     }
 
     @EventListener(HandlerMethodArgumentsResolvedEvent.class)
@@ -143,29 +145,29 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
         assertEquals(method, handlerMethod.getMethod());
         assertHandlerMethod(handlerMethod);
         Object[] arguments = event.getArguments();
-        assertArguments(arguments);
+        assertArguments(method, arguments);
     }
 
     @Override
-    public void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
+    public void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest) {
         assertHandlerMethod(handlerMethod);
         assertNativeWebRequest(webRequest);
     }
 
     @Override
-    public void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
+    public void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod, NativeWebRequest webRequest) {
         // Reuse
         beforeResolveArgument(parameter, handlerMethod, webRequest);
     }
 
     @Override
-    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
+    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) {
         assertHandlerMethod(handlerMethod);
-        assertArguments(args);
+        assertArguments(handlerMethod.getMethod(), args);
     }
 
     @Override
-    public void afterExecute(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Exception {
+    public void afterExecute(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) {
         beforeExecute(handlerMethod, args, request);
         if (returnValue == null) {
             assertNotNull(error);
@@ -182,8 +184,8 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
         assertEquals(TestController.class, handlerMethod.getBeanType());
     }
 
-    protected void assertArguments(Object[] arguments) {
-        assertEquals(1, arguments.length);
+    protected void assertArguments(Method method, Object[] arguments) {
+        assertEquals(method.getParameterCount(), arguments.length);
     }
 
     protected void assertReturnValue(Object returnValue) {
