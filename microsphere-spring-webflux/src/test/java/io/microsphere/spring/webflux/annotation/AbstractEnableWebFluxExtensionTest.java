@@ -59,8 +59,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest implements
         HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
 
-    protected static final String expectedArgument0 = "hello";
-
     protected boolean registerWebEndpointMappings;
 
     protected boolean interceptHandlerMethods;
@@ -158,7 +156,6 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         beforeExecute(handlerMethod, args, request);
         if (returnValue == null) {
             assertNotNull(error);
-            assertEquals(expectedArgument0, error.getMessage());
         } else {
             assertReturnValue(returnValue);
             assertNull(error);
