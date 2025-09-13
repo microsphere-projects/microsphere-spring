@@ -52,6 +52,7 @@ import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMe
 import static java.util.Collections.emptyList;
 import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 import static reactor.core.publisher.Mono.error;
+import static reactor.core.publisher.Mono.just;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} beans based on
@@ -140,6 +141,8 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
             beforeExecute(parameter, webRequest, handlerMethod, arguments);
 
+            // rebuild the result
+            result = just(argument);
         } catch (Exception e) {
             result = error(e);
         }
