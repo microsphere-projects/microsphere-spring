@@ -77,7 +77,7 @@ public abstract class AbstractWebMvcTest {
      *
      * @throws Exception If failed to execute {@link MockMvc#perform(RequestBuilder)}
      */
-    protected void testHelloWorld() throws Exception {
+    public void testHelloWorld() throws Exception {
         this.mockMvc.perform(get("/test/helloworld"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(this.testController.helloWorld()));
@@ -88,7 +88,7 @@ public abstract class AbstractWebMvcTest {
      *
      * @throws Exception If failed to execute {@link MockMvc#perform(RequestBuilder)}
      */
-    protected void testGreeting() throws Exception {
+    public void testGreeting() throws Exception {
         String pattern = "/test/greeting/{message}";
         String message = "Mercy";
         this.mockMvc.perform(get(pattern, message))
@@ -101,7 +101,7 @@ public abstract class AbstractWebMvcTest {
      *
      * @throws Exception If failed to execute {@link MockMvc#perform(RequestBuilder)}
      */
-    protected void testUser() throws Exception {
+    public void testUser() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = new User();
         user.setName("Mercy");
@@ -119,7 +119,7 @@ public abstract class AbstractWebMvcTest {
      *
      * @throws Exception If failed to execute {@link MockMvc#perform(RequestBuilder)}
      */
-    protected void testError() {
+    public void testError() {
         assertThrows(ServletException.class, () -> this.mockMvc.perform(get("/test/error")
                 .param("message", "For testing")).andReturn());
     }
@@ -129,7 +129,7 @@ public abstract class AbstractWebMvcTest {
      *
      * @throws Exception If failed to execute {@link MockMvc#perform(RequestBuilder)}
      */
-    protected void testResponseEntity() throws Exception {
+    public void testResponseEntity() throws Exception {
         this.mockMvc.perform(put("/test/response-entity"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(this.testController.responseEntity().getBody()));
@@ -140,7 +140,7 @@ public abstract class AbstractWebMvcTest {
      *
      * @throws Exception If failed to execute {@link MockMvc#perform(RequestBuilder)}
      */
-    protected void testView() throws Exception {
+    public void testView() throws Exception {
         this.mockMvc.perform(get("/test/view"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
