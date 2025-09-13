@@ -87,7 +87,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractWebMvcTest {
     }
 
     @Test
-    void testError() {
+    protected void testError() {
         assertThrows(ServletException.class, () ->
                 this.mockMvc.perform(get("/test/error").param("message", "For testing"))
                         .andReturn());
