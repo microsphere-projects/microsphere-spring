@@ -55,4 +55,5 @@ public abstract class BaseWebRequestRuleTest {
     protected abstract void doTestHashCode();
 
     protected abstract void doTestToString();
+
 }
