@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         ConsumingWebEndpointMappingAdapterTest.class
 })
 @EnableWebFluxExtension
-public class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
+class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
 
     @Test
     void test() {
