@@ -16,17 +16,11 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.test.web.controller.TestController;
-import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
-import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
-import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
-import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
 import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
@@ -37,19 +31,10 @@ import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.MethodParameter;
-import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.method.HandlerMethod;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
 
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -60,8 +45,7 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 @Ignore
-public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest implements HandlerMethodArgumentInterceptor,
-        HandlerMethodInterceptor {
+public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest {
 
     protected boolean registerWebEndpointMappings;
 
@@ -128,69 +112,5 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
         this.testUser();
         this.testError();
         this.testResponseEntity();
-    }
-
-    @EventListener(WebEndpointMappingsReadyEvent.class)
-    public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
-        Collection<WebEndpointMapping> mappings = event.getMappings();
-        assertTrue(mappings.size() > 0);
-    }
-
-    @EventListener(HandlerMethodArgumentsResolvedEvent.class)
-    public void onHandlerMethodArgumentsResolvedEvent(HandlerMethodArgumentsResolvedEvent event) {
-        Method method = event.getMethod();
-        HandlerMethod handlerMethod = event.getHandlerMethod();
-        assertEquals(method, handlerMethod.getMethod());
-        assertHandlerMethod(handlerMethod);
-        Object[] arguments = event.getArguments();
-        assertArguments(method, arguments);
-    }
-
-    @Override
-    public void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest) {
-        assertHandlerMethod(handlerMethod);
-        assertNativeWebRequest(webRequest);
-    }
-
-    @Override
-    public void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod, NativeWebRequest webRequest) {
-        // Reuse
-        beforeResolveArgument(parameter, handlerMethod, webRequest);
-    }
-
-    @Override
-    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) {
-        assertHandlerMethod(handlerMethod);
-        assertArguments(handlerMethod.getMethod(), args);
-    }
-
-    @Override
-    public void afterExecute(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) {
-        beforeExecute(handlerMethod, args, request);
-        if (returnValue == null) {
-            assertNotNull(error);
-        } else {
-            assertReturnValue(returnValue);
-            assertNull(error);
-        }
-    }
-
-    protected void assertHandlerMethod(HandlerMethod handlerMethod) {
-        assertNotNull(handlerMethod);
-        Object bean = handlerMethod.getBean();
-        assertNotNull(bean);
-        assertEquals(TestController.class, handlerMethod.getBeanType());
-    }
-
-    protected void assertArguments(Method method, Object[] arguments) {
-        assertEquals(method.getParameterCount(), arguments.length);
-    }
-
-    protected void assertReturnValue(Object returnValue) {
-        assertNotNull(returnValue);
-    }
-
-    protected void assertNativeWebRequest(NativeWebRequest webRequest) {
-        assertNotNull(webRequest);
     }
 }
