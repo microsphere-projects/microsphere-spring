@@ -49,7 +49,7 @@ public class ConsumeMediaTypeExpression extends GenericMediaTypeExpression {
     }
 
     public final boolean match(MediaType contentType) {
-        boolean match = getMediaType().includes(contentType);
+        boolean match = getMediaType().includes(contentType) && matchParameters(contentType);
         return !isNegated() == match;
     }
 
