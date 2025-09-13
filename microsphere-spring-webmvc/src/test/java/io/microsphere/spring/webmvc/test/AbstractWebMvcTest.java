@@ -23,7 +23,6 @@ import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -64,7 +63,7 @@ public abstract class AbstractWebMvcTest {
     protected ConfigurableWebApplicationContext context;
 
     @Autowired
-    protected ObjectProvider<TestController> testControllerProvider;
+    protected TestController testController;
 
     protected MockMvc mockMvc;
 
@@ -81,7 +80,7 @@ public abstract class AbstractWebMvcTest {
     public void testHelloWorld() throws Exception {
         this.mockMvc.perform(get("/test/helloworld"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(this.getTestController().helloWorld()));
+                .andExpect(content().string(this.testController.helloWorld()));
     }
 
     /**
@@ -94,7 +93,7 @@ public abstract class AbstractWebMvcTest {
         String message = "Mercy";
         this.mockMvc.perform(get(pattern, message))
                 .andExpect(status().isOk())
-                .andExpect(content().string(this.getTestController().greeting(message)));
+                .andExpect(content().string(this.testController.greeting(message)));
     }
 
     /**
@@ -133,7 +132,7 @@ public abstract class AbstractWebMvcTest {
     public void testResponseEntity() throws Exception {
         this.mockMvc.perform(put("/test/response-entity"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(this.getTestController().responseEntity().getBody()));
+                .andExpect(content().string(this.testController.responseEntity().getBody()));
     }
 
     /**
@@ -145,9 +144,5 @@ public abstract class AbstractWebMvcTest {
         this.mockMvc.perform(get("/test/view"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
-    }
-
-    protected TestController getTestController() {
-        return this.testControllerProvider.getIfAvailable();
     }
 }
