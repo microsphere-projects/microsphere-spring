@@ -146,7 +146,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         } catch (Exception e) {
             result = error(e);
         }
-
         return result;
     }
 
