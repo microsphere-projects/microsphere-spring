@@ -24,6 +24,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithHeaders;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -59,17 +60,26 @@ public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
 
     @Override
     protected void doTestEquals() {
+        WebRequestHeadersRule rule = new WebRequestHeadersRule("header1=value1", "header2=value2");
 
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestHeadersRule("header1=value1", "header2=value2"));
+
+        assertNotEquals(rule, new WebRequestHeadersRule("Accept=text/xml"));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
     }
 
     @Override
     protected void doTestHashCode() {
-
+        WebRequestHeadersRule rule = new WebRequestHeadersRule("header1=value1", "header2=value2");
+        assertEquals(rule.hashCode(), rule.getContent().hashCode());
     }
 
     @Override
     protected void doTestToString() {
-
+        WebRequestHeadersRule rule = new WebRequestHeadersRule("header1=value1", "header2=value2");
+        assertEquals("[header1=value1 && header2=value2]", rule.toString());
     }
 
     @Test
