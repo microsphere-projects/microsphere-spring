@@ -94,7 +94,7 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
     }
 
     @Test
-    void testRegisteredBeans() {
+    public void testRegisteredBeans() {
         assertTrue(isBeanPresent(this.context, WebMvcExtensionConfiguration.class));
         // From @EnableWebExtension
         assertEquals(this.registerWebEndpointMappings, isBeanPresent(this.context, SimpleWebEndpointMappingRegistry.class));
@@ -122,14 +122,14 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
      * @see #testView()
      */
     @Test
-    void testWebEndpoints() throws Exception {
+    public void testWebEndpoints() throws Exception {
         this.testGreeting();
         this.testUser();
         this.testError();
     }
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
-    void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
+    public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         Collection<WebEndpointMapping> mappings = event.getMappings();
         WebEndpointMapping webEndpointMapping = mappings.iterator().next();
         String[] patterns = webEndpointMapping.getPatterns();
