@@ -21,7 +21,7 @@ package io.microsphere.spring.webmvc.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebMvcExtension} Test on enabled all status(all attributes are <code>true</code>).
+ * {@link EnableWebMvcExtension} Test when all status are enabled(all attributes are <code>true</code>).
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebMvcExtensionBeanDefinitionRegistrar
