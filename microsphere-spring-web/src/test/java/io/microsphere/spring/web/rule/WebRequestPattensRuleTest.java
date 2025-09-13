@@ -47,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
 
-
     @Test
     public void testHasPattern() {
         assertFalse(hasPattern(null));
@@ -163,7 +162,6 @@ class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
         assertEquals("/api/*.*", rule.getMatchingPattern("/api/*", "/api/data.json"));
     }
 
-
     @Test
     public void testGetMatchingPatternOnWildcardExtensionMatched() {
         WebRequestPattensRule rule = new WebRequestPattensRule(EMPTY_STRING_ARRAY, null, true, true);
@@ -200,7 +198,6 @@ class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
         assertEquals("/*", rule.getMatchingPattern("/*", "/data"));
     }
 
-
     @Override
     void doTestGetToStringInfix() {
         WebRequestPattensRule rule = new WebRequestPattensRule();
@@ -231,4 +228,3 @@ class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
         assertEquals("[/api/*]", rule.toString());
     }
 }
-
