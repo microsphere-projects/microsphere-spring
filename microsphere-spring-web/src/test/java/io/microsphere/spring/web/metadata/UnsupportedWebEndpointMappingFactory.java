@@ -15,28 +15,31 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.annotation;
+package io.microsphere.spring.web.metadata;
 
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
-import org.springframework.test.context.ContextConfiguration;
+import io.microsphere.lang.Prioritized;
 
 /**
- * Disable {@link EnableWebFluxExtension} Test
+ * {@link WebEndpointMappingFactory} always do not support any endpoint.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see EnableWebFluxExtension
+ * @see WebEndpointMappingFactory
  * @since 1.0.0
  */
-@ContextConfiguration(classes = {
-        DisableWebFluxExtensionTest.class,
-        RouterFunctionTestConfig.class
-})
-@EnableWebFluxExtension(
-        registerWebEndpointMappings = false,
-        interceptHandlerMethods = false,
-        publishEvents = false,
-        storeRequestBodyArgument = false,
-        storeResponseBodyReturnValue = false
-)
-public class DisableWebFluxExtensionTest extends AbstractEnableWebFluxExtensionTest {
+public class UnsupportedWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<Object> implements Prioritized {
+
+    @Override
+    public boolean supports(Object endpoint) {
+        return false;
+    }
+
+    @Override
+    protected WebEndpointMapping<?> doCreate(Object endpoint) throws Throwable {
+        return null;
+    }
+
+    @Override
+    public int getPriority() {
+        return MAX_PRIORITY;
+    }
 }

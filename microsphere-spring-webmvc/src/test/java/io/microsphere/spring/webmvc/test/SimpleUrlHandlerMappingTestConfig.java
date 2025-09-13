@@ -15,23 +15,33 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.context;
+package io.microsphere.spring.webmvc.test;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+
+import java.util.Map;
+
+import static io.microsphere.collection.MapUtils.ofMap;
 
 /**
- * The configuration of {@link ViewResolver}
+ * {@link SimpleUrlHandlerMapping} Test Config
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ViewResolver
+ * @see SimpleUrlHandlerMapping
  * @since 1.0.0
  */
-class ViewResolverConfig {
+public class SimpleUrlHandlerMappingTestConfig {
+
+    public static final String BASE_PATH = "/simple";
+
+    public static final String FIRST_PATH = BASE_PATH + "/1";
 
     @Bean
-    public BeanNameViewResolver beanNameViewResolver() {
-        return new BeanNameViewResolver();
+    public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
+        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        Map<String, ?> urlMap = ofMap(BASE_PATH, this, FIRST_PATH, this);
+        mapping.setUrlMap(urlMap);
+        return mapping;
     }
 }

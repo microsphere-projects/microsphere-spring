@@ -18,15 +18,9 @@
 package io.microsphere.spring.core.convert;
 
 import io.microsphere.annotation.Nonnull;
-import io.microsphere.annotation.Nullable;
 import io.microsphere.util.Utils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
-
-import java.lang.invoke.MethodHandle;
-
-import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
-import static io.microsphere.invoke.MethodHandlesLookupUtils.findPublicStatic;
 
 /**
  * The utilities class for {@link ConversionService}
@@ -37,17 +31,6 @@ import static io.microsphere.invoke.MethodHandlesLookupUtils.findPublicStatic;
  */
 public abstract class ConversionServiceUtils implements Utils {
 
-    @Nullable
-    private static volatile DefaultConversionService sharedInstance;
-
-    /**
-     * The {@link MethodHandle} for {@link DefaultConversionService#getSharedInstance()}
-     *
-     * @see DefaultConversionService#getSharedInstance()
-     * @since Spring Framework 4.3.5
-     */
-    private static final MethodHandle getSharedInstanceMethodHandle = findPublicStatic(DefaultConversionService.class, "getSharedInstance");
-
     /**
      * Get the shared {@link ConversionService}
      *
@@ -56,35 +39,7 @@ public abstract class ConversionServiceUtils implements Utils {
      */
     @Nonnull
     public static ConversionService getSharedInstance() {
-        MethodHandle methodHandle = getSharedInstanceMethodHandle;
-        if (methodHandle != null) {
-            try {
-                return (ConversionService) methodHandle.invokeExact();
-            } catch (Throwable e) {
-                handleInvokeExactFailure(e, methodHandle);
-            }
-        }
-        return doGetSharedInstance();
-    }
-
-    /**
-     * Fork the source code from {@link DefaultConversionService#getSharedInstance()}
-     *
-     * @return the instance of {@link DefaultConversionService}
-     */
-    @Nonnull
-    protected static ConversionService doGetSharedInstance() {
-        DefaultConversionService cs = sharedInstance;
-        if (cs == null) {
-            synchronized (ConversionServiceUtils.class) {
-                cs = sharedInstance;
-                if (cs == null) {
-                    cs = new DefaultConversionService();
-                    sharedInstance = cs;
-                }
-            }
-        }
-        return cs;
+        return DefaultConversionService.getSharedInstance();
     }
 
     private ConversionServiceUtils() {

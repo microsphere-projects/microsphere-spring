@@ -15,41 +15,26 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.context;
+package io.microsphere.spring.webflux.annotation;
 
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link ExclusiveViewResolverApplicationListener} Test on defaults
+ * {@link EnableWebFluxExtension} Test when all status are disabled(all attributes are <code>false</code>).
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ExclusiveViewResolverApplicationListener
+ * @see EnableWebFluxExtension
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = {
-        ExclusiveViewResolverApplicationListener.class,
-        ExclusiveViewResolverApplicationListenerTestOnDefaults.class
+        EnableWebFluxExtensionAllDisabledTest.class
 })
-@EnableWebMvc
-class ExclusiveViewResolverApplicationListenerTestOnDefaults {
-
-    @Autowired
-    private ExclusiveViewResolverApplicationListener listener;
-
-    @Test
-    void test() {
-        assertNotNull(listener);
-    }
-
+@EnableWebFluxExtension(
+        registerWebEndpointMappings = false,
+        interceptHandlerMethods = false,
+        publishEvents = false,
+        storeRequestBodyArgument = false,
+        storeResponseBodyReturnValue = false
+)
+class EnableWebFluxExtensionAllDisabledTest extends AbstractEnableWebFluxExtensionTest {
 }

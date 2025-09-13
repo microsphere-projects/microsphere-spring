@@ -20,16 +20,20 @@ package io.microsphere.spring.web.rule;
 
 import io.microsphere.spring.web.context.request.MockServletWebRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
 
 import static io.microsphere.spring.web.rule.WebRequestParamExpression.parseExpressions;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * {@link WebRequestParamExpression} Test
@@ -42,6 +46,8 @@ class WebRequestParamExpressionTest extends BaseNameValueExpressionTest<WebReque
 
     WebRequestParamExpression nameOnlyExpression;
 
+    WebRequestParamExpression negatedNameOnlyExpression;
+
     WebRequestParamExpression expression;
 
     WebRequestParamExpression negatedExpression;
@@ -50,93 +56,150 @@ class WebRequestParamExpressionTest extends BaseNameValueExpressionTest<WebReque
 
     @BeforeEach
     void setUp() {
-        List<WebRequestParamExpression> expressions = parseExpressions("name", "name=Mercy", "name!=Mercy");
+        List<WebRequestParamExpression> expressions = parseExpressions("name", "!name", "name=Mercy", "name!=Mercy");
         this.nameOnlyExpression = expressions.get(0);
-        this.expression = expressions.get(1);
-        this.negatedExpression = expressions.get(2);
+        this.negatedNameOnlyExpression = expressions.get(1);
+        this.expression = expressions.get(2);
+        this.negatedExpression = expressions.get(3);
         this.request = new MockServletWebRequest();
         MockHttpServletRequest mockHttpServletRequest = this.request.getMockHttpServletRequest();
         mockHttpServletRequest.addParameter("name", "Mercy");
     }
 
-    @Override
+    @Test
     void testGetName() {
         assertEquals("name", nameOnlyExpression.getName());
+        assertEquals("name", negatedNameOnlyExpression.getName());
         assertEquals("name", expression.getName());
         assertEquals("name", negatedExpression.getName());
     }
 
-    @Override
+    @Test
     void testGetValue() {
         assertNull(nameOnlyExpression.getValue());
+        assertNull(negatedNameOnlyExpression.getValue());
         assertEquals("Mercy", expression.getValue());
         assertEquals("Mercy", negatedExpression.getValue());
     }
 
-    @Override
+    @Test
     void testIsNegated() {
-        assertFalse(nameOnlyExpression.isNegated);
-        assertFalse(expression.isNegated);
-        assertTrue(negatedExpression.isNegated);
+        assertFalse(nameOnlyExpression.isNegated());
+        assertTrue(negatedNameOnlyExpression.isNegated());
+        assertFalse(expression.isNegated());
+        assertTrue(negatedExpression.isNegated());
     }
 
-    @Override
+    @Test
     void testMatch() {
         assertTrue(nameOnlyExpression.match(request));
+        assertFalse(negatedNameOnlyExpression.match(request));
         assertTrue(expression.match(request));
         assertFalse(negatedExpression.match(request));
     }
 
-    @Override
+    @Test
     void testIsCaseSensitiveName() {
         assertTrue(this.nameOnlyExpression.isCaseSensitiveName());
+        assertTrue(this.negatedNameOnlyExpression.isCaseSensitiveName());
         assertTrue(this.expression.isCaseSensitiveName());
         assertTrue(this.negatedExpression.isCaseSensitiveName());
     }
 
-    @Override
+    @Test
     void testParseValue() {
         assertEquals("test", this.nameOnlyExpression.parseValue("test"));
+        assertEquals("test", this.negatedNameOnlyExpression.parseValue("test"));
         assertEquals("test", this.expression.parseValue("test"));
         assertEquals("test", this.negatedExpression.parseValue("test"));
     }
 
-    @Override
+    @Test
     void testMatchName() {
         assertTrue(nameOnlyExpression.matchName(request));
+        assertTrue(negatedNameOnlyExpression.matchName(request));
         assertTrue(expression.matchName(request));
         assertTrue(negatedExpression.matchName(request));
+
+        assertFalse(negatedExpression.matchName(mock(NativeWebRequest.class)));
     }
 
-    @Override
+    @Test
     void testMatchValue() {
         assertFalse(nameOnlyExpression.matchValue(request));
+        assertFalse(negatedNameOnlyExpression.matchValue(request));
         assertTrue(expression.matchValue(request));
         assertTrue(negatedExpression.matchValue(request));
     }
 
-    @Override
-    void testEquals() {
-        assertNotEquals(this, this.nameOnlyExpression);
-        assertNotEquals(this.nameOnlyExpression, this.expression);
-        assertNotEquals(this.expression, this.negatedExpression);
-
-        assertEquals(this.nameOnlyExpression, new WebRequestParamExpression("name"));
-        assertEquals(this.expression, new WebRequestParamExpression("name=Mercy"));
-        assertEquals(this.negatedExpression, new WebRequestParamExpression("name!=Mercy"));
+    @Test
+    void testGetExpression() {
+        assertEquals("name", this.nameOnlyExpression.getExpression());
+        assertEquals("!name", this.negatedNameOnlyExpression.getExpression());
+        assertEquals("name=Mercy", this.expression.getExpression());
+        assertEquals("name!=Mercy", this.negatedExpression.getExpression());
     }
 
-    @Override
+    @Test
+    void testEquals() {
+        assertEquals(this.nameOnlyExpression, this.nameOnlyExpression);
+        assertEquals(this.nameOnlyExpression, new WebRequestParamExpression("name"));
+        assertNotEquals(this.nameOnlyExpression, new WebRequestParamExpression("otherName"));
+        assertNotEquals(this.nameOnlyExpression, this.negatedNameOnlyExpression);
+        assertNotEquals(this.nameOnlyExpression, this.expression);
+        assertNotEquals(this.nameOnlyExpression, this.negatedExpression);
+        assertNotEquals(this.nameOnlyExpression, new Object());
+        assertNotEquals(this.nameOnlyExpression, null);
+
+        assertEquals(this.negatedNameOnlyExpression, this.negatedNameOnlyExpression);
+        assertEquals(this.negatedNameOnlyExpression, new WebRequestParamExpression("!name"));
+        assertNotEquals(this.negatedNameOnlyExpression, new WebRequestParamExpression("!otherName"));
+        assertNotEquals(this.negatedNameOnlyExpression, this.nameOnlyExpression);
+        assertNotEquals(this.negatedNameOnlyExpression, this.expression);
+        assertNotEquals(this.negatedNameOnlyExpression, this.negatedExpression);
+        assertNotEquals(this.nameOnlyExpression, new Object());
+        assertNotEquals(this.nameOnlyExpression, null);
+
+        assertEquals(this.expression, this.expression);
+        assertEquals(this.expression, new WebRequestParamExpression("name=Mercy"));
+        assertNotEquals(this.expression, new WebRequestParamExpression("name=Ma"));
+        assertNotEquals(this.expression, this.nameOnlyExpression);
+        assertNotEquals(this.expression, this.negatedNameOnlyExpression);
+        assertNotEquals(this.expression, this.negatedExpression);
+        assertNotEquals(this.expression, new Object());
+        assertNotEquals(this.expression, null);
+
+        assertEquals(this.negatedExpression, this.negatedExpression);
+        assertEquals(this.negatedExpression, new WebRequestParamExpression("name!=Mercy"));
+        assertNotEquals(this.negatedExpression, new WebRequestParamExpression("name!=Ma"));
+        assertNotEquals(this.negatedExpression, this.nameOnlyExpression);
+        assertNotEquals(this.negatedExpression, this.negatedNameOnlyExpression);
+        assertNotEquals(this.negatedExpression, this.expression);
+        assertNotEquals(this.negatedExpression, new Object());
+        assertNotEquals(this.negatedExpression, null);
+    }
+
+    @Test
     void testHashCode() {
         assertEquals(this.nameOnlyExpression.hashCode(), new WebRequestParamExpression("name").hashCode());
+        assertEquals(this.negatedNameOnlyExpression.hashCode(), new WebRequestParamExpression("!name").hashCode());
         assertEquals(this.expression.hashCode(), new WebRequestParamExpression("name=Mercy").hashCode());
         assertEquals(this.negatedExpression.hashCode(), new WebRequestParamExpression("name!=Mercy").hashCode());
     }
 
-    @Override
+    @Test
     void testToString() {
         assertEquals(this.nameOnlyExpression.toString(), "name");
+        assertEquals(this.negatedNameOnlyExpression.toString(), "!name");
         assertEquals(this.expression.toString(), "name=Mercy");
         assertEquals(this.negatedExpression.toString(), "name!=Mercy");
+    }
+
+    @Test
+    void testConstructorWithoutName() {
+        WebRequestParamExpression expression = new WebRequestParamExpression("=Mercy");
+        assertFalse(expression.isNegated());
+        assertEquals(EMPTY_STRING, expression.getName());
+        assertEquals("Mercy", expression.getValue());
     }
 }

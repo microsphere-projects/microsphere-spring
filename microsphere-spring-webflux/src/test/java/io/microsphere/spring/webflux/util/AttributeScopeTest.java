@@ -48,7 +48,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @see AttributeScope
  * @since 1.0.0
  */
-public class AttributeScopeTest {
+class AttributeScopeTest {
 
     private MockServerWebExchange serverWebExchange;
 

@@ -27,6 +27,7 @@ import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
+import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Import;
@@ -148,4 +149,12 @@ public @interface EnableWebMvcExtension {
      * @see RequestAttributesUtils#getHandlerMethodReturnValue(RequestAttributes, HandlerMethod)
      */
     boolean storeResponseBodyReturnValue() default false;
+
+    /**
+     * Indicate whether the {@link ReversedProxyHandlerMapping} is enabled or not.
+     *
+     * @return <code>false</code> as default
+     * @see ReversedProxyHandlerMapping
+     */
+    boolean reversedProxyHandlerMapping() default false;
 }
