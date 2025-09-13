@@ -37,6 +37,5 @@ class PropertyConstantsTest {
     void testConstants() {
         assertEquals("microsphere.spring.webmvc.", MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX);
         assertEquals("microsphere.spring.webmvc.view-resolver.", MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX);
-
     }
 }
