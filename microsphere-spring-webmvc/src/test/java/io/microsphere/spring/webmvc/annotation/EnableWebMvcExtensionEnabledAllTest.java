@@ -21,14 +21,14 @@ package io.microsphere.spring.webmvc.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link WebMvcExtensionBeanDefinitionRegistrar} Test on enabled status(all attributes are <code>true</code>).
+ * {@link EnableWebMvcExtension} Test when all status are enabled(all attributes are <code>true</code>).
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebMvcExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        WebMvcExtensionBeanDefinitionRegistrarTest.class
+        EnableWebMvcExtensionEnabledAllTest.class
 })
 @EnableWebMvcExtension(
         registerWebEndpointMappings = true,
@@ -39,5 +39,5 @@ import org.springframework.test.context.ContextConfiguration;
         storeResponseBodyReturnValue = true,
         reversedProxyHandlerMapping = true
 )
-public class WebMvcExtensionBeanDefinitionRegistrarTest extends AbstractEnableWebMvcExtensionTest {
+class EnableWebMvcExtensionEnabledAllTest extends AbstractEnableWebMvcExtensionTest {
 }
