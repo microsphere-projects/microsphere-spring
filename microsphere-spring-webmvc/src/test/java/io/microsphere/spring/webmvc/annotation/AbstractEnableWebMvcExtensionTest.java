@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @Disabled
-abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest implements HandlerMethodArgumentInterceptor,
+public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest implements HandlerMethodArgumentInterceptor,
         HandlerMethodInterceptor {
 
     protected static final String expectedArgument0 = "hello";
