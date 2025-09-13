@@ -97,10 +97,6 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         log("@EnableWebMvcExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
     }
 
-    private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
-        return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
-    }
-
     private void registerHandlerInterceptors(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         Class<? extends HandlerInterceptor>[] interceptorClasses = resolveHandlerInterceptorClasses(attributes);
         if (isNotEmpty(interceptorClasses)) {
@@ -162,6 +158,10 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
             registerBeanDefinition(registry, ReversedProxyHandlerMapping.class);
         }
         log("@EnableWebMvcExtension.reversedProxyHandlerMapping() = {}", reversedProxyHandlerMapping);
+    }
+
+    private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
+        return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
     }
 
     private void log(String messagePattern, Object... args) {
