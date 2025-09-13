@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,13 +50,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @see EnableWebMvc
  * @since 1.0.0
  */
+@Ignore
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@EnableWebMvc
-@Ignore
-@Import(value = {
+@ContextConfiguration(classes = {
         TestController.class           // Test Controller
 })
+@EnableWebMvc
 public abstract class AbstractWebMvcTest {
 
     @Autowired
