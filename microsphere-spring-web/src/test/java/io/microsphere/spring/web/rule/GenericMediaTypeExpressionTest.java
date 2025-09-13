@@ -219,5 +219,4 @@ class GenericMediaTypeExpressionTest {
         Map<String, String> targetParameters = ofMap("charset", "UTF-16");
         assertFalse(matchParameters(sourceParameters, targetParameters));
     }
-
 }
