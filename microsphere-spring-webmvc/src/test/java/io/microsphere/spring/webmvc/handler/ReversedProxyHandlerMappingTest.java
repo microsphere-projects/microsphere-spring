@@ -41,7 +41,6 @@ import static java.lang.System.currentTimeMillis;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -89,10 +88,8 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
      * @throws Exception
      */
     @Test
-    void testGreeting() throws Exception {
-        this.mockMvc.perform(get("/test/greeting/Mercy"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Greeting : Mercy"));
+    protected void testGreeting() throws Exception {
+        super.testGreeting();
     }
 
     /**
@@ -101,7 +98,7 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
      * @throws Exception
      */
     @Test
-    void testUser() throws Exception {
+    protected void testUser() throws Exception {
         String pattern = "/test/user";
         ObjectMapper objectMapper = new ObjectMapper();
         User user = new User();
@@ -123,7 +120,7 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
      * @throws Exception
      */
     @Test
-    void testResponseEntity() throws Exception {
+    protected void testResponseEntity() throws Exception {
         String pattern = "/test/response-entity";
         this.mockMvc.perform(put(pattern).header(ID_HEADER_NAME, currentTimeMillis()))
                 .andExpect(status().isOk())
@@ -159,7 +156,6 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
 //        WebEndpointMapping webEndpointMapping = this.webEndpointMappingsMap.get(pattern);
 //        assertNull(mapping.invokeGetHandlerExecutionChain(mapping, webEndpointMapping.getEndpoint(), new MockHttpServletRequest()));
 //    }
-
 
     private int getWebEndpointMappingId(String pattern) {
         WebEndpointMapping webEndpointMapping = this.webEndpointMappingsMap.get(pattern);
