@@ -39,5 +39,5 @@ import org.springframework.test.context.ContextConfiguration;
         storeResponseBodyReturnValue = true,
         reversedProxyHandlerMapping = true
 )
-class WebMvcExtensionBeanDefinitionRegistrarTest extends AbstractEnableWebMvcExtensionTest {
+public class WebMvcExtensionBeanDefinitionRegistrarTest extends AbstractEnableWebMvcExtensionTest {
 }
