@@ -131,7 +131,7 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
     }
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
-    void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
+    public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {
         Collection<WebEndpointMapping> mappings = event.getMappings();
         WebEndpointMapping webEndpointMapping = mappings.iterator().next();
         String[] patterns = webEndpointMapping.getPatterns();
