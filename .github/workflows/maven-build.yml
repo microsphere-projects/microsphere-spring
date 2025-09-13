@@ -40,6 +40,7 @@ jobs:
           --batch-mode
           --update-snapshots
           --file pom.xml
+          --threads 1
           -Drevision=0.0.1-SNAPSHOT
           test
           --activate-profiles test,coverage,${{ matrix.maven-profile-spring-framework }}
