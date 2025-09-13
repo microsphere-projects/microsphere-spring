@@ -38,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link EnableWebMvcExtension} Test Config
+ * The Test Config for {@link EnableWebMvcExtension} interceptors
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
-public class EnableWebMvcExtensionTestConfig implements HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
+public class EnableWebMvcExtensionInterceptorsTestConfig implements HandlerMethodArgumentInterceptor, HandlerMethodInterceptor {
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onWebEndpointMappingsReadyEvent(WebEndpointMappingsReadyEvent event) {

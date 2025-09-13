@@ -17,7 +17,7 @@
 package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
-import io.microsphere.spring.webmvc.test.EnableWebMvcExtensionTestConfig;
+import io.microsphere.spring.webmvc.test.EnableWebMvcExtensionInterceptorsTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -35,8 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionTestConfig.class,
-        EnableWebMvcExtensionInterceptorsTest.class
+        EnableWebMvcExtensionInterceptorsTest.class,
+        EnableWebMvcExtensionInterceptorsTestConfig.class
 })
 @EnableWebMvcExtension(handlerInterceptors = {
         IdempotentAnnotatedMethodHandlerInterceptor.class
