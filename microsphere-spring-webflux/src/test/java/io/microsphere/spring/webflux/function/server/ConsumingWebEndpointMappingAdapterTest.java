@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = {
         ConsumingWebEndpointMappingAdapterTest.class
 })
-public class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
+class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
 
     @Test
     void test() {
