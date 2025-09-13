@@ -164,7 +164,7 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         this.webEndpointMappingsCache = webEndpointMappingsMap;
     }
 
-    private boolean isAbstractHandlerMapping(WebEndpointMapping webEndpointMapping) {
+    boolean isAbstractHandlerMapping(WebEndpointMapping webEndpointMapping) {
         return WEB_MVC.equals(webEndpointMapping.getKind()) &&
                 webEndpointMapping.getSource() instanceof AbstractHandlerMapping;
     }
