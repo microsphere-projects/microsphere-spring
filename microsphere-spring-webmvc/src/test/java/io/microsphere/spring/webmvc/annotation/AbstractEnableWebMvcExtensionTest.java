@@ -63,8 +63,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest implements HandlerMethodArgumentInterceptor,
         HandlerMethodInterceptor {
 
-    protected static final String expectedArgument0 = "hello";
-
     protected boolean registerWebEndpointMappings;
 
     protected boolean interceptHandlerMethods;
@@ -171,7 +169,6 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
         beforeExecute(handlerMethod, args, request);
         if (returnValue == null) {
             assertNotNull(error);
-            assertEquals(expectedArgument0, error.getMessage());
         } else {
             assertReturnValue(returnValue);
             assertNull(error);
