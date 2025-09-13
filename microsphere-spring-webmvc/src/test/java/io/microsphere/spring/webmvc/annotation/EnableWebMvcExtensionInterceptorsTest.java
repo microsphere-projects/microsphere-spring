@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableWebMvcExtension(handlerInterceptors = {
         IdempotentAnnotatedMethodHandlerInterceptor.class
 })
-class EnableWebMvcExtensionInterceptorsTest extends AbstractEnableWebMvcExtensionTest {
+public class EnableWebMvcExtensionInterceptorsTest extends AbstractEnableWebMvcExtensionTest {
 
     @Test
     public void testWebEndpoints() throws Exception {
