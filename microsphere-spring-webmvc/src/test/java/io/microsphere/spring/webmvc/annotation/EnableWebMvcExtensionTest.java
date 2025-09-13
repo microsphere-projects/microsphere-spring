@@ -19,7 +19,7 @@ package io.microsphere.spring.webmvc.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebMvcExtension} Test on default status.
+ * {@link EnableWebMvcExtension} Test when all status are default.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see EnableWebMvcExtension
