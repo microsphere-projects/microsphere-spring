@@ -34,5 +34,5 @@ import org.springframework.test.context.ContextConfiguration;
         EnableWebFluxExtensionInterceptorsTestConfig.class
 })
 @EnableWebFluxExtension
-public class EnableWebFluxExtensionInterceptorsTest extends AbstractEnableWebFluxExtensionTest {
+class EnableWebFluxExtensionInterceptorsTest extends AbstractEnableWebFluxExtensionTest {
 }
