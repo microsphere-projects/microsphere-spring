@@ -35,6 +35,7 @@ import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebReques
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -77,17 +78,26 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
 
     @Override
     protected void doTestEquals() {
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
 
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestProducesRule(APPLICATION_JSON_VALUE));
+
+        assertNotEquals(rule, new WebRequestPattensRule(APPLICATION_XML_VALUE));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
     }
 
     @Override
     protected void doTestHashCode() {
-
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+        assertEquals(rule.hashCode(), rule.getContent().hashCode());
     }
 
     @Override
     protected void doTestToString() {
-
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+        assertEquals("[application/json]", rule.toString());
     }
 
     // Test pre-flight request returns false
