@@ -103,10 +103,15 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
 
     /**
      * Test the Web Endpoint with single parameter
+     *
+     * @see #testGreeting()
+     * @see #testUser()
+     * @see #testView()
+     * @see #testUpdatePerson()
      */
     @Test
     void testWebEndpoints() {
-        // this.testGreeting();
+        this.testGreeting();
         this.testUser();
         this.testError();
         this.testUpdatePerson();
@@ -129,7 +134,6 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         Object[] arguments = event.getArguments();
         assertArguments(arguments);
     }
-
 
     @Override
     public void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
