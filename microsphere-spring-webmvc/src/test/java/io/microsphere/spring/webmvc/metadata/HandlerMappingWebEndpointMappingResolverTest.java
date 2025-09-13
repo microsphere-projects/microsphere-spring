@@ -20,20 +20,13 @@ package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
+import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import io.microsphere.spring.webmvc.test.SimpleUrlHandlerMappingTestConfig;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * {@link HandlerMappingWebEndpointMappingResolver} Test
@@ -43,7 +36,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = {
         SimpleUrlHandlerMappingTestConfig.class,
         HandlerMappingWebEndpointMappingResolver.class,
@@ -51,19 +43,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 })
 @Import(TestController.class)
-@EnableWebMvc
 @EnableWebMvcExtension
-public class HandlerMappingWebEndpointMappingResolverTest {
-
-    @Autowired
-    private WebApplicationContext context;
-
-    private MockMvc mockMvc;
-
-    @Before
-    public void setUp() {
-        this.mockMvc = webAppContextSetup(this.context).build();
-    }
+public class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebMvcTest {
 
     @Test
     public void testResolve() {
