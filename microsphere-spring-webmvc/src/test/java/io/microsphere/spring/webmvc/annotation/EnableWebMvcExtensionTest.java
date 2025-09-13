@@ -29,5 +29,5 @@ import org.springframework.test.context.ContextConfiguration;
         EnableWebMvcExtensionTest.class
 })
 @EnableWebMvcExtension
-public class EnableWebMvcExtensionTest extends AbstractEnableWebMvcExtensionTest {
+class EnableWebMvcExtensionTest extends AbstractEnableWebMvcExtensionTest {
 }

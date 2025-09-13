@@ -36,5 +36,5 @@ import org.springframework.test.context.ContextConfiguration;
         storeRequestBodyArgument = false,
         storeResponseBodyReturnValue = false
 )
-public class EnableWebFluxExtensionAllDisabledTest extends AbstractEnableWebFluxExtensionTest {
+class EnableWebFluxExtensionAllDisabledTest extends AbstractEnableWebFluxExtensionTest {
 }
