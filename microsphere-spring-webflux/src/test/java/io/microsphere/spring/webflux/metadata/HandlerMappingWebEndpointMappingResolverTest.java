@@ -18,14 +18,11 @@
 package io.microsphere.spring.webflux.metadata;
 
 
-import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import io.microsphere.spring.webflux.test.SimpleUrlHandlerMappingTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
@@ -49,10 +46,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         HandlerMappingWebEndpointMappingResolver.class,
         HandlerMappingWebEndpointMappingResolverTest.class,
 
-})
-@Import(value = {
-        TestController.class,           // Test Controller
-        RouterFunctionTestConfig.class  // Test RouterFunction
 })
 class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
 
