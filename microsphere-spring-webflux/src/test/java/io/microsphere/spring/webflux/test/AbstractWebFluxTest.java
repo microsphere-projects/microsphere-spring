@@ -23,7 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.config.EnableWebFlux;
@@ -40,13 +40,13 @@ import static reactor.core.publisher.Mono.just;
  * @see EnableWebFluxExtension
  * @since 1.0.0
  */
-@SpringJUnitConfig
 @Disabled
-@EnableWebFlux
-@Import(value = {
+@SpringJUnitConfig
+@ContextConfiguration(classes = {
         TestController.class,           // Test Controller
         RouterFunctionTestConfig.class  // Test RouterFunction
 })
+@EnableWebFlux
 public abstract class AbstractWebFluxTest {
 
     @Autowired
@@ -141,7 +141,7 @@ public abstract class AbstractWebFluxTest {
     }
 
     /**
-     * Test RouterFunctionTestConfig#nestedPersonRouterFunction(PersonHandler)
+     * @see RouterFunctionTestConfig#nestedPersonRouterFunction(PersonHandler)
      */
     protected void testUpdatePerson() {
         this.webTestClient.put()
