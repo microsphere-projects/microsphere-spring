@@ -401,4 +401,4 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     private String getClassName(Object instance) {
         return instance.getClass().getName();
     }
-}       
+}
