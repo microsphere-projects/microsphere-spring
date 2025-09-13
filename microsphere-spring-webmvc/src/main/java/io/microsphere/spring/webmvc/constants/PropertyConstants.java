@@ -30,4 +30,9 @@ public interface PropertyConstants {
      * The property name prefix of Microsphere Spring WebMVC: "microsphere.spring.webmvc."
      */
     String MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "webmvc.";
+
+    /**
+     * The property name prefix of Microsphere Spring WebMVC View Resolver: "microsphere.spring.webmvc.view-resolver."
+     */
+    String MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX + "view-resolver.";
 }

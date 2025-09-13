@@ -59,7 +59,7 @@ public class WebRequestParamExpression extends AbstractNameValueExpression<Strin
                 return true;
             }
         }
-        return request.getParameter(this.name) != null;
+        return false;
     }
 
     @Override

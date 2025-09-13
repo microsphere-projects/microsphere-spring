@@ -14,20 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.microsphere.spring.webmvc.annotation;
+
 
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebMvcExtension} Test with defaults
+ * {@link EnableWebMvcExtension} Test when all status are enabled(all attributes are <code>true</code>).
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see EnableWebMvcExtension
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see WebMvcExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionDefaultsTest.class
+        EnableWebMvcExtensionEnabledAllTest.class
 })
-@EnableWebMvcExtension
-public class EnableWebMvcExtensionDefaultsTest extends AbstractEnableWebMvcExtensionTest {
+@EnableWebMvcExtension(
+        registerWebEndpointMappings = true,
+        interceptHandlerMethods = true,
+        publishEvents = true,
+        registerHandlerInterceptors = true,
+        storeRequestBodyArgument = true,
+        storeResponseBodyReturnValue = true,
+        reversedProxyHandlerMapping = true
+)
+public class EnableWebMvcExtensionEnabledAllTest extends AbstractEnableWebMvcExtensionTest {
 }

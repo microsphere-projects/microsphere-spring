@@ -17,7 +17,16 @@
 package io.microsphere.spring.webmvc.util;
 
 import io.microsphere.util.Utils;
+import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.ViewResolverComposite;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
+import org.springframework.web.servlet.view.groovy.GroovyMarkupViewResolver;
 
 /**
  * {@link ViewResolver} Utilities
@@ -29,34 +38,69 @@ import org.springframework.web.servlet.ViewResolver;
 public abstract class ViewResolverUtils implements Utils {
 
     /**
-     * The bean name of InternalResourceViewResolver
+     * The bean name of {@link BeanNameViewResolver}
+     *
+     * @see BeanNameViewResolver
+     */
+    public static final String BEAN_NAME_VIEW_RESOLVER_BEAN_NAME = "beanNameViewResolver";
+
+    /**
+     * The bean name of {@link InternalResourceViewResolver}
+     *
+     * @see InternalResourceViewResolver
      */
     public static final String INTERNAL_RESOURCE_VIEW_RESOLVER_BEAN_NAME = "defaultViewResolver";
 
     /**
-     * The bean name of org.springframework.web.servlet.view.velocity.VelocityViewResolver
+     * The bean name of {@link org.springframework.web.servlet.view.velocity.VelocityViewResolver}
+     *
+     * @see org.springframework.web.servlet.view.velocity.VelocityViewResolver
      */
     public static final String VELOCITY_VIEW_RESOLVER_BEAN_NAME = "velocityViewResolver";
 
     /**
-     * The bean name of org.thymeleaf.spring5.view.ThymeleafViewResolver
+     * The bean name of {@link org.thymeleaf.spring5.view.ThymeleafViewResolver}
+     *
+     * @see org.thymeleaf.spring5.view.ThymeleafViewResolver
      */
     public static final String THYMELEAF_VIEW_RESOLVER_BEAN_NAME = "thymeleafViewResolver";
 
     /**
-     * The bean name of org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
+     * The bean name of {@link FreeMarkerViewResolver}
+     *
+     * @see FreeMarkerViewResolver
      */
     public static final String FREEMARKER_VIEW_RESOLVER_BEAN_NAME = "freeMarkerViewResolver";
 
     /**
-     * The bean name of org.springframework.web.servlet.view.groovy.GroovyMarkupViewResolver
+     * The bean name of {@link GroovyMarkupViewResolver}
+     *
+     * @see GroovyMarkupViewResolver
      */
     public static final String GROOVY_MARKUP_VIEW_RESOLVER_BEAN_NAME = "groovyMarkupViewResolver";
 
     /**
-     * The bean name of org.springframework.boot.web.servlet.view.MustacheViewResolver
+     * The bean name of {@link org.springframework.boot.web.servlet.view.MustacheViewResolver}
+     *
+     * @see org.springframework.boot.web.servlet.view.MustacheViewResolver
      */
     public static final String MUSTACHE_VIEW_RESOLVER_BEAN_NAME = "mustacheViewResolver";
+
+    /**
+     * The bean name of {@link ViewResolverComposite}
+     *
+     * @see ViewResolverComposite
+     * @see WebMvcConfigurationSupport#mvcViewResolver(ContentNegotiationManager)
+     * @see ViewResolverRegistry
+     */
+    public static final String VIEW_RESOLVER_COMPOSITE_BEAN_NAME = "mvcViewResolver";
+
+    /**
+     * The bean name of {@link ContentNegotiatingViewResolver}
+     *
+     * @see ContentNegotiatingViewResolver
+     */
+    public static final String CONTENT_NEGOTIATING_VIEW_RESOLVER_BEAN_NAME = "viewResolver";
 
     private ViewResolverUtils() {
     }

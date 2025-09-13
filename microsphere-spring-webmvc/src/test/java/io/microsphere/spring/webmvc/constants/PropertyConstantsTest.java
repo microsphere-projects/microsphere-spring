@@ -21,6 +21,7 @@ package io.microsphere.spring.webmvc.constants;
 import org.junit.Test;
 
 import static io.microsphere.spring.webmvc.constants.PropertyConstants.MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX;
+import static io.microsphere.spring.webmvc.constants.PropertyConstants.MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -35,5 +36,6 @@ public class PropertyConstantsTest {
     @Test
     public void testConstants() {
         assertEquals("microsphere.spring.webmvc.", MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX);
+        assertEquals("microsphere.spring.webmvc.view-resolver.", MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX);
     }
 }

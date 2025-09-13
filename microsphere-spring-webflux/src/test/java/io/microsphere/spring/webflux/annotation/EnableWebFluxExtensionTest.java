@@ -17,20 +17,18 @@
 
 package io.microsphere.spring.webflux.annotation;
 
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebFluxExtension} Test
+ * {@link EnableWebFluxExtension} Test when all status are default.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebFluxExtension
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        EnableWebFluxExtensionTest.class,
-        RouterFunctionTestConfig.class
+        EnableWebFluxExtensionTest.class
 })
 @EnableWebFluxExtension
-public class EnableWebFluxExtensionTest extends AbstractEnableWebFluxExtensionTest {
+class EnableWebFluxExtensionTest extends AbstractEnableWebFluxExtensionTest {
 }

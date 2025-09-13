@@ -46,6 +46,11 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 public abstract class WebRequestUtils {
 
     /**
+     * The header name for HTTP method
+     */
+    public static final String METHOD_HEADER_NAME = ":METHOD:";
+
+    /**
      * Name of Servlet request attribute that holds a
      * {@link UrlPathHelper#getLookupPathForRequest resolved} lookupPath.
      *
@@ -54,7 +59,7 @@ public abstract class WebRequestUtils {
     public static final String PATH_ATTRIBUTE = UrlPathHelper.class.getName() + ".PATH";
 
     public static String getMethod(NativeWebRequest request) {
-        String method = request.getHeader(":METHOD:");
+        String method = request.getHeader(METHOD_HEADER_NAME);
         if (method == null) {
             Object nativeRequest = request.getNativeRequest();
             if (nativeRequest instanceof HttpServletRequest) {

@@ -20,12 +20,20 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import java.util.List;
+
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExpressions;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 /**
  * {@link WebRequestConsumesRule} Test
@@ -40,7 +48,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testMatchesOnPreflightRequest() {
         NativeWebRequest request = createPreFightRequest();
-        WebRequestConsumesRule rule = new WebRequestConsumesRule("application/json");
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
         assertFalse(rule.matches(request));
     }
 
@@ -48,7 +56,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testMatchesOnEmptyExpressions() {
         NativeWebRequest request = createWebRequest(req -> {
-            req.setContentType("application/json");
+            req.setContentType(APPLICATION_JSON_VALUE);
         });
         WebRequestConsumesRule rule = new WebRequestConsumesRule();
         assertFalse(rule.matches(request));
@@ -61,7 +69,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
             req.setContentType("invalid/type");
         });
 
-        WebRequestConsumesRule rule = new WebRequestConsumesRule("application/json");
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
         assertFalse(rule.matches(request));
     }
 
@@ -69,7 +77,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testMatchesOnNoContentTypeHeader() {
         NativeWebRequest request = createWebRequest();
-        WebRequestConsumesRule rule = new WebRequestConsumesRule("application/octet-stream");
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_OCTET_STREAM_VALUE);
         assertTrue(rule.matches(request));
     }
 
@@ -77,7 +85,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testMatchesOnAllExpressionsMatch() {
         NativeWebRequest request = createWebRequest(req -> {
-            req.setContentType("application/json");
+            req.setContentType(APPLICATION_JSON_VALUE);
         });
 
         WebRequestConsumesRule rule = new WebRequestConsumesRule("*/*");
@@ -88,10 +96,10 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testMatchesOnAnyExpressionFails() {
         NativeWebRequest request = createWebRequest(req -> {
-            req.setContentType("application/xml");
+            req.setContentType(APPLICATION_XML_VALUE);
         });
 
-        WebRequestConsumesRule rule = new WebRequestConsumesRule("application/json", "text/plain");
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE, TEXT_PLAIN_VALUE);
         assertFalse(rule.matches(request));
     }
 
@@ -99,7 +107,7 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testMatchesOnWildcardMediaType() {
         NativeWebRequest request = createWebRequest(req -> {
-            req.setContentType("application/json");
+            req.setContentType(APPLICATION_JSON_VALUE);
         });
 
         WebRequestConsumesRule rule = new WebRequestConsumesRule("application/*");
@@ -110,18 +118,42 @@ public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testMatchesOnWithNegatedExpression() {
         NativeWebRequest request = createWebRequest(req -> {
-            req.setContentType("application/xml");
+            req.setContentType(APPLICATION_XML_VALUE);
         });
 
         // Expression: !application/json AND application/xml
         WebRequestConsumesRule rule = new WebRequestConsumesRule(
-                ofArray("application/xml"),
+                ofArray(APPLICATION_XML_VALUE),
                 "Content-Type=!application/json");
         assertTrue(rule.matches(request));
     }
 
     @Override
-    public void testGetToStringInfix() {
+    public void doTestGetToStringInfix() {
         assertEquals("Should return ' || '", " || ", new WebRequestConsumesRule().getToStringInfix());
+    }
+
+    @Override
+    protected void doTestEquals() {
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestConsumesRule(APPLICATION_JSON_VALUE));
+
+        assertNotEquals(rule, new WebRequestConsumesRule(APPLICATION_XML_VALUE));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
+    }
+
+    @Override
+    protected void doTestHashCode() {
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
+        List<ConsumeMediaTypeExpression> expressions = parseExpressions(ofArray(APPLICATION_JSON_VALUE), null);
+        assertEquals(rule.hashCode(), expressions.hashCode());
+    }
+
+    @Override
+    protected void doTestToString() {
+        WebRequestConsumesRule rule = new WebRequestConsumesRule(APPLICATION_JSON_VALUE);
+        assertEquals("[application/json]", rule.toString());
     }
 }

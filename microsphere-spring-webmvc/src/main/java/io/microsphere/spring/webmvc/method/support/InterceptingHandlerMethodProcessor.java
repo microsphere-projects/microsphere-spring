@@ -90,6 +90,14 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
         private HandlerMethodArgumentResolver resolver;
 
+        @Override
+        public String toString() {
+            return "MethodParameterContext{" +
+                    "method=" + method +
+                    ", parameterCount=" + parameterCount +
+                    ", resolver=" + resolver +
+                    '}';
+        }
     }
 
     static class ReturnTypeContext {
@@ -98,6 +106,13 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
         private HandlerMethodReturnValueHandler handler;
 
+        @Override
+        public String toString() {
+            return "ReturnTypeContext{" +
+                    "method=" + method +
+                    ", handler=" + handler +
+                    '}';
+        }
     }
 
     @Override
@@ -110,22 +125,18 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return true;
+        return this.parameterContextsCache.containsKey(parameter);
     }
 
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {
-        return true;
+        return this.returnTypeContextsCache.containsKey(returnType);
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         MethodParameterContext methodParameterContext = getParameterContext(parameter);
-        if (methodParameterContext == null) {
-            logger.trace("The MethodParameterContext can't be found by the MethodParameter[{}]", parameter);
-            return null;
-        }
 
         HandlerMethodArgumentResolver resolver = methodParameterContext.resolver;
 
@@ -144,10 +155,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest) throws Exception {
         ReturnTypeContext context = getReturnTypeContext(returnType);
-        if (context == null) {
-            logger.trace("The ReturnTypeContext can't be found by the return type[{}]", returnType);
-            return;
-        }
 
         HandlerMethodReturnValueHandler handler = context.handler;
 
@@ -249,11 +256,15 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private MethodParameterContext getParameterContext(MethodParameter parameter) {
-        return parameterContextsCache.get(parameter);
+        MethodParameterContext context = parameterContextsCache.get(parameter);
+        logger.trace("The MethodParameterContext is gotten by the parameter[{}] : {}", parameter, context);
+        return context;
     }
 
     private ReturnTypeContext getReturnTypeContext(MethodParameter returnType) {
-        return returnTypeContextsCache.get(returnType);
+        ReturnTypeContext context = returnTypeContextsCache.get(returnType);
+        logger.trace("The ReturnTypeContext is gotten by the return type[{}] : {}", returnType, context);
+        return context;
     }
 
     private HandlerMethod resolveHandlerMethod(Object handler) {
@@ -293,7 +304,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         for (int i = 0; i < handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
             int parameterCount = methodParameterContext.parameterCount;
-            Object[] arguments = resolveArguments(parameter, argument, webRequest);
+            Object[] arguments = resolveArguments(webRequest, parameter, argument);
 
             int parameterIndex = parameter.getParameterIndex();
             if (parameterIndex == parameterCount - 1) {
@@ -314,7 +325,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         afterExecute(webRequest, handlerMethod, args, returnValue, null);
     }
 
-    private void afterExecute(HttpServletRequest request, Object handler, @Nullable Exception error) throws Exception {
+    void afterExecute(HttpServletRequest request, Object handler, @Nullable Exception error) throws Exception {
         HandlerMethod handlerMethod = resolveHandlerMethod(handler);
         if (handlerMethod != null) {
             ServletWebRequest webRequest = new ServletWebRequest(request);
@@ -331,15 +342,15 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         }
     }
 
-    private Object[] getArguments(NativeWebRequest webRequest, HandlerMethod handlerMethod) {
+    Object[] getArguments(NativeWebRequest webRequest, HandlerMethod handlerMethod) {
         return getHandlerMethodArguments(webRequest, handlerMethod);
     }
 
-    private Object[] getArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
+    Object[] getArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
         return WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
     }
 
-    private Object[] resolveArguments(MethodParameter parameter, Object argument, NativeWebRequest webRequest) {
+    Object[] resolveArguments(NativeWebRequest webRequest, MethodParameter parameter, Object argument) {
         int index = parameter.getParameterIndex();
         Object[] arguments = null;
         if (argument != null) {
@@ -351,7 +362,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return arguments;
     }
 
-    private HandlerMethodArgumentResolver resolveArgumentResolver(MethodParameter methodParameter, List<HandlerMethodArgumentResolver> resolvers) {
+    HandlerMethodArgumentResolver resolveArgumentResolver(MethodParameter methodParameter, List<HandlerMethodArgumentResolver> resolvers) {
         int size = resolvers.size();
         HandlerMethodArgumentResolver targetResolver = null;
         for (int i = 0; i < size; i++) {
@@ -369,8 +380,8 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return targetResolver;
     }
 
-    private HandlerMethodReturnValueHandler resolveReturnValueHandler(HandlerMethod methodParameter, List<HandlerMethodReturnValueHandler> handlers) {
-        MethodParameter returnType = methodParameter.getReturnType();
+    HandlerMethodReturnValueHandler resolveReturnValueHandler(HandlerMethod handlerMethod, List<HandlerMethodReturnValueHandler> handlers) {
+        MethodParameter returnType = handlerMethod.getReturnType();
         int size = handlers.size();
         HandlerMethodReturnValueHandler targetHandler = null;
         for (int i = 0; i < size; i++) {
@@ -381,7 +392,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                     targetHandler = handler;
                 } else {
                     logger.warn("The HandlerMethodReturnValueHandler[class : '{}'] also supports the return type[{}] , the mapped one : {}",
-                            getClassName(handler), methodParameter, getClassName(targetHandler));
+                            getClassName(handler), handlerMethod, getClassName(targetHandler));
                 }
             }
         }

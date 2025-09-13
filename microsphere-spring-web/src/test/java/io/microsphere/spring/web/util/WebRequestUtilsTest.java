@@ -34,11 +34,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * {@link WebRequestUtils} Test
@@ -56,6 +58,12 @@ public class WebRequestUtilsTest {
 
         request = createWebRequest(r -> r.setMethod("POST"));
         assertEquals("POST", getMethod(request));
+    }
+
+    @Test
+    public void testGetMethodOnNotHttpServletRequest() {
+        NativeWebRequest request = mock(NativeWebRequest.class);
+        assertNull(getMethod(request));
     }
 
     @Test
@@ -78,13 +86,13 @@ public class WebRequestUtilsTest {
 
     @Test
     public void testGetContentType() {
-        NativeWebRequest request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, "application/json"));
-        assertEquals("application/json", getContentType(request));
+        NativeWebRequest request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE));
+        assertEquals(APPLICATION_JSON_VALUE, getContentType(request));
     }
 
     @Test
     public void testParseContentType() {
-        NativeWebRequest request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, "application/json"));
+        NativeWebRequest request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE));
         assertEquals(APPLICATION_JSON, parseContentType(request));
 
         request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, "test"));

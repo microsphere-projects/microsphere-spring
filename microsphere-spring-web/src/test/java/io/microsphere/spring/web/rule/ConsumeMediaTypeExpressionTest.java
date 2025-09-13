@@ -26,8 +26,12 @@ import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExp
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.http.MediaType.valueOf;
 
 /**
@@ -53,7 +57,7 @@ public class ConsumeMediaTypeExpressionTest {
 
     @Test
     public void testMatchWithWildcard() {
-        MediaType contentType = valueOf("application/json");
+        MediaType contentType = valueOf(APPLICATION_JSON_VALUE);
         ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(valueOf("application/*"), false);
         assertTrue(expression.match(contentType));
     }
@@ -66,6 +70,13 @@ public class ConsumeMediaTypeExpressionTest {
     }
 
     @Test
+    public void testMatchWhenParametersNoMatch() {
+        MediaType contentType = parseMediaType("application/json;charset=UTF-8");
+        ConsumeMediaTypeExpression expression = new ConsumeMediaTypeExpression(contentType, false);
+        assertFalse(expression.match(parseMediaType("application/json;charset=GBK")));
+    }
+
+    @Test
     public void testParseExpressionsWithHeaders() {
         String[] headers = {"Content-Type=application/json"};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(null, headers);
@@ -75,7 +86,7 @@ public class ConsumeMediaTypeExpressionTest {
 
     @Test
     public void testParseExpressionsWithConsumes() {
-        String[] consumes = {"application/xml"};
+        String[] consumes = {APPLICATION_XML_VALUE};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, null);
         assertFalse(expressions.isEmpty());
         assertTrue(expressions.get(0).match(APPLICATION_XML));
@@ -84,7 +95,7 @@ public class ConsumeMediaTypeExpressionTest {
     @Test
     public void testParseExpressionsWithHeadersAndConsumes() {
         String[] headers = {"Content-Type=application/json"};
-        String[] consumes = {"application/xml"};
+        String[] consumes = {APPLICATION_XML_VALUE};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
         assertEquals(2, expressions.size());
         assertTrue(expressions.get(0).match(APPLICATION_JSON));
@@ -93,7 +104,7 @@ public class ConsumeMediaTypeExpressionTest {
 
     @Test
     public void testParseExpressionsWithNoValueHeaders() {
-        String[] headers = {"Content-Type"};
+        String[] headers = {CONTENT_TYPE};
         String[] consumes = {};
         List<ConsumeMediaTypeExpression> expressions = parseExpressions(consumes, headers);
         assertTrue(expressions.isEmpty());

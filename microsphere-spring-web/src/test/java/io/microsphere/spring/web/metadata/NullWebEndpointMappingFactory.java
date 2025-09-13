@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc.annotation;
 
-import org.springframework.test.context.ContextConfiguration;
+package io.microsphere.spring.web.metadata;
+
+import io.microsphere.lang.Prioritized;
 
 /**
- * {@link EnableWebMvcExtension} Test with disable features
+ * {@link WebEndpointMappingFactory} always returns null.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see EnableWebMvcExtension
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see WebEndpointMappingFactory
  * @since 1.0.0
  */
-@ContextConfiguration(classes = {
-        EnableWebMvcExtensionDisableTest.class
-})
-@EnableWebMvcExtension(
-        registerWebEndpointMappings = false,
-        interceptHandlerMethods = false,
-        publishEvents = false
-)
-public class EnableWebMvcExtensionDisableTest extends AbstractEnableWebMvcExtensionTest {
+public class NullWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<Object> implements Prioritized {
+
+    @Override
+    protected WebEndpointMapping<?> doCreate(Object endpoint) throws Throwable {
+        return null;
+    }
+
+    @Override
+    public int getPriority() {
+        return NORMAL_PRIORITY;
+    }
 }
