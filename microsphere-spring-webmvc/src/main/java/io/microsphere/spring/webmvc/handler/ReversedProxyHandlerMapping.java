@@ -167,5 +167,4 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         return WEB_MVC.equals(webEndpointMapping.getKind()) &&
                 webEndpointMapping.getSource() instanceof AbstractHandlerMapping;
     }
-
 }
