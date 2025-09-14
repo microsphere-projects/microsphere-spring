@@ -551,13 +551,13 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.candidateConstructorsCache = newConcurrentHashMap(cacheSize);
         this.injectionMetadataCache = newConcurrentHashMap(cacheSize);
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         candidateConstructorsCache.clear();
         injectionMetadataCache.clear();
         logger.info("{} was destroying!", getClass().getName());
