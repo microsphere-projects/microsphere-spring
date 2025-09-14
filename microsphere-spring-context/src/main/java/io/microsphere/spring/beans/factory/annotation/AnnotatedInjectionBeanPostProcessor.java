@@ -365,7 +365,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
      */
-    private List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
+    protected List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
 
         final List<AnnotatedFieldElement> elements = new LinkedList<>();
 
@@ -402,7 +402,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
      */
-    private List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
+    protected List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
 
         final List<AnnotatedMethodElement> elements = new LinkedList<>();
 
