@@ -249,10 +249,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         setCacheSize(CACHE_SIZE);
     }
 
-    public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
-        return unmodifiableCollection(annotationTypes);
-    }
-
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
         if (candidateConstructors == null) {
@@ -642,6 +638,10 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         } else {
             return cachedArgument;
         }
+    }
+
+    public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
+        return unmodifiableCollection(annotationTypes);
     }
 
     @Override
