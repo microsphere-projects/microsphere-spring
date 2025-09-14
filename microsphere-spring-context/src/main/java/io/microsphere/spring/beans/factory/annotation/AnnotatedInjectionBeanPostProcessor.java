@@ -55,7 +55,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -74,6 +73,7 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotatio
 import static io.microsphere.util.ArrayUtils.combine;
 import static java.lang.Integer.getInteger;
 import static java.lang.Integer.parseInt;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.copyOf;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.beans.BeanUtils.findPrimaryConstructor;
@@ -373,10 +373,8 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
                 AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
                 if (attributes != null) {
-                    if (Modifier.isStatic(field.getModifiers())) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + annotationType.getName() + " is not supported on static fields: " + field);
-                        }
+                    if (isStatic(field.getModifiers())) {
+                        logger.warn("@{} is not supported on static fields: {}", annotationType.getName(), field);
                         return;
                     }
                     boolean required = determineRequiredStatus(attributes);
@@ -416,16 +414,12 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
                 AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
                 if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
-                    if (Modifier.isStatic(method.getModifiers())) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + annotationType.getName() + " annotation is not supported on static methods: " + method);
-                        }
+                    if (isStatic(method.getModifiers())) {
+                        logger.warn("@{} annotation is not supported on static methods: {}", annotationType.getName(), method);
                         return;
                     }
                     if (method.getParameterTypes().length == 0) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
-                        }
+                        logger.warn("@{} annotation should only be used on methods with parameters: {}", annotationType.getName(), method);
                     }
                     PropertyDescriptor pd = findPropertyForMethod(bridgedMethod, beanClass);
                     boolean required = determineRequiredStatus(attributes);
