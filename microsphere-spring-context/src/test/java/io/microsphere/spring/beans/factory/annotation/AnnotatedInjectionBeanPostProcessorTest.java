@@ -43,8 +43,8 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
+        ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.class,
-        AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
@@ -98,14 +98,6 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         assertEquals(parent.user, child.user);
     }
 
-    public static class ReferencedInjectedBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
-
-        public ReferencedInjectedBeanPostProcessor() {
-            super(Referenced.class);
-        }
-
-    }
-
     @Import(GenericChild.class)
     public static class GenericConfiguration {
 
@@ -115,31 +107,42 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
         static class Parent {
 
+            // Case : inject to field
             @Referenced
             User parentUser;
 
             User user;
 
+            // Case : inject to method
             @Referenced
             public void setUser(User user) {
                 this.user = user;
+            }
+
+            // Case : inject to method without parameter(invalid)
+            @Referenced
+            public void action() {
             }
         }
 
         static class Child extends Parent {
 
+            // Case : inject to field
             @Referenced
             User childUser;
 
+            /**
+             * Case : inject to static field(invalid)
+             */
             @Referenced
             static User invalidUser;
 
-
+            /**
+             * Case : inject to static method with parameter(invalid)
+             */
             @Referenced
             static void init(User user) {
             }
-
-
         }
 
         static class UserHolder {
@@ -179,6 +182,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
     static abstract class GenericParent<S> {
 
+        // Case : inject to field with generic type
         @Referenced
         S s;
 
@@ -186,6 +190,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
         S s2;
 
+        // Case : inject to method with generic type parameters
         @Referenced
         public void init(S s1, S s2) {
             this.s1 = s1;
@@ -197,6 +202,7 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
         private final User user;
 
+        // Case : inject to constructor with parameter
         @Referenced
         public GenericChild(@Referenced User user) {
             this.user = user;
