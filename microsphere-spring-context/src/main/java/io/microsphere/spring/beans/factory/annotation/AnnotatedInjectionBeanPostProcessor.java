@@ -199,7 +199,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * make sure higher priority than {@link AutowiredAnnotationBeanPostProcessor}
      */
-    private int order = LOWEST_PRECEDENCE - 3;
+    private int order;
 
     /**
      * whether to turn Class references into Strings (for compatibility with {@link AnnotationMetadata} or to
@@ -216,17 +216,17 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * whether ignore default value or not
      */
-    private boolean ignoreDefaultValue = true;
+    private boolean ignoreDefaultValue;
 
     /**
      * whether try merged annotation or not
      */
-    private boolean tryMergedAnnotation = true;
+    private boolean tryMergedAnnotation;
 
     /**
      * The size of cache
      */
-    private int cacheSize = CACHE_SIZE;
+    private int cacheSize;
 
     /**
      * @param annotationType the single type of {@link Annotation annotation}
@@ -241,6 +241,12 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public AnnotatedInjectionBeanPostProcessor(Collection<Class<? extends Annotation>> annotationTypes) {
         notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
+        setOrder(LOWEST_PRECEDENCE - 3);
+        setClassValuesAsString(false);
+        setNestedAnnotationsAsMap(false);
+        setIgnoreDefaultValue(true);
+        setTryMergedAnnotation(true);
+        setCacheSize(CACHE_SIZE);
     }
 
     private static <T> Collection<T> combine(Collection<? extends T>... elements) {
