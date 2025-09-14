@@ -65,16 +65,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
-import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.ArrayUtils.combine;
 import static java.lang.Integer.getInteger;
 import static java.lang.Integer.parseInt;
-import static java.util.Arrays.asList;
 import static java.util.Arrays.copyOf;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.beans.BeanUtils.findPropertyForMethod;
@@ -232,7 +232,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * @param annotationType the single type of {@link Annotation annotation}
      */
     public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation> annotationType, Class<? extends Annotation>... otherAnnotationTypes) {
-        this(combine(ofSet(annotationType), asList(otherAnnotationTypes)));
+        this(ofList(combine(annotationType, otherAnnotationTypes)));
     }
 
     /**
@@ -247,14 +247,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         setIgnoreDefaultValue(true);
         setTryMergedAnnotation(true);
         setCacheSize(CACHE_SIZE);
-    }
-
-    private static <T> Collection<T> combine(Collection<? extends T>... elements) {
-        List<T> allElements = new ArrayList<T>();
-        for (Collection<? extends T> e : elements) {
-            allElements.addAll(e);
-        }
-        return allElements;
     }
 
     public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
