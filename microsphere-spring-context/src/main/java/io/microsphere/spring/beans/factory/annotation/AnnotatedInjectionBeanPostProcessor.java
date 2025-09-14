@@ -19,7 +19,6 @@ package io.microsphere.spring.beans.factory.annotation;
 import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.TypeConverter;
@@ -37,6 +36,7 @@ import org.springframework.beans.factory.annotation.InjectionMetadata.InjectedEl
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -92,8 +92,7 @@ import static org.springframework.util.StringUtils.hasLength;
 /**
  * A {@link BeanPostProcessor} implementation that provides dependency injection support for custom annotation types.
  * <p>
- * This class extends {@link InstantiationAwareBeanPostProcessorAdapter}, making it compatible with Spring 6.x+,
- * and supports the following features:
+ * This class supports the following features:
  * </p>
  *
  * <ul>
@@ -156,8 +155,8 @@ import static org.springframework.util.StringUtils.hasLength;
  * @see AutowiredAnnotationBeanPostProcessor
  * @since 1.0.0
  */
-public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
-        implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
+public class AnnotatedInjectionBeanPostProcessor implements InstantiationAwareBeanPostProcessor,
+        MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
     /**
@@ -337,10 +336,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             }
         }
         return (candidateConstructors.length > 0 ? candidateConstructors : null);
-    }
-
-    public final PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
-        return postProcessProperties(pvs, bean, beanName);
     }
 
     public final PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
@@ -565,9 +560,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public void destroy() throws Exception {
         candidateConstructorsCache.clear();
         injectionMetadataCache.clear();
-        if (logger.isInfoEnabled()) {
-            logger.info(getClass() + " was destroying!");
-        }
+        logger.info("{} was destroying!", getClass().getName());
     }
 
     /**
