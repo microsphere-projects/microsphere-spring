@@ -479,6 +479,12 @@ public abstract class AnnotationUtils {
             attributes = getAnnotationAttributes(annotatedElement, annotationType, propertyResolver,
                     classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, ignoreAttributeNames);
         }
+        
+        if (attributes != null) {
+            AnnotationAttributes annotationAttributes = new AnnotationAttributes(annotationType);
+            annotationAttributes.putAll(attributes);
+            attributes = annotationAttributes;
+        }
 
         return attributes;
     }
