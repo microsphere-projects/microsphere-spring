@@ -18,10 +18,10 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 /**
- * TODO
+ * {@link AnnotatedInjectionBeanPostProcessor} for the annotation {@link Referenced}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see TODO
+ * @see AnnotatedInjectionBeanPostProcessor
  * @since 1.0.0
  */
 public class ReferencedInjectedBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
