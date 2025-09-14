@@ -72,6 +72,7 @@ import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ArrayUtils.combine;
 import static java.lang.Integer.getInteger;
 import static java.lang.Integer.parseInt;
@@ -249,6 +250,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         setCacheSize(CACHE_SIZE);
     }
 
+    @Override
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
         if (candidateConstructors == null) {
@@ -289,10 +291,10 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                         }
                         if (ann != null) {
                             if (requiredConstructor != null) {
-                                throw new BeanCreationException(beanName,
-                                        "Invalid injection constructor: " + candidate +
-                                                ". Found constructor with 'required' Autowired annotation already: " +
-                                                requiredConstructor);
+                                String message = format("Invalid injection constructors: {}. "
+                                                + "Found constructor with 'required' @{} annotation already: {}"
+                                        , candidate, ann.annotationType().getName(), requiredConstructor);
+                                throw new BeanCreationException(message);
                             }
                             boolean required = determineRequiredStatus(ann);
                             if (required) {
