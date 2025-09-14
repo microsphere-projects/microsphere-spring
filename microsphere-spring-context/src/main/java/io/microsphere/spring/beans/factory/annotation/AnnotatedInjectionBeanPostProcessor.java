@@ -556,18 +556,16 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.candidateConstructorsCache = newConcurrentHashMap(cacheSize);
         this.injectionMetadataCache = newConcurrentHashMap(cacheSize);
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         candidateConstructorsCache.clear();
         injectionMetadataCache.clear();
-        if (logger.isInfoEnabled()) {
-            logger.info(getClass() + " was destroying!");
-        }
+        logger.info("{} was destroying!", getClass().getName());
     }
 
     /**
