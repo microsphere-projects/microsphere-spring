@@ -52,7 +52,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -67,6 +66,8 @@ import java.util.concurrent.ConcurrentMap;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.reflect.FieldUtils.setFieldValue;
+import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
@@ -86,7 +87,6 @@ import static org.springframework.util.ClassUtils.getMostSpecificMethod;
 import static org.springframework.util.ClassUtils.getUserClass;
 import static org.springframework.util.ReflectionUtils.doWithFields;
 import static org.springframework.util.ReflectionUtils.doWithMethods;
-import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.StringUtils.hasLength;
 
 /**
@@ -624,10 +624,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 if (this.beanFactory.containsBean(injectedBeanName)) {
                     this.beanFactory.registerDependentBean(injectedBeanName, beanName);
                 }
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Injected by type from bean name '" + beanName +
-                            "' to bean named '" + injectedBeanName + "'");
-                }
+                logger.trace("Injected by type from bean name '{}' to bean named '{}'", beanName, injectedBeanName);
             }
         }
     }
@@ -721,10 +718,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             } else {
                 value = resolveFieldValue(field, bean, beanName, pvs);
             }
-            if (value != null) {
-                makeAccessible(field);
-                field.set(bean, value);
-            }
+            setFieldValue(bean, field, value);
         }
 
         @Nullable
@@ -795,12 +789,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 arguments = resolveMethodArguments(method, bean, beanName, pvs);
             }
             if (arguments != null) {
-                try {
-                    makeAccessible(method);
-                    method.invoke(bean, arguments);
-                } catch (InvocationTargetException ex) {
-                    throw ex.getTargetException();
-                }
+                invokeMethod(bean, method, arguments);
             }
         }
 
