@@ -313,11 +313,11 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                         if (requiredConstructor == null) {
                             if (defaultConstructor != null) {
                                 candidates.add(defaultConstructor);
-                            } else if (candidates.size() == 1 && logger.isInfoEnabled()) {
-                                logger.info("Inconsistent constructor declaration on bean with name '" + beanName +
-                                        "': single injection constructor flagged as optional - " +
+                            } else if (candidates.size() == 1) {
+                                logger.info("Inconsistent constructor declaration on bean with name '{}': " +
+                                        "single injection constructor flagged as optional - " +
                                         "this constructor is effectively required since there is no " +
-                                        "default constructor to fall back to: " + candidates.get(0));
+                                        "default constructor to fall back to: {}", beanName, candidates.get(0));
                             }
                         }
                         candidateConstructors = candidates.toArray(new Constructor<?>[0]);
