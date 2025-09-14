@@ -19,9 +19,12 @@ package io.microsphere.spring.beans.factory.annotation;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
@@ -33,6 +36,7 @@ import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionB
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Parent;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.UserHolder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -98,9 +102,37 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         assertEquals(parent.user, child.user);
     }
 
-    @Import(GenericChild.class)
-    public static class GenericConfiguration {
+    @Test
+    public void testDetermineCandidateConstructorsOnMultipleRequiredConstructors() {
+        assertThrows(BeanCreationException.class, () -> {
+            MultipleRequiredConstructorsBean bean = createProxy(MultipleRequiredConstructorsBean.class);
+            this.processor.determineCandidateConstructors(bean.getClass(), "multipleConstructorBean");
+        });
+    }
 
+    <T> T createProxy(Class<T> beanType) {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(beanType);
+        enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> method.invoke(obj, args));
+        return (T) enhancer.create();
+    }
+
+    static class MultipleRequiredConstructorsBean {
+
+        @Referenced
+        public MultipleRequiredConstructorsBean(User user) {
+        }
+
+        @Referenced
+        public MultipleRequiredConstructorsBean(User user, UserHolder userHolder) {
+        }
+
+        public MultipleRequiredConstructorsBean() {
+        }
+    }
+
+    @Import(GenericChild.class)
+    static class GenericConfiguration {
     }
 
     static class TestConfiguration {
@@ -179,7 +211,6 @@ public class AnnotatedInjectionBeanPostProcessorTest {
 
     }
 
-
     static abstract class GenericParent<S> {
 
         // Case : inject to field with generic type
@@ -207,6 +238,5 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         public GenericChild(@Referenced User user) {
             this.user = user;
         }
-
     }
 }
