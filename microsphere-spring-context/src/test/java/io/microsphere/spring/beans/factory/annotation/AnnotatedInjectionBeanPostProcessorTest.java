@@ -107,25 +107,40 @@ class AnnotatedInjectionBeanPostProcessorTest {
 
         static class Parent {
 
+            // Case : inject to field
             @Referenced
             User parentUser;
 
             User user;
 
+            // Case : inject to method
             @Referenced
             public void setUser(User user) {
                 this.user = user;
+            }
+
+            // Case : inject to method without parameter(invalid)
+            @Referenced
+            public User getUser() {
+                return this.user;
             }
         }
 
         static class Child extends Parent {
 
+            // Case : inject to field
             @Referenced
             User childUser;
 
+            /**
+             * Case : inject to static field(invalid)
+             */
             @Referenced
             static User invalidUser;
 
+            /**
+             * Case : inject to static method with parameter(invalid)
+             */
             @Referenced
             static void init(User user) {
             }
@@ -168,6 +183,7 @@ class AnnotatedInjectionBeanPostProcessorTest {
 
     static abstract class GenericParent<S> {
 
+        // Case : inject to field with generic type
         @Referenced
         S s;
 
@@ -175,6 +191,7 @@ class AnnotatedInjectionBeanPostProcessorTest {
 
         S s2;
 
+        // Case : inject to method with generic type parameters
         @Referenced
         public void init(S s1, S s2) {
             this.s1 = s1;
@@ -186,6 +203,7 @@ class AnnotatedInjectionBeanPostProcessorTest {
 
         private final User user;
 
+        // Case : inject to constructor with parameter
         @Referenced
         public GenericChild(@Referenced User user) {
             this.user = user;
