@@ -199,7 +199,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * make sure higher priority than {@link AutowiredAnnotationBeanPostProcessor}
      */
-    private int order = LOWEST_PRECEDENCE - 3;
+    private int order;
 
     /**
      * whether to turn Class references into Strings (for compatibility with {@link AnnotationMetadata} or to
@@ -216,17 +216,17 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * whether ignore default value or not
      */
-    private boolean ignoreDefaultValue = true;
+    private boolean ignoreDefaultValue;
 
     /**
      * whether try merged annotation or not
      */
-    private boolean tryMergedAnnotation = true;
+    private boolean tryMergedAnnotation;
 
     /**
      * The size of cache
      */
-    private int cacheSize = CACHE_SIZE;
+    private int cacheSize;
 
     /**
      * @param annotationType the single type of {@link Annotation annotation}
@@ -241,6 +241,12 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public AnnotatedInjectionBeanPostProcessor(Collection<Class<? extends Annotation>> annotationTypes) {
         notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
+        setOrder(LOWEST_PRECEDENCE - 3);
+        setClassValuesAsString(false);
+        setNestedAnnotationsAsMap(false);
+        setIgnoreDefaultValue(true);
+        setTryMergedAnnotation(true);
+        setCacheSize(CACHE_SIZE);
     }
 
     private static <T> Collection<T> combine(Collection<? extends T>... elements) {
@@ -253,11 +259,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
         return unmodifiableCollection(annotationTypes);
-    }
-
-    @Override
-    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
     }
 
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
@@ -374,7 +375,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     private List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedFieldElement> elements = new LinkedList<AnnotatedFieldElement>();
+        final List<AnnotatedFieldElement> elements = new LinkedList<>();
 
         doWithFields(beanClass, field -> {
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
@@ -413,7 +414,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     private List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedMethodElement> elements = new LinkedList<AnnotatedMethodElement>();
+        final List<AnnotatedMethodElement> elements = new LinkedList<>();
 
         doWithMethods(beanClass, method -> {
             Method bridgedMethod = findBridgedMethod(method);
@@ -506,6 +507,30 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         }
     }
 
+    @Override
+    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
+    }
+
+    @Override
+    public final void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public final void setBeanClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    /**
+     * Set the order of this post-processor.
+     *
+     * @param order the order
+     */
+    public final void setOrder(int order) {
+        this.order = order;
+    }
+
     /**
      * @param classValuesAsString whether to turn Class references into Strings (for
      *                            compatibility with {@link org.springframework.core.type.AnnotationMetadata} or to
@@ -546,20 +571,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     public final void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
-    }
-
-    public final void setOrder(int order) {
-        this.order = order;
-    }
-
-    @Override
-    public final void setBeanClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
-
-    @Override
-    public final void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 
     @Override
