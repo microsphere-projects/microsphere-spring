@@ -33,6 +33,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.InjectionMetadata;
+import org.springframework.beans.factory.annotation.InjectionMetadata.InjectedElement;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
@@ -187,7 +188,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private ConcurrentMap<Class<?>, Constructor<?>[]> candidateConstructorsCache;
 
-    private ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache;
+    private ConcurrentMap<String, InjectionMetadata> injectionMetadataCache;
 
     private ConfigurableListableBeanFactory beanFactory;
 
@@ -366,7 +367,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * Finds {@link InjectionMetadata.InjectedElement} Metadata from annotated fields
+     * Finds {@link InjectedElement} Metadata from annotated fields
      *
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
@@ -405,7 +406,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * Finds {@link InjectionMetadata.InjectedElement} Metadata from annotated methods
+     * Finds {@link InjectedElement} Metadata from annotated methods
      *
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
@@ -464,17 +465,20 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return getAnnotationAttributes(annotatedElement, annotationType, getEnvironment(), classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, tryMergedAnnotation);
     }
 
-    private AnnotatedInjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
+    private InjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
         Collection<AnnotatedFieldElement> fieldElements = findFieldAnnotationMetadata(beanClass);
         Collection<AnnotatedMethodElement> methodElements = findAnnotatedMethodMetadata(beanClass);
-        return new AnnotatedInjectionMetadata(beanClass, fieldElements, methodElements);
+        List<InjectedElement> elements = new ArrayList<>(fieldElements.size() + methodElements.size());
+        elements.addAll(fieldElements);
+        elements.addAll(methodElements);
+        return new InjectionMetadata(beanClass, elements);
     }
 
     private InjectionMetadata findInjectionMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
         String cacheKey = (hasLength(beanName) ? beanName : clazz.getName());
         // Quick check on the concurrent map first, with minimal locking.
-        AnnotatedInjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
+        InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
         if (needsRefresh(metadata, clazz)) {
             synchronized (this.injectionMetadataCache) {
                 metadata = this.injectionMetadataCache.get(cacheKey);
@@ -664,36 +668,11 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * {@link Annotation Annotated} {@link InjectionMetadata} implementation
-     */
-    private static class AnnotatedInjectionMetadata extends InjectionMetadata {
-
-        private final Collection<AnnotatedFieldElement> fieldElements;
-
-        private final Collection<AnnotatedMethodElement> methodElements;
-
-        public AnnotatedInjectionMetadata(Class<?> targetClass, Collection<AnnotatedFieldElement> fieldElements, Collection<AnnotatedMethodElement> methodElements) {
-            super(targetClass, combine(fieldElements, methodElements));
-            this.fieldElements = fieldElements;
-            this.methodElements = methodElements;
-        }
-
-        public Collection<AnnotatedFieldElement> getFieldElements() {
-            return fieldElements;
-        }
-
-        public Collection<AnnotatedMethodElement> getMethodElements() {
-            return methodElements;
-        }
-    }
-
-
-    /**
-     * Annotation {@link InjectionMetadata.InjectedElement}
+     * Annotation {@link InjectedElement}
      *
      * @param <M> {@link Field} or {@link Method}
      */
-    public abstract static class AnnotationInjectedElement<M extends Member> extends InjectionMetadata.InjectedElement {
+    public abstract static class AnnotationInjectedElement<M extends Member> extends InjectedElement {
 
         private final AnnotationAttributes attributes;
 
@@ -719,7 +698,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * {@link Annotation Annotated} {@link Field} {@link InjectionMetadata.InjectedElement}
+     * {@link Annotation Annotated} {@link Field} {@link InjectedElement}
      */
     private class AnnotatedFieldElement extends AnnotationInjectedElement<Field> {
 
@@ -789,7 +768,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * {@link Annotation Annotated} {@link Method} {@link InjectionMetadata.InjectedElement}
+     * {@link Annotation Annotated} {@link Method} {@link InjectedElement}
      */
     private class AnnotatedMethodElement extends AnnotationInjectedElement<Method> {
 
