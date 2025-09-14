@@ -121,8 +121,7 @@ class AnnotatedInjectionBeanPostProcessorTest {
 
             // Case : inject to method without parameter(invalid)
             @Referenced
-            public User getUser() {
-                return this.user;
+            public void action() {
             }
         }
 
