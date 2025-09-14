@@ -255,11 +255,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return unmodifiableCollection(annotationTypes);
     }
 
-    @Override
-    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
-    }
-
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
         if (candidateConstructors == null) {
@@ -506,6 +501,30 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         }
     }
 
+    @Override
+    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
+    }
+
+    @Override
+    public final void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public final void setBeanClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    /**
+     * Set the order of this post-processor.
+     *
+     * @param order the order
+     */
+    public final void setOrder(int order) {
+        this.order = order;
+    }
+
     /**
      * @param classValuesAsString whether to turn Class references into Strings (for
      *                            compatibility with {@link org.springframework.core.type.AnnotationMetadata} or to
@@ -546,20 +565,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     public final void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
-    }
-
-    public final void setOrder(int order) {
-        this.order = order;
-    }
-
-    @Override
-    public final void setBeanClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
-
-    @Override
-    public final void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 
     @Override
