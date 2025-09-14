@@ -36,8 +36,8 @@ import org.springframework.beans.factory.annotation.InjectionMetadata.InjectedEl
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
@@ -155,7 +155,7 @@ import static org.springframework.util.StringUtils.hasLength;
  * @see AutowiredAnnotationBeanPostProcessor
  * @since 1.0.0
  */
-public class AnnotatedInjectionBeanPostProcessor implements InstantiationAwareBeanPostProcessor,
+public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAwareBeanPostProcessor,
         MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
