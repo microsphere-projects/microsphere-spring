@@ -374,7 +374,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     private List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedFieldElement> elements = new LinkedList<AnnotatedFieldElement>();
+        final List<AnnotatedFieldElement> elements = new LinkedList<>();
 
         doWithFields(beanClass, field -> {
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
@@ -413,7 +413,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     private List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedMethodElement> elements = new LinkedList<AnnotatedMethodElement>();
+        final List<AnnotatedMethodElement> elements = new LinkedList<>();
 
         doWithMethods(beanClass, method -> {
             Method bridgedMethod = findBridgedMethod(method);
