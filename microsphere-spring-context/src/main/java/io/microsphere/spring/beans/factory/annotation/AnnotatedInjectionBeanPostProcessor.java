@@ -663,7 +663,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
         return unmodifiableCollection(annotationTypes);
     }
-    
+
     /**
      * Annotation {@link InjectedElement}
      *
