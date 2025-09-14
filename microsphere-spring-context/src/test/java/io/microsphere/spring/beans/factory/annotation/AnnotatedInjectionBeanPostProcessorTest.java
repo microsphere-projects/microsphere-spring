@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.class,
-        AnnotatedInjectionBeanPostProcessorTest.ReferencedInjectedBeanPostProcessor.class,
+        ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
 @SuppressWarnings({"deprecation", "unchecked"})
@@ -98,14 +98,6 @@ class AnnotatedInjectionBeanPostProcessorTest {
         assertEquals(parent.user, child.user);
     }
 
-    public static class ReferencedInjectedBeanPostProcessor extends AnnotatedInjectionBeanPostProcessor {
-
-        public ReferencedInjectedBeanPostProcessor() {
-            super(Referenced.class);
-        }
-
-    }
-
     @Import(GenericChild.class)
     public static class GenericConfiguration {
 
@@ -134,12 +126,9 @@ class AnnotatedInjectionBeanPostProcessorTest {
             @Referenced
             static User invalidUser;
 
-
             @Referenced
             static void init(User user) {
             }
-
-
         }
 
         static class UserHolder {
