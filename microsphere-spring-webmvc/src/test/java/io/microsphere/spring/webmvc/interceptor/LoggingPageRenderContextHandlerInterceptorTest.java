@@ -18,19 +18,7 @@
 package io.microsphere.spring.webmvc.interceptor;
 
 
-import io.microsphere.spring.test.web.controller.TestController;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static io.microsphere.reflect.MethodUtils.findMethod;
-import static org.junit.Assert.assertTrue;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * {@link LoggingPageRenderContextHandlerInterceptor} Test
@@ -39,52 +27,10 @@ import static org.junit.Assert.assertTrue;
  * @see LoggingPageRenderContextHandlerInterceptor
  * @since 1.0.0
  */
-public class LoggingPageRenderContextHandlerInterceptorTest {
+public class LoggingPageRenderContextHandlerInterceptorTest extends AbstractHandlerInterceptorTest {
 
-    private LoggingPageRenderContextHandlerInterceptor interceptor;
-
-    private HttpServletRequest request;
-
-    private HttpServletResponse response;
-
-    private HandlerMethod handlerMethod;
-
-    private ModelAndView modelAndView;
-
-    @Before
-    public void setUp() {
-        this.interceptor = new LoggingPageRenderContextHandlerInterceptor();
-        this.request = new MockHttpServletRequest();
-        this.response = new MockHttpServletResponse();
-        TestController testController = new TestController();
-        this.handlerMethod = new HandlerMethod(testController, findMethod(TestController.class, "helloWorld"));
-        this.modelAndView = new ModelAndView();
-        this.modelAndView.setViewName("test-view");
-        this.modelAndView.addObject("name", "value");
-    }
-
-    @Test
-    public void testPreHandle() throws Exception {
-        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handlerMethod));
-    }
-
-    @Test
-    public void testPostHandle() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, (Object) null, this.modelAndView);
-    }
-
-    @Test
-    public void testPostHandleWithoutModelAndView() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, null);
-    }
-
-    @Test
-    public void testPostHandleWithInvalidModelAndView() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, new ModelAndView());
-    }
-
-    @Test
-    public void testAfterCompletion() throws Exception {
-        this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, null);
+    @Override
+    protected HandlerInterceptor createHandlerInterceptor() {
+        return new LoggingPageRenderContextHandlerInterceptor();
     }
 }
