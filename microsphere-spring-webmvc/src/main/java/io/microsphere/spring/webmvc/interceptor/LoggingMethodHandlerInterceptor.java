@@ -52,4 +52,9 @@ public class LoggingMethodHandlerInterceptor extends MethodHandlerInterceptor {
     protected void afterCompletion(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) {
         logger.trace("afterCompletion - handlerMethod : {} , exception : {}", handlerMethod, ex);
     }
+
+    @Override
+    protected boolean supports(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+        return request == null ? false : super.supports(request, response, handlerMethod);
+    }
 }
