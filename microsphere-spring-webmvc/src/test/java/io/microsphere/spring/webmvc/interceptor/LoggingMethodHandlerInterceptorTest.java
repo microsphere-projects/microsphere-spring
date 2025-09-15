@@ -64,27 +64,69 @@ class LoggingMethodHandlerInterceptorTest {
 
     @Test
     void testPreHandle() throws Exception {
-        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handlerMethod));
-        assertTrue(this.interceptor.preHandle(this.request, this.response, null));
-        assertTrue(this.interceptor.preHandle(this.request, this.response, (Object) null));
+        testPreHandle(this.handlerMethod);
+    }
+
+    @Test
+    void testPreHandleWithNullHandler() throws Exception {
+        testPreHandle(null);
+    }
+
+    @Test
+    void testPreHandleWithNotHandler() throws Exception {
+        testPreHandle(this);
     }
 
     @Test
     void testPostHandle() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, modelAndView);
-        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, null);
-        this.interceptor.postHandle(this.request, this.response, (Object) null, null);
+        testPostHandle(this.handlerMethod);
+    }
+
+    @Test
+    void testPostHandleWithNullHandler() throws Exception {
+        testPostHandle(null);
+    }
+
+    @Test
+    void testPostHandleWithInvalidHandler() throws Exception {
+        testPostHandle(this);
     }
 
     @Test
     void testAfterCompletion() throws Exception {
-        this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, null);
-        this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, new Exception("For testing"));
-        this.interceptor.afterCompletion(this.request, this.response, (Object) null, null);
+        testAfterCompletion(this.handlerMethod);
+    }
+
+    @Test
+    void testAfterCompletionWithNullHandler() throws Exception {
+        testAfterCompletion(null);
+    }
+
+    @Test
+    void testAfterCompletionWithInvalidHandler() throws Exception {
+        testAfterCompletion(this);
     }
 
     @Test
     void testSupports() throws Exception {
         assertTrue(this.interceptor.supports(this.request, this.response, this.handlerMethod));
+    }
+
+    void testPreHandle(Object handler) throws Exception {
+        assertTrue(this.interceptor.preHandle(this.request, this.response, handler));
+        assertTrue(this.interceptor.preHandle(null, this.response, handler));
+    }
+
+    void testPostHandle(Object handler) throws Exception {
+        this.interceptor.postHandle(this.request, this.response, handler, modelAndView);
+        this.interceptor.postHandle(null, this.response, handler, modelAndView);
+    }
+
+    void testAfterCompletion(Object handler) throws Exception {
+        this.interceptor.afterCompletion(this.request, this.response, handler, null);
+        this.interceptor.afterCompletion(this.request, this.response, handler, new Exception("For testing"));
+
+        this.interceptor.afterCompletion(null, this.response, handler, null);
+        this.interceptor.afterCompletion(null, this.response, handler, new Exception("For testing"));
     }
 }
