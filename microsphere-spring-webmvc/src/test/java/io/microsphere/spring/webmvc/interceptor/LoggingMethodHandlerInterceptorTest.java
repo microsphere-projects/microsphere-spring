@@ -18,18 +18,7 @@
 package io.microsphere.spring.webmvc.interceptor;
 
 
-import io.microsphere.spring.test.web.controller.TestController;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
-
-import static io.microsphere.reflect.MethodUtils.findMethod;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * {@link LoggingMethodHandlerInterceptor} Test
@@ -38,95 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see LoggingMethodHandlerInterceptor
  * @since 1.0.0
  */
-class LoggingMethodHandlerInterceptorTest {
+class LoggingMethodHandlerInterceptorTest extends AbstractHandlerInterceptorTest {
 
-    private LoggingMethodHandlerInterceptor interceptor;
-
-    private HttpServletRequest request;
-
-    private HttpServletResponse response;
-
-    private HandlerMethod handlerMethod;
-
-    private ModelAndView modelAndView;
-
-    @BeforeEach
-    void setUp() {
-        this.interceptor = new LoggingMethodHandlerInterceptor();
-        this.request = new MockHttpServletRequest();
-        this.response = new MockHttpServletResponse();
-        TestController testController = new TestController();
-        this.handlerMethod = new HandlerMethod(testController, findMethod(TestController.class, "helloWorld"));
-        this.modelAndView = new ModelAndView();
-        this.modelAndView.setViewName("test-view");
-        this.modelAndView.addObject("name", "value");
-    }
-
-    @Test
-    void testPreHandle() throws Exception {
-        testPreHandle(this.handlerMethod);
-    }
-
-    @Test
-    void testPreHandleWithNullHandler() throws Exception {
-        testPreHandle(null);
-    }
-
-    @Test
-    void testPreHandleWithNotHandler() throws Exception {
-        testPreHandle(this);
-    }
-
-    @Test
-    void testPostHandle() throws Exception {
-        testPostHandle(this.handlerMethod);
-    }
-
-    @Test
-    void testPostHandleWithNullHandler() throws Exception {
-        testPostHandle(null);
-    }
-
-    @Test
-    void testPostHandleWithInvalidHandler() throws Exception {
-        testPostHandle(this);
-    }
-
-    @Test
-    void testAfterCompletion() throws Exception {
-        testAfterCompletion(this.handlerMethod);
-    }
-
-    @Test
-    void testAfterCompletionWithNullHandler() throws Exception {
-        testAfterCompletion(null);
-    }
-
-    @Test
-    void testAfterCompletionWithInvalidHandler() throws Exception {
-        testAfterCompletion(this);
-    }
-
-    @Test
-    void testSupports() throws Exception {
-        assertTrue(this.interceptor.supports(this.request, this.response, this.handlerMethod));
-    }
-
-    void testPreHandle(Object handler) throws Exception {
-        assertTrue(this.interceptor.preHandle(this.request, this.response, handler));
-        assertTrue(this.interceptor.preHandle(null, this.response, handler));
-    }
-
-    void testPostHandle(Object handler) throws Exception {
-        this.interceptor.postHandle(this.request, this.response, handler, modelAndView);
-        this.interceptor.postHandle(null, this.response, handler, modelAndView);
-    }
-
-    void testAfterCompletion(Object handler) throws Exception {
-        this.interceptor.afterCompletion(this.request, this.response, handler, null);
-        this.interceptor.afterCompletion(this.request, this.response, handler, new Exception("For testing"));
-
-        this.interceptor.afterCompletion(null, this.response, handler, null);
-        this.interceptor.afterCompletion(null, this.response, handler, new Exception("For testing"));
+    @Override
+    protected HandlerInterceptor createHandlerInterceptor() {
+        return new LoggingMethodHandlerInterceptor();
     }
 }
