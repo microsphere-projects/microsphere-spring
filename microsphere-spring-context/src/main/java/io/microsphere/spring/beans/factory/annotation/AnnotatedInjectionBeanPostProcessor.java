@@ -249,6 +249,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
         setCacheSize(CACHE_SIZE);
     }
 
+    @Override
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
         if (candidateConstructors == null) {
