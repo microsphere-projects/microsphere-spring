@@ -69,17 +69,21 @@ class LoggingPageRenderContextHandlerInterceptorTest {
 
     @Test
     void testPostHandle() throws Exception {
+        this.interceptor.postHandle(this.request, this.response, (Object) null, this.modelAndView);
+    }
+
+    @Test
+    void testPostHandleWithoutModelAndView() throws Exception {
         this.interceptor.postHandle(this.request, this.response, this.handlerMethod, null);
-        this.interceptor.postHandle(this.request, this.response, (Object) null, null);
+    }
+
+    @Test
+    void testPostHandleWithInvalidModelAndView() throws Exception {
+        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, new ModelAndView());
     }
 
     @Test
     void testAfterCompletion() throws Exception {
         this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, null);
-    }
-
-    @Test
-    void testPostHandleOnPageRenderContext() throws Exception {
-        this.interceptor.postHandleOnPageRenderContext(this.request, this.response, this.handlerMethod, this.modelAndView);
     }
 }
