@@ -2,6 +2,7 @@ package io.microsphere.spring.core.annotation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -12,7 +13,6 @@ import org.springframework.mock.env.MockEnvironment;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -33,6 +33,11 @@ import static io.microsphere.util.AnnotationUtils.getAttributesMap;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.CLASS;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -87,13 +92,11 @@ public class AnnotationUtilsTest {
     @Test
     void testIsPresent() {
 
-        Method method = findMethod(RuntimeAnnotationHandler.class, "handle",
-                String.class, String.class);
+        Method method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class, String.class);
 
         assertTrue(isPresent(method, RuntimeAnnotation.class));
 
-        method = findMethod(RuntimeAnnotationHandler.class, "handle",
-                String.class);
+        method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class);
 
         assertTrue(isPresent(method, RuntimeAnnotation.class));
 
@@ -101,8 +104,7 @@ public class AnnotationUtilsTest {
 
         assertTrue(isPresent(method, RuntimeAnnotation.class));
 
-        method = findMethod(ClassAnnotationHandler.class, "echo",
-                String.class);
+        method = findMethod(ClassAnnotationHandler.class, "echo", String.class);
 
         assertFalse(isPresent(method, ClassAnnotation.class));
     }
@@ -110,15 +112,13 @@ public class AnnotationUtilsTest {
     @Test
     void testFindAnnotations() {
 
-        Method method = findMethod(RuntimeAnnotationHandler.class, "handle",
-                String.class, String.class);
+        Method method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class, String.class);
 
-        Map<ElementType, List<RuntimeAnnotation>> annotationsMap =
-                findAnnotations(method, RuntimeAnnotation.class);
+        Map<ElementType, List<RuntimeAnnotation>> annotationsMap = findAnnotations(method, RuntimeAnnotation.class);
 
         assertEquals(3, annotationsMap.size());
 
-        List<RuntimeAnnotation> annotationsList = annotationsMap.get(ElementType.TYPE);
+        List<RuntimeAnnotation> annotationsList = annotationsMap.get(TYPE);
 
         assertEquals(1, annotationsList.size());
 
@@ -126,7 +126,7 @@ public class AnnotationUtilsTest {
 
         assertEquals("type", runtimeAnnotation.value());
 
-        annotationsList = annotationsMap.get(ElementType.METHOD);
+        annotationsList = annotationsMap.get(METHOD);
 
         assertEquals(1, annotationsList.size());
 
@@ -134,7 +134,7 @@ public class AnnotationUtilsTest {
 
         assertEquals("method", runtimeAnnotation.value());
 
-        annotationsList = annotationsMap.get(ElementType.PARAMETER);
+        annotationsList = annotationsMap.get(PARAMETER);
 
         assertEquals(2, annotationsList.size());
 
@@ -161,6 +161,13 @@ public class AnnotationUtilsTest {
         Map<ElementType, List<ClassAnnotation>> classAnnotationsMap = findAnnotations(method, ClassAnnotation.class);
 
         assertTrue(classAnnotationsMap.isEmpty());
+    }
+
+    @Test
+    void testFindAnnotationsOnMismatchAnnotation() {
+        Method method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class, String.class);
+        Map<ElementType, List<Autowired>> annotationsMap = findAnnotations(method, Autowired.class);
+        assertTrue(annotationsMap.isEmpty());
     }
 
     /**
@@ -417,7 +424,6 @@ public class AnnotationUtilsTest {
 
         @RuntimeAnnotation("method")
         public String handle() {
-
             return "";
         }
 
@@ -444,21 +450,18 @@ public class AnnotationUtilsTest {
         public String handle(@ClassAnnotation String message) {
             return message;
         }
-
     }
 
 
-    @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
+    @Target({TYPE, PARAMETER, METHOD})
+    @Retention(RUNTIME)
     private @interface RuntimeAnnotation {
 
         String value();
-
     }
 
-    @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
-    @Retention(RetentionPolicy.CLASS)
+    @Target({TYPE, PARAMETER, METHOD})
+    @Retention(CLASS)
     private @interface ClassAnnotation {
-
     }
 }
