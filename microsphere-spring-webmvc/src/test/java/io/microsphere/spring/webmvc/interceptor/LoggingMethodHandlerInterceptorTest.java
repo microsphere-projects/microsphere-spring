@@ -18,19 +18,7 @@
 package io.microsphere.spring.webmvc.interceptor;
 
 
-import io.microsphere.spring.test.web.controller.TestController;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static io.microsphere.reflect.MethodUtils.findMethod;
-import static org.junit.Assert.assertTrue;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * {@link LoggingMethodHandlerInterceptor} Test
@@ -39,53 +27,10 @@ import static org.junit.Assert.assertTrue;
  * @see LoggingMethodHandlerInterceptor
  * @since 1.0.0
  */
-public class LoggingMethodHandlerInterceptorTest {
+public class LoggingMethodHandlerInterceptorTest extends AbstractHandlerInterceptorTest {
 
-    private LoggingMethodHandlerInterceptor interceptor;
-
-    private HttpServletRequest request;
-
-    private HttpServletResponse response;
-
-    private HandlerMethod handlerMethod;
-
-    private ModelAndView modelAndView;
-
-    @Before
-    public void setUp() {
-        this.interceptor = new LoggingMethodHandlerInterceptor();
-        this.request = new MockHttpServletRequest();
-        this.response = new MockHttpServletResponse();
-        TestController testController = new TestController();
-        this.handlerMethod = new HandlerMethod(testController, findMethod(TestController.class, "helloWorld"));
-        this.modelAndView = new ModelAndView();
-        this.modelAndView.setViewName("test-view");
-        this.modelAndView.addObject("name", "value");
-    }
-
-    @Test
-    public void testPreHandle() throws Exception {
-        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handlerMethod));
-        assertTrue(this.interceptor.preHandle(this.request, this.response, null));
-        assertTrue(this.interceptor.preHandle(this.request, this.response, (Object) null));
-    }
-
-    @Test
-    public void testPostHandle() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, modelAndView);
-        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, null);
-        this.interceptor.postHandle(this.request, this.response, (Object) null, null);
-    }
-
-    @Test
-    public void testAfterCompletion() throws Exception {
-        this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, null);
-        this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, new Exception("For testing"));
-        this.interceptor.afterCompletion(this.request, this.response, (Object) null, null);
-    }
-
-    @Test
-    public void testSupports() throws Exception {
-        assertTrue(this.interceptor.supports(this.request, this.response, this.handlerMethod));
+    @Override
+    protected HandlerInterceptor createHandlerInterceptor() {
+        return new LoggingMethodHandlerInterceptor();
     }
 }
