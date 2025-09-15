@@ -47,7 +47,7 @@ public class LoggingPageRenderContextHandlerInterceptorTest {
 
     private HttpServletResponse response;
 
-    private Object handler;
+    private HandlerMethod handlerMethod;
 
     private ModelAndView modelAndView;
 
@@ -57,29 +57,34 @@ public class LoggingPageRenderContextHandlerInterceptorTest {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
         TestController testController = new TestController();
-        this.handler = new HandlerMethod(testController, findMethod(TestController.class, "helloWorld"));
+        this.handlerMethod = new HandlerMethod(testController, findMethod(TestController.class, "helloWorld"));
         this.modelAndView = new ModelAndView();
         this.modelAndView.setViewName("test-view");
         this.modelAndView.addObject("name", "value");
     }
 
     @Test
-    public void testPostHandle() throws Exception {
-        this.interceptor.postHandle(this.request, this.response, this.handler, null);
+    public void testPreHandle() throws Exception {
+        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handlerMethod));
     }
 
     @Test
-    public void testPreHandle() throws Exception {
-        assertTrue(this.interceptor.preHandle(this.request, this.response, this.handler));
+    public void testPostHandle() throws Exception {
+        this.interceptor.postHandle(this.request, this.response, (Object) null, this.modelAndView);
+    }
+
+    @Test
+    public void testPostHandleWithoutModelAndView() throws Exception {
+        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, null);
+    }
+
+    @Test
+    public void testPostHandleWithInvalidModelAndView() throws Exception {
+        this.interceptor.postHandle(this.request, this.response, this.handlerMethod, new ModelAndView());
     }
 
     @Test
     public void testAfterCompletion() throws Exception {
-        this.interceptor.afterCompletion(this.request, this.response, this.handler, null);
-    }
-
-    @Test
-    public void testPostHandleOnPageRenderContext() throws Exception {
-        this.interceptor.postHandleOnPageRenderContext(this.request, this.response, this.handler, this.modelAndView);
+        this.interceptor.afterCompletion(this.request, this.response, this.handlerMethod, null);
     }
 }
