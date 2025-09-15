@@ -2,6 +2,7 @@ package io.microsphere.spring.core.annotation;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -12,7 +13,6 @@ import org.springframework.mock.env.MockEnvironment;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -33,6 +33,11 @@ import static io.microsphere.util.AnnotationUtils.getAttributesMap;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.CLASS;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -161,6 +166,13 @@ public class AnnotationUtilsTest {
         Map<ElementType, List<ClassAnnotation>> classAnnotationsMap = findAnnotations(method, ClassAnnotation.class);
 
         assertTrue(classAnnotationsMap.isEmpty());
+    }
+
+    @Test
+    public void testFindAnnotationsOnMismatchAnnotation() {
+        Method method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class, String.class);
+        Map<ElementType, List<Autowired>> annotationsMap = findAnnotations(method, Autowired.class);
+        assertTrue(annotationsMap.isEmpty());
     }
 
     /**
@@ -417,7 +429,6 @@ public class AnnotationUtilsTest {
 
         @RuntimeAnnotation("method")
         public String handle() {
-
             return "";
         }
 
@@ -444,21 +455,18 @@ public class AnnotationUtilsTest {
         public String handle(@ClassAnnotation String message) {
             return message;
         }
-
     }
 
 
-    @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
+    @Target({TYPE, PARAMETER, METHOD})
+    @Retention(RUNTIME)
     private @interface RuntimeAnnotation {
 
         String value();
-
     }
 
-    @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.METHOD})
-    @Retention(RetentionPolicy.CLASS)
+    @Target({TYPE, PARAMETER, METHOD})
+    @Retention(CLASS)
     private @interface ClassAnnotation {
-
     }
 }
