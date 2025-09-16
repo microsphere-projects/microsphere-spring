@@ -17,8 +17,8 @@
 
 package io.microsphere.spring.web.util;
 
-import jakarta.servlet.ServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import static io.microsphere.util.Assert.assertNotNull;
 
@@ -52,8 +52,7 @@ public enum WebType {
      */
     public static WebType valueOf(NativeWebRequest request) {
         assertNotNull(request, () -> "The request must not be null");
-        Object nativeRequest = request.getNativeRequest();
-        if (nativeRequest instanceof ServletRequest) {
+        if (request instanceof ServletWebRequest) {
             return SERVLET;
         }
         return REACTIVE;
