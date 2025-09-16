@@ -26,6 +26,7 @@ import static io.microsphere.spring.web.util.WebType.REACTIVE;
 import static io.microsphere.spring.web.util.WebType.SERVLET;
 import static io.microsphere.spring.web.util.WebType.valueOf;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -41,5 +42,10 @@ public class WebTypeTest {
     public void testValueOf() {
         assertSame(SERVLET, valueOf(new MockServletWebRequest()));
         assertSame(REACTIVE, valueOf(mock(NativeWebRequest.class)));
+    }
+
+    @Test
+    public void testValueOfWithNull() {
+        assertThrows(IllegalArgumentException.class, () -> valueOf((NativeWebRequest) null));
     }
 }
