@@ -84,10 +84,14 @@ public abstract class AnnotatedMethodHandlerInterceptor<A extends Annotation> ex
         String attributeName = getAnnotationAttributeName(handlerMethod);
         A annotation = (A) servletContext.getAttribute(attributeName);
         if (annotation == null) {
-            annotation = handlerMethod.getMethodAnnotation(getAnnotationType());
+            annotation = getAnnotation(handlerMethod);
             servletContext.setAttribute(attributeName, annotation);
         }
         return annotation;
+    }
+
+    protected A getAnnotation(HandlerMethod handlerMethod) {
+        return handlerMethod.getMethodAnnotation(getAnnotationType());
     }
 
     private String getAnnotationAttributeName(HandlerMethod handlerMethod) {
