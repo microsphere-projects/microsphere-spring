@@ -27,14 +27,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 
 import static io.microsphere.spring.beans.factory.annotation.AnnotationBeanDefinitionRegistryPostProcessor.getAnnotation;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -79,8 +80,8 @@ class AnnotationBeanDefinitionRegistryPostProcessorTest {
 
     }
 
-    @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-    @Retention(RetentionPolicy.RUNTIME)
+    @Target({TYPE, ANNOTATION_TYPE})
+    @Retention(RUNTIME)
     @Documented
     @Inherited
     @interface Service {
