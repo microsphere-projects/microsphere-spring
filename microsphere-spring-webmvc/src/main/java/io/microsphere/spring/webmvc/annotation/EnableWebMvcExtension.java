@@ -43,11 +43,12 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enable annotation to extend the features of Spring WebMVC
@@ -59,8 +60,8 @@ import java.lang.reflect.Method;
  * @see WebMvcExtensionConfiguration
  * @since 1.0.0
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Retention(RUNTIME)
+@Target(TYPE)
 @Documented
 @Import(value = {
         WebMvcExtensionBeanDefinitionRegistrar.class,
