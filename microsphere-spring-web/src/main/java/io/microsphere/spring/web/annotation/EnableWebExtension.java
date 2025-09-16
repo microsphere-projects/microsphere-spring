@@ -27,11 +27,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enable annotation to extend the features of Spring Web
@@ -41,8 +43,8 @@ import java.lang.annotation.Target;
  * @see org.springframework.web.reactive.config.EnableWebFlux
  * @since 1.0.0
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RUNTIME)
+@Target({TYPE, ANNOTATION_TYPE})
 @Documented
 @Inherited
 @Import(WebExtensionBeanDefinitionRegistrar.class)
