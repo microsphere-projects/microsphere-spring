@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
 import static io.microsphere.util.ExceptionUtils.create;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,9 +47,9 @@ public class LazyCompositeHandlerInterceptorTest extends AbstractHandlerIntercep
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.register(LoggingMethodHandlerInterceptor.class);
         context.register(LazyCompositeHandlerInterceptorTest.class);
-        LazyCompositeHandlerInterceptor interceptor = new LazyCompositeHandlerInterceptor(HandlerInterceptor.class);
-        registerBean(context, BEAN_NAME, interceptor);
+        registerBeanDefinition(context, BEAN_NAME, LazyCompositeHandlerInterceptor.class, HandlerInterceptor.class);
         context.refresh();
+        LazyCompositeHandlerInterceptor interceptor = context.getBean(LazyCompositeHandlerInterceptor.class);
         return interceptor;
     }
 
