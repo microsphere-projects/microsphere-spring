@@ -23,7 +23,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import static io.microsphere.util.Assert.assertNotNull;
 
 /**
- * Web Type
+ * The enumeration of Web Type
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see NativeWebRequest
