@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import static io.microsphere.spring.web.util.WebType.UNKNOWN;
+import static io.microsphere.spring.web.util.WebType.NONE;
 import static io.microsphere.spring.web.util.WebType.REACTIVE;
 import static io.microsphere.spring.web.util.WebType.SERVLET;
 import static io.microsphere.spring.web.util.WebType.valueOf;
@@ -46,7 +46,7 @@ class WebTypeTest {
         assertSame(SERVLET, valueOf(new MockServletWebRequest()));
 
         NativeWebRequest request = mock(NativeWebRequest.class);
-        assertSame(UNKNOWN, valueOf(request));
+        assertSame(NONE, valueOf(request));
 
         when(request.getNativeRequest()).thenReturn(mock(ServerHttpRequest.class));
         assertSame(REACTIVE, valueOf(request));
