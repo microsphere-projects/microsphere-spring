@@ -19,8 +19,6 @@ package io.microsphere.spring.web.util;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
-import static io.microsphere.spring.web.util.WebType.SERVLET;
-
 /**
  * The enumeration of the type of Spring Web
  *
@@ -32,7 +30,10 @@ public enum SpringWebType {
 
     WEB_MVC,
 
-    WEB_FLUX;
+    WEB_FLUX,
+
+    UNKNOWN,
+    ;
 
     /**
      * The class name of the indicator of Spring WebMVC
@@ -64,7 +65,6 @@ public enum SpringWebType {
      *         break;
      * }
      * }</pre>
-     * </p>
      *
      * @param request the {@link NativeWebRequest} to resolve
      * @return the {@link SpringWebType} of the given {@link NativeWebRequest}
@@ -73,6 +73,13 @@ public enum SpringWebType {
      */
     public static SpringWebType valueOf(NativeWebRequest request) {
         WebType webType = WebType.valueOf(request);
-        return webType == SERVLET ? WEB_MVC : WEB_FLUX;
+        switch (webType) {
+            case SERVLET:
+                return WEB_MVC;
+            case REACTIVE:
+                return WEB_FLUX;
+            default:
+                return UNKNOWN;
+        }
     }
 }
