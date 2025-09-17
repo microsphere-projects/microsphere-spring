@@ -17,6 +17,8 @@
 
 package io.microsphere.spring.web.util;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +51,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.servlet.HandlerMapping#BEST_MATCHING_HANDLER_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#BEST_MATCHING_HANDLER_ATTRIBUTE
      */
+    @Nullable
     Object getBestMatchingHandler(NativeWebRequest request);
 
     /**
@@ -59,6 +62,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.servlet.HandlerMapping#PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE
      */
+    @Nullable
     String getPathWithinHandlerMapping(NativeWebRequest request);
 
     /**
@@ -70,6 +74,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.servlet.HandlerMapping#BEST_MATCHING_PATTERN_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#BEST_MATCHING_PATTERN_ATTRIBUTE
      */
+    @Nullable
     String getBestMatchingPattern(NativeWebRequest request);
 
     /**
@@ -82,6 +87,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.servlet.HandlerMapping#URI_TEMPLATE_VARIABLES_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#URI_TEMPLATE_VARIABLES_ATTRIBUTE
      */
+    @Nullable
     Map<String, String> getUriTemplateVariables(NativeWebRequest request);
 
     /**
@@ -93,5 +99,14 @@ public interface SpringWebHelper {
      * @see org.springframework.web.servlet.HandlerMapping#PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE
      */
+    @Nullable
     Set<MediaType> getProducibleMediaTypes(NativeWebRequest request);
+
+    /**
+     * Get the Spring Web Type
+     *
+     * @return {@link SpringWebType}
+     */
+    @Nonnull
+    SpringWebType getType();
 }
