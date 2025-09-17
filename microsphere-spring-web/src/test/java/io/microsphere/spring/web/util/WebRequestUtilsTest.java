@@ -18,21 +18,30 @@
 package io.microsphere.spring.web.util;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
+import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingHandler;
+import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingPattern;
 import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
+import static io.microsphere.spring.web.util.WebRequestUtils.getPathWithinHandlerMapping;
+import static io.microsphere.spring.web.util.WebRequestUtils.getProducibleMediaTypes;
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
+import static io.microsphere.spring.web.util.WebRequestUtils.getUriTemplateVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.hasBody;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.parseContentType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
@@ -41,6 +50,7 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
 /**
  * {@link WebRequestUtils} Test
@@ -50,6 +60,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @since 1.0.0
  */
 class WebRequestUtilsTest {
+
+    private MockHttpServletRequest servletRequest;
+
+    private ServletWebRequest request;
+
+    @BeforeEach
+    void setUp() {
+        this.servletRequest = new MockHttpServletRequest();
+        this.request = new ServletWebRequest(this.servletRequest);
+    }
 
     @Test
     void testGetMethod() {
@@ -97,6 +117,8 @@ class WebRequestUtilsTest {
 
         request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, "test"));
         assertNull(parseContentType(request));
+
+        assertSame(APPLICATION_OCTET_STREAM, parseContentType(this.request));
     }
 
     @Test
@@ -118,5 +140,30 @@ class WebRequestUtilsTest {
     void testGetResolvedLookupPath() {
         NativeWebRequest request = createWebRequest(r -> r.setAttribute(PATH_ATTRIBUTE, "/"));
         assertEquals("/", getResolvedLookupPath(request));
+    }
+
+    @Test
+    void testGetBestMatchingHandler() {
+        assertNull(getBestMatchingHandler(this.request));
+    }
+
+    @Test
+    void testGetPathWithinHandlerMapping() {
+        assertNull(getPathWithinHandlerMapping(this.request));
+    }
+
+    @Test
+    void testGetBestMatchingPattern() {
+        assertNull(getBestMatchingPattern(this.request));
+    }
+
+    @Test
+    void testGetUriTemplateVariables() {
+        assertNull(getUriTemplateVariables(this.request));
+    }
+
+    @Test
+    void testGetProducibleMediaTypes() {
+        assertNull(getProducibleMediaTypes(this.request));
     }
 }
