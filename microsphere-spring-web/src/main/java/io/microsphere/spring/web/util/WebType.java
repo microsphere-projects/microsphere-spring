@@ -44,9 +44,9 @@ public enum WebType {
     REACTIVE,
 
     /**
-     * The unknown web
+     * The non-web
      */
-    UNKNOWN;
+    NONE;
 
     /**
      * Resolve the {@link WebType} from the given {@link NativeWebRequest}.
@@ -62,6 +62,6 @@ public enum WebType {
         }
         Object nativeRequest = request.getNativeRequest();
         String nativeRequestClassName = getTypeName(nativeRequest);
-        return contains(nativeRequestClassName, ".reactive.") ? REACTIVE : UNKNOWN;
+        return contains(nativeRequestClassName, ".reactive.") ? REACTIVE : NONE;
     }
 }
