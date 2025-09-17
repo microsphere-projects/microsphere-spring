@@ -20,14 +20,17 @@ package io.microsphere.spring.web.util;
 
 import io.microsphere.spring.web.context.request.MockServletWebRequest;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.spring.web.util.WebType.UNKNOWN;
 import static io.microsphere.spring.web.util.WebType.REACTIVE;
 import static io.microsphere.spring.web.util.WebType.SERVLET;
 import static io.microsphere.spring.web.util.WebType.valueOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link WebType} test
@@ -41,7 +44,12 @@ class WebTypeTest {
     @Test
     void testValueOf() {
         assertSame(SERVLET, valueOf(new MockServletWebRequest()));
-        assertSame(REACTIVE, valueOf(mock(NativeWebRequest.class)));
+
+        NativeWebRequest request = mock(NativeWebRequest.class);
+        assertSame(UNKNOWN, valueOf(request));
+
+        when(request.getNativeRequest()).thenReturn(mock(ServerHttpRequest.class));
+        assertSame(REACTIVE, valueOf(request));
     }
 
     @Test
