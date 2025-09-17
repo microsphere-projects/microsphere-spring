@@ -21,6 +21,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import static io.microsphere.util.Assert.assertNotNull;
+import static io.microsphere.util.ClassUtils.getTypeName;
+import static io.microsphere.util.StringUtils.contains;
 
 /**
  * The enumeration of Web Type
@@ -34,14 +36,17 @@ public enum WebType {
     /**
      * The servlet-based web
      */
-    SERVLET {
-    },
+    SERVLET,
 
     /**
      * The reactive web
      */
-    REACTIVE {
-    };
+    REACTIVE,
+
+    /**
+     * The unknown web
+     */
+    UNKNOWN;
 
     /**
      * Resolve the {@link WebType} from the given {@link NativeWebRequest}.
@@ -55,6 +60,8 @@ public enum WebType {
         if (request instanceof ServletWebRequest) {
             return SERVLET;
         }
-        return REACTIVE;
+        Object nativeRequest = request.getNativeRequest();
+        String nativeRequestClassName = getTypeName(nativeRequest);
+        return contains(nativeRequestClassName, ".reactive.") ? REACTIVE : UNKNOWN;
     }
 }
