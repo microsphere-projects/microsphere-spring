@@ -43,6 +43,16 @@ import java.util.Set;
 public interface SpringWebHelper {
 
     /**
+     * Get the cookie value for the given cookie name.
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param cookieName the name of Cookie
+     * @return the cookie value if found, otherwise <code>null</code>
+     */
+    @Nullable
+    String getCookieValue(NativeWebRequest request, String cookieName);
+
+    /**
      * Get the mapped handler for the best matching pattern.
      *
      * @param request the {@link NativeWebRequest}
