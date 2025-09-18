@@ -20,6 +20,7 @@ import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.server.ServerWebExchange;
@@ -76,16 +76,18 @@ public abstract class WebRequestUtils {
      */
     public static final String PATH_ATTRIBUTE = UrlPathHelper.class.getName() + ".PATH";
 
+    /**
+     * Get the HTTP method of the current request.
+     *
+     * @param request the {@link NativeWebRequest}
+     * @return the HTTP method if found, otherwise <code>null</code>
+     * @see HttpServletRequest#getMethod()
+     * @see HttpRequest#getMethod()
+     */
+    @Nullable
     public static String getMethod(@Nonnull NativeWebRequest request) {
-        String method = request.getHeader(METHOD_HEADER_NAME);
-        if (method == null) {
-            if (request instanceof ServletWebRequest) {
-                Object nativeRequest = request.getNativeRequest();
-                HttpServletRequest servletRequest = (HttpServletRequest) nativeRequest;
-                method = servletRequest.getMethod();
-            }
-        }
-        return method;
+        SpringWebHelper springWebHelper = getSpringWebHelper(request);
+        return springWebHelper.getMethod(request);
     }
 
     /**
@@ -131,6 +133,25 @@ public abstract class WebRequestUtils {
     public static String getResolvedLookupPath(@Nonnull NativeWebRequest request) {
         String lookupPath = REQUEST.getAttribute(request, PATH_ATTRIBUTE);
         return lookupPath;
+    }
+
+    /**
+     * Get the cookie value for the given cookie name.
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param cookieName the name of Cookie
+     * @return the cookie value if found, otherwise <code>null</code>
+     */
+    @Nullable
+    public static String getCookieValue(@Nonnull NativeWebRequest request, String cookieName) {
+        SpringWebHelper springWebHelper = getSpringWebHelper(request);
+        return springWebHelper.getCookieValue(request, cookieName);
+    }
+
+    @Nullable
+    public static <T> T getRequestBody(@Nonnull NativeWebRequest request, Class<T> requestBodyType) {
+        SpringWebHelper springWebHelper = getSpringWebHelper(request);
+        return springWebHelper.getRequestBody(request, requestBodyType);
     }
 
     /**
