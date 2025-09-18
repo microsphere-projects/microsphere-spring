@@ -19,7 +19,6 @@ package io.microsphere.spring.web.util;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.MatrixVariable;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.server.ServerWebExchange;
 
 import java.util.Map;
 import java.util.Set;
@@ -83,8 +81,8 @@ public interface SpringWebHelper {
      * @see HandlerMethod
      * @see org.springframework.web.servlet.function.RouterFunction
      * @see org.springframework.web.reactive.function.server.RouterFunction
-     * @see org.springframework.web.servlet.HandlerMapping#getHandler(HttpServletRequest)
-     * @see org.springframework.web.reactive.HandlerMapping#getHandler(ServerWebExchange)
+     * @see org.springframework.web.servlet.HandlerMapping#getHandler
+     * @see org.springframework.web.reactive.HandlerMapping#getHandler
      * @see org.springframework.web.servlet.HandlerMapping#BEST_MATCHING_HANDLER_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#BEST_MATCHING_HANDLER_ATTRIBUTE
      */
