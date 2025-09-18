@@ -51,6 +51,24 @@ class UnknownSpringWebHelperTest {
     }
 
     @Test
+    void testGetMethod() {
+        assertNull(helper.getMethod(this.request));
+        assertNull(helper.getMethod(null));
+    }
+
+    @Test
+    void testGetCookieValue() {
+        assertNull(helper.getCookieValue(this.request, "cookieName"));
+        assertNull(helper.getCookieValue(null, "cookieName"));
+    }
+
+    @Test
+    void testGetRequestBody() {
+        assertNull(helper.getRequestBody(this.request, String.class));
+        assertNull(helper.getRequestBody(null, String.class));
+    }
+
+    @Test
     void testGetBestMatchingHandler() {
         assertNull(helper.getBestMatchingHandler(this.request));
         assertNull(helper.getBestMatchingHandler(null));
