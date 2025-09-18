@@ -20,8 +20,10 @@ package io.microsphere.spring.web.util;
 
 import io.microsphere.spring.web.context.request.MockServletWebRequest;
 import org.junit.Test;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.spring.web.util.SpringWebType.UNKNOWN;
 import static io.microsphere.spring.web.util.SpringWebType.WEBFLUX_INDICATOR_CLASS_NAME;
 import static io.microsphere.spring.web.util.SpringWebType.WEBMVC_INDICATOR_CLASS_NAME;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_FLUX;
@@ -31,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link SpringWebType} Test
@@ -50,7 +53,12 @@ public class SpringWebTypeTest {
     @Test
     public void testValueOf() {
         assertSame(WEB_MVC, valueOf(new MockServletWebRequest()));
-        assertSame(WEB_FLUX, valueOf(mock(NativeWebRequest.class)));
+
+        NativeWebRequest request = mock(NativeWebRequest.class);
+        assertSame(UNKNOWN, valueOf(request));
+
+        when(request.getNativeRequest()).thenReturn(mock(ServerHttpRequest.class));
+        assertSame(WEB_FLUX, valueOf(request));
     }
 
     @Test
