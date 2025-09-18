@@ -23,8 +23,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import static io.microsphere.spring.web.util.SpringWebType.UNKNOWN;
 import static io.microsphere.spring.web.util.UnknownSpringWebHelper.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * {@link UnknownSpringWebHelper} Test
@@ -80,6 +82,6 @@ class UnknownSpringWebHelperTest {
 
     @Test
     void testGetType() {
-        assertNull(helper.getType());
+        assertSame(UNKNOWN, helper.getType());
     }
 }
