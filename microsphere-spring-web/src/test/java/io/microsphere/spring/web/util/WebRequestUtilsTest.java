@@ -18,21 +18,34 @@
 package io.microsphere.spring.web.util;
 
 
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.ServletWebRequest;
+
+import javax.servlet.http.Cookie;
 
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
+import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingHandler;
+import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingPattern;
 import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
+import static io.microsphere.spring.web.util.WebRequestUtils.getCookieValue;
+import static io.microsphere.spring.web.util.WebRequestUtils.getMatrixVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
+import static io.microsphere.spring.web.util.WebRequestUtils.getPathWithinHandlerMapping;
+import static io.microsphere.spring.web.util.WebRequestUtils.getProducibleMediaTypes;
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
+import static io.microsphere.spring.web.util.WebRequestUtils.getUriTemplateVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.hasBody;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.parseContentType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
@@ -41,6 +54,7 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 
 /**
  * {@link WebRequestUtils} Test
@@ -50,6 +64,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * @since 1.0.0
  */
 public class WebRequestUtilsTest {
+
+    private MockHttpServletRequest servletRequest;
+
+    private ServletWebRequest request;
+
+    @Before
+    public void setUp() {
+        this.servletRequest = new MockHttpServletRequest();
+        this.request = new ServletWebRequest(this.servletRequest);
+    }
 
     @Test
     public void testGetMethod() {
@@ -97,6 +121,8 @@ public class WebRequestUtilsTest {
 
         request = createWebRequest(r -> r.addHeader(CONTENT_TYPE, "test"));
         assertNull(parseContentType(request));
+
+        assertSame(APPLICATION_OCTET_STREAM, parseContentType(this.request));
     }
 
     @Test
@@ -118,5 +144,46 @@ public class WebRequestUtilsTest {
     public void testGetResolvedLookupPath() {
         NativeWebRequest request = createWebRequest(r -> r.setAttribute(PATH_ATTRIBUTE, "/"));
         assertEquals("/", getResolvedLookupPath(request));
+    }
+
+    @Test
+    public void testGetCookieValue() {
+        NativeWebRequest request = createWebRequest(r -> r.setCookies(new Cookie("name", "value")));
+        assertEquals("value", getCookieValue(request, "name"));
+    }
+
+    @Test
+    public void testGetRequestBody() {
+
+    }
+
+    @Test
+    public void testGetBestMatchingHandler() {
+        assertNull(getBestMatchingHandler(this.request));
+    }
+
+    @Test
+    public void testGetPathWithinHandlerMapping() {
+        assertNull(getPathWithinHandlerMapping(this.request));
+    }
+
+    @Test
+    public void testGetBestMatchingPattern() {
+        assertNull(getBestMatchingPattern(this.request));
+    }
+
+    @Test
+    public void testGetUriTemplateVariables() {
+        assertNull(getUriTemplateVariables(this.request));
+    }
+
+    @Test
+    public void testGetMatrixVariables() {
+        assertNull(getMatrixVariables(this.request));
+    }
+
+    @Test
+    public void testGetProducibleMediaTypes() {
+        assertNull(getProducibleMediaTypes(this.request));
     }
 }
