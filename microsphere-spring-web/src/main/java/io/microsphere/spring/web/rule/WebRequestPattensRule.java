@@ -21,7 +21,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.util.UrlPathHelper;
-import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,8 +45,8 @@ import static org.springframework.util.StringUtils.hasText;
  * A logical disjunction (' || ') request condition that matches a request
  * against a set of URL path patterns.
  *
- * <p>In contrast to {@link PathPatternsRequestCondition} which uses parsed
- * {@link PathPattern}s, this condition does String pattern matching via
+ * <p>In contrast to PathPatternsRequestCondition which uses parsed
+ * {@link org.springframework.web.util.pattern.PathPattern}s, this condition does String pattern matching via
  * {@link org.springframework.util.AntPathMatcher AntPathMatcher}.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
