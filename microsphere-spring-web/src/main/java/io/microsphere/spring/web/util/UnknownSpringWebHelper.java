@@ -41,6 +41,21 @@ public class UnknownSpringWebHelper implements SpringWebHelper {
     }
 
     @Override
+    public String getMethod(NativeWebRequest request) {
+        return null;
+    }
+
+    @Override
+    public String getCookieValue(NativeWebRequest request, String cookieName) {
+        return null;
+    }
+
+    @Override
+    public <T> T getRequestBody(NativeWebRequest request, Class<T> requestBodyType) {
+        return null;
+    }
+
+    @Override
     public Object getBestMatchingHandler(NativeWebRequest request) {
         return null;
     }
