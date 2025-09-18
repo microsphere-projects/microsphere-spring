@@ -31,6 +31,7 @@ import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
 
+import static io.microsphere.spring.core.MethodParameterUtils.forExecutable;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodReturnValue;
@@ -69,7 +70,7 @@ public class RequestAttributesUtilsTest {
         setRequestAttributes(this.requestAttributes);
         this.handlerMethod = new HandlerMethod(new TestController(), "user", User.class);
         this.method = this.handlerMethod.getMethod();
-        this.methodParameter = new MethodParameter(this.method, 0);
+        this.methodParameter = forExecutable(this.method, 0);
         this.user = new User();
         this.user.setName("Mercy");
         this.user.setAge(18);
