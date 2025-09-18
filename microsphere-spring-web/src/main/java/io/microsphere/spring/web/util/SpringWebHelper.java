@@ -21,6 +21,8 @@ import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -41,11 +43,13 @@ import java.util.Set;
 public interface SpringWebHelper {
 
     /**
-     * Get the best matching handler
+     * Get the mapped handler for the best matching pattern.
      *
      * @param request the {@link NativeWebRequest}
-     * @return the best matching handler
+     * @return the mapped handler for the best matching pattern if found, otherwise <code>null</code>
      * @see HandlerMethod
+     * @see org.springframework.web.servlet.function.RouterFunction
+     * @see org.springframework.web.reactive.function.server.RouterFunction
      * @see org.springframework.web.servlet.HandlerMapping#getHandler(HttpServletRequest)
      * @see org.springframework.web.reactive.HandlerMapping#getHandler(ServerWebExchange)
      * @see org.springframework.web.servlet.HandlerMapping#BEST_MATCHING_HANDLER_ATTRIBUTE
@@ -55,10 +59,13 @@ public interface SpringWebHelper {
     Object getBestMatchingHandler(NativeWebRequest request);
 
     /**
-     * Get the path within handler mapping
+     * Get the path within the handler mapping, in case of a pattern match, or the full relevant URI
+     * (typically within the DispatcherServlet's mapping) else.
      *
      * @param request the {@link NativeWebRequest}
-     * @return the path within handler mapping
+     * @return the path within handler mapping if found, otherwise <code>null</code>
+     * @see org.springframework.web.servlet.handler.AbstractUrlHandlerMapping#exposePathWithinMapping
+     * @see org.springframework.web.reactive.handler.AbstractUrlHandlerMapping#lookupHandler
      * @see org.springframework.web.servlet.HandlerMapping#PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE
      */
@@ -66,11 +73,13 @@ public interface SpringWebHelper {
     String getPathWithinHandlerMapping(NativeWebRequest request);
 
     /**
-     * Get the best matching pattern
+     * Get the best matching pattern within the handler mapping.
      *
      * @param request the {@link NativeWebRequest}
-     * @return the best matching pattern
-     * @see RequestMapping
+     * @return the best matching pattern within the handler mapping if found, otherwise <code>null</code>
+     * @see RequestMapping#path()
+     * @see org.springframework.web.servlet.handler.AbstractUrlHandlerMapping#exposePathWithinMapping
+     * @see org.springframework.web.reactive.handler.AbstractUrlHandlerMapping#lookupHandler
      * @see org.springframework.web.servlet.HandlerMapping#BEST_MATCHING_PATTERN_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#BEST_MATCHING_PATTERN_ATTRIBUTE
      */
@@ -78,12 +87,13 @@ public interface SpringWebHelper {
     String getBestMatchingPattern(NativeWebRequest request);
 
     /**
-     * Get the URI template variables
+     * Get the URI templates map, mapping variable names to values.
      *
      * @param request the {@link NativeWebRequest}
-     * @return the URI template variables
-     * @see RequestMapping#path()
+     * @return the URI template variables if found, otherwise <code>null</code>
      * @see PathVariable
+     * @see org.springframework.web.servlet.handler.AbstractUrlHandlerMapping#exposeUriTemplateVariables
+     * @see org.springframework.web.reactive.handler.AbstractUrlHandlerMapping#lookupHandler
      * @see org.springframework.web.servlet.HandlerMapping#URI_TEMPLATE_VARIABLES_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#URI_TEMPLATE_VARIABLES_ATTRIBUTE
      */
@@ -91,11 +101,27 @@ public interface SpringWebHelper {
     Map<String, String> getUriTemplateVariables(NativeWebRequest request);
 
     /**
-     * Get the producible media types
+     * Get a map with URI variable names and a corresponding {@link MultiValueMap} of URI matrix variables for each.
      *
      * @param request the {@link NativeWebRequest}
-     * @return the producible media types
+     * @return the matrix variables if found, otherwise <code>null</code>
+     * @see MatrixVariable
+     * @see org.springframework.web.servlet.mvc.method.annotation.MatrixVariableMapMethodArgumentResolver#resolveArgument
+     * @see org.springframework.web.reactive.result.method.annotation.MatrixVariableMapMethodArgumentResolver#resolveArgumentValue
+     * @see org.springframework.web.servlet.HandlerMapping#MATRIX_VARIABLES_ATTRIBUTE
+     * @see org.springframework.web.reactive.HandlerMapping#MATRIX_VARIABLES_ATTRIBUTE
+     */
+    @Nullable
+    Map<String, MultiValueMap<String, String>> getMatrixVariables(NativeWebRequest request);
+
+    /**
+     * Get the set of producible MediaTypes applicable to the mapped handler.
+     *
+     * @param request the {@link NativeWebRequest}
+     * @return the producible media types if found, otherwise <code>null</code>
      * @see RequestMapping#produces()
+     * @see org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping#handleMatch
+     * @see org.springframework.web.reactive.result.method.RequestMappingInfoHandlerMapping#handleMatch
      * @see org.springframework.web.servlet.HandlerMapping#PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE
      * @see org.springframework.web.reactive.HandlerMapping#PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE
      */
