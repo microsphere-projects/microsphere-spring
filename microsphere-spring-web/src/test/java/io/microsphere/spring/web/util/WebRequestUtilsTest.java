@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.util;
 
 
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -30,6 +31,7 @@ import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingHandler;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingPattern;
 import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
+import static io.microsphere.spring.web.util.WebRequestUtils.getCookieValue;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMatrixVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.getPathWithinHandlerMapping;
@@ -141,6 +143,17 @@ class WebRequestUtilsTest {
     void testGetResolvedLookupPath() {
         NativeWebRequest request = createWebRequest(r -> r.setAttribute(PATH_ATTRIBUTE, "/"));
         assertEquals("/", getResolvedLookupPath(request));
+    }
+
+    @Test
+    void testGetCookieValue() {
+        NativeWebRequest request = createWebRequest(r -> r.setCookies(new Cookie("name", "value")));
+        assertEquals("value", getCookieValue(request, "name"));
+    }
+
+    @Test
+    void testGetRequestBody() {
+
     }
 
     @Test
