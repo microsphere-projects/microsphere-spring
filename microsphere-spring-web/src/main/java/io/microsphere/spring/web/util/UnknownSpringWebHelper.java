@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.util;
 
 import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Map;
@@ -56,6 +57,11 @@ public class UnknownSpringWebHelper implements SpringWebHelper {
 
     @Override
     public Map<String, String> getUriTemplateVariables(NativeWebRequest request) {
+        return null;
+    }
+
+    @Override
+    public Map<String, MultiValueMap<String, String>> getMatrixVariables(NativeWebRequest request) {
         return null;
     }
 
