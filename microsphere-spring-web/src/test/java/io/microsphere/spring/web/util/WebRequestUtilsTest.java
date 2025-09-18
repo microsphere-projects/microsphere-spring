@@ -30,6 +30,7 @@ import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingHandler;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingPattern;
 import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
+import static io.microsphere.spring.web.util.WebRequestUtils.getMatrixVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.getPathWithinHandlerMapping;
 import static io.microsphere.spring.web.util.WebRequestUtils.getProducibleMediaTypes;
@@ -160,6 +161,11 @@ class WebRequestUtilsTest {
     @Test
     void testGetUriTemplateVariables() {
         assertNull(getUriTemplateVariables(this.request));
+    }
+
+    @Test
+    void testGetMatrixVariables() {
+        assertNull(getMatrixVariables(this.request));
     }
 
     @Test
