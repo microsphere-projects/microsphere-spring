@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -43,6 +44,15 @@ import java.util.Set;
 public interface SpringWebHelper {
 
     /**
+     * Get the HTTP method of the request
+     *
+     * @param request the {@link NativeWebRequest}
+     * @return the HTTP method if found, otherwise <code>null</code>
+     */
+    @Nullable
+    String getMethod(@Nonnull NativeWebRequest request);
+
+    /**
      * Get the cookie value for the given cookie name.
      *
      * @param request    the {@link NativeWebRequest}
@@ -50,7 +60,20 @@ public interface SpringWebHelper {
      * @return the cookie value if found, otherwise <code>null</code>
      */
     @Nullable
-    String getCookieValue(NativeWebRequest request, String cookieName);
+    String getCookieValue(@Nonnull NativeWebRequest request, String cookieName);
+
+    /**
+     * Get the request body for the given request body type.
+     *
+     * @param request         the {@link NativeWebRequest}
+     * @param requestBodyType the request body type
+     * @param <T>             the type of request body
+     * @return the request body if found, otherwise <code>null</code>
+     * @see RequestBody
+     * @see org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor#resolveArgument
+     * @see org.springframework.web.reactive.result.method.annotation.RequestBodyMethodArgumentResolver#resolveArgument
+     */
+    <T> T getRequestBody(@Nonnull NativeWebRequest request, Class<T> requestBodyType);
 
     /**
      * Get the mapped handler for the best matching pattern.
@@ -66,7 +89,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.reactive.HandlerMapping#BEST_MATCHING_HANDLER_ATTRIBUTE
      */
     @Nullable
-    Object getBestMatchingHandler(NativeWebRequest request);
+    Object getBestMatchingHandler(@Nonnull NativeWebRequest request);
 
     /**
      * Get the path within the handler mapping, in case of a pattern match, or the full relevant URI
@@ -80,7 +103,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.reactive.HandlerMapping#PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE
      */
     @Nullable
-    String getPathWithinHandlerMapping(NativeWebRequest request);
+    String getPathWithinHandlerMapping(@Nonnull NativeWebRequest request);
 
     /**
      * Get the best matching pattern within the handler mapping.
@@ -94,7 +117,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.reactive.HandlerMapping#BEST_MATCHING_PATTERN_ATTRIBUTE
      */
     @Nullable
-    String getBestMatchingPattern(NativeWebRequest request);
+    String getBestMatchingPattern(@Nonnull NativeWebRequest request);
 
     /**
      * Get the URI templates map, mapping variable names to values.
@@ -108,7 +131,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.reactive.HandlerMapping#URI_TEMPLATE_VARIABLES_ATTRIBUTE
      */
     @Nullable
-    Map<String, String> getUriTemplateVariables(NativeWebRequest request);
+    Map<String, String> getUriTemplateVariables(@Nonnull NativeWebRequest request);
 
     /**
      * Get a map with URI variable names and a corresponding {@link MultiValueMap} of URI matrix variables for each.
@@ -122,7 +145,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.reactive.HandlerMapping#MATRIX_VARIABLES_ATTRIBUTE
      */
     @Nullable
-    Map<String, MultiValueMap<String, String>> getMatrixVariables(NativeWebRequest request);
+    Map<String, MultiValueMap<String, String>> getMatrixVariables(@Nonnull NativeWebRequest request);
 
     /**
      * Get the set of producible MediaTypes applicable to the mapped handler.
@@ -136,7 +159,7 @@ public interface SpringWebHelper {
      * @see org.springframework.web.reactive.HandlerMapping#PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE
      */
     @Nullable
-    Set<MediaType> getProducibleMediaTypes(NativeWebRequest request);
+    Set<MediaType> getProducibleMediaTypes(@Nonnull NativeWebRequest request);
 
     /**
      * Get the Spring Web Type
