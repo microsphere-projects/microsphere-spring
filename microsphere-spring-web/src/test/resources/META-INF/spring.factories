@@ -2,3 +2,6 @@ io.microsphere.spring.web.metadata.WebEndpointMappingFactory=\
 io.microsphere.spring.web.metadata.UnsupportedWebEndpointMappingFactory,\
 io.microsphere.spring.web.metadata.ThrowableWebEndpointMappingFactory,\
 io.microsphere.spring.web.metadata.NullWebEndpointMappingFactory
+
+io.microsphere.spring.web.util.SpringWebHelper=\
+io.microsphere.spring.web.util.SpringWebMvcHelper
