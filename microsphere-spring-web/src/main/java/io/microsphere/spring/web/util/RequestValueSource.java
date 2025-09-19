@@ -174,7 +174,5 @@ public enum RequestValueSource {
      * @return <code>null</code> if not found
      */
     @Nullable
-    public String getValue(NativeWebRequest request, String name) {
-        return null;
-    }
+    public abstract String getValue(NativeWebRequest request, String name);
 }
