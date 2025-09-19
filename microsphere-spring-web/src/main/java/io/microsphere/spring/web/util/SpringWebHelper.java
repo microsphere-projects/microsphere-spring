@@ -32,6 +32,8 @@ import org.springframework.web.method.HandlerMethod;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodRequestBodyArgument;
+
 /**
  * The helper interface for Spring Web
  *
@@ -71,7 +73,13 @@ public interface SpringWebHelper {
      * @see org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor#resolveArgument
      * @see org.springframework.web.reactive.result.method.annotation.RequestBodyMethodArgumentResolver#resolveArgument
      */
-    <T> T getRequestBody(@Nonnull NativeWebRequest request, Class<T> requestBodyType);
+    default <T> T getRequestBody(@Nonnull NativeWebRequest request, Class<T> requestBodyType) {
+        Object handler = getBestMatchingHandler(request);
+        if (handler instanceof HandlerMethod) {
+            return getHandlerMethodRequestBodyArgument(request, (HandlerMethod) handler);
+        }
+        return null;
+    }
 
     /**
      * Get the mapped handler for the best matching pattern.
