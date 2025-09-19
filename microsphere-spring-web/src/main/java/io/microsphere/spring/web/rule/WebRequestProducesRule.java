@@ -112,7 +112,8 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
         List<ProduceMediaTypeExpression> result = getMatchingExpressions(acceptedMediaTypes);
         if (isNotEmpty(result)) {
             return false;
-        } else return !isPresentIn(ALL, acceptedMediaTypes);
+        }
+        return !isPresentIn(ALL, acceptedMediaTypes);
     }
 
     private List<ProduceMediaTypeExpression> getMatchingExpressions(List<MediaType> acceptedMediaTypes) {
