@@ -18,6 +18,7 @@ package io.microsphere.spring.web.util;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.InvalidMediaTypeException;
@@ -79,7 +80,7 @@ public abstract class WebRequestUtils {
      *
      * @param request the {@link NativeWebRequest}
      * @return the HTTP method if found, otherwise <code>null</code>
-     * @see jakarta.servlet.http.HttpServletRequest#getMethod()
+     * @see HttpServletRequest#getMethod()
      * @see HttpRequest#getMethod()
      */
     @Nullable
