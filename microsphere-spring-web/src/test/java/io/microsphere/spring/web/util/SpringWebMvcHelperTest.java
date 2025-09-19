@@ -172,6 +172,11 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
         this.wac.removeApplicationListener(listener);
     }
 
+    @Test
+    void testGetType() {
+        assertSame(WEB_MVC, springWebMvcHelper.getType());
+    }
+
     void testGetMethod(ServletWebRequest request, HttpMethod httpMethod) {
         String method = this.springWebMvcHelper.getMethod(request);
         assertEquals(httpMethod.name(), method);
@@ -226,11 +231,6 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
     void testGetProducibleMediaTypes(NativeWebRequest request, MediaType... mediaTypes) {
         Set<MediaType> producibleMediaTypes = this.springWebMvcHelper.getProducibleMediaTypes(request);
         assertEquals(ofSet(mediaTypes), producibleMediaTypes);
-    }
-
-    @Test
-    void testGetType() {
-        assertSame(WEB_MVC, springWebMvcHelper.getType());
     }
 
     @Override
