@@ -153,11 +153,13 @@ public enum RequestValueSource {
         @Override
         public String getValue(NativeWebRequest request, String name) {
             Map<String, MultiValueMap<String, String>> variables = getMatrixVariables(request);
-            for (MultiValueMap<String, String> parameters : variables.values()) {
-                for (Entry<String, List<String>> entry : parameters.entrySet()) {
-                    if (Objects.equals(name, entry.getKey())) {
-                        List<String> values = entry.getValue();
-                        return first(values);
+            if (variables != null) {
+                for (MultiValueMap<String, String> parameters : variables.values()) {
+                    for (Entry<String, List<String>> entry : parameters.entrySet()) {
+                        if (Objects.equals(name, entry.getKey())) {
+                            List<String> values = entry.getValue();
+                            return first(values);
+                        }
                     }
                 }
             }
@@ -174,7 +176,5 @@ public enum RequestValueSource {
      * @return <code>null</code> if not found
      */
     @Nullable
-    public String getValue(NativeWebRequest request, String name) {
-        return null;
-    }
+    public abstract String getValue(NativeWebRequest request, String name);
 }
