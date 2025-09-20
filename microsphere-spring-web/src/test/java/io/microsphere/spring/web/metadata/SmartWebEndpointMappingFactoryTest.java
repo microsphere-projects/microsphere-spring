@@ -19,6 +19,7 @@ package io.microsphere.spring.web.metadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,7 +28,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.util.StreamUtils.copyToString;
 
@@ -37,15 +40,18 @@ import static org.springframework.util.StreamUtils.copyToString;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = SmartWebEndpointMappingFactoryTest.class)
+@ContextConfiguration(classes = {
+        SmartWebEndpointMappingFactory.class,
+        SmartWebEndpointMappingFactoryTest.class
+})
 class SmartWebEndpointMappingFactoryTest {
-
-    private WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory();
 
     @Value("classpath:META-INF/web-mapping-descriptor.json")
     private Resource fullJsonResource;
+
+    @Autowired
+    private SmartWebEndpointMappingFactory factory;
 
     private String fullJson;
 
@@ -56,6 +62,28 @@ class SmartWebEndpointMappingFactoryTest {
 
     @Test
     void testCreate() {
+        assertFactory(factory);
+    }
+
+    @Test
+    void testCreateWithoutBeanFactory() {
+        WebEndpointMappingFactory factory = new SmartWebEndpointMappingFactory(null);
+        assertFactory(factory);
+    }
+
+    @Test
+    void testCreateOnUnsupported() {
+        Optional<WebEndpointMapping<Object>> descriptor = factory.create(new Object());
+        assertFalse(descriptor.isPresent());
+    }
+
+    @Test
+    void testCreateOnUnsupportedType() {
+        Optional<WebEndpointMapping<Object>> descriptor = factory.create(emptyMap());
+        assertFalse(descriptor.isPresent());
+    }
+
+    void assertFactory(WebEndpointMappingFactory factory) {
         Optional<WebEndpointMapping> descriptor = factory.create(fullJson);
         assertNotNull(descriptor);
         assertEquals(fullJson, descriptor.get().toJSON());

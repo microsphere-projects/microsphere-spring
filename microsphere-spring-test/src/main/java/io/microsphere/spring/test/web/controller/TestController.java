@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
@@ -55,7 +56,7 @@ public class TestController {
         return "Greeting : " + message;
     }
 
-    @PostMapping(path = "/user")
+    @PostMapping(path = "/user", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public User user(@RequestBody User user) {
         return user;

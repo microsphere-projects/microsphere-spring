@@ -25,12 +25,13 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.io.Resource;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Comparator;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * The extension annotation of {@link ResourcePropertySource @ResourcePropertySource} providing a convenient and declarative
@@ -103,8 +104,8 @@ import java.util.Comparator;
  * @see YamlPropertySourceFactory
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(TYPE)
+@Retention(RUNTIME)
 @Inherited
 @Documented
 @ResourcePropertySource(factory = YamlPropertySourceFactory.class)

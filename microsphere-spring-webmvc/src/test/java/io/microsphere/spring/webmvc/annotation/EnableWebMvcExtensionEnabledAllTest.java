@@ -15,41 +15,29 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.context;
+package io.microsphere.spring.webmvc.annotation;
 
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link ExclusiveViewResolverApplicationListener} Test on defaults
+ * {@link EnableWebMvcExtension} Test when all status are enabled(all attributes are <code>true</code>).
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ExclusiveViewResolverApplicationListener
+ * @see WebMvcExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = {
-        ExclusiveViewResolverApplicationListener.class,
-        ExclusiveViewResolverApplicationListenerTestOnDefaults.class
+        EnableWebMvcExtensionEnabledAllTest.class
 })
-@EnableWebMvc
-class ExclusiveViewResolverApplicationListenerTestOnDefaults {
-
-    @Autowired
-    private ExclusiveViewResolverApplicationListener listener;
-
-    @Test
-    void test() {
-        assertNotNull(listener);
-    }
-
+@EnableWebMvcExtension(
+        registerWebEndpointMappings = true,
+        interceptHandlerMethods = true,
+        publishEvents = true,
+        registerHandlerInterceptors = true,
+        storeRequestBodyArgument = true,
+        storeResponseBodyReturnValue = true,
+        reversedProxyHandlerMapping = true
+)
+class EnableWebMvcExtensionEnabledAllTest extends AbstractEnableWebMvcExtensionTest {
 }

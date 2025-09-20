@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 import static org.springframework.util.ResourceUtils.getURL;
 
 /**
@@ -135,7 +136,7 @@ class SpringResourceURLConnectionAdapterTest extends AbstractSpringResourceURLCo
     @Test
     void testGetContentType() {
         assertNull(this.readonly.getContentType());
-        assertEquals("text/plain", this.writable.getContentType());
+        assertEquals(TEXT_PLAIN_VALUE, this.writable.getContentType());
         assertNull(this.notFound.getContentType());
     }
 

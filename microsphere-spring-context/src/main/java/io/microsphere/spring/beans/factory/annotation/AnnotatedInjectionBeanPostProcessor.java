@@ -19,7 +19,6 @@ package io.microsphere.spring.beans.factory.annotation;
 import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.TypeConverter;
@@ -33,10 +32,12 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.InjectionMetadata;
+import org.springframework.beans.factory.annotation.InjectionMetadata.InjectedElement;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.EnvironmentAware;
@@ -51,10 +52,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -64,15 +63,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
-import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.reflect.FieldUtils.setFieldValue;
+import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.ArrayUtils.combine;
 import static java.lang.Integer.getInteger;
 import static java.lang.Integer.parseInt;
-import static java.util.Arrays.asList;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Arrays.copyOf;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.beans.BeanUtils.findPrimaryConstructor;
@@ -85,14 +88,12 @@ import static org.springframework.util.ClassUtils.getMostSpecificMethod;
 import static org.springframework.util.ClassUtils.getUserClass;
 import static org.springframework.util.ReflectionUtils.doWithFields;
 import static org.springframework.util.ReflectionUtils.doWithMethods;
-import static org.springframework.util.ReflectionUtils.makeAccessible;
 import static org.springframework.util.StringUtils.hasLength;
 
 /**
  * A {@link BeanPostProcessor} implementation that provides dependency injection support for custom annotation types.
  * <p>
- * This class extends {@link InstantiationAwareBeanPostProcessorAdapter}, making it compatible with Spring 6.x+,
- * and supports the following features:
+ * This class supports the following features:
  * </p>
  *
  * <ul>
@@ -155,8 +156,8 @@ import static org.springframework.util.StringUtils.hasLength;
  * @see AutowiredAnnotationBeanPostProcessor
  * @since 1.0.0
  */
-public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
-        implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
+public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAwareBeanPostProcessor,
+        MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware, BeanClassLoaderAware,
         EnvironmentAware, InitializingBean, DisposableBean {
 
     /**
@@ -187,7 +188,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
 
     private ConcurrentMap<Class<?>, Constructor<?>[]> candidateConstructorsCache;
 
-    private ConcurrentMap<String, AnnotatedInjectionMetadata> injectionMetadataCache;
+    private ConcurrentMap<String, InjectionMetadata> injectionMetadataCache;
 
     private ConfigurableListableBeanFactory beanFactory;
 
@@ -198,7 +199,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * make sure higher priority than {@link AutowiredAnnotationBeanPostProcessor}
      */
-    private int order = LOWEST_PRECEDENCE - 3;
+    private int order;
 
     /**
      * whether to turn Class references into Strings (for compatibility with {@link AnnotationMetadata} or to
@@ -215,23 +216,23 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     /**
      * whether ignore default value or not
      */
-    private boolean ignoreDefaultValue = true;
+    private boolean ignoreDefaultValue;
 
     /**
      * whether try merged annotation or not
      */
-    private boolean tryMergedAnnotation = true;
+    private boolean tryMergedAnnotation;
 
     /**
      * The size of cache
      */
-    private int cacheSize = CACHE_SIZE;
+    private int cacheSize;
 
     /**
      * @param annotationType the single type of {@link Annotation annotation}
      */
     public AnnotatedInjectionBeanPostProcessor(Class<? extends Annotation> annotationType, Class<? extends Annotation>... otherAnnotationTypes) {
-        this(combine(ofSet(annotationType), asList(otherAnnotationTypes)));
+        this(ofList(combine(annotationType, otherAnnotationTypes)));
     }
 
     /**
@@ -240,25 +241,15 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public AnnotatedInjectionBeanPostProcessor(Collection<Class<? extends Annotation>> annotationTypes) {
         notEmpty(annotationTypes, "The argument of annotations' types must not empty");
         this.annotationTypes = annotationTypes;
-    }
-
-    private static <T> Collection<T> combine(Collection<? extends T>... elements) {
-        List<T> allElements = new ArrayList<T>();
-        for (Collection<? extends T> e : elements) {
-            allElements.addAll(e);
-        }
-        return allElements;
-    }
-
-    public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
-        return unmodifiableCollection(annotationTypes);
+        setOrder(LOWEST_PRECEDENCE - 3);
+        setClassValuesAsString(false);
+        setNestedAnnotationsAsMap(false);
+        setIgnoreDefaultValue(true);
+        setTryMergedAnnotation(true);
+        setCacheSize(CACHE_SIZE);
     }
 
     @Override
-    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
-    }
-
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
         if (candidateConstructors == null) {
@@ -299,10 +290,10 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                         }
                         if (ann != null) {
                             if (requiredConstructor != null) {
-                                throw new BeanCreationException(beanName,
-                                        "Invalid injection constructor: " + candidate +
-                                                ". Found constructor with 'required' Autowired annotation already: " +
-                                                requiredConstructor);
+                                String message = format("Invalid injection constructors: {}. "
+                                                + "Found constructor with 'required' @{} annotation already: {}"
+                                        , candidate, ann.annotationType().getName(), requiredConstructor);
+                                throw new BeanCreationException(message);
                             }
                             boolean required = determineRequiredStatus(ann);
                             if (required) {
@@ -324,11 +315,11 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                         if (requiredConstructor == null) {
                             if (defaultConstructor != null) {
                                 candidates.add(defaultConstructor);
-                            } else if (candidates.size() == 1 && logger.isInfoEnabled()) {
-                                logger.info("Inconsistent constructor declaration on bean with name '" + beanName +
-                                        "': single injection constructor flagged as optional - " +
+                            } else if (candidates.size() == 1) {
+                                logger.info("Inconsistent constructor declaration on bean with name '{}': " +
+                                        "single injection constructor flagged as optional - " +
                                         "this constructor is effectively required since there is no " +
-                                        "default constructor to fall back to: " + candidates.get(0));
+                                        "default constructor to fall back to: {}", beanName, candidates.get(0));
                             }
                         }
                         candidateConstructors = candidates.toArray(new Constructor<?>[0]);
@@ -349,10 +340,6 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return (candidateConstructors.length > 0 ? candidateConstructors : null);
     }
 
-    public final PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
-        return postProcessProperties(pvs, bean, beanName);
-    }
-
     public final PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
         InjectionMetadata metadata = findInjectionMetadata(beanName, bean.getClass(), pvs);
         try {
@@ -366,23 +353,21 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * Finds {@link InjectionMetadata.InjectedElement} Metadata from annotated fields
+     * Finds {@link InjectedElement} Metadata from annotated fields
      *
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
      */
-    private List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
+    protected List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedFieldElement> elements = new LinkedList<AnnotatedFieldElement>();
+        final List<AnnotatedFieldElement> elements = new LinkedList<>();
 
         doWithFields(beanClass, field -> {
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
                 AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
                 if (attributes != null) {
-                    if (Modifier.isStatic(field.getModifiers())) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + annotationType.getName() + " is not supported on static fields: " + field);
-                        }
+                    if (isStatic(field.getModifiers())) {
+                        logger.warn("@{} is not supported on static fields: {}", annotationType.getName(), field);
                         return;
                     }
                     boolean required = determineRequiredStatus(attributes);
@@ -405,14 +390,14 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * Finds {@link InjectionMetadata.InjectedElement} Metadata from annotated methods
+     * Finds {@link InjectedElement} Metadata from annotated methods
      *
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
      */
-    private List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
+    protected List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedMethodElement> elements = new LinkedList<AnnotatedMethodElement>();
+        final List<AnnotatedMethodElement> elements = new LinkedList<>();
 
         doWithMethods(beanClass, method -> {
             Method bridgedMethod = findBridgedMethod(method);
@@ -422,16 +407,12 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
                 AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
                 if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
-                    if (Modifier.isStatic(method.getModifiers())) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + annotationType.getName() + " annotation is not supported on static methods: " + method);
-                        }
+                    if (isStatic(method.getModifiers())) {
+                        logger.warn("@{} annotation is not supported on static methods: {}", annotationType.getName(), method);
                         return;
                     }
                     if (method.getParameterTypes().length == 0) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("@" + annotationType.getName() + " annotation should only be used on methods with parameters: " + method);
-                        }
+                        logger.warn("@{} annotation should only be used on methods with parameters: {}", annotationType.getName(), method);
                     }
                     PropertyDescriptor pd = findPropertyForMethod(bridgedMethod, beanClass);
                     boolean required = determineRequiredStatus(attributes);
@@ -464,17 +445,20 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return getAnnotationAttributes(annotatedElement, annotationType, getEnvironment(), classValuesAsString, nestedAnnotationsAsMap, ignoreDefaultValue, tryMergedAnnotation);
     }
 
-    private AnnotatedInjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
+    private InjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
         Collection<AnnotatedFieldElement> fieldElements = findFieldAnnotationMetadata(beanClass);
         Collection<AnnotatedMethodElement> methodElements = findAnnotatedMethodMetadata(beanClass);
-        return new AnnotatedInjectionMetadata(beanClass, fieldElements, methodElements);
+        List<InjectedElement> elements = new ArrayList<>(fieldElements.size() + methodElements.size());
+        elements.addAll(fieldElements);
+        elements.addAll(methodElements);
+        return new InjectionMetadata(beanClass, elements);
     }
 
     private InjectionMetadata findInjectionMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
         String cacheKey = (hasLength(beanName) ? beanName : clazz.getName());
         // Quick check on the concurrent map first, with minimal locking.
-        AnnotatedInjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
+        InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
         if (needsRefresh(metadata, clazz)) {
             synchronized (this.injectionMetadataCache) {
                 metadata = this.injectionMetadataCache.get(cacheKey);
@@ -500,6 +484,30 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             InjectionMetadata metadata = findInjectionMetadata(beanName, beanType, null);
             metadata.checkConfigMembers(beanDefinition);
         }
+    }
+
+    @Override
+    public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
+    }
+
+    @Override
+    public final void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public final void setBeanClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    /**
+     * Set the order of this post-processor.
+     *
+     * @param order the order
+     */
+    public final void setOrder(int order) {
+        this.order = order;
     }
 
     /**
@@ -544,33 +552,17 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         this.cacheSize = cacheSize;
     }
 
-    public final void setOrder(int order) {
-        this.order = order;
-    }
-
     @Override
-    public final void setBeanClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
-
-    @Override
-    public final void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.candidateConstructorsCache = newConcurrentHashMap(cacheSize);
         this.injectionMetadataCache = newConcurrentHashMap(cacheSize);
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         candidateConstructorsCache.clear();
         injectionMetadataCache.clear();
-        if (logger.isInfoEnabled()) {
-            logger.info(getClass() + " was destroying!");
-        }
+        logger.info("{} was destroying!", getClass().getName());
     }
 
     /**
@@ -623,10 +615,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 if (this.beanFactory.containsBean(injectedBeanName)) {
                     this.beanFactory.registerDependentBean(injectedBeanName, beanName);
                 }
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Injected by type from bean name '" + beanName +
-                            "' to bean named '" + injectedBeanName + "'");
-                }
+                logger.trace("Injected by type from bean name '{}' to bean named '{}'", beanName, injectedBeanName);
             }
         }
     }
@@ -635,14 +624,19 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      * Resolve the specified cached method argument or field value.
      */
     private Object resolvedCachedArgument(String beanName, Object cachedArgument) {
-        if (cachedArgument instanceof DependencyDescriptor descriptor) {
+        if (cachedArgument instanceof DependencyDescriptor) {
+            DependencyDescriptor descriptor = (DependencyDescriptor) cachedArgument;
             TypeConverter typeConverter = this.beanFactory.getTypeConverter();
             return this.beanFactory.resolveDependency(descriptor, beanName, null, typeConverter);
-        } else if (cachedArgument instanceof RuntimeBeanReference runtimeBeanReference) {
-            return this.beanFactory.getBean(runtimeBeanReference.getBeanName());
+        } else if (cachedArgument instanceof RuntimeBeanReference) {
+            return this.beanFactory.getBean(((RuntimeBeanReference) cachedArgument).getBeanName());
         } else {
             return cachedArgument;
         }
+    }
+
+    public final Collection<Class<? extends Annotation>> getAnnotationTypes() {
+        return unmodifiableCollection(annotationTypes);
     }
 
     @Override
@@ -663,36 +657,11 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * {@link Annotation Annotated} {@link InjectionMetadata} implementation
-     */
-    private static class AnnotatedInjectionMetadata extends InjectionMetadata {
-
-        private final Collection<AnnotatedFieldElement> fieldElements;
-
-        private final Collection<AnnotatedMethodElement> methodElements;
-
-        public AnnotatedInjectionMetadata(Class<?> targetClass, Collection<AnnotatedFieldElement> fieldElements, Collection<AnnotatedMethodElement> methodElements) {
-            super(targetClass, combine(fieldElements, methodElements));
-            this.fieldElements = fieldElements;
-            this.methodElements = methodElements;
-        }
-
-        public Collection<AnnotatedFieldElement> getFieldElements() {
-            return fieldElements;
-        }
-
-        public Collection<AnnotatedMethodElement> getMethodElements() {
-            return methodElements;
-        }
-    }
-
-
-    /**
-     * Annotation {@link InjectionMetadata.InjectedElement}
+     * Annotation {@link InjectedElement}
      *
      * @param <M> {@link Field} or {@link Method}
      */
-    public abstract static class AnnotationInjectedElement<M extends Member> extends InjectionMetadata.InjectedElement {
+    public abstract static class AnnotationInjectedElement<M extends Member> extends InjectedElement {
 
         private final AnnotationAttributes attributes;
 
@@ -718,7 +687,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * {@link Annotation Annotated} {@link Field} {@link InjectionMetadata.InjectedElement}
+     * {@link Annotation Annotated} {@link Field} {@link InjectedElement}
      */
     private class AnnotatedFieldElement extends AnnotationInjectedElement<Field> {
 
@@ -744,10 +713,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
             } else {
                 value = resolveFieldValue(field, bean, beanName, pvs);
             }
-            if (value != null) {
-                makeAccessible(field);
-                field.set(bean, value);
-            }
+            setFieldValue(bean, field, value);
         }
 
         @Nullable
@@ -788,7 +754,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     }
 
     /**
-     * {@link Annotation Annotated} {@link Method} {@link InjectionMetadata.InjectedElement}
+     * {@link Annotation Annotated} {@link Method} {@link InjectedElement}
      */
     private class AnnotatedMethodElement extends AnnotationInjectedElement<Method> {
 
@@ -818,12 +784,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 arguments = resolveMethodArguments(method, bean, beanName, pvs);
             }
             if (arguments != null) {
-                try {
-                    makeAccessible(method);
-                    method.invoke(bean, arguments);
-                } catch (InvocationTargetException ex) {
-                    throw ex.getTargetException();
-                }
+                invokeMethod(bean, method, arguments);
             }
         }
 

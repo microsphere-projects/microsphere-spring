@@ -14,20 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc.annotation;
+package io.microsphere.spring.web.annotation;
 
-import org.springframework.test.context.ContextConfiguration;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * {@link EnableWebMvcExtension} Test with defaults
+ * Idempotent Annotation
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see EnableWebMvcExtension
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@ContextConfiguration(classes = {
-        EnableWebMvcExtensionDefaultsTest.class
-})
-@EnableWebMvcExtension
-public class EnableWebMvcExtensionDefaultsTest extends AbstractEnableWebMvcExtensionTest {
+@Target({TYPE, METHOD})
+@Retention(RUNTIME)
+@Inherited
+@Documented
+public @interface Idempotent {
 }

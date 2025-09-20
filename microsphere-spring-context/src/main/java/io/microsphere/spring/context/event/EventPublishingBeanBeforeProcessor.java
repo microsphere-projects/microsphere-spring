@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanFactory;
@@ -24,6 +23,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -53,8 +53,8 @@ import static org.springframework.beans.factory.support.BeanDefinitionReaderUtil
  * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
-class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProcessorAdapter
-        implements BeanDefinitionRegistryPostProcessor, DestructionAwareBeanPostProcessor, InstantiationStrategy {
+class EventPublishingBeanBeforeProcessor implements InstantiationAwareBeanPostProcessor, BeanDefinitionRegistryPostProcessor,
+        DestructionAwareBeanPostProcessor, InstantiationStrategy {
 
     private BeanDefinitionRegistry registry;
 

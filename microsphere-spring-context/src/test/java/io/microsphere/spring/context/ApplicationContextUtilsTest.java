@@ -53,13 +53,6 @@ class ApplicationContextUtilsTest {
     void tearDown() {
         context.close();
     }
-
-    @Test
-    void testAsConfigurableApplicationContext() {
-        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
-        assertSame(context, applicationContext);
-    }
-
     @Test
     void testAsConfigurableApplicationContextWithContext() {
         ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);

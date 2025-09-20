@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
+import static io.microsphere.spring.core.convert.SpringConverterAdapter.INSTANCE;
 import static io.microsphere.spring.core.convert.SpringConverterAdapter.buildConvertiblePair;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +41,7 @@ import static org.springframework.core.convert.TypeDescriptor.valueOf;
  */
 class SpringConverterAdapterTest {
 
-    private final SpringConverterAdapter converterAdapter = SpringConverterAdapter.INSTANCE;
+    private final SpringConverterAdapter converterAdapter = INSTANCE;
 
     @Test
     void testMatch() {

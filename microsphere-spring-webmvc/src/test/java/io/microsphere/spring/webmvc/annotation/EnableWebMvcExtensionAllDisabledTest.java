@@ -19,19 +19,23 @@ package io.microsphere.spring.webmvc.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebMvcExtension} Test with disable features
+ * {@link EnableWebMvcExtension} Test when all status are disabled(all attributes are <code>false</code>).
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionDisableTest.class
+        EnableWebMvcExtensionAllDisabledTest.class
 })
 @EnableWebMvcExtension(
         registerWebEndpointMappings = false,
         interceptHandlerMethods = false,
-        publishEvents = false
+        publishEvents = false,
+        registerHandlerInterceptors = false,
+        storeRequestBodyArgument = true,
+        storeResponseBodyReturnValue = false,
+        reversedProxyHandlerMapping = false
 )
-public class EnableWebMvcExtensionDisableTest extends AbstractEnableWebMvcExtensionTest {
+class EnableWebMvcExtensionAllDisabledTest extends AbstractEnableWebMvcExtensionTest {
 }

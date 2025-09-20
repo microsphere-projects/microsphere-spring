@@ -27,6 +27,7 @@ import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
+import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Import;
@@ -42,11 +43,12 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enable annotation to extend the features of Spring WebMVC
@@ -58,8 +60,8 @@ import java.lang.reflect.Method;
  * @see WebMvcExtensionConfiguration
  * @since 1.0.0
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Retention(RUNTIME)
+@Target(TYPE)
 @Documented
 @Import(value = {
         WebMvcExtensionBeanDefinitionRegistrar.class,
@@ -148,4 +150,12 @@ public @interface EnableWebMvcExtension {
      * @see RequestAttributesUtils#getHandlerMethodReturnValue(RequestAttributes, HandlerMethod)
      */
     boolean storeResponseBodyReturnValue() default false;
+
+    /**
+     * Indicate whether the {@link ReversedProxyHandlerMapping} is enabled or not.
+     *
+     * @return <code>false</code> as default
+     * @see ReversedProxyHandlerMapping
+     */
+    boolean reversedProxyHandlerMapping() default false;
 }

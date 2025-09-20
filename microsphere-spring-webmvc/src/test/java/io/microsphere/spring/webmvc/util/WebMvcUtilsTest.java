@@ -109,7 +109,7 @@ class WebMvcUtilsTest {
     private User user;
 
     @BeforeEach
-    public void setUp() throws NoSuchMethodException {
+    void setUp() throws NoSuchMethodException {
         this.servletRequest = new MockHttpServletRequest();
         this.requestAttributes = new ServletWebRequest(this.servletRequest);
         setRequestAttributes(this.requestAttributes);
@@ -122,28 +122,28 @@ class WebMvcUtilsTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         resetRequestAttributes();
     }
 
     @Test
-    public void testConstants() {
+    void testConstants() {
         assertEquals(ofSet(MappingJackson2HttpMessageConverter.class, StringHttpMessageConverter.class), SUPPORTED_CONVERTER_TYPES);
         assertEquals(",; \t\n", INIT_PARAM_DELIMITERS);
     }
 
     @Test
-    public void testGetHttpServletRequest() {
+    void testGetHttpServletRequest() {
         assertSame(this.servletRequest, getHttpServletRequest());
     }
 
     @Test
-    public void testGetHttpServletRequestWithNullRequestAttributes() {
+    void testGetHttpServletRequestWithNullRequestAttributes() {
         assertNull(getHttpServletRequest(null));
     }
 
     @Test
-    public void testGetWebApplicationContext() {
+    void testGetWebApplicationContext() {
         HttpServletRequest request = getHttpServletRequest();
         ServletContext servletContext = request.getServletContext();
         WebApplicationContext context = new GenericWebApplicationContext();
@@ -152,70 +152,70 @@ class WebMvcUtilsTest {
     }
 
     @Test
-    public void testGetWebApplicationContextWithoutHttpServletRequest() {
+    void testGetWebApplicationContextWithoutHttpServletRequest() {
         resetRequestAttributes();
         assertThrows(IllegalStateException.class, WebMvcUtils::getWebApplicationContext);
     }
 
     @Test
-    public void testGetWebApplicationContextWithoutWebApplicationContext() {
+    void testGetWebApplicationContextWithoutWebApplicationContext() {
         assertNull(getWebApplicationContext());
     }
 
     @Test
-    public void testSetHandlerMethodRequestBodyArgument() {
+    void testSetHandlerMethodRequestBodyArgument() {
         setHandlerMethodRequestBodyArgument(this.method, this.user);
         assertEquals(this.user, getHandlerMethodRequestBodyArgument(this.method));
     }
 
     @Test
-    public void testSetHandlerMethodRequestBodyArgumentWithHandlerMethod() throws NoSuchMethodException {
+    void testSetHandlerMethodRequestBodyArgumentWithHandlerMethod() throws NoSuchMethodException {
         setHandlerMethodRequestBodyArgument(this.handlerMethod.getMethod(), this.user);
         assertEquals(this.user, getHandlerMethodRequestBodyArgument(this.handlerMethod));
     }
 
     @Test
-    public void testSetHandlerMethodRequestBodyArgumentWithNull() {
+    void testSetHandlerMethodRequestBodyArgumentWithNull() {
         setHandlerMethodRequestBodyArgument(null, this.user);
         setHandlerMethodRequestBodyArgument(this.method, null);
     }
 
     @Test
-    public void testGetHandlerMethodArgumentsWithHandlerMethod() {
+    void testGetHandlerMethodArgumentsWithHandlerMethod() {
         assertHandlerMethodArguments(getHandlerMethodArguments(this.handlerMethod));
     }
 
     @Test
-    public void testGetHandlerMethodArgumentsWithMethod() {
+    void testGetHandlerMethodArgumentsWithMethod() {
         assertHandlerMethodArguments(getHandlerMethodArguments(this.method));
     }
 
     @Test
-    public void testSetHandlerMethodReturnValue() {
+    void testSetHandlerMethodReturnValue() {
         setHandlerMethodReturnValue(this.method, this.user);
         assertEquals(this.user, getHandlerMethodReturnValue(this.method));
     }
 
     @Test
-    public void testGetHandlerMethodReturnValueWithHandlerMethod() {
+    void testGetHandlerMethodReturnValueWithHandlerMethod() {
         setHandlerMethodReturnValue(getHttpServletRequest(), this.method, this.user);
         assertEquals(this.user, getHandlerMethodReturnValue(this.handlerMethod));
     }
 
     @Test
-    public void testSetHandlerMethodReturnValueWithNull() {
+    void testSetHandlerMethodReturnValueWithNull() {
         setHandlerMethodReturnValue(null, this.user);
         setHandlerMethodReturnValue(this.method, null);
     }
 
     @Test
-    public void testIsControllerAdviceBeanType() {
+    void testIsControllerAdviceBeanType() {
         assertTrue(isControllerAdviceBeanType(WebMvcUtilsTest.class));
         assertFalse(isControllerAdviceBeanType(TestController.class));
     }
 
     @Test
-    public void testSetInitParameters() {
+    void testSetInitParameters() {
         MockServletContext servletContext = new MockServletContext();
         String parameterName = "names";
         setInitParameters(servletContext, parameterName, "a", "b", "c");
@@ -226,21 +226,21 @@ class WebMvcUtilsTest {
     }
 
     @Test
-    public void testSetGlobalInitializerClassInitParameter() {
+    void testSetGlobalInitializerClassInitParameter() {
         MockServletContext servletContext = new MockServletContext();
         setGlobalInitializerClassInitParameter(servletContext, INITIALIZER_CLASSES);
         assertEquals(arrayToCommaDelimitedString(getClassNames(INITIALIZER_CLASSES)), servletContext.getInitParameter(GLOBAL_INITIALIZER_CLASSES_PARAM));
     }
 
     @Test
-    public void testSetContextInitializerClassInitParameter() {
+    void testSetContextInitializerClassInitParameter() {
         MockServletContext servletContext = new MockServletContext();
         setContextInitializerClassInitParameter(servletContext, INITIALIZER_CLASSES);
         assertEquals(arrayToCommaDelimitedString(getClassNames(INITIALIZER_CLASSES)), servletContext.getInitParameter(CONTEXT_INITIALIZER_CLASSES_PARAM));
     }
 
     @Test
-    public void testSetFrameworkServletContextInitializerClassInitParameter() {
+    void testSetFrameworkServletContextInitializerClassInitParameter() {
         TestServletContext testServletContext = new TestServletContext();
         ServletRegistration servletRegistration = testServletContext.addServlet("dispatcherServlet", DispatcherServlet.class);
 
@@ -249,12 +249,12 @@ class WebMvcUtilsTest {
     }
 
     @Test
-    public void testSetFrameworkServletContextInitializerClassInitParameterWithoutServlet() {
+    void testSetFrameworkServletContextInitializerClassInitParameterWithoutServlet() {
         setFrameworkServletContextInitializerClassInitParameter(new MockServletContext(), INITIALIZER_CLASSES);
     }
 
     @Test
-    public void testSetFrameworkServletContextInitializerClassInitParameterWithoutFrameworkServlet() {
+    void testSetFrameworkServletContextInitializerClassInitParameterWithoutFrameworkServlet() {
         TestServletContext testServletContext = new TestServletContext();
         ServletRegistration servletRegistration = testServletContext.addServlet("testServlet", TestServlet.class);
         setFrameworkServletContextInitializerClassInitParameter(testServletContext, INITIALIZER_CLASSES);
@@ -262,7 +262,7 @@ class WebMvcUtilsTest {
     }
 
     @Test
-    public void testIsPageRenderRequest() {
+    void testIsPageRenderRequest() {
         ModelAndView modelAndView = new ModelAndView();
         assertFalse(isPageRenderRequest(modelAndView));
 
@@ -271,7 +271,7 @@ class WebMvcUtilsTest {
     }
 
     @Test
-    public void testIsPageRenderRequestWithNull() {
+    void testIsPageRenderRequestWithNull() {
         assertFalse(isPageRenderRequest(null));
     }
 

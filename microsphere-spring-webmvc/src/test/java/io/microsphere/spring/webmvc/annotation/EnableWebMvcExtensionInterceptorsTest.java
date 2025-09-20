@@ -16,7 +16,10 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
+import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
+import io.microsphere.spring.webmvc.test.EnableWebMvcExtensionInterceptorsTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -27,14 +30,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * {@link EnableWebMvcExtension} Test with interceptors
+ * {@link EnableWebMvcExtension} Test with {@link HandlerMethodInterceptor} and {@link HandlerMethodArgumentInterceptor}.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionInterceptorsTest.class
+        EnableWebMvcExtensionInterceptorsTest.class,
+        EnableWebMvcExtensionInterceptorsTestConfig.class
 })
 @EnableWebMvcExtension(handlerInterceptors = {
         IdempotentAnnotatedMethodHandlerInterceptor.class
@@ -42,8 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class EnableWebMvcExtensionInterceptorsTest extends AbstractEnableWebMvcExtensionTest {
 
     @Test
-    @Override
-    public void test() throws Exception {
+    public void testWebEndpoints() throws Exception {
         this.mockMvc.perform(get("/test/greeting/hello").header(TOKEN_HEADER_NAME, MOCK_TOKEN_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Greeting : hello"));

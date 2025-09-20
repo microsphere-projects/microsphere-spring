@@ -23,11 +23,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.springframework.context.annotation.AdviceMode.PROXY;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
@@ -62,8 +62,8 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  * using the AspectJ mode enables more comprehensive interception compared to the default proxy-based approach.
  * </p>
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(TYPE)
+@Retention(RUNTIME)
 @Documented
 @EnableCaching
 @Import(TTLCachingConfiguration.class)

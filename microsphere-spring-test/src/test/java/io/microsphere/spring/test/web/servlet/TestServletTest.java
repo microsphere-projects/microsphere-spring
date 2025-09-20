@@ -51,9 +51,9 @@ class TestServletTest {
 
     @BeforeEach
     void setUp() {
-        this.testServlet = new TestServlet();
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
+        this.testServlet = new TestServlet();
     }
 
     @Test

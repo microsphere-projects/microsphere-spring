@@ -45,7 +45,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see BeanUtils
- * @since 2017.01.13
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 class BeanUtilsTest {
