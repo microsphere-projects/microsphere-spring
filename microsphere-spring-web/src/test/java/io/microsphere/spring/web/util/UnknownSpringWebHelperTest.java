@@ -93,6 +93,12 @@ public class UnknownSpringWebHelperTest {
     }
 
     @Test
+    public void testGetMatrixVariables() {
+        assertNull(helper.getMatrixVariables(this.request));
+        assertNull(helper.getMatrixVariables(null));
+    }
+
+    @Test
     public void testGetProducibleMediaTypes() {
         assertNull(helper.getProducibleMediaTypes(this.request));
         assertNull(helper.getProducibleMediaTypes(null));
