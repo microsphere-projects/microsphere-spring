@@ -20,10 +20,11 @@ package io.microsphere.spring.guice.annotation;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enables Google Guice features for the Spring application
@@ -31,8 +32,8 @@ import java.lang.annotation.Target;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(TYPE)
+@Retention(RUNTIME)
 @Documented
 @Import(value = {
         GuiceConfiguration.class

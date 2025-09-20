@@ -32,7 +32,8 @@ import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.collection.CollectionUtils.size;
-import static io.microsphere.collection.SetUtils.of;
+import static io.microsphere.collection.Sets.ofSet;
+import static java.lang.Boolean.TRUE;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
@@ -54,7 +55,7 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
     private List<HandlerInterceptor> interceptors;
 
     public LazyCompositeHandlerInterceptor(Class<? extends HandlerInterceptor>... interceptorClasses) {
-        this.interceptorClasses = of(interceptorClasses);
+        this.interceptorClasses = ofSet(interceptorClasses);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
     private void forEach(ThrowableConsumer<HandlerInterceptor> interceptorConsumer) throws Exception {
         forEach(interceptor -> {
             interceptorConsumer.accept(interceptor);
-            return Boolean.TRUE;
+            return TRUE;
         });
     }
 
@@ -120,6 +121,6 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
                 }
             }
         }
-        return Boolean.TRUE;
+        return TRUE;
     }
 }

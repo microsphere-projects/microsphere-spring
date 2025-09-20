@@ -19,7 +19,7 @@ package io.microsphere.spring.webmvc.annotation;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
- * {@link EnableWebMvcExtension} Test
+ * {@link EnableWebMvcExtension} Test when all status are default.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see EnableWebMvcExtension
@@ -28,10 +28,6 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = {
         EnableWebMvcExtensionTest.class
 })
-@EnableWebMvcExtension(
-        registerHandlerInterceptors = true,
-        storeRequestBodyArgument = true,
-        storeResponseBodyReturnValue = true
-)
+@EnableWebMvcExtension
 public class EnableWebMvcExtensionTest extends AbstractEnableWebMvcExtensionTest {
 }

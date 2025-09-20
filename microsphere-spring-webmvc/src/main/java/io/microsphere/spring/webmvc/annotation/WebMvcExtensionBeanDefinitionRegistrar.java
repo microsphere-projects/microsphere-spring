@@ -22,6 +22,7 @@ import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
 import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.advice.StoringResponseBodyReturnValueAdvice;
+import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
@@ -38,7 +39,7 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotatio
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
 import static io.microsphere.util.ArrayUtils.arrayEquals;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
-import static io.microsphere.util.ArrayUtils.of;
+import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
 
 /**
@@ -58,7 +59,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
     public static final String ANNOTATION_CLASS_NAME = ANNOTATION_CLASS.getName();
 
-    private static final Class<? extends HandlerInterceptor>[] ALL_HANDLER_INTERCEPTOR_CLASSES = of(HandlerInterceptor.class);
+    private static final Class<? extends HandlerInterceptor>[] ALL_HANDLER_INTERCEPTOR_CLASSES = ofArray(HandlerInterceptor.class);
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -75,6 +76,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
         registerStoringResponseBodyReturnValueAdvice(attributes, registry);
 
+        registerReversedProxyHandlerMapping(attributes, registry);
     }
 
     private void registerWebEndpointMappingRegistrar(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
@@ -83,9 +85,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
             registerBeanDefinition(registry, ServletWebEndpointMappingResolver.class);
             registerBeanDefinition(registry, HandlerMappingWebEndpointMappingResolver.class);
         }
-        if (logger.isTraceEnabled()) {
-            logger.trace("@EnableWebMvcExtension.registerWebEndpointMappings = {}", registerWebEndpointMappings);
-        }
+        log("@EnableWebMvcExtension.registerWebEndpointMappings = {}", registerWebEndpointMappings);
     }
 
     private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
@@ -94,13 +94,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
             String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
             registerBeanDefinition(registry, beanName, InterceptingHandlerMethodProcessor.class);
         }
-        if (logger.isTraceEnabled()) {
-            logger.trace("@EnableWebMvcExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
-        }
-    }
-
-    private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
-        return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
+        log("@EnableWebMvcExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
     }
 
     private void registerHandlerInterceptors(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
@@ -117,10 +111,8 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
                 (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("handlerInterceptors");
         Class<? extends HandlerInterceptor>[] handlerInterceptorClasses = registerHandlerInterceptors ?
                 ALL_HANDLER_INTERCEPTOR_CLASSES : handlerInterceptors;
-        if (logger.isTraceEnabled()) {
-            logger.trace("@EnableWebMvcExtension.registerHandlerInterceptors() = {} , handlerInterceptors() = {} , handlerInterceptorClasses = {}",
-                    registerHandlerInterceptors, handlerInterceptors, handlerInterceptorClasses);
-        }
+        log("@EnableWebMvcExtension.registerHandlerInterceptors() = {} , handlerInterceptors() = {} , handlerInterceptorClasses = {}",
+                registerHandlerInterceptors, handlerInterceptors, handlerInterceptorClasses);
         return handlerInterceptorClasses;
     }
 
@@ -149,9 +141,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         if (storeRequestBodyArgument) {
             registerBeanDefinition(registry, StoringRequestBodyArgumentAdvice.class);
         }
-        if (logger.isTraceEnabled()) {
-            logger.trace("@EnableWebMvcExtension.storeRequestBodyArgument() = {}", storeRequestBodyArgument);
-        }
+        log("@EnableWebMvcExtension.storeRequestBodyArgument() = {}", storeRequestBodyArgument);
     }
 
     private void registerStoringResponseBodyReturnValueAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
@@ -159,8 +149,24 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         if (storeResponseBodyReturnValue) {
             registerBeanDefinition(registry, StoringResponseBodyReturnValueAdvice.class);
         }
+        log("@EnableWebMvcExtension.storeResponseBodyReturnValue() = {}", storeResponseBodyReturnValue);
+    }
+
+    private void registerReversedProxyHandlerMapping(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean reversedProxyHandlerMapping = attributes.getBoolean("reversedProxyHandlerMapping");
+        if (reversedProxyHandlerMapping) {
+            registerBeanDefinition(registry, ReversedProxyHandlerMapping.class);
+        }
+        log("@EnableWebMvcExtension.reversedProxyHandlerMapping() = {}", reversedProxyHandlerMapping);
+    }
+
+    private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
+        return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
+    }
+
+    private void log(String messagePattern, Object... args) {
         if (logger.isTraceEnabled()) {
-            logger.trace("@EnableWebMvcExtension.storeResponseBodyReturnValue() = {}", storeResponseBodyReturnValue);
+            logger.trace(messagePattern, args);
         }
     }
 }

@@ -27,7 +27,9 @@ import java.util.Collection;
 
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestFilter;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolverTest.assertWebEndpointMappings;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link WebEndpointMappingRegistrar} Test
@@ -63,5 +65,14 @@ public class WebEndpointMappingRegistrarTest {
         WebEndpointMappingRegistry registry = this.context.getBean(WebEndpointMappingRegistry.class);
         Collection<WebEndpointMapping> webEndpointMappings = registry.getWebEndpointMappings();
         assertWebEndpointMappings(webEndpointMappings);
+    }
+
+    @Test
+    public void testWithoutWebEndpointMapping() {
+        testInSpringContainer(context -> {
+            WebEndpointMappingRegistry registry = context.getBean(WebEndpointMappingRegistry.class);
+            Collection<WebEndpointMapping> webEndpointMappings = registry.getWebEndpointMappings();
+            assertTrue(webEndpointMappings.isEmpty());
+        }, SimpleWebEndpointMappingRegistry.class, NoOpWebEndpointMappingResolver.class, WebEndpointMappingRegistrar.class);
     }
 }

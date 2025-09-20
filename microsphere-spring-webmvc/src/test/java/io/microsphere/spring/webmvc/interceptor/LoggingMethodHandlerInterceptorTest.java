@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc.annotation;
 
-import org.springframework.test.context.ContextConfiguration;
+package io.microsphere.spring.webmvc.interceptor;
+
+
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * {@link EnableWebMvcExtension} Test with defaults
+ * {@link LoggingMethodHandlerInterceptor} Test
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see EnableWebMvcExtension
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see LoggingMethodHandlerInterceptor
  * @since 1.0.0
  */
-@ContextConfiguration(classes = {
-        EnableWebMvcExtensionDefaultsTest.class
-})
-@EnableWebMvcExtension
-public class EnableWebMvcExtensionDefaultsTest extends AbstractEnableWebMvcExtensionTest {
+public class LoggingMethodHandlerInterceptorTest extends AbstractHandlerInterceptorTest {
+
+    @Override
+    protected HandlerInterceptor createHandlerInterceptor() {
+        return new LoggingMethodHandlerInterceptor();
+    }
 }

@@ -26,7 +26,6 @@ import java.lang.reflect.Field;
 import static io.microsphere.reflect.FieldUtils.findField;
 import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver.ENABLED_PROPERTY_NAME;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
-import static io.microsphere.spring.core.SpringVersion.SPRING_5_0;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -56,8 +55,6 @@ import static org.junit.Assert.assertSame;
         }
 )
 public class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolvingListener, EnvironmentAware {
-
-    private static final boolean isGESpring5 = CURRENT.gt(SPRING_5_0);
 
     private static final boolean isGESpring5_1 = CURRENT.gt(SPRING_5_1);
 

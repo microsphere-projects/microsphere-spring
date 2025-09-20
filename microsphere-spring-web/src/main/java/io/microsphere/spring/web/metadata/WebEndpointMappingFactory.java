@@ -60,6 +60,7 @@ public interface WebEndpointMappingFactory<E> {
      *                 </ul>
      * @return <code>WebEndpointMapping</code> if present
      */
+    @Nonnull
     Optional<WebEndpointMapping<E>> create(E endpoint);
 
     /**

@@ -12,6 +12,7 @@ import org.springframework.web.method.HandlerMethod;
 import java.lang.reflect.Method;
 
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
+import static java.lang.String.valueOf;
 import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 
 /**
@@ -303,7 +304,7 @@ public abstract class RequestAttributesUtils {
     }
 
     static String getMethodInfo(Method method) {
-        return String.valueOf(method);
+        return valueOf(method);
     }
 
     private RequestAttributesUtils() {

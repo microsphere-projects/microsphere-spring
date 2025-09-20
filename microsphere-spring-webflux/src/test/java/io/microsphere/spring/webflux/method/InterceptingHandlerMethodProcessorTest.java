@@ -22,7 +22,6 @@ import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,7 @@ import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.core.MethodParameter.forExecutable;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 import static reactor.core.publisher.Mono.just;
 
@@ -54,17 +54,13 @@ import static reactor.core.publisher.Mono.just;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        InterceptingHandlerMethodProcessorTest.class,
-        RouterFunctionTestConfig.class
+        InterceptingHandlerMethodProcessorTest.class
 })
 @EnableWebFluxExtension
 class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtensionTest {
 
     @Autowired
     private InterceptingHandlerMethodProcessor processor;
-
-    @Autowired
-    private TestController testController;
 
     private Method greetingMethod;
 
@@ -76,7 +72,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     void setUp() {
         this.greetingMethod = findMethod(TestController.class, "greeting", String.class);
         this.greetingHandlerMethod = new HandlerMethod(testController, greetingMethod);
-        this.greetingMethodParameter0 = new MethodParameter(greetingMethod, 0);
+        this.greetingMethodParameter0 = forExecutable(greetingMethod, 0);
     }
 
     @Test
@@ -87,7 +83,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Test
     void testSupportsParameterWithUnsupportedMethodParameter() {
         Method helloWorldMethod = findMethod(TestController.class, "helloWorld");
-        MethodParameter methodParameter = new MethodParameter(helloWorldMethod, -1);
+        MethodParameter methodParameter = forExecutable(helloWorldMethod, -1);
         assertFalse(processor.supportsParameter(methodParameter));
     }
 
@@ -119,7 +115,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Test
     void testSupportsWithUnsupportedHandlerResult() {
         Method method = findMethod(Object.class, "hashCode");
-        HandlerResult handlerResult = new HandlerResult(method, null, new MethodParameter(method, -1));
+        HandlerResult handlerResult = new HandlerResult(method, null, forExecutable(method, -1));
         assertFalse(processor.supports(handlerResult));
     }
 

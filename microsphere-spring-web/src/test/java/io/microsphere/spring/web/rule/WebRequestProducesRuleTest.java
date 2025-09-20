@@ -35,7 +35,12 @@ import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebReques
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 /**
  * {@link WebRequestProducesRule} Test
@@ -60,21 +65,45 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         assertTrue(rule1.getContent().isEmpty());
 
         // Constructor with parameters
-        WebRequestProducesRule rule2 = new WebRequestProducesRule("application/json", "text/plain");
+        WebRequestProducesRule rule2 = new WebRequestProducesRule(APPLICATION_JSON_VALUE, TEXT_PLAIN_VALUE);
         assertEquals(2, rule2.getContent().size());
     }
 
     // Test getToStringInfix() method
     @Test
-    public void testGetToStringInfix() {
+    public void doTestGetToStringInfix() {
         WebRequestProducesRule rule = new WebRequestProducesRule();
         assertEquals(" || ", rule.getToStringInfix());
+    }
+
+    @Override
+    protected void doTestEquals() {
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestProducesRule(APPLICATION_JSON_VALUE));
+
+        assertNotEquals(rule, new WebRequestPattensRule(APPLICATION_XML_VALUE));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
+    }
+
+    @Override
+    protected void doTestHashCode() {
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+        assertEquals(rule.hashCode(), rule.getContent().hashCode());
+    }
+
+    @Override
+    protected void doTestToString() {
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
+        assertEquals("[application/json]", rule.toString());
     }
 
     // Test pre-flight request returns false
     @Test
     public void testPreFlightRequestReturnsFalse() {
-        WebRequestProducesRule rule = new WebRequestProducesRule("application/json");
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
 
         // Create pre-flight request (OPTIONS method with Origin header)
         MockHttpServletRequest request = new MockHttpServletRequest("OPTIONS", "/test");
@@ -88,7 +117,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     @Test
     public void testEmptyExpressionsReturnFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule();
-        NativeWebRequest request = createWebRequestWithHeaders(singletonMap("Accept", "application/json"));
+        NativeWebRequest request = createWebRequestWithHeaders(singletonMap(ACCEPT, APPLICATION_JSON_VALUE));
         assertFalse(rule.matches(request));
     }
 
@@ -104,22 +133,22 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         };
 
         WebRequestProducesRule rule = new WebRequestProducesRule(
-                new String[]{"application/json"},
+                new String[]{APPLICATION_JSON_VALUE},
                 null,
                 exceptionManager
         );
 
-        NativeWebRequest request = createWebRequestWithHeaders(singletonMap("Accept", "invalid"));
+        NativeWebRequest request = createWebRequestWithHeaders(singletonMap(ACCEPT, "invalid"));
         assertFalse(rule.matches(request));
     }
 
     // Test matching expressions return false
     @Test
     public void testMatchingExpressionsReturnFalse() {
-        WebRequestProducesRule rule = new WebRequestProducesRule("application/json", "text/plain");
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE, TEXT_PLAIN_VALUE);
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/json"); // Matches first expression
+        headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Matches first expression
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
         assertFalse(rule.matches(request));
@@ -128,10 +157,10 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     // Test wildcard media type returns false
     @Test
     public void testWildcardMediaTypeReturnsFalse() {
-        WebRequestProducesRule rule = new WebRequestProducesRule("application/xml");
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "*/*"); // Wildcard media type
+        headers.put(ACCEPT, "*/*"); // Wildcard media type
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
         assertFalse(rule.matches(request));
@@ -144,10 +173,10 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     // Test successful match returns true
     @Test
     public void testSuccessfulMatchReturnsTrue() {
-        WebRequestProducesRule rule = new WebRequestProducesRule("application/xml");
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/json"); // Doesn't match rule expressions
+        headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Doesn't match rule expressions
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
         assertTrue(rule.matches(request));
@@ -156,19 +185,19 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     // Test media type caching
     @Test
     public void testMediaTypeCaching() {
-        WebRequestProducesRule rule = new WebRequestProducesRule("application/json");
+        WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
 
         // Create request with Accept header
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Accept", "application/json");
+        request.addHeader(ACCEPT, APPLICATION_JSON_VALUE);
         NativeWebRequest webRequest = new ServletWebRequest(request);
 
         // First call - should parse and cache
         boolean firstResult = rule.matches(webRequest);
 
         // Modify request to have different Accept header (shouldn't affect cached value)
-        request.removeHeader("Accept");
-        request.addHeader("Accept", "text/plain");
+        request.removeHeader(ACCEPT);
+        request.addHeader(ACCEPT, TEXT_PLAIN_VALUE);
 
         // Second call - should use cached media types
         boolean secondResult = rule.matches(webRequest);
