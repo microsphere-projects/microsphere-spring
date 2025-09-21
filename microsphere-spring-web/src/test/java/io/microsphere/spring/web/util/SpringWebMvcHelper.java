@@ -20,20 +20,16 @@ package io.microsphere.spring.web.util;
 import io.microsphere.annotation.Nonnull;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.core.MethodParameter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodArgumentResolver;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_MVC;
 import static io.microsphere.spring.web.util.WebRequestUtils.METHOD_HEADER_NAME;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
@@ -53,10 +49,6 @@ import static org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIAB
  */
 public class SpringWebMvcHelper implements SpringWebHelper {
 
-    private static final Method readWithMessageConvertersMethod = findMethod(AbstractMessageConverterMethodArgumentResolver.class, "readWithMessageConverters", NativeWebRequest.class, MethodParameter.class, Type.class);
-
-    private static final MethodParameter typeMethodParameter = new MethodParameter(readWithMessageConvertersMethod, 2);
-
     @Override
     public String getMethod(NativeWebRequest request) {
         String method = request.getHeader(METHOD_HEADER_NAME);
@@ -65,6 +57,20 @@ public class SpringWebMvcHelper implements SpringWebHelper {
             method = httpServletRequest.getMethod();
         }
         return method;
+    }
+
+    @Override
+    public void setHeader(NativeWebRequest request, String headerName, String headerValue) {
+        HttpServletResponse httpServletResponse = getHttpServletResponse(request);
+        httpServletResponse.setHeader(headerName, headerValue);
+    }
+
+    @Override
+    public void addHeader(NativeWebRequest request, String headerName, String... headerValues) {
+        HttpServletResponse httpServletResponse = getHttpServletResponse(request);
+        for (String headerValue : headerValues) {
+            httpServletResponse.addHeader(headerName, headerValue);
+        }
     }
 
     @Override
@@ -79,6 +85,13 @@ public class SpringWebMvcHelper implements SpringWebHelper {
             }
         }
         return null;
+    }
+
+    @Override
+    public void addCookie(NativeWebRequest request, String cookieName, String cookieValue) {
+        HttpServletResponse response = getHttpServletResponse(request);
+        Cookie cookie = new Cookie(cookieName, cookieValue);
+        response.addCookie(cookie);
     }
 
     @Override
@@ -117,9 +130,20 @@ public class SpringWebMvcHelper implements SpringWebHelper {
     }
 
     @Nonnull
+    protected HttpServletResponse getHttpServletResponse(NativeWebRequest request) {
+        ServletWebRequest servletWebRequest = getServletWebRequest(request);
+        return servletWebRequest.getResponse();
+    }
+
+    @Nonnull
     protected HttpServletRequest getHttpServletRequest(NativeWebRequest request) {
+        ServletWebRequest servletWebRequest = getServletWebRequest(request);
+        return servletWebRequest.getRequest();
+    }
+
+    protected ServletWebRequest getServletWebRequest(NativeWebRequest request) {
         if (request instanceof ServletWebRequest) {
-            return (HttpServletRequest) request.getNativeRequest();
+            return (ServletWebRequest) request;
         }
         throw new IllegalArgumentException("The NativeWebRequest is not a ServletWebRequest");
     }
