@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -33,6 +34,7 @@ import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebReques
 import static io.microsphere.spring.web.util.RequestSourceTest.testName;
 import static io.microsphere.spring.web.util.RequestSourceTest.testValue;
 import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
+import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static io.microsphere.spring.web.util.WebRequestUtils.addHeader;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingHandler;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingPattern;
@@ -194,6 +196,15 @@ class WebRequestUtilsTest {
     void testGetCookieValue() {
         NativeWebRequest request = createWebRequest(r -> r.setCookies(new Cookie(testName, testValue)));
         assertEquals(testValue, getCookieValue(request, testName));
+    }
+
+    @Test
+    void testAddCookie() {
+        NativeWebRequest request = createWebRequest();
+        addCookie(request, testName, testValue);
+        MockHttpServletResponse response = request.getNativeResponse(MockHttpServletResponse.class);
+        Cookie[] cookies = response.getCookies();
+        assertEquals(testValue, cookies[0].getValue());
     }
 
     @Test
