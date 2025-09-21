@@ -43,7 +43,7 @@ import static io.microsphere.spring.web.util.WebScope.REQUEST;
 import static io.microsphere.spring.web.util.WebScope.SESSION;
 
 /**
- * The source of the request.
+ * The source from the web.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see RequestAttribute
@@ -58,14 +58,14 @@ import static io.microsphere.spring.web.util.WebScope.SESSION;
  * @see org.springframework.http.server.reactive.ServerHttpRequest
  * @since 1.0.0
  */
-public enum RequestSource {
+public enum WebSource {
 
     /**
-     * The scope of the request attribute
+     * The source from the request attribute
      *
      * @see RequestAttribute
      */
-    ATTRIBUTE {
+    REQUEST_ATTRIBUTE {
         @Override
         public String getValue(NativeWebRequest request, String name) {
             return REQUEST.getAttribute(request, name);
@@ -73,7 +73,7 @@ public enum RequestSource {
     },
 
     /**
-     * The scope of the session attribute
+     * The source from the session attribute
      *
      * @see SessionAttribute
      */
@@ -85,11 +85,11 @@ public enum RequestSource {
     },
 
     /**
-     * The scope of the request parameter
+     * The source from the request parameter
      *
      * @see RequestParam
      */
-    PARAMETER {
+    REQUEST_PARAMETER {
         @Override
         public String getValue(NativeWebRequest request, String name) {
             return request.getParameter(name);
@@ -97,11 +97,11 @@ public enum RequestSource {
     },
 
     /**
-     * The scope of the request header
+     * The source from the request header
      *
      * @see RequestHeader
      */
-    HEADER {
+    REQUEST_HEADER {
         @Override
         public String getValue(NativeWebRequest request, String name) {
             return request.getHeader(name);
@@ -109,11 +109,11 @@ public enum RequestSource {
     },
 
     /**
-     * The scope of the request cookie
+     * The source from the request cookie
      *
      * @see CookieValue
      */
-    COOKIE {
+    REQUEST_COOKIE {
         @Override
         public String getValue(NativeWebRequest request, String name) {
             return getCookieValue(request, name);
@@ -121,11 +121,11 @@ public enum RequestSource {
     },
 
     /**
-     * The scope of the request body
+     * The source from the request body
      *
      * @see RequestBody
      */
-    BODY {
+    REQUEST_BODY {
         @Override
         public String getValue(NativeWebRequest request, String name) {
             Map<String, Object> requestBody = getRequestBody(request, Map.class);
@@ -134,7 +134,7 @@ public enum RequestSource {
     },
 
     /**
-     * The scope of the request path variable
+     * The source from the request path variable
      *
      * @see PathVariable
      */
@@ -147,7 +147,7 @@ public enum RequestSource {
     },
 
     /**
-     * The scope of the request matrix variable
+     * The source from the request matrix variable
      *
      * @see MatrixVariable
      */
@@ -174,7 +174,7 @@ public enum RequestSource {
      * Get the value of the request by the specified name
      *
      * @param request {@link NativeWebRequest}
-     * @param name    the name of request value
+     * @param name   the name of request value
      * @return <code>null</code> if not found
      */
     @Nullable

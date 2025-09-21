@@ -107,7 +107,7 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
      * @see #testUpdatePerson()
      */
     @Test
-    void testWebEndpoints() throws Exception {
+    protected void testWebEndpoints() throws Exception {
         this.testHelloWorld();
         this.testGreeting();
         this.testUser();

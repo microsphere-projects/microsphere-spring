@@ -16,19 +16,22 @@
  */
 package io.microsphere.spring.web.idempotent;
 
-import io.microsphere.spring.web.util.RequestSource;
-import io.microsphere.spring.web.util.ResponseTarget;
+import io.microsphere.spring.web.util.WebSource;
+import io.microsphere.spring.web.util.WebTarget;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static io.microsphere.spring.web.util.RequestSource.PARAMETER;
-import static io.microsphere.spring.web.util.ResponseTarget.HEADER;
+import static io.microsphere.spring.web.util.WebSource.REQUEST_HEADER;
+import static io.microsphere.spring.web.util.WebTarget.RESPONSE_HEADER;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Idempotent Annotation
@@ -52,18 +55,25 @@ public @interface Idempotent {
     String tokenName() default DEFAULT_TOKEN_NAME;
 
     /**
+     * The request methods for idempotent protection.
+     *
+     * @return {@link RequestMethod#POST} and {@link RequestMethod#PATCH} as default
+     */
+    RequestMethod[] method() default {POST, PATCH};
+
+    /**
      * The source of the token value
      *
-     * @return {@link RequestSource#PARAMETER} as default
-     * @see RequestSource
+     * @return {@link WebSource#REQUEST_HEADER} as default
+     * @see WebSource
      */
-    RequestSource source() default PARAMETER;
+    WebSource source() default REQUEST_HEADER;
 
     /**
      * The target of the token value
      *
-     * @return {@link ResponseTarget#HEADER} as default
-     * @see ResponseTarget
+     * @return {@link WebTarget#RESPONSE_HEADER} as default
+     * @see WebTarget
      */
-    ResponseTarget target() default HEADER;
+    WebTarget target() default RESPONSE_HEADER;
 }

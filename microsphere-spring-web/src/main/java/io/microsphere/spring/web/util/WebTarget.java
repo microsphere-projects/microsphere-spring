@@ -24,24 +24,24 @@ import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static io.microsphere.spring.web.util.WebRequestUtils.setHeader;
 
 /**
- * The target of response.
+ * The target of the web.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResponseBody
  * @see org.springframework.http.ResponseCookie
  * @since 1.0.0
  */
-public enum ResponseTarget {
+public enum WebTarget {
 
     /**
      * The body of response
      */
-    BODY,
+    RESPONSE_BODY,
 
     /*
      * The header of response
      */
-    HEADER {
+    RESPONSE_HEADER {
         @Override
         public void writeValue(NativeWebRequest request, String name, String value) {
             setHeader(request, name, value);
@@ -51,7 +51,7 @@ public enum ResponseTarget {
     /**
      * The cookie of response Value
      */
-    COOKIE {
+    RESPONSE_COOKIE {
         @Override
         public void writeValue(NativeWebRequest request, String name, String value) {
             addCookie(request, name, value);

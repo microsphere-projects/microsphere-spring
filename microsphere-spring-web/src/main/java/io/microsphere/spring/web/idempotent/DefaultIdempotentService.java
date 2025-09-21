@@ -17,7 +17,7 @@
 
 package io.microsphere.spring.web.idempotent;
 
-import io.microsphere.spring.web.util.RequestValueSource;
+import io.microsphere.spring.web.util.WebSource;
 import io.microsphere.spring.web.util.WebScope;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -36,7 +36,7 @@ public class DefaultIdempotentService implements IdempotentService {
     @Override
     public String getToken(NativeWebRequest request, Idempotent idempotent) {
         String tokenName = idempotent.tokenName();
-        RequestValueSource source = idempotent.source();
+        WebSource source = idempotent.source();
         return source.getValue(request, tokenName);
     }
 

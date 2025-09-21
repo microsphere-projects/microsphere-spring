@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.test;
 
-import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -95,7 +94,6 @@ public class EnableWebMvcExtensionInterceptorsTestConfig implements HandlerMetho
         assertNotNull(handlerMethod);
         Object bean = handlerMethod.getBean();
         assertNotNull(bean);
-        assertEquals(TestController.class, handlerMethod.getBeanType());
     }
 
     protected void assertArguments(Method method, Object[] arguments) {

@@ -26,23 +26,23 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
-import static io.microsphere.spring.web.util.RequestSourceTest.testName;
-import static io.microsphere.spring.web.util.RequestSourceTest.testValue;
-import static io.microsphere.spring.web.util.ResponseTarget.BODY;
-import static io.microsphere.spring.web.util.ResponseTarget.COOKIE;
-import static io.microsphere.spring.web.util.ResponseTarget.HEADER;
+import static io.microsphere.spring.web.util.WebSourceTest.testName;
+import static io.microsphere.spring.web.util.WebSourceTest.testValue;
+import static io.microsphere.spring.web.util.WebTarget.RESPONSE_BODY;
+import static io.microsphere.spring.web.util.WebTarget.RESPONSE_COOKIE;
+import static io.microsphere.spring.web.util.WebTarget.RESPONSE_HEADER;
 import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * {@link ResponseTarget} Test
+ * {@link WebTarget} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ResponseTarget
+ * @see WebTarget
  * @since 1.0.0
  */
-class ResponseTargetTest {
+class WebTargetTest {
 
     private NativeWebRequest request;
 
@@ -53,19 +53,19 @@ class ResponseTargetTest {
 
     @Test
     void testWriteValueForBODY() {
-        assertThrows(UnsupportedOperationException.class, () -> BODY.writeValue(request, testName, testValue));
+        assertThrows(UnsupportedOperationException.class, () -> RESPONSE_BODY.writeValue(request, testName, testValue));
     }
 
     @Test
     void testWriteValueForHEADER() {
-        HEADER.writeValue(request, testName, testValue);
+        RESPONSE_HEADER.writeValue(request, testName, testValue);
         HttpServletResponse response = request.getNativeResponse(HttpServletResponse.class);
         assertEquals(testValue, response.getHeader(testName));
     }
 
     @Test
     void testWriteValueForCOOKIE() {
-        COOKIE.writeValue(request, testName, testValue);
+        RESPONSE_COOKIE.writeValue(request, testName, testValue);
         addCookie(request, testName, testValue);
         MockHttpServletResponse response = request.getNativeResponse(MockHttpServletResponse.class);
         Cookie[] cookies = response.getCookies();
