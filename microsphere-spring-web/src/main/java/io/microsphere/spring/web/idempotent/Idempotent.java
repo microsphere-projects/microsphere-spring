@@ -16,14 +16,16 @@
  */
 package io.microsphere.spring.web.idempotent;
 
-import io.microsphere.spring.web.util.RequestValueSource;
+import io.microsphere.spring.web.util.RequestSource;
+import io.microsphere.spring.web.util.ResponseTarget;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static io.microsphere.spring.web.util.RequestValueSource.PARAMETER;
+import static io.microsphere.spring.web.util.RequestSource.PARAMETER;
+import static io.microsphere.spring.web.util.ResponseTarget.HEADER;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -52,8 +54,16 @@ public @interface Idempotent {
     /**
      * The source of the token value
      *
-     * @return {@link RequestValueSource#PARAMETER} as default
-     * @see RequestValueSource
+     * @return {@link RequestSource#PARAMETER} as default
+     * @see RequestSource
      */
-    RequestValueSource source() default PARAMETER;
+    RequestSource source() default PARAMETER;
+
+    /**
+     * The target of the token value
+     *
+     * @return {@link ResponseTarget#HEADER} as default
+     * @see ResponseTarget
+     */
+    ResponseTarget target() default HEADER;
 }
