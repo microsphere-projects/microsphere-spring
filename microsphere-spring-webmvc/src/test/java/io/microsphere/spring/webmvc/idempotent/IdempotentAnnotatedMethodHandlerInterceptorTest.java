@@ -24,10 +24,10 @@ import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.EnableWebMvcExtensionInterceptorsTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RestController
 class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEnableWebMvcExtensionTest {
 
-    @GetMapping("/idempotent")
+    @PostMapping("/idempotent")
     @Idempotent
     public String idempotent() {
         return "idempotent";
@@ -57,7 +57,7 @@ class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEnableWebM
     @Test
     protected void testWebEndpoints() throws Exception {
         super.testWebEndpoints();
-        this.mockMvc.perform(get("/idempotent"))
+        this.mockMvc.perform(post("/idempotent"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(this.idempotent()));
     }

@@ -38,6 +38,8 @@ import static io.microsphere.spring.web.util.WebTarget.RESPONSE_HEADER;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -56,7 +58,7 @@ class IdempotentAttributesTest {
         String tokenName = attributes.getTokenName();
         assertEquals(DEFAULT_TOKEN_NAME, tokenName);
 
-        RequestMethod[] method = attributes.getMethod();
+        RequestMethod[] method = attributes.getValidatedMethod();
         assertArrayEquals(ofArray(POST, PATCH), method);
 
         WebSource source = attributes.getSource();
@@ -64,6 +66,8 @@ class IdempotentAttributesTest {
 
         WebTarget target = attributes.getTarget();
         assertEquals(RESPONSE_HEADER, target);
+
+        assertValidatedMethods(attributes);
     }
 
     @Test
@@ -82,7 +86,7 @@ class IdempotentAttributesTest {
         tokenName = attributes.getTokenName();
         assertEquals("token-1", tokenName);
 
-        RequestMethod[] method = attributes.getMethod();
+        RequestMethod[] method = attributes.getValidatedMethod();
         assertArrayEquals(ofArray(POST, PATCH), method);
 
         WebSource source = attributes.getSource();
@@ -90,6 +94,8 @@ class IdempotentAttributesTest {
 
         WebTarget target = attributes.getTarget();
         assertEquals(RESPONSE_HEADER, target);
+
+        assertValidatedMethods(attributes);
     }
 
     @Test
@@ -98,7 +104,7 @@ class IdempotentAttributesTest {
         String tokenName = attributes.getTokenName();
         assertEquals(DEFAULT_TOKEN_NAME, tokenName);
 
-        RequestMethod[] method = attributes.getMethod();
+        RequestMethod[] method = attributes.getValidatedMethod();
         assertArrayEquals(ofArray(POST, PATCH), method);
 
         WebSource source = attributes.getSource();
@@ -106,6 +112,8 @@ class IdempotentAttributesTest {
 
         WebTarget target = attributes.getTarget();
         assertEquals(RESPONSE_COOKIE, target);
+
+        assertValidatedMethods(attributes);
     }
 
     private IdempotentAttributes createAttributes(String methodName) {
@@ -130,5 +138,11 @@ class IdempotentAttributesTest {
 
     @Idempotent(source = REQUEST_PARAMETER, target = RESPONSE_COOKIE)
     private void sourceAndTargetAttributes() {
+    }
+
+    private void assertValidatedMethods(IdempotentAttributes attributes) {
+        assertTrue(attributes.isValidatedMethod("POST"));
+        assertTrue(attributes.isValidatedMethod("PATCH"));
+        assertFalse(attributes.isValidatedMethod("PUT"));
     }
 }

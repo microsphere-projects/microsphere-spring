@@ -20,19 +20,23 @@ import io.microsphere.annotation.Nonnull;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.idempotent.DefaultIdempotentService;
 import io.microsphere.spring.web.idempotent.Idempotent;
+import io.microsphere.spring.web.idempotent.IdempotentAttributes;
 import io.microsphere.spring.web.idempotent.IdempotentService;
 import io.microsphere.spring.webmvc.interceptor.AnnotatedMethodHandlerInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
+import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
 /**
@@ -41,19 +45,28 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethodHandlerInterceptor<Idempotent> implements ApplicationListener<ContextRefreshedEvent> {
+public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethodHandlerInterceptor<Idempotent> implements
+        EnvironmentAware, ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger logger = getLogger(IdempotentAnnotatedMethodHandlerInterceptor.class);
 
     @Nonnull
     private IdempotentService idempotentService;
 
+    private Environment environment;
+
     @Override
     protected boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
                                 Idempotent idempotent) {
         NativeWebRequest nativeWebRequest = new ServletWebRequest(request);
-        idempotentService.validateToken(nativeWebRequest, idempotent);
+        IdempotentAttributes attributes = of(idempotent, environment);
+        idempotentService.validateToken(nativeWebRequest, attributes);
         return true;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 
     @Override
@@ -71,7 +84,6 @@ public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethod
         }
         return idempotent;
     }
-
 
     protected void initIdempotentService(ApplicationContext context) {
         IdempotentService idempotentService = getOptionalBean(context, IdempotentService.class);

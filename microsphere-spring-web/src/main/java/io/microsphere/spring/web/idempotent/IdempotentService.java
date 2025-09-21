@@ -21,8 +21,7 @@ import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.Objects;
-
+import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
 import static java.util.UUID.randomUUID;
 
@@ -41,12 +40,12 @@ public interface IdempotentService {
      * Note : The new token should not be generated twice in one request.
      *
      * @param request    the {@link NativeWebRequest}
-     * @param idempotent the {@link Idempotent}
+     * @param attributes the {@link IdempotentAttributes}
      * @return the new token
      */
     @Nonnull
-    default String generateToken(NativeWebRequest request, Idempotent idempotent) {
-        String tokenName = idempotent.tokenName();
+    default String generateToken(NativeWebRequest request, IdempotentAttributes attributes) {
+        String tokenName = attributes.getTokenName();
         String newToken = REQUEST.getAttribute(request, tokenName);
         if (newToken == null) {
             newToken = randomUUID().toString();
@@ -59,65 +58,61 @@ public interface IdempotentService {
      * Get the token from the request.
      *
      * @param request    the {@link NativeWebRequest}
-     * @param idempotent the {@link Idempotent}
+     * @param attributes the {@link IdempotentAttributes}
      * @return the token from the request if exists
      */
     @Nullable
-    String getToken(NativeWebRequest request, Idempotent idempotent);
-
-    /**
-     * Load the last {@link #storeToken(NativeWebRequest, Idempotent, String) stored} token
-     *
-     * @param request    the {@link NativeWebRequest}
-     * @param idempotent the {@link Idempotent}
-     * @return the token if exists
-     */
-    @Nullable
-    String loadToken(NativeWebRequest request, Idempotent idempotent);
-
-    /**
-     * Invalidate the token
-     *
-     * @param request    the {@link NativeWebRequest}
-     * @param idempotent the {@link Idempotent}
-     * @return <code>true</code> if invalidated successfully
-     */
-    boolean invalidateToken(NativeWebRequest request, Idempotent idempotent);
+    String getToken(NativeWebRequest request, IdempotentAttributes attributes);
 
     /**
      * Store the token
      *
      * @param request    the {@link NativeWebRequest}
-     * @param idempotent the {@link Idempotent}
+     * @param attributes the {@link IdempotentAttributes}
      * @param newToken   the new generated token
      * @return <code>true</code> if stored successfully
      */
-    boolean storeToken(NativeWebRequest request, Idempotent idempotent, String newToken);
+    boolean storeToken(NativeWebRequest request, IdempotentAttributes attributes, String newToken);
+
+    /**
+     * Check the token is existed
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param attributes the {@link IdempotentAttributes}
+     * @param token      the token
+     * @return <code>true</code> if exists
+     */
+    boolean checkToken(NativeWebRequest request, IdempotentAttributes attributes, String token);
+
+    /**
+     * Invalidate the token
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param attributes the {@link IdempotentAttributes}
+     * @param token      the token
+     * @return <code>true</code> if invalidated successfully
+     */
+    boolean invalidate(NativeWebRequest request, IdempotentAttributes attributes, String token);
 
     /**
      * Validate the token
      *
      * @param request    the {@link NativeWebRequest}
-     * @param idempotent the {@link Idempotent}
+     * @param attributes the {@link IdempotentAttributes}
      * @throws IdempotentException if the validated token is invalid
      */
-    default void validateToken(NativeWebRequest request, Idempotent idempotent) throws IdempotentException {
-        String lastToken = loadToken(request, idempotent);
-        if (lastToken == null) {
-            String newToken = generateToken(request, idempotent);
-            storeToken(request, idempotent, newToken);
-            return;
+    default void validateToken(NativeWebRequest request, IdempotentAttributes attributes) throws IdempotentException {
+        String method = getMethod(request);
+        if (attributes.isValidatedMethod(method)) {
+            String token = getToken(request, attributes);
+            if (token == null) {
+                throw new IdempotentException("the request token is missing.");
+            }
+            if (checkToken(request, attributes, token)) {
+                throw new IdempotentException("the requested token is existed.");
+            }
+            String newToken = generateToken(request, attributes);
+            storeToken(request, attributes, newToken);
         }
-        String token = getToken(request, idempotent);
-        if (token == null) {
-            throw new IdempotentException("Token is not exists from the request.");
-        }
-        if (!Objects.equals(lastToken, token)) {
-            throw new IdempotentException("Illegal token : " + token);
-        }
-        // invalidate
-        invalidateToken(request, idempotent);
-        // renew token
-        validateToken(request, idempotent);
     }
 }

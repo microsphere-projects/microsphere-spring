@@ -24,8 +24,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,90 +45,81 @@ class DefaultIdempotentServiceTest {
 
     private Idempotent idempotent;
 
+    private IdempotentAttributes attributes;
+
     private IdempotentService idempotentService;
 
     @BeforeEach
     void setUp() {
         this.request = createWebRequest();
         this.idempotent = this.getClass().getAnnotation(Idempotent.class);
+        this.attributes = of(idempotent);
         this.idempotentService = new DefaultIdempotentService();
     }
 
     @Test
     void testGenerateToken() {
-        String newToken = this.idempotentService.generateToken(request, idempotent);
-        assertSame(newToken, idempotentService.generateToken(request, idempotent));
+        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
+        assertSame(newToken, idempotentService.generateToken(this.request, this.attributes));
     }
 
     @Test
     void testGetToken() {
-        String token = this.idempotentService.getToken(request, idempotent);
+        String token = this.idempotentService.getToken(this.request, this.attributes);
         assertNull(token);
 
-        String newToken = this.idempotentService.generateToken(this.request, idempotent);
+        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
 
         this.request = createWebRequest(r -> {
-            r.addParameter(idempotent.tokenName(), newToken);
+            r.addHeader(idempotent.tokenName(), newToken);
         });
 
-        token = this.idempotentService.getToken(request, idempotent);
+        token = this.idempotentService.getToken(this.request, this.attributes);
         assertSame(newToken, token);
-    }
-
-    @Test
-    void testLoadToken() {
-        String token = this.idempotentService.loadToken(request, idempotent);
-        assertNull(token);
-
-        String newToken = this.idempotentService.generateToken(this.request, idempotent);
-
-        this.request = createWebRequest(r -> {
-            r.getSession().setAttribute(idempotent.tokenName(), newToken);
-        });
-
-        token = this.idempotentService.loadToken(request, idempotent);
-        assertSame(newToken, token);
-    }
-
-    @Test
-    void testInvalidateToken() {
-        assertFalse(this.idempotentService.invalidateToken(request, idempotent));
-        testLoadToken();
-        assertTrue(this.idempotentService.invalidateToken(request, idempotent));
     }
 
     @Test
     void testStoreToken() {
-        assertTrue(this.idempotentService.storeToken(request, idempotent, null));
+        assertFalse(this.idempotentService.storeToken(this.request, this.attributes, null));
 
-        String newToken = this.idempotentService.generateToken(this.request, idempotent);
-        assertTrue(this.idempotentService.storeToken(request, idempotent, newToken));
+        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
+        assertTrue(this.idempotentService.storeToken(this.request, this.attributes, newToken));
+    }
 
-        String token = this.idempotentService.loadToken(request, idempotent);
-        assertSame(newToken, token);
+    @Test
+    void testCheckToken() {
+        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
+        assertFalse(this.idempotentService.checkToken(this.request, this.attributes, newToken));
+
+        assertTrue(this.idempotentService.storeToken(this.request, this.attributes, newToken));
+        assertTrue(this.idempotentService.checkToken(this.request, this.attributes, newToken));
+    }
+
+    @Test
+    void testInvalidate() {
+        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
+        assertFalse(this.idempotentService.invalidate(this.request, this.attributes, newToken));
+
+        assertTrue(this.idempotentService.storeToken(this.request, this.attributes, newToken));
+        assertTrue(this.idempotentService.invalidate(this.request, this.attributes, newToken));
     }
 
     @Test
     void testValidateToken() {
-        String token = this.idempotentService.loadToken(request, idempotent);
-        assertNull(token);
+        // validate token in idempotent method
+        this.idempotentService.validateToken(this.request, this.attributes);
+        this.idempotentService.validateToken(this.request, this.attributes);
+
+        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
+
+        MockHttpServletRequest httpServletRequest = this.request.getNativeRequest(MockHttpServletRequest.class);
+        httpServletRequest.setMethod("POST");
+        httpServletRequest.addHeader(idempotent.tokenName(), newToken);
 
         // store new token in the first request
-        this.idempotentService.validateToken(request, idempotent);
-        token = this.idempotentService.loadToken(request, idempotent);
-        assertNotNull(token);
+        this.idempotentService.validateToken(this.request, this.attributes);
 
         // throw a IdempotentException if the token is absent in the request
-        assertThrows(IdempotentException.class, () -> this.idempotentService.validateToken(request, idempotent));
-
-        // Add the token parameter to the request
-        MockHttpServletRequest httpServletRequest = this.request.getNativeRequest(MockHttpServletRequest.class);
-        httpServletRequest.setParameter(idempotent.tokenName(), token);
-
-        // works fine
-        this.idempotentService.validateToken(request, idempotent);
-
-        // throw a IdempotentException if the token is invalid
-        assertThrows(IdempotentException.class, () -> this.idempotentService.validateToken(request, idempotent));
+        assertThrows(IdempotentException.class, () -> this.idempotentService.validateToken(this.request, this.attributes));
     }
 }

@@ -55,11 +55,11 @@ public @interface Idempotent {
     String tokenName() default DEFAULT_TOKEN_NAME;
 
     /**
-     * The request methods for idempotent protection.
+     * The request methods for idempotent validation.
      *
      * @return {@link RequestMethod#POST} and {@link RequestMethod#PATCH} as default
      */
-    RequestMethod[] method() default {POST, PATCH};
+    RequestMethod[] validatedMethod() default {POST, PATCH};
 
     /**
      * The source of the token value

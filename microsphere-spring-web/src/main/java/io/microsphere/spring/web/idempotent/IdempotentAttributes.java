@@ -25,6 +25,10 @@ import io.microsphere.spring.web.util.WebTarget;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import static io.microsphere.util.ArrayUtils.contains;
+import static io.microsphere.util.StringUtils.isBlank;
+import static org.springframework.web.bind.annotation.RequestMethod.valueOf;
+
 /**
  * {@link ResolvablePlaceholderAnnotationAttributes} for {@link Idempotent} annotation
  *
@@ -50,14 +54,14 @@ public class IdempotentAttributes extends ResolvablePlaceholderAnnotationAttribu
     }
 
     /**
-     * Get the request methods
+     * Get the request methods for idempotent validation.
      *
      * @return non-null
-     * @see Idempotent#method()
+     * @see Idempotent#validatedMethod()
      */
     @Nonnull
-    public RequestMethod[] getMethod() {
-        return (RequestMethod[]) get("method");
+    public RequestMethod[] getValidatedMethod() {
+        return (RequestMethod[]) get("validatedMethod");
     }
 
     /**
@@ -80,6 +84,17 @@ public class IdempotentAttributes extends ResolvablePlaceholderAnnotationAttribu
     @Nonnull
     public WebTarget getTarget() {
         return getEnum("target");
+    }
+
+    /**
+     * Determine whether the specified request method should be validated
+     *
+     * @param method the request method
+     * @return <code>true</code> if the specified request method should be validated; <code>false</code> otherwise
+     */
+    public boolean isValidatedMethod(String method) {
+        RequestMethod requestMethod = isBlank(method) ? null : valueOf(method);
+        return contains(getValidatedMethod(), requestMethod);
     }
 
     /**
