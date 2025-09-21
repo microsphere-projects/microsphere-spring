@@ -18,6 +18,7 @@
 package io.microsphere.spring.test.util;
 
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.util.UrlPathHelper;
@@ -49,8 +50,9 @@ public abstract class SpringTestWebUtils {
 
     public static NativeWebRequest createWebRequest(Consumer<MockHttpServletRequest> requestBuilder) {
         MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         requestBuilder.accept(request);
-        return new ServletWebRequest(request);
+        return new ServletWebRequest(request, response);
     }
 
     public static NativeWebRequest createWebRequest(String requestURI) {
