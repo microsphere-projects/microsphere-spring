@@ -231,6 +231,18 @@ public abstract class WebRequestUtils {
     }
 
     /**
+     * Write value to the response body.
+     *
+     * @param request the {@link NativeWebRequest}
+     * @param name    the name
+     * @param value   the value
+     */
+    public static void writeResponseBody(@Nonnull NativeWebRequest request, String name, String value) {
+        SpringWebHelper springWebHelper = getSpringWebHelper(request);
+        springWebHelper.writeResponseBody(request, name, value);
+    }
+
+    /**
      * Get the mapped handler for the best matching pattern.
      *
      * @param request the {@link NativeWebRequest}
