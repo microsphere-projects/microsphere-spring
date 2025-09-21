@@ -31,8 +31,6 @@ import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.constants.PathConstants.SLASH;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
-import static io.microsphere.spring.web.util.WebSourceTest.testName;
-import static io.microsphere.spring.web.util.WebSourceTest.testValue;
 import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
 import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static io.microsphere.spring.web.util.WebRequestUtils.addHeader;
@@ -46,18 +44,23 @@ import static io.microsphere.spring.web.util.WebRequestUtils.getMatrixVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.getPathWithinHandlerMapping;
 import static io.microsphere.spring.web.util.WebRequestUtils.getProducibleMediaTypes;
+import static io.microsphere.spring.web.util.WebRequestUtils.getRequestBody;
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
 import static io.microsphere.spring.web.util.WebRequestUtils.getUriTemplateVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.hasBody;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.parseContentType;
 import static io.microsphere.spring.web.util.WebRequestUtils.setHeader;
+import static io.microsphere.spring.web.util.WebRequestUtils.writeResponseBody;
+import static io.microsphere.spring.web.util.WebSourceTest.testName;
+import static io.microsphere.spring.web.util.WebSourceTest.testValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
@@ -209,7 +212,14 @@ class WebRequestUtilsTest {
 
     @Test
     void testGetRequestBody() {
+        NativeWebRequest request = createWebRequest();
+        assertNull(getRequestBody(request, Object.class));
+    }
 
+    @Test
+    void testWriteResponseBody() {
+        NativeWebRequest request = createWebRequest();
+        assertThrows(UnsupportedOperationException.class, () -> writeResponseBody(request, testName, testValue));
     }
 
     @Test
