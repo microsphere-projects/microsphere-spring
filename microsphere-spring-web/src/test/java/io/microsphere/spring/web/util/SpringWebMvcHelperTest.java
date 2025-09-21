@@ -59,14 +59,22 @@ import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_MVC;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
@@ -110,12 +118,14 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
     void testPathPattern() throws Exception {
         HttpMethod method = GET;
         String uriTemplate = "/test/greeting/{message}";
-        Object[] uriVariables = ofArray("message", "Mercy");
+        String[] uriVariables = ofArray("message", "Mercy");
         Cookie cookie = new Cookie("JSESSIONID", "123456");
         Cookie[] cookies = ofArray(cookie);
+        String[] headerNames = ofArray(ACCEPT, CONTENT_TYPE);
+        String[] headerValues = ofArray(APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE);
         ApplicationListener<RequestHandledEvent> listener = event -> {
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) getRequestAttributes();
-            ServletWebRequest request = new ServletWebRequest(requestAttributes.getRequest());
+            ServletWebRequest request = new ServletWebRequest(requestAttributes.getRequest(), requestAttributes.getResponse());
             testGetMethod(request, method);
             testGetCookieValue(request, cookies);
             testGetBestMatchingHandler(request, "greeting", String.class);
@@ -123,13 +133,23 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
             testGetBestMatchingPattern(request, uriTemplate);
             testGetUriTemplateVariables(request, uriVariables);
             testGetMatrixVariables(request);
+            testSetHeader(request, headerNames[0], headerValues[0]);
+            testAddHeader(request, headerNames[1], headerValues[1]);
+            testAddCookie(request, cookie.getName(), cookie.getValue());
         };
         this.wac.addApplicationListener(listener);
 
         this.mockMvc.perform(
                 request(method, uriTemplate, uriVariables[1])
                         .cookie(cookies)
-        ).andExpect(status().isOk());
+                        .characterEncoding(UTF_8)
+        ).andExpectAll(
+                status().isOk(),
+                header().string(headerNames[0], headerValues[0]),
+                header().string(headerNames[1], headerValues[1] + ";charset=ISO-8859-1"),
+                cookie().value(cookie.getName(), cookie.getValue()),
+                content().string(testController.greeting(uriVariables[1]))
+        );
 
         this.wac.removeApplicationListener(listener);
     }
@@ -147,7 +167,7 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
 
         ApplicationListener<RequestHandledEvent> listener = event -> {
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) getRequestAttributes();
-            ServletWebRequest request = new ServletWebRequest(requestAttributes.getRequest());
+            ServletWebRequest request = new ServletWebRequest(requestAttributes.getRequest(), requestAttributes.getResponse());
             testGetMethod(request, method);
             testGetCookieValue(request, cookies);
             testGetBestMatchingHandler(request, "user", User.class);
@@ -221,6 +241,18 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
         Map<String, MultiValueMap<String, String>> matrixVariables = this.springWebMvcHelper.getMatrixVariables(request);
         Map<String, String> variablesMap = ofMap(variables);
         assertEquals(variablesMap, matrixVariables);
+    }
+
+    void testSetHeader(ServletWebRequest request, String headerName, String headerValue) {
+        this.springWebMvcHelper.setHeader(request, headerName, headerValue);
+    }
+
+    void testAddHeader(ServletWebRequest request, String headerName, String headerValue) {
+        this.springWebMvcHelper.addHeader(request, headerName, headerValue);
+    }
+
+    void testAddCookie(ServletWebRequest request, String name, String value) {
+        this.springWebMvcHelper.addCookie(request, name, value);
     }
 
     void testGetRequestBody(NativeWebRequest request, Object expectedRequestBody) {
