@@ -19,19 +19,27 @@ package io.microsphere.spring.web.util;
 
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.constants.PathConstants.SLASH;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static io.microsphere.spring.web.util.RequestSourceTest.testName;
+import static io.microsphere.spring.web.util.RequestSourceTest.testValue;
 import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
+import static io.microsphere.spring.web.util.WebRequestUtils.addHeader;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingHandler;
 import static io.microsphere.spring.web.util.WebRequestUtils.getBestMatchingPattern;
 import static io.microsphere.spring.web.util.WebRequestUtils.getContentType;
 import static io.microsphere.spring.web.util.WebRequestUtils.getCookieValue;
+import static io.microsphere.spring.web.util.WebRequestUtils.getHeader;
+import static io.microsphere.spring.web.util.WebRequestUtils.getHeaderValues;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMatrixVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
 import static io.microsphere.spring.web.util.WebRequestUtils.getPathWithinHandlerMapping;
@@ -41,6 +49,9 @@ import static io.microsphere.spring.web.util.WebRequestUtils.getUriTemplateVaria
 import static io.microsphere.spring.web.util.WebRequestUtils.hasBody;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.parseContentType;
+import static io.microsphere.spring.web.util.WebRequestUtils.setHeader;
+import static io.microsphere.util.ArrayUtils.ofArray;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -141,14 +152,48 @@ class WebRequestUtilsTest {
 
     @Test
     void testGetResolvedLookupPath() {
-        NativeWebRequest request = createWebRequest(r -> r.setAttribute(PATH_ATTRIBUTE, "/"));
-        assertEquals("/", getResolvedLookupPath(request));
+        NativeWebRequest request = createWebRequest(r -> r.setAttribute(PATH_ATTRIBUTE, SLASH));
+        assertEquals(SLASH, getResolvedLookupPath(request));
+    }
+
+    @Test
+    void testGetHeader() {
+        NativeWebRequest request = createWebRequest(r -> r.addHeader(testName, testValue));
+        assertEquals(testValue, getHeader(request, testName));
+    }
+
+    @Test
+    void testGetHeaderValues() {
+        NativeWebRequest request = createWebRequest(r -> r.addHeader(testName, testValue));
+        assertArrayEquals(ofArray(testValue), getHeaderValues(request, testName));
+    }
+
+    @Test
+    void testSetHeader() {
+        NativeWebRequest request = createWebRequest();
+        setHeader(request, testName, testValue);
+        HttpServletResponse response = request.getNativeResponse(HttpServletResponse.class);
+        assertEquals(testValue, response.getHeader(testName));
+    }
+
+    @Test
+    void testAddHeader() {
+        NativeWebRequest request = createWebRequest();
+        addHeader(request, testName, testValue);
+        HttpServletResponse response = request.getNativeResponse(HttpServletResponse.class);
+        assertEquals(testValue, response.getHeader(testName));
+        assertEquals(ofList(testValue), response.getHeaders(testName));
+
+        String value = "test";
+        addHeader(request, testName, value);
+        assertEquals(testValue, response.getHeader(testName));
+        assertEquals(ofList(testValue, value), response.getHeaders(testName));
     }
 
     @Test
     void testGetCookieValue() {
-        NativeWebRequest request = createWebRequest(r -> r.setCookies(new Cookie("name", "value")));
-        assertEquals("value", getCookieValue(request, "name"));
+        NativeWebRequest request = createWebRequest(r -> r.setCookies(new Cookie(testName, testValue)));
+        assertEquals(testValue, getCookieValue(request, testName));
     }
 
     @Test
