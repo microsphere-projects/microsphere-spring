@@ -18,11 +18,15 @@ package io.microsphere.spring.web.util;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -135,6 +139,65 @@ public abstract class WebRequestUtils {
     }
 
     /**
+     * Get the header value from the request by the given header name.
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param headerName the name of header
+     * @return the header value if found, otherwise <code>null</code>
+     * @see jakarta.servlet.http.HttpServletRequest#getHeader(String)
+     * @see HttpMessage#getHeaders()
+     * @see HttpHeaders#getFirst(String)
+     */
+    @Nullable
+    public static String getHeader(@Nonnull NativeWebRequest request, String headerName) {
+        return request.getHeader(headerName);
+    }
+
+    /**
+     * Get the header values from the request by the given header name.
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param headerName the name of header
+     * @return the header values if found, otherwise <code>null</code>
+     * @see jakarta.servlet.http.HttpServletRequest#getHeaders(String)
+     * @see HttpMessage#getHeaders()
+     * @see HttpHeaders#get(Object)
+     */
+    @Nullable
+    public static String[] getHeaderValues(@Nonnull NativeWebRequest request, String headerName) {
+        return request.getHeaderValues(headerName);
+    }
+
+    /**
+     * Sets a response header with the given name and value. If the header had already been set,
+     * the new value overwrites all previous values.
+     *
+     * @param request     the {@link NativeWebRequest}
+     * @param headerName  the name of header
+     * @param headerValue the header value
+     * @see jakarta.servlet.http.HttpServletResponse#setHeader(String, String)
+     * @see HttpHeaders#set(String, String)
+     */
+    public static void setHeader(@Nonnull NativeWebRequest request, @Nullable String headerName, @Nullable String headerValue) {
+        SpringWebHelper springWebHelper = getSpringWebHelper(request);
+        springWebHelper.setHeader(request, headerName, headerValue);
+    }
+
+    /**
+     * Adds a response header with the given name and value. This method allows response headers to have multiple values.
+     *
+     * @param request      the {@link NativeWebRequest}
+     * @param headerName   the name of header
+     * @param headerValues the header values
+     * @see jakarta.servlet.http.HttpServletResponse#addHeader(String, String)
+     * @see HttpHeaders#add(String, String)
+     */
+    public static void addHeader(@Nonnull NativeWebRequest request, @Nullable String headerName, @Nullable String... headerValues) {
+        SpringWebHelper springWebHelper = getSpringWebHelper(request);
+        springWebHelper.addHeader(request, headerName, headerValues);
+    }
+
+    /**
      * Get the cookie value for the given cookie name.
      *
      * @param request    the {@link NativeWebRequest}
@@ -145,6 +208,20 @@ public abstract class WebRequestUtils {
     public static String getCookieValue(@Nonnull NativeWebRequest request, String cookieName) {
         SpringWebHelper springWebHelper = getSpringWebHelper(request);
         return springWebHelper.getCookieValue(request, cookieName);
+    }
+
+    /**
+     * Adds the specified cookie to the response. This method can be called multiple times to set more than one cookie.
+     *
+     * @param request     the {@link NativeWebRequest}
+     * @param cookieName  the name of Cookie
+     * @param cookieValue the cookie value
+     * @see jakarta.servlet.http.HttpServletResponse#addCookie(Cookie)
+     * @see org.springframework.http.server.reactive.ServerHttpResponse#addCookie(ResponseCookie)
+     */
+    public static void addCookie(@Nonnull NativeWebRequest request, String cookieName, String cookieValue) {
+        SpringWebHelper springWebHelper = getSpringWebHelper(request);
+        springWebHelper.addCookie(request, cookieName, cookieValue);
     }
 
     @Nullable
