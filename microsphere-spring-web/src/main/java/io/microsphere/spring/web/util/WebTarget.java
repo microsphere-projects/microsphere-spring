@@ -36,7 +36,12 @@ public enum WebTarget {
     /**
      * The body of response
      */
-    RESPONSE_BODY,
+    RESPONSE_BODY {
+        @Override
+        public void writeValue(NativeWebRequest request, String name, String value) {
+
+        }
+    },
 
     /*
      * The header of response
@@ -58,7 +63,12 @@ public enum WebTarget {
         }
     };
 
-    public void writeValue(NativeWebRequest request, String name, String value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    /**
+     * Write value to the target
+     *
+     * @param request the {@link NativeWebRequest}
+     * @param name    the name
+     * @param value   the value
+     */
+    public abstract void writeValue(NativeWebRequest request, String name, String value);
 }
