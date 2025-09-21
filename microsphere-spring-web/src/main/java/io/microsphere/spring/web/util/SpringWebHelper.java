@@ -24,9 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
-
 import org.springframework.http.ResponseCookie;
-
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -154,6 +152,17 @@ public interface SpringWebHelper {
             return getHandlerMethodRequestBodyArgument(request, (HandlerMethod) handler);
         }
         return null;
+    }
+
+    /**
+     * Write value to the response body.
+     *
+     * @param request the {@link NativeWebRequest}
+     * @param name    the name
+     * @param value   the value
+     */
+    default void writeResponseBody(@Nonnull NativeWebRequest request, String name, String value) {
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     /**
