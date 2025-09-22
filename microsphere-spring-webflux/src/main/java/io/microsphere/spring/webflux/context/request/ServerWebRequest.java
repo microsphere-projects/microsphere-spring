@@ -110,13 +110,13 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nonnull
     public Object getNativeRequest() {
-        return request;
+        return getRequest();
     }
 
     @Override
     @Nonnull
     public Object getNativeResponse() {
-        return exchange.getResponse();
+        return getResponse();
     }
 
     @Override
@@ -327,6 +327,35 @@ public class ServerWebRequest implements NativeWebRequest {
             mutex = session;
         }
         return mutex;
+    }
+
+    /**
+     * Get the {@link ServerWebExchange}
+     *
+     * @return the {@link ServerWebExchange}
+     */
+    @Nonnull
+    public ServerWebExchange getExchange() {
+        return this.exchange;
+    }
+
+    /**
+     * Get the {@link ServerHttpRequest}
+     * @return the {@link ServerHttpRequest}
+     */
+    @Nonnull
+    public ServerHttpRequest getRequest() {
+        return this.request;
+    }
+
+    /**
+     * Get the {@link ServerHttpResponse}
+     *
+     * @return the {@link ServerHttpResponse}
+     */
+    @Nonnull
+    public ServerHttpResponse getResponse() {
+        return this.exchange.getResponse();
     }
 
     @Nonnull
