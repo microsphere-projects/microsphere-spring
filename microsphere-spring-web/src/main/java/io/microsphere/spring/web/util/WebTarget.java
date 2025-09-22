@@ -22,6 +22,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static io.microsphere.spring.web.util.WebRequestUtils.setHeader;
+import static io.microsphere.spring.web.util.WebRequestUtils.writeResponseBody;
 
 /**
  * The target of the web.
@@ -39,7 +40,7 @@ public enum WebTarget {
     RESPONSE_BODY {
         @Override
         public void writeValue(NativeWebRequest request, String name, String value) {
-
+            writeResponseBody(request, name, value);
         }
     },
 
