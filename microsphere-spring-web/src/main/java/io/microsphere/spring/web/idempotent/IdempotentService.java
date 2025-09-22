@@ -95,6 +95,17 @@ public interface IdempotentService {
     boolean invalidate(NativeWebRequest request, IdempotentAttributes attributes, String token);
 
     /**
+     * Renew the token
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param attributes the {@link IdempotentAttributes}
+     */
+    default void renewToken(NativeWebRequest request, IdempotentAttributes attributes) {
+        String newToken = generateToken(request, attributes);
+        storeToken(request, attributes, newToken);
+    }
+
+    /**
      * Validate the token
      *
      * @param request    the {@link NativeWebRequest}
@@ -111,8 +122,12 @@ public interface IdempotentService {
             if (checkToken(request, attributes, token)) {
                 throw new IdempotentException("the requested token is existed.");
             }
-            String newToken = generateToken(request, attributes);
-            storeToken(request, attributes, newToken);
+            renewToken(request, attributes);
         }
     }
+
+    /**
+     * Destroy
+     */
+    void destroy();
 }
