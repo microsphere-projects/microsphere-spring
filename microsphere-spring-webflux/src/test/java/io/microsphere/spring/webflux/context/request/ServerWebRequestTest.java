@@ -66,11 +66,13 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  */
 class ServerWebRequestTest {
 
+    private MockServerWebExchange serverWebExchange;
+
     private ServerWebRequest serverWebRequest;
 
     @BeforeEach
     void setUp() {
-        MockServerWebExchange serverWebExchange = mockServerWebExchange();
+        this.serverWebExchange = mockServerWebExchange();
         this.serverWebRequest = new ServerWebRequest(serverWebExchange);
     }
 
@@ -85,39 +87,39 @@ class ServerWebRequestTest {
 
     @Test
     void testGetNativeRequest() {
-        assertNotNull(serverWebRequest.getNativeRequest());
+        assertNotNull(this.serverWebRequest.getNativeRequest());
     }
 
     @Test
     void testGetNativeResponse() {
-        assertNotNull(serverWebRequest.getNativeResponse());
+        assertNotNull(this.serverWebRequest.getNativeResponse());
     }
 
     @Test
     void testTestGetNativeRequest() {
-        assertNotNull(serverWebRequest.getNativeRequest(ServerHttpRequest.class));
-        assertNull(serverWebRequest.getNativeRequest(ServerWebRequestTest.class));
+        assertNotNull(this.serverWebRequest.getNativeRequest(ServerHttpRequest.class));
+        assertNull(this.serverWebRequest.getNativeRequest(ServerWebRequestTest.class));
     }
 
     @Test
     void testTestGetNativeResponse() {
-        assertNotNull(serverWebRequest.getNativeResponse(ServerHttpResponse.class));
-        assertNull(serverWebRequest.getNativeResponse(ServerWebRequestTest.class));
+        assertNotNull(this.serverWebRequest.getNativeResponse(ServerHttpResponse.class));
+        assertNull(this.serverWebRequest.getNativeResponse(ServerWebRequestTest.class));
     }
 
     @Test
     void testGetHeader() {
-        assertSame(HEADER_VALUE, serverWebRequest.getHeader(HEADER_NAME));
+        assertSame(HEADER_VALUE, this.serverWebRequest.getHeader(HEADER_NAME));
     }
 
     @Test
     void testGetHeaderValues() {
-        assertArrayEquals(HEADER_VALUE_2, serverWebRequest.getHeaderValues(HEADER_NAME_2));
+        assertArrayEquals(HEADER_VALUE_2, this.serverWebRequest.getHeaderValues(HEADER_NAME_2));
     }
 
     @Test
     void testGetHeaderNames() {
-        Iterator<String> iterator = serverWebRequest.getHeaderNames();
+        Iterator<String> iterator = this.serverWebRequest.getHeaderNames();
         assertTrue(iterator.hasNext());
         assertSame(HEADER_NAME, iterator.next());
         assertTrue(iterator.hasNext());
@@ -129,19 +131,19 @@ class ServerWebRequestTest {
 
     @Test
     void testGetParameter() {
-        assertEquals(PARAM_VALUE, serverWebRequest.getParameter(PARAM_NAME));
-        assertEquals("test-param-value-2", serverWebRequest.getParameter(PARAM_NAME_2));
+        assertEquals(PARAM_VALUE, this.serverWebRequest.getParameter(PARAM_NAME));
+        assertEquals("test-param-value-2", this.serverWebRequest.getParameter(PARAM_NAME_2));
     }
 
     @Test
     void testGetParameterValues() {
-        assertArrayEquals(new String[]{PARAM_VALUE}, serverWebRequest.getParameterValues(PARAM_NAME));
-        assertArrayEquals(PARAM_VALUE_2, serverWebRequest.getParameterValues(PARAM_NAME_2));
+        assertArrayEquals(new String[]{PARAM_VALUE}, this.serverWebRequest.getParameterValues(PARAM_NAME));
+        assertArrayEquals(PARAM_VALUE_2, this.serverWebRequest.getParameterValues(PARAM_NAME_2));
     }
 
     @Test
     void testGetParameterNames() {
-        Iterator<String> iterator = serverWebRequest.getParameterNames();
+        Iterator<String> iterator = this.serverWebRequest.getParameterNames();
         assertTrue(iterator.hasNext());
         assertEquals(PARAM_NAME, iterator.next());
         assertTrue(iterator.hasNext());
@@ -151,7 +153,7 @@ class ServerWebRequestTest {
 
     @Test
     void testGetParameterMap() {
-        Map<String, String[]> parameterMap = serverWebRequest.getParameterMap();
+        Map<String, String[]> parameterMap = this.serverWebRequest.getParameterMap();
         assertEquals(2, parameterMap.size());
         assertArrayEquals(new String[]{PARAM_VALUE}, parameterMap.get(PARAM_NAME));
         assertArrayEquals(PARAM_VALUE_2, parameterMap.get(PARAM_NAME_2));
@@ -159,134 +161,151 @@ class ServerWebRequestTest {
 
     @Test
     void testGetLocale() {
-        Locale locale = serverWebRequest.getLocale();
+        Locale locale = this.serverWebRequest.getLocale();
         assertEquals(getDefault(), locale);
     }
 
     @Test
     void testGetContextPath() {
-        String contextPath = serverWebRequest.getContextPath();
+        String contextPath = this.serverWebRequest.getContextPath();
         assertEquals("", contextPath);
     }
 
     @Test
     void testGetRemoteUser() {
-        assertNull(serverWebRequest.getRemoteUser());
+        assertNull(this.serverWebRequest.getRemoteUser());
     }
 
     @Test
     void testGetUserPrincipal() {
-        assertNull(serverWebRequest.getUserPrincipal());
+        assertNull(this.serverWebRequest.getUserPrincipal());
     }
 
     @Test
     void testIsUserInRole() {
-        assertFalse(serverWebRequest.isUserInRole(""));
+        assertFalse(this.serverWebRequest.isUserInRole(""));
     }
 
     @Test
     void testIsSecure() {
-        assertFalse(serverWebRequest.isSecure());
+        assertFalse(this.serverWebRequest.isSecure());
     }
 
     @Test
     void testCheckNotModifiedWithLastModifiedTimestamp() {
-        assertFalse(serverWebRequest.checkNotModified(0));
+        assertFalse(this.serverWebRequest.checkNotModified(0));
     }
 
     @Test
     void testCheckNotModifiedWithTag() {
-        assertFalse(serverWebRequest.checkNotModified("null"));
+        assertFalse(this.serverWebRequest.checkNotModified("null"));
     }
 
     @Test
     void testCheckNotModifiedWithTagAndLastModifiedTimestamp() {
-        assertFalse(serverWebRequest.checkNotModified("null", 0));
+        assertFalse(this.serverWebRequest.checkNotModified("null", 0));
     }
 
     @Test
     void testGetDescription() {
-        String desc = serverWebRequest.getDescription(false);
+        String desc = this.serverWebRequest.getDescription(false);
         assertTrue(isNotBlank(desc));
 
-        desc = serverWebRequest.getDescription(true);
+        desc = this.serverWebRequest.getDescription(true);
         assertTrue(isNotBlank(desc));
 
-        serverWebRequest.setAttribute(REMOTE_USER_ATTRIBUTE_NAME, "admin", SCOPE_REQUEST);
+        this.serverWebRequest.setAttribute(REMOTE_USER_ATTRIBUTE_NAME, "admin", SCOPE_REQUEST);
 
-        desc = serverWebRequest.getDescription(true);
+        desc = this.serverWebRequest.getDescription(true);
         assertTrue(isNotBlank(desc));
     }
 
     @Test
     void testGetAttribute() {
-        assertEquals(ATTRIBUTE_VALUE, serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_REQUEST));
-        assertEquals(ATTRIBUTE_VALUE, serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_SESSION));
+        assertEquals(ATTRIBUTE_VALUE, this.serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_REQUEST));
+        assertEquals(ATTRIBUTE_VALUE, this.serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_SESSION));
 
-        assertNull(serverWebRequest.getAttribute(NOT_FOUND_ATTRIBUTE_NAME, SCOPE_REQUEST));
-        assertNull(serverWebRequest.getAttribute(NOT_FOUND_ATTRIBUTE_NAME, SCOPE_SESSION));
+        assertNull(this.serverWebRequest.getAttribute(NOT_FOUND_ATTRIBUTE_NAME, SCOPE_REQUEST));
+        assertNull(this.serverWebRequest.getAttribute(NOT_FOUND_ATTRIBUTE_NAME, SCOPE_SESSION));
     }
 
     @Test
     void testSetAttribute() {
-        serverWebRequest.setAttribute(REMOTE_USER_ATTRIBUTE_NAME, "admin", SCOPE_REQUEST);
-        assertEquals("admin", serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_REQUEST));
+        this.serverWebRequest.setAttribute(REMOTE_USER_ATTRIBUTE_NAME, "admin", SCOPE_REQUEST);
+        assertEquals("admin", this.serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_REQUEST));
 
-        serverWebRequest.setAttribute(REMOTE_USER_ATTRIBUTE_NAME, "admin", SCOPE_SESSION);
-        assertEquals("admin", serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_SESSION));
+        this.serverWebRequest.setAttribute(REMOTE_USER_ATTRIBUTE_NAME, "admin", SCOPE_SESSION);
+        assertEquals("admin", this.serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_SESSION));
     }
 
     @Test
     void testRemoveAttribute() {
-        serverWebRequest.removeAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_REQUEST);
-        assertNull(serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_REQUEST));
+        this.serverWebRequest.removeAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_REQUEST);
+        assertNull(this.serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_REQUEST));
 
-        serverWebRequest.removeAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_SESSION);
-        assertNull(serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_SESSION));
+        this.serverWebRequest.removeAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_SESSION);
+        assertNull(this.serverWebRequest.getAttribute(REMOTE_USER_ATTRIBUTE_NAME, SCOPE_SESSION));
 
-        serverWebRequest.removeAttribute(ATTRIBUTE_NAME, SCOPE_REQUEST);
-        assertNull(serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_REQUEST));
+        this.serverWebRequest.removeAttribute(ATTRIBUTE_NAME, SCOPE_REQUEST);
+        assertNull(this.serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_REQUEST));
 
-        serverWebRequest.removeAttribute(ATTRIBUTE_NAME, SCOPE_SESSION);
-        assertNull(serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_SESSION));
+        this.serverWebRequest.removeAttribute(ATTRIBUTE_NAME, SCOPE_SESSION);
+        assertNull(this.serverWebRequest.getAttribute(ATTRIBUTE_NAME, SCOPE_SESSION));
     }
 
     @Test
     void testGetAttributeNames() {
-        assertNotNull(serverWebRequest.getAttributeNames(SCOPE_REQUEST));
-        assertNotNull(serverWebRequest.getAttributeNames(SCOPE_SESSION));
+        assertNotNull(this.serverWebRequest.getAttributeNames(SCOPE_REQUEST));
+        assertNotNull(this.serverWebRequest.getAttributeNames(SCOPE_SESSION));
     }
 
     @Test
     void testRegisterDestructionCallback() {
-        serverWebRequest.registerDestructionCallback("test", () -> {
+        this.serverWebRequest.registerDestructionCallback("test", () -> {
         }, SCOPE_REQUEST);
     }
 
     @Test
     void testResolveReference() {
-        assertSame(serverWebRequest.getNativeRequest(), serverWebRequest.resolveReference(REFERENCE_KEY_REQUEST));
-        assertSame(serverWebRequest.getNativeResponse(), serverWebRequest.resolveReference(REFERENCE_KEY_RESPONSE));
-        assertSame(serverWebRequest.getSession(), serverWebRequest.resolveReference(REFERENCE_KEY_SESSION));
-        assertNull(serverWebRequest.resolveReference("others"));
+        assertSame(this.serverWebRequest.getNativeRequest(), this.serverWebRequest.resolveReference(REFERENCE_KEY_REQUEST));
+        assertSame(this.serverWebRequest.getNativeResponse(), this.serverWebRequest.resolveReference(REFERENCE_KEY_RESPONSE));
+        assertSame(this.serverWebRequest.getSession(), this.serverWebRequest.resolveReference(REFERENCE_KEY_SESSION));
+        assertNull(this.serverWebRequest.resolveReference("others"));
     }
 
     @Test
     void testGetSessionId() {
-        assertNotNull(serverWebRequest.getSessionId());
+        assertNotNull(this.serverWebRequest.getSessionId());
     }
 
     @Test
     void testGetSessionMutex() {
-        assertSame(serverWebRequest.getSession(), serverWebRequest.getSessionMutex());
+        assertSame(this.serverWebRequest.getSession(), this.serverWebRequest.getSessionMutex());
 
-        serverWebRequest.setAttribute(SESSION_MUTEX_ATTRIBUTE_NAME, this, SCOPE_SESSION);
-        assertSame(this, serverWebRequest.getSessionMutex());
+        this.serverWebRequest.setAttribute(SESSION_MUTEX_ATTRIBUTE_NAME, this, SCOPE_SESSION);
+        assertSame(this, this.serverWebRequest.getSessionMutex());
+    }
+
+    @Test
+    void testGetExchange() {
+        assertSame(this.serverWebExchange, this.serverWebRequest.getExchange());
+    }
+
+    @Test
+    void testGetRequest() {
+        assertSame(this.serverWebRequest.getNativeRequest(), this.serverWebRequest.getRequest());
+        assertSame(this.serverWebExchange.getRequest(), this.serverWebRequest.getRequest());
+    }
+
+    @Test
+    void testGetResponse() {
+        assertSame(this.serverWebRequest.getNativeResponse(), this.serverWebRequest.getResponse());
+        assertSame(this.serverWebExchange.getResponse(), this.serverWebRequest.getResponse());
     }
 
     @Test
     void testToArray() {
-        assertNull(serverWebRequest.toArray(null));
+        assertNull(this.serverWebRequest.toArray(null));
     }
 
 }
