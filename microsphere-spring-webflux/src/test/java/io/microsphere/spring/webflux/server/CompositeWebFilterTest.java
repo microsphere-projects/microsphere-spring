@@ -23,10 +23,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.server.WebHandler;
 import org.springframework.web.server.handler.DefaultWebFilterChain;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,18 +69,22 @@ class CompositeWebFilterTest {
     @Test
     void testFilterWithFilter() {
         testAddFilter();
-        testFilter();
+        assertFilter(this.webFilter);
     }
 
     @Test
     void testFilterWithoutFilter() {
-        testFilter();
+        assertFilter(this.webFilter);
     }
 
-    void testFilter() {
+    static void assertFilter(CompositeWebFilter webFilter) {
+        assertFilter(webFilter, webFilter.getWebFilters().toArray(new WebFilter[0]));
+    }
+
+    static void assertFilter(WebFilter containerFilter, WebFilter... elementFilters) {
         ServerWebExchange exchange = mockServerWebExchange();
         WebHandler webHandler = new DispatcherHandler();
-        WebFilterChain chain = new DefaultWebFilterChain(webHandler, this.webFilter.getWebFilters());
-        assertNotNull(this.webFilter.filter(exchange, chain));
+        WebFilterChain chain = new DefaultWebFilterChain(webHandler, ofList(elementFilters));
+        assertNotNull(containerFilter.filter(exchange, chain));
     }
 }
