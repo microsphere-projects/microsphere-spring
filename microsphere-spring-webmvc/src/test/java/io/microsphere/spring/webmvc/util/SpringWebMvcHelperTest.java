@@ -115,7 +115,7 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
     }
 
     @Test
-    void testPathPattern() throws Exception {
+    void testGreeting() throws Exception {
         HttpMethod method = GET;
         String uriTemplate = "/test/greeting/{message}";
         String[] uriVariables = ofArray("message", "Mercy");
@@ -155,7 +155,7 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
     }
 
     @Test
-    void testJSONContent() throws Exception {
+    void testUser() throws Exception {
         HttpMethod method = POST;
         String uriTemplate = "/test/user";
         MediaType contentType = APPLICATION_JSON;
