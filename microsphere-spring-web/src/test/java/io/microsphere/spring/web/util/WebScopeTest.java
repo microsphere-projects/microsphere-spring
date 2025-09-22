@@ -27,6 +27,7 @@ import java.util.Map;
 
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
 import static io.microsphere.spring.web.util.WebScope.SESSION;
+import static io.microsphere.spring.web.util.WebScope.clearAttributes;
 import static io.microsphere.spring.web.util.WebScope.getAttribute;
 import static io.microsphere.spring.web.util.WebScope.getAttributeNames;
 import static io.microsphere.spring.web.util.WebScope.removeAttribute;
@@ -170,6 +171,22 @@ class WebScopeTest {
     void testGetAttributeNames() {
         testGetAttributeNames(SCOPE_REQUEST);
         testGetAttributeNames(SCOPE_SESSION);
+    }
+
+    @Test
+    public void testClearAttributes() {
+        testStaticGetAttribute(SCOPE_REQUEST);
+
+        clearAttributes(this.requestAttributes, SCOPE_REQUEST);
+        assertNull(getAttribute(this.requestAttributes, ATTRIBUTE_NAME, SCOPE_REQUEST));
+    }
+
+    @Test
+    public void testClearAttributesOnSession() {
+        testStaticGetAttribute(SCOPE_SESSION);
+
+        clearAttributes(this.requestAttributes, SCOPE_SESSION);
+        assertNull(getAttribute(this.requestAttributes, ATTRIBUTE_NAME, SCOPE_SESSION));
     }
 
     void assertGetAttributes(Map<String, Object> attributesMap) {
