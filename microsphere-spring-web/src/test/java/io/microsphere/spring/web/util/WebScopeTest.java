@@ -171,7 +171,7 @@ class WebScopeTest {
         testGetAttributeNames(SCOPE_REQUEST);
         testGetAttributeNames(SCOPE_SESSION);
     }
-    
+
     void assertGetAttributes(Map<String, Object> attributesMap) {
         assertNotNull(attributesMap);
         assertEquals(1, attributesMap.size());
