@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.webflux.context.request;
 
+import io.microsphere.annotation.Immutable;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
@@ -142,14 +143,14 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nullable
     public String getHeader(String headerName) {
-        HttpHeaders httpHeaders = getHttpHeaders();
+        HttpHeaders httpHeaders = getRequestHeaders();
         return httpHeaders.getFirst(headerName);
     }
 
     @Override
     @Nullable
     public String[] getHeaderValues(String headerName) {
-        HttpHeaders httpHeaders = getHttpHeaders();
+        HttpHeaders httpHeaders = getRequestHeaders();
         List<String> headerValues = httpHeaders.get(headerName);
         return toArray(headerValues);
     }
@@ -157,7 +158,7 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nonnull
     public Iterator<String> getHeaderNames() {
-        HttpHeaders httpHeaders = getHttpHeaders();
+        HttpHeaders httpHeaders = getRequestHeaders();
         return httpHeaders.keySet().iterator();
     }
 
@@ -341,6 +342,7 @@ public class ServerWebRequest implements NativeWebRequest {
 
     /**
      * Get the {@link ServerHttpRequest}
+     *
      * @return the {@link ServerHttpRequest}
      */
     @Nonnull
@@ -358,18 +360,29 @@ public class ServerWebRequest implements NativeWebRequest {
         return this.exchange.getResponse();
     }
 
+    /**
+     * Get the {@link HttpHeaders}
+     *
+     * @return the mutable {@link HttpHeaders}
+     */
     @Nonnull
-    protected HttpHeaders getHttpHeaders() {
+    public HttpHeaders getRequestHeaders() {
         return this.request.getHeaders();
     }
 
+    /**
+     * Get a read-only map with parsed and decoded query parameter values.
+     *
+     * @return a read-only map with parsed and decoded query parameter values
+     */
     @Nonnull
-    protected MultiValueMap<String, String> getQueryParams() {
+    @Immutable
+    public MultiValueMap<String, String> getQueryParams() {
         return this.request.getQueryParams();
     }
 
     @Nonnull
-    protected WebSession getSession() {
+    public WebSession getSession() {
         return this.exchange.getSession().block();
     }
 
