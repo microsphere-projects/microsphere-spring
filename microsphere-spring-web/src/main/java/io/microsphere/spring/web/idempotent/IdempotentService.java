@@ -19,6 +19,7 @@ package io.microsphere.spring.web.idempotent;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import io.microsphere.spring.web.util.WebTarget;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import static io.microsphere.spring.web.util.WebRequestUtils.getMethod;
@@ -65,7 +66,7 @@ public interface IdempotentService {
     String getToken(NativeWebRequest request, IdempotentAttributes attributes);
 
     /**
-     * Store the token
+     * Store the token into backend storage.
      *
      * @param request    the {@link NativeWebRequest}
      * @param attributes the {@link IdempotentAttributes}
@@ -95,6 +96,21 @@ public interface IdempotentService {
     boolean invalidate(NativeWebRequest request, IdempotentAttributes attributes, String token);
 
     /**
+     * Renew the token
+     *
+     * @param request    the {@link NativeWebRequest}
+     * @param attributes the {@link IdempotentAttributes}
+     * @return the new token
+     */
+    default String renewToken(NativeWebRequest request, IdempotentAttributes attributes) {
+        String newToken = generateToken(request, attributes);
+        String tokenName = attributes.getTokenName();
+        WebTarget target = attributes.getTarget();
+        target.writeValue(request, tokenName, newToken);
+        return newToken;
+    }
+
+    /**
      * Validate the token
      *
      * @param request    the {@link NativeWebRequest}
@@ -108,11 +124,19 @@ public interface IdempotentService {
             if (token == null) {
                 throw new IdempotentException("the request token is missing.");
             }
-            if (checkToken(request, attributes, token)) {
-                throw new IdempotentException("the requested token is existed.");
+            if (!checkToken(request, attributes, token)) {
+                throw new IdempotentException("the request token is invalid.");
             }
-            String newToken = generateToken(request, attributes);
-            storeToken(request, attributes, newToken);
+            if (!storeToken(request, attributes, token)) {
+                throw new IdempotentException("the request token is existed.");
+            }
+            renewToken(request, attributes);
+            invalidate(request, attributes, token);
         }
     }
+
+    /**
+     * Destroy
+     */
+    void destroy();
 }
