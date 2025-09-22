@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.web.util;
+package io.microsphere.spring.webmvc.util;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -57,9 +57,37 @@ public class UnknownSpringWebHelperTest {
     }
 
     @Test
+    public void testGetHeader() {
+        assertNull(helper.getHeader(this.request, "headerName"));
+    }
+
+    @Test
+    public void testGetHeaderValues() {
+        assertNull(helper.getHeaderValues(this.request, "headerName"));
+    }
+
+    @Test
+    public void testSetHeader() {
+        helper.setHeader(this.request, "headerName", "headerValue");
+        helper.setHeader(null, "headerName", "headerValue");
+    }
+
+    @Test
+    public void testAddHeader() {
+        helper.addHeader(this.request, "headerName", "headerValue");
+        helper.addHeader(null, "headerName", "headerValue");
+    }
+
+    @Test
     public void testGetCookieValue() {
         assertNull(helper.getCookieValue(this.request, "cookieName"));
         assertNull(helper.getCookieValue(null, "cookieName"));
+    }
+
+    @Test
+    public void testAddCookieValue() {
+        helper.addCookie(this.request, "cookieName", "cookieValue");
+        helper.addCookie(null, "cookieName", "cookieValue");
     }
 
     @Test

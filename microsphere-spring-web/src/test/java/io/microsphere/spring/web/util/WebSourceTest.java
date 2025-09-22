@@ -29,20 +29,18 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import static io.microsphere.collection.Maps.ofMap;
-import static io.microsphere.constants.PathConstants.SLASH;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
-import static io.microsphere.spring.web.util.RequestValueSource.ATTRIBUTE;
-import static io.microsphere.spring.web.util.RequestValueSource.BODY;
-import static io.microsphere.spring.web.util.RequestValueSource.COOKIE;
-import static io.microsphere.spring.web.util.RequestValueSource.HEADER;
-import static io.microsphere.spring.web.util.RequestValueSource.MATRIX_VARIABLE;
-import static io.microsphere.spring.web.util.RequestValueSource.PARAMETER;
-import static io.microsphere.spring.web.util.RequestValueSource.PATH_VARIABLE;
-import static io.microsphere.spring.web.util.RequestValueSource.SESSION_ATTRIBUTE;
-import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
+import static io.microsphere.spring.web.util.WebSource.MATRIX_VARIABLE;
+import static io.microsphere.spring.web.util.WebSource.PATH_VARIABLE;
+import static io.microsphere.spring.web.util.WebSource.REQUEST_ATTRIBUTE;
+import static io.microsphere.spring.web.util.WebSource.REQUEST_BODY;
+import static io.microsphere.spring.web.util.WebSource.REQUEST_COOKIE;
+import static io.microsphere.spring.web.util.WebSource.REQUEST_HEADER;
+import static io.microsphere.spring.web.util.WebSource.REQUEST_PARAMETER;
+import static io.microsphere.spring.web.util.WebSource.SESSION_ATTRIBUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
@@ -50,52 +48,53 @@ import static org.springframework.web.servlet.HandlerMapping.MATRIX_VARIABLES_AT
 import static org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
 
 /**
- * {@link RequestValueSource} Test
+ * {@link WebSource} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see RequestValueSource
+ * @see WebSource
  * @since 1.0.0
  */
-public class RequestValueSourceTest {
+public class WebSourceTest {
 
-    private static final String testName = "test";
+    static final String testName = "test";
 
-    private static final String testValue = "value";
+    static final String testValue = "value";
 
     @Test
     public void testGetValueForATTRIBUTE() {
-        NativeWebRequest request = createWebRequest(r -> r.setAttribute(PATH_ATTRIBUTE, SLASH));
-        assertEquals(SLASH, ATTRIBUTE.getValue(request, PATH_ATTRIBUTE));
+        NativeWebRequest request = createWebRequest(r -> r.setAttribute(testName, testValue));
+        assertEquals(testValue, REQUEST_ATTRIBUTE.getValue(request, testName));
     }
 
     @Test
     public void testGetValueForSESSION_ATTRIBUTE() {
-        NativeWebRequest request = createWebRequest(r -> r.getSession().setAttribute(PATH_ATTRIBUTE, SLASH));
-        assertEquals(SLASH, SESSION_ATTRIBUTE.getValue(request, PATH_ATTRIBUTE));
+        NativeWebRequest request = createWebRequest(r -> r.getSession().setAttribute(testName, testValue));
+        assertEquals(testValue, SESSION_ATTRIBUTE.getValue(request, testName));
     }
+
 
     @Test
     public void testGetValueForPARAMETER() {
         NativeWebRequest request = createWebRequest(r -> r.setParameter(testName, testValue));
-        assertEquals(testValue, PARAMETER.getValue(request, testName));
+        assertEquals(testValue, REQUEST_PARAMETER.getValue(request, testName));
     }
 
     @Test
     public void testGetValueForHEADER() {
         NativeWebRequest request = createWebRequest(r -> r.addHeader(testName, testValue));
-        assertEquals(testValue, HEADER.getValue(request, testName));
+        assertEquals(testValue, REQUEST_HEADER.getValue(request, testName));
     }
 
     @Test
     public void testGetValueForCOOKIE() {
         NativeWebRequest request = createWebRequest(r -> r.setCookies(new Cookie(testName, testValue)));
-        assertEquals(testValue, COOKIE.getValue(request, testName));
+        assertEquals(testValue, REQUEST_COOKIE.getValue(request, testName));
     }
 
     @Test
     public void testGetValueForCOOKIEOnNull() {
         NativeWebRequest request = createWebRequest();
-        assertNull(COOKIE.getValue(request, testName));
+        assertNull(REQUEST_COOKIE.getValue(request, testName));
     }
 
     @Test
@@ -107,13 +106,13 @@ public class RequestValueSourceTest {
             r.setAttribute(BEST_MATCHING_HANDLER_ATTRIBUTE, handlerMethod);
         });
         setHandlerMethodRequestBodyArgument(request, method, body);
-        assertEquals(testValue, BODY.getValue(request, testName));
+        assertEquals(testValue, REQUEST_BODY.getValue(request, testName));
     }
 
     @Test
     public void testGetValueForBODYOnNull() {
         NativeWebRequest request = createWebRequest();
-        assertNull(BODY.getValue(request, testName));
+        assertNull(REQUEST_BODY.getValue(request, testName));
     }
 
     @Test

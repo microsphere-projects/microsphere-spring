@@ -58,7 +58,7 @@ public class TestServletContext extends MockServletContext {
      * Create a new {@code TestServletContext}, using no base path and a
      * {@link DefaultResourceLoader} (i.e. the classpath root as WAR root).
      *
-     * @see org.springframework.core.io.DefaultResourceLoader
+     * @see DefaultResourceLoader
      */
     public TestServletContext() {
         this("");
@@ -68,7 +68,7 @@ public class TestServletContext extends MockServletContext {
      * Create a new {@code TestServletContext}, using a {@link DefaultResourceLoader}.
      *
      * @param resourceBasePath the root directory of the WAR (should not end with a slash)
-     * @see org.springframework.core.io.DefaultResourceLoader
+     * @see DefaultResourceLoader
      */
     public TestServletContext(String resourceBasePath) {
         this(resourceBasePath, null);

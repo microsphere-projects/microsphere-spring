@@ -52,7 +52,7 @@ public class ProduceMediaTypeExpression extends GenericMediaTypeExpression {
         return !isNegated() == match;
     }
 
-    private boolean matchMediaType(List<MediaType> acceptedMediaTypes) {
+    boolean matchMediaType(List<MediaType> acceptedMediaTypes) {
         for (MediaType acceptedMediaType : acceptedMediaTypes) {
             if (getMediaType().isCompatibleWith(acceptedMediaType) && matchParameters(acceptedMediaType)) {
                 return true;

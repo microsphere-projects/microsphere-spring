@@ -14,41 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
-import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
-import io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor;
+package io.microsphere.spring.webmvc.idempotent;
+
+
+import io.microsphere.spring.web.idempotent.Idempotent;
+import io.microsphere.spring.webmvc.annotation.AbstractEnableWebMvcExtensionTest;
+import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.EnableWebMvcExtensionInterceptorsTestConfig;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import static io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor.MOCK_TOKEN_VALUE;
-import static io.microsphere.spring.webmvc.interceptor.IdempotentAnnotatedMethodHandlerInterceptor.TOKEN_HEADER_NAME;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * {@link EnableWebMvcExtension} Test with {@link HandlerMethodInterceptor} and {@link HandlerMethodArgumentInterceptor}.
+ * {@link IdempotentAnnotatedMethodHandlerInterceptor} Test
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see EnableWebMvcExtension
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see IdempotentAnnotatedMethodHandlerInterceptor
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        EnableWebMvcExtensionInterceptorsTest.class,
+        IdempotentAnnotatedMethodHandlerInterceptorTest.class,
         EnableWebMvcExtensionInterceptorsTestConfig.class
 })
 @EnableWebMvcExtension(handlerInterceptors = {
         IdempotentAnnotatedMethodHandlerInterceptor.class
 })
-public class EnableWebMvcExtensionInterceptorsTest extends AbstractEnableWebMvcExtensionTest {
+@RestController
+public class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEnableWebMvcExtensionTest {
+
+    @PostMapping("/idempotent")
+    @Idempotent
+    public String idempotent() {
+        return "idempotent";
+    }
 
     @Test
     public void testWebEndpoints() throws Exception {
-        this.mockMvc.perform(get("/test/greeting/hello").header(TOKEN_HEADER_NAME, MOCK_TOKEN_VALUE))
+        super.testWebEndpoints();
+        this.mockMvc.perform(post("/idempotent"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Greeting : hello"));
+                .andExpect(content().string(this.idempotent()));
     }
 }

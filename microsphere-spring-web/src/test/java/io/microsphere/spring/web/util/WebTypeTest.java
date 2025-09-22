@@ -46,7 +46,6 @@ public class WebTypeTest {
         assertSame(SERVLET, valueOf(new MockServletWebRequest()));
 
         NativeWebRequest request = mock(NativeWebRequest.class);
-        when(request.getNativeRequest()).thenReturn(null);
         assertSame(NONE, valueOf(request));
 
         when(request.getNativeRequest()).thenReturn(mock(ServerHttpRequest.class));

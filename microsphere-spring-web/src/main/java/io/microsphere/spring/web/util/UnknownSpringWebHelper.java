@@ -27,7 +27,7 @@ import java.util.Set;
 import static io.microsphere.spring.web.util.SpringWebType.UNKNOWN;
 
 /**
- * Unknown {@link SpringWebHelper}, all method return {@code null} exception {@link #getType()}.
+ * Unknown {@link SpringWebHelper}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see SpringWebHelper
@@ -46,8 +46,20 @@ public class UnknownSpringWebHelper implements SpringWebHelper {
     }
 
     @Override
+    public void setHeader(NativeWebRequest request, String headerName, String headerValue) {
+    }
+
+    @Override
+    public void addHeader(NativeWebRequest request, String headerName, String... headerValues) {
+    }
+
+    @Override
     public String getCookieValue(NativeWebRequest request, String cookieName) {
         return null;
+    }
+
+    @Override
+    public void addCookie(NativeWebRequest request, String cookieName, String cookieValue) {
     }
 
     @Override
