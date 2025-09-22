@@ -57,11 +57,11 @@ public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethod
 
     @Override
     protected boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
-                                Idempotent idempotent) {
+                                Idempotent idempotent) throws Exception {
         NativeWebRequest nativeWebRequest = new ServletWebRequest(request);
         IdempotentAttributes attributes = of(idempotent, environment);
         idempotentService.validateToken(nativeWebRequest, attributes);
-        return true;
+        return super.preHandle(request, response, handlerMethod, idempotent);
     }
 
     @Override
