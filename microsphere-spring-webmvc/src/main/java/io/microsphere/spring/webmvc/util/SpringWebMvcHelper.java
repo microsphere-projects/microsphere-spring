@@ -93,6 +93,7 @@ public class SpringWebMvcHelper implements SpringWebHelper {
     public void addCookie(NativeWebRequest request, String cookieName, String cookieValue) {
         HttpServletResponse response = getHttpServletResponse(request);
         Cookie cookie = new Cookie(cookieName, cookieValue);
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 
