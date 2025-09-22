@@ -23,13 +23,18 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import static io.microsphere.spring.test.util.SpringTestWebUtils.clearAttributes;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithHeaders;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithParams;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
 import static org.springframework.http.HttpHeaders.ORIGIN;
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
 /**
  * {@link SpringTestWebUtils} Test
@@ -39,6 +44,10 @@ import static org.springframework.http.HttpHeaders.ORIGIN;
  * @since 1.0.0
  */
 class SpringTestWebUtilsTest {
+
+    static final String TEST_ATTRIBUTE_NAME = "test-name";
+
+    static final String TEST_ATTRIBUTE_VALUE = "test-value";
 
     @Test
     void testCreateWebRequest() {
@@ -82,6 +91,40 @@ class SpringTestWebUtilsTest {
         assertTrue("OPTIONS".equals(servletRequest.getHeader(":METHOD:")));
         assertTrue("*".equals(servletRequest.getHeader(ORIGIN)));
         assertTrue("*".equals(servletRequest.getHeader(ACCESS_CONTROL_REQUEST_METHOD)));
+    }
+
+    @Test
+    void testClearAttributes() {
+        NativeWebRequest webRequest = createWebRequest(request -> {
+            request.setAttribute(TEST_ATTRIBUTE_NAME, TEST_ATTRIBUTE_VALUE);
+        });
+        assertSame(TEST_ATTRIBUTE_VALUE, webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_REQUEST));
+
+        clearAttributes(webRequest);
+        assertNull(webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_REQUEST));
+    }
+
+    @Test
+    void testClearAttributesOnEmptyAttributes() {
+        NativeWebRequest webRequest = createWebRequest();
+        assertNull(webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_REQUEST));
+
+        clearAttributes(webRequest);
+        assertNull(webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_REQUEST));
+    }
+
+    @Test
+    void testClearAttributesForSession() {
+        NativeWebRequest webRequest = createWebRequest(request -> {
+            request.getSession().setAttribute(TEST_ATTRIBUTE_NAME, TEST_ATTRIBUTE_VALUE);
+        });
+
+        assertNull(webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_REQUEST));
+        assertSame(TEST_ATTRIBUTE_VALUE, webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_SESSION));
+
+        clearAttributes(webRequest, SCOPE_SESSION);
+        assertNull(webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_REQUEST));
+        assertNull(webRequest.getAttribute(TEST_ATTRIBUTE_NAME, SCOPE_SESSION));
     }
 
     void assertNativeWebRequest(NativeWebRequest request) {
