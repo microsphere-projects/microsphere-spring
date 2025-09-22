@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
@@ -174,7 +175,7 @@ class BeanDefinitionUtilsTest {
 
         @Bean(name = USERS_BEAN_NAME)
         public List<User> users() {
-            return List.of(new User());
+            return ofList(new User());
         }
     }
 }
