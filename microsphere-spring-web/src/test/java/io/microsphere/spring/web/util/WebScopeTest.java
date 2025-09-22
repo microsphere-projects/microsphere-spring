@@ -136,12 +136,6 @@ class WebScopeTest {
         assertGetAttributes(SESSION.getAttributes(this.requestAttributes));
     }
 
-    void assertGetAttributes(Map<String, Object> attributesMap) {
-        assertNotNull(attributesMap);
-        assertEquals(1, attributesMap.size());
-        assertEquals(ATTRIBUTE_VALUE, attributesMap.get(ATTRIBUTE_NAME));
-    }
-
     @Test
     void testValueOf() {
         assertEquals(REQUEST, valueOf(SCOPE_REQUEST));
@@ -176,6 +170,12 @@ class WebScopeTest {
     void testGetAttributeNames() {
         testGetAttributeNames(SCOPE_REQUEST);
         testGetAttributeNames(SCOPE_SESSION);
+    }
+    
+    void assertGetAttributes(Map<String, Object> attributesMap) {
+        assertNotNull(attributesMap);
+        assertEquals(1, attributesMap.size());
+        assertEquals(ATTRIBUTE_VALUE, attributesMap.get(ATTRIBUTE_NAME));
     }
 
     void testStaticGetAttribute(int scope) {
