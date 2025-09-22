@@ -19,20 +19,35 @@ package io.microsphere.spring.web.idempotent;
 
 import io.microsphere.spring.web.util.WebScope;
 import io.microsphere.spring.web.util.WebSource;
-import io.microsphere.spring.web.util.WebTarget;
+import org.springframework.util.ConcurrentReferenceHashMap;
+import org.springframework.util.ConcurrentReferenceHashMap.ReferenceType;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import static io.microsphere.spring.web.util.WebScope.SESSION;
 import static io.microsphere.util.StringUtils.isBlank;
+import static org.springframework.util.ConcurrentReferenceHashMap.ReferenceType.WEAK;
 
 /**
- * The default {@link IdempotentService} implementation based on {@link WebScope#SESSION session}.
+ * The default {@link IdempotentService} implementation which uses a weak reference {@link ConcurrentReferenceHashMap} to
+ * store the new generated token and {@link WebScope#SESSION session} context to check the duplicated request with same
+ * token.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see IdempotentService
+ * @see ConcurrentReferenceHashMap
+ * @see ReferenceType#WEAK
  * @since 1.0.0
  */
 public class DefaultIdempotentService implements IdempotentService {
+
+    private final ConcurrentReferenceHashMap cache = new ConcurrentReferenceHashMap<>(256, 0.75f, 16, WEAK);
+
+    @Override
+    public String generateToken(NativeWebRequest request, IdempotentAttributes attributes) {
+        String token = IdempotentService.super.generateToken(request, attributes);
+        cacheToken(attributes, token);
+        return token;
+    }
 
     @Override
     public String getToken(NativeWebRequest request, IdempotentAttributes attributes) {
@@ -50,11 +65,7 @@ public class DefaultIdempotentService implements IdempotentService {
     @Override
     public boolean invalidate(NativeWebRequest request, IdempotentAttributes attributes, String token) {
         String key = generateTokenKey(attributes, token);
-        if (SESSION.getAttribute(request, key) == null) {
-            return false;
-        }
-        SESSION.removeAttribute(request, key);
-        return true;
+        return cache.remove(key, token);
     }
 
     @Override
@@ -62,14 +73,14 @@ public class DefaultIdempotentService implements IdempotentService {
         if (isBlank(newToken)) {
             return false;
         }
-        String tokenName = attributes.getTokenName();
-        WebTarget target = attributes.getTarget();
         String key = generateTokenKey(attributes, newToken);
-        SESSION.setAttribute(request, key, newToken);
-        target.writeValue(request, tokenName, newToken);
-        return true;
+        return SESSION.setAttribute(request, key, newToken) == null;
     }
 
+    @Override
+    public void destroy() {
+        this.cache.clear();
+    }
 
     String generateTokenKey(IdempotentAttributes attributes, String token) {
         String tokenName = attributes.getTokenName();
@@ -78,5 +89,10 @@ public class DefaultIdempotentService implements IdempotentService {
 
     String generateTokenKey(String tokenName, String token) {
         return tokenName + ":" + token;
+    }
+
+    void cacheToken(IdempotentAttributes attributes, String newToken) {
+        String key = generateTokenKey(attributes, newToken);
+        cache.put(key, newToken);
     }
 }
