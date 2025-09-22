@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.spring.test.util.SpringTestWebUtils.clearAttributes;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
 import static org.junit.Assert.assertFalse;
@@ -30,6 +31,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
 /**
  * {@link DefaultIdempotentService} Test
@@ -84,24 +86,30 @@ public class DefaultIdempotentServiceTest {
 
         String newToken = this.idempotentService.generateToken(this.request, this.attributes);
         assertTrue(this.idempotentService.storeToken(this.request, this.attributes, newToken));
+        assertFalse(this.idempotentService.storeToken(this.request, this.attributes, newToken));
     }
 
     @Test
     public void testCheckToken() {
-        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
+        String newToken = "test";
         assertFalse(this.idempotentService.checkToken(this.request, this.attributes, newToken));
 
-        assertTrue(this.idempotentService.storeToken(this.request, this.attributes, newToken));
+        newToken = this.idempotentService.generateToken(this.request, this.attributes);
         assertTrue(this.idempotentService.checkToken(this.request, this.attributes, newToken));
     }
 
     @Test
     public void testInvalidate() {
         String newToken = this.idempotentService.generateToken(this.request, this.attributes);
-        assertFalse(this.idempotentService.invalidate(this.request, this.attributes, newToken));
+        assertTrue(this.idempotentService.checkToken(this.request, this.attributes, newToken));
 
-        assertTrue(this.idempotentService.storeToken(this.request, this.attributes, newToken));
+        // invalidate success
         assertTrue(this.idempotentService.invalidate(this.request, this.attributes, newToken));
+        assertFalse(this.idempotentService.checkToken(this.request, this.attributes, newToken));
+
+        // invalidate failed when token is absent
+        assertFalse(this.idempotentService.invalidate(this.request, this.attributes, newToken));
+        assertFalse(this.idempotentService.checkToken(this.request, this.attributes, newToken));
     }
 
     @Test
@@ -121,5 +129,23 @@ public class DefaultIdempotentServiceTest {
 
         // throw a IdempotentException if the token is absent in the request
         assertThrows(IdempotentException.class, () -> this.idempotentService.validateToken(this.request, this.attributes));
+
+
+        newToken = this.idempotentService.generateToken(this.request, this.attributes);
+
+        // clear attributes from Session
+        clearAttributes(this.request, SCOPE_SESSION);
+        // store new token
+        assertTrue(this.idempotentService.storeToken(this.request, this.attributes, newToken));
+
+        // throw a IdempotentException if the token is existed in the session
+        assertThrows(IdempotentException.class, () -> this.idempotentService.validateToken(this.request, this.attributes));
+    }
+
+    @Test
+    public void testDestroy() {
+        String newToken = this.idempotentService.generateToken(this.request, this.attributes);
+        this.idempotentService.destroy();
+        assertFalse(this.idempotentService.checkToken(this.request, this.attributes, newToken));
     }
 }
