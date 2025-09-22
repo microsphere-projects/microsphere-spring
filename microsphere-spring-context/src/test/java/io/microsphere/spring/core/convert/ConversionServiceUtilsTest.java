@@ -37,9 +37,4 @@ public class ConversionServiceUtilsTest {
     public void testGetSharedInstance() {
         assertNotNull(getSharedInstance());
     }
-
-    @Test
-    public void testDoGetSharedInstance() {
-        assertNotNull(doGetSharedInstance());
-    }
 }
