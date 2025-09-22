@@ -92,13 +92,11 @@ public class AnnotationUtilsTest {
     @Test
     public void testIsPresent() {
 
-        Method method = findMethod(RuntimeAnnotationHandler.class, "handle",
-                String.class, String.class);
+        Method method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class, String.class);
 
         assertTrue(isPresent(method, RuntimeAnnotation.class));
 
-        method = findMethod(RuntimeAnnotationHandler.class, "handle",
-                String.class);
+        method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class);
 
         assertTrue(isPresent(method, RuntimeAnnotation.class));
 
@@ -106,8 +104,7 @@ public class AnnotationUtilsTest {
 
         assertTrue(isPresent(method, RuntimeAnnotation.class));
 
-        method = findMethod(ClassAnnotationHandler.class, "echo",
-                String.class);
+        method = findMethod(ClassAnnotationHandler.class, "echo", String.class);
 
         assertFalse(isPresent(method, ClassAnnotation.class));
     }
@@ -115,15 +112,13 @@ public class AnnotationUtilsTest {
     @Test
     public void testFindAnnotations() {
 
-        Method method = findMethod(RuntimeAnnotationHandler.class, "handle",
-                String.class, String.class);
+        Method method = findMethod(RuntimeAnnotationHandler.class, "handle", String.class, String.class);
 
-        Map<ElementType, List<RuntimeAnnotation>> annotationsMap =
-                findAnnotations(method, RuntimeAnnotation.class);
+        Map<ElementType, List<RuntimeAnnotation>> annotationsMap = findAnnotations(method, RuntimeAnnotation.class);
 
         assertEquals(3, annotationsMap.size());
 
-        List<RuntimeAnnotation> annotationsList = annotationsMap.get(ElementType.TYPE);
+        List<RuntimeAnnotation> annotationsList = annotationsMap.get(TYPE);
 
         assertEquals(1, annotationsList.size());
 
@@ -131,7 +126,7 @@ public class AnnotationUtilsTest {
 
         assertEquals("type", runtimeAnnotation.value());
 
-        annotationsList = annotationsMap.get(ElementType.METHOD);
+        annotationsList = annotationsMap.get(METHOD);
 
         assertEquals(1, annotationsList.size());
 
@@ -139,7 +134,7 @@ public class AnnotationUtilsTest {
 
         assertEquals("method", runtimeAnnotation.value());
 
-        annotationsList = annotationsMap.get(ElementType.PARAMETER);
+        annotationsList = annotationsMap.get(PARAMETER);
 
         assertEquals(2, annotationsList.size());
 
