@@ -17,22 +17,27 @@
 
 package io.microsphere.spring.web.idempotent;
 
-import io.microsphere.spring.web.util.WebScope;
 import io.microsphere.spring.web.util.WebSource;
 import io.microsphere.spring.web.util.WebTarget;
+import org.springframework.util.ConcurrentReferenceHashMap;
+import org.springframework.util.ConcurrentReferenceHashMap.ReferenceType;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import static io.microsphere.spring.web.util.WebScope.SESSION;
 import static io.microsphere.util.StringUtils.isBlank;
+import static org.springframework.util.ConcurrentReferenceHashMap.ReferenceType.WEAK;
 
 /**
- * The default {@link IdempotentService} implementation based on {@link WebScope#SESSION session}.
+ * The default {@link IdempotentService} implementation based on {@link ConcurrentReferenceHashMap} with weak entity.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see IdempotentService
+ * @see ConcurrentReferenceHashMap
+ * @see ReferenceType#WEAK
  * @since 1.0.0
  */
 public class DefaultIdempotentService implements IdempotentService {
+
+    private final ConcurrentReferenceHashMap cache = new ConcurrentReferenceHashMap<>(256, 0.75f, 16, WEAK);
 
     @Override
     public String getToken(NativeWebRequest request, IdempotentAttributes attributes) {
@@ -44,17 +49,13 @@ public class DefaultIdempotentService implements IdempotentService {
     @Override
     public boolean checkToken(NativeWebRequest request, IdempotentAttributes attributes, String token) {
         String key = generateTokenKey(attributes, token);
-        return SESSION.getAttribute(request, key) != null;
+        return cache.containsKey(key);
     }
 
     @Override
     public boolean invalidate(NativeWebRequest request, IdempotentAttributes attributes, String token) {
         String key = generateTokenKey(attributes, token);
-        if (SESSION.getAttribute(request, key) == null) {
-            return false;
-        }
-        SESSION.removeAttribute(request, key);
-        return true;
+        return cache.remove(key, token);
     }
 
     @Override
@@ -65,11 +66,15 @@ public class DefaultIdempotentService implements IdempotentService {
         String tokenName = attributes.getTokenName();
         WebTarget target = attributes.getTarget();
         String key = generateTokenKey(attributes, newToken);
-        SESSION.setAttribute(request, key, newToken);
+        cache.put(key, newToken);
         target.writeValue(request, tokenName, newToken);
         return true;
     }
 
+    @Override
+    public void destroy() {
+        this.cache.clear();
+    }
 
     String generateTokenKey(IdempotentAttributes attributes, String token) {
         String tokenName = attributes.getTokenName();
