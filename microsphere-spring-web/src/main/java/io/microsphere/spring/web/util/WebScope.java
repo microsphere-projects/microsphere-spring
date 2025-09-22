@@ -173,6 +173,18 @@ public enum WebScope {
     }
 
     /**
+     * Clear all attributes in the specified {@link RequestAttributes}.
+     *
+     * @param requestAttributes {@link RequestAttributes}
+     */
+    public void clearAttributes(@Nonnull RequestAttributes requestAttributes) {
+        String[] attributeNames = getAttributeNames(requestAttributes);
+        for (String attributeName : attributeNames) {
+            removeAttribute(requestAttributes, attributeName);
+        }
+    }
+
+    /**
      * Resolve the {@link WebScope} by the specified scope value
      *
      * @param scope the scope value
@@ -250,5 +262,17 @@ public enum WebScope {
     public static String[] getAttributeNames(@Nonnull RequestAttributes requestAttributes, int scope)
             throws IllegalArgumentException {
         return valueOf(scope).getAttributeNames(requestAttributes);
+    }
+
+    /**
+     * Clear all attributes in the specified {@link RequestAttributes} by the scope
+     *
+     * @param requestAttributes {@link RequestAttributes} source
+     * @param scope             the scope value
+     * @throws IllegalArgumentException if the scope value is not recognized
+     */
+    public static void clearAttributes(@Nonnull RequestAttributes requestAttributes, int scope)
+            throws IllegalArgumentException {
+        valueOf(scope).clearAttributes(requestAttributes);
     }
 }
