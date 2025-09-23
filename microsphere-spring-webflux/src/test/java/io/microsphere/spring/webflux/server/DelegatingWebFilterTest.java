@@ -47,10 +47,6 @@ class DelegatingWebFilterTest {
     @Autowired
     private DelegatingWebFilter webFilter;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void testFilter() {
         assertFilter(webFilter);
