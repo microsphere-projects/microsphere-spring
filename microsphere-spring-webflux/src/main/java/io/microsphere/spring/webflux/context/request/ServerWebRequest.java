@@ -20,7 +20,7 @@ package io.microsphere.spring.webflux.context.request;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.spring.webflux.util.AttributeScope;
+import io.microsphere.spring.web.util.WebServerScope;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -271,23 +271,23 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nullable
     public Object getAttribute(String name, int scope) {
-        return AttributeScope.getAttribute(this.exchange, name, scope);
+        return WebServerScope.getAttribute(this.exchange, name, scope);
     }
 
     @Override
     public void setAttribute(String name, Object value, int scope) {
-        AttributeScope.setAttribute(this.exchange, name, value, scope);
+        WebServerScope.setAttribute(this.exchange, name, value, scope);
     }
 
     @Override
     public void removeAttribute(String name, int scope) {
-        AttributeScope.removeAttribute(this.exchange, name, scope);
+        WebServerScope.removeAttribute(this.exchange, name, scope);
     }
 
     @Override
     @Nonnull
     public String[] getAttributeNames(int scope) {
-        return AttributeScope.getAttributeNames(this.exchange, scope);
+        return WebServerScope.getAttributeNames(this.exchange, scope);
     }
 
     @Override

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.util;
+package io.microsphere.spring.web.util;
 
 import io.microsphere.annotation.Nonnull;
 import org.springframework.lang.Nullable;
@@ -31,7 +31,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
 /**
- * The enumeration of attributes scopes for Spring Web
+ * The enumeration of Web Server scopes for Spring Web
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see RequestAttributes#SCOPE_REQUEST
@@ -39,7 +39,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-public enum AttributeScope {
+public enum WebServerScope {
 
     /**
      * Request Scope
@@ -72,7 +72,7 @@ public enum AttributeScope {
 
     private final int value;
 
-    AttributeScope(int value) {
+    WebServerScope(int value) {
         this.value = value;
     }
 
@@ -180,20 +180,20 @@ public enum AttributeScope {
     protected abstract Map<String, Object> getAttributes(@Nonnull ServerWebExchange serverWebExchange);
 
     /**
-     * Resolve the {@link AttributeScope} by the specified scope value
+     * Resolve the {@link WebServerScope} by the specified scope value
      *
      * @param scope the scope value
-     * @return the {@link AttributeScope}
+     * @return the {@link WebServerScope}
      * @throws IllegalArgumentException if the scope value is not recognized
      * @see #value()
      * @see #REQUEST
      * @see #SESSION
      */
     @Nonnull
-    public static AttributeScope valueOf(int scope) throws IllegalArgumentException {
-        for (AttributeScope attributeScope : values()) {
-            if (attributeScope.value == scope) {
-                return attributeScope;
+    public static WebServerScope valueOf(int scope) throws IllegalArgumentException {
+        for (WebServerScope webServerScope : values()) {
+            if (webServerScope.value == scope) {
+                return webServerScope;
             }
         }
         throw new IllegalArgumentException("Unknown RequestAttributeScope value: " + scope);
