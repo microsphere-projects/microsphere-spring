@@ -32,7 +32,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.server.WebFilter;
-import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
 import java.net.HttpCookie;
@@ -44,7 +43,7 @@ import static io.microsphere.collection.MapUtils.ofMap;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_FLUX;
 import static io.microsphere.util.ArrayUtils.ofArray;
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -89,23 +88,19 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
 
         WebFilter webFilter = (exchange, chain) -> {
             NativeWebRequest request = new ServerWebRequest(exchange);
-
-            Mono<Void> result = chain.filter(exchange);
-
-            result.doOnTerminate(() -> {
+            testSetHeader(request, headerNames[0], headerValues[0]);
+            testAddHeader(request, headerNames[1], headerValues[1]);
+            testAddCookie(request, cookie.getName(), cookie.getValue());
+            return chain.filter(exchange).doOnTerminate(() -> {
                 testGetMethod(request, method);
                 testGetCookieValue(request, cookies);
                 testGetBestMatchingHandler(request, "greeting", String.class);
                 testGetPathWithinHandlerMapping(request, uriTemplate, uriVariables);
                 testGetBestMatchingPattern(request, uriTemplate);
                 testGetUriTemplateVariables(request, uriVariables);
-                testGetMatrixVariables(request, emptyMap());
-                testSetHeader(request, headerNames[0], headerValues[0]);
-                testAddHeader(request, headerNames[1], headerValues[1]);
-                testAddCookie(request, cookie.getName(), cookie.getValue());
+                testGetMatrixVariables(request);
+                testGetProducibleMediaTypes(request);
             });
-
-            return result;
         };
 
         compositeWebFilter.addFilter(webFilter);
@@ -120,14 +115,15 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
                 })
                 .exchange()
                 .expectStatus().isOk()
-//                .expectHeader().valueEquals(headerNames[0], headerValues[0])
-//                .expectHeader().valueEquals(headerNames[1], headerValues[1])
-//                .expectCookie().valueEquals(cookie.getName(), cookie.getValue())
-                .expectBody(String.class).isEqualTo(testController.greeting(message))
-        ;
+                .expectHeader().valueEquals(headerNames[0], headerValues[0])
+                .expectHeader().valueEquals(headerNames[1], headerValues[1])
+                .expectCookie().valueEquals(cookie.getName(), cookie.getValue())
+                .expectBody(String.class).isEqualTo(testController.greeting(message));
+
+        compositeWebFilter.removeFilter(webFilter);
     }
 
-    @Test
+    @Override
     protected void testUser() {
         HttpMethod method = POST;
         String uriTemplate = "/test/user";
@@ -137,6 +133,37 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
         User user = new User();
         user.setName("Mercy");
         user.setAge(18);
+
+        WebFilter webFilter = (exchange, chain) -> {
+            NativeWebRequest request = new ServerWebRequest(exchange);
+            testAddCookie(request, cookie.getName(), cookie.getValue());
+            return chain.filter(exchange).doOnTerminate(() -> {
+                testGetMethod(request, method);
+                testGetCookieValue(request, cookies);
+                testGetBestMatchingHandler(request, "user", User.class);
+                testGetPathWithinHandlerMapping(request, uriTemplate);
+                testGetBestMatchingPattern(request, uriTemplate);
+                testGetUriTemplateVariables(request);
+                testGetMatrixVariables(request);
+                testGetProducibleMediaTypes(request, contentType);
+                testGetRequestBody(request, user);
+            });
+        };
+
+        compositeWebFilter.addFilter(webFilter);
+
+        this.webTestClient
+                .method(method)
+                .uri(uriTemplate)
+                .cookie(cookie.getName(), cookie.getValue())
+                .accept(contentType)
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isOk()
+                .expectCookie().valueEquals(cookie.getName(), cookie.getValue())
+                .expectBody(User.class).isEqualTo(testController.user(user));
+
+        compositeWebFilter.removeFilter(webFilter);
     }
 
     @Test
@@ -209,6 +236,9 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
 
     void testGetProducibleMediaTypes(NativeWebRequest request, MediaType... mediaTypes) {
         Set<MediaType> producibleMediaTypes = this.springWebFluxHelper.getProducibleMediaTypes(request);
+        if (producibleMediaTypes == null) {
+            producibleMediaTypes = emptySet();
+        }
         assertEquals(ofSet(mediaTypes), producibleMediaTypes);
     }
 }
