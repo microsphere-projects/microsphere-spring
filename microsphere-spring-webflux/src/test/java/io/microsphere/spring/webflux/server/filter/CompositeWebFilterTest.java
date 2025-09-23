@@ -67,6 +67,16 @@ class CompositeWebFilterTest {
     }
 
     @Test
+    void testRemoveFilter() {
+        assertFalse(this.webFilter.removeFilter(null));
+        assertFalse(this.webFilter.removeFilter(this.webFilter));
+        testAddFilter();
+        for (WebFilter filter : this.webFilter.getWebFilters()) {
+            assertTrue(this.webFilter.removeFilter(filter));
+        }
+    }
+
+    @Test
     void testFilterWithFilter() {
         testAddFilter();
         assertFilter(this.webFilter);
