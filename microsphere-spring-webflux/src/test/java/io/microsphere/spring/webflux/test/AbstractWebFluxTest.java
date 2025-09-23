@@ -29,6 +29,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import reactor.core.publisher.Mono;
 
+import static java.util.Locale.ENGLISH;
+import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.reactive.server.WebTestClient.bindToApplicationContext;
 import static reactor.core.publisher.Mono.just;
@@ -68,6 +70,7 @@ public abstract class AbstractWebFluxTest {
     protected void testHelloWorld() {
         this.webTestClient.get()
                 .uri("/test/helloworld")
+                .header(ACCEPT_LANGUAGE, ENGLISH.getLanguage())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
@@ -150,7 +153,8 @@ public abstract class AbstractWebFluxTest {
                 .expectStatus().isOk();
     }
 
-    public static WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
-        return bindToApplicationContext(context).build();
+    public WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
+        return bindToApplicationContext(context)
+                .build();
     }
 }
