@@ -102,7 +102,7 @@ public class SpringWebFluxHelper implements SpringWebHelper {
     @Override
     public String getBestMatchingPattern(NativeWebRequest request) {
         PathPattern pathPattern = REQUEST.getAttribute(request, BEST_MATCHING_PATTERN_ATTRIBUTE);
-        return pathPattern.getPatternString();
+        return pathPattern == null ? null : pathPattern.getPatternString();
     }
 
     @Override
@@ -133,11 +133,6 @@ public class SpringWebFluxHelper implements SpringWebHelper {
     protected HttpHeaders getResponseHeaders(NativeWebRequest request) {
         ServerHttpResponse serverHttpResponse = getServerHttpResponse(request);
         return serverHttpResponse.getHeaders();
-    }
-
-    protected HttpHeaders getRequestHeaders(NativeWebRequest request) {
-        ServerWebRequest serverWebRequest = getServerWebRequest(request);
-        return serverWebRequest.getRequestHeaders();
     }
 
     protected ServerHttpRequest getServerHttpRequest(NativeWebRequest request) {
