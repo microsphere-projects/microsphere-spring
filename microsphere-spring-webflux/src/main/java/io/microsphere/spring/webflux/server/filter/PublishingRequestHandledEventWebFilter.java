@@ -44,8 +44,9 @@ public class PublishingRequestHandledEventWebFilter implements WebFilter, Applic
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         long startTime = System.currentTimeMillis();
-        publishEvent(exchange, chain, startTime);
-        return chain.filter(exchange);
+        return chain.filter(exchange).doOnTerminate(() -> {
+            publishEvent(exchange, chain, startTime);
+        });
     }
 
     @Override
