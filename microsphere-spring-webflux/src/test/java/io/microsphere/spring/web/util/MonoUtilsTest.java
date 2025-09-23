@@ -21,11 +21,12 @@ package io.microsphere.spring.web.util;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static reactor.core.publisher.Mono.just;
-import static reactor.core.scheduler.Schedulers.registerNonBlockingThreadPredicate;
-import static reactor.core.scheduler.Schedulers.resetNonBlockingThreadPredicate;
+import static reactor.core.scheduler.Schedulers.newSingle;
 
 /**
  * {@link MonoUtils} Test
@@ -44,9 +45,20 @@ class MonoUtilsTest {
     }
 
     @Test
-    void testGetValueOnNonBlockingThread() {
-        registerNonBlockingThreadPredicate(t -> true);
-        testGetValueOnBlockingThread();
-        resetNonBlockingThreadPredicate();
+    void testGetValueOnNonBlockingThread() throws InterruptedException {
+        String value = "Hello,World";
+        Mono<String> mono = just("Hello,World");
+
+        AtomicBoolean executed = new AtomicBoolean(false);
+
+        newSingle("test").schedule(() -> {
+            assertEquals(value, getValue(mono));
+            executed.set(true);
+        });
+
+        while (!executed.get()) {
+            Thread.sleep(100L);
+        }
+
     }
 }
