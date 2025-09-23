@@ -24,6 +24,7 @@ import org.springframework.web.server.WebSession;
 import java.net.InetSocketAddress;
 import java.util.Map;
 
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Locale.getDefault;
 import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
@@ -76,7 +77,7 @@ public class WebTestUtils {
         Map<String, Object> attributes = serverWebExchange.getAttributes();
         attributes.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
-        WebSession webSession = serverWebExchange.getSession().block();
+        WebSession webSession = getValue(serverWebExchange.getSession());
         webSession.getAttributes().put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
         return serverWebExchange;
     }

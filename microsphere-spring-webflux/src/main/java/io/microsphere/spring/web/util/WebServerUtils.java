@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.util;
+package io.microsphere.spring.web.util;
 
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebSession;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 
 import java.security.Principal;
 
-import static io.microsphere.lang.function.ThrowableSupplier.execute;
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 
 /**
  * The utils class for Spring Web
@@ -32,7 +32,7 @@ import static io.microsphere.lang.function.ThrowableSupplier.execute;
  * @see ServerWebExchange
  * @since 1.0.0
  */
-public abstract class WebUtils {
+public abstract class WebServerUtils {
 
     public static WebSession getSession(ServerWebExchange exchange) {
         Mono<WebSession> session = exchange.getSession();
@@ -55,10 +55,6 @@ public abstract class WebUtils {
         return principal == null ? null : principal.getName();
     }
 
-    static <T> T getValue(Mono<T> mono) {
-        return execute(() -> mono.toFuture().get());
-    }
-
-    private WebUtils() {
+    private WebServerUtils() {
     }
 }

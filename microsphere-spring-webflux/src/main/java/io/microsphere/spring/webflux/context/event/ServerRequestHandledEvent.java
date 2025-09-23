@@ -19,7 +19,7 @@ package io.microsphere.spring.webflux.context.event;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.spring.webflux.util.WebUtils;
+import io.microsphere.spring.web.util.WebServerUtils;
 import org.springframework.web.context.support.RequestHandledEvent;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebHandler;
@@ -43,7 +43,7 @@ public class ServerRequestHandledEvent extends RequestHandledEvent {
 
     public ServerRequestHandledEvent(@Nonnull WebHandler webHandler, @Nonnull ServerWebExchange exchange,
                                      long processingTimeMillis, @Nullable Throwable failureCause) {
-        super(webHandler, WebUtils.getSessionId(exchange), WebUtils.getUserName(exchange), processingTimeMillis, failureCause);
+        super(webHandler, WebServerUtils.getSessionId(exchange), WebServerUtils.getUserName(exchange), processingTimeMillis, failureCause);
         this.exchange = exchange;
     }
 

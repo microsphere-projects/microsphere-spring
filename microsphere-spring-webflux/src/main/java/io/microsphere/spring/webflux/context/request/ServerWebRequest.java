@@ -21,7 +21,7 @@ import io.microsphere.annotation.Immutable;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.spring.webflux.util.AttributeScope;
+import io.microsphere.spring.web.util.WebServerScope;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.util.ClassUtils.isAssignableFrom;
 import static java.lang.System.lineSeparator;
 import static java.time.Instant.ofEpochMilli;
@@ -220,7 +221,7 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nullable
     public Principal getUserPrincipal() {
-        return this.exchange.getPrincipal().block();
+        return getValue(this.exchange.getPrincipal());
     }
 
     @Override
@@ -272,23 +273,23 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nullable
     public Object getAttribute(String name, int scope) {
-        return AttributeScope.getAttribute(this.exchange, name, scope);
+        return WebServerScope.getAttribute(this.exchange, name, scope);
     }
 
     @Override
     public void setAttribute(String name, Object value, int scope) {
-        AttributeScope.setAttribute(this.exchange, name, value, scope);
+        WebServerScope.setAttribute(this.exchange, name, value, scope);
     }
 
     @Override
     public void removeAttribute(String name, int scope) {
-        AttributeScope.removeAttribute(this.exchange, name, scope);
+        WebServerScope.removeAttribute(this.exchange, name, scope);
     }
 
     @Override
     @Nonnull
     public String[] getAttributeNames(int scope) {
-        return AttributeScope.getAttributeNames(this.exchange, scope);
+        return WebServerScope.getAttributeNames(this.exchange, scope);
     }
 
     @Override
@@ -383,7 +384,7 @@ public class ServerWebRequest implements NativeWebRequest {
 
     @Nonnull
     public WebSession getSession() {
-        return this.exchange.getSession().block();
+        return getValue(this.exchange.getSession());
     }
 
     @Nullable

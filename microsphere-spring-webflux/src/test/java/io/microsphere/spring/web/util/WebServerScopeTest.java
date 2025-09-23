@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.util;
+package io.microsphere.spring.web.util;
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,13 +26,13 @@ import static io.microsphere.spring.webflux.test.WebTestUtils.ATTRIBUTE_NAME;
 import static io.microsphere.spring.webflux.test.WebTestUtils.ATTRIBUTE_VALUE;
 import static io.microsphere.spring.webflux.test.WebTestUtils.NOT_FOUND_ATTRIBUTE_NAME;
 import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
-import static io.microsphere.spring.webflux.util.AttributeScope.REQUEST;
-import static io.microsphere.spring.webflux.util.AttributeScope.SESSION;
-import static io.microsphere.spring.webflux.util.AttributeScope.getAttribute;
-import static io.microsphere.spring.webflux.util.AttributeScope.getAttributeNames;
-import static io.microsphere.spring.webflux.util.AttributeScope.removeAttribute;
-import static io.microsphere.spring.webflux.util.AttributeScope.setAttribute;
-import static io.microsphere.spring.webflux.util.AttributeScope.valueOf;
+import static io.microsphere.spring.web.util.WebServerScope.REQUEST;
+import static io.microsphere.spring.web.util.WebServerScope.SESSION;
+import static io.microsphere.spring.web.util.WebServerScope.getAttribute;
+import static io.microsphere.spring.web.util.WebServerScope.getAttributeNames;
+import static io.microsphere.spring.web.util.WebServerScope.removeAttribute;
+import static io.microsphere.spring.web.util.WebServerScope.setAttribute;
+import static io.microsphere.spring.web.util.WebServerScope.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -42,13 +42,13 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
 /**
- * {@link AttributeScope} Test
+ * {@link WebServerScope} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see AttributeScope
+ * @see WebServerScope
  * @since 1.0.0
  */
-class AttributeScopeTest {
+class WebServerScopeTest {
 
     private MockServerWebExchange serverWebExchange;
 
