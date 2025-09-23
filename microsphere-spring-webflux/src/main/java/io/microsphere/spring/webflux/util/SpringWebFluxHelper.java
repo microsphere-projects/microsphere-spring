@@ -28,6 +28,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.Map;
 import java.util.Set;
@@ -58,13 +59,13 @@ public class SpringWebFluxHelper implements SpringWebHelper {
 
     @Override
     public void setHeader(NativeWebRequest request, String headerName, String headerValue) {
-        HttpHeaders httpHeaders = getRequestHeaders(request);
+        HttpHeaders httpHeaders = getResponseHeaders(request);
         httpHeaders.set(headerName, headerValue);
     }
 
     @Override
     public void addHeader(NativeWebRequest request, String headerName, String... headerValues) {
-        HttpHeaders httpHeaders = getRequestHeaders(request);
+        HttpHeaders httpHeaders = getResponseHeaders(request);
         for (String headerValue : headerValues) {
             httpHeaders.add(headerName, headerValue);
         }
@@ -100,7 +101,8 @@ public class SpringWebFluxHelper implements SpringWebHelper {
 
     @Override
     public String getBestMatchingPattern(NativeWebRequest request) {
-        return REQUEST.getAttribute(request, BEST_MATCHING_PATTERN_ATTRIBUTE);
+        PathPattern pathPattern = REQUEST.getAttribute(request, BEST_MATCHING_PATTERN_ATTRIBUTE);
+        return pathPattern.getPatternString();
     }
 
     @Override
@@ -126,6 +128,11 @@ public class SpringWebFluxHelper implements SpringWebHelper {
     protected ServerHttpResponse getServerHttpResponse(NativeWebRequest request) {
         ServerWebRequest serverWebRequest = getServerWebRequest(request);
         return serverWebRequest.getResponse();
+    }
+
+    protected HttpHeaders getResponseHeaders(NativeWebRequest request) {
+        ServerHttpResponse serverHttpResponse = getServerHttpResponse(request);
+        return serverHttpResponse.getHeaders();
     }
 
     protected HttpHeaders getRequestHeaders(NativeWebRequest request) {
