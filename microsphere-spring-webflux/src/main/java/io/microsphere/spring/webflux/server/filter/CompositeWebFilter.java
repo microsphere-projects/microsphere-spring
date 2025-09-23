@@ -77,6 +77,20 @@ public class CompositeWebFilter implements WebFilter {
     }
 
     /**
+     * Remove one {@link WebFilter}
+     *
+     * @param webFilter one {@link WebFilter}
+     * @return {@code true} if the {@link WebFilter} was removed successfully
+     */
+    public boolean removeFilter(WebFilter webFilter) {
+        if (webFilter == null) {
+            return false;
+        }
+        logger.warn("The WebFilter is about to be removed : {} ", webFilter);
+        return webFilters.remove(webFilter);
+    }
+
+    /**
      * Add one or more {@link WebFilter WebFilters}
      *
      * @param one    one {@link WebFilter}
