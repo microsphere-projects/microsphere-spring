@@ -30,6 +30,7 @@ import org.springframework.web.server.WebHandler;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link PublishingRequestHandledEventWebFilter} Test
@@ -62,5 +63,6 @@ class PublishingRequestHandledEventWebFilterTest extends AbstractWebFluxTest imp
         assertNotNull(event.getExchange());
         assertNotNull(event.getSessionId());
         assertNull(event.getUserName());
+        assertTrue(event.getProcessingTimeMillis() > 0);
     }
 }
