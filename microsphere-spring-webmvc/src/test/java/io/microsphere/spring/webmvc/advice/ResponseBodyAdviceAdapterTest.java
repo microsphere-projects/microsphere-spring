@@ -56,7 +56,7 @@ public class ResponseBodyAdviceAdapterTest {
 
     @Before
     public void setUp() throws Exception {
-        this.returnType = new MethodParameter(getClass().getMethod("setUp"), -1);
+        this.returnType = new MethodParameter(getClass().getDeclaredMethod("setUp"), -1);
         this.selectedContentType = APPLICATION_JSON;
         this.converterType = StringHttpMessageConverter.class;
         this.httpRequest = new ServletServerHttpRequest(new MockHttpServletRequest());

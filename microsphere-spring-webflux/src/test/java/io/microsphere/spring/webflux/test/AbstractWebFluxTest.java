@@ -19,6 +19,7 @@ package io.microsphere.spring.webflux.test;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
+import io.microsphere.spring.webflux.server.filter.CompositeWebFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import reactor.core.publisher.Mono;
 
+import static java.util.Locale.ENGLISH;
+import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.reactive.server.WebTestClient.bindToApplicationContext;
 import static reactor.core.publisher.Mono.just;
@@ -57,8 +60,11 @@ public abstract class AbstractWebFluxTest {
 
     protected WebTestClient webTestClient;
 
+    protected CompositeWebFilter compositeWebFilter;
+
     @BeforeEach
     final void init() {
+        this.compositeWebFilter = new CompositeWebFilter();
         this.webTestClient = buildWebTestClient(this.context);
     }
 
@@ -68,6 +74,7 @@ public abstract class AbstractWebFluxTest {
     protected void testHelloWorld() {
         this.webTestClient.get()
                 .uri("/test/helloworld")
+                .header(ACCEPT_LANGUAGE, ENGLISH.getLanguage())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
@@ -150,7 +157,9 @@ public abstract class AbstractWebFluxTest {
                 .expectStatus().isOk();
     }
 
-    public static WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
-        return bindToApplicationContext(context).build();
+    public WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
+        return bindToApplicationContext(context)
+                .webFilter(this.compositeWebFilter)
+                .build();
     }
 }

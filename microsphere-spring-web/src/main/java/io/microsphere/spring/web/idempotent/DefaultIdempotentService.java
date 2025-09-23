@@ -59,7 +59,7 @@ public class DefaultIdempotentService implements IdempotentService {
     @Override
     public boolean checkToken(NativeWebRequest request, IdempotentAttributes attributes, String token) {
         String key = generateTokenKey(attributes, token);
-        return SESSION.getAttribute(request, key) != null;
+        return cache.containsKey(key);
     }
 
     @Override

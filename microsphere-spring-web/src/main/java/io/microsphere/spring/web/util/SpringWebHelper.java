@@ -130,7 +130,7 @@ public interface SpringWebHelper {
      * @param cookieName  the name of Cookie
      * @param cookieValue the cookie value
      * @see javax.servlet.http.HttpServletResponse#addCookie(Cookie)
-     * @see org.springframework.http.server.reactive.ServerHttpResponse#addCookie(ResponseCookie)
+     * @see org.springframework.http.server.reactive.ServerHttpResponse#addCookie
      */
     void addCookie(@Nonnull NativeWebRequest request, String cookieName, String cookieValue);
 

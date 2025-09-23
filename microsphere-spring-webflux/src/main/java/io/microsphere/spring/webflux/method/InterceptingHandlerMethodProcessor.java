@@ -48,6 +48,7 @@ import java.util.Map;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static java.util.Collections.emptyList;
 import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
@@ -133,7 +134,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
             result = resolver.resolveArgument(parameter, bindingContext, exchange);
 
-            Object argument = result.toFuture().get();
+            Object argument = getValue(result);
 
             Object[] arguments = resolveArguments(webRequest, parameter, argument);
 

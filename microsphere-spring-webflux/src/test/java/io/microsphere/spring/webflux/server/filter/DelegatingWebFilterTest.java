@@ -15,25 +15,39 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.core.convert;
+package io.microsphere.spring.webflux.server.filter;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
 
-import static io.microsphere.spring.core.convert.ConversionServiceUtils.getSharedInstance;
-import static org.junit.Assert.assertNotNull;
+import static io.microsphere.spring.webflux.server.filter.CompositeWebFilterTest.assertFilter;
 
 /**
- * {@link ConversionServiceUtils} Test
+ * {@link DelegatingWebFilter} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ConversionServiceUtils
+ * @see DelegatingWebFilter
  * @since 1.0.0
  */
-public class ConversionServiceUtilsTest {
+@SpringJUnitConfig
+@ContextConfiguration(
+        classes = {
+                HiddenHttpMethodFilter.class,
+                DelegatingWebFilter.class,
+                DelegatingWebFilterTest.class
+        }
+)
+class DelegatingWebFilterTest {
+
+    @Autowired
+    private DelegatingWebFilter webFilter;
 
     @Test
-    public void testGetSharedInstance() {
-        assertNotNull(getSharedInstance());
+    void testFilter() {
+        assertFilter(webFilter);
     }
 }

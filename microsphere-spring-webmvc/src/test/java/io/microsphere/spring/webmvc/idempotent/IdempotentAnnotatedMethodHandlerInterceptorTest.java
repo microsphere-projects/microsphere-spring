@@ -18,15 +18,25 @@
 package io.microsphere.spring.webmvc.idempotent;
 
 
+import io.microsphere.spring.web.idempotent.DefaultIdempotentService;
 import io.microsphere.spring.web.idempotent.Idempotent;
+import io.microsphere.spring.web.idempotent.IdempotentAttributes;
+import io.microsphere.spring.web.idempotent.IdempotentService;
 import io.microsphere.spring.webmvc.annotation.AbstractEnableWebMvcExtensionTest;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.EnableWebMvcExtensionInterceptorsTestConfig;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.NativeWebRequest;
 
+import java.lang.reflect.Method;
+
+import static io.microsphere.reflect.MethodUtils.findMethod;
+import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
+        DefaultIdempotentService.class,
         IdempotentAnnotatedMethodHandlerInterceptorTest.class,
         EnableWebMvcExtensionInterceptorsTestConfig.class
 })
@@ -47,6 +58,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @RestController
 public class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEnableWebMvcExtensionTest {
+
+    @Autowired
+    private IdempotentService idempotentService;
 
     @PostMapping("/idempotent")
     @Idempotent
@@ -57,8 +71,16 @@ public class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEna
     @Test
     public void testWebEndpoints() throws Exception {
         super.testWebEndpoints();
-        this.mockMvc.perform(post("/idempotent"))
-                .andExpect(status().isOk())
+        NativeWebRequest request = createWebRequest();
+        Method method = findMethod(IdempotentAnnotatedMethodHandlerInterceptorTest.class, "idempotent");
+        Idempotent idempotent = method.getAnnotation(Idempotent.class);
+        IdempotentAttributes attributes = of(idempotent);
+
+        String token = idempotentService.renewToken(request, attributes);
+        this.mockMvc.perform(
+                        post("/idempotent")
+                                .header(attributes.getTokenName(), token)
+                ).andExpect(status().isOk())
                 .andExpect(content().string(this.idempotent()));
     }
 }

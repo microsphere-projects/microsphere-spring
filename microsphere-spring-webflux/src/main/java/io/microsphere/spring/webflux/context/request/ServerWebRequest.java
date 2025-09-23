@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.webflux.context.request;
 
+import io.microsphere.annotation.Immutable;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
@@ -42,6 +43,7 @@ import java.util.Map.Entry;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.util.ClassUtils.isAssignableFrom;
 import static java.lang.System.lineSeparator;
 import static java.time.Instant.ofEpochMilli;
@@ -110,13 +112,13 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nonnull
     public Object getNativeRequest() {
-        return request;
+        return getRequest();
     }
 
     @Override
     @Nonnull
     public Object getNativeResponse() {
-        return exchange.getResponse();
+        return getResponse();
     }
 
     @Override
@@ -142,14 +144,14 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nullable
     public String getHeader(String headerName) {
-        HttpHeaders httpHeaders = getHttpHeaders();
+        HttpHeaders httpHeaders = getRequestHeaders();
         return httpHeaders.getFirst(headerName);
     }
 
     @Override
     @Nullable
     public String[] getHeaderValues(String headerName) {
-        HttpHeaders httpHeaders = getHttpHeaders();
+        HttpHeaders httpHeaders = getRequestHeaders();
         List<String> headerValues = httpHeaders.get(headerName);
         return toArray(headerValues);
     }
@@ -157,7 +159,7 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nonnull
     public Iterator<String> getHeaderNames() {
-        HttpHeaders httpHeaders = getHttpHeaders();
+        HttpHeaders httpHeaders = getRequestHeaders();
         return httpHeaders.keySet().iterator();
     }
 
@@ -219,7 +221,7 @@ public class ServerWebRequest implements NativeWebRequest {
     @Override
     @Nullable
     public Principal getUserPrincipal() {
-        return this.exchange.getPrincipal().block();
+        return getValue(this.exchange.getPrincipal());
     }
 
     @Override
@@ -329,19 +331,60 @@ public class ServerWebRequest implements NativeWebRequest {
         return mutex;
     }
 
+    /**
+     * Get the {@link ServerWebExchange}
+     *
+     * @return the {@link ServerWebExchange}
+     */
     @Nonnull
-    protected HttpHeaders getHttpHeaders() {
+    public ServerWebExchange getExchange() {
+        return this.exchange;
+    }
+
+    /**
+     * Get the {@link ServerHttpRequest}
+     *
+     * @return the {@link ServerHttpRequest}
+     */
+    @Nonnull
+    public ServerHttpRequest getRequest() {
+        return this.request;
+    }
+
+    /**
+     * Get the {@link ServerHttpResponse}
+     *
+     * @return the {@link ServerHttpResponse}
+     */
+    @Nonnull
+    public ServerHttpResponse getResponse() {
+        return this.exchange.getResponse();
+    }
+
+    /**
+     * Get the {@link HttpHeaders}
+     *
+     * @return the mutable {@link HttpHeaders}
+     */
+    @Nonnull
+    public HttpHeaders getRequestHeaders() {
         return this.request.getHeaders();
     }
 
+    /**
+     * Get a read-only map with parsed and decoded query parameter values.
+     *
+     * @return a read-only map with parsed and decoded query parameter values
+     */
     @Nonnull
-    protected MultiValueMap<String, String> getQueryParams() {
+    @Immutable
+    public MultiValueMap<String, String> getQueryParams() {
         return this.request.getQueryParams();
     }
 
     @Nonnull
-    protected WebSession getSession() {
-        return this.exchange.getSession().block();
+    public WebSession getSession() {
+        return getValue(this.exchange.getSession());
     }
 
     @Nullable

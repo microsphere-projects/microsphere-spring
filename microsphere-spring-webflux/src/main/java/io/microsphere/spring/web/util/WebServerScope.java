@@ -25,6 +25,7 @@ import org.springframework.web.server.WebSession;
 
 import java.util.Map;
 
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.Assert.assertNotNull;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -66,7 +67,7 @@ public enum WebServerScope {
         }
 
         protected WebSession getSession(ServerWebExchange serverWebExchange) {
-            return serverWebExchange.getSession().block();
+            return getValue(serverWebExchange.getSession());
         }
     };
 

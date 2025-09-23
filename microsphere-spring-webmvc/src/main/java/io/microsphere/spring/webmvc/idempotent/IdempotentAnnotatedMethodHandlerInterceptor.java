@@ -23,6 +23,7 @@ import io.microsphere.spring.web.idempotent.Idempotent;
 import io.microsphere.spring.web.idempotent.IdempotentAttributes;
 import io.microsphere.spring.web.idempotent.IdempotentService;
 import io.microsphere.spring.webmvc.interceptor.AnnotatedMethodHandlerInterceptor;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.EnvironmentAware;
@@ -47,7 +48,7 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
  * @since 1.0.0
  */
 public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethodHandlerInterceptor<Idempotent> implements
-        EnvironmentAware, ApplicationListener<ContextRefreshedEvent> {
+        EnvironmentAware, ApplicationListener<ContextRefreshedEvent>, DisposableBean {
 
     private static final Logger logger = getLogger(IdempotentAnnotatedMethodHandlerInterceptor.class);
 
@@ -59,7 +60,7 @@ public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethod
     @Override
     protected boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod,
                                 Idempotent idempotent) throws Exception {
-        NativeWebRequest nativeWebRequest = new ServletWebRequest(request);
+        NativeWebRequest nativeWebRequest = new ServletWebRequest(request, response);
         IdempotentAttributes attributes = of(idempotent, environment);
         idempotentService.validateToken(nativeWebRequest, attributes);
         return super.preHandle(request, response, handlerMethod, idempotent);
@@ -74,6 +75,11 @@ public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethod
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext context = event.getApplicationContext();
         initIdempotentService(context);
+    }
+
+    @Override
+    public void destroy() {
+        this.idempotentService.destroy();
     }
 
     @Override

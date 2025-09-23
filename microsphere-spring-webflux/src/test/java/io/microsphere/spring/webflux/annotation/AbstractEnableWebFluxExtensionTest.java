@@ -94,7 +94,7 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
      * @see #testUpdatePerson()
      */
     @Test
-    void testWebEndpoints() {
+    protected void testWebEndpoints() {
         this.testHelloWorld();
         this.testGreeting();
         this.testUser();
