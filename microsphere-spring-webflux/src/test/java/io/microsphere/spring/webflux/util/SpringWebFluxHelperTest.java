@@ -23,10 +23,13 @@ import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -39,14 +42,22 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.ofMap;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_FLUX;
+import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_NAME;
+import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_NAME_2;
+import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_VALUE;
+import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_VALUE_2;
+import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -74,6 +85,16 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
 
     @Autowired
     private SpringWebFluxHelper springWebFluxHelper;
+
+    private MockServerWebExchange serverWebExchange;
+
+    private ServerWebRequest serverWebRequest;
+
+    @BeforeEach
+    void setUp() {
+        this.serverWebExchange = mockServerWebExchange();
+        this.serverWebRequest = new ServerWebRequest(serverWebExchange);
+    }
 
     @Override
     protected void testGreeting() {
@@ -167,8 +188,82 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
     }
 
     @Test
+    void testGetMethod() {
+        assertSame("GET", this.springWebFluxHelper.getMethod(this.serverWebRequest));
+    }
+
+    @Test
+    void testSetHeader() {
+        this.springWebFluxHelper.setHeader(this.serverWebRequest, HEADER_NAME, HEADER_VALUE);
+        ServerHttpResponse response = this.serverWebRequest.getResponse();
+        assertEquals(HEADER_VALUE, response.getHeaders().getFirst(HEADER_NAME));
+    }
+
+    @Test
+    void testAddHeader() {
+        this.springWebFluxHelper.addHeader(this.serverWebRequest, HEADER_NAME_2, HEADER_VALUE_2);
+        ServerHttpResponse response = this.serverWebRequest.getResponse();
+        assertEquals(ofList(HEADER_VALUE_2), response.getHeaders().get(HEADER_NAME_2));
+    }
+
+    @Test
+    void testGetCookieValue() {
+        assertNull(this.springWebFluxHelper.getCookieValue(this.serverWebRequest, "test"));
+    }
+
+    @Test
+    void testAddCookie() {
+        String name = "name";
+        String value = "value";
+        this.springWebFluxHelper.addCookie(this.serverWebRequest, name, value);
+        ServerHttpResponse response = this.serverWebRequest.getResponse();
+        assertEquals(value, response.getCookies().get(name).get(0).getValue());
+    }
+
+
+    @Test
+    void testGetRequestBody() {
+        assertNull(this.springWebFluxHelper.getRequestBody(this.serverWebRequest, String.class));
+    }
+
+    @Test
+    void testGetBestMatchingHandler() {
+        assertNull(this.springWebFluxHelper.getBestMatchingHandler(this.serverWebRequest));
+    }
+
+    @Test
+    void testGetPathWithinHandlerMapping() {
+        assertNull(this.springWebFluxHelper.getPathWithinHandlerMapping(this.serverWebRequest));
+    }
+
+    @Test
+    void testGetBestMatchingPattern() {
+        assertNull(this.springWebFluxHelper.getBestMatchingPattern(this.serverWebRequest));
+    }
+
+    @Test
+    void testGetUriTemplateVariables() {
+        assertNull(this.springWebFluxHelper.getUriTemplateVariables(this.serverWebRequest));
+    }
+
+    @Test
+    void testGetMatrixVariables() {
+        assertNull(this.springWebFluxHelper.getMatrixVariables(this.serverWebRequest));
+    }
+
+    @Test
+    void testGetProducibleMediaTypes() {
+        assertNull(this.springWebFluxHelper.getProducibleMediaTypes(this.serverWebRequest));
+    }
+
+    @Test
     void testGetType() {
-        assertSame(WEB_FLUX, springWebFluxHelper.getType());
+        assertSame(WEB_FLUX, this.springWebFluxHelper.getType());
+    }
+
+    @Test
+    void testGetServerWebRequestOnIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> this.springWebFluxHelper.getServerWebRequest(null));
     }
 
     void testGetMethod(NativeWebRequest request, HttpMethod httpMethod) {
