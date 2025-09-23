@@ -19,6 +19,7 @@ package io.microsphere.spring.webflux.test;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
+import io.microsphere.spring.webflux.server.filter.CompositeWebFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +60,11 @@ public abstract class AbstractWebFluxTest {
 
     protected WebTestClient webTestClient;
 
+    protected CompositeWebFilter compositeWebFilter;
+
     @BeforeEach
     final void init() {
+        this.compositeWebFilter = new CompositeWebFilter();
         this.webTestClient = buildWebTestClient(this.context);
     }
 
@@ -155,6 +159,7 @@ public abstract class AbstractWebFluxTest {
 
     public WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
         return bindToApplicationContext(context)
+                .webFilter(this.compositeWebFilter)
                 .build();
     }
 }
