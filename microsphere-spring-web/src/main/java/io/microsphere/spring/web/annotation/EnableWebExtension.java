@@ -23,7 +23,10 @@ import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.annotation.Documented;
@@ -31,6 +34,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -85,4 +89,13 @@ public @interface EnableWebExtension {
      */
     boolean publishEvents() default true;
 
+    /**
+     * Indicate where the {@link RequestAttributes} stores.
+     *
+     * @return {@link RequestContextStrategy#DEFAULT} as default
+     * @see RequestAttributes
+     * @see RequestContextHolder
+     * @see RequestContextStrategy
+     */
+    RequestContextStrategy requestContextStrategy() default DEFAULT;
 }
