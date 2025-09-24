@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webflux.test;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
@@ -30,6 +31,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import reactor.core.publisher.Mono;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static java.util.Locale.ENGLISH;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -51,6 +53,8 @@ import static reactor.core.publisher.Mono.just;
 })
 @EnableWebFlux
 public abstract class AbstractWebFluxTest {
+
+    protected final Logger logger = getLogger(this.getClass());
 
     @Autowired
     protected ConfigurableApplicationContext context;
