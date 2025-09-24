@@ -66,5 +66,6 @@ class PublishingRequestHandledEventWebFilterTest extends AbstractWebFluxTest imp
         assertNotNull(event.getSessionId());
         assertNull(event.getUserName());
         assertTrue(event.getProcessingTimeMillis() > 0);
+        logger.trace("Received {}", event);
     }
 }
