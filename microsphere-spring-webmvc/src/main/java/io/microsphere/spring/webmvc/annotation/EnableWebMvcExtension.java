@@ -26,17 +26,23 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.i18n.LocaleContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.FrameworkServlet;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -47,6 +53,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 
+import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -108,6 +115,20 @@ public @interface EnableWebMvcExtension {
      */
     @AliasFor(annotation = EnableWebExtension.class)
     boolean publishEvents() default true;
+
+    /**
+     * Indicate where the {@link RequestAttributes} stores.
+     *
+     * @return {@link RequestContextStrategy#DEFAULT} as default
+     * @see RequestAttributes
+     * @see RequestContextHolder
+     * @see RequestContextFilter
+     * @see RequestContextListener
+     * @see FrameworkServlet#initContextHolders(HttpServletRequest, LocaleContext, RequestAttributes)
+     * @see RequestContextStrategy
+     */
+    @AliasFor(annotation = EnableWebExtension.class)
+    RequestContextStrategy requestContextStrategy() default DEFAULT;
 
     /**
      * Indicate whether the {@link InterceptorRegistry} registers the beans of {@link HandlerInterceptor}.
