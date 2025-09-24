@@ -29,11 +29,15 @@ import org.springframework.web.server.WebHandler;
 import org.springframework.web.server.handler.DefaultWebFilterChain;
 import reactor.core.publisher.Mono;
 
+import static java.lang.System.nanoTime;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+
 /**
  * A WebFilter class to publish the {@link RequestHandledEvent}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebFilter
+ * @see ServerRequestHandledEvent
  * @see RequestHandledEvent
  * @since 1.0.0
  */
@@ -43,9 +47,9 @@ public class PublishingRequestHandledEventWebFilter implements WebFilter, Applic
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        long startTime = System.currentTimeMillis();
+        long startTime = nanoTime();
         return chain.filter(exchange).doOnTerminate(() -> {
-            publishEvent(exchange, chain, startTime);
+            publishRequestHandledEvent(exchange, chain, startTime);
         });
     }
 
@@ -54,15 +58,16 @@ public class PublishingRequestHandledEventWebFilter implements WebFilter, Applic
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    private void publishEvent(ServerWebExchange exchange, WebFilterChain chain, long startTime) {
-        RequestHandledEvent event = createEvent(exchange, chain, startTime);
+    private void publishRequestHandledEvent(ServerWebExchange exchange, WebFilterChain chain, long startTime) {
+        RequestHandledEvent event = createRequestHandledEvent(exchange, chain, startTime);
         this.applicationEventPublisher.publishEvent(event);
     }
 
-    private RequestHandledEvent createEvent(ServerWebExchange exchange, WebFilterChain chain, long startTime) {
+    private RequestHandledEvent createRequestHandledEvent(ServerWebExchange exchange, WebFilterChain chain, long startTime) {
         DefaultWebFilterChain filterChain = (DefaultWebFilterChain) chain;
         WebHandler webHandler = filterChain.getHandler();
-        long processingTimeMillis = System.currentTimeMillis() - startTime;
+        long processingTime = nanoTime() - startTime;
+        long processingTimeMillis = NANOSECONDS.toMillis(processingTime);
         return new ServerRequestHandledEvent(webHandler, exchange, processingTimeMillis);
     }
 
