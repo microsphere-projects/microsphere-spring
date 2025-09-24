@@ -25,14 +25,19 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
+import io.microsphere.spring.webflux.context.event.ServerRequestHandledEvent;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
+import io.microsphere.spring.webflux.server.filter.PublishingRequestHandledEventWebFilter;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.support.RequestHandledEvent;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebHandler;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -85,12 +90,16 @@ public @interface EnableWebFluxExtension {
      * <ul>
      *     <li>{@link HandlerMethodArgumentsResolvedEvent}({@link EnableWebExtension#interceptHandlerMethods() if enabled})</li>
      *     <li>{@link WebEndpointMappingsReadyEvent}({@link EnableWebExtension#registerWebEndpointMappings() if enabled})</li>
+     *     <li>{@link ServerRequestHandledEvent} after {@link WebHandler#handle(ServerWebExchange) WebHandler was handled}</li>
      * </ul>
      *
      * @return <code>true</code> as default
      * @see WebEventPublisher
      * @see WebEndpointMappingsReadyEvent
      * @see HandlerMethodArgumentsResolvedEvent
+     * @see PublishingRequestHandledEventWebFilter
+     * @see ServerRequestHandledEvent
+     * @see RequestHandledEvent
      */
     @AliasFor(annotation = EnableWebExtension.class)
     boolean publishEvents() default true;
