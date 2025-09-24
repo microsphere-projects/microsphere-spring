@@ -22,6 +22,7 @@ import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingRe
 import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
 import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentInterceptor;
 import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
+import io.microsphere.spring.webflux.server.filter.PublishingRequestHandledEventWebFilter;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -56,6 +57,8 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
 
         registerInterceptingHandlerMethodProcessor(attributes, registry);
 
+        registerEventPublishingProcessor(attributes, registry);
+
         registerStoringRequestBodyArgumentInterceptor(attributes, registry);
 
         registerStoringResponseBodyReturnValueInterceptor(attributes, registry);
@@ -78,6 +81,14 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
             registerBeanDefinition(registry, beanName, InterceptingHandlerMethodProcessor.class);
         }
         log("@EnableWebFluxExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
+    }
+
+    private void registerEventPublishingProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        boolean publishEvents = attributes.getBoolean("publishEvents");
+        if (publishEvents) {
+            registerBeanDefinition(registry, PublishingRequestHandledEventWebFilter.class);
+        }
+        log("@EnableWebFluxExtension.publishEvents() = {}", publishEvents);
     }
 
     private void registerStoringRequestBodyArgumentInterceptor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
