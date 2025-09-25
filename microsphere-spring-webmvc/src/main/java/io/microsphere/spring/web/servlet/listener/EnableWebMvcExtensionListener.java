@@ -20,6 +20,7 @@ package io.microsphere.spring.web.servlet.listener;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
+import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -28,6 +29,7 @@ import jakarta.servlet.annotation.HandlesTypes;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FrameworkServlet;
 
@@ -38,14 +40,15 @@ import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static io.microsphere.util.ClassUtils.isAssignableFrom;
+import static jakarta.servlet.DispatcherType.REQUEST;
 import static java.lang.String.valueOf;
+import static java.util.EnumSet.of;
 
 /**
  * {@link ServletContainerInitializer} for {@link EnableWebMvcExtension}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebMvcExtension#requestContextStrategy()
- * @see EnableWebMvcExtension#filters()
  * @see ServletContainerInitializer
  * @since 1.0.0
  */
@@ -56,10 +59,17 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
 
     private static final Class<FrameworkServlet> FRAMEWORK_SERVLET_CLASS = FrameworkServlet.class;
 
+    private static final Class<RequestContextFilter> REQUEST_CONTEXT_FILTER_CLASS = RequestContextFilter.class;
+
     /**
      * The class name of {@link DispatcherServlet}
      */
     private static final String DISPATCHER_SERVLET_CLASS_NAME = DispatcherServlet.class.getName();
+
+    /**
+     * The class name of {@link RequestContextFilter}
+     */
+    private static final String REQUEST_CONTEXT_FILTER_CLASS_NAME = REQUEST_CONTEXT_FILTER_CLASS.getName();
 
     @Override
     public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
@@ -81,7 +91,6 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
 
     private void processAnnotatedClass(EnableWebMvcExtension enableWebMvcExtension, ServletContext servletContext) {
         processRequestContextStrategy(enableWebMvcExtension, servletContext);
-        processFilters(enableWebMvcExtension, servletContext);
     }
 
     private void processRequestContextStrategy(EnableWebMvcExtension enableWebMvcExtension, ServletContext servletContext) {
@@ -98,6 +107,7 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
                 break;
         }
         processFrameworkServlet(servletContext, threadContextInheritable);
+        processRequestContextFilter(servletContext, threadContextInheritable);
     }
 
     /**
@@ -123,6 +133,22 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
         }
     }
 
+    /**
+     * Process {@link RequestContextFilter}
+     *
+     * @param servletContext           {@link ServletContext}
+     * @param threadContextInheritable whether to expose the LocaleContext as inheritable
+     *                                 for child threads (using an {@link InheritableThreadLocal})
+     * @see RequestContextFilter
+     * @see RequestContextFilter#setThreadContextInheritable(boolean)
+     */
+    private void processRequestContextFilter(ServletContext servletContext, boolean threadContextInheritable) {
+        if (hasRequestContextFilterRegistration(servletContext)) {
+            return;
+        }
+        registerRequestContextFilter(servletContext, threadContextInheritable);
+    }
+
     protected boolean isFrameworkServlet(String servletClassName, ServletContext servletContext) {
         if (DISPATCHER_SERVLET_CLASS_NAME.equals(servletClassName)) { // the most case
             return true;
@@ -136,7 +162,23 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
         return false;
     }
 
-    private void processFilters(EnableWebMvcExtension enableWebMvcExtension, ServletContext servletContext) {
-        enableWebMvcExtension.filters();
+    protected boolean hasRequestContextFilterRegistration(ServletContext servletContext) {
+        Map<String, ? extends FilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
+        for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
+            FilterRegistration filterRegistration = entry.getValue();
+            String filterClassName = filterRegistration.getClassName();
+            if (REQUEST_CONTEXT_FILTER_CLASS_NAME.equals(filterClassName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void registerRequestContextFilter(ServletContext servletContext, boolean threadContextInheritable) {
+        RequestContextFilter filter = new RequestContextFilter();
+        filter.setThreadContextInheritable(threadContextInheritable);
+
+        FilterRegistration filterRegistration = servletContext.addFilter(REQUEST_CONTEXT_FILTER_CLASS.getSimpleName(), filter);
+        filterRegistration.addMappingForUrlPatterns(of(REQUEST), true, "/*");
     }
 }
