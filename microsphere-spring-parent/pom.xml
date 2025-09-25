@@ -32,6 +32,7 @@
         <jsonassert.version>1.5.3</jsonassert.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <hamcrest.version>3.0</hamcrest.version>
+        <tomcat.version>10.1.46</tomcat.version>
     </properties>
 
     <dependencyManagement>
@@ -164,6 +165,13 @@
                 <version>${microsphere-java.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Embedded Tomcat -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
             </dependency>
 
         </dependencies>
