@@ -27,7 +27,7 @@ import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
 import io.microsphere.spring.webflux.context.event.ServerRequestHandledEvent;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
-import io.microsphere.spring.webflux.server.filter.PublishingRequestHandledEventWebFilter;
+import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishingWebFilter;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
@@ -97,7 +97,7 @@ public @interface EnableWebFluxExtension {
      * @see WebEventPublisher
      * @see WebEndpointMappingsReadyEvent
      * @see HandlerMethodArgumentsResolvedEvent
-     * @see PublishingRequestHandledEventWebFilter
+     * @see RequestHandledEventPublishingWebFilter
      * @see ServerRequestHandledEvent
      * @see RequestHandledEvent
      */
