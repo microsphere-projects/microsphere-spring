@@ -125,5 +125,11 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Embedded Tomcat -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+        </dependency>
+
     </dependencies>
 </project>
