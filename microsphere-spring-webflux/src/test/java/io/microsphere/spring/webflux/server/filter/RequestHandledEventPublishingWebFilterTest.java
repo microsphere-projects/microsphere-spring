@@ -34,18 +34,18 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * {@link PublishingRequestHandledEventWebFilter} Test
+ * {@link RequestHandledEventPublishingWebFilter} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see PublishingRequestHandledEventWebFilter
+ * @see RequestHandledEventPublishingWebFilter
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        PublishingRequestHandledEventWebFilter.class,
-        PublishingRequestHandledEventWebFilterTest.class,
+        RequestHandledEventPublishingWebFilter.class,
+        RequestHandledEventPublishingWebFilterTest.class,
 })
 @EnableWebFlux
-class PublishingRequestHandledEventWebFilterTest extends AbstractWebFluxTest implements ApplicationListener<ServerRequestHandledEvent> {
+class RequestHandledEventPublishingWebFilterTest extends AbstractWebFluxTest implements ApplicationListener<ServerRequestHandledEvent> {
 
     @Autowired
     private ConfigurableApplicationContext context;
