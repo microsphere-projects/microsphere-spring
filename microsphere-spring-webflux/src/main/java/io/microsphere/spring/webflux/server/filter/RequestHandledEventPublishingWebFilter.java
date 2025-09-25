@@ -41,7 +41,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
  * @see RequestHandledEvent
  * @since 1.0.0
  */
-public class PublishingRequestHandledEventWebFilter implements WebFilter, ApplicationEventPublisherAware, Ordered {
+public class RequestHandledEventPublishingWebFilter implements WebFilter, ApplicationEventPublisherAware, Ordered {
 
     private ApplicationEventPublisher applicationEventPublisher;
 
