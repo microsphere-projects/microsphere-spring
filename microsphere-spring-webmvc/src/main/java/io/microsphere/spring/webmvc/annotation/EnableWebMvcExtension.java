@@ -30,9 +30,6 @@ import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterRegistration;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.i18n.LocaleContext;
@@ -132,15 +129,6 @@ public @interface EnableWebMvcExtension {
      */
     @AliasFor(annotation = EnableWebExtension.class)
     RequestContextStrategy requestContextStrategy() default DEFAULT;
-
-    /**
-     * Specify {@link Filter} types or its inherited types as Spring beans and then register into {@link ServletContext}.
-     *
-     * @return <code>null</code> as default
-     * @see ServletContext#addFilter(String, Class)
-     * @see FilterRegistration
-     */
-    Class<? extends Filter>[] filters() default {};
 
     /**
      * Indicate whether the {@link InterceptorRegistry} registers the beans of {@link HandlerInterceptor}.
