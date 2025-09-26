@@ -21,11 +21,13 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  * {@link EmbeddedTomcatConfiguration} Test with default attributes
@@ -40,9 +42,16 @@ class EmbeddedTomcatConfigurationTest {
     @Autowired
     private ConfigurableWebApplicationContext wac;
 
+    @Autowired
+    private ApplicationContext context;
+
     @Test
     void test() {
         assertNotNull(this.wac);
+
+        assertNotNull(this.context);
+
+        assertNotSame(this.wac, this.context);
 
         ServletContext servletContext = this.wac.getServletContext();
         assertNotNull(servletContext);
