@@ -50,7 +50,7 @@ class EmbeddedTomcatContextLoaderTest {
 
     @Test
     void testSetParent() {
-        GenericApplicationContext context = this.loader.createContext();
+        GenericApplicationContext context = new GenericApplicationContext();
         setParent(context, null);
 
         ConfigurableWebApplicationContext webApplicationContext = new GenericWebApplicationContext();
@@ -79,7 +79,7 @@ class EmbeddedTomcatContextLoaderTest {
         );
         WebMergedContextConfiguration webMergedContextConfiguration = new WebMergedContextConfiguration(mergedConfig, resourceBasePath);
         EmbeddedTomcatMergedContextConfiguration config = new EmbeddedTomcatMergedContextConfiguration(webMergedContextConfiguration, 0, "");
-        GenericApplicationContext context = this.loader.createContext();
+        GenericApplicationContext context = new GenericApplicationContext();
         assertThrows(LifecycleException.class, () -> this.loader.deployContext(context, config));
     }
 
