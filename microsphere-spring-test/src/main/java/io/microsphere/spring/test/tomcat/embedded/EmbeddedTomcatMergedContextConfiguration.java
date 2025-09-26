@@ -17,48 +17,35 @@
 
 package io.microsphere.spring.test.tomcat.embedded;
 
-import org.apache.catalina.startup.Tomcat;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.springframework.test.context.web.WebMergedContextConfiguration;
 
 /**
- * Enable the Embedded Tomcat
+ * The {@link WebMergedContextConfiguration} extension class for {@link EmbeddedTomcatConfiguration}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see Tomcat
+ * @see EmbeddedTomcatConfiguration
+ * @see WebMergedContextConfiguration
+ * @see EmbeddedTomcatTestContextBootstrapper
  * @since 1.0.0
  */
-@Target(TYPE)
-@Retention(RUNTIME)
-@Documented
-public @interface EnableEmbeddedTomcat {
+class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfiguration {
 
-    /**
-     * The port of Tomcat
-     *
-     * @return the default value of port : 8080
-     */
-    int port() default 8080;
+    private final int port;
 
-    /**
-     * The context path of Tomcat
-     *
-     * @return the default value of context path : "/"
-     * @see Tomcat#addContext(String, String)
-     */
-    String contextPath() default "/";
+    private final String contextPath;
 
+    public EmbeddedTomcatMergedContextConfiguration(WebMergedContextConfiguration webMergedContextConfiguration,
+                                                    int port, String contextPath) {
+        super(webMergedContextConfiguration, webMergedContextConfiguration.getResourceBasePath());
+        this.port = port;
+        this.contextPath = contextPath;
+    }
 
-    /**
-     * The basedir of Tomcat
-     *
-     * @return
-     * @see Tomcat#setBaseDir(String)
-     */
-    String basedir() default "${java.io.tmpdir}/tomcat";
+    public int getPort() {
+        return port;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
 }
