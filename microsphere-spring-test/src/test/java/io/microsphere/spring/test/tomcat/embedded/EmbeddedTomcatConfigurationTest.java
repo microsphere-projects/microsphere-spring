@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import static io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatContextLoader.setParent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -53,7 +52,5 @@ class EmbeddedTomcatConfigurationTest {
         assertEquals(DispatcherServlet.class.getName(), servletRegistration.getClassName());
         assertEquals("", servletRegistration.getInitParameter("contextConfigLocation"));
         assertEquals("/*", servletRegistration.getMappings().iterator().next());
-
-        setParent(this.wac, null);
     }
 }
