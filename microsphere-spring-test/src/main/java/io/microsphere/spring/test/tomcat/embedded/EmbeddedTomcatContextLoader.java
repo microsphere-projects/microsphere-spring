@@ -28,12 +28,11 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.MergedContextConfiguration;
-import org.springframework.test.context.SmartContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
@@ -53,19 +52,14 @@ import static org.springframework.web.context.support.WebApplicationContextUtils
 import static org.springframework.web.servlet.FrameworkServlet.SERVLET_CONTEXT_PREFIX;
 
 /**
- * {@link SmartContextLoader} class for {@link EmbeddedTomcatConfiguration}
+ * {@link AbstractGenericContextLoader} class for {@link EmbeddedTomcatConfiguration}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EmbeddedTomcatConfiguration
- * @see SmartContextLoader
+ * @see AbstractGenericContextLoader
  * @since 1.0.0
  */
 class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
-
-    @Override
-    protected GenericApplicationContext createContext() {
-        return new AnnotationConfigApplicationContext();
-    }
 
     @Override
     protected void prepareContext(ConfigurableApplicationContext applicationContext, MergedContextConfiguration mergedConfig) {
@@ -107,13 +101,15 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
     @Override
     protected void customizeContext(ConfigurableApplicationContext context, MergedContextConfiguration mergedConfig) {
         super.customizeContext(context, mergedConfig);
-        registerConfigClasses((AnnotationConfigApplicationContext) context, mergedConfig);
+        registerConfigClasses((GenericApplicationContext) context, mergedConfig);
     }
 
-    private void registerConfigClasses(AnnotationConfigApplicationContext context, MergedContextConfiguration config) {
+    protected void registerConfigClasses(GenericApplicationContext context, MergedContextConfiguration config) {
         Class<?>[] configClasses = config.getClasses();
         if (isNotEmpty(configClasses)) {
-            context.register(configClasses);
+            DefaultListableBeanFactory beanFactory = context.getDefaultListableBeanFactory();
+            AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(beanFactory);
+            reader.register(configClasses);
         }
     }
 
