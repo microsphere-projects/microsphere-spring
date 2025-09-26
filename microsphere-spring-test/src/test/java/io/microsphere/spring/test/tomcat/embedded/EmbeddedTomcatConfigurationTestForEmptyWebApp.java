@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
@@ -65,6 +66,8 @@ class EmbeddedTomcatConfigurationTestForEmptyWebApp {
         assertNull(this.wac);
 
         assertNotNull(this.context);
+
+        assertNotSame(this.wac, this.context);
 
         assertNotNull(this.hashMap);
 
