@@ -39,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 @EmbeddedTomcatConfiguration(
         port = 0,
         contextPath = "${contextPath}",
-        docBase = "${docBase}"
+        docBase = "${docBase}",
+        classes = EmbeddedTomcatConfigurationTestForContextLoaderWebApp.class
 )
 @TestPropertySource(properties = {
         "contextPath=/",
