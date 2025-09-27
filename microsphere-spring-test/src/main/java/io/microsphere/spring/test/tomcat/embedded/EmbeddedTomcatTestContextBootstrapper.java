@@ -43,7 +43,10 @@ class EmbeddedTomcatTestContextBootstrapper extends WebTestContextBootstrapper {
     protected MergedContextConfiguration processMergedContextConfiguration(MergedContextConfiguration mergedConfig) {
         EmbeddedTomcatConfiguration annotation = getEmbeddedTomcatConfiguration(mergedConfig.getTestClass());
         WebMergedContextConfiguration webMergedContextConfiguration = (WebMergedContextConfiguration) super.processMergedContextConfiguration(mergedConfig);
-        return new EmbeddedTomcatMergedContextConfiguration(webMergedContextConfiguration, annotation.port(), annotation.contextPath());
+        return new EmbeddedTomcatMergedContextConfiguration(webMergedContextConfiguration,
+                annotation.port(),
+                annotation.contextPath(),
+                annotation.basedir());
     }
 
     private static EmbeddedTomcatConfiguration getEmbeddedTomcatConfiguration(Class<?> testClass) {

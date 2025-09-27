@@ -19,6 +19,7 @@ package io.microsphere.spring.test.tomcat.embedded;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import io.microsphere.logging.Logger;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -45,6 +46,7 @@ import java.util.Enumeration;
 
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 import static org.springframework.util.StringUtils.hasText;
@@ -60,6 +62,8 @@ import static org.springframework.web.servlet.FrameworkServlet.SERVLET_CONTEXT_P
  * @since 1.0.0
  */
 class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
+
+    private static final Logger logger = getLogger(EmbeddedTomcatContextLoader.class);
 
     @Override
     protected void prepareContext(ConfigurableApplicationContext applicationContext, MergedContextConfiguration mergedConfig) {
@@ -160,11 +164,17 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
 
         int port = config.getPort();
         String contextPath = environment.resolvePlaceholders(config.getContextPath());
+        String basedir = environment.resolvePlaceholders(config.getBasedir());
         String resourceBasePath = environment.resolvePlaceholders(config.getResourceBasePath());
+
 
         Tomcat tomcat = new Tomcat();
         tomcat.setAddDefaultWebXmlToWebapp(false);
         tomcat.setPort(port);
+
+        if (hasText(basedir)) {
+            tomcat.setBaseDir(basedir);
+        }
 
         String docBase = resourceBasePath;
         if (hasText(resourceBasePath)) {
@@ -173,6 +183,10 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
                 docBase = resource.getFile().getAbsolutePath();
             }
         }
+
+        logger.trace("Tomcat will startup with port : {} , contextPath : '{}' , basedir : '{}', resourceBasePath : '{}' , docBase : '{}'",
+                port, contextPath, basedir, resourceBasePath, docBase);
+
 
         Context context = tomcat.addWebapp(contextPath, docBase);
 

@@ -20,7 +20,9 @@ package io.microsphere.spring.test.tomcat.embedded;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,6 +42,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see Tomcat
+ * @see Context
  * @since 1.0.0
  */
 @Target(TYPE)
@@ -62,14 +65,25 @@ public @interface EmbeddedTomcatConfiguration {
     /**
      * The context path of Tomcat
      *
-     * @return the default value of context path : "/"
-     * @see Context#getPath()
+     * @return the default value of context path : ""
+     * @see Context#setPath(String)
      */
     String contextPath() default "";
 
     /**
-     * Alias for {@link WebAppConfiguration#value()}.
+     * The resource location of the Tomcat's {@link Tomcat#setBaseDir(String) base directory}.
+     *
+     * @return the default value of basedir : The "java.io.tmpdir" system property (the directory where Java temporary
+     * directory) where a directory named tomcat.$PORT will be created. $PORT is the value configured via
+     * {@link Tomcat#setPort(int)} which defaults to 8080 if not set
+     * @see Tomcat#setBaseDir(String)
+     */
+    String basedir() default "${java.io.tmpdir}";
+
+    /**
      * The resource location of the Tomcat's {@link Context#getDocBase() document root}
+     * <p>
+     * Alias for {@link WebAppConfiguration#value()}.
      *
      * @return An absolute pathname or a relative (to the Host's appBase) pathname.
      * The default value : "classpath:/webapp"
@@ -79,38 +93,44 @@ public @interface EmbeddedTomcatConfiguration {
     String docBase() default "classpath:/webapp";
 
     /**
+     * The <em>component classes</em> to use for loading an {@link ApplicationContext ApplicationContext}.
+     * <p>
      * Alias for {@link ContextConfiguration#classes}.
      */
     @AliasFor(annotation = ContextConfiguration.class)
     Class<?>[] classes() default {};
 
     /**
+     * The resource locations to use for loading an {@link ApplicationContext ApplicationContext}.
+     * <p>
      * Alias for {@link ContextConfiguration#locations}.
      */
     @AliasFor(annotation = ContextConfiguration.class)
     String[] locations() default {};
 
     /**
+     * The application context <em>initializer classes</em> to use for initializing a {@link ConfigurableApplicationContext}.
+     * <p>
      * Alias for {@link ContextConfiguration#initializers}.
      */
     @AliasFor(annotation = ContextConfiguration.class)
     Class<? extends ApplicationContextInitializer<?>>[] initializers() default {};
 
     /**
+     * Whether {@linkplain #locations resource locations} or {@linkplain #classes <em>component classes</em>} from
+     * test superclasses and enclosing classes should be <em>inherited</em>.
+     * <p>
      * Alias for {@link ContextConfiguration#inheritLocations}.
      */
     @AliasFor(annotation = ContextConfiguration.class)
     boolean inheritLocations() default true;
 
     /**
+     * Whether {@linkplain #initializers context initializers} from test superclasses and enclosing classes should be
+     * <em>inherited</em>.
+     * <p>
      * Alias for {@link ContextConfiguration#inheritInitializers}.
      */
     @AliasFor(annotation = ContextConfiguration.class)
     boolean inheritInitializers() default true;
-
-    /**
-     * Alias for {@link ContextConfiguration#name}.
-     */
-    @AliasFor(annotation = ContextConfiguration.class)
-    String name() default "";
 }

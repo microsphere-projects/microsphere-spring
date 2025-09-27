@@ -34,11 +34,14 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
 
     private final String contextPath;
 
+    private final String basedir;
+
     public EmbeddedTomcatMergedContextConfiguration(WebMergedContextConfiguration webMergedContextConfiguration,
-                                                    int port, String contextPath) {
+                                                    int port, String contextPath, String basedir) {
         super(webMergedContextConfiguration, webMergedContextConfiguration.getResourceBasePath());
         this.port = port;
         this.contextPath = contextPath;
+        this.basedir = basedir;
     }
 
     public int getPort() {
@@ -47,5 +50,9 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
 
     public String getContextPath() {
         return contextPath;
+    }
+
+    public String getBasedir() {
+        return basedir;
     }
 }
