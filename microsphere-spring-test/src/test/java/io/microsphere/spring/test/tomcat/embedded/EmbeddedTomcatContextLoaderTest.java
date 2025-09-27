@@ -78,7 +78,7 @@ class EmbeddedTomcatContextLoaderTest {
                 loader
         );
         WebMergedContextConfiguration webMergedContextConfiguration = new WebMergedContextConfiguration(mergedConfig, resourceBasePath);
-        EmbeddedTomcatMergedContextConfiguration config = new EmbeddedTomcatMergedContextConfiguration(webMergedContextConfiguration, 0, "");
+        EmbeddedTomcatMergedContextConfiguration config = new EmbeddedTomcatMergedContextConfiguration(webMergedContextConfiguration, 0, "", "");
         GenericApplicationContext context = new GenericApplicationContext();
         assertThrows(LifecycleException.class, () -> this.loader.deployContext(context, config));
     }
