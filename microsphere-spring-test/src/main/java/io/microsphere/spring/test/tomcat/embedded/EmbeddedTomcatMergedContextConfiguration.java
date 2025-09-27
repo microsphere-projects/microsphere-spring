@@ -19,7 +19,7 @@ package io.microsphere.spring.test.tomcat.embedded;
 
 import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration.Feature;
 import org.springframework.core.style.DefaultToStringStyler;
-import org.springframework.core.style.SimpleValueStyler;
+import org.springframework.core.style.DefaultValueStyler;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 
@@ -101,11 +101,11 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
 
     @Override
     public String toString() {
-        return new ToStringCreator(this, new DefaultToStringStyler(new SimpleValueStyler()))
+        return new ToStringCreator(this, new DefaultToStringStyler(new DefaultValueStyler()))
                 .append(super.toString())
                 .append("port", getPort())
                 .append("contextPath", getContextPath())
-                .append("getBasedir", getBasedir())
+                .append("basedir", getBasedir())
                 .append("alternativeWebXml", getAlternativeWebXml())
                 .append("features", getFeatures())
                 .toString();
