@@ -133,4 +133,57 @@ public @interface EmbeddedTomcatConfiguration {
      */
     @AliasFor(annotation = ContextConfiguration.class)
     boolean inheritInitializers() default true;
+
+    /**
+     * Enable the Tomcat features
+     *
+     * @return the empty array as default
+     */
+    Feature[] features() default {};
+
+    enum Feature {
+
+        /**
+         * Enables the JNDI feature
+         *
+         * @see Tomcat#enableNaming()
+         */
+        NAMING,
+
+        /**
+         * Add the default web.xml file to the context
+         *
+         * @see Tomcat#setAddDefaultWebXmlToWebapp(boolean)
+         */
+        DEFAULT_WEB_XML,
+
+        /**
+         * Provide default configuration for a context. This is broadly the programmatic equivalent of the default web.xml
+         * and provides the following features:
+         * <ul>
+         * <li>Default servlet mapped to "/"</li>
+         * <li>JSP servlet mapped to "*.jsp" and ""*.jspx"</li>
+         * <li>Session timeout of 30 minutes</li>
+         * <li>MIME mappings (subset of those in conf/web.xml)</li>
+         * <li>Welcome files</li>
+         * </ul>
+         *
+         * @see Tomcat#initWebappDefaults(Context)
+         */
+        WEB_APP_DEFAULTS,
+
+        /**
+         * Uses test dependencies rather than only runtime
+         *
+         * @see Context#setParentClassLoader(ClassLoader)
+         */
+        USE_TEST_CLASSPATH,
+
+        /**
+         * Controls the loggers will be silenced.
+         *
+         * @see Tomcat#setSilent(boolean)
+         */
+        SILENT;
+    }
 }

@@ -124,10 +124,26 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Embedded Tomcat -->
+        <!-- Apache Tomcat -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jasper</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-tribes</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina-ha</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

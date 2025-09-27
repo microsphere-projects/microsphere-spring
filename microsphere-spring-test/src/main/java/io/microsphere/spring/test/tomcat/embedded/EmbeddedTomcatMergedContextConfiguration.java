@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.test.tomcat.embedded;
 
+import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration.Feature;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 
 /**
@@ -36,23 +37,50 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
 
     private final String basedir;
 
+    private final Feature[] features;
+
     public EmbeddedTomcatMergedContextConfiguration(WebMergedContextConfiguration webMergedContextConfiguration,
-                                                    int port, String contextPath, String basedir) {
+                                                    int port, String contextPath, String basedir, Feature... features) {
         super(webMergedContextConfiguration, webMergedContextConfiguration.getResourceBasePath());
         this.port = port;
         this.contextPath = contextPath;
         this.basedir = basedir;
+        this.features = features;
     }
 
+    /**
+     * Get the Tomcat port
+     *
+     * @return Tomcat port
+     */
     public int getPort() {
         return port;
     }
 
+    /**
+     * Get the Tomcat context path
+     *
+     * @return Tomcat context path
+     */
     public String getContextPath() {
         return contextPath;
     }
 
+    /**
+     * Get the Tomcat basedir
+     *
+     * @return Tomcat basedir
+     */
     public String getBasedir() {
         return basedir;
+    }
+
+    /**
+     * Get the Tomcat features
+     *
+     * @return Tomcat features
+     */
+    public Feature[] getFeatures() {
+        return features;
     }
 }
