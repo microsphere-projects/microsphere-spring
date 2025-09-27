@@ -20,6 +20,7 @@ package io.microsphere.spring.test.tomcat.embedded;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration.Feature;
 import jakarta.servlet.ServletContext;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
@@ -47,8 +48,10 @@ import java.util.Enumeration;
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
+import static org.apache.catalina.startup.Tomcat.initWebappDefaults;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext;
 import static org.springframework.web.servlet.FrameworkServlet.SERVLET_CONTEXT_PREFIX;
@@ -166,7 +169,7 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
         String contextPath = environment.resolvePlaceholders(config.getContextPath());
         String basedir = environment.resolvePlaceholders(config.getBasedir());
         String resourceBasePath = environment.resolvePlaceholders(config.getResourceBasePath());
-
+        Feature[] features = config.getFeatures();
 
         Tomcat tomcat = new Tomcat();
         tomcat.setAddDefaultWebXmlToWebapp(false);
@@ -184,17 +187,43 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
             }
         }
 
-        logger.trace("Tomcat will startup with port : {} , contextPath : '{}' , basedir : '{}', resourceBasePath : '{}' , docBase : '{}'",
-                port, contextPath, basedir, resourceBasePath, docBase);
-
+        logger.trace("Tomcat will startup with port : {} , contextPath : '{}' , basedir : '{}', resourceBasePath : '{}'" +
+                        " , docBase : '{}' , features : {}",
+                port, contextPath, basedir, resourceBasePath, docBase, arrayToString(features));
 
         Context context = tomcat.addWebapp(contextPath, docBase);
+
+        setFeatures(tomcat, context, config);
 
         tomcat.start();
 
         addShutdownHookCallback(() -> execute(tomcat::stop));
 
         return context;
+    }
+
+    private void setFeatures(Tomcat tomcat, Context context, EmbeddedTomcatMergedContextConfiguration config) {
+        Feature[] features = config.getFeatures();
+        for (Feature feature : features) {
+            switch (feature) {
+                case NAMING:
+                    tomcat.enableNaming();
+                    break;
+                case DEFAULT_WEB_XML:
+                    tomcat.setAddDefaultWebXmlToWebapp(true);
+                    break;
+                case WEB_APP_DEFAULTS:
+                    initWebappDefaults(context);
+                    break;
+                case USE_TEST_CLASSPATH:
+                    ClassLoader classLoader = config.getTestClass().getClassLoader();
+                    context.setParentClassLoader(classLoader);
+                    break;
+                case SILENT:
+                    tomcat.setSilent(true);
+                    break;
+            }
+        }
     }
 
     /**

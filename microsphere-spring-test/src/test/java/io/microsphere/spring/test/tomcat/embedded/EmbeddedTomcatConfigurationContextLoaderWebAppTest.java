@@ -19,16 +19,15 @@ package io.microsphere.spring.test.tomcat.embedded;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * {@link EmbeddedTomcatConfiguration} Test with default attributes
@@ -39,14 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 @EmbeddedTomcatConfiguration(
         port = 0,
-        contextPath = "/",
-        docBase = "classpath:/webapps/empty-app",
-        classes = {
-                HashMap.class
-        },
-        locations = "classpath:webapps/empty-app/WEB-INF/context.xml"
+        contextPath = "${contextPath}",
+        docBase = "${docBase}",
+        classes = EmbeddedTomcatConfigurationContextLoaderWebAppTest.class
 )
-class EmbeddedTomcatConfigurationTestForEmptyWebApp {
+@TestPropertySource(properties = {
+        "contextPath=/",
+        "docBase=classpath:/webapps/context-loader-app"
+})
+class EmbeddedTomcatConfigurationContextLoaderWebAppTest {
 
     @Autowired(required = false)
     private WebApplicationContext wac;
@@ -54,23 +54,25 @@ class EmbeddedTomcatConfigurationTestForEmptyWebApp {
     @Autowired
     private ApplicationContext context;
 
-    @Autowired
-    private HashMap hashMap;
+    @Value("${contextPath}")
+    private String contextPath;
+
+    @Value("${docBase}")
+    private String docBase;
 
     @Autowired
-    @Qualifier("testString")
-    private String testString;
+    private Environment environment;
 
     @Test
     void test() {
-        assertNull(this.wac);
+        assertNotNull(this.wac);
 
         assertNotNull(this.context);
 
         assertNotSame(this.wac, this.context);
 
-        assertNotNull(this.hashMap);
+        assertEquals("/", this.contextPath);
 
-        assertEquals("test", this.testString);
+        assertEquals("classpath:/webapps/context-loader-app", docBase);
     }
 }
