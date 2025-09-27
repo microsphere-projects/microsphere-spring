@@ -20,10 +20,10 @@ package io.microsphere.spring.web.servlet.listener;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.annotation.HandlesTypes;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +33,7 @@ import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FrameworkServlet;
 
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,7 @@ import static io.microsphere.util.ClassUtils.isAssignableFrom;
 import static jakarta.servlet.DispatcherType.REQUEST;
 import static java.lang.String.valueOf;
 import static java.util.EnumSet.of;
+import static org.springframework.util.StringUtils.uncapitalize;
 
 /**
  * {@link ServletContainerInitializer} for {@link EnableWebMvcExtension}
@@ -55,7 +57,7 @@ import static java.util.EnumSet.of;
 @HandlesTypes(EnableWebMvcExtension.class)
 public class EnableWebMvcExtensionListener implements ServletContainerInitializer {
 
-    private final Logger logger = getLogger(getClass());
+    private static final Logger logger = getLogger(EnableWebMvcExtensionListener.class);
 
     private static final Class<FrameworkServlet> FRAMEWORK_SERVLET_CLASS = FrameworkServlet.class;
 
@@ -71,8 +73,23 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
      */
     private static final String REQUEST_CONTEXT_FILTER_CLASS_NAME = REQUEST_CONTEXT_FILTER_CLASS.getName();
 
+    /**
+     * The name of {@link RequestContextFilter}
+     */
+    private static final String REQUEST_CONTEXT_FILTER_NAME = uncapitalize(REQUEST_CONTEXT_FILTER_CLASS.getSimpleName());
+
+    /**
+     * The dispatcher types of {@link RequestContextFilter}
+     */
+    private static final EnumSet<DispatcherType> REQUEST_CONTEXT_FILTER_DISPATCHER_TYPES = of(REQUEST);
+
+    /**
+     * The URL pattern of {@link RequestContextFilter}
+     */
+    private static final String REQUEST_CONTEXT_FILTER_URL_PATTERN = "/*";
+
     @Override
-    public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
+    public void onStartup(Set<Class<?>> classes, ServletContext servletContext) {
         if (isNotEmpty(classes)) {
             processAnnotatedClasses(classes, servletContext);
         }
@@ -133,6 +150,19 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
         }
     }
 
+    boolean isFrameworkServlet(String servletClassName, ServletContext servletContext) {
+        if (DISPATCHER_SERVLET_CLASS_NAME.equals(servletClassName)) { // the most case
+            return true;
+        } else {
+            ClassLoader classLoader = servletContext.getClassLoader();
+            Class<?> servletClass = resolveClass(servletClassName, classLoader);
+            if (isAssignableFrom(FRAMEWORK_SERVLET_CLASS, servletClass)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Process {@link RequestContextFilter}
      *
@@ -149,36 +179,27 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
         registerRequestContextFilter(servletContext, threadContextInheritable);
     }
 
-    protected boolean isFrameworkServlet(String servletClassName, ServletContext servletContext) {
-        if (DISPATCHER_SERVLET_CLASS_NAME.equals(servletClassName)) { // the most case
-            return true;
-        } else {
-            ClassLoader classLoader = servletContext.getClassLoader();
-            Class<?> servletClass = resolveClass(servletClassName, classLoader);
-            if (isAssignableFrom(FRAMEWORK_SERVLET_CLASS, servletClass)) {
+    boolean hasRequestContextFilterRegistration(ServletContext servletContext) {
+        Map<String, ? extends FilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
+        for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
+            FilterRegistration filterRegistration = entry.getValue();
+            String filterClassName = filterRegistration.getClassName();
+            if (isRequestContextFilter(filterClassName)) {
                 return true;
             }
         }
         return false;
     }
 
-    protected boolean hasRequestContextFilterRegistration(ServletContext servletContext) {
-        Map<String, ? extends FilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
-        for (Map.Entry<String, ? extends FilterRegistration> entry : filterRegistrations.entrySet()) {
-            FilterRegistration filterRegistration = entry.getValue();
-            String filterClassName = filterRegistration.getClassName();
-            if (REQUEST_CONTEXT_FILTER_CLASS_NAME.equals(filterClassName)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isRequestContextFilter(String filterClassName) {
+        return REQUEST_CONTEXT_FILTER_CLASS_NAME.equals(filterClassName);
     }
 
     private void registerRequestContextFilter(ServletContext servletContext, boolean threadContextInheritable) {
         RequestContextFilter filter = new RequestContextFilter();
         filter.setThreadContextInheritable(threadContextInheritable);
 
-        FilterRegistration filterRegistration = servletContext.addFilter(REQUEST_CONTEXT_FILTER_CLASS.getSimpleName(), filter);
-        filterRegistration.addMappingForUrlPatterns(of(REQUEST), true, "/*");
+        FilterRegistration filterRegistration = servletContext.addFilter(REQUEST_CONTEXT_FILTER_NAME, filter);
+        filterRegistration.addMappingForUrlPatterns(REQUEST_CONTEXT_FILTER_DISPATCHER_TYPES, true, REQUEST_CONTEXT_FILTER_URL_PATTERN);
     }
 }

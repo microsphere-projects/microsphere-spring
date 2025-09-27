@@ -18,15 +18,20 @@
 package io.microsphere.spring.web.servlet.listener;
 
 
-import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration;
+import io.microsphere.spring.test.web.servlet.TestFilter;
+import io.microsphere.spring.test.web.servlet.TestServlet;
+import io.microsphere.spring.test.web.servlet.TestServletContext;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
-import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.FrameworkServlet;
 
-import static io.microsphere.spring.web.util.RequestContextStrategy.INHERITABLE_THREAD_LOCAL;
+import static io.microsphere.collection.Sets.ofSet;
+import static io.microsphere.spring.web.servlet.listener.AbstractEnableWebMvcExtensionListenerTest.assertRequestContextFilter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link EnableWebMvcExtensionListener} Test
@@ -35,24 +40,52 @@ import static io.microsphere.spring.web.util.RequestContextStrategy.INHERITABLE_
  * @see EnableWebMvcExtensionListener
  * @since 1.0.0
  */
-@EmbeddedTomcatConfiguration(
-        classes = EnableWebMvcExtensionListenerTest.class
-)
-@EnableWebMvcExtension(requestContextStrategy = INHERITABLE_THREAD_LOCAL)
+@EnableWebMvcExtension
 class EnableWebMvcExtensionListenerTest {
 
-    @Autowired
-    private WebApplicationContext wac;
+    private EnableWebMvcExtensionListener listener;
 
-    private ServletContext servletContext;
+    private TestServletContext servletContext;
 
     @BeforeEach
     void setUp() {
-        this.servletContext = wac.getServletContext();
+        this.listener = new EnableWebMvcExtensionListener();
+        this.servletContext = new TestServletContext();
     }
 
     @Test
-    void test() {
+    void testOnStartup() {
+        this.listener.onStartup(ofSet(this.getClass()), this.servletContext);
+        assertTrue(this.servletContext.getServletRegistrations().isEmpty());
+        assertTrue(this.servletContext.getFilterRegistrations().isEmpty());
+    }
 
+    @Test
+    void testOnStartupWithTestServlet() {
+        assertNotNull(this.servletContext.addServlet("test", TestServlet.class));
+        this.listener.onStartup(ofSet(EnableWebMvcExtensionListenerThreadLocalStrategyTest.class), this.servletContext);
+        assertEquals(1, this.servletContext.getServletRegistrations().size());
+        assertRequestContextFilter(this.servletContext);
+    }
+
+    @Test
+    void testOnStartupWithNullClasses() {
+        this.listener.onStartup(null, this.servletContext);
+        assertTrue(this.servletContext.getServletRegistrations().isEmpty());
+        assertTrue(this.servletContext.getFilterRegistrations().isEmpty());
+    }
+
+    @Test
+    void testIsFrameworkServlet() {
+        assertTrue(this.listener.isFrameworkServlet(FrameworkServlet.class.getName(), this.servletContext));
+        assertFalse(this.listener.isFrameworkServlet(TestServlet.class.getName(), this.servletContext));
+    }
+
+    @Test
+    void testHasRequestContextFilterRegistration() {
+        assertFalse(this.listener.hasRequestContextFilterRegistration(this.servletContext));
+
+        assertNotNull(this.servletContext.addFilter("test", TestFilter.class));
+        assertFalse(this.listener.hasRequestContextFilterRegistration(this.servletContext));
     }
 }
