@@ -43,13 +43,13 @@ import static org.junit.Assert.assertNotSame;
         port = 0,
         contextPath = "${contextPath}",
         docBase = "${docBase}",
-        classes = EmbeddedTomcatConfigurationTestForContextLoaderWebApp.class
+        classes = EmbeddedTomcatConfigurationContextLoaderWebAppTest.class
 )
 @TestPropertySource(properties = {
         "contextPath=/",
         "docBase=classpath:/webapps/context-loader-app"
 })
-public class EmbeddedTomcatConfigurationTestForContextLoaderWebApp {
+public class EmbeddedTomcatConfigurationContextLoaderWebAppTest {
 
     @Autowired(required = false)
     private WebApplicationContext wac;

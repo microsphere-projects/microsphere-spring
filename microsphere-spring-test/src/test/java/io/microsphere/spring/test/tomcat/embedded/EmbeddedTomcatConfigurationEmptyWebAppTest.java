@@ -49,7 +49,7 @@ import static org.junit.Assert.assertNull;
         },
         locations = "classpath:webapps/empty-app/WEB-INF/context.xml"
 )
-public class EmbeddedTomcatConfigurationTestForEmptyWebApp {
+public class EmbeddedTomcatConfigurationEmptyWebAppTest {
 
     @Autowired(required = false)
     private WebApplicationContext wac;
