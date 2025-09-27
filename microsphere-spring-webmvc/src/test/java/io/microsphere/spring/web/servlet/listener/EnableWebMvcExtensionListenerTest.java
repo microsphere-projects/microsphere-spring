@@ -35,7 +35,9 @@ import static io.microsphere.spring.web.util.RequestContextStrategy.INHERITABLE_
  * @see EnableWebMvcExtensionListener
  * @since 1.0.0
  */
-@EmbeddedTomcatConfiguration
+@EmbeddedTomcatConfiguration(
+        classes = EnableWebMvcExtensionListenerTest.class
+)
 @EnableWebMvcExtension(requestContextStrategy = INHERITABLE_THREAD_LOCAL)
 class EnableWebMvcExtensionListenerTest {
 
