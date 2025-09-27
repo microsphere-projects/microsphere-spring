@@ -54,7 +54,7 @@ import static io.microsphere.spring.web.util.WebScope.SESSION;
  * @see RequestBody
  * @see PathVariable
  * @see MatrixVariable
- * @see jakarta.servlet.http.HttpServletRequest
+ * @see javax.servlet.http.HttpServletRequest
  * @see org.springframework.http.server.reactive.ServerHttpRequest
  * @since 1.0.0
  */
