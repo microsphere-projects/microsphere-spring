@@ -18,7 +18,6 @@
 package io.microsphere.spring.test.tomcat.embedded;
 
 
-import org.apache.catalina.LifecycleException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.GenericApplicationContext;
@@ -26,6 +25,8 @@ import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
+
+import java.io.IOException;
 
 import static io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatContextLoader.setParent;
 import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
@@ -78,9 +79,10 @@ class EmbeddedTomcatContextLoaderTest {
                 loader
         );
         WebMergedContextConfiguration webMergedContextConfiguration = new WebMergedContextConfiguration(mergedConfig, resourceBasePath);
-        EmbeddedTomcatMergedContextConfiguration config = new EmbeddedTomcatMergedContextConfiguration(webMergedContextConfiguration, 0, "", "");
+        EmbeddedTomcatMergedContextConfiguration config = new EmbeddedTomcatMergedContextConfiguration(
+                webMergedContextConfiguration, 0, "", "", "");
         GenericApplicationContext context = new GenericApplicationContext();
-        assertThrows(LifecycleException.class, () -> this.loader.deployContext(context, config));
+        assertThrows(IOException.class, () -> this.loader.deployContext(context, config));
     }
 
 }
