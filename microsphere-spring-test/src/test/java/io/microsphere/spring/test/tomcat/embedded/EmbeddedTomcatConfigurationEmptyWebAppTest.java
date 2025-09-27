@@ -33,7 +33,14 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 
 /**
- * {@link EmbeddedTomcatConfiguration} Test with default attributes
+ * {@link EmbeddedTomcatConfiguration} Test for "/webapps/empty-app" with cases as following:
+ * <ul>
+ *     <li>The Contexts' path via {@link EmbeddedTomcatConfiguration#contextPath()} with hardcode</li>
+ *     <li>The Context's document base directory will be ignored caused by {@link EmbeddedTomcatConfiguration#alternativeWebXml()}</li>
+ *     <li>The alternative deployment descriptor can be found via {@link EmbeddedTomcatConfiguration#alternativeWebXml()}</li>
+ *     <li>The configuration classes can be registered via {@link EmbeddedTomcatConfiguration#classes()}</li>
+ *     <li>The context locations can be loaded via {@link EmbeddedTomcatConfiguration#locations()}</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EmbeddedTomcatConfiguration
@@ -44,6 +51,7 @@ import static org.junit.Assert.assertNull;
         port = 0,
         contextPath = "/",
         docBase = "classpath:/webapps/empty-app",
+        alternativeWebXml = "classpath:/webapps/empty-app/WEB-INF/web.xml",
         classes = {
                 HashMap.class
         },

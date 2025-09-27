@@ -18,6 +18,9 @@
 package io.microsphere.spring.test.tomcat.embedded;
 
 import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration.Feature;
+import org.springframework.core.style.DefaultToStringStyler;
+import org.springframework.core.style.DefaultValueStyler;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 
 /**
@@ -37,21 +40,24 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
 
     private final String basedir;
 
+    private final String alternativeWebXml;
+
     private final Feature[] features;
 
     public EmbeddedTomcatMergedContextConfiguration(WebMergedContextConfiguration webMergedContextConfiguration,
-                                                    int port, String contextPath, String basedir, Feature... features) {
+                                                    int port, String contextPath, String basedir, String alternativeWebXml, Feature... features) {
         super(webMergedContextConfiguration, webMergedContextConfiguration.getResourceBasePath());
         this.port = port;
         this.contextPath = contextPath;
         this.basedir = basedir;
+        this.alternativeWebXml = alternativeWebXml;
         this.features = features;
     }
 
     /**
      * Get the Tomcat port
      *
-     * @return Tomcat port
+     * @return {@link EmbeddedTomcatConfiguration#port()}
      */
     public int getPort() {
         return port;
@@ -60,7 +66,7 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
     /**
      * Get the Tomcat context path
      *
-     * @return Tomcat context path
+     * @return {@link EmbeddedTomcatConfiguration#contextPath()}
      */
     public String getContextPath() {
         return contextPath;
@@ -69,18 +75,39 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
     /**
      * Get the Tomcat basedir
      *
-     * @return Tomcat basedir
+     * @return {@link EmbeddedTomcatConfiguration#basedir()}
      */
     public String getBasedir() {
         return basedir;
     }
 
     /**
+     * Get the Tomcat web.xml
+     *
+     * @return {@link EmbeddedTomcatConfiguration#alternativeWebXml()}
+     */
+    public String getAlternativeWebXml() {
+        return alternativeWebXml;
+    }
+
+    /**
      * Get the Tomcat features
      *
-     * @return Tomcat features
+     * @return {@link EmbeddedTomcatConfiguration#features()}
      */
     public Feature[] getFeatures() {
         return features;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringCreator(this, new DefaultToStringStyler(new DefaultValueStyler()))
+                .append(super.toString())
+                .append("port", getPort())
+                .append("contextPath", getContextPath())
+                .append("basedir", getBasedir())
+                .append("alternativeWebXml", getAlternativeWebXml())
+                .append("features", getFeatures())
+                .toString();
     }
 }

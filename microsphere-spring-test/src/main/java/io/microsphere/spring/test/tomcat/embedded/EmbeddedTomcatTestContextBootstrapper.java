@@ -47,6 +47,7 @@ class EmbeddedTomcatTestContextBootstrapper extends WebTestContextBootstrapper {
                 annotation.port(),
                 annotation.contextPath(),
                 annotation.basedir(),
+                annotation.alternativeWebXml(),
                 annotation.features());
     }
 

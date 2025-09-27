@@ -72,6 +72,12 @@ public @interface EmbeddedTomcatConfiguration {
 
     /**
      * The resource location of the Tomcat's {@link Tomcat#setBaseDir(String) base directory}.
+     * <p>
+     * The value supports two types of locations:
+     * <ul>
+     *     <li>File System, e.g: /tmp/catalina </li>
+     *     <li>Spring Resource location, e.g: classpath:/catalina, file:/temp/catalina</li>
+     * </ul>
      *
      * @return the default value of basedir : The "java.io.tmpdir" system property (the directory where Java temporary
      * directory) where a directory named tomcat.$PORT will be created. $PORT is the value configured via
@@ -81,16 +87,51 @@ public @interface EmbeddedTomcatConfiguration {
     String basedir() default "${java.io.tmpdir}";
 
     /**
-     * The resource location of the Tomcat's {@link Context#getDocBase() document root}
+     * The resource location of the Tomcat's {@link Context#getDocBase() the root directory of context document}.
+     * <p>
+     * The value supports two types of locations:
+     * <ul>
+     *     <li>File System, e.g: /tmp/webapp </li>
+     *     <li>Spring Resource location, e.g: classpath:/WEB-INF/webapp, file:/temp/webapp</li>
+     * </ul>
      * <p>
      * Alias for {@link WebAppConfiguration#value()}.
+     * <p>
+     * Note : {@link #docBase()} could be ignored if {@link #alternativeWebXml()} is specified.
      *
-     * @return An absolute pathname or a relative (to the Host's appBase) pathname.
-     * The default value : "classpath:/webapp"
+     * @return the default value : "classpath:/webapp"
      * @see Context#setDocBase(String)
      */
     @AliasFor(annotation = WebAppConfiguration.class, attribute = "value")
     String docBase() default "classpath:/webapp";
+
+    /**
+     * The resource location of an alternative deployment descriptor for the web application.
+     * <p>
+     * The value supports two types of locations:
+     * <ul>
+     *     <li>File System, e.g: /tmp/web.xml </li>
+     *     <li>Spring Resource location, e.g: classpath:/WEB-INF/web.xml, file:/temp/web.xml</li>
+     * </ul>
+     * <p>
+     * Note : Whether the location is based on File System or Spring Resource, Tomcat only uses the deployment descriptor
+     * whose underlying layer resource must be the file, please reference to {@link ContextConfig#getContextWebXmlSource()
+     * the Tomcat's source code}.
+     * <p>
+     * If {@link #alternativeWebXml()} is specified, {@link #docBase()} will be ignored, and the context's document base
+     * will be the parent directory of the alternative deployment descriptor.
+     *
+     * @return the default value is "", which means no alternative deployment descriptor required.
+     * @see Context#setAltDDName(String)
+     */
+    String alternativeWebXml() default "";
+
+    /**
+     * Enable the Tomcat features
+     *
+     * @return the empty array as default
+     */
+    Feature[] features() default {};
 
     /**
      * The <em>component classes</em> to use for loading an {@link ApplicationContext ApplicationContext}.
@@ -135,12 +176,8 @@ public @interface EmbeddedTomcatConfiguration {
     boolean inheritInitializers() default true;
 
     /**
-     * Enable the Tomcat features
-     *
-     * @return the empty array as default
+     * The Tomcat features
      */
-    Feature[] features() default {};
-
     enum Feature {
 
         /**

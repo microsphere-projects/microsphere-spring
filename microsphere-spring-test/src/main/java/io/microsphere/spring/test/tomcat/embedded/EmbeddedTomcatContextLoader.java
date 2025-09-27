@@ -34,6 +34,7 @@ import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
@@ -44,15 +45,18 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FrameworkServlet;
 
 import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.util.ArrayUtils.arrayToString;
+import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 import static org.apache.catalina.startup.Tomcat.initWebappDefaults;
+import static org.springframework.util.StringUtils.cleanPath;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext;
 import static org.springframework.web.servlet.FrameworkServlet.SERVLET_CONTEXT_PREFIX;
@@ -163,14 +167,16 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
      */
     @Nonnull
     protected Context deployContext(ConfigurableApplicationContext applicationContext, EmbeddedTomcatMergedContextConfiguration config) throws Exception {
-
+        logger.trace("Deploying Tomcat Context from the config : {}", config);
         Environment environment = applicationContext.getEnvironment();
-
         int port = config.getPort();
-        String contextPath = environment.resolvePlaceholders(config.getContextPath());
-        String basedir = environment.resolvePlaceholders(config.getBasedir());
-        String resourceBasePath = environment.resolvePlaceholders(config.getResourceBasePath());
-        Feature[] features = config.getFeatures();
+        String contextPath = resolvePath(environment, config.getContextPath());
+        String basedir = resolvePath(environment, config.getBasedir());
+        String resourceBasePath = resolvePath(environment, config.getResourceBasePath());
+        String alternativeWebXml = resolvePath(environment, config.getAlternativeWebXml());
+
+        logger.trace("[Resolved] contextPath : '{}' , basedir : '{}', resourceBasePath : '{}' , alternativeWebXml : '{}'",
+                contextPath, basedir, resourceBasePath, alternativeWebXml);
 
         Tomcat tomcat = new Tomcat();
         tomcat.setAddDefaultWebXmlToWebapp(false);
@@ -180,19 +186,39 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
             tomcat.setBaseDir(basedir);
         }
 
-        String docBase = resourceBasePath;
-        if (hasText(resourceBasePath)) {
-            Resource resource = applicationContext.getResource(resourceBasePath);
-            if (resource.exists()) {
-                docBase = resource.getFile().getAbsolutePath();
+        File docBaseDir = null;
+        File alternativeWebXmlFile = null;
+
+        if (hasText(alternativeWebXml)) {
+            alternativeWebXmlFile = getResourceFile(applicationContext, alternativeWebXml);
+            if (alternativeWebXmlFile == null) {
+                logger.warn("The alternative deployment descriptor 'web.xml' was not found on the path : '{}'", alternativeWebXml);
+            } else {
+                docBaseDir = alternativeWebXmlFile.getParentFile();
+                logger.trace("The alternative deployment descriptor 'web.xml' was found", alternativeWebXml);
+                logger.trace("The Context's docBase directory is changed to {}", docBaseDir);
+                resourceBasePath = null;
             }
         }
 
-        logger.trace("Tomcat will startup with port : {} , contextPath : '{}' , basedir : '{}', resourceBasePath : '{}'" +
-                        " , docBase : '{}' , features : {}",
-                port, contextPath, basedir, resourceBasePath, docBase, arrayToString(features));
+        if (hasText(resourceBasePath)) {
+            docBaseDir = getResourceFile(applicationContext, resourceBasePath);
+        }
 
-        Context context = tomcat.addWebapp(contextPath, docBase);
+        if (docBaseDir == null) {
+            throw new IOException(format("The Context's docBase directory can't be found on the path : '{}'", resourceBasePath));
+        }
+
+        String docBasePath = docBaseDir.getAbsolutePath();
+
+        logger.trace("Adding the web application within contextPath : '{}' , basedir : '{}', resourceBasePath : '{}'" +
+                " , docBase : '{}'", contextPath, basedir, resourceBasePath, docBasePath);
+
+        Context context = tomcat.addWebapp(contextPath, docBasePath);
+
+        if (alternativeWebXmlFile != null) {
+            context.setAltDDName(alternativeWebXmlFile.getAbsolutePath());
+        }
 
         setFeatures(tomcat, context, config);
 
@@ -201,6 +227,19 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
         addShutdownHookCallback(() -> execute(tomcat::stop));
 
         return context;
+    }
+
+    private String resolvePath(Environment environment, String rawPath) {
+        String resolvedPath = environment.resolvePlaceholders(rawPath);
+        return cleanPath(resolvedPath);
+    }
+
+    private File getResourceFile(ResourceLoader resourceLoader, String location) throws IOException {
+        Resource resource = resourceLoader.getResource(location);
+        if (resource.exists()) {
+            return resource.getFile();
+        }
+        return null;
     }
 
     private void setFeatures(Tomcat tomcat, Context context, EmbeddedTomcatMergedContextConfiguration config) {

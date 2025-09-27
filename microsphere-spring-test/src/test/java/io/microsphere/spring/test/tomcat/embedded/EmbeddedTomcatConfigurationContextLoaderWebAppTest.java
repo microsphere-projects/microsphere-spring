@@ -32,7 +32,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 /**
- * {@link EmbeddedTomcatConfiguration} Test with default attributes
+ * {@link EmbeddedTomcatConfiguration} Test for "/webapps/context-loader-app" with cases as following:
+ * <ul>
+ *     <li>{@link TestPropertySource} with inlined properties</li>
+ *     <li>Resolve the placeholders for String type attributes</li>
+ *     <li>The Context's document base directory can be found via {@link EmbeddedTomcatConfiguration#docBase()}</li>
+ *     <li>The alternative deployment descriptor can't be found via {@link EmbeddedTomcatConfiguration#alternativeWebXml()}</li>
+ *     <li>The configuration classes can be registered via {@link EmbeddedTomcatConfiguration#classes()}</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EmbeddedTomcatConfiguration
@@ -43,6 +50,7 @@ import static org.junit.Assert.assertNotSame;
         port = 0,
         contextPath = "${contextPath}",
         docBase = "${docBase}",
+        alternativeWebXml = "classpath:/not-found/web.xml",
         classes = EmbeddedTomcatConfigurationContextLoaderWebAppTest.class
 )
 @TestPropertySource(properties = {
