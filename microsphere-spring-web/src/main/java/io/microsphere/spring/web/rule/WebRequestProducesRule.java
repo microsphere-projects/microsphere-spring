@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -29,6 +30,9 @@ import java.util.List;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.spring.core.SpringVersion.CURRENT;
+import static io.microsphere.spring.core.SpringVersion.SPRING_5_0_5;
 import static io.microsphere.spring.util.MimeTypeUtils.isPresentIn;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
@@ -55,6 +59,15 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
  * @since 1.0.0
  */
 public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaTypeExpression> {
+
+    static final boolean BEFORE_SPRING_505 = CURRENT.isLessThan(SPRING_5_0_5);
+    /**
+     * A singleton list with {@link MediaType#ALL} that is returned from
+     * {@link ContentNegotiationStrategy#resolveMediaTypes} when no specific media types are requested.
+     *
+     * @since Spring Framework 5.0.5
+     */
+    static final List<MediaType> MEDIA_TYPE_ALL_LIST = ofList(ALL);
 
     private static final ContentNegotiationManager DEFAULT_CONTENT_NEGOTIATION_MANAGER =
             new ContentNegotiationManager();
@@ -112,7 +125,8 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
         List<ProduceMediaTypeExpression> result = getMatchingExpressions(acceptedMediaTypes);
         if (isNotEmpty(result)) {
             return false;
-        } else return !isPresentIn(ALL, acceptedMediaTypes);
+        }
+        return !isPresentIn(ALL, acceptedMediaTypes);
     }
 
     private List<ProduceMediaTypeExpression> getMatchingExpressions(List<MediaType> acceptedMediaTypes) {
@@ -128,7 +142,12 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
     private List<MediaType> getAcceptedMediaTypes(NativeWebRequest request) throws HttpMediaTypeNotAcceptableException {
         List<MediaType> result = (List<MediaType>) request.getAttribute(MEDIA_TYPES_ATTRIBUTE, SCOPE_REQUEST);
         if (result == null) {
+            // The return value of ContentNegotiationStrategy#resolveMediaTypes(NativeWebRequest) had been changed
+            // since Spring Framework 5.0.5 : the requested media types, or MEDIA_TYPE_ALL_LIST if none were requested.
             result = this.contentNegotiationManager.resolveMediaTypes(request);
+            if (result.isEmpty() && BEFORE_SPRING_505) {
+                result = MEDIA_TYPE_ALL_LIST;
+            }
             request.setAttribute(MEDIA_TYPES_ATTRIBUTE, result, SCOPE_REQUEST);
         }
         return result;

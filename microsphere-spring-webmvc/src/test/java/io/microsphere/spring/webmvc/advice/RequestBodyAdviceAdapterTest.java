@@ -54,7 +54,7 @@ public class RequestBodyAdviceAdapterTest {
     @Before
     public void setUp() throws Exception {
         this.httpRequest = new ServletServerHttpRequest(new MockHttpServletRequest());
-        this.methodParameter = new MethodParameter(getClass().getMethod("setUp"), -1);
+        this.methodParameter = new MethodParameter(getClass().getDeclaredMethod("setUp"), -1);
         this.targetType = methodParameter.getGenericParameterType();
         this.converterType = StringHttpMessageConverter.class;
         this.adapter = new RequestBodyAdviceAdapter() {

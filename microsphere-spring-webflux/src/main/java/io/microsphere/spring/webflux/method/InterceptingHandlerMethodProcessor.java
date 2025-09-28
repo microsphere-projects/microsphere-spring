@@ -48,10 +48,12 @@ import java.util.Map;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static java.util.Collections.emptyList;
 import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 import static reactor.core.publisher.Mono.error;
+import static reactor.core.publisher.Mono.just;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} beans based on
@@ -132,7 +134,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
             result = resolver.resolveArgument(parameter, bindingContext, exchange);
 
-            Object argument = result.toFuture().get();
+            Object argument = getValue(result);
 
             Object[] arguments = resolveArguments(webRequest, parameter, argument);
 
@@ -140,10 +142,11 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
             beforeExecute(parameter, webRequest, handlerMethod, arguments);
 
+            // rebuild the result
+            result = just(argument);
         } catch (Exception e) {
             result = error(e);
         }
-
         return result;
     }
 

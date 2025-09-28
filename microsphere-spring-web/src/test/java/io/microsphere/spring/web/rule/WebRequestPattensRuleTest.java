@@ -24,10 +24,19 @@ import org.springframework.web.context.request.ServletWebRequest;
 import java.util.List;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static io.microsphere.spring.web.rule.WebRequestPattensRule.EMPTY_PATH_PATTERN;
+import static io.microsphere.spring.web.rule.WebRequestPattensRule.hasPattern;
+import static io.microsphere.spring.web.rule.WebRequestPattensRule.initPatterns;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
+import static io.microsphere.util.ArrayUtils.ofArray;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -37,6 +46,23 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 public class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
+
+    @Test
+    public void testHasPattern() {
+        assertFalse(hasPattern(null));
+        assertFalse(hasPattern(EMPTY_STRING_ARRAY));
+        assertFalse(hasPattern(ofArray(EMPTY_STRING)));
+        assertTrue(hasPattern(ofArray("/*")));
+    }
+
+    @Test
+    public void testInitPatterns() {
+        assertSame(EMPTY_PATH_PATTERN, initPatterns(null));
+        assertSame(EMPTY_PATH_PATTERN, initPatterns(EMPTY_STRING_ARRAY));
+        assertSame(EMPTY_PATH_PATTERN, initPatterns(ofArray(EMPTY_STRING)));
+
+        assertEquals(ofSet("/*", "/api"), initPatterns(ofArray("/*", "api")));
+    }
 
     // Test empty patterns match all requests
     @Test
@@ -136,10 +162,70 @@ public class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
         assertEquals("/api/*.*", rule.getMatchingPattern("/api/*", "/api/data.json"));
     }
 
+    @Test
+    public void testGetMatchingPatternOnWildcardExtensionMatched() {
+        WebRequestPattensRule rule = new WebRequestPattensRule(EMPTY_STRING_ARRAY, null, true, true);
+        assertNull(rule.getMatchingPattern("/", "/data.json"));
+    }
+
+    @Test
+    public void testGetMatchingPatternWithSuffix() {
+        WebRequestPattensRule rule = new WebRequestPattensRule(EMPTY_STRING_ARRAY, null, true, true);
+        assertEquals("/*.json", rule.getMatchingPattern("/*.json", "/data.json"));
+    }
+
+    @Test
+    public void testGetMatchingPatternWithoutTrailingSlashMatch() {
+        WebRequestPattensRule rule = new WebRequestPattensRule(EMPTY_STRING_ARRAY, null, true, false);
+        assertNull(rule.getMatchingPattern("/*.txt", "/data.json"));
+    }
+
+    @Test
+    public void testGetMatchingPatternOnWildcardExtensionNotMatched() {
+        WebRequestPattensRule rule = new WebRequestPattensRule(EMPTY_STRING_ARRAY, null, true, true);
+        assertNull(rule.getMatchingPattern("/", "/data.json"));
+    }
+
+    @Test
+    public void testGetMatchingPatternOnFileExtensionMatched() {
+        WebRequestPattensRule rule = new WebRequestPattensRule(EMPTY_STRING_ARRAY, null, true, true, ofList("json"));
+        assertEquals("/*.json", rule.getMatchingPattern("/*", "/data.json"));
+    }
+
+    @Test
+    public void testGetMatchingPatternOnFileExtensionNotMatched() {
+        WebRequestPattensRule rule = new WebRequestPattensRule(EMPTY_STRING_ARRAY, null, true, true, ofList("json"));
+        assertEquals("/*", rule.getMatchingPattern("/*", "/data"));
+    }
+
     @Override
-    public void testGetToStringInfix() {
+    public void doTestGetToStringInfix() {
         WebRequestPattensRule rule = new WebRequestPattensRule();
         assertEquals(" || ", rule.getToStringInfix());
+    }
+
+    @Override
+    protected void doTestEquals() {
+        WebRequestPattensRule rule = new WebRequestPattensRule("/api/*");
+
+        assertEquals(rule, rule);
+        assertEquals(rule, new WebRequestPattensRule("/api/*"));
+
+        assertNotEquals(rule, new WebRequestPattensRule("/test"));
+        assertNotEquals(rule, this);
+        assertNotEquals(rule, null);
+    }
+
+    @Override
+    protected void doTestHashCode() {
+        WebRequestPattensRule rule = new WebRequestPattensRule("/api/*");
+        assertEquals(rule.hashCode(), rule.getContent().hashCode());
+    }
+
+    @Override
+    protected void doTestToString() {
+        WebRequestPattensRule rule = new WebRequestPattensRule("/api/*");
+        assertEquals("[/api/*]", rule.toString());
     }
 }
 

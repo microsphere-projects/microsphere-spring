@@ -21,14 +21,17 @@ import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * {@link EnableWebExtension} Test
@@ -40,16 +43,21 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {
+        TestController.class,
         EnableWebExtensionTest.class
 })
+@EnableWebMvc
 @EnableWebExtension
 public class EnableWebExtensionTest {
+
+    @Autowired
+    private WebApplicationContext wac;
 
     private MockMvc mockMvc;
 
     @Before
     public void setUp() {
-        this.mockMvc = standaloneSetup(TestController.class).build();
+        this.mockMvc = webAppContextSetup(wac).build();
     }
 
     @Test

@@ -28,7 +28,6 @@ import org.springframework.web.method.HandlerMethod;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -57,7 +56,6 @@ import static io.microsphere.util.Assert.assertNotNull;
 import static io.microsphere.util.Assert.assertTrue;
 import static io.microsphere.util.IterableUtils.iterate;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
-import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -90,7 +88,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  *      <ul>
  *          <li>The {@link String} presenting the name of Handler bean</li>
  *          <li>The {@link HandlerMethod} could be annotated the {@link RequestMapping @RequestMapping}</li>
- *          <li>The {@link org.springframework.web.reactive.function.server.HandlerFunction} since Spring Framework 5.0</li>
+ *          <li>The {@link org.springframework.web.reactive.function.server.RouterFunction} since Spring Framework 5.0</li>
  *      </ul>
  *     </li>
  * </ul>
@@ -1003,24 +1001,6 @@ public class WebEndpointMapping<E> {
         }
 
         @Nonnull
-        public Builder<E> and(Builder<?> other) {
-            assertBuilders(this, other);
-            iterate(other.patterns, this::pattern);
-            iterate(other.methods, this::methods);
-            iterate(other.params, this::params);
-            iterate(other.headers, this::headers);
-            iterate(other.consumes, this::consumes);
-            iterate(other.produces, this::produces);
-            return this;
-        }
-
-        @Nonnull
-        public List<Builder<?>> or(Builder<?> other) {
-
-            return emptyList();
-        }
-
-        @Nonnull
         public Builder<E> nestPatterns(@Nonnull Builder<?> other) {
             assertBuilders(this, other);
             Set<String> patterns = newSet();
@@ -1395,21 +1375,22 @@ public class WebEndpointMapping<E> {
     public int hashCode() {
         int hashCode = this.hashCode;
         if (hashCode == 0) {
-            hashCode = Arrays.hashCode(patterns);
-            if (methods != null) {
-                hashCode = 31 * hashCode + Arrays.hashCode(methods);
+            hashCode = this.kind.hashCode();
+            hashCode = 31 * hashCode + Boolean.hashCode(this.negated);
+            hashCode = 31 * hashCode + Arrays.hashCode(this.patterns);
+            hashCode = 31 * hashCode + Arrays.hashCode(this.methods);
+
+            if (isNotEmpty(this.params)) {
+                hashCode = 31 * hashCode + Arrays.hashCode(this.params);
             }
-            if (params != null) {
-                hashCode = 31 * hashCode + Arrays.hashCode(params);
+            if (isNotEmpty(this.headers)) {
+                hashCode = 31 * hashCode + Arrays.hashCode(this.headers);
             }
-            if (headers != null) {
-                hashCode = 31 * hashCode + Arrays.hashCode(headers);
+            if (isNotEmpty(this.consumes)) {
+                hashCode = 31 * hashCode + Arrays.hashCode(this.consumes);
             }
-            if (consumes != null) {
-                hashCode = 31 * hashCode + Arrays.hashCode(consumes);
-            }
-            if (produces != null) {
-                hashCode = 31 * hashCode + Arrays.hashCode(produces);
+            if (isNotEmpty(this.produces)) {
+                hashCode = 31 * hashCode + Arrays.hashCode(this.produces);
             }
             this.hashCode = hashCode;
         }

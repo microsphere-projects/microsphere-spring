@@ -20,12 +20,20 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 
+import java.util.Map;
+
+import static io.microsphere.collection.MapUtils.ofMap;
+import static io.microsphere.spring.web.rule.GenericMediaTypeExpression.matchParameters;
 import static io.microsphere.spring.web.rule.GenericMediaTypeExpression.of;
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.http.MediaType.parseMediaType;
 
 
 /**
@@ -47,14 +55,14 @@ public class GenericMediaTypeExpressionTest {
     @Test
     public void testGetMediaType() {
         MediaType expected = TEXT_PLAIN;
-        GenericMediaTypeExpression expression = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expression = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertEquals(expected, expression.getMediaType());
     }
 
     // ==================== isNegated() ====================
     @Test
     public void testIsNegatedWhenNotNegated() {
-        GenericMediaTypeExpression expression = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expression = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertFalse(expression.isNegated());
     }
 
@@ -67,7 +75,7 @@ public class GenericMediaTypeExpressionTest {
     // ==================== compareTo() ====================
     @Test
     public void testCompareToWhenMoreSpecific() {
-        GenericMediaTypeExpression specific = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression specific = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         GenericMediaTypeExpression general = new GenericMediaTypeExpression("text/*");
         assertTrue(specific.compareTo(general) < 0);
     }
@@ -75,77 +83,77 @@ public class GenericMediaTypeExpressionTest {
     @Test
     public void testCompareToWhenLessSpecific() {
         GenericMediaTypeExpression general = new GenericMediaTypeExpression("text/*");
-        GenericMediaTypeExpression specific = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression specific = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertTrue(general.compareTo(specific) > 0);
     }
 
     @Test
     public void testCompareToWhenEqualSpecificity() {
-        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
-        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
+        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertEquals(0, expr1.compareTo(expr2));
     }
 
     // ==================== equals() ====================
     @Test
     public void testEqualsSameInstance() {
-        GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expr = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertTrue(expr.equals(expr));
     }
 
     @Test
     public void testEqualsNull() {
-        GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expr = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertFalse(expr.equals(null));
     }
 
     @Test
     public void testEqualsDifferentType() {
-        GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
-        assertFalse(expr.equals("text/plain"));
+        GenericMediaTypeExpression expr = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
+        assertFalse(expr.equals(TEXT_PLAIN_VALUE));
     }
 
     @Test
     public void testEqualsDifferentMediaType() {
-        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
-        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("application/json");
+        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
+        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression(APPLICATION_JSON_VALUE);
         assertFalse(expr1.equals(expr2));
     }
 
     @Test
     public void testEqualsDifferentNegatedFlag() {
-        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("!text/plain");
         assertFalse(expr1.equals(expr2));
     }
 
     @Test
     public void testEqualsSameProperties() {
-        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
-        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
+        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertTrue(expr1.equals(expr2));
     }
 
     // ==================== hashCode() ====================
     @Test
     public void testHashCodeSameMediaType() {
-        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
-        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("text/plain");
+        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
+        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
         assertEquals(expr1.hashCode(), expr2.hashCode());
     }
 
     @Test
     public void testHashCodeDifferentMediaType() {
-        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression("text/plain");
-        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression("application/json");
+        GenericMediaTypeExpression expr1 = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
+        GenericMediaTypeExpression expr2 = new GenericMediaTypeExpression(APPLICATION_JSON_VALUE);
         assertNotEquals(expr1.hashCode(), expr2.hashCode());
     }
 
     // ==================== toString() ====================
     @Test
     public void testToStringWhenNotNegated() {
-        GenericMediaTypeExpression expr = new GenericMediaTypeExpression("text/plain");
-        assertEquals("text/plain", expr.toString());
+        GenericMediaTypeExpression expr = new GenericMediaTypeExpression(TEXT_PLAIN_VALUE);
+        assertEquals(TEXT_PLAIN_VALUE, expr.toString());
     }
 
     @Test
@@ -157,7 +165,7 @@ public class GenericMediaTypeExpressionTest {
     // ==================== static of() ====================
     @Test
     public void testOfWhenNotNegated() {
-        GenericMediaTypeExpression expr = of("text/plain");
+        GenericMediaTypeExpression expr = of(TEXT_PLAIN_VALUE);
         assertEquals(TEXT_PLAIN, expr.getMediaType());
         assertFalse(expr.isNegated());
     }
@@ -167,5 +175,48 @@ public class GenericMediaTypeExpressionTest {
         GenericMediaTypeExpression expr = of("!text/plain");
         assertEquals(TEXT_PLAIN, expr.getMediaType());
         assertTrue(expr.isNegated());
+    }
+
+    // ==================== matchParameters() ====================
+    @Test
+    public void testMatchParameters() {
+        ProduceMediaTypeExpression expr = new ProduceMediaTypeExpression("text/plain;charset=utf-8");
+        MediaType acceptedMediaType = parseMediaType("text/plain;charset=UTF-8");
+        assertTrue(expr.matchParameters(acceptedMediaType));
+
+        expr = new ProduceMediaTypeExpression("text/plain;charset=GBK");
+        assertFalse(expr.matchParameters(acceptedMediaType));
+
+        acceptedMediaType = parseMediaType("text/plain;charset=UTF-16");
+        assertFalse(expr.matchParameters(acceptedMediaType));
+    }
+
+    // ==================== static matchParameters() ====================
+    @Test
+    public void testMatchParametersOnParameterMatch() {
+        Map<String, String> sourceParameters = ofMap("charset", "UTF-8");
+        Map<String, String> targetParameters = ofMap("charset", "UTF-8");
+        assertTrue(matchParameters(sourceParameters, targetParameters));
+    }
+
+    @Test
+    public void testMatchParametersOnNullEntry() {
+        Map<String, String> sourceParameters = ofMap("charset", null);
+        Map<String, String> targetParameters = ofMap("charset", "UTF-16");
+        assertTrue(matchParameters(sourceParameters, targetParameters));
+    }
+
+    @Test
+    public void testMatchParametersOnParameterMissing() {
+        Map<String, String> sourceParameters = ofMap("charset", "UTF-8");
+        Map<String, String> targetParameters = emptyMap();
+        assertTrue(matchParameters(sourceParameters, targetParameters));
+    }
+
+    @Test
+    public void testMatchParametersOnParameterNotMatch() {
+        Map<String, String> sourceParameters = ofMap("charset", "UTF-8");
+        Map<String, String> targetParameters = ofMap("charset", "UTF-16");
+        assertFalse(matchParameters(sourceParameters, targetParameters));
     }
 }

@@ -20,7 +20,6 @@ package io.microsphere.spring.core.convert;
 
 import org.junit.Test;
 
-import static io.microsphere.spring.core.convert.ConversionServiceUtils.doGetSharedInstance;
 import static io.microsphere.spring.core.convert.ConversionServiceUtils.getSharedInstance;
 import static org.junit.Assert.assertNotNull;
 
@@ -36,10 +35,5 @@ public class ConversionServiceUtilsTest {
     @Test
     public void testGetSharedInstance() {
         assertNotNull(getSharedInstance());
-    }
-
-    @Test
-    public void testDoGetSharedInstance() {
-        assertNotNull(doGetSharedInstance());
     }
 }

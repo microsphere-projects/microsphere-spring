@@ -19,7 +19,6 @@ package io.microsphere.spring.webmvc.config;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
-import io.microsphere.spring.webmvc.annotation.Idempotent;
 import org.springframework.context.event.EventListener;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;

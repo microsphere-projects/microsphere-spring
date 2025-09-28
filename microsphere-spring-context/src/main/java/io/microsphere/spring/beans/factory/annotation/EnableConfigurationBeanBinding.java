@@ -21,11 +21,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.PropertySources;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enables Spring's annotation-driven configuration bean from {@link PropertySources properties}.
@@ -65,8 +67,8 @@ import java.lang.annotation.Target;
  * @see ConfigurationBeanCustomizer
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE, ANNOTATION_TYPE})
+@Retention(RUNTIME)
 @Documented
 @Import(ConfigurationBeanBindingRegistrar.class)
 @Repeatable(EnableConfigurationBeanBindings.class)
