@@ -77,6 +77,8 @@ class RequestContextWebFilterTest extends AbstractWebFluxTest implements WebFilt
 
         LocaleContext localeContext = getLocaleContext();
         assertSame(ENGLISH, localeContext.getLocale());
+
+        assertTrue(this.webFilter.isThreadContextInheritable());
         return chain.filter(exchange);
     }
 }
