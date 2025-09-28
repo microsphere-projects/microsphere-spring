@@ -42,7 +42,7 @@ import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
  *     <li>No {@link RequestContextWebFilter} bean will be registered</li>
  *     <li>All {@link RequestBody} method arguments of {@link TestController} will not be stored</li>
  *     <li>All {@link ResponseBody} method return values of {@link TestController} will not be stored</li>
- *     <li>The {@link ReversedProxyHandlerMapping} bean will not be registered</li>*
+ *     <li>The {@link ReversedProxyHandlerMapping} bean will not be registered</li>
  * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
