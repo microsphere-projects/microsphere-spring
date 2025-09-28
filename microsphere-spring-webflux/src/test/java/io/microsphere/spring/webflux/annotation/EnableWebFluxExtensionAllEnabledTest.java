@@ -19,10 +19,37 @@ package io.microsphere.spring.webflux.annotation;
 
 
 import io.microsphere.spring.test.web.controller.TestController;
+import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
+import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
+import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.webflux.context.event.ServerRequestHandledEvent;
+import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
+import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
+import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
+import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.HandlerMethod;
+
+import static io.microsphere.spring.web.util.RequestContextStrategy.INHERITABLE_THREAD_LOCAL;
 
 /**
- * {@link EnableWebFluxExtension} Test when all status are enabled(all attributes are <code>true</code>).
+ * {@link EnableWebFluxExtension} Test when all status are enabled with test cases :
+ * <ul>
+ *     <li>All {@link WebEndpointMapping WebEndpointMappings} will be exposed from {@link TestController} and
+ *     {@link RouterFunctionTestConfig}</li>
+ *     <li>No {@link HandlerMethodArgumentInterceptor} or {@link HandlerMethodInterceptor} bean will be registered and
+ *     intercept the {@link HandlerMethod HandlerMethods} of {@link Controller Controllers}</li>
+ *     <li>The {@link WebEndpointMappingsReadyEvent}, {@link HandlerMethodArgumentsResolvedEvent}
+ *     and {@link ServerRequestHandledEvent} will be published</li>
+ *     <li>The {@link RequestContextWebFilter} with {@link InheritableThreadLocal} bean will be registered</li>
+ *     <li>The {@link RequestBody} method arguments of {@link Controller Controllers} will be stored</li>
+ *     <li>The {@link ResponseBody} method return values of {@link Controller Controllers} will be stored</li>
+ *     <li>The {@link ReversedProxyHandlerMapping} bean will be registered</li>
+ * </ul>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebFluxExtensionBeanDefinitionRegistrar
@@ -37,6 +64,7 @@ import org.springframework.test.context.ContextConfiguration;
         registerWebEndpointMappings = true,
         interceptHandlerMethods = true,
         publishEvents = true,
+        requestContextStrategy = INHERITABLE_THREAD_LOCAL,
         storeRequestBodyArgument = true,
         storeResponseBodyReturnValue = true,
         reversedProxyHandlerMapping = true

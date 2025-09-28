@@ -17,21 +17,27 @@
 
 package io.microsphere.spring.webflux.annotation;
 
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
 import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentInterceptor;
 import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
+import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
 import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishingWebFilter;
 import org.slf4j.Logger;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.util.StringUtils.uncapitalize;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar} class for {@link EnableWebFluxExtension Spring WebFlux extensions}.
@@ -58,6 +64,8 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
         registerInterceptingHandlerMethodProcessor(attributes, registry);
 
         registerEventPublishingProcessor(attributes, registry);
+
+        registerRequestContextWebFilter(attributes, registry);
 
         registerStoringRequestBodyArgumentInterceptor(attributes, registry);
 
@@ -89,6 +97,31 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
             registerBeanDefinition(registry, RequestHandledEventPublishingWebFilter.class);
         }
         log("@EnableWebFluxExtension.publishEvents() = {}", publishEvents);
+    }
+
+    private void registerRequestContextWebFilter(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        RequestContextStrategy requestContextStrategy = attributes.getEnum("requestContextStrategy");
+        Boolean threadContextInheritable;
+        switch (requestContextStrategy) {
+            case THREAD_LOCAL:
+                threadContextInheritable = false;
+                break;
+            case INHERITABLE_THREAD_LOCAL:
+                threadContextInheritable = true;
+                break;
+            default:
+                threadContextInheritable = null;
+                break;
+        }
+        if (threadContextInheritable != null) {
+            Class<?> filterClass = RequestContextWebFilter.class;
+            BeanDefinition beanDefinition = genericBeanDefinition(filterClass);
+            MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
+            propertyValues.addPropertyValue("threadContextInheritable", threadContextInheritable);
+            String beanName = uncapitalize(filterClass.getSimpleName());
+            registry.registerBeanDefinition(beanName, beanDefinition);
+        }
+        log("@EnableWebFluxExtension.requestContextStrategy() = {}", requestContextStrategy);
     }
 
     private void registerStoringRequestBodyArgumentInterceptor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {

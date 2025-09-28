@@ -28,8 +28,10 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webflux.context.event.ServerRequestHandledEvent;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
+import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
 import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishingWebFilter;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
@@ -37,6 +39,7 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.support.RequestHandledEvent;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.server.ServerWebExchange;
@@ -46,6 +49,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -109,6 +113,18 @@ public @interface EnableWebFluxExtension {
      */
     @AliasFor(annotation = EnableWebExtension.class)
     boolean publishEvents() default true;
+
+    /**
+     * Indicate where the {@link RequestAttributes} stores.
+     *
+     * @return {@link RequestContextStrategy#DEFAULT} as default
+     * @see RequestAttributes
+     * @see RequestContextHolder
+     * @see RequestContextWebFilter
+     * @see RequestContextStrategy
+     */
+    @AliasFor(annotation = EnableWebExtension.class)
+    RequestContextStrategy requestContextStrategy() default DEFAULT;
 
     /**
      * Indicate that {@link RequestAttributes} stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}

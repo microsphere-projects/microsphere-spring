@@ -19,8 +19,10 @@ package io.microsphere.spring.webflux.server.filter;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
+import org.springframework.context.i18n.LocaleContext;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -76,6 +78,21 @@ public class RequestContextWebFilter implements WebFilter, Ordered {
         this.threadContextInheritable = threadContextInheritable;
     }
 
+    /**
+     * Get whether to expose the {@link LocaleContext} and {@link RequestAttributes} into {@link InheritableThreadLocal}.
+     *
+     * @return <code>true</code> if the {@link LocaleContext} and {@link RequestAttributes} are exposed into
+     * {@link InheritableThreadLocal}, otherwise, <code>false</code>
+     */
+    public boolean isThreadContextInheritable() {
+        return threadContextInheritable;
+    }
+
+    @Override
+    public int getOrder() {
+        return HIGHEST_PRECEDENCE + 1;
+    }
+
     private void initContextHolders(ServerWebRequest requestAttributes) {
         Locale locale = getLocale(requestAttributes);
         setLocale(locale, this.threadContextInheritable);
@@ -92,10 +109,5 @@ public class RequestContextWebFilter implements WebFilter, Ordered {
     private void resetContextHolders() {
         resetLocaleContext();
         resetRequestAttributes();
-    }
-
-    @Override
-    public int getOrder() {
-        return HIGHEST_PRECEDENCE + 1;
     }
 }
