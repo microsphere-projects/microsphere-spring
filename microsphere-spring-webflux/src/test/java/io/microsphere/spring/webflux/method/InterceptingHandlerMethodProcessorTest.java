@@ -22,7 +22,6 @@ import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,7 @@ import java.lang.reflect.Method;
 
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.reflect.MethodUtils.invokeMethod;
+import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.util.ClassUtils.getTypes;
 import static java.util.Collections.emptyList;
@@ -55,17 +55,13 @@ import static reactor.core.publisher.Mono.just;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        InterceptingHandlerMethodProcessorTest.class,
-        RouterFunctionTestConfig.class
+        InterceptingHandlerMethodProcessorTest.class
 })
 @EnableWebFluxExtension
 class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtensionTest {
 
     @Autowired
     private InterceptingHandlerMethodProcessor processor;
-
-    @Autowired
-    private TestController testController;
 
     private Method greetingMethod;
 
@@ -107,7 +103,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Test
     void testSupportsWithServerResponseResult() {
         Mono<String> stringMono = just("OK");
-        HandlerResult handlerResult = new HandlerResult(this, ok().body(stringMono, String.class).block(), greetingMethodParameter0);
+        HandlerResult handlerResult = new HandlerResult(this, getValue(ok().body(stringMono, String.class)), greetingMethodParameter0);
         assertTrue(processor.supports(handlerResult));
     }
 

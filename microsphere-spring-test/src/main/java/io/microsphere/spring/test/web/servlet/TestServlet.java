@@ -36,11 +36,15 @@ public class TestServlet extends HttpServlet {
      */
     public static final String DEFAULT_SERVLET_NAME = "testServlet";
 
+    /**
+     * Servlet Class
+     */
+    public static final Class<? extends Servlet> SERVLET_CLASS = TestServlet.class;
 
     /**
-     * Servlet  Class Name
+     * Servlet Class Name
      */
-    public static final String SERVLET_CLASS_NAME = TestServlet.class.getName();
+    public static final String SERVLET_CLASS_NAME = SERVLET_CLASS.getName();
 
     /**
      * Default URL Pattern : "/testServlet"

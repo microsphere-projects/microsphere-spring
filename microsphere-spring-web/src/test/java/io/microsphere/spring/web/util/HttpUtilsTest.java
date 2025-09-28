@@ -77,15 +77,20 @@ class HttpUtilsTest {
     }
 
     @Test
-    void testSupportsMethodWithNullHttpMethod() {
-        assertFalse(supportsMethod((HttpMethod) null));
-    }
-
-    @Test
     void testSupportsMethodWithRequestMethod() {
         for (RequestMethod method : RequestMethod.values()) {
             assertTrue(supportsMethod(method));
         }
+    }
+
+    @Test
+    void testSupportsMethodWithNullMethod() {
+        assertFalse(supportsMethod((String) null));
+    }
+
+    @Test
+    void testSupportsMethodWithNullHttpMethod() {
+        assertFalse(supportsMethod((HttpMethod) null));
     }
 
     @Test

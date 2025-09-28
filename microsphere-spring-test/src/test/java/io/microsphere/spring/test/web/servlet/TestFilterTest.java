@@ -45,7 +45,7 @@ class TestFilterTest {
     private TestFilter testFilter;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.testFilter = new TestFilter();
     }
 

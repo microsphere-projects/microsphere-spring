@@ -25,16 +25,19 @@ import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.SetUtils.newFixedHashSet;
 import static io.microsphere.collection.Sets.ofSet;
+import static io.microsphere.constants.PathConstants.SLASH;
+import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
-import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
+import static io.microsphere.util.StringUtils.startsWith;
 import static java.util.Collections.emptyList;
-import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -54,7 +57,9 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
 
-    private final static Set<String> EMPTY_PATH_PATTERN = ofSet("");
+    static final Set<String> EMPTY_PATH_PATTERN = ofSet(EMPTY_STRING);
+
+    static final String WILDCARD_EXTENSION = ".*";
 
     private final Set<String> patterns;
 
@@ -130,10 +135,10 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
         this.useSuffixPatternMatch = useSuffixPatternMatch;
         this.useTrailingSlashMatch = useTrailingSlashMatch;
 
-        if (fileExtensions != null) {
+        if (isNotEmpty(fileExtensions)) {
             for (String fileExtension : fileExtensions) {
-                if (fileExtension.charAt(0) != '.') {
-                    fileExtension = "." + fileExtension;
+                if (fileExtension.charAt(0) != DOT_CHAR) {
+                    fileExtension = DOT_CHAR + fileExtension;
                 }
                 this.fileExtensions.add(fileExtension);
             }
@@ -158,7 +163,6 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
         // FIXME : WebFlux
         String lookupPath = getResolvedLookupPath(request);
         return matches(lookupPath);
-
     }
 
     public boolean matches(String lookupPath) {
@@ -190,16 +194,16 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
             return pattern;
         }
         if (this.useSuffixPatternMatch) {
-            if (!this.fileExtensions.isEmpty() && lookupPath.indexOf('.') != -1) {
+            if (isNotEmpty(this.fileExtensions) && lookupPath.indexOf(DOT_CHAR) != -1) {
                 for (String extension : this.fileExtensions) {
                     if (this.pathMatcher.match(pattern + extension, lookupPath)) {
                         return pattern + extension;
                     }
                 }
             } else {
-                boolean hasSuffix = pattern.indexOf('.') != -1;
-                if (!hasSuffix && this.pathMatcher.match(pattern + ".*", lookupPath)) {
-                    return pattern + ".*";
+                boolean noSuffix = pattern.indexOf(DOT_CHAR) == -1;
+                if (noSuffix && this.pathMatcher.match(pattern + WILDCARD_EXTENSION, lookupPath)) {
+                    return pattern + WILDCARD_EXTENSION;
                 }
             }
         }
@@ -207,29 +211,31 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
             return pattern;
         }
         if (this.useTrailingSlashMatch) {
-            if (!pattern.endsWith("/") && this.pathMatcher.match(pattern + "/", lookupPath)) {
-                return pattern + "/";
+            if (!pattern.endsWith(SLASH) && this.pathMatcher.match(pattern + SLASH, lookupPath)) {
+                return pattern + SLASH;
             }
         }
         return null;
     }
 
-    private static Set<String> initPatterns(String[] patterns) {
+    static Set<String> initPatterns(String[] patterns) {
         if (!hasPattern(patterns)) {
             return EMPTY_PATH_PATTERN;
         }
-        Set<String> result = new LinkedHashSet<>(patterns.length);
-        for (String pattern : patterns) {
-            if (hasLength(pattern) && !pattern.startsWith("/")) {
-                pattern = "/" + pattern;
+        int size = patterns.length;
+        Set<String> result = newFixedHashSet(size);
+        for (int i = 0; i < size; i++) {
+            String pattern = patterns[i];
+            if (!startsWith(pattern, SLASH)) {
+                pattern = SLASH + pattern;
             }
             result.add(pattern);
         }
         return result;
     }
 
-    private static boolean hasPattern(String[] patterns) {
-        if (isNotEmpty(patterns)) {
+    static boolean hasPattern(String[] patterns) {
+        if (patterns != null) {
             for (String pattern : patterns) {
                 if (hasText(pattern)) {
                     return true;

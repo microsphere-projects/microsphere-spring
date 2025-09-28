@@ -48,11 +48,7 @@ public class DelegatingHandlerMethodAdvice extends OnceApplicationContextEventLi
 
     private List<HandlerMethodArgumentInterceptor> argumentInterceptors = emptyList();
 
-    private int argumentInterceptorsSize = 0;
-
     private List<HandlerMethodInterceptor> methodInterceptors = emptyList();
-
-    private int methodInterceptorsSize = 0;
 
     @Override
     protected void onApplicationContextEvent(ContextRefreshedEvent event) {
@@ -63,61 +59,49 @@ public class DelegatingHandlerMethodAdvice extends OnceApplicationContextEventLi
     }
 
     private void log(ApplicationContext context) {
-        if (logger.isInfoEnabled()) {
-            logger.info("{} HandlerMethodArgumentInterceptors and {} HandlerMethodInterceptors were initialized in the ApplicationContext[id : '{}']",
-                    this.argumentInterceptorsSize, this.methodInterceptorsSize, context.getId());
-        }
+        logger.trace("{} HandlerMethodArgumentInterceptors and {} HandlerMethodInterceptors were initialized in the ApplicationContext[id : '{}']",
+                this.argumentInterceptors.size(), this.methodInterceptors.size(), context.getId());
     }
 
     @Override
     public void beforeResolveArgument(MethodParameter parameter, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
-        if (argumentInterceptorsSize > 0) {
-            for (int i = 0; i < argumentInterceptorsSize; i++) {
-                HandlerMethodArgumentInterceptor interceptor = argumentInterceptors.get(i);
-                interceptor.beforeResolveArgument(parameter, handlerMethod, webRequest);
-            }
+        for (int i = 0; i < this.argumentInterceptors.size(); i++) {
+            HandlerMethodArgumentInterceptor interceptor = this.argumentInterceptors.get(i);
+            interceptor.beforeResolveArgument(parameter, handlerMethod, webRequest);
         }
     }
 
     @Override
     public void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, HandlerMethod handlerMethod, NativeWebRequest webRequest) throws Exception {
-        if (argumentInterceptorsSize > 0) {
-            for (int i = 0; i < argumentInterceptorsSize; i++) {
-                HandlerMethodArgumentInterceptor interceptor = argumentInterceptors.get(i);
-                interceptor.afterResolveArgument(parameter, resolvedArgument, handlerMethod, webRequest);
-            }
+        for (int i = 0; i < this.argumentInterceptors.size(); i++) {
+            HandlerMethodArgumentInterceptor interceptor = this.argumentInterceptors.get(i);
+            interceptor.afterResolveArgument(parameter, resolvedArgument, handlerMethod, webRequest);
         }
     }
 
     @Override
     public void beforeExecuteMethod(HandlerMethod handlerMethod, Object[] args, NativeWebRequest request) throws Exception {
-        if (methodInterceptorsSize > 0) {
-            for (int i = 0; i < methodInterceptorsSize; i++) {
-                HandlerMethodInterceptor interceptor = methodInterceptors.get(i);
-                interceptor.beforeExecute(handlerMethod, args, request);
-            }
+        for (int i = 0; i < this.methodInterceptors.size(); i++) {
+            HandlerMethodInterceptor interceptor = this.methodInterceptors.get(i);
+            interceptor.beforeExecute(handlerMethod, args, request);
         }
     }
 
     @Override
     public void afterExecuteMethod(HandlerMethod handlerMethod, Object[] args, Object returnValue, Throwable error, NativeWebRequest request) throws Exception {
-        if (methodInterceptorsSize > 0) {
-            for (int i = 0; i < methodInterceptorsSize; i++) {
-                HandlerMethodInterceptor interceptor = methodInterceptors.get(i);
-                interceptor.afterExecute(handlerMethod, args, returnValue, error, request);
-            }
+        for (int i = 0; i < this.methodInterceptors.size(); i++) {
+            HandlerMethodInterceptor interceptor = this.methodInterceptors.get(i);
+            interceptor.afterExecute(handlerMethod, args, returnValue, error, request);
         }
     }
 
     private void initHandlerMethodArgumentInterceptors(ApplicationContext context) {
         List<HandlerMethodArgumentInterceptor> argumentInterceptors = getSortedBeans(context, HandlerMethodArgumentInterceptor.class);
         this.argumentInterceptors = argumentInterceptors;
-        this.argumentInterceptorsSize = argumentInterceptors.size();
     }
 
     private void initHandlerMethodInterceptors(ApplicationContext context) {
         List<HandlerMethodInterceptor> interceptors = getSortedBeans(context, HandlerMethodInterceptor.class);
         this.methodInterceptors = interceptors;
-        this.methodInterceptorsSize = interceptors.size();
     }
 }

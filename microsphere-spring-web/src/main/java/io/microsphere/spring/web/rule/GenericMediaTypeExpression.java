@@ -20,8 +20,12 @@ import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import static org.springframework.http.MediaType.SPECIFICITY_COMPARATOR;
 import static org.springframework.http.MediaType.parseMediaType;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * A {@link MediaTypeExpression} implementation that supports matching
@@ -76,6 +80,21 @@ public class GenericMediaTypeExpression implements MediaTypeExpression, Comparab
         return this.isNegated;
     }
 
+    protected boolean matchParameters(MediaType mediaType) {
+        return matchParameters(this.getMediaType().getParameters(), mediaType.getParameters());
+    }
+
+    static boolean matchParameters(Map<String, String> sourceParameters, Map<String, String> targetParameters) {
+        for (Entry<String, String> entry : sourceParameters.entrySet()) {
+            String name = entry.getKey();
+            String s1 = entry.getValue();
+            String s2 = targetParameters.get(name);
+            if (hasText(s1) && hasText(s2) && !s1.equalsIgnoreCase(s2)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public int compareTo(GenericMediaTypeExpression other) {

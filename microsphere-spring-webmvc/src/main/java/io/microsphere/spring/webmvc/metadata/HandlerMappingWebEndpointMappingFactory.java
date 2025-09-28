@@ -26,6 +26,7 @@ import org.springframework.web.servlet.HandlerMapping;
 import java.util.Collection;
 
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
+import static io.microsphere.util.Assert.assertNotNull;
 
 /**
  * The abstract class {@link WebEndpointMappingFactory} for Spring WebMVC {@link HandlerMapping}
@@ -41,7 +42,14 @@ public abstract class HandlerMappingWebEndpointMappingFactory<H, M> extends Abst
 
     private final HandlerMapping handlerMapping;
 
-    public HandlerMappingWebEndpointMappingFactory(HandlerMapping handlerMapping) {
+    /**
+     * Constructor with {@link HandlerMapping}
+     *
+     * @param handlerMapping non-null {@link HandlerMapping} instance
+     * @throws IllegalArgumentException If <code>handlerMapping</code> argument is null
+     */
+    public HandlerMappingWebEndpointMappingFactory(@Nonnull HandlerMapping handlerMapping) throws IllegalArgumentException {
+        assertNotNull(handlerMapping, () -> "The 'handlerMapping' must not be null");
         this.handlerMapping = handlerMapping;
     }
 

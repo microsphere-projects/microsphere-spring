@@ -32,6 +32,7 @@
         <jsonassert.version>1.5.3</jsonassert.version>
         <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
         <hamcrest.version>3.0</hamcrest.version>
+        <tomcat.version>10.1.46</tomcat.version>
     </properties>
 
     <dependencyManagement>
@@ -148,6 +149,15 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Project Reactor BOM -->
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-bom</artifactId>
+                <version>${reactor.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Microsphere Dependencies -->
             <dependency>
                 <groupId>io.github.microsphere-projects</groupId>
@@ -155,6 +165,31 @@
                 <version>${microsphere-java.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Apache Tomcat -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-tribes</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina-ha</artifactId>
+                <version>${tomcat.version}</version>
             </dependency>
 
         </dependencies>
@@ -165,6 +200,7 @@
             <id>spring-framework-6.0</id>
             <properties>
                 <spring.version>6.0.23</spring.version>
+                <reactor.version>2022.0.22</reactor.version>
             </properties>
         </profile>
 
@@ -172,6 +208,7 @@
             <id>spring-framework-6.1</id>
             <properties>
                 <spring.version>6.1.21</spring.version>
+                <reactor.version>2023.0.19</reactor.version>
             </properties>
         </profile>
 
@@ -182,6 +219,7 @@
             </activation>
             <properties>
                 <spring.version>6.2.10</spring.version>
+                <reactor.version>2024.0.9</reactor.version>
             </properties>
         </profile>
     </profiles>

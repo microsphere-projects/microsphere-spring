@@ -18,6 +18,8 @@
 package io.microsphere.spring.web.metadata;
 
 
+import io.microsphere.spring.test.web.servlet.TestFilter;
+import io.microsphere.spring.test.web.servlet.TestFilterRegistration;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
@@ -33,12 +35,16 @@ import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
 import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_NAME;
 import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_URL_PATTERN;
 import static io.microsphere.spring.test.web.servlet.TestFilter.FILTER_CLASS_NAME;
+import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_NAME;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
 import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link FilterRegistrationWebEndpointMappingFactory} Test
@@ -63,10 +69,23 @@ class FilterRegistrationWebEndpointMappingFactoryTest {
     }
 
     @Test
+    void testSupports() {
+        assertTrue(factory.supports(DEFAULT_FILTER_NAME));
+        assertFalse(factory.supports(DEFAULT_SERVLET_NAME));
+    }
+
+    @Test
     void testGetMethods() {
         FilterRegistration registration = factory.getRegistration(DEFAULT_FILTER_NAME, this.servletContext);
         Collection<String> methods = factory.getMethods(registration);
         assertEquals(ALL_HTTP_METHODS, methods);
+    }
+
+    @Test
+    void testGetMethodsWithoutUrlPatternMappings() {
+        FilterRegistration registration = new TestFilterRegistration(DEFAULT_FILTER_NAME, FILTER_CLASS_NAME, new TestFilter());
+        Collection<String> methods = factory.getMethods(registration);
+        assertEquals(emptySet(), methods);
     }
 
     @Test

@@ -63,7 +63,7 @@ class TestControllerTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.mockMvc = webAppContextSetup(this.wac).build();
     }
 

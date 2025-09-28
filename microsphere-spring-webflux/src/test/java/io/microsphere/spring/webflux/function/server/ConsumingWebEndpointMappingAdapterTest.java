@@ -17,12 +17,9 @@
 
 package io.microsphere.spring.webflux.function.server;
 
-import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
-import io.microsphere.spring.webflux.test.RouterFunctionTestConfig;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.support.RouterFunctionMapping;
@@ -40,11 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
-        ConsumingWebEndpointMappingAdapterTest.class,
-        RouterFunctionTestConfig.class
+        ConsumingWebEndpointMappingAdapterTest.class
 })
-@Import(TestController.class)
-public class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
+class ConsumingWebEndpointMappingAdapterTest extends AbstractWebFluxTest {
 
     @Test
     void test() {

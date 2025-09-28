@@ -55,13 +55,12 @@ public abstract class HttpUtils {
     }
 
     public static boolean supportsMethod(HttpMethod method) {
-        return method == null ? false : ALL_HTTP_METHODS.contains(method.name());
+        return method == null ? false : supportsMethod(method.name());
     }
 
     public static boolean supportsMethod(RequestMethod method) {
-        return method == null ? false : ALL_HTTP_METHODS.contains(method.name());
+        return method == null ? false : supportsMethod(method.name());
     }
-
 
     private HttpUtils() {
     }

@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationEvent;
@@ -54,7 +54,7 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
-class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements GenericApplicationListenerAdapter {
+class EventPublishingBeanAfterProcessor implements InstantiationAwareBeanPostProcessor, GenericApplicationListenerAdapter {
 
     private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = resolveClass("org.springframework.beans.factory.support.DisposableBeanAdapter");
 

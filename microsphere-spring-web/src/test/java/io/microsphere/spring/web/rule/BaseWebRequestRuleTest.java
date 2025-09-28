@@ -20,7 +20,7 @@ package io.microsphere.spring.web.rule;
 import org.junit.jupiter.api.Test;
 
 /**
- * Base {@link WebRequestRule} Test
+ * Base Test for {@link WebRequestRule}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebRequestRule
@@ -29,6 +29,31 @@ import org.junit.jupiter.api.Test;
 public abstract class BaseWebRequestRuleTest {
 
     @Test
-    void testGetToStringInfix() {
+    final void testGetToStringInfix() {
+        doTestGetToStringInfix();
     }
+
+    @Test
+    final void testEquals() {
+        doTestEquals();
+    }
+
+    @Test
+    final void testHashCode() {
+        doTestHashCode();
+    }
+
+    @Test
+    final void testToString() {
+        doTestToString();
+    }
+
+    abstract void doTestGetToStringInfix();
+
+    protected abstract void doTestEquals();
+
+    protected abstract void doTestHashCode();
+
+    protected abstract void doTestToString();
+
 }
