@@ -20,11 +20,13 @@ import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webflux.method.InterceptingHandlerMethodProcessor;
 import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentInterceptor;
 import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
+import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
 import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishingWebFilter;
 import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +34,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
+import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
+import static io.microsphere.spring.web.util.RequestContextStrategy.INHERITABLE_THREAD_LOCAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Abstract {@link EnableWebFluxExtension} Test
@@ -50,6 +55,10 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
 
     protected boolean publishEvents;
 
+    protected RequestContextStrategy requestContextStrategy;
+
+    protected boolean requestContextWebFilterRegistered;
+
     protected boolean storeRequestBodyArgument;
 
     protected boolean storeResponseBodyReturnValue;
@@ -62,6 +71,8 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         this.registerWebEndpointMappings = enableWebFluxExtension.registerWebEndpointMappings();
         this.interceptHandlerMethods = enableWebFluxExtension.interceptHandlerMethods();
         this.publishEvents = enableWebFluxExtension.publishEvents();
+        this.requestContextStrategy = enableWebFluxExtension.requestContextStrategy();
+        this.requestContextWebFilterRegistered = DEFAULT != this.requestContextStrategy;
         this.storeRequestBodyArgument = enableWebFluxExtension.storeRequestBodyArgument();
         this.storeResponseBodyReturnValue = enableWebFluxExtension.storeResponseBodyReturnValue();
         this.reversedProxyHandlerMapping = enableWebFluxExtension.reversedProxyHandlerMapping();
@@ -80,6 +91,11 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, DelegatingHandlerMethodAdvice.class));
         assertEquals(this.interceptHandlerMethods, isBeanPresent(this.context, InterceptingHandlerMethodProcessor.class));
         assertEquals(this.publishEvents, isBeanPresent(this.context, RequestHandledEventPublishingWebFilter.class));
+        if (requestContextWebFilterRegistered) {
+            RequestContextWebFilter requestContextWebFilter = this.context.getBean(RequestContextWebFilter.class);
+            assertNotNull(requestContextWebFilter);
+            assertEquals(INHERITABLE_THREAD_LOCAL == this.requestContextStrategy, requestContextWebFilter.isThreadContextInheritable());
+        }
         assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.context, StoringRequestBodyArgumentInterceptor.class));
         assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueInterceptor.class));
         assertEquals(this.reversedProxyHandlerMapping, isBeanPresent(this.context, ReversedProxyHandlerMapping.class));
