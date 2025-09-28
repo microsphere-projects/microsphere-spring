@@ -23,6 +23,7 @@ import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +34,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.function.RouterFunction;
 
+import static io.microsphere.spring.web.util.RequestContextStrategy.INHERITABLE_THREAD_LOCAL;
+
 /**
  * {@link EnableWebMvcExtension} Test when all status are enabled with test cases:
  * <ul>
@@ -41,6 +44,8 @@ import org.springframework.web.servlet.function.RouterFunction;
  *     <li>All {@link HandlerMethodArgumentInterceptor} or {@link HandlerMethodInterceptor} beans will be registered and
  *     intercept the {@link HandlerMethod HandlerMethods} of {@link Controller @Controller}</li>
  *     <li>The {@link WebEndpointMappingsReadyEvent} and {@link HandlerMethodArgumentsResolvedEvent} will be published</li>
+ *     <li>The {@link RequestContextStrategy#INHERITABLE_THREAD_LOCAL} {@link RequestContextStrategy}
+ *     (does not work on Spring MockMVC Test)</li>
  *     <li>All {@link HandlerInterceptor} beans will be registered into {@link InterceptorRegistry}</li>
  *     <li>The {@link RequestBody} method arguments of {@link Controller @Controller} will be stored</li>
  *     <li>The {@link ResponseBody} method return values of {@link Controller @Controller} will be stored</li>
@@ -58,6 +63,7 @@ import org.springframework.web.servlet.function.RouterFunction;
         registerWebEndpointMappings = true,
         interceptHandlerMethods = true,
         publishEvents = true,
+        requestContextStrategy = INHERITABLE_THREAD_LOCAL,
         registerHandlerInterceptors = true,
         storeRequestBodyArgument = true,
         storeResponseBodyReturnValue = true,

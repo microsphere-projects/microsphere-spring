@@ -19,6 +19,7 @@ package io.microsphere.spring.webmvc.annotation;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,6 +30,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.function.RouterFunction;
 
+import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
+
 /**
  * {@link EnableWebMvcExtension} Test when all status are disabled with test cases:
  * <ul>
@@ -36,6 +39,7 @@ import org.springframework.web.servlet.function.RouterFunction;
  *     <li>No {@link HandlerMethod} of {@link Controller @Controller} will not be intercepted</li>
  *     <li>No ApplicationEvent {@link WebEndpointMappingsReadyEvent} or {@link HandlerMethodArgumentsResolvedEvent}
  *     will be published</li>
+ *     <li>The {@link RequestContextStrategy#DEFAULT} {@link RequestContextStrategy}(does not work on Spring MockMVC Test)</li>
  *     <li>No {@link HandlerInterceptor} bean will be registered into {@link InterceptorRegistry}</li>
  *     <li>No {@link RequestBody} method arguments of {@link Controller @Controller} will be stored</li>
  *     <li>No {@link ResponseBody} method return values of {@link Controller @Controller} will be stored</li>
@@ -53,6 +57,7 @@ import org.springframework.web.servlet.function.RouterFunction;
         registerWebEndpointMappings = false,
         interceptHandlerMethods = false,
         publishEvents = false,
+        requestContextStrategy = DEFAULT,
         registerHandlerInterceptors = false,
         storeRequestBodyArgument = true,
         storeResponseBodyReturnValue = false,
