@@ -19,7 +19,7 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.1.5</microsphere-java.version>
+        <microsphere-java.version>0.1.6</microsphere-java.version>
         <servlet-api.version>6.1.0</servlet-api.version>
         <websocket-api.version>2.2.0</websocket-api.version>
         <jackson.version>2.18.2</jackson.version>
