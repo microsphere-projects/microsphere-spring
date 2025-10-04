@@ -154,6 +154,8 @@ public enum SpringVersion {
 
     SPRING_6_2_10,
 
+    SPRING_6_2_11,
+
     CURRENT(of(org.springframework.core.SpringVersion.getVersion()));
 
     private final Version version;
