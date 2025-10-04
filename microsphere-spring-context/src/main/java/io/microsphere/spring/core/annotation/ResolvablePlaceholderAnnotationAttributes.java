@@ -16,19 +16,21 @@
  */
 package io.microsphere.spring.core.annotation;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.shallowCloneMap;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Collections.emptySet;
 
 /**
@@ -41,7 +43,7 @@ import static java.util.Collections.emptySet;
  */
 public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> extends GenericAnnotationAttributes<A> {
 
-    public ResolvablePlaceholderAnnotationAttributes(A annotation, @Nullable PropertyResolver propertyResolver) {
+    public ResolvablePlaceholderAnnotationAttributes(@Nonnull A annotation, @Nullable PropertyResolver propertyResolver) {
         this(getAnnotationAttributes(annotation, false), (Class<A>) annotation.annotationType(), propertyResolver);
     }
 
@@ -49,7 +51,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
         this(another, findAnnotationType(another), propertyResolver);
     }
 
-    public ResolvablePlaceholderAnnotationAttributes(Map<String, Object> another, Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
+    public ResolvablePlaceholderAnnotationAttributes(Map<String, Object> another, @Nonnull Class<A> annotationType, @Nullable PropertyResolver propertyResolver) {
         super(resolvePlaceholders(another, propertyResolver), annotationType);
     }
 
@@ -59,7 +61,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
             return source;
         }
         Map<String, Object> copy = shallowCloneMap(source);
-        for (Map.Entry<String, Object> entry : copy.entrySet()) {
+        for (Entry<String, Object> entry : copy.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof String stringValue) {
                 entry.setValue(resolvePlaceholder(stringValue, propertyResolver));
@@ -136,7 +138,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      */
     @Nonnull
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes[] attributesArray, @Nullable PropertyResolver propertyResolver) {
-        int length = attributesArray == null ? 0 : attributesArray.length;
+        int length = length(attributesArray);
 
         if (length < 1) {
             return emptySet();

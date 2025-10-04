@@ -37,7 +37,7 @@ public abstract class AbstractEnableConfigurationBeanBindingTest {
     protected AnnotationConfigApplicationContext context;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         context = new AnnotationConfigApplicationContext();
         context.register(getClass());
         context.setEnvironment(new AbstractEnvironment() {
@@ -57,7 +57,7 @@ public abstract class AbstractEnableConfigurationBeanBindingTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         context.close();
     }
 }

@@ -16,27 +16,26 @@
 
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.annotation.Nullable;
 
 /**
  * A contract for {@code "name!=value"} style expression used to specify request
  * parameters and request header conditions in {@code @RequestMapping}.
  *
- * @author Rossen Stoyanchev
- * @since 3.1
  * @param <T> the value type
+ * @author Rossen Stoyanchev
  * @see RequestMapping#params()
  * @see RequestMapping#headers()
+ * @since Spring Framework 3.1
  */
 public interface NameValueExpression<T> {
 
-	String getName();
+    String getName();
 
-	@Nullable
-	T getValue();
+    @Nullable
+    T getValue();
 
-	boolean isNegated();
+    boolean isNegated();
 
 }

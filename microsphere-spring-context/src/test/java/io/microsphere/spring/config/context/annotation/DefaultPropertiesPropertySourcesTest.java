@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = {DefaultPropertiesPropertySourcesTest.class})
 @DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/a.properties"})
 @DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/b.properties"})
-public class DefaultPropertiesPropertySourcesTest {
+class DefaultPropertiesPropertySourcesTest {
 
     @Autowired
     private ConfigurableEnvironment environment;
@@ -48,12 +48,12 @@ public class DefaultPropertiesPropertySourcesTest {
     private MutablePropertySources propertySources;
 
     @BeforeEach
-    public void before() {
+    void setUp() {
         this.propertySources = environment.getPropertySources();
     }
 
     @Test
-    public void test() {
+    void test() {
         assertTrue(propertySources.contains(DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME));
         assertEquals("1", environment.getProperty("a"));
         assertEquals("2", environment.getProperty("b"));

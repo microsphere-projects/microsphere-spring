@@ -21,7 +21,29 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * TTL Context
+ * A context class that manages Time-To-Live (TTL) values using a thread-local variable.
+ * This class provides utility methods to execute operations with a specified TTL,
+ * supporting both void and return-value operations via functional interfaces.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Using doWithTTL with a Consumer to handle TTL value
+ * TTLContext.doWithTTL(ttl -> {
+ *     System.out.println("Current TTL: " + ttl);
+ * }, Duration.ofSeconds(30));
+ *
+ * // Using doWithTTL with a Function to handle TTL and return a result
+ * String result = TTLContext.doWithTTL(ttl -> {
+ *     return "TTL is: " + ttl;
+ * }, Duration.ofSeconds(60));
+ *
+ * // Setting TTL manually
+ * TTLContext.setTTL(Duration.ofMinutes(5));
+ * Duration currentTTL = TTLContext.getTTL();
+ *
+ * // Clearing TTL manually
+ * TTLContext.clearTTL();
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
@@ -30,6 +52,13 @@ public class TTLContext {
 
     private static final ThreadLocal<Duration> ttlThreadLocal = new ThreadLocal<>();
 
+    public static void doWithTTL(Consumer<Duration> ttlFunction, Duration defaultTTL) {
+        doWithTTL(ttl -> {
+            ttlFunction.accept(ttl);
+            return null;
+        }, defaultTTL);
+    }
+
     public static <R> R doWithTTL(Function<Duration, R> ttlFunction, Duration defaultTTL) {
         Duration effectiveTTL = getEffectiveTTL(defaultTTL);
         try {
@@ -37,13 +66,6 @@ public class TTLContext {
         } finally {
             clearTTL();
         }
-    }
-
-    public static void doWithTTL(Consumer<Duration> ttlFunction, Duration defaultTTL) {
-        doWithTTL(ttl -> {
-            ttlFunction.accept(ttl);
-            return null;
-        }, defaultTTL);
     }
 
     private static Duration getEffectiveTTL(Duration defaultTTL) {

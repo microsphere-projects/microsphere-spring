@@ -31,8 +31,8 @@ import java.util.function.BiConsumer;
  */
 class DefaultApplicationEventInterceptorChain implements ApplicationEventInterceptorChain {
 
-
     private final Iterator<ApplicationEventInterceptor> iterator;
+
     private final BiConsumer<ApplicationEvent, ResolvableType> eventAndTypeConsumer;
 
     public DefaultApplicationEventInterceptorChain(Iterable<ApplicationEventInterceptor> interceptors,

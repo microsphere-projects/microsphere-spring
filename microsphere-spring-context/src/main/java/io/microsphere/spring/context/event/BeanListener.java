@@ -24,9 +24,45 @@ import java.lang.reflect.Method;
 import java.util.EventListener;
 
 /**
- * The {@link EventListener} for Bean lifecycle
+ * Listener interface for bean lifecycle events.
+ *
+ * <p>Implementations of this interface can be used to receive notifications at various stages
+ * of a bean's lifecycle, such as before or after instantiation, initialization, or destruction.
+ * This interface provides a single extension point to react to different bean lifecycle phases.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyBeanListener implements BeanListener {
+ *
+ *     @Override
+ *     public boolean supports(String beanName) {
+ *         return "myBean".equals(beanName); // listen only to "myBean"
+ *     }
+ *
+ *     @Override
+ *     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
+ *         System.out.println("Bean definition is ready: " + beanName);
+ *     }
+ *
+ *     @Override
+ *     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
+ *         System.out.println("Before instantiating bean: " + beanName);
+ *     }
+ *
+ *     // Implement other lifecycle methods as needed...
+ * }
+ * }</pre>
+ *
+ * <p><b>Note:</b> Implementations should check if they support a particular bean by implementing
+ * the {@link #supports(String)} method. Returning {@code false} will skip further lifecycle events
+ * for that bean.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanListeners
+ * @see BeanListenerAdapter
  * @since 1.0.0
  */
 public interface BeanListener extends EventListener {

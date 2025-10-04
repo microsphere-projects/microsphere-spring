@@ -16,21 +16,20 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.logging.Logger;
+import io.microsphere.annotation.Nullable;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.collection.CollectionUtils.size;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.emptyList;
+import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
  * The smart {@link WebEndpointMappingFactory} class based on Spring's {@link WebEndpointMappingFactory} SPI
@@ -38,17 +37,11 @@ import static java.util.Collections.emptyList;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory<Object> {
+public class SmartWebEndpointMappingFactory extends AbstractWebEndpointMappingFactory<Object> {
 
     private static final Class<WebEndpointMappingFactory> FACTORY_CLASS = WebEndpointMappingFactory.class;
 
-    private final static Logger logger = getLogger(FACTORY_CLASS);
-
     private final Map<Class<?>, List<WebEndpointMappingFactory>> delegates;
-
-    SmartWebEndpointMappingFactory() {
-        this(null);
-    }
 
     public SmartWebEndpointMappingFactory(@Nullable ConfigurableListableBeanFactory beanFactory) {
         this.delegates = loadDelegates(beanFactory);
@@ -59,7 +52,7 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
         List<WebEndpointMappingFactory> factories = doLoadFactories(beanFactory);
         Collection<WebEndpointMappingFactory> factoryBeans = getFactoryBeans(beanFactory);
 
-        int size = factories.size() + factoryBeans.size();
+        int size = size(factories) + size(factoryBeans);
 
         Map<Class<?>, List<WebEndpointMappingFactory>> delegates = new HashMap<>(size);
 
@@ -77,10 +70,9 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
                                Map<Class<?>, List<WebEndpointMappingFactory>> delegates) {
         for (WebEndpointMappingFactory factory : factories) {
             Class<?> sourceType = factory.getSourceType();
-            List<WebEndpointMappingFactory> factoriesList =
-                    delegates.computeIfAbsent(sourceType, t -> new LinkedList<>());
+            List<WebEndpointMappingFactory> factoriesList = delegates.computeIfAbsent(sourceType, t -> newLinkedList());
             factoriesList.add(factory);
-            AnnotationAwareOrderComparator.sort(factoriesList);
+            sort(factoriesList);
         }
     }
 
@@ -89,20 +81,20 @@ public class SmartWebEndpointMappingFactory implements WebEndpointMappingFactory
     }
 
     @Override
-    public Optional<WebEndpointMapping<Object>> create(Object endpoint) {
+    protected WebEndpointMapping<?> doCreate(Object endpoint) throws Throwable {
         Class<?> sourceType = endpoint.getClass();
         List<WebEndpointMappingFactory> factories = delegates.get(sourceType);
-        int size = factories == null ? 0 : factories.size();
+        int size = size(factories);
         if (size < 1) {
             return null;
         }
-        Optional<WebEndpointMapping<Object>> result = null;
+        WebEndpointMapping<Object> result = null;
         for (int i = 0; i < size; i++) {
             WebEndpointMappingFactory factory = factories.get(i);
             if (factory.supports(endpoint)) {
-                result = factory.create(endpoint);
-                if (result != null) {
-                    break;
+                Optional<WebEndpointMapping<Object>> optionalResult = factory.create(endpoint);
+                if (optionalResult.isPresent()) {
+                    result = optionalResult.get();
                 }
             }
         }

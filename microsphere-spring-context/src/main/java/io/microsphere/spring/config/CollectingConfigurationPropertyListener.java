@@ -16,13 +16,12 @@
  */
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener;
 import io.microsphere.spring.core.env.PropertyResolverListener;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 
@@ -33,7 +32,56 @@ import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_PREFIX;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_SUFFIX;
 
 /**
- * The listener class for collecting the {@link ConfigurationProperty}
+ * A listener implementation that collects and manages configuration properties during property resolution and autowiring processes.
+ *
+ * <p>{@link CollectingConfigurationPropertyListener} integrates with Spring's property resolution and autowire candidate resolving mechanisms to:
+ * <ul>
+ *     <li>Capture configuration properties as they are resolved by a {@link ConfigurablePropertyResolver}</li>
+ *     <li>Track metadata such as the property name, target type, value, default value, and whether it's required</li>
+ *     <li>Register itself as a Spring bean for integration into the application context lifecycle</li>
+ * </ul>
+ *
+ * <h3>Property Resolution Example</h3>
+ * When a property is resolved via a {@link ConfigurablePropertyResolver}, this listener records its details:
+ *
+ * <pre>{@code
+ * @Component
+ * public class MyPropertyResolverListener implements PropertyResolverListener {
+ *     @Override
+ *     public void afterGetProperty(ConfigurablePropertyResolver resolver, String name, Class<?> targetType, Object value, Object defaultValue) {
+ *         System.out.println("Captured property: " + name);
+ *         System.out.println("Target type: " + targetType.getName());
+ *         System.out.println("Value: " + value);
+ *         System.out.println("Default Value: " + defaultValue);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h3>Autowire Candidate Resolving Example</h3>
+ * This listener also participates in autowire candidate resolution events:
+ *
+ * <pre>{@code
+ * @Component
+ * public class MyAutowireCandidateResolvingListener implements AutowireCandidateResolvingListener {
+ *     @Override
+ *     public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
+ *         System.out.println("Suggested value for dependency " + descriptor + ": " + suggestedValue);
+ *     }
+ *
+ *     @Override
+ *     public void lazyProxyResolved(DependencyDescriptor descriptor, String beanName, Object proxy) {
+ *         System.out.println("Lazy proxy created for " + descriptor + " in bean " + beanName);
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h3>Bean Registration</h3>
+ * This class is typically registered as a Spring bean using:
+ *
+ * <pre>{@code
+ * BeanDefinitionRegistry registry = ...;
+ * registerBean(registry, CollectingConfigurationPropertyListener.BEAN_NAME, new CollectingConfigurationPropertyListener());
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see PropertyResolverListener
@@ -74,10 +122,6 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
     }
 
     @Override
-    public void afterResolvePlaceholders(ConfigurablePropertyResolver propertyResolver, String text, String result) {
-    }
-
-    @Override
     public void afterSetPlaceholderPrefix(ConfigurablePropertyResolver propertyResolver, String prefix) {
         this.placeholderPrefix = prefix;
     }
@@ -88,14 +132,6 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
     }
 
     @Override
-    public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
-        Value value = descriptor.getAnnotation(Value.class);
-        if (value != null) {
-
-        }
-    }
-
-    @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
         BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
@@ -103,8 +139,17 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
         registerBean(registry, BEAN_NAME, this);
     }
 
+    public String getPlaceholderPrefix() {
+        return placeholderPrefix;
+    }
+
+    public String getPlaceholderSuffix() {
+        return placeholderSuffix;
+    }
+
     private ConfigurationProperty getConfigurationProperty(String name) {
-        return this.getRepository().createIfAbsent(name);
+        ConfigurationPropertyRepository repository = getRepository();
+        return repository.createIfAbsent(name);
     }
 
     private ConfigurationPropertyRepository getRepository() {
@@ -113,4 +158,5 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
         }
         return repository;
     }
+
 }

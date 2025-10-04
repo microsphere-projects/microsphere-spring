@@ -21,14 +21,34 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import java.util.LinkedList;
 import java.util.List;
 
-import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.forEach;
+import static io.microsphere.util.Assert.assertNotEmpty;
+import static io.microsphere.util.Assert.assertNotNull;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
 
 /**
- * The composite class for {@link AutowireCandidateResolvingListener}
+ * A composite implementation of the {@link AutowireCandidateResolvingListener} interface that delegates events to a list
+ * of internal listeners. This class provides centralized management for multiple listeners, allowing them to be added and
+ * invoked collectively.
+ *
+ * <h3>Example Usage</h3>
+ * <p>
+ * To use this composite listener, you can instantiate it with an initial list of listeners and add more if needed:
+ * <pre>{@code
+ * AutowireCandidateResolvingListener listener1 = new MyAutowireCandidateResolvingListener();
+ * AutowireCandidateResolvingListener listener2 = new AnotherAutowireCandidateResolvingListener();
+ *
+ * CompositeAutowireCandidateResolvingListener compositeListener = new CompositeAutowireCandidateResolvingListener(
+ *     Lists.ofList(listener1, listener2)
+ * );
+ *
+ * // Optionally add more listeners later
+ * compositeListener.addListeners(Lists.ofList(new YetAnotherAutowireCandidateResolvingListener()));
+ * }</pre>
+ *
+ * <p>This class ensures all listeners are properly sorted using the
+ * {@link org.springframework.core.annotation.AnnotationAwareOrderComparator}, so they are always invoked in a consistent
+ * order.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see AutowireCandidateResolvingListener
@@ -39,13 +59,13 @@ public class CompositeAutowireCandidateResolvingListener implements AutowireCand
     private final List<AutowireCandidateResolvingListener> listeners = new LinkedList<>();
 
     public CompositeAutowireCandidateResolvingListener(List<AutowireCandidateResolvingListener> listeners) {
-        isTrue(isNotEmpty(listeners), "The argument 'listeners' must not be empty!");
+        assertNotEmpty(listeners, () -> "The argument 'listeners' must not be empty!");
         this.addListeners(listeners);
     }
 
     public void addListeners(List<AutowireCandidateResolvingListener> listeners) {
         forEach(listeners, listener -> {
-            notNull(listener, "The element 'listener' must not be null!");
+            assertNotNull(listener, () -> "The element 'listener' must not be null!");
             this.listeners.add(listener);
         });
         sort(this.listeners);

@@ -17,6 +17,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public abstract class ResponseBodyAdviceAdapter<T> implements ResponseBodyAdvice<T> {
 
     @Override
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        return false;
+    }
+
+    @Override
     public T beforeBodyWrite(T body, MethodParameter returnType, MediaType selectedContentType,
                              Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
                              ServerHttpResponse response) {

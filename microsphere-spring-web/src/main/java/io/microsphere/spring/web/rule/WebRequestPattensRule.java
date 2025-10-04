@@ -16,24 +16,28 @@
  */
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPattern;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.SetUtils.newFixedHashSet;
+import static io.microsphere.collection.Sets.ofSet;
+import static io.microsphere.constants.PathConstants.SLASH;
+import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.spring.web.util.WebRequestUtils.getResolvedLookupPath;
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
-import static io.microsphere.util.ArrayUtils.isNotEmpty;
-import static org.springframework.util.StringUtils.hasLength;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
+import static io.microsphere.util.StringUtils.startsWith;
+import static java.util.Collections.emptyList;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -53,7 +57,9 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
 
-    private final static Set<String> EMPTY_PATH_PATTERN = Collections.singleton("");
+    static final Set<String> EMPTY_PATH_PATTERN = ofSet(EMPTY_STRING);
+
+    static final String WILDCARD_EXTENSION = ".*";
 
     private final Set<String> patterns;
 
@@ -82,7 +88,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
     public WebRequestPattensRule(String[] patterns, boolean useTrailingSlashMatch,
                                  @Nullable PathMatcher pathMatcher) {
 
-        this(patterns, null, pathMatcher, useTrailingSlashMatch);
+        this(patterns, pathMatcher, useTrailingSlashMatch);
     }
 
     /**
@@ -95,22 +101,20 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
      * {@link #WebRequestPattensRule(String[], boolean, PathMatcher)}.
      */
     @Deprecated
-    public WebRequestPattensRule(String[] patterns, @Nullable UrlPathHelper urlPathHelper,
-                                 @Nullable PathMatcher pathMatcher, boolean useTrailingSlashMatch) {
-        this(patterns, urlPathHelper, pathMatcher, false, useTrailingSlashMatch);
+    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useTrailingSlashMatch) {
+        this(patterns, pathMatcher, false, useTrailingSlashMatch);
     }
 
     /**
-     * Variant of {@link #PatternsRequestCondition(String...)} with a
+     * Variant of {@link #WebRequestPattensRule(String...)} with a
      * {@link UrlPathHelper} and a {@link PathMatcher}, and flags for matching
      * with suffixes and trailing slashes.
      * <p>As of 5.3 the path is obtained through the static method
      * {@link UrlPathHelper#getResolvedLookupPath} and a {@code UrlPathHelper}
      * does not need to be passed in.
      */
-    public WebRequestPattensRule(String[] patterns, @Nullable UrlPathHelper urlPathHelper,
-                                 @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
-        this(patterns, urlPathHelper, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, null);
+    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
+        this(patterns, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, null);
     }
 
     /**
@@ -119,24 +123,22 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
      * with suffixes and trailing slashes, along with specific extensions.
      *
      * @param patterns
-     * @param urlPathHelper
      * @param pathMatcher
      * @param useSuffixPatternMatch
      * @param useTrailingSlashMatch
      * @param fileExtensions
      */
-    public WebRequestPattensRule(String[] patterns, @Nullable UrlPathHelper urlPathHelper,
-                                 @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch,
+    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch,
                                  boolean useTrailingSlashMatch, @Nullable List<String> fileExtensions) {
         this.patterns = initPatterns(patterns);
         this.pathMatcher = pathMatcher != null ? pathMatcher : new AntPathMatcher();
         this.useSuffixPatternMatch = useSuffixPatternMatch;
         this.useTrailingSlashMatch = useTrailingSlashMatch;
 
-        if (fileExtensions != null) {
+        if (isNotEmpty(fileExtensions)) {
             for (String fileExtension : fileExtensions) {
-                if (fileExtension.charAt(0) != '.') {
-                    fileExtension = "." + fileExtension;
+                if (fileExtension.charAt(0) != DOT_CHAR) {
+                    fileExtension = DOT_CHAR + fileExtension;
                 }
                 this.fileExtensions.add(fileExtension);
             }
@@ -161,7 +163,6 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
         // FIXME : WebFlux
         String lookupPath = getResolvedLookupPath(request);
         return matches(lookupPath);
-
     }
 
     public boolean matches(String lookupPath) {
@@ -179,7 +180,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
             }
         }
         if (matches == null) {
-            return Collections.emptyList();
+            return emptyList();
         }
         if (matches.size() > 1) {
             matches.sort(this.pathMatcher.getPatternComparator(lookupPath));
@@ -193,16 +194,16 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
             return pattern;
         }
         if (this.useSuffixPatternMatch) {
-            if (!this.fileExtensions.isEmpty() && lookupPath.indexOf('.') != -1) {
+            if (isNotEmpty(this.fileExtensions) && lookupPath.indexOf(DOT_CHAR) != -1) {
                 for (String extension : this.fileExtensions) {
                     if (this.pathMatcher.match(pattern + extension, lookupPath)) {
                         return pattern + extension;
                     }
                 }
             } else {
-                boolean hasSuffix = pattern.indexOf('.') != -1;
-                if (!hasSuffix && this.pathMatcher.match(pattern + ".*", lookupPath)) {
-                    return pattern + ".*";
+                boolean noSuffix = pattern.indexOf(DOT_CHAR) == -1;
+                if (noSuffix && this.pathMatcher.match(pattern + WILDCARD_EXTENSION, lookupPath)) {
+                    return pattern + WILDCARD_EXTENSION;
                 }
             }
         }
@@ -210,29 +211,31 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
             return pattern;
         }
         if (this.useTrailingSlashMatch) {
-            if (!pattern.endsWith("/") && this.pathMatcher.match(pattern + "/", lookupPath)) {
-                return pattern + "/";
+            if (!pattern.endsWith(SLASH) && this.pathMatcher.match(pattern + SLASH, lookupPath)) {
+                return pattern + SLASH;
             }
         }
         return null;
     }
 
-    private static Set<String> initPatterns(String[] patterns) {
+    static Set<String> initPatterns(String[] patterns) {
         if (!hasPattern(patterns)) {
             return EMPTY_PATH_PATTERN;
         }
-        Set<String> result = new LinkedHashSet<>(patterns.length);
-        for (String pattern : patterns) {
-            if (hasLength(pattern) && !pattern.startsWith("/")) {
-                pattern = "/" + pattern;
+        int size = patterns.length;
+        Set<String> result = newFixedHashSet(size);
+        for (int i = 0; i < size; i++) {
+            String pattern = patterns[i];
+            if (!startsWith(pattern, SLASH)) {
+                pattern = SLASH + pattern;
             }
             result.add(pattern);
         }
         return result;
     }
 
-    private static boolean hasPattern(String[] patterns) {
-        if (isNotEmpty(patterns)) {
+    static boolean hasPattern(String[] patterns) {
+        if (patterns != null) {
             for (String pattern : patterns) {
                 if (hasText(pattern)) {
                     return true;

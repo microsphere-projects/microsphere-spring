@@ -17,14 +17,14 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 /**
- * {@link EnableConfigurationBeanBinding} Test
+ * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnableConfigurationBeanBinding(prefix = "users", type = User.class, multiple = true, ignoreUnknownFields = false,
         ignoreInvalidFields = false)
-public class EnableConfigurationBeanBindingTestForMultipleBinding extends AbstractEnableConfigurationBeanBindingTest {
+class EnableConfigurationBeanBindingTestForMultipleBinding extends AbstractEnableConfigurationBeanBindingTest {
 
     @Bean
     public ConfigurationBeanBindingPostProcessor configurationBeanBindingPostProcessor() {
@@ -58,7 +58,8 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
     private ConfigurationBeanBindingPostProcessor configurationBeanBindingPostProcessor;
 
     @BeforeEach
-    public void init() {
+    void setUp() {
+        super.setUp();
         aUser = context.getBean("a", User.class);
         bUser = context.getBean("b", User.class);
         users = getSortedBeans(context, User.class);
@@ -66,7 +67,7 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
     }
 
     @Test
-    public void testUser() {
+    void testUser() {
 
         assertEquals(2, users.size());
         assertTrue(users.contains(aUser));

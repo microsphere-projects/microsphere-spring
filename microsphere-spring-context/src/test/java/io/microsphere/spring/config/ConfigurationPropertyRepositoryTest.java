@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.config;
 
+import io.microsphere.beans.ConfigurationProperty;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +50,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                 "microsphere.spring.config-property-repository.max-size=3"
         }
 )
-public class ConfigurationPropertyRepositoryTest {
+class ConfigurationPropertyRepositoryTest {
 
     @Autowired
     private ConfigurationPropertyRepository repository;
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         String name = "test";
         ConfigurationProperty configurationProperty = new ConfigurationProperty(name);
 

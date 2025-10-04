@@ -16,18 +16,55 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.context.event.SmartApplicationListener;
 
-import javax.annotation.Nullable;
-
 import static org.springframework.core.ResolvableType.forClass;
 
 /**
- * The adapter interface of {@link GenericApplicationListener} and {@link SmartApplicationListener}
+ * An adapter interface that combines the functionalities of {@link GenericApplicationListener}
+ * and {@link SmartApplicationListener} to provide a more flexible and extensible way to handle
+ * application events in the Spring context.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * <p>Implementing this interface allows a class to be notified of application events while
+ * also providing additional control over event and source type filtering, listener ordering,
+ * and listener identification.</p>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyApplicationListener implements GenericApplicationListenerAdapter {
+ *
+ *     @Override
+ *     public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
+ *         return ApplicationReadyEvent.class.isAssignableFrom(eventType);
+ *     }
+ *
+ *     @Override
+ *     public boolean supportsSourceType(Class<?> sourceType) {
+ *         return sourceType.equals(MyCustomSource.class);
+ *     }
+ *
+ *     @Override
+ *     public void onApplicationEvent(ApplicationEvent event) {
+ *         // Handle the event here
+ *         System.out.println("Received event: " + event);
+ *     }
+ *
+ *     @Override
+ *     public int getOrder() {
+ *         return 0; // Custom ordering if needed
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>This example demonstrates how to implement the {@code GenericApplicationListenerAdapter}
+ * to listen for specific application events (e.g., {@code ApplicationReadyEvent}) and filter
+ * based on the source type. The listener can also define a custom order to control the sequence
+ * of event delivery.</p>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see GenericApplicationListener
  * @see SmartApplicationListener
  * @since 1.0.0

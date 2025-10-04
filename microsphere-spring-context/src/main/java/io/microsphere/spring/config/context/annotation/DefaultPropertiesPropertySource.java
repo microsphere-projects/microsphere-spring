@@ -26,13 +26,14 @@ import org.springframework.core.io.support.DefaultPropertySourceFactory;
 import org.springframework.core.io.support.PropertySourceFactory;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Comparator;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A variant of the {@link PropertySource @PropertySource} annotation for the {@link org.springframework.core.env.PropertySource PropertySource}
@@ -43,6 +44,39 @@ import java.util.Comparator;
  * {@link org.springframework.core.env.PropertySource PropertySource} to Spring's Environment.
  * To be used in conjunction with {@link Configuration @Configuration} classes.
  *
+ * <h3>Example Usage</h3>
+ * <pre>
+ * {@code
+ * @Configuration
+ * @DefaultPropertiesPropertySource("classpath:com/myco/app.properties")
+ * public class MyConfig {
+ * }
+ * }
+ * </pre>
+ *
+ * <p><b>Multiple Locations Example:</b>
+ * <pre>
+ * {@code
+ * @Configuration
+ * @DefaultPropertiesPropertySource(value = {
+ *     "classpath:com/myco/app1.properties",
+ *     "file:/path/to/app2.properties"
+ * })
+ * public class MyConfig {
+ * }
+ * }
+ * </pre>
+ *
+ * <p><b>Wildcard Usage Example:</b>
+ * <pre>
+ * {@code
+ * @Configuration
+ * @DefaultPropertiesPropertySource("classpath*:com/myco/*.properties")
+ * public class MyConfig {
+ * }
+ * }
+ * </pre>
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySource
  * @see PropertySourcesUtils#DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME
@@ -51,8 +85,8 @@ import java.util.Comparator;
  * @see Configuration
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(TYPE)
+@Retention(RUNTIME)
 @Inherited
 @Documented
 @Repeatable(DefaultPropertiesPropertySources.class)

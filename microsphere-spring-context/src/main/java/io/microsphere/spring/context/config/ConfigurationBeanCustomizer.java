@@ -17,14 +17,37 @@
 package io.microsphere.spring.context.config;
 
 import io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 /**
- * The customizer for the configuration bean after {@link ConfigurationBeanBinder#bind its binding}.
- * <p>
- * If There are multiple {@link ConfigurationBeanCustomizer} beans in the Spring {@link ApplicationContext context},
- * they are executed orderly, thus the subclass should be aware to implement the {@link #getOrder()} method.
+ * A callback interface that allows for customizing a configuration bean after it has been bound
+ * but before it is registered in the Spring application context.
+ *
+ * <p>Implementations of this interface can perform additional processing or modifications
+ * on the configuration bean. If multiple {@code ConfigurationBeanCustomizer} beans are present,
+ * they will be executed in the order determined by the {@link Ordered} interface.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyConfigurationBeanCustomizer implements ConfigurationBeanCustomizer {
+ *
+ *     private final int order;
+ *
+ *     public MyConfigurationBeanCustomizer(int order) {
+ *         this.order = order;
+ *     }
+ *
+ *     @Override
+ *     public int getOrder() {
+ *         return order;
+ *     }
+ *
+ *     @Override
+ *     public void customize(String beanName, Object configurationBean) {
+ *         // Customization logic here
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ConfigurationBeanBinder

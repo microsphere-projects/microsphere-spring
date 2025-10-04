@@ -13,7 +13,7 @@ import static io.microsphere.spring.webmvc.util.WebMvcUtils.isPageRenderRequest;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see HandlerInterceptor
- * @since 2017.02.01
+ * @since 1.0.0
  */
 public abstract class AbstractPageRenderContextHandlerInterceptor implements HandlerInterceptor {
 

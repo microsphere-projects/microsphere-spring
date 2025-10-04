@@ -18,8 +18,9 @@ package io.microsphere.spring.jdbc.p6spy;
 
 import com.p6spy.engine.spy.P6LoadableOptions;
 
-import java.util.Collections;
 import java.util.Map;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * No-Operation {@link P6LoadableOptions}
@@ -36,6 +37,6 @@ public class NoOpP6LoadableOptions implements P6LoadableOptions {
 
     @Override
     public Map<String, String> getDefaults() {
-        return Collections.emptyMap();
+        return emptyMap();
     }
 }

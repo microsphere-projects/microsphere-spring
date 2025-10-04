@@ -16,8 +16,9 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.test.web.controller.TestController;
+import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.webmvc.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,7 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         RequestMappingInfoWebEndpointMappingFactoryTest.class,
         RequestMappingInfoWebEndpointMappingFactoryTest.Config.class
 })
-public class RequestMappingInfoWebEndpointMappingFactoryTest {
+class RequestMappingInfoWebEndpointMappingFactoryTest {
 
     private Map<RequestMappingInfo, HandlerMethod> handlerMethods;
 
@@ -72,15 +74,15 @@ public class RequestMappingInfoWebEndpointMappingFactoryTest {
     }
 
     @BeforeEach
-    public void init() {
+    void setUp() {
         factory = new RequestMappingMetadataWebEndpointMappingFactory(requestMappingInfoHandlerMapping);
         this.handlerMethods = requestMappingInfoHandlerMapping.getHandlerMethods();
     }
 
     @Test
-    public void test() {
+    void test() {
         assertNotNull(handlerMethods);
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
+        for (Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             RequestMappingMetadata metadata = new RequestMappingMetadata(entry.getKey(), entry.getValue());
             Optional<WebEndpointMapping<HandlerMetadata<HandlerMethod, RequestMappingInfo>>> webEndpointMapping = factory.create(metadata);
             assertTrue(webEndpointMapping.isPresent());

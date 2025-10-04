@@ -1,4 +1,4 @@
-///*
+/// *
 // * Licensed to the Apache Software Foundation (ASF) under one or more
 // * contributor license agreements.  See the NOTICE file distributed with
 // * this work for additional information regarding copyright ownership.
@@ -31,13 +31,13 @@
 //import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //
-///**
+/// **
 // * {@link FilterRegistrationWebEndpointMappingFactory} Test
 // *
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
 // * @since 1.0.0
 // */
-//public class FilterRegistrationWebEndpointMappingFactoryTest {
+//class FilterRegistrationWebEndpointMappingFactoryTest {
 //
 //    private FilterRegistrationWebEndpointMappingFactory factory;
 //
@@ -58,7 +58,7 @@
 //    }
 //
 //    @Test
-//    public void testCreate() {
+//    void testCreate() {
 //        Optional<WebEndpointMapping<?>> webEndpointMapping = factory.create(registration);
 //        webEndpointMapping.ifPresent(mapping -> {
 //            assertEquals(this.filterName, mapping.getEndpoint());

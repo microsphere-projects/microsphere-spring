@@ -22,10 +22,23 @@ import org.springframework.context.ConfigurableApplicationContext;
 import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver.register;
 
 /**
- * The initializer class for {@link ListenableAutowireCandidateResolver}
+ * An {@link ApplicationContextInitializer} implementation that registers a
+ * {@link ListenableAutowireCandidateResolver} to provide extensible autowiring
+ * capabilities within the Spring application context.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyConfig implements WebMvcConfigurer {
+ *     // Configuration code...
+ * }
+ * }</pre>
+ *
+ * <p>This initializer should be registered with a {@link org.springframework.context.ApplicationContext}
+ * to enable custom autowiring logic during the application context initialization phase.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see ListenableAutowireCandidateResolver
+ * @see ApplicationContextInitializer
  * @since 1.0.0
  */
 public class ListenableAutowireCandidateResolverInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

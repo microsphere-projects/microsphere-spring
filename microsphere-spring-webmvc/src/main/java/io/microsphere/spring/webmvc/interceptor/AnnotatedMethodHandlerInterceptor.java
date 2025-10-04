@@ -10,6 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.lang.annotation.Annotation;
 
+import static org.springframework.core.ResolvableType.forType;
+
 /**
  * The annotation method {@link HandlerInterceptor} abstract implementation
  *
@@ -26,8 +28,8 @@ public abstract class AnnotatedMethodHandlerInterceptor<A extends Annotation> ex
     }
 
     private Class<A> resolveAnnotationType() {
-        ResolvableType resolvableType = ResolvableType.forType(getClass());
-        return (Class<A>) resolvableType.getSuperType().getGeneric(0).resolve();
+        ResolvableType resolvableType = forType(getClass());
+        return (Class<A>) resolvableType.as(AnnotatedMethodHandlerInterceptor.class).getGeneric(0).resolve();
     }
 
     @Override
@@ -82,10 +84,14 @@ public abstract class AnnotatedMethodHandlerInterceptor<A extends Annotation> ex
         String attributeName = getAnnotationAttributeName(handlerMethod);
         A annotation = (A) servletContext.getAttribute(attributeName);
         if (annotation == null) {
-            annotation = handlerMethod.getMethodAnnotation(getAnnotationType());
+            annotation = getAnnotation(handlerMethod);
             servletContext.setAttribute(attributeName, annotation);
         }
         return annotation;
+    }
+
+    protected A getAnnotation(HandlerMethod handlerMethod) {
+        return handlerMethod.getMethodAnnotation(getAnnotationType());
     }
 
     private String getAnnotationAttributeName(HandlerMethod handlerMethod) {

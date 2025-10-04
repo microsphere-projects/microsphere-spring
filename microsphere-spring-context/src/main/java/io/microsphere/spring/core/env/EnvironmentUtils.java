@@ -16,33 +16,31 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.SetUtils.ofSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.core.convert.ConversionServiceUtils.getSharedInstance;
+import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
 import static org.springframework.util.Assert.isInstanceOf;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -52,7 +50,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @since 1.0.0
  */
-public abstract class EnvironmentUtils extends BaseUtils {
+public abstract class EnvironmentUtils implements Utils {
 
     private static final Logger logger = getLogger(EnvironmentUtils.class);
 
@@ -65,8 +63,7 @@ public abstract class EnvironmentUtils extends BaseUtils {
      */
     public static ConfigurableEnvironment asConfigurableEnvironment(Environment environment) throws IllegalArgumentException {
         isInstanceOf(ConfigurableEnvironment.class, environment,
-                "The 'environment' argument is not a instance of ConfigurableEnvironment, " +
-                        "is it running in Spring container?");
+                "The 'environment' argument is not a instance of ConfigurableEnvironment, is it running in Spring container?");
         return (ConfigurableEnvironment) environment;
     }
 
@@ -79,7 +76,7 @@ public abstract class EnvironmentUtils extends BaseUtils {
      */
     @Nonnull
     public static Map<String, String> getProperties(Environment environment, String... propertyNames) {
-        int length = propertyNames == null ? 0 : propertyNames.length;
+        int length = length(propertyNames);
         if (length < 1) {
             return emptyMap();
         } else if (length == 1) {
@@ -98,10 +95,7 @@ public abstract class EnvironmentUtils extends BaseUtils {
      */
     @Nonnull
     public static Map<String, String> getProperties(Environment environment, Iterable<String> propertyNames) {
-        Set<String> propertyNamesSet = propertyNames instanceof Set names ? names :
-                propertyNames instanceof Collection names ? new HashSet<>(names) :
-                        stream(propertyNames.spliterator(), false).collect(toSet());
-        return getProperties(environment, propertyNamesSet);
+        return getProperties(environment, ofSet(propertyNames));
     }
 
     /**
@@ -131,11 +125,10 @@ public abstract class EnvironmentUtils extends BaseUtils {
         ConversionService conversionService = null;
         if (environment instanceof ConfigurablePropertyResolver resolver) {
             conversionService = resolver.getConversionService();
-            if (conversionService == null) {
-                conversionService = DefaultConversionService.getSharedInstance();
-                logger.warn("ConversionService can't be resolved from Environment[class: {}], the shared ApplicationConversionService will be used!",
-                        environment.getClass().getName());
-            }
+        }
+        if (conversionService == null) {
+            conversionService = getSharedInstance();
+            logger.info("ConversionService can't be resolved from Environment[{}], the shared ConversionService will be used!", environment);
         }
         return conversionService;
     }
@@ -199,5 +192,8 @@ public abstract class EnvironmentUtils extends BaseUtils {
                     propertyValue, resolvedPropertyValue, targetValue, targetType);
         }
         return targetValue;
+    }
+
+    private EnvironmentUtils() {
     }
 }

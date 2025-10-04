@@ -23,7 +23,7 @@ package io.microsphere.spring.core.env;
  * @see EnvironmentListener
  * @since 1.0.0
  */
-public class ThrowableErrorLoggingEnvironmentListener extends LoggingEnvironmentListener {
+class ThrowableErrorLoggingEnvironmentListener extends LoggingEnvironmentListener {
 
     @Override
     protected void log(String message) {

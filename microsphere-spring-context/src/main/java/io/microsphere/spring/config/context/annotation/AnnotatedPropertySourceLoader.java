@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
@@ -28,20 +30,42 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
+import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * Abstract {@link ImportSelector} class to load the {@link PropertySource PropertySource}
- * when the {@link Configuration configuration} annotated the specified annotation
+ * Abstract base class for {@link ImportSelector} implementations that load a {@link PropertySource}
+ * when a {@link Configuration} class is annotated with a specific annotation.
  *
- * @param <A> The type of {@link Annotation}
+ * <p>This class provides a foundation for conditionally adding property sources to the Spring environment
+ * based on annotations present on configuration classes. Subclasses must implement the
+ * {@link #loadPropertySource(AnnotationAttributes, AnnotationMetadata, String, MutablePropertySources)} method
+ * to define how the property source is loaded.
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <pre>{@code
+ * public class MyPropertySourceLoader extends AnnotatedPropertySourceLoader<MyPropertySource> {
+ *
+ *     @Override
+ *     protected void loadPropertySource(AnnotationAttributes attributes,
+ *                                       AnnotationMetadata metadata,
+ *                                       String propertySourceName,
+ *                                       MutablePropertySources propertySources) throws Throwable {
+ *         // Create and add a custom PropertySource
+ *         PropertySource<?> propertySource = new CustomPropertySource(propertySourceName);
+ *         propertySources.addLast(propertySource);
+ *     }
+ * }
+ * }</pre>
+ *
+ * @param <A> The type of annotation that triggers property source loading
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySourceLoader
  * @see PropertySourceExtensionLoader
@@ -66,7 +90,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
     }
 
     protected Class<A> resolveAnnotationType() {
-        ResolvableType type = ResolvableType.forType(this.getClass());
+        ResolvableType type = forType(this.getClass());
         ResolvableType superType = type.as(AnnotatedPropertySourceLoader.class);
         return (Class<A>) superType.resolveGeneric(0);
     }
@@ -75,7 +99,7 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
     public final String[] selectImports(AnnotationMetadata metadata) {
         String annotationClassName = annotationType.getName();
         Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
-        ResolvablePlaceholderAnnotationAttributes attributes = ResolvablePlaceholderAnnotationAttributes.of(annotationAttributes, annotationType, getEnvironment());
+        ResolvablePlaceholderAnnotationAttributes attributes = of(annotationAttributes, annotationType, getEnvironment());
         String propertySourceName = resolvePropertySourceName(attributes, metadata);
         this.propertySourceName = propertySourceName;
         MutablePropertySources propertySources = getEnvironment().getPropertySources();

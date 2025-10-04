@@ -16,11 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.spring.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationEvent;
@@ -30,6 +30,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.ResolvableType;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -43,9 +44,17 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * Bean After-Event Publishing Processor
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanBeforeProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
-class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProcessorAdapter implements GenericApplicationListenerAdapter {
+class EventPublishingBeanAfterProcessor implements InstantiationAwareBeanPostProcessor, GenericApplicationListenerAdapter {
 
     private static final Class<?> DISPOSABLE_BEAN_ADAPTER_CLASS = resolveClass("org.springframework.beans.factory.support.DisposableBeanAdapter");
 
@@ -55,7 +64,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
 
     public EventPublishingBeanAfterProcessor(ConfigurableApplicationContext context) {
         this.context = context;
-        this.beanEventListeners = BeanListeners.getBean(context);
+        this.beanEventListeners = getBean(context);
     }
 
     @Override
@@ -93,7 +102,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
     private void fireBeansReadyEvent() {
         ConfigurableListableBeanFactory beanFactory = this.context.getBeanFactory();
         Map<String, Object> beansMap = beanFactory.getBeansOfType(Object.class, true, false);
-        for (Map.Entry<String, Object> beanEntry : beansMap.entrySet()) {
+        for (Entry<String, Object> beanEntry : beansMap.entrySet()) {
             String beanName = beanEntry.getKey();
             Object bean = beanEntry.getValue();
             fireBeanReadyEvent(beanName, bean);
@@ -114,7 +123,7 @@ class EventPublishingBeanAfterProcessor extends InstantiationAwareBeanPostProces
             doWithFields(DefaultSingletonBeanRegistry.class, field -> {
                 field.setAccessible(true);
                 Map<String, Object> disposableBeans = (Map<String, Object>) field.get(beanFactory);
-                for (Map.Entry<String, Object> entry : disposableBeans.entrySet()) {
+                for (Entry<String, Object> entry : disposableBeans.entrySet()) {
                     String beanName = entry.getKey();
                     Object adapterBean = entry.getValue();
                     if (isDisposableBeanAdapter(adapterBean)) {

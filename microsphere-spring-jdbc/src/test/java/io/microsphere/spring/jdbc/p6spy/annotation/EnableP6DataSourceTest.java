@@ -1,4 +1,4 @@
-///*
+/// *
 // * Licensed to the Apache Software Foundation (ASF) under one or more
 // * contributor license agreements.  See the NOTICE file distributed with
 // * this work for additional information regarding copyright ownership.
@@ -33,7 +33,7 @@
 //import static org.junit.jupiter.api.Assertions.assertNotNull;
 //import static org.junit.jupiter.api.Assertions.assertSame;
 //
-///**
+/// **
 // * {@link EnableP6DataSource} Test
 // *
 // * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -45,14 +45,14 @@
 //})
 //@EnableP6DataSource
 //@EnableEmbeddedDatabase(dataSource = "testDataSource")
-//public class EnableP6DataSourceTest extends LoggingEventListener {
+//class EnableP6DataSourceTest extends LoggingEventListener {
 //
 //    @Autowired
 //    @Qualifier("testDataSource")
 //    private DataSource dataSource;
 //
 //    @Test
-//    public void test() throws Exception {
+//    void test() throws Exception {
 //        Connection connection = dataSource.getConnection();
 //        assertNotNull(connection);
 //    }

@@ -1,13 +1,13 @@
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,18 +20,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @EnableConfigurationBeanBinding(prefix = "users",
         type = User.class, multiple = true, ignoreUnknownFields = false, ignoreInvalidFields = false)
-public class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableConfigurationBeanBindingTest {
+class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableConfigurationBeanBindingTest {
 
 
     @Test
-    public void test() {
+    void test() {
         testAlice("a", () -> ofList("UserA", "users-a", "users_a"));
         testAlice("b", () -> ofList("UserB", "users-b", "users_b"));
 
     }
 
     private List<String> ofList(String... names) {
-        return Arrays.stream(names).collect(Collectors.toList());
+        return stream(names).collect(toList());
     }
 
     private void testAlice(String beanName, Supplier<List<String>> aliasSupplier) {

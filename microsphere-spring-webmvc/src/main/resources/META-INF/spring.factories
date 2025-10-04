@@ -1,3 +1,6 @@
 io.microsphere.spring.web.metadata.WebEndpointMappingFactory=\
 io.microsphere.spring.webmvc.metadata.HandlerMetadataWebEndpointMappingFactory,\
 io.microsphere.spring.webmvc.metadata.RequestMappingMetadataWebEndpointMappingFactory
+
+io.microsphere.spring.web.util.SpringWebHelper=\
+io.microsphere.spring.webmvc.util.SpringWebMvcHelper

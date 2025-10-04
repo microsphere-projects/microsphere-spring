@@ -17,9 +17,9 @@
 package io.microsphere.spring.util;
 
 import io.microsphere.spring.beans.factory.support.BeanRegistrar;
-import io.microsphere.spring.test.Bean;
-import io.microsphere.spring.test.TestBean;
-import io.microsphere.spring.test.TestBean2;
+import io.microsphere.spring.beans.test.Bean;
+import io.microsphere.spring.beans.test.TestBean;
+import io.microsphere.spring.beans.test.TestBean2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -39,19 +39,19 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  *
  * @since 1.0.0
  */
-public class BeanInitializerTest {
+class BeanInitializerTest {
 
     private static final String BEAN_NAME = "testBean";
 
     private DefaultListableBeanFactory registry;
 
     @BeforeEach
-    public void init() {
+    void setUp() {
         registry = new DefaultListableBeanFactory();
     }
 
     @Test
-    public void testRegisterInfrastructureBean() {
+    void testRegisterInfrastructureBean() {
 
         assertTrue(registerInfrastructureBean(registry, BEAN_NAME, TestBean.class));
 
@@ -65,14 +65,14 @@ public class BeanInitializerTest {
     }
 
     @Test
-    public void testHasAlias() {
+    void testHasAlias() {
         testRegisterInfrastructureBean();
         registry.registerAlias(BEAN_NAME, "A");
         assertTrue(hasAlias(registry, BEAN_NAME, "A"));
     }
 
     @Test
-    public void testRegisterSpringFactoriesBeans() {
+    void testRegisterSpringFactoriesBeans() {
         assertEquals(2, registerSpringFactoriesBeans((BeanDefinitionRegistry) registry, Bean.class));
         assertTrue(registry.containsBeanDefinition("testBean"));
         assertTrue(registry.containsBeanDefinition("testBean2"));

@@ -21,14 +21,45 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.PropertySources;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enables Spring's annotation-driven configuration bean from {@link PropertySources properties}.
+ *
+ * <h3>Example Usage</h3>
+ *
+ * <h4>Basic Configuration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "my.config", type = MyConfig.class)
+ * public class MyConfig {}
+ * }</pre>
+ *
+ * <h4>Multiple Bean Registration</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(prefix = "multi.config", type = MultiConfig.class, multiple = true)
+ * public class MultiConfig {}
+ * }</pre>
+ *
+ * <h4>Custom Ignore Behavior</h4>
+ * <pre>{@code
+ * @Configuration
+ * @EnableConfigurationBeanBinding(
+ *     prefix = "strict.config",
+ *     type = StrictConfig.class,
+ *     ignoreUnknownFields = false,
+ *     ignoreInvalidFields = false
+ * )
+ * public class StrictConfig {}
+ * }</pre>
+ * Here, binding will fail if there are unknown or invalid fields in the configuration.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ConfigurationBeanBindingRegistrar
@@ -36,8 +67,8 @@ import java.lang.annotation.Target;
  * @see ConfigurationBeanCustomizer
  * @since 1.0.0
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE, ANNOTATION_TYPE})
+@Retention(RUNTIME)
 @Documented
 @Import(ConfigurationBeanBindingRegistrar.class)
 @Repeatable(EnableConfigurationBeanBindings.class)

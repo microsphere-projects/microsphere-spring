@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.web.metadata.HandlerMethodMetadata;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
