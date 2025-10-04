@@ -1,2 +1,5 @@
 io.microsphere.spring.web.metadata.WebEndpointMappingFactory=\
 io.microsphere.spring.web.metadata.Jackson2WebEndpointMappingFactory
+
+io.microsphere.spring.web.util.SpringWebHelper=\
+io.microsphere.spring.web.util.UnknownSpringWebHelper

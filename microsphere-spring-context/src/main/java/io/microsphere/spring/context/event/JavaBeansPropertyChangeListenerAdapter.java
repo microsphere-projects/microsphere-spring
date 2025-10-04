@@ -22,7 +22,32 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
- * The adapter for Java Beans {@link PropertyChangeListener}
+ * An adapter class that bridges JavaBeans {@link PropertyChangeListener} with Spring's event publishing mechanism.
+ * This class converts a JavaBeans {@link PropertyChangeEvent} into a Spring application event
+ * ({@link BeanPropertyChangedEvent}) and publishes it using the provided {@link ApplicationEventPublisher}.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * ConfigurableApplicationContext context = ...; // typically provided by Spring
+ * JavaBeansPropertyChangeListenerAdapter listenerAdapter = new JavaBeansPropertyChangeListenerAdapter(context);
+ *
+ * User user = new User();
+ *
+ * context.addApplicationListener((ApplicationListener<BeanPropertyChangedEvent>) event -> {
+ * user.setName((String) event.getNewValue());
+ * });
+ *
+ * assertNull(user.getName());
+ *
+ * PropertyChangeSupport support = new PropertyChangeSupport(user);
+ * support.addPropertyChangeListener(listenerAdapter);
+ *
+ * String userName = "my-name";
+ *
+ * support.firePropertyChange("name", user.getName(), userName);
+ *
+ * assertEquals(userName, user.getName());
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0

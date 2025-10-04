@@ -1,7 +1,7 @@
 package io.microsphere.spring.beans.factory.config;
 
-import io.microsphere.spring.test.Bean;
-import io.microsphere.spring.test.TestBean;
+import io.microsphere.spring.beans.test.Bean;
+import io.microsphere.spring.beans.test.TestBean;
 import org.junit.Test;
 import org.springframework.beans.BeansException;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNull;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see GenericBeanPostProcessorAdapter
- * @since 2017.01.22
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public class GenericBeanPostProcessorAdapterTest {

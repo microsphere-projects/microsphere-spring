@@ -16,13 +16,15 @@
  */
 package io.microsphere.spring.core;
 
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.core.MethodParameter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+
+import static io.microsphere.text.FormatUtils.format;
 
 /**
  * The utility class for {@link MethodParameter}
@@ -31,7 +33,7 @@ import java.lang.reflect.Parameter;
  * @see MethodParameter
  * @since 1.0.0
  */
-public abstract class MethodParameterUtils extends BaseUtils {
+public abstract class MethodParameterUtils implements Utils {
 
     /**
      * Create a new MethodParameter for the given parameter descriptor.
@@ -62,11 +64,9 @@ public abstract class MethodParameterUtils extends BaseUtils {
             return new MethodParameter((Method) executable, parameterIndex);
         } else if (executable instanceof Constructor) {
             return new MethodParameter((Constructor<?>) executable, parameterIndex);
-        } else {
-            throw new IllegalArgumentException("Not a Method/Constructor: " + executable);
         }
+        throw new IllegalArgumentException("Not a Method/Constructor: " + executable);
     }
-
 
     protected static int findParameterIndex(Parameter parameter) {
         Executable executable = parameter.getDeclaringExecutable();
@@ -84,7 +84,10 @@ public abstract class MethodParameterUtils extends BaseUtils {
                 return i;
             }
         }
-        throw new IllegalArgumentException("Given parameter [" + parameter +
-                "] does not match any parameter in the declaring executable");
+        String message = format("Given parameter[name : {}] does not match any parameter in the declaring executable : {}", parameter.getName(), executable);
+        throw new IllegalArgumentException(message);
+    }
+
+    private MethodParameterUtils() {
     }
 }

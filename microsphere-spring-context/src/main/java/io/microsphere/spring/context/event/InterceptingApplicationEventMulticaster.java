@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ApplicationEvent;
@@ -24,7 +25,6 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.ResolvableType;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.Executor;
 

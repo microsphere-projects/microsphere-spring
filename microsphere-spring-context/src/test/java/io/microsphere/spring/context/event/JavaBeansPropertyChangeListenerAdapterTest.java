@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,8 @@
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.logging.Logger;
-import io.microsphere.util.BaseUtils;
+import io.microsphere.util.Utils;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -12,7 +13,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -38,7 +38,7 @@ import static java.util.Collections.unmodifiableSet;
  * @see PropertySources
  * @since 1.0.0
  */
-public abstract class PropertySourcesUtils extends BaseUtils {
+public abstract class PropertySourcesUtils implements Utils {
 
     private static final Logger logger = getLogger(PropertySourcesUtils.class);
 
@@ -384,6 +384,9 @@ public abstract class PropertySourcesUtils extends BaseUtils {
      */
     public static boolean containsBootstrapPropertySource(ConfigurableEnvironment environment) {
         return containsPropertySource(environment, BOOTSTRAP_PROPERTY_SOURCE_NAME);
+    }
+
+    private PropertySourcesUtils() {
     }
 }
 

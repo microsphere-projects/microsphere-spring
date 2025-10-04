@@ -297,7 +297,7 @@ public class ListenableConfigurableEnvironmentTest {
 
     @Test
     public void testGetDelegate() {
-        assertTrue(ListenableConfigurableEnvironment.class.isInstance(environment));
+        assertTrue(environment instanceof ListenableConfigurableEnvironment);
         assertNotSame(environment, environment.getDelegate());
     }
 }

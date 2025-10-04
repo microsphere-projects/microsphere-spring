@@ -17,14 +17,14 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 /**
- * {@link EnableConfigurationBeanBinding} Test
+ * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
-import io.microsphere.spring.util.User;
+import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
@@ -58,7 +58,8 @@ public class EnableConfigurationBeanBindingTestForMultipleBinding extends Abstra
     private ConfigurationBeanBindingPostProcessor configurationBeanBindingPostProcessor;
 
     @Before
-    public void init() {
+    public void setUp() {
+        super.setUp();
         aUser = context.getBean("a", User.class);
         bUser = context.getBean("b", User.class);
         users = getSortedBeans(context, User.class);

@@ -21,9 +21,22 @@ import org.springframework.context.ApplicationEvent;
 import java.util.StringJoiner;
 
 /**
- * The event published when a Beans'  is changed.
+ * An event that is published when a property of a bean changes.
+ * <p>
+ * This event provides details about the bean whose property changed, the name of the property,
+ * and the old and new values of the property. It can be used to track changes in bean properties
+ * during runtime.
+ * </p>
+ *
+ * <h3>Example usage:</h3>
+ * <pre>
+ * // Create and publish the event when a bean's property changes
+ * BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "status", oldStatus, newStatus);
+ * applicationEventPublisher.publishEvent(event);
+ * </pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ApplicationEvent
  * @since 1.0.0
  */
 public class BeanPropertyChangedEvent extends ApplicationEvent {

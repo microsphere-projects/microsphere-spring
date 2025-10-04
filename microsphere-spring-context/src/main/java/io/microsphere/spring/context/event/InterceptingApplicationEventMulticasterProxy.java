@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.annotation.ConfigurationProperty;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.beans.factory.config.GenericBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -28,7 +30,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -52,11 +53,6 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
         implements ApplicationEventMulticaster, BeanFactoryAware {
 
     /**
-     * The property name of the reset bean name of {@link ApplicationEventMulticaster}
-     */
-    public static final String RESET_BEAN_NAME_PROPERTY_NAME = "microsphere.application-event-multicaster.reset-bean-name";
-
-    /**
      * The default reset bean name of {@link ApplicationEventMulticaster}.
      * <p>
      * The original bean name of {@link ApplicationEventMulticaster} is
@@ -65,6 +61,15 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
      * @see AbstractApplicationContext#APPLICATION_EVENT_MULTICASTER_BEAN_NAME
      */
     public static final String DEFAULT_RESET_BEAN_NAME = APPLICATION_EVENT_MULTICASTER_BEAN_NAME + "_ORIGINAL";
+
+    /**
+     * The property name of the reset bean name of {@link ApplicationEventMulticaster}
+     */
+    @ConfigurationProperty(
+            defaultValue = DEFAULT_RESET_BEAN_NAME,
+            description = "The property name of the reset bean name of ApplicationEventMulticaster"
+    )
+    public static final String RESET_BEAN_NAME_PROPERTY_NAME = "microsphere.spring.application-event-multicaster.reset-bean-name";
 
     /**
      * The method name of {@link ApplicationEventMulticaster#removeApplicationListeners(Predicate)}

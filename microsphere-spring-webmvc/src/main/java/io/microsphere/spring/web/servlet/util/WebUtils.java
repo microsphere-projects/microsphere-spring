@@ -1,5 +1,7 @@
 package io.microsphere.spring.web.servlet.util;
 
+import io.microsphere.annotation.Nonnull;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.Registration;
@@ -7,13 +9,14 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import static io.microsphere.util.ClassLoaderUtils.isPresent;
-import static org.springframework.util.ClassUtils.isAssignable;
-import static org.springframework.util.ClassUtils.resolveClassName;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static io.microsphere.util.ClassUtils.isAssignableFrom;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * Web Utilities Class
@@ -25,32 +28,14 @@ import static org.springframework.util.ClassUtils.resolveClassName;
 public abstract class WebUtils {
 
     /**
-     * Is Running in Servlet 3 or Above
-     */
-    private static final boolean servlet3OrAbove;
-
-    /**
-     * javax.servlet.ServletContainerInitializer @since 3.0
-     */
-    private static final String SERVLET_CONTAINER_INITIALIZER_CLASS_NAME = "javax.servlet.ServletContainerInitializer";
-
-    static {
-
-        ClassLoader classLoader = WebUtils.class.getClassLoader();
-
-        servlet3OrAbove = isPresent(SERVLET_CONTAINER_INITIALIZER_CLASS_NAME, classLoader);
-
-    }
-
-    /**
      * Is Running below Servlet 3 Container
      *
+     * @param servletContext {@link ServletContext}
      * @return If below , <code>true</code>
      */
-    public static boolean isRunningBelowServlet3Container() {
-        return !servlet3OrAbove;
+    public static boolean isRunningBelowServlet3Container(@Nonnull ServletContext servletContext) {
+        return servletContext.getMajorVersion() < 3;
     }
-
 
     /**
      * Get {@link ServletContext} from {@link HttpServletRequest}
@@ -58,15 +43,9 @@ public abstract class WebUtils {
      * @param request {@link HttpServletRequest}
      * @return non-null
      */
-    public static ServletContext getServletContext(HttpServletRequest request) {
-
-        if (isRunningBelowServlet3Container()) { // below Servlet 3.x
-
-            return request.getSession().getServletContext();
-
-        }
-
-        return request.getServletContext();
+    @Nonnull
+    public static ServletContext getServletContext(@Nonnull HttpServletRequest request) {
+        return request.getSession().getServletContext();
     }
 
     /**
@@ -76,8 +55,9 @@ public abstract class WebUtils {
      * @param filterClass    The {@link Class of class} of {@link Filter}
      * @return the {@link Map map} of {@link ServletRegistration}
      */
+    @Nonnull
     public static Map<String, ? extends FilterRegistration> findFilterRegistrations(
-            ServletContext servletContext, Class<? extends Filter> filterClass) {
+            @Nonnull ServletContext servletContext, @Nonnull Class<? extends Filter> filterClass) {
         Map<String, ? extends FilterRegistration> filterRegistrationsMap = servletContext.getFilterRegistrations();
         return findRegistrations(servletContext, filterRegistrationsMap, filterClass);
     }
@@ -90,11 +70,10 @@ public abstract class WebUtils {
      * @return the unmodifiable {@link Map map} of {@link ServletRegistration}
      */
     public static Map<String, ? extends ServletRegistration> findServletRegistrations(
-            ServletContext servletContext, Class<? extends Servlet> servletClass) {
+            @Nonnull ServletContext servletContext, @Nonnull Class<? extends Servlet> servletClass) {
         Map<String, ? extends ServletRegistration> servletRegistrationsMap = servletContext.getServletRegistrations();
         return findRegistrations(servletContext, servletRegistrationsMap, servletClass);
     }
-
 
     /**
      * Find the {@link Map map} of {@link Registration} in specified {@link Class}
@@ -109,26 +88,26 @@ public abstract class WebUtils {
             ServletContext servletContext, Map<String, R> registrationsMap, Class<?> targetClass) {
 
         if (registrationsMap.isEmpty()) {
-            return Collections.emptyMap();
+            return emptyMap();
         }
 
         ClassLoader classLoader = servletContext.getClassLoader();
 
-        Map<String, R> foundRegistrationsMap = new LinkedHashMap<String, R>();
+        Map<String, R> foundRegistrationsMap = newLinkedHashMap();
 
-        for (Map.Entry<String, R> entry : registrationsMap.entrySet()) {
+        for (Entry<String, R> entry : registrationsMap.entrySet()) {
             R registration = entry.getValue();
             String className = registration.getClassName();
-            Class<?> registeredRegistrationClass = resolveClassName(className, classLoader);
-            if (isAssignable(targetClass, registeredRegistrationClass)) {
+            Class<?> registeredRegistrationClass = resolveClass(className, classLoader);
+            if (isAssignableFrom(targetClass, registeredRegistrationClass)) {
                 String servletName = entry.getKey();
                 foundRegistrationsMap.put(servletName, registration);
             }
         }
 
-        return Collections.unmodifiableMap(foundRegistrationsMap);
-
+        return unmodifiableMap(foundRegistrationsMap);
     }
 
-
+    private WebUtils() {
+    }
 }

@@ -1,16 +1,25 @@
 package io.microsphere.spring.webmvc.context;
 
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import io.microsphere.annotation.ConfigurationProperty;
+import io.microsphere.logging.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.springframework.web.servlet.view.ViewResolverComposite;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
-import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
+import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
+import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
+import static io.microsphere.spring.webmvc.constants.PropertyConstants.MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX;
+import static io.microsphere.spring.webmvc.util.ViewResolverUtils.VIEW_RESOLVER_COMPOSITE_BEAN_NAME;
+import static io.microsphere.util.StringUtils.isBlank;
 
 /**
  * Exclusive {@link ViewResolver} {@link ApplicationListener} on {@link ContextRefreshedEvent}
@@ -19,56 +28,89 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncl
  * @see ViewResolver
  * @see ApplicationListener
  * @see ContextRefreshedEvent
- * @since 2017.03.23
+ * @since 1.0.0
  */
-public class ExclusiveViewResolverApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
+public class ExclusiveViewResolverApplicationListener implements ApplicationListener<ContextRefreshedEvent>, EnvironmentAware {
 
-    private static final Class<ViewResolver> VIEW_RESOLVER_CLASS = ViewResolver.class;
+    private static final Logger logger = getLogger(ExclusiveViewResolverApplicationListener.class);
 
-    private final String exclusiveViewResolverBeanName;
+    /**
+     * The property name of the exclusive {@link ViewResolver} bean name
+     */
+    @ConfigurationProperty
+    public static final String EXCLUSIVE_VIEW_RESOLVER_BEAN_NAME_PROPERTY_NAME =
+            MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX + "exclusive-bean-name";
 
-    public ExclusiveViewResolverApplicationListener(String exclusiveViewResolverBeanName) {
-        this.exclusiveViewResolverBeanName = exclusiveViewResolverBeanName;
-    }
+    private String exclusiveViewResolverBeanName;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-
         ApplicationContext applicationContext = event.getApplicationContext();
-
         configureExclusiveViewResolver(applicationContext);
+    }
 
+    @Override
+    public void setEnvironment(Environment environment) {
+        String exclusiveViewResolverBeanName = environment.getProperty(EXCLUSIVE_VIEW_RESOLVER_BEAN_NAME_PROPERTY_NAME);
+        setExclusiveViewResolverBeanName(exclusiveViewResolverBeanName);
+    }
 
+    public void setExclusiveViewResolverBeanName(String exclusiveViewResolverBeanName) {
+        this.exclusiveViewResolverBeanName = exclusiveViewResolverBeanName;
     }
 
     /**
      * Configure exclusive {@link ViewResolver}
      *
-     * @param applicationContext {@link ApplicationContext}
+     * @param context {@link ApplicationContext}
      */
-    private void configureExclusiveViewResolver(ApplicationContext applicationContext) {
-
-        Map<String, ViewResolver> viewResolversMap = beansOfTypeIncludingAncestors(applicationContext, VIEW_RESOLVER_CLASS);
-
-        int size = viewResolversMap.size();
-
-        if (size < 2) {
+    void configureExclusiveViewResolver(ApplicationContext context) {
+        String beanName = this.exclusiveViewResolverBeanName;
+        if (isBlank(beanName)) {
+            logger.trace("The 'exclusiveViewResolverBeanName' is blank, the configuration will be ignored!");
             return;
         }
 
-        ViewResolver exclusiveViewResolver = viewResolversMap.get(exclusiveViewResolverBeanName);
-
+        ViewResolver exclusiveViewResolver = getBeanIfAvailable(context, beanName, ViewResolver.class);
         if (exclusiveViewResolver == null) {
-
-            throw new NoSuchBeanDefinitionException(VIEW_RESOLVER_CLASS, exclusiveViewResolverBeanName);
-
+            logger.trace("No ViewResolver was found by the bean name : '{}'", beanName);
+            return;
         }
 
-        ContentNegotiatingViewResolver contentNegotiatingViewResolver =
-                applicationContext.getBean(ContentNegotiatingViewResolver.class);
-
-        contentNegotiatingViewResolver.setViewResolvers(Arrays.asList(exclusiveViewResolver));
-
+        configureContentNegotiatingViewResolver(exclusiveViewResolver, context);
     }
 
+    private void configureContentNegotiatingViewResolver(ViewResolver exclusiveViewResolver, ApplicationContext context) {
+
+        ContentNegotiatingViewResolver contentNegotiatingViewResolver = getOptionalBean(context, ContentNegotiatingViewResolver.class);
+
+        if (contentNegotiatingViewResolver == null) {
+            logger.trace("No ContentNegotiatingViewResolver was found in the application context : {}", context);
+            configureViewResolverComposite(exclusiveViewResolver, context);
+            return;
+        }
+
+        List<ViewResolver> viewResolvers = contentNegotiatingViewResolver.getViewResolvers();
+
+        contentNegotiatingViewResolver.setViewResolvers(ofList(exclusiveViewResolver));
+
+        logger.trace("The view resolvers of ContentNegotiatingViewResolver has been reset , before : {} , after : {}",
+                viewResolvers, exclusiveViewResolver);
+    }
+
+    private void configureViewResolverComposite(ViewResolver exclusiveViewResolver, ApplicationContext context) {
+        ViewResolverComposite viewResolverComposite = getBeanIfAvailable(context, VIEW_RESOLVER_COMPOSITE_BEAN_NAME, ViewResolverComposite.class);
+
+        if (viewResolverComposite == null) {
+            logger.trace("No ViewResolverComposite was found in the application context : {}", context);
+            return;
+        }
+
+        List<ViewResolver> viewResolvers = viewResolverComposite.getViewResolvers();
+
+        viewResolverComposite.setViewResolvers(ofList(exclusiveViewResolver));
+
+        logger.trace("The view resolvers of ViewResolverComposite has been reset , before : {} , after : {}",
+                viewResolvers, exclusiveViewResolver);
+    }
 }

@@ -26,13 +26,14 @@ import org.springframework.core.io.support.DefaultPropertySourceFactory;
 import org.springframework.core.io.support.PropertySourceFactory;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Comparator;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A variant of the {@link PropertySource @PropertySource} annotation that has some limitations:
@@ -44,19 +45,87 @@ import java.util.Comparator;
  *     <li>The {@link PropertySource#encoding() PropertySource#encoding()} attribute does not specify the default encoding for the {@link Resource resource}</li>
  * </ul>
  * <p>
- * Annotation providing a convenient and declarative mechanism for adding a
- * {@link org.springframework.core.env.PropertySource PropertySource} to Spring's Environment.
- * To be used in conjunction with {@link Configuration @Configuration} classes.
+ * This annotation provides additional features not available with the standard {@link PropertySource}, such as:
+ * <ul>
+ *     <li>Support for meta-annotation usage</li>
+ *     <li>Control over the order in which property sources are added to Spring's Environment</li>
+ *     <li>Inheritance through the use of the {@link Inherited} annotation</li>
+ *     <li>Support for resource location wildcards in the resource paths</li>
+ *     <li>Ability to specify default encoding for property resources</li>
+ * </ul>
+ *
+ * <h3>Examples Usage</h3>
+ *
+ * <h4>Basic Usage</h4>
+ * To load a simple properties file from the classpath:
+ * <pre>{@code
+ * @ResourcePropertySource("classpath:/com/example/config/app.properties")
+ * public class AppConfig {
+ * }
+ * }</pre>
+ *
+ * <h4>Specifying Order</h4>
+ * To control the precedence of this property source, you can use the attributes like {@link #before()} or {@link #first()}:
+ * <pre>{@code
+ * // Make this property source first in the list
+ * @ResourcePropertySource(value = "classpath:/com/example/config/app.properties", first = true)
+ * public class AppConfig {
+ * }
+ * }</pre>
+ *
+ * <h4>Using Wildcards and Custom Comparator</h4>
+ * When using wildcards to load multiple property files, you can also define the loading order via a custom comparator:
+ * <pre>{@code
+ * @ResourcePropertySource(
+ *     value = "classpath:/com/example/config/*.properties",
+ *     resourceComparator = MyCustomResourceComparator.class
+ * )
+ * public class AppConfig {
+ * }
+ * }</pre>
+ *
+ * <h4>Ignoring Missing Resources</h4>
+ * If the property file is optional, you can choose to ignore missing files:
+ * <pre>{@code
+ * @ResourcePropertySource(
+ *     value = "classpath:/com/example/config/app.properties",
+ *     ignoreResourceNotFound = true
+ * )
+ * public class AppConfig {
+ * }
+ * }</pre>
+ *
+ * <h4>Encoding Support</h4>
+ * You can also specify the encoding used when reading property files:
+ * <pre>{@code
+ * @ResourcePropertySource(
+ *     value = "classpath:/com/example/config/app.properties",
+ *     encoding = "ISO-8859-1"
+ * )
+ * public class AppConfig {
+ * }
+ * }</pre>
+ *
+ * <h4>Custom PropertySourceFactory</h4>
+ * To customize how the property source is created, provide your own implementation of
+ * {@link PropertySourceFactory}:
+ * <pre>{@code
+ * @ResourcePropertySource(
+ *     value = "classpath:/com/example/config/app.properties",
+ *     factory = MyCustomPropertySourceFactory.class
+ * )
+ * public class AppConfig {
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySource
- * @see ResourcePropertySource
  * @see org.springframework.core.env.PropertySource
  * @see Configuration
  * @since 1.0.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(TYPE)
+@Retention(RUNTIME)
 @Inherited
 @Documented
 @PropertySourceExtension
@@ -156,10 +225,10 @@ public @interface ResourcePropertySource {
 
     /**
      * A specific character encoding for the given resources.
-     * <p>Default is "UTF-8"
+     * <p>Default is the property value of "file.encoding" if present, or "UTF-8"
      */
     @AliasFor(annotation = PropertySourceExtension.class)
-    String encoding() default "UTF-8";
+    String encoding() default "${file.encoding:UTF-8}";
 
     /**
      * Specify a custom {@link PropertySourceFactory}, if any.

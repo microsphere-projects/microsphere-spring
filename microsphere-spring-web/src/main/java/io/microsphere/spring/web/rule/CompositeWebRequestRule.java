@@ -18,9 +18,10 @@ package io.microsphere.spring.web.rule;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
+import static io.microsphere.collection.Lists.ofList;
 import static java.util.Collections.emptyList;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -34,10 +35,10 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  */
 public class CompositeWebRequestRule implements WebRequestRule {
 
-    private List<WebRequestRule> webRequestRules;
+    private final List<WebRequestRule> webRequestRules;
 
     public CompositeWebRequestRule(WebRequestRule... requestRules) {
-        this.webRequestRules = isEmpty(requestRules) ? emptyList() : Arrays.asList(requestRules);
+        this.webRequestRules = isEmpty(requestRules) ? emptyList() : ofList(requestRules);
     }
 
     @Override
@@ -48,5 +49,27 @@ public class CompositeWebRequestRule implements WebRequestRule {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CompositeWebRequestRule that = (CompositeWebRequestRule) o;
+        return Objects.equals(webRequestRules, that.webRequestRules);
+    }
+
+    @Override
+    public int hashCode() {
+        return webRequestRules.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return webRequestRules.toString();
     }
 }

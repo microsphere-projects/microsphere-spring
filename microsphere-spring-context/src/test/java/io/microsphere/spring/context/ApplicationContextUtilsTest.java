@@ -23,6 +23,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
@@ -43,7 +44,7 @@ public class ApplicationContextUtilsTest {
     private GenericApplicationContext context;
 
     @Before
-    public void init() {
+    public void setUp() {
         context = new GenericApplicationContext();
         context.refresh();
     }
@@ -54,9 +55,15 @@ public class ApplicationContextUtilsTest {
     }
 
     @Test
-    public void testAsConfigurableApplicationContext() {
+    public void testAsConfigurableApplicationContextWithContext() {
         ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
         assertSame(context, applicationContext);
+    }
+
+    @Test
+    public void testAsConfigurableApplicationContextWithObject() {
+        ResourceLoader resourceLoader = this.context;
+        assertSame(this.context, asConfigurableApplicationContext(resourceLoader));
     }
 
     @Test

@@ -20,18 +20,27 @@ import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
+import io.microsphere.spring.web.metadata.WebEndpointMappingFilter;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
+import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enable annotation to extend the features of Spring Web
@@ -41,8 +50,8 @@ import java.lang.annotation.Target;
  * @see org.springframework.web.reactive.config.EnableWebFlux
  * @since 1.0.0
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RUNTIME)
+@Target({TYPE, ANNOTATION_TYPE})
 @Documented
 @Inherited
 @Import(WebExtensionBeanDefinitionRegistrar.class)
@@ -54,7 +63,10 @@ public @interface EnableWebExtension {
      *
      * @return <code>true</code> as default
      * @see WebEndpointMapping
+     * @see WebEndpointMappingResolver
      * @see WebEndpointMappingRegistry
+     * @see WebEndpointMappingFactory
+     * @see WebEndpointMappingFilter
      */
     boolean registerWebEndpointMappings() default true;
 
@@ -83,4 +95,13 @@ public @interface EnableWebExtension {
      */
     boolean publishEvents() default true;
 
+    /**
+     * Indicate where the {@link RequestAttributes} stores.
+     *
+     * @return {@link RequestContextStrategy#DEFAULT} as default
+     * @see RequestAttributes
+     * @see RequestContextHolder
+     * @see RequestContextStrategy
+     */
+    RequestContextStrategy requestContextStrategy() default DEFAULT;
 }

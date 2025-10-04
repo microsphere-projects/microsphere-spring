@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.collection.SetUtils;
-import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.MutablePropertyValues;
@@ -35,7 +35,6 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.StopWatch;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -44,6 +43,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
@@ -56,6 +56,7 @@ import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
+import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.MemberUtils.isStatic;
@@ -132,7 +133,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         clearResolvedBeanMembers();
 
-        logger.info(stopWatch.toString());
+        if (logger.isTraceEnabled()) {
+            logger.trace(stopWatch.toString());
+        }
 
         return dependentBeanNamesMap;
     }
@@ -143,21 +146,12 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         int beansCount = eligibleBeanDefinitionsMap.size();
         final Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
 
-        CompletionService<Map.Entry<String, Set<String>>> completionService = new ExecutorCompletionService<>(this.executorService);
-
-        for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
-            completionService.submit(() -> {
-                String beanName = entry.getKey();
-                RootBeanDefinition beanDefinition = entry.getValue();
-                Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
-                return ofEntry(beanName, dependentBeanNames);
-            });
-        }
+        CompletionService<Entry<String, Set<String>>> completionService = getEntryCompletionService(eligibleBeanDefinitionsMap);
 
         for (int i = 0; i < beansCount; i++) {
-            ThrowableAction.execute(() -> {
-                Future<Map.Entry<String, Set<String>>> future = completionService.take();
-                Map.Entry<String, Set<String>> entry = future.get();
+            execute(() -> {
+                Future<Entry<String, Set<String>>> future = completionService.take();
+                Entry<String, Set<String>> entry = future.get();
                 String beanName = entry.getKey();
                 Set<String> dependentBeanNames = entry.getValue();
                 dependentBeanNamesMap.put(beanName, dependentBeanNames);
@@ -168,11 +162,25 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return dependentBeanNamesMap;
     }
 
+    private CompletionService<Entry<String, Set<String>>> getEntryCompletionService(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap) {
+        CompletionService<Entry<String, Set<String>>> completionService = new ExecutorCompletionService<>(this.executorService);
+
+        for (Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
+            completionService.submit(() -> {
+                String beanName = entry.getKey();
+                RootBeanDefinition beanDefinition = entry.getValue();
+                Set<String> dependentBeanNames = resolve(beanName, beanDefinition, beanFactory);
+                return ofEntry(beanName, dependentBeanNames);
+            });
+        }
+        return completionService;
+    }
+
     private void preProcessLoadBeanClasses(Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap, StopWatch stopWatch) {
         stopWatch.start("preProcessLoadBeanClasses");
 
         ClassLoader classLoader = this.classLoader;
-        for (Map.Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
+        for (Entry<String, RootBeanDefinition> entry : eligibleBeanDefinitionsMap.entrySet()) {
             String beanName = entry.getKey();
             RootBeanDefinition beanDefinition = entry.getValue();
             preProcessLoadBeanClass(beanName, beanDefinition, eligibleBeanDefinitionsMap, classLoader);
@@ -203,7 +211,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             }
         } else {
             executorService.execute(() -> {
-                Class beanClass = loadClass(beanClassName, classLoader, true);
+                Class beanClass = loadClass(classLoader, beanClassName, true);
                 beanDefinition.setBeanClass(beanClass);
                 if (logger.isTraceEnabled()) {
                     logger.trace("The bean[name : '{}'] class[name : '{}'] was loaded", beanName, beanClassName);
@@ -233,7 +241,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap, StopWatch stopWatch) {
         stopWatch.start("flattenDependentBeanNamesMap");
 
-        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
             if (dependentBeanNames.isEmpty()) { // No Dependent bean name
                 continue;
@@ -247,7 +255,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         }
 
         Set<String> nonRootBeanNames = new LinkedHashSet<>();
-        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             String beanName = entry.getKey();
             Set<String> dependentBeanNames = entry.getValue();
             for (String dependentBeanName : dependentBeanNames) {
@@ -272,7 +280,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private void logDependentBeanNames(Map<String, Set<String>> dependentBeanNamesMap) {
         if (logger.isTraceEnabled()) {
-            for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+            for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
                 logger.trace("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
             }
         }

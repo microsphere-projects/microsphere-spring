@@ -19,6 +19,7 @@ package io.microsphere.spring.util;
 import org.junit.Test;
 import org.springframework.util.MimeType;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL;
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL_VALUE;
 import static io.microsphere.spring.util.MimeTypeUtils.equalsTypeAndSubtype;
@@ -73,8 +74,8 @@ public class MimeTypeUtilsTest {
     public void testIsPresentIn() {
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, null));
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, emptyList()));
-        assertFalse(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_TEXT)));
+        assertFalse(isPresentIn(APPLICATION_GRAPHQL, ofList(APPLICATION_TEXT)));
         assertTrue(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_TEXT, APPLICATION_GRAPHQL)));
-        assertTrue(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_GRAPHQL)));
+        assertTrue(isPresentIn(APPLICATION_GRAPHQL, ofList(APPLICATION_GRAPHQL)));
     }
 }

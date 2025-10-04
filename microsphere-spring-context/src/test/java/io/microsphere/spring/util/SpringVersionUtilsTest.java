@@ -28,6 +28,7 @@ import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSI
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CORE_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 /**
  * {@link SpringVersionUtils} Test
@@ -37,14 +38,14 @@ import static org.junit.Assert.assertEquals;
  */
 public class SpringVersionUtilsTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testGetSpringVersionOnNPE() {
-        getSpringVersion((Class) null);
+        assertThrows(NullPointerException.class, () -> getSpringVersion((Class) null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetSpringVersionOnIAE() {
-        getSpringVersion(String.class);
+        assertThrows(IllegalArgumentException.class, () -> getSpringVersion(String.class));
     }
 
     @Test

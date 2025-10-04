@@ -19,12 +19,16 @@ package io.microsphere.spring.beans.factory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +49,9 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvable
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isDefaultListableBeanFactory;
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -65,24 +71,24 @@ public class BeanFactoryUtilsTest {
     private ConfigurableListableBeanFactory beanFactory;
 
     @Before
-    public void init() {
+    public void setUp() {
         this.applicationContext = new AnnotationConfigApplicationContext();
         this.beanFactory = this.applicationContext.getBeanFactory();
     }
 
     @After
-    public void destroy() {
-        applicationContext.close();
+    public void tearDown() {
+        this.applicationContext.close();
     }
 
     @Test
     public void testGetOptionalBean() {
 
-        applicationContext.register(BaseTestBean.class);
+        this.applicationContext.register(BaseTestBean.class);
 
         this.applicationContext.refresh();
 
-        BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
+        BaseTestBean testBean = getOptionalBean(this.applicationContext, "baseTestBean", BaseTestBean.class);
 
         assertNotNull(testBean);
 
@@ -95,15 +101,15 @@ public class BeanFactoryUtilsTest {
 
         this.applicationContext.refresh();
 
-        BaseTestBean testBean = getOptionalBean(applicationContext, "baseTestBean", BaseTestBean.class);
+        BaseTestBean testBean = getOptionalBean(this.applicationContext, "baseTestBean", BaseTestBean.class);
 
         assertNull(testBean);
 
-        testBean = getOptionalBean(applicationContext, "1", BaseTestBean.class);
+        testBean = getOptionalBean(this.applicationContext, "1", BaseTestBean.class);
 
         assertNull(testBean);
 
-        testBean = getOptionalBean(applicationContext, null, BaseTestBean.class);
+        testBean = getOptionalBean(this.applicationContext, null, BaseTestBean.class);
 
         assertNull(testBean);
     }
@@ -115,21 +121,21 @@ public class BeanFactoryUtilsTest {
 
         this.applicationContext.refresh();
 
-        List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
+        List<BaseTestBean> testBeans = getBeans(this.applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
         assertEquals(1, testBeans.size());
 
         assertEquals("Hello,World", testBeans.get(0).getName());
 
-        testBeans = getBeans(applicationContext, (String[]) null, BaseTestBean.class);
+        testBeans = getBeans(this.applicationContext, null, BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
 
-        testBeans = getBeans(applicationContext, of((String) null), BaseTestBean.class);
+        testBeans = getBeans(this.applicationContext, of((String) null), BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
 
-        testBeans = getBeans(applicationContext, of("abc"), BaseTestBean.class);
+        testBeans = getBeans(this.applicationContext, of("abc"), BaseTestBean.class);
 
         assertEquals(0, testBeans.size());
     }
@@ -139,7 +145,7 @@ public class BeanFactoryUtilsTest {
 
         this.applicationContext.refresh();
 
-        List<BaseTestBean> testBeans = getBeans(applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
+        List<BaseTestBean> testBeans = getBeans(this.applicationContext, new String[]{"baseTestBean"}, BaseTestBean.class);
 
         assertTrue(testBeans.isEmpty());
 
@@ -175,6 +181,74 @@ public class BeanFactoryUtilsTest {
         List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(this.beanFactory);
         assertFalse(beanPostProcessors.isEmpty());
         assertEquals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME, beanPostProcessors.get(0).getClass().getName());
+    }
+
+    @Test
+    public void testGetBeanPostProcessorsOnNotAbstractFactory() {
+        List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(new BeanFactory() {
+
+            public Object getBean(String name) throws BeansException {
+                return null;
+            }
+
+            public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+                return null;
+            }
+
+            public Object getBean(String name, Object... args) throws BeansException {
+                return null;
+            }
+
+            public <T> T getBean(Class<T> requiredType) throws BeansException {
+                return null;
+            }
+
+            public <T> T getBean(Class<T> requiredType, Object... args) throws BeansException {
+                return null;
+            }
+
+            public <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType) {
+                return null;
+            }
+
+            public <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType) {
+                return null;
+            }
+
+            public boolean containsBean(String name) {
+                return false;
+            }
+
+            public boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
+                return false;
+            }
+
+            public boolean isPrototype(String name) throws NoSuchBeanDefinitionException {
+                return false;
+            }
+
+            public boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException {
+                return false;
+            }
+
+            public boolean isTypeMatch(String name, Class<?> typeToMatch) throws NoSuchBeanDefinitionException {
+                return false;
+            }
+
+            public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+                return null;
+            }
+
+            public Class<?> getType(String name, boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException {
+                return null;
+            }
+
+            public String[] getAliases(String name) {
+                return EMPTY_STRING_ARRAY;
+            }
+        });
+
+        assertSame(emptyList(), beanPostProcessors);
     }
 
 

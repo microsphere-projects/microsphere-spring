@@ -52,11 +52,6 @@ public class WebRequestHeaderExpression extends AbstractNameValueExpression<Stri
     }
 
     @Override
-    protected boolean isCaseSensitiveName() {
-        return false;
-    }
-
-    @Override
     protected String parseValue(String valueExpression) {
         return valueExpression;
     }

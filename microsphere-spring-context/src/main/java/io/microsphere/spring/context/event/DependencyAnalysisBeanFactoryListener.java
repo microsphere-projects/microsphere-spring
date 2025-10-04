@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.filter.Filter;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -45,11 +45,13 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Supplier;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
@@ -60,7 +62,6 @@ import static io.microsphere.util.ArrayUtils.EMPTY_PARAMETER_ARRAY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singletonList;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -68,6 +69,14 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * Dependency Analysis {@link BeanFactoryListener}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListenerAdapter {
@@ -96,7 +105,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
         Map<String, Set<String>> dependenciesMap = new LinkedHashMap<>(dependentBeanNamesMap.size());
-        for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
             if (dependentBeanNames.isEmpty()) { // No Dependent bean name
                 continue;
@@ -110,7 +119,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         }
 
         // Remove the bean names that ware dependent by the requesting beans
-        for (Map.Entry<String, Set<String>> entry : dependenciesMap.entrySet()) {
+        for (Entry<String, Set<String>> entry : dependenciesMap.entrySet()) {
             String dependentBeanName = entry.getKey();
             dependentBeanNamesMap.remove(dependentBeanName);
             logDependenciesTrace(dependentBeanName, entry);
@@ -120,7 +129,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     }
 
 
-    private void logDependenciesTrace(String dependentBeanName, Map.Entry<String, Set<String>> dependencies) {
+    private void logDependenciesTrace(String dependentBeanName, Entry<String, Set<String>> dependencies) {
         if (logger.isTraceEnabled()) {
             logger.trace("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
         }
@@ -129,7 +138,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
         if (logger.isTraceEnabled()) {
-            for (Map.Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
+            for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
                 logger.trace("The bean : '{}' <- bean dependencies : {}", entry.getKey(), entry.getValue());
             }
         }
@@ -288,7 +297,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             String[] beanNames = beanFactory.getBeanNamesForType(dependentType, false, false);
             return asList(beanNames);
         } else {
-            return singletonList(dependentBeanName);
+            return ofList(dependentBeanName);
         }
     }
 

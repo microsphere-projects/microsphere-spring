@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.metadata;
 
+import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,9 @@ import java.lang.invoke.MethodHandle;
 import java.util.Collection;
 import java.util.Set;
 
-import static io.microsphere.invoke.MethodHandleUtils.NOT_FOUND_METHOD_HANDLE;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.invoke.MethodHandlesLookupUtils.NOT_FOUND_METHOD_HANDLE;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -72,6 +74,12 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
     protected HandlerMethod getHandler(HandlerMetadata<HandlerMethod, RequestMappingInfo> handlerMetadata) {
         HandlerMethod handlerMethod = handlerMetadata.getHandler();
         return handlerMethod.createWithResolvedBean();
+    }
+
+    @Override
+    protected Collection<String> getMethods(HandlerMethod handler, RequestMappingInfo metadata) {
+        Set<RequestMethod> methods = metadata.getMethodsCondition().getMethods();
+        return methods.stream().map(RequestMethod::name).collect(toList());
     }
 
     @Override

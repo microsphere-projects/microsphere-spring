@@ -16,20 +16,24 @@
  */
 package io.microsphere.spring.core.annotation;
 
+import io.microsphere.annotation.Immutable;
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import org.springframework.core.annotation.AnnotationAttributes;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.Assert.assertNotNull;
+import static java.util.Arrays.deepHashCode;
+import static java.util.Arrays.deepToString;
 import static java.util.Collections.emptySet;
+import static java.util.Objects.deepEquals;
 
 /**
  * Generic {@link AnnotationAttributes}
@@ -41,19 +45,20 @@ import static java.util.Collections.emptySet;
  */
 public class GenericAnnotationAttributes<A extends Annotation> extends AnnotationAttributes {
 
-    @Nullable
+    @Nonnull
     private final Class<A> annotationType;
 
     public GenericAnnotationAttributes(A annotation) {
         this(getAnnotationAttributes(annotation, false), (Class<A>) annotation.annotationType());
     }
 
-    public GenericAnnotationAttributes(AnnotationAttributes another) {
-        this(another, findAnnotationType(another));
+    public GenericAnnotationAttributes(AnnotationAttributes attributes) {
+        this(attributes, findAnnotationType(attributes));
     }
 
-    public GenericAnnotationAttributes(Map<String, Object> another, Class<A> annotationType) {
+    public GenericAnnotationAttributes(Map<String, Object> another, @Nonnull Class<A> annotationType) {
         super(another);
+        assertNotNull(annotationType, () -> "The annotation type must not be null");
         this.annotationType = annotationType;
     }
 
@@ -62,9 +67,9 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * <p>
      * Current method will override the super classes' method since Spring Framework 4.2
      *
-     * @return <code>null</code> if not found
+     * @return non-null
      */
-    @Nullable
+    @Nonnull
     public Class<A> annotationType() {
         return annotationType;
     }
@@ -77,12 +82,16 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
 
         AnnotationAttributes that = (AnnotationAttributes) o;
 
+        if (!this.annotationType().equals(that.annotationType())) {
+            return false;
+        }
+
         if (this.size() == that.size()) {
-            for (Map.Entry<String, Object> entry : this.entrySet()) {
+            for (Entry<String, Object> entry : this.entrySet()) {
                 String attributeName = entry.getKey();
                 Object attributeValue = entry.getValue();
                 Object thatAttributeValue = that.get(attributeName);
-                if (!Objects.deepEquals(attributeValue, thatAttributeValue)) {
+                if (!deepEquals(attributeValue, thatAttributeValue)) {
                     return false;
                 }
             }
@@ -93,20 +102,45 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
     @Override
     public int hashCode() {
         int h = 0;
-        for (Map.Entry<String, Object> entry : this.entrySet()) {
+        for (Entry<String, Object> entry : this.entrySet()) {
             String attributeName = entry.getKey();
             h += 31 * attributeName.hashCode();
             Object attributeValue = entry.getValue();
             if (attributeValue != null) {
                 Class<?> attributeValueType = attributeValue.getClass();
                 if (attributeValueType.isArray()) {
-                    h += 31 * Arrays.deepHashCode((Object[]) attributeValue);
+                    h += 31 * deepHashCode((Object[]) attributeValue);
                 } else {
                     h += 31 * attributeValue.hashCode();
                 }
             }
         }
         return h;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("@")
+                .append(annotationType().getName())
+                .append("(");
+        for (Entry<String, Object> entry : entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            Class<?> valueType = value.getClass();
+
+            stringBuilder.append(name).append('=');
+
+            if (CharSequence.class.isAssignableFrom(valueType)) {
+                stringBuilder.append('"').append(value).append('"');
+            } else if (valueType.isArray()) {
+                stringBuilder.append(deepToString((Object[]) value));
+            } else {
+                stringBuilder.append(value);
+            }
+            stringBuilder.append(',');
+        }
+        stringBuilder.setCharAt(stringBuilder.length() - 1, ')');
+        return stringBuilder.toString();
     }
 
 
@@ -144,6 +178,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
      * @return non-null
      */
     @Nonnull
+    @Immutable
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes... attributesArray) {
         int length = attributesArray == null ? 0 : attributesArray.length;
 
@@ -151,7 +186,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             return emptySet();
         }
 
-        Set<AnnotationAttributes> annotationAttributesSet = new LinkedHashSet<>();
+        Set<AnnotationAttributes> annotationAttributesSet = newFixedLinkedHashSet(length);
         for (int i = 0; i < length; i++) {
             AnnotationAttributes annotationAttributes = attributesArray[i];
             annotationAttributesSet.add(of(annotationAttributes));

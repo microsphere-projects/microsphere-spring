@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
+import static io.microsphere.spring.core.convert.SpringConverterAdapter.INSTANCE;
 import static io.microsphere.spring.core.convert.SpringConverterAdapter.buildConvertiblePair;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -40,7 +41,7 @@ import static org.springframework.core.convert.TypeDescriptor.valueOf;
  */
 public class SpringConverterAdapterTest {
 
-    private SpringConverterAdapter converterAdapter = SpringConverterAdapter.INSTANCE;
+    private final SpringConverterAdapter converterAdapter = INSTANCE;
 
     @Test
     public void testMatch() {
@@ -52,7 +53,7 @@ public class SpringConverterAdapterTest {
         assertMatch(String.class, Short.class);
         assertMatch(String.class, Integer.class);
         assertMatch(String.class, Long.class);
-        assertMatch(String.class, Optional.class);
+        assertMatch(Object.class, Optional.class);
         assertMatch(String.class, String.class);
         assertMatch(Map.class, Properties.class);
         assertMatch(Properties.class, String.class);
@@ -68,7 +69,7 @@ public class SpringConverterAdapterTest {
         assertGetConvertibleTypes(String.class, Short.class);
         assertGetConvertibleTypes(String.class, Integer.class);
         assertGetConvertibleTypes(String.class, Long.class);
-        assertGetConvertibleTypes(String.class, Optional.class);
+        assertGetConvertibleTypes(Object.class, Optional.class);
         assertGetConvertibleTypes(String.class, String.class);
         assertGetConvertibleTypes(Map.class, Properties.class);
         assertGetConvertibleTypes(Properties.class, String.class);

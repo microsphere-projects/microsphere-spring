@@ -27,14 +27,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- JSR 305 -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- MicroSphere Core -->
+        <!-- Microsphere Java Core -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-java-core</artifactId>
@@ -92,6 +85,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Microsphere Annotation Processor -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-annotation-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
@@ -99,15 +99,25 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Mockito Core -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Test -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Microsphere Spring Test -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-spring-test</artifactId>
+            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
 

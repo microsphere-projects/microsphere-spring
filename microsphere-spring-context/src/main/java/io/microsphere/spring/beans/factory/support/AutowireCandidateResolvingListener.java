@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,6 +38,23 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  *     <li>{@link AutowireCandidateResolver#getSuggestedValue(DependencyDescriptor) resolving suggested value}</li>
  *     <li>{@link AutowireCandidateResolver#getLazyResolutionProxyIfNecessary(DependencyDescriptor, String) resolving lazy proxy}</li>
  * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <p>
+ * Implementing this interface to handle events when a suggested value is resolved:
+ * <pre>{@code
+ * public class MyAutowireCandidateResolvingListener implements AutowireCandidateResolvingListener {
+ *     @Override
+ *     public void suggestedValueResolved(DependencyDescriptor descriptor, Object suggestedValue) {
+ *         System.out.println("Suggested value for " + descriptor + " is: " + suggestedValue);
+ *     }
+ *
+ *     @Override
+ *     public void lazyProxyResolved(DependencyDescriptor descriptor, String beanName, Object proxy) {
+ *         System.out.println("Lazy proxy for " + descriptor + " in bean " + beanName + " is: " + proxy);
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
  * @see ListenableAutowireCandidateResolver

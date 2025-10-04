@@ -22,10 +22,12 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.NamedBeanHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -36,7 +38,13 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
  * The Composite {@link BeanFactoryListener}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanInitializer
+ * @see EventPublishingBeanBeforeProcessor
+ * @see EventPublishingBeanAfterProcessor
  * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see ConfigurableListableBeanFactory
+ * @see DefaultListableBeanFactory
  * @since 1.0.0
  */
 class BeanFactoryListeners implements BeanFactoryListener {
@@ -58,7 +66,7 @@ class BeanFactoryListeners implements BeanFactoryListener {
         registerSpringFactoriesBeans(beanFactory, BeanFactoryListener.class);
         Map<String, BeanFactoryListener> beanDefinitionListenersMap = beanFactory.getBeansOfType(BeanFactoryListener.class);
         List<NamedBeanHolder<BeanFactoryListener>> namedListeners = new ArrayList<>(beanDefinitionListenersMap.size());
-        for (Map.Entry<String, BeanFactoryListener> entry : beanDefinitionListenersMap.entrySet()) {
+        for (Entry<String, BeanFactoryListener> entry : beanDefinitionListenersMap.entrySet()) {
             NamedBeanHolder<BeanFactoryListener> namedListener = new NamedBeanHolder<>(entry.getKey(), entry.getValue());
             namedListeners.add(namedListener);
         }

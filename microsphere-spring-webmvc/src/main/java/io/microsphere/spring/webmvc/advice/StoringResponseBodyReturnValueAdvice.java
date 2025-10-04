@@ -12,8 +12,8 @@ import org.springframework.web.method.HandlerMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
+import static io.microsphere.spring.webmvc.util.WebMvcUtils.SUPPORTED_CONVERTER_TYPES;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.setHandlerMethodReturnValue;
-import static io.microsphere.spring.webmvc.util.WebMvcUtils.supportedConverterTypes;
 
 /**
  * Store {@link HandlerMethod} return value {@link ResponseBodyAdviceAdapter}
@@ -26,7 +26,7 @@ public class StoringResponseBodyReturnValueAdvice extends ResponseBodyAdviceAdap
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return supportedConverterTypes.contains(converterType);
+        return SUPPORTED_CONVERTER_TYPES.contains(converterType);
     }
 
     @Override

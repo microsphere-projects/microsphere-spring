@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.convert.Converter.convertIfPossible;
 import static io.microsphere.util.ServiceLoaderUtils.loadServicesList;
 
 /**
@@ -93,6 +94,6 @@ public class SpringConverterAdapter implements ConditionalGenericConverter {
     @Override
     public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
         Converter converter = getConverter(sourceType, targetType);
-        return converter.convert(source);
+        return converter == null ? convertIfPossible(source, targetType.getType()) : converter.convert(source);
     }
 }

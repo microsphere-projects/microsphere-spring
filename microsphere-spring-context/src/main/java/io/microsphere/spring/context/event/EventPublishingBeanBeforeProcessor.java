@@ -25,7 +25,6 @@ import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.InstantiationStrategy;
@@ -36,14 +35,22 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
+import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.registerBeanDefinition;
 
 /**
  * Bean Before-Event Publishing Processor
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EventPublishingBeanAfterProcessor
+ * @see BeanListeners
+ * @see BeanListener
+ * @see BeanListenerAdapter
+ * @see BeanFactoryListeners
+ * @see BeanFactoryListener
+ * @see BeanFactoryListenerAdapter
+ * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
 class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProcessorAdapter
@@ -75,27 +82,47 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
 
     @Override
     public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner) throws BeansException {
-        return aroundInstantiate(beanName, bd, () -> instantiationStrategyDelegate.instantiate(bd, beanName, owner));
+        this.beanEventListeners.onBeforeBeanInstantiate(beanName, bd);
+        Object bean = null;
+        try {
+            bean = instantiationStrategyDelegate.instantiate(bd, beanName, owner);
+        } finally {
+            this.beanEventListeners.onAfterBeanInstantiated(beanName, bd, bean);
+        }
+        return bean;
     }
 
     @Override
     public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner, Constructor<?> ctor, Object... args) throws BeansException {
-        return aroundInstantiate(beanName, bd, () -> instantiationStrategyDelegate.instantiate(bd, beanName, owner, ctor, args));
+        this.beanEventListeners.onBeforeBeanInstantiate(beanName, bd, ctor, args);
+        Object bean = null;
+        try {
+            bean = instantiationStrategyDelegate.instantiate(bd, beanName, owner, ctor, args);
+        } finally {
+            this.beanEventListeners.onAfterBeanInstantiated(beanName, bd, bean);
+        }
+        return bean;
     }
 
     @Override
     public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner, Object factoryBean, Method factoryMethod, Object... args) throws BeansException {
-        return aroundInstantiate(beanName, bd, () -> instantiationStrategyDelegate.instantiate(bd, beanName, owner, factoryBean, factoryMethod, args));
-    }
-
-    private Object aroundInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Supplier<Object> beanSupplier) {
-        this.beanEventListeners.onBeforeBeanInstantiate(beanName, mergedBeanDefinition);
-        Object bean = beanSupplier.get();
-        this.beanEventListeners.onAfterBeanInstantiated(beanName, mergedBeanDefinition, bean);
+        this.beanEventListeners.onBeforeBeanInstantiate(beanName, bd, factoryBean, factoryMethod, args);
+        Object bean = null;
+        try {
+            bean = instantiationStrategyDelegate.instantiate(bd, beanName, owner, factoryBean, factoryMethod, args);
+        } finally {
+            this.beanEventListeners.onAfterBeanInstantiated(beanName, bd, bean);
+        }
         return bean;
     }
 
     public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
+        postProcessProperties(pvs, bean, beanName);
+        return pvs;
+    }
+
+    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
+            throws BeansException {
         this.beanEventListeners.onBeanPropertyValuesReady(beanName, bean, pvs);
         return pvs;
     }
@@ -138,7 +165,7 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
 
         // re-register previous bean definitions
         beanDefinitionHolders.forEach(beanDefinitionHolder -> {
-            BeanDefinitionReaderUtils.registerBeanDefinition(beanDefinitionHolder, registry);
+            registerBeanDefinition(beanDefinitionHolder, registry);
         });
     }
 

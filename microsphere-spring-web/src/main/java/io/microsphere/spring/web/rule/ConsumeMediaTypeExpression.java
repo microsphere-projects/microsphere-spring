@@ -16,16 +16,16 @@
  */
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
+import static io.microsphere.util.ArrayUtils.length;
+import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.parseMediaTypes;
 
@@ -49,31 +49,32 @@ public class ConsumeMediaTypeExpression extends GenericMediaTypeExpression {
     }
 
     public final boolean match(MediaType contentType) {
-        boolean match = getMediaType().includes(contentType);
+        boolean match = getMediaType().includes(contentType) && matchParameters(contentType);
         return !isNegated() == match;
     }
 
-
     public static List<ConsumeMediaTypeExpression> parseExpressions(String[] consumes, @Nullable String[] headers) {
-        Set<ConsumeMediaTypeExpression> result = null;
-        if (!isEmpty(headers)) {
-            for (String header : headers) {
-                WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
-                if (CONTENT_TYPE.equalsIgnoreCase(expression.name) && expression.value != null) {
-                    result = (result != null ? result : new LinkedHashSet<>());
-                    List<MediaType> mediaTypes = parseMediaTypes(expression.value);
-                    for (MediaType mediaType : mediaTypes) {
-                        result.add(new ConsumeMediaTypeExpression(mediaType, expression.isNegated));
-                    }
+        int consumesSize = length(consumes);
+        int headersSize = length(headers);
+
+        Set<ConsumeMediaTypeExpression> result = newFixedLinkedHashSet(consumesSize + headersSize);
+
+        for (int i = 0; i < headersSize; i++) {
+            String header = headers[i];
+            WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);
+            if (CONTENT_TYPE.equalsIgnoreCase(expression.name) && expression.value != null) {
+                List<MediaType> mediaTypes = parseMediaTypes(expression.value);
+                for (MediaType mediaType : mediaTypes) {
+                    result.add(new ConsumeMediaTypeExpression(mediaType, expression.isNegated));
                 }
             }
         }
-        if (!isEmpty(consumes)) {
-            result = (result != null ? result : new LinkedHashSet<>());
-            for (String consume : consumes) {
-                result.add(new ConsumeMediaTypeExpression(consume));
-            }
+
+        for (int i = 0; i < consumesSize; i++) {
+            String consume = consumes[i];
+            result.add(new ConsumeMediaTypeExpression(consume));
         }
-        return (result != null ? new ArrayList<>(result) : Collections.emptyList());
+
+        return result.isEmpty() ? emptyList() : new ArrayList<>(result);
     }
 }

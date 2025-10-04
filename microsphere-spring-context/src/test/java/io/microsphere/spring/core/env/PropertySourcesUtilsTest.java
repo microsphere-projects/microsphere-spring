@@ -15,7 +15,6 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProp
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getMapPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getPropertySource;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -44,7 +44,7 @@ import static org.springframework.core.convert.support.DefaultConversionService.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySourcesUtils
- * @since 2017.01.13
+ * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
 public class PropertySourcesUtilsTest {
@@ -52,7 +52,7 @@ public class PropertySourcesUtilsTest {
     private ConfigurableEnvironment environment;
 
     @Before
-    public void before() {
+    public void setUp() {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty("test-key", "test-value");
         mockEnvironment.setProperty("test-key2", "test-value2");
@@ -160,7 +160,7 @@ public class PropertySourcesUtilsTest {
 
         Map<String, Object> result = getSubProperties(propertySources, "user");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         source.put("age", "31");
         source.put("user.name", "Mercy");
@@ -183,11 +183,11 @@ public class PropertySourcesUtilsTest {
 
         result = getSubProperties(propertySources, "");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
         result = getSubProperties(propertySources, "no-exists");
 
-        assertEquals(Collections.emptyMap(), result);
+        assertEquals(emptyMap(), result);
 
     }
 

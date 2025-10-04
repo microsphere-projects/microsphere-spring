@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.annotation.ConfigurationProperty;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
 import org.springframework.beans.BeansException;
@@ -32,12 +34,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
-import java.util.Arrays;
 import java.util.List;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
@@ -45,18 +47,48 @@ import static io.microsphere.spring.beans.factory.support.AutowireCandidateResol
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.util.ArrayUtils.combine;
+import static java.lang.Boolean.parseBoolean;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
- * The decorator class of {@link AutowireCandidateResolver} to listen to the resolving process of autowire candidate by
- * {@link AutowireCandidateResolvingListener}
+ * A decorator implementation of {@link AutowireCandidateResolver} that allows listening to the autowire candidate
+ * resolution process via {@link AutowireCandidateResolvingListener}.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * <p>This class enables enhanced visibility into the Spring dependency resolution mechanism by allowing external
+ * listeners to observe and react to events during autowiring. It wraps the original resolver and delegates all calls
+ * to it while notifying registered listeners about various resolution stages.
+ *
+ * <h3>Key Features</h3>
+ * <ul>
+ *     <li>Wraps the existing {@link AutowireCandidateResolver} in a Spring bean factory</li>
+ *     <li>Supports dynamic registration of resolving listeners</li>
+ *     <li>Provides lifecycle integration through {@link BeanFactoryPostProcessor}</li>
+ *     <li>Configurable via environment properties (e.g., enable/disable)</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Register as infrastructure bean
+ * ListenableAutowireCandidateResolver.register(applicationContext);
+ *
+ * // Add custom listener
+ * ListenableAutowireCandidateResolver resolver = beanFactory.getBean(ListenableAutowireCandidateResolver.class);
+ * resolver.addListener((descriptor, candidates) -> {
+ *     System.out.println("Resolved candidates for " + descriptor.getDependencyType());
+ * });
+ * }</pre>
+ *
+ * <h3>Configuration</h3>
+ * Enable the resolver using property configuration:
+ * <pre>{@code
+ * microsphere.spring.listenable-autowire-candidate-resolver.enabled=true
+ * }</pre>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see AutowireCandidateResolver
  * @see AutowireCandidateResolvingListener
  * @see CompositeAutowireCandidateResolvingListener
  * @see DefaultListableBeanFactory#setAutowireCandidateResolver(AutowireCandidateResolver)
- * @see BeanFactoryPostProcessor
  * @since 1.0.0
  */
 public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor,
@@ -90,15 +122,22 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      */
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-autowire-candidate-resolver.";
 
+    private static final String DEFAULT_ENABLED = "false";
+
     /**
      * The property name of {@link ListenableAutowireCandidateResolver} to be 'enabled'
      */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_ENABLED,
+            description = "The property name of ListenableAutowireCandidateResolver to be enabled or not"
+    )
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
 
     /**
      * The default property value of {@link ListenableAutowireCandidateResolver} to be 'enabled'
      */
-    public static final boolean ENABLED_PROPERTY_VALUE = false;
+    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
 
     private AutowireCandidateResolver delegate;
 
@@ -113,7 +152,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
     }
 
     public void addListeners(AutowireCandidateResolvingListener[] listeners) {
-        addListeners(Arrays.asList(listeners));
+        addListeners(ofList(listeners));
     }
 
     public void addListeners(List<AutowireCandidateResolvingListener> listeners) {
@@ -131,17 +170,15 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.0
      */
     public boolean isRequired(DependencyDescriptor descriptor) {
-        if (IS_REQUIRED_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = IS_REQUIRED_METHOD_HANDLE;
+        if (methodHandle == null) {
             return descriptor.isRequired();
         }
         boolean required = false;
         try {
-            required = (boolean) IS_REQUIRED_METHOD_HANDLE.invokeExact(delegate, descriptor);
+            required = (boolean) methodHandle.invokeExact(delegate, descriptor);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : '{}'", IS_REQUIRED_METHOD_HANDLE,
-                        Arrays.asList(delegate, descriptor), e);
-            }
+            handleInvokeExactFailure(e, methodHandle, descriptor, descriptor);
             required = descriptor.isRequired();
         }
         return required;
@@ -153,17 +190,15 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.1
      */
     public boolean hasQualifier(DependencyDescriptor descriptor) {
-        if (HAS_QUALIFIER_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = HAS_QUALIFIER_METHOD_HANDLE;
+        if (methodHandle == null) {
             return false;
         }
         boolean hasQualifier = false;
         try {
-            hasQualifier = (boolean) HAS_QUALIFIER_METHOD_HANDLE.invokeExact(delegate, descriptor);
+            hasQualifier = (boolean) methodHandle.invokeExact(delegate, descriptor);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with args : '{}'", HAS_QUALIFIER_METHOD_HANDLE,
-                        Arrays.asList(delegate, descriptor), e);
-            }
+            handleInvokeExactFailure(e, methodHandle, delegate, descriptor);
         }
         return hasQualifier;
     }
@@ -192,7 +227,8 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @since Spring Framework 5.2.7
      */
     public AutowireCandidateResolver cloneIfNecessary() {
-        if (CLONE_IF_NECESSARY_METHOD_HANDLE == null) {
+        MethodHandle methodHandle = CLONE_IF_NECESSARY_METHOD_HANDLE;
+        if (methodHandle == null) {
             if (logger.isTraceEnabled()) {
                 logger.trace("The method AutowireCandidateResolver#cloneIfNecessary() was not found, the clone instance will be created on default way.");
             }
@@ -200,11 +236,9 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         }
         AutowireCandidateResolver autowireCandidateResolver = null;
         try {
-            autowireCandidateResolver = (AutowireCandidateResolver) CLONE_IF_NECESSARY_METHOD_HANDLE.invokeExact(delegate);
+            autowireCandidateResolver = (AutowireCandidateResolver) methodHandle.invokeExact(delegate);
         } catch (Throwable e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Failed to invokeExact on {} with arg : '{}'", CLONE_IF_NECESSARY_METHOD_HANDLE, delegate, e);
-            }
+            handleInvokeExactFailure(e, methodHandle, delegate);
         }
         return autowireCandidateResolver;
     }
@@ -243,7 +277,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         }
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
         AutowireCandidateResolver autowireCandidateResolver = dbf.getAutowireCandidateResolver();
-        if (autowireCandidateResolver != null) {
+        if (autowireCandidateResolver != this) {
             List<AutowireCandidateResolvingListener> listeners = loadListeners(beanFactory);
             CompositeAutowireCandidateResolvingListener compositeListener = new CompositeAutowireCandidateResolvingListener(listeners);
             this.delegate = autowireCandidateResolver;
@@ -259,7 +293,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @return <code>true</code> if enabled, otherwise <code>false</code>
      */
     public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, ENABLED_PROPERTY_VALUE);
+        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, DEFAULT_ENABLED_PROPERTY_VALUE);
     }
 
     /**

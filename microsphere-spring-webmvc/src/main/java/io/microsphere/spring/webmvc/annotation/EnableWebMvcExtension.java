@@ -21,27 +21,43 @@ import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
+import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
+import io.microsphere.spring.web.metadata.WebEndpointMappingFilter;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
+import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import io.microsphere.spring.web.util.RequestAttributesUtils;
+import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
-import io.microsphere.spring.webmvc.metadata.WebEndpointMappingRegistrar;
+import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
+import io.microsphere.spring.webmvc.util.WebMvcUtils;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.i18n.LocaleContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.FrameworkServlet;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+
+import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Enable annotation to extend the features of Spring WebMVC
@@ -53,8 +69,8 @@ import java.lang.annotation.Target;
  * @see WebMvcExtensionConfiguration
  * @since 1.0.0
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Retention(RUNTIME)
+@Target(TYPE)
 @Documented
 @Import(value = {
         WebMvcExtensionBeanDefinitionRegistrar.class,
@@ -69,8 +85,10 @@ public @interface EnableWebMvcExtension {
      *
      * @return <code>true</code> as default
      * @see WebEndpointMapping
+     * @see WebEndpointMappingResolver
      * @see WebEndpointMappingRegistry
-     * @see WebEndpointMappingRegistrar
+     * @see WebEndpointMappingFactory
+     * @see WebEndpointMappingFilter
      */
     @AliasFor(annotation = EnableWebExtension.class)
     boolean registerWebEndpointMappings() default true;
@@ -103,6 +121,20 @@ public @interface EnableWebMvcExtension {
     boolean publishEvents() default true;
 
     /**
+     * Indicate where the {@link RequestAttributes} stores.
+     *
+     * @return {@link RequestContextStrategy#DEFAULT} as default
+     * @see RequestAttributes
+     * @see RequestContextHolder
+     * @see RequestContextFilter
+     * @see RequestContextListener
+     * @see FrameworkServlet#initContextHolders(HttpServletRequest, LocaleContext, RequestAttributes)
+     * @see RequestContextStrategy
+     */
+    @AliasFor(annotation = EnableWebExtension.class)
+    RequestContextStrategy requestContextStrategy() default DEFAULT;
+
+    /**
      * Indicate whether the {@link InterceptorRegistry} registers the beans of {@link HandlerInterceptor}.
      * If it specifies <code>true</code>, {@link #handlerInterceptors()} method will not work anymore.
      *
@@ -113,7 +145,9 @@ public @interface EnableWebMvcExtension {
     boolean registerHandlerInterceptors() default false;
 
     /**
-     * Specify {@link HandlerInterceptor} types or its inherited types to register into {@link InterceptorRegistry}.
+     * Specify {@link HandlerInterceptor} types or its inherited types as Spring beans and then register into
+     * {@link InterceptorRegistry}.
+     * <p>
      * If {@link #registerHandlerInterceptors()} is <code>true</code>, specified types will be ignored.
      *
      * @return <code>null</code> as default
@@ -123,20 +157,32 @@ public @interface EnableWebMvcExtension {
     Class<? extends HandlerInterceptor>[] handlerInterceptors() default {};
 
     /**
-     * Indicate that Stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}
+     * Indicate that {@link RequestAttributes} stores the {@link MethodParameter argument} of {@link HandlerMethod} that annotated {@link RequestBody}
      *
      * @return <code>false</code> as default
      * @see RequestBody
      * @see StoringRequestBodyArgumentAdvice
      * @see HandlerMethod
+     * @see WebMvcUtils#getHandlerMethodRequestBodyArgument(HttpServletRequest, Method)
+     * @see RequestAttributesUtils#getHandlerMethodRequestBodyArgument(RequestAttributes, HandlerMethod)
      */
     boolean storeRequestBodyArgument() default false;
 
     /**
-     * Stores the return value of {@link HandlerMethod} before write as the {@link ResponseBody}
+     * Indicate that {@link RequestAttributes} stores the return value of {@link HandlerMethod} before write as the {@link ResponseBody}
      *
      * @return <code>false</code> as default
      * @see ResponseBody
+     * @see WebMvcUtils#getHandlerMethodReturnValue(HttpServletRequest, Method)
+     * @see RequestAttributesUtils#getHandlerMethodReturnValue(RequestAttributes, HandlerMethod)
      */
     boolean storeResponseBodyReturnValue() default false;
+
+    /**
+     * Indicate whether the {@link ReversedProxyHandlerMapping} is enabled or not.
+     *
+     * @return <code>false</code> as default
+     * @see ReversedProxyHandlerMapping
+     */
+    boolean reversedProxyHandlerMapping() default false;
 }
