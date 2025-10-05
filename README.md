@@ -80,7 +80,7 @@ Then add the specific modules you need:
 </dependencies>
 ```
 
-### Code Examples
+### Example : Auto-Refreshable Spring `@PropertySource` variant - `@ResourcePropertySource`
 
 1. To add The Java Properties resource(located classpath `META-INF/test/a.properties`):
 
@@ -92,12 +92,12 @@ b=3
 2. To add the test class for `@ResourcePropertySource`:
 
 ```java
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 @ResourcePropertySource(
         name = "test-property-source",
-        value = "classpath*:/META-INF/test/*.properties"
+        value = "classpath*:/META-INF/test/*.properties",
+        autoRefreshed = true
 )
 class PropertySourceExtensionAttributesTest {
 
@@ -111,6 +111,9 @@ class PropertySourceExtensionAttributesTest {
 
 }
 ```
+
+> If the resource `META-INF/test/a.properties` is modified, the `@ResourcePropertySource` will be automatically
+> refreshed, and the `Environment` will be updated with the new property values.
 
 ## Building from Source
 
