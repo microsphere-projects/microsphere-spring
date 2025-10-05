@@ -30,7 +30,7 @@
         <junit.version>5.11.4</junit.version>
         <mockito.version>5.14.2</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
-        <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
+        <sqlite-jdbc.version>3.41.2.2</sqlite-jdbc.version>
         <hamcrest.version>3.0</hamcrest.version>
         <tomcat.version>10.1.46</tomcat.version>
     </properties>
