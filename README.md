@@ -16,7 +16,7 @@ Framework capabilities through modular extensions and advanced integration patte
 providing enhanced dependency injection, event processing, web endpoint management, and caching capabilities while
 maintaining seamless compatibility with existing Spring applications.
 
-## Project Purpose and Scope
+## Purpose and Scope
 
 Microsphere Spring aims to address common challenges and limitations in Spring applications by offering:
 
