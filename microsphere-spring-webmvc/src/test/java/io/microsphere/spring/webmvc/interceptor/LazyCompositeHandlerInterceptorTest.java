@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see LazyCompositeHandlerInterceptor
  * @since 1.0.0
  */
-public class LazyCompositeHandlerInterceptorTest extends AbstractHandlerInterceptorTest implements HandlerInterceptor {
+class LazyCompositeHandlerInterceptorTest extends AbstractHandlerInterceptorTest implements HandlerInterceptor {
 
     private static final String exceptionTypeAttributeName = "_exception_type_";
 
