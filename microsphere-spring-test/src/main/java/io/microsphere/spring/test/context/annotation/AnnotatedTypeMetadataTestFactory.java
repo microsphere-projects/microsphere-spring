@@ -43,6 +43,7 @@ public class AnnotatedTypeMetadataTestFactory implements BeanClassLoaderAware {
     }
 
     private Method findTestMethod() {
+        // TODO be refactored by StackWalker API
         StackTraceElement[] stackTraces = currentThread().getStackTrace();
         StackTraceElement stackTrace = stackTraces[3];
         String className = stackTrace.getClassName();
