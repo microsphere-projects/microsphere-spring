@@ -31,6 +31,7 @@ import static io.microsphere.constants.PathConstants.SLASH_CHAR;
 import static io.microsphere.net.URLUtils.resolveAuthority;
 import static io.microsphere.net.URLUtils.resolvePath;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static org.springframework.util.MimeType.valueOf;
 
 /**
  * The {@link URLConnection} adapter class is based on the Spring {@link PropertySources}
@@ -46,7 +47,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperti
  */
 public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
 
-    public static final MimeType DEFAULT_MEDIA_TYPE = MimeType.valueOf("text/properties");
+    public static final MimeType DEFAULT_MEDIA_TYPE = valueOf("text/properties");
 
     private final PropertySources propertySources;
 
@@ -118,7 +119,7 @@ public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
         if (path.indexOf(SLASH_CHAR) == 0) {
             path = path.substring(1);
         }
-        MimeType mimeType = path == null ? DEFAULT_MEDIA_TYPE : MimeType.valueOf(path);
+        MimeType mimeType = path == null ? DEFAULT_MEDIA_TYPE : valueOf(path);
         return mimeType;
     }
 

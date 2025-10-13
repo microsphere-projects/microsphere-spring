@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 })
 @EnableWebMvc
 @EnableWebExtension
-public class EnableWebExtensionTest {
+class EnableWebExtensionTest {
 
     @Autowired
     private WebApplicationContext wac;

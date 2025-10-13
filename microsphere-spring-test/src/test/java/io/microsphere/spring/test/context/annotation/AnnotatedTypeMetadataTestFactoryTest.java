@@ -49,7 +49,9 @@ class AnnotatedTypeMetadataTestFactoryTest {
     @Test
     void testCreateMethodAnnotatedTypeMetadata() {
         AnnotatedTypeMetadata metadata = factory.createMethodAnnotatedTypeMetadata();
+        StandardMethodMetadata standardMethodMetadata = (StandardMethodMetadata) metadata;
         assertNotNull(metadata);
-        assertEquals("testCreateMethodAnnotatedTypeMetadata", ((StandardMethodMetadata) metadata).getMethodName());
+        assertEquals("testCreateMethodAnnotatedTypeMetadata", standardMethodMetadata.getMethodName());
+        assertEquals(AnnotatedTypeMetadataTestFactoryTest.class.getName(), standardMethodMetadata.getDeclaringClassName());
     }
 }
