@@ -17,7 +17,15 @@
 
 package io.microsphere.spring.test.zookeeper.embedded;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.junit.jupiter.api.Test;
+
+import java.nio.charset.Charset;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.curator.framework.CuratorFrameworkFactory.newClient;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link EmbeddedZookeeperServer} Test
@@ -30,7 +38,19 @@ import org.junit.jupiter.api.Test;
 public class EmbeddedZookeeperServerTest {
 
     @Test
-    void test() {
+    void test() throws Exception {
+        ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(1000, 3);
+        CuratorFramework curatorFramework = newClient("localhost:2181", retryPolicy);
+        curatorFramework.start();
 
+        String path = "/test";
+        String payload = "testing...";
+        Charset charset = UTF_8;
+        curatorFramework.create().forPath(path, payload.getBytes(charset));
+        byte[] bytes = curatorFramework.getData().forPath(path);
+        assertEquals(payload, new String(bytes, charset));
+
+        curatorFramework.delete().forPath(path);
+        curatorFramework.close();
     }
 }
