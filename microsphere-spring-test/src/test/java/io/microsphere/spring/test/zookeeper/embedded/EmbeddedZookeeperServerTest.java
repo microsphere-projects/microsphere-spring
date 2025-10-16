@@ -20,6 +20,7 @@ package io.microsphere.spring.test.zookeeper.embedded;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.nio.charset.Charset;
 
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 1.0.0
  */
 @EmbeddedZookeeperServer
+@ContextConfiguration(classes = EmbeddedZookeeperServerTest.class)
 public class EmbeddedZookeeperServerTest {
 
     @Test
