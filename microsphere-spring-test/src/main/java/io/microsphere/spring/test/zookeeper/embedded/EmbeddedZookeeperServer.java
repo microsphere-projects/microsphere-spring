@@ -18,9 +18,9 @@
 package io.microsphere.spring.test.zookeeper.embedded;
 
 import org.apache.catalina.Context;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -42,7 +42,7 @@ import static org.springframework.test.context.TestExecutionListeners.MergeMode.
 @Retention(RUNTIME)
 @Documented
 @Inherited
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 @TestExecutionListeners(
         listeners = EmbeddedZookeeperServerTestExecutionListener.class,
         mergeMode = MERGE_WITH_DEFAULTS
