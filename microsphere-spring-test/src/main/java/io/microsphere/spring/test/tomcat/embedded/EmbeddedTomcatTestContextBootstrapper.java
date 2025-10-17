@@ -22,7 +22,7 @@ import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 import org.springframework.test.context.web.WebTestContextBootstrapper;
 
-import static org.springframework.test.context.TestContextAnnotationUtils.findMergedAnnotation;
+import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
 /**
  * {@link WebTestContextBootstrapper} extension class for {@link EmbeddedTomcatConfiguration}

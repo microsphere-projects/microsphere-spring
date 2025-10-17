@@ -47,8 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
         port = 0,
         contextPath = "${contextPath}",
         docBase = "${docBase}",
-        alternativeWebXml = "classpath:/not-found/web.xml",
-        classes = EmbeddedTomcatConfigurationContextLoaderWebAppTest.class
+        alternativeWebXml = "classpath:/not-found/web.xml"
 )
 @TestPropertySource(properties = {
         "contextPath=/",

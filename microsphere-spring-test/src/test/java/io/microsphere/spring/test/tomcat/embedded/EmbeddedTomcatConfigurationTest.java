@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
  * @see EmbeddedTomcatConfiguration
  * @since 1.0.0
  */
-@EmbeddedTomcatConfiguration(classes = EmbeddedTomcatConfigurationTest.class)
+@EmbeddedTomcatConfiguration
 class EmbeddedTomcatConfigurationTest {
 
     @Autowired

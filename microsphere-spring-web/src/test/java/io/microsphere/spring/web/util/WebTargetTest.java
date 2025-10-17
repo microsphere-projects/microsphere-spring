@@ -26,12 +26,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
+import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static io.microsphere.spring.web.util.WebSourceTest.testName;
 import static io.microsphere.spring.web.util.WebSourceTest.testValue;
 import static io.microsphere.spring.web.util.WebTarget.RESPONSE_BODY;
 import static io.microsphere.spring.web.util.WebTarget.RESPONSE_COOKIE;
 import static io.microsphere.spring.web.util.WebTarget.RESPONSE_HEADER;
-import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
