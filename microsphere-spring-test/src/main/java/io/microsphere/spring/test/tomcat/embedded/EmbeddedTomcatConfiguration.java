@@ -18,6 +18,7 @@
 package io.microsphere.spring.test.tomcat.embedded;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
