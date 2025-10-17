@@ -56,7 +56,7 @@ import static org.springframework.util.ReflectionUtils.findMethod;
  * @see AnnotationUtils
  * @since 1.0.0
  */
-public class AnnotationUtilsTest {
+class AnnotationUtilsTest {
 
     private static final String dummyBeanName = "dummy-bean";
 
