@@ -24,7 +24,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -217,7 +216,7 @@ public abstract class WebRequestUtils {
      * @param cookieName  the name of Cookie
      * @param cookieValue the cookie value
      * @see javax.servlet.http.HttpServletResponse#addCookie(Cookie)
-     * @see org.springframework.http.server.reactive.ServerHttpResponse#addCookie(ResponseCookie)
+     * @see org.springframework.http.server.reactive.ServerHttpResponse#addCookie(org.springframework.http.ResponseCookie)
      */
     public static void addCookie(@Nonnull NativeWebRequest request, String cookieName, String cookieValue) {
         SpringWebHelper springWebHelper = getSpringWebHelper(request);
