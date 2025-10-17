@@ -23,9 +23,6 @@ import org.springframework.core.style.DefaultValueStyler;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 
-import static io.microsphere.util.ArrayUtils.isEmpty;
-import static io.microsphere.util.ArrayUtils.ofArray;
-
 /**
  * The {@link WebMergedContextConfiguration} extension class for {@link EmbeddedTomcatConfiguration}
  *
@@ -100,15 +97,6 @@ class EmbeddedTomcatMergedContextConfiguration extends WebMergedContextConfigura
      */
     public Feature[] getFeatures() {
         return features;
-    }
-
-    @Override
-    public Class<?>[] getClasses() {
-        Class<?>[] classes = super.getClasses();
-        if (isEmpty(classes)) {
-            return ofArray(getTestClass());
-        }
-        return classes;
     }
 
     @Override
