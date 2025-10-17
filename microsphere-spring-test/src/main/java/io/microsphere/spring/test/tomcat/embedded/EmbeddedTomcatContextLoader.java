@@ -21,7 +21,6 @@ import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration.Feature;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -35,6 +34,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
@@ -53,6 +53,7 @@ import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 import static org.apache.catalina.startup.Tomcat.initWebappDefaults;
@@ -72,6 +73,15 @@ import static org.springframework.web.servlet.FrameworkServlet.SERVLET_CONTEXT_P
 class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
 
     private static final Logger logger = getLogger(EmbeddedTomcatContextLoader.class);
+
+    @Override
+    public void processContextConfiguration(ContextConfigurationAttributes configAttributes) {
+        super.processContextConfiguration(configAttributes);
+        Class<?>[] classes = configAttributes.getClasses();
+        if (isEmpty(classes)) {
+            configAttributes.setClasses(configAttributes.getDeclaringClass());
+        }
+    }
 
     @Override
     protected void prepareContext(ConfigurableApplicationContext applicationContext, MergedContextConfiguration mergedConfig) {
