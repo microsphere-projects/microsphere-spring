@@ -64,7 +64,7 @@ import static org.junit.Assert.assertSame;
         contextPath = "${contextPath}",
         docBase = "${docBase}",
         alternativeWebXml = "${alternativeWebXml}",
-        classes = {},
+        classes = String.class,
         locations = "classpath:webapps/empty-app/WEB-INF/context.xml",
         initializers = EmbeddedTomcatConfigurationFullTest.class,
         inheritLocations = false,
