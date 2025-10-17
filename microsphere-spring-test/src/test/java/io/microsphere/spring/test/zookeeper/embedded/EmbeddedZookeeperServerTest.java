@@ -19,14 +19,16 @@ package io.microsphere.spring.test.zookeeper.embedded;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.charset.Charset;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.curator.framework.CuratorFrameworkFactory.newClient;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link EmbeddedZookeeperServer} Test
@@ -35,12 +37,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see EmbeddedZookeeperServer
  * @since 1.0.0
  */
+@RunWith(SpringRunner.class)
 @EmbeddedZookeeperServer
 @ContextConfiguration(classes = EmbeddedZookeeperServerTest.class)
 public class EmbeddedZookeeperServerTest {
 
     @Test
-    void test() throws Exception {
+    public void test() throws Exception {
         ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(1000, 3);
         CuratorFramework curatorFramework = newClient("localhost:2181", retryPolicy);
         curatorFramework.start();
