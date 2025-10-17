@@ -24,6 +24,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
