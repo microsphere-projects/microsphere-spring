@@ -55,12 +55,19 @@ class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionReg
     }
 
     void registerBeanDefinitions(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        assertBeanName(attributes, registry);
         EmbeddedDatabaseType type = attributes.getEnum("type");
-
         switch (type) {
             case SQLITE:
                 processSQLite(attributes, registry);
                 break;
+        }
+    }
+
+    private void assertBeanName(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        String beanName = attributes.getString("dataSource");
+        if (registry.containsBeanDefinition(beanName)) {
+            throw new BeanCreationException("The duplicated BeanDefinition with name : " + beanName);
         }
     }
 
@@ -84,9 +91,7 @@ class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionReg
         BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(DriverManagerDataSource.class);
         beanDefinitionBuilder.addConstructorArgValue(jdbcURL);
         beanDefinitionBuilder.addConstructorArgValue(properties);
-        if (registry.containsBeanDefinition(beanName)) {
-            throw new BeanCreationException("The duplicated BeanDefinition with name : " + beanName);
-        }
+
         AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
         beanDefinition.setPrimary(primary);
         registry.registerBeanDefinition(beanName, beanDefinition);

@@ -40,7 +40,7 @@ import static org.junit.Assert.assertNotSame;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@EmbeddedTomcatConfiguration(classes = EmbeddedTomcatConfigurationTest.class)
+@EmbeddedTomcatConfiguration
 public class EmbeddedTomcatConfigurationTest {
 
     @Autowired

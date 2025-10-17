@@ -34,6 +34,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -215,7 +216,7 @@ public abstract class WebRequestUtils {
      * @param cookieName  the name of Cookie
      * @param cookieValue the cookie value
      * @see javax.servlet.http.HttpServletResponse#addCookie(Cookie)
-     * @see org.springframework.http.server.reactive.ServerHttpResponse#addCookie(ResponseCookie)
+     * @see org.springframework.http.server.reactive.ServerHttpResponse#addCookie(org.springframework.http.ResponseCookie)
      */
     public static void addCookie(@Nonnull NativeWebRequest request, String cookieName, String cookieValue) {
         SpringWebHelper springWebHelper = getSpringWebHelper(request);

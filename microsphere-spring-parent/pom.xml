@@ -31,8 +31,10 @@
         <junit5.version>5.13.4</junit5.version>
         <mockito.version>4.11.0</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
-        <sqlite-jdbc.version>3.36.0.3</sqlite-jdbc.version>
+        <sqlite-jdbc.version>3.41.2.2</sqlite-jdbc.version>
         <tomcat.version>9.0.109</tomcat.version>
+        <zookeeper.version>3.9.4</zookeeper.version>
+        <curator.version>5.9.0</curator.version>
     </properties>
 
     <dependencyManagement>
@@ -183,6 +185,38 @@
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-catalina-ha</artifactId>
                 <version>${tomcat.version}</version>
+            </dependency>
+
+            <!-- Apache Zookeeper -->
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
+            </dependency>
+
+            <!-- Apache Curator -->
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.zookeeper</groupId>
+                        <artifactId>zookeeper</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-test</artifactId>
+                <version>${curator.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.zookeeper</groupId>
+                        <artifactId>zookeeper</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
         </dependencies>

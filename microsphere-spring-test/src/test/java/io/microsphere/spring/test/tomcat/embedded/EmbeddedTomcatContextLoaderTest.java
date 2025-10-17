@@ -18,7 +18,6 @@
 package io.microsphere.spring.test.tomcat.embedded;
 
 
-import org.apache.catalina.LifecycleException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.GenericApplicationContext;
