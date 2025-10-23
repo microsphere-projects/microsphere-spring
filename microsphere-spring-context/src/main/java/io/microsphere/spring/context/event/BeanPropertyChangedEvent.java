@@ -28,7 +28,7 @@ import java.util.StringJoiner;
  * during runtime.
  * </p>
  *
- * <h3>Example usage:</h3>
+ * <h3>Example Usage</h3>
  * <pre>
  * // Create and publish the event when a bean's property changes
  * BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "status", oldStatus, newStatus);
