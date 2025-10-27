@@ -1,5 +1,6 @@
 {
 "id":1,
+"kind":"CUSTOMIZED",
 "negated":true,
 "patterns":["/a","/b","/c"],
 "methods":["GET","POST"],
