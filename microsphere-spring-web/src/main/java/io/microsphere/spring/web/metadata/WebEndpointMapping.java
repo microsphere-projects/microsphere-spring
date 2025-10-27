@@ -1362,7 +1362,8 @@ public class WebEndpointMapping<E> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WebEndpointMapping that = (WebEndpointMapping) o;
-        return this.negated == that.negated
+        return this.kind == that.kind
+                && this.negated == that.negated
                 && arrayEquals(patterns, that.patterns)
                 && arrayEquals(methods, that.methods)
                 && arrayEquals(params, that.params)
@@ -1418,6 +1419,7 @@ public class WebEndpointMapping<E> {
     public String toJSON() {
         StringBuilder stringBuilder = new StringBuilder(LEFT_CURLY_BRACE).append(LINE_SEPARATOR);
         append(stringBuilder, "id", this.id);
+        append(stringBuilder, "kind", this.kind, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "negated", this.negated, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "patterns", this.patterns, COMMA, LINE_SEPARATOR);
         append(stringBuilder, "methods", this.methods, COMMA, LINE_SEPARATOR);
@@ -1436,6 +1438,11 @@ public class WebEndpointMapping<E> {
     private void append(StringBuilder appendable, String name, boolean value, String... prefixes) {
         append(prefixes, appendable);
         JSONUtils.append(appendable, name, value);
+    }
+
+    private void append(StringBuilder appendable, String name, Kind kind, String... prefixes) {
+        append(prefixes, appendable);
+        JSONUtils.append(appendable, name, kind);
     }
 
     private void append(StringBuilder appendable, String name, String[] values, String... prefixes) {
