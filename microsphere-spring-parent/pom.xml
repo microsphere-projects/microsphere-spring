@@ -252,7 +252,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.version>6.2.11</spring.version>
+                <spring.version>6.2.12</spring.version>
                 <reactor.version>2024.0.10</reactor.version>
             </properties>
         </profile>
