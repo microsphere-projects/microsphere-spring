@@ -519,6 +519,9 @@ public class WebEndpointMappingTest {
         assertNotEquals(mapping, null);
         assertNotEquals(mapping, this);
 
+        // equals with different kinds
+        assertNotEquals(mapping, minBuilder(FILTER).build());
+
         // equals with different patterns
         assertNotEquals(mapping, minServletBuilder().pattern("/**").build());
 
