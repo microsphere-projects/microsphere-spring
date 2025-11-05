@@ -126,7 +126,7 @@ public class WebEndpointMappingTest {
     @Test
     public void testBuildWithoutMethods() {
         WebEndpointMapping mapping = servlet().endpoint(this).patterns(TEST_URL_PATTERNS).build();
-        assertEquals(toStrings(values(), HttpMethod::name), mapping.getMethods());
+        assertArrayEquals(toStrings(values(), HttpMethod::name), mapping.getMethods());
     }
 
     @Test
