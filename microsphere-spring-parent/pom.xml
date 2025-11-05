@@ -37,6 +37,14 @@
         <curator.version>5.9.0</curator.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>spring-milestone</id>
+            <name>Spring Portfolio Milestone Repository</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
 
@@ -254,6 +262,15 @@
             <properties>
                 <spring.version>6.2.12</spring.version>
                 <reactor.version>2024.0.11</reactor.version>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>spring-framework-7.0</id>
+            <properties>
+                <spring.version>7.0.0-RC3</spring.version>
+                <reactor.version>2025.0.0-RC1</reactor.version>
+                <junit.version>6.0.1</junit.version>
             </properties>
         </profile>
     </profiles>
