@@ -59,6 +59,7 @@ import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.function.Function.identity;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpMethod.values;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -243,7 +244,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For aServletendpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.endpoint("myServlet");
          *
@@ -267,7 +268,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.pattern("/api/users");
          *
@@ -296,7 +297,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint with a list of pattern strings
+         * // For a Servlet endpoint with a list of pattern strings
          * List<String> patternList = Arrays.asList("/api/users", "/api/orders");
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.patterns(patternList, Function.identity());
@@ -323,7 +324,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.patterns("/api/users", "/api/orders");
          *
@@ -346,7 +347,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.patterns(Arrays.asList("/api/users", "/api/orders"));
          *
@@ -372,7 +373,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.method(HttpMethod.GET);
          *
@@ -396,7 +397,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.method("GET");
          *
@@ -424,7 +425,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint with a list of HttpMethod enums
+         * // For a Servlet endpoint with a list of HttpMethod enums
          * List<HttpMethod> methodList = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.methods(methodList, HttpMethod::name);
@@ -451,7 +452,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.methods(HttpMethod.GET, HttpMethod.POST);
          *
@@ -476,7 +477,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.methods("GET", "POST");
          *
@@ -506,7 +507,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.param("version", "v1");
          *
@@ -531,7 +532,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.param("version=v1");
          *
@@ -558,7 +559,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint with a list of parameter objects
+         * // For a Servlet endpoint with a list of parameter objects
          * List<MyParam> paramList = Arrays.asList(new MyParam("version", "v1"), new MyParam("lang", "en"));
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.params(paramList, p -> p.getName() + "=" + p.getValue());
@@ -585,7 +586,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.params("version=v1", "lang=en");
          *
@@ -610,7 +611,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.header("X-API-Version", "v1");
          *
@@ -640,7 +641,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.header("X-API-Version:v1");
          *
@@ -668,7 +669,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint with a list of header objects
+         * // For a Servlet endpoint with a list of header objects
          * List<MyHeader> headerList = Arrays.asList(new MyHeader("X-API-Version", "v1"), new MyHeader("Accept-Language", "en"));
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.headers(headerList, h -> h.getName() + ":" + h.getValue());
@@ -695,7 +696,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.headers("X-API-Version:v1", "Accept-Language:en");
          *
@@ -720,7 +721,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.consume(MediaType.APPLICATION_JSON);
          *
@@ -744,7 +745,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.consume("application/json");
          *
@@ -772,7 +773,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.consumes(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
          *
@@ -795,7 +796,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint with a list of MediaType objects
+         * // For a Servlet endpoint with a list of MediaType objects
          * List<MediaType> mediaTypeList = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.consumes(mediaTypeList, MediaType::toString);
@@ -822,7 +823,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.consumes("application/json", "text/xml");
          *
@@ -847,7 +848,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.produce(MediaType.APPLICATION_JSON);
          *
@@ -871,7 +872,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.produce("application/json");
          *
@@ -899,7 +900,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.produces(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
          *
@@ -924,7 +925,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint with a list of MediaType objects
+         * // For a Servlet endpoint with a list of MediaType objects
          * List<MediaType> mediaTypeList = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.produces(mediaTypeList, MediaType::toString);
@@ -951,7 +952,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.produces("application/json", "text/xml");
          *
@@ -982,7 +983,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For a servlet endpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.source(servletContext);
          *
@@ -1105,10 +1106,13 @@ public class WebEndpointMapping<E> {
             assertNotNull(this.endpoint, () -> "The 'endpoint' must not be null");
 
             assertNotEmpty(this.patterns, () -> "The 'pattern' must not be empty");
-            assertNoNullElements(this.patterns, "Any element of 'patterns' must not be null");
+            assertNoNullElements(this.patterns, () -> "Any element of 'patterns' must not be null");
 
-            assertNotEmpty(this.methods, () -> "The 'methods' must not be empty");
-            assertNoNullElements(this.methods, "Any element of 'methods' must not be null");
+            if (isEmpty(this.methods)) {
+                methods(values());
+            }
+
+            assertNoNullElements(this.methods, () -> "Any element of 'methods' must not be null");
 
             return new WebEndpointMapping(
                     this.kind,

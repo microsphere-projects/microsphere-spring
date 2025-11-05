@@ -33,6 +33,7 @@ import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.io.IOUtils.copyToString;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.assertBuilders;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.pair;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.toStrings;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
@@ -62,6 +63,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.values;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML;
@@ -122,8 +124,9 @@ class WebEndpointMappingTest {
     }
 
     @Test
-    void testBuildWithoutMethods() {
-        assertThrows(IllegalArgumentException.class, servlet().endpoint(this).patterns(TEST_URL_PATTERNS)::build);
+    public void testBuildWithoutMethods() {
+        WebEndpointMapping mapping = servlet().endpoint(this).patterns(TEST_URL_PATTERNS).build();
+        assertArrayEquals(toStrings(values(), HttpMethod::name), mapping.getMethods());
     }
 
     @Test
