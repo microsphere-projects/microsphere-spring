@@ -105,7 +105,7 @@ public abstract class MimeTypeUtils implements Utils {
         }
         String subtype = one.getSubtype();
         String suffix = substringAfter(subtype, "+");
-        return suffix == EMPTY_STRING ? null : suffix;
+        return EMPTY_STRING.equals(suffix) ? null : suffix;
     }
 
     /**
