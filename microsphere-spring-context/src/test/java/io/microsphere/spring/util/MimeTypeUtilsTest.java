@@ -88,12 +88,16 @@ class MimeTypeUtilsTest {
         MimeType allTypes = valueOf("*/*");
         MimeType audioType = valueOf("audio/*");
         assertEquals(1, comparator.compare(allTypes, audioType));
+        assertEquals(0, comparator.compare(allTypes, allTypes));
         assertEquals(-1, comparator.compare(audioType, allTypes));
+        assertEquals(0, comparator.compare(audioType, audioType));
 
         MimeType audioWildcard = valueOf("audio/*");
         MimeType audioBasic = valueOf("audio/basic");
+        MimeType audioWave = valueOf("audio/wave");
         assertEquals(1, comparator.compare(audioWildcard, audioBasic));
         assertEquals(-1, comparator.compare(audioBasic, audioWildcard));
+        assertEquals(0, comparator.compare(audioBasic, audioWave));
 
         MimeType withParams = valueOf("audio/basic;level=1;charset=utf-8");
         MimeType withoutParams = valueOf("audio/basic");
