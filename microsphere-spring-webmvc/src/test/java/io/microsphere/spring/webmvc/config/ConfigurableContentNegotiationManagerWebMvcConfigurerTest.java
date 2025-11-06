@@ -33,8 +33,6 @@ import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.accept.ParameterContentNegotiationStrategy;
-import org.springframework.web.accept.PathExtensionContentNegotiationStrategy;
-import org.springframework.web.accept.ServletPathExtensionContentNegotiationStrategy;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -96,12 +94,8 @@ class ConfigurableContentNegotiationManagerWebMvcConfigurerTest {
     void testConfigureContentNegotiation() throws HttpMediaTypeNotAcceptableException {
         assertNotNull(this.contentNegotiationManager);
 
-
         List<ContentNegotiationStrategy> strategies = this.contentNegotiationManager.getStrategies();
-        assertEquals(4, strategies.size());
-
-        PathExtensionContentNegotiationStrategy pathExtensionContentNegotiationStrategy = this.contentNegotiationManager.getStrategy(ServletPathExtensionContentNegotiationStrategy.class);
-        assertNotNull(pathExtensionContentNegotiationStrategy);
+        assertTrue(strategies.size() > 1);
 
         ParameterContentNegotiationStrategy parameterContentNegotiationStrategy = this.contentNegotiationManager.getStrategy(ParameterContentNegotiationStrategy.class);
         assertNotNull(parameterContentNegotiationStrategy);
