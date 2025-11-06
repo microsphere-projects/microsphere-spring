@@ -20,7 +20,7 @@ package io.microsphere.spring.web.util;
 
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
@@ -132,7 +132,7 @@ class WebSourceTest {
 
     @Test
     void testGetValueForMATRIX_VARIABLE() {
-        HttpHeaders httpHeaders = new HttpHeaders();
+        MultiValueMap<String, String> httpHeaders = new LinkedMultiValueMap<>();
         httpHeaders.add("h1", "v1");
         Map<String, MultiValueMap<String, String>> matrixVariables = ofMap(testName, httpHeaders);
         NativeWebRequest request = createWebRequest(r -> {
@@ -146,7 +146,7 @@ class WebSourceTest {
         NativeWebRequest request = createWebRequest();
         assertNull(MATRIX_VARIABLE.getValue(request, testName));
 
-        HttpHeaders httpHeaders = new HttpHeaders();
+        MultiValueMap<String, String> httpHeaders = new LinkedMultiValueMap<>();
         Map<String, MultiValueMap<String, String>> matrixVariables = ofMap(testName, httpHeaders);
         REQUEST.setAttribute(request, MATRIX_VARIABLES_ATTRIBUTE, matrixVariables);
         assertNull(MATRIX_VARIABLE.getValue(request, testName));
