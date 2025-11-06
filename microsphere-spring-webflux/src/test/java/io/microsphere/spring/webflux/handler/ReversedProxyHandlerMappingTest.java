@@ -38,7 +38,6 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NA
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
 import static java.lang.String.valueOf;
-import static java.lang.System.currentTimeMillis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -115,7 +114,7 @@ class ReversedProxyHandlerMappingTest extends AbstractWebFluxTest {
     protected void testResponseEntity() {
         this.webTestClient.put()
                 .uri("/test/response-entity")
-                .header(ID_HEADER_NAME, valueOf(currentTimeMillis()))
+                .header(ID_HEADER_NAME, "1")
                 .exchange()
                 .expectBody(String.class)
                 .isEqualTo("OK");
