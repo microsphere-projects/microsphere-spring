@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -212,6 +213,10 @@ class BeanFactoryUtilsTest {
             }
 
             public <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType) {
+                return null;
+            }
+
+            public <T> ObjectProvider<T> getBeanProvider(ParameterizedTypeReference<T> requiredType) {
                 return null;
             }
 

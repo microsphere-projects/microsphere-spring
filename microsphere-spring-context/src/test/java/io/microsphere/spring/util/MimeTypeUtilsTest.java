@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.spring.util.MimeTypeUtils.SpecificityComparator;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeType;
 
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.util.MimeType.valueOf;
 
 /**
  * {@link MimeTypeUtils} Test
@@ -77,5 +79,39 @@ class MimeTypeUtilsTest {
         assertFalse(isPresentIn(APPLICATION_GRAPHQL, ofList(APPLICATION_TEXT)));
         assertTrue(isPresentIn(APPLICATION_GRAPHQL, asList(APPLICATION_TEXT, APPLICATION_GRAPHQL)));
         assertTrue(isPresentIn(APPLICATION_GRAPHQL, ofList(APPLICATION_GRAPHQL)));
+    }
+
+    @Test
+    void testSpecificityComparator() {
+        SpecificityComparator<MimeType> comparator = new SpecificityComparator<>();
+
+        MimeType allTypes = valueOf("*/*");
+        MimeType audioType = valueOf("audio/*");
+        assertEquals(1, comparator.compare(allTypes, audioType));
+        assertEquals(0, comparator.compare(allTypes, allTypes));
+        assertEquals(-1, comparator.compare(audioType, allTypes));
+        assertEquals(0, comparator.compare(audioType, audioType));
+
+        MimeType audioWildcard = valueOf("audio/*");
+        MimeType audioBasic = valueOf("audio/basic");
+        MimeType audioWave = valueOf("audio/wave");
+        assertEquals(1, comparator.compare(audioWildcard, audioBasic));
+        assertEquals(-1, comparator.compare(audioBasic, audioWildcard));
+        assertEquals(0, comparator.compare(audioBasic, audioWave));
+
+        MimeType withParams = valueOf("audio/basic;level=1;charset=utf-8");
+        MimeType withoutParams = valueOf("audio/basic");
+        assertEquals(-1, comparator.compare(withParams, withoutParams));
+        assertEquals(1, comparator.compare(withoutParams, withParams));
+
+        audioType = valueOf("audio/basic");
+        MimeType textType = valueOf("text/html");
+        assertEquals(0, comparator.compare(audioType, textType));
+        assertEquals(0, comparator.compare(textType, audioType));
+
+        MimeType withOneParam = MimeType.valueOf("application/json;version=1");
+        MimeType withTwoParams = MimeType.valueOf("application/json;version=1;charset=utf-8");
+        assertEquals(1, comparator.compare(withOneParam, withTwoParams));
+        assertEquals(-1, comparator.compare(withTwoParams, withOneParam));
     }
 }

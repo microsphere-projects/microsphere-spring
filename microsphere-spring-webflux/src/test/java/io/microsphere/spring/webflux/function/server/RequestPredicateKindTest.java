@@ -73,7 +73,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
-import static org.springframework.http.server.PathContainer.parsePath;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
@@ -419,7 +418,7 @@ class RequestPredicateKindTest {
     @Test
     void testPredicateOnPath() {
         ServerRequest request = mockServerRequest();
-        when(request.pathContainer()).thenReturn(parsePath(TEST_ROOT_PATH));
+//        when(request.path()).thenReturn(parsePath(TEST_ROOT_PATH));
         RequestPredicate predicate = PATH.predicate(TEST_ROOT_PATH);
         assertTrue(predicate.test(request));
     }
@@ -494,7 +493,6 @@ class RequestPredicateKindTest {
     void testPredicateOnAnd() {
         ServerRequest request = mockServerRequest();
         when(request.method()).thenReturn(GET);
-        when(request.pathContainer()).thenReturn(parsePath(TEST_ROOT_PATH));
         RequestPredicate predicate = AND.predicate("(GET && /test)");
         assertTrue(predicate.test(request));
     }
@@ -503,7 +501,6 @@ class RequestPredicateKindTest {
     void testPredicateOnOr() {
         ServerRequest request = mockServerRequest();
         when(request.method()).thenReturn(GET);
-        when(request.pathContainer()).thenReturn(parsePath(TEST_EXTENSION_PATH));
         RequestPredicate predicate = OR.predicate("(GET || /test)");
         assertTrue(predicate.test(request));
     }
