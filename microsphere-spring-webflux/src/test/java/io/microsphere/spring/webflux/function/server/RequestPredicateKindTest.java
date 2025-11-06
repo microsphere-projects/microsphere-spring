@@ -493,7 +493,6 @@ class RequestPredicateKindTest {
     void testPredicateOnAnd() {
         ServerRequest request = mockServerRequest();
         when(request.method()).thenReturn(GET);
-//        when(request.pathContainer()).thenReturn(parsePath(TEST_ROOT_PATH));
         RequestPredicate predicate = AND.predicate("(GET && /test)");
         assertTrue(predicate.test(request));
     }
@@ -502,7 +501,6 @@ class RequestPredicateKindTest {
     void testPredicateOnOr() {
         ServerRequest request = mockServerRequest();
         when(request.method()).thenReturn(GET);
-//        when(request.pathContainer()).thenReturn(parsePath(TEST_EXTENSION_PATH));
         RequestPredicate predicate = OR.predicate("(GET || /test)");
         assertTrue(predicate.test(request));
     }
