@@ -23,6 +23,8 @@ import org.springframework.util.MimeType;
 import java.util.Collection;
 
 import static io.microsphere.collection.CollectionUtils.isEmpty;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
+import static io.microsphere.util.StringUtils.substringAfter;
 
 /**
  * The utility class for MIME Type
@@ -101,11 +103,8 @@ public abstract class MimeTypeUtils implements Utils {
             return null;
         }
         String subtype = one.getSubtype();
-        int suffixIndex = subtype.lastIndexOf('+');
-        if (suffixIndex != -1 && subtype.length() > suffixIndex) {
-            return subtype.substring(suffixIndex + 1);
-        }
-        return null;
+        String suffix = substringAfter(subtype, "+");
+        return EMPTY_STRING.equals(suffix) ? null : suffix;
     }
 
     private MimeTypeUtils() {
