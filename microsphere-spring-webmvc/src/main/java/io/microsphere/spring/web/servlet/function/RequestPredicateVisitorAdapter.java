@@ -55,6 +55,14 @@ public interface RequestPredicateVisitorAdapter extends Visitor {
     default void param(String name, String value) {
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since Spring Framework 7.0
+     */
+    default void version(String version) {
+    }
+
     @Override
     default void startAnd() {
     }
