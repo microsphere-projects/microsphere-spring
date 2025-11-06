@@ -38,8 +38,8 @@ class MediaTypeUtilsTest {
     void testSPECIFICITY_COMPARATOR() {
         MediaType audioType07 = parseMediaType("audio/*;q=0.7");
         MediaType audioType03 = parseMediaType("audio/*;q=0.3");
-        MediaType audioType_07 = parseMediaType("audio/*;q=0.7;a=b");
+        MediaType audioType07A = parseMediaType("audio/*;q=0.7;a=b");
         assertEquals(-1, SPECIFICITY_COMPARATOR.compare(audioType07, audioType03));
-        assertEquals(1, SPECIFICITY_COMPARATOR.compare(audioType07, audioType_07));
+        assertEquals(1, SPECIFICITY_COMPARATOR.compare(audioType07, audioType07A));
     }
 }
