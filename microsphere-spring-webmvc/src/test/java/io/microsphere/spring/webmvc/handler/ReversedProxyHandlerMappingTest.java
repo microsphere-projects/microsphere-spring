@@ -122,7 +122,7 @@ public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
     @Test
     public void testResponseEntity() throws Exception {
         String pattern = "/test/response-entity";
-        this.mockMvc.perform(put(pattern).header(ID_HEADER_NAME, currentTimeMillis()))
+        this.mockMvc.perform(put(pattern).header(ID_HEADER_NAME, "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("OK"));
     }
