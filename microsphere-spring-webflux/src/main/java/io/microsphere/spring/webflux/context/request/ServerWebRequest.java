@@ -40,8 +40,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
+import static io.microsphere.collection.SetUtils.newHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.util.ClassUtils.isAssignableFrom;
@@ -160,7 +162,9 @@ public class ServerWebRequest implements NativeWebRequest {
     @Nonnull
     public Iterator<String> getHeaderNames() {
         HttpHeaders httpHeaders = getRequestHeaders();
-        return httpHeaders.keySet().iterator();
+        Set<String> keys = newHashSet(httpHeaders.size());
+        httpHeaders.forEach((key, values) -> keys.add(key));
+        return keys.iterator();
     }
 
     @Override
