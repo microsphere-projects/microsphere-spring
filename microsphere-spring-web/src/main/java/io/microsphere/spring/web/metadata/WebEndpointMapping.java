@@ -244,7 +244,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For aServletendpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.endpoint("myServlet");
          *
