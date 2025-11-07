@@ -37,7 +37,6 @@ import java.util.Map;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
-import static java.lang.System.currentTimeMillis;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -122,7 +121,7 @@ class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
     @Test
     protected void testResponseEntity() throws Exception {
         String pattern = "/test/response-entity";
-        this.mockMvc.perform(put(pattern).header(ID_HEADER_NAME, currentTimeMillis()))
+        this.mockMvc.perform(put(pattern).header(ID_HEADER_NAME, "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("OK"));
     }

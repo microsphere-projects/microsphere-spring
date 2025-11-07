@@ -129,38 +129,45 @@
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-tribes</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina-ha</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Apache Zookeeper -->
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Apache Curator -->
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>
