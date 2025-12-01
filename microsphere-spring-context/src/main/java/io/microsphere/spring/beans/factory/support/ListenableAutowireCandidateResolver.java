@@ -36,6 +36,7 @@ import org.springframework.core.env.Environment;
 
 import java.util.List;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
@@ -106,7 +107,8 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
     @ConfigurationProperty(
             type = boolean.class,
             defaultValue = DEFAULT_ENABLED,
-            description = "The property name of ListenableAutowireCandidateResolver to be enabled or not"
+            description = "The property name of ListenableAutowireCandidateResolver to be enabled or not",
+            source = APPLICATION_SOURCE
     )
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
 

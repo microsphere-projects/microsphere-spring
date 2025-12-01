@@ -63,6 +63,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
+import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -178,7 +180,8 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
     @ConfigurationProperty(
             name = CACHE_SIZE_PROPERTY_NAME,
             defaultValue = DEFAULT_CACHE_SIZE_PROPERTY_VALUE,
-            description = "The size of metadata cache"
+            description = "The size of metadata cache",
+            source = SYSTEM_PROPERTIES_SOURCE
     )
     public final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, DEFAULT_CACHE_SIZE);
 

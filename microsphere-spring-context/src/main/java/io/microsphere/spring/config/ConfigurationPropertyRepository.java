@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
+import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.text.FormatUtils.format;
@@ -93,7 +95,8 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     @io.microsphere.annotation.ConfigurationProperty(
             type = int.class,
             description = "The max size of the repository for ConfigurationProperty instances",
-            defaultValue = DEFAULT_MAX_SIZE
+            defaultValue = DEFAULT_MAX_SIZE,
+            source = SYSTEM_PROPERTIES_SOURCE
     )
     public static final String MAX_SIZE_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "max-size";
 
