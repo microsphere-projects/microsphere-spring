@@ -23,8 +23,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.microsphere.collection.MapUtils.MIN_LOAD_FACTOR;
-import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyMap;
@@ -275,7 +274,7 @@ public abstract class PropertySourcesUtils implements Utils {
         if (length < 1) {
             return emptyMap();
         }
-        Map<String, Object> properties = newLinkedHashMap(length, MIN_LOAD_FACTOR);
+        Map<String, Object> properties = newFixedLinkedHashMap(length);
         for (int i = 0; i < length; i++) {
             String propertyName = propertyNames[i];
             properties.put(propertyName, propertySource.getProperty(propertyName));
