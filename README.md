@@ -8,8 +8,6 @@
 [![Codecov](https://codecov.io/gh/microsphere-projects/microsphere-spring/branch/main/graph/badge.svg)](https://app.codecov.io/gh/microsphere-projects/microsphere-spring)
 ![Maven](https://img.shields.io/maven-central/v/io.github.microsphere-projects/microsphere-spring.svg)
 ![License](https://img.shields.io/github/license/microsphere-projects/microsphere-spring.svg)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/microsphere-projects/microsphere-spring.svg)](http://isitmaintained.com/project/microsphere-projects/microsphere-spring "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/microsphere-projects/microsphere-spring.svg)](http://isitmaintained.com/project/microsphere-projects/microsphere-spring "Percentage of issues still open")
 
 The Microsphere Spring framework is built upon a sophisticated multi-layered architecture that enhances standard Spring
 Framework capabilities through modular extensions and advanced integration patterns. This architecture focuses on
@@ -45,6 +43,7 @@ Microsphere Spring aims to address common challenges and limitations in Spring a
 The easiest way to get started is by adding the Microsphere Spring BOM (Bill of Materials) to your project's pom.xml:
 
 ```xml
+
 <dependencyManagement>
     <dependencies>
         ...
@@ -65,12 +64,13 @@ The easiest way to get started is by adding the Microsphere Spring BOM (Bill of 
 
 | **Branches** | **Purpose**                                    | **Latest Version** |
 |--------------|------------------------------------------------|--------------------|
-| **0.2.x**    | Compatible with Spring Framework 6.0.x - 6.2.x | 0.2.5              |
-| **0.1.x**    | Compatible with Spring Framework 4.3.x - 5.3.x | 0.1.5              |
+| **0.2.x**    | Compatible with Spring Framework 6.0.x - 6.2.x | 0.2.6-SNAPSHOT     |          |
+| **0.1.x**    | Compatible with Spring Framework 4.3.x - 5.3.x | 0.1.6-SNAPSHOT     |
 
 Then add the specific modules you need:
 
 ```xml
+
 <dependencies>
     <!-- Microsphere Spring Context -->
     <dependency>
@@ -92,6 +92,7 @@ b=3
 2. To add the test class for `@ResourcePropertySource`:
 
 ```java
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
 @ResourcePropertySource(

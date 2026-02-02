@@ -25,7 +25,7 @@ import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentIntercepto
 import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
 import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
 import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishingWebFilter;
-import org.slf4j.Logger;
+import io.microsphere.logging.Logger;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -36,7 +36,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static org.slf4j.LoggerFactory.getLogger;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.uncapitalize;
 
 /**
