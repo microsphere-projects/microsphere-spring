@@ -53,6 +53,7 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
+import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
@@ -268,10 +269,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         ReturnTypeContext context = returnTypeContextsCache.get(returnType);
         logger.trace("The ReturnTypeContext is gotten by the return type[{}] : {}", returnType, context);
         return context;
-    }
-
-    private HandlerMethod resolveHandlerMethod(Object handler) {
-        return handler instanceof HandlerMethod handlerMethod ? handlerMethod : null;
     }
 
     private void beforeResolveArgument(MethodParameter parameter, MethodParameterContext methodParameterContext,
