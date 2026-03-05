@@ -269,7 +269,7 @@
             </activation>
             <properties>
                 <spring.version>7.0.5</spring.version>
-                <reactor.version>2025.0.2</reactor.version>
+                <reactor.version>2025.0.3</reactor.version>
             </properties>
         </profile>
     </profiles>
