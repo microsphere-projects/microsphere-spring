@@ -49,13 +49,15 @@ public abstract class PropertyResolverUtils implements Utils {
             return source;
         }
         Map<String, Object> copy = newLinkedHashMap(source);
-        for (Map.Entry<String, Object> entry : copy.entrySet()) {
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            String key = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof String) {
-                entry.setValue(resolvePlaceholders((String) value, propertyResolver));
+                value = resolvePlaceholders((String) value, propertyResolver);
             } else if (value instanceof String[]) {
-                entry.setValue(resolvePlaceholders((String[]) value, propertyResolver));
+                value = resolvePlaceholders((String[]) value, propertyResolver);
             }
+            copy.put(key, value);
         }
         return copy;
     }
