@@ -51,15 +51,20 @@ public abstract class PropertyResolverUtils implements Utils {
         Map<String, Object> copy = newLinkedHashMap(source);
         for (Map.Entry<String, Object> entry : source.entrySet()) {
             String key = entry.getKey();
-            Object value = entry.getValue();
-            if (value instanceof String) {
-                value = resolvePlaceholders((String) value, propertyResolver);
-            } else if (value instanceof String[]) {
-                value = resolvePlaceholders((String[]) value, propertyResolver);
-            }
+            Object value = resolvePlaceholders(entry.getValue(), propertyResolver);
             copy.put(key, value);
         }
         return copy;
+    }
+
+    @Nullable
+    public static Object resolvePlaceholders(@Nullable Object source, @Nullable PropertyResolver propertyResolver) {
+        if (source instanceof String) {
+            return resolvePlaceholders((String) source, propertyResolver);
+        } else if (source instanceof String[]) {
+            return resolvePlaceholders((String[]) source, propertyResolver);
+        }
+        return source;
     }
 
     /**
