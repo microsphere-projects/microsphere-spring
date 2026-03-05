@@ -257,7 +257,7 @@
         <profile>
             <id>spring-framework-6.2</id>
             <properties>
-                <spring.version>6.2.12</spring.version>
+                <spring.version>6.2.16</spring.version>
                 <reactor.version>2024.0.15</reactor.version>
             </properties>
         </profile>
