@@ -52,7 +52,7 @@ import java.util.Map;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
-import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
@@ -168,11 +168,8 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (handler instanceof HandlerMethod handlerMethod) {
-            MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-            if (isEmpty(methodParameters)) { // No-arg Handler Method
-                beforeExecute(new ServletWebRequest(request), handlerMethod);
-            }
+        if (isNoArgumentHandlerMethod(handler)) {
+            beforeExecute(new ServletWebRequest(request), (HandlerMethod) handler);
         }
         return true;
     }
