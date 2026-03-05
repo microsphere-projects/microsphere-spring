@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.web.util;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.util.Utils;
 import org.springframework.web.method.HandlerMethod;
 
@@ -37,8 +38,22 @@ public abstract class WebUtils implements Utils {
      * @param handler the specified handler
      * @return if the specified handler is {@link HandlerMethod}, return <code>true</code>, or <code>false</code>
      */
-    public static boolean isHandlerMethod(Object handler) {
+    public static boolean isHandlerMethod(@Nullable Object handler) {
         return handler instanceof HandlerMethod;
+    }
+
+    /**
+     * Determine whether the specified handler is {@link HandlerMethod} and no argument
+     *
+     * @param handler the specified handler
+     * @return if the specified handler is {@link HandlerMethod} and no argument, return <code>true</code>, or <code>false</code>
+     */
+    public static boolean isNoArgumentHandlerMethod(@Nullable Object handler) {
+        if (isHandlerMethod(handler)) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            return isNoArgumentHandlerMethod(handlerMethod);
+        }
+        return false;
     }
 
     /**
@@ -47,10 +62,9 @@ public abstract class WebUtils implements Utils {
      * @param handlerMethod the specified {@link HandlerMethod}
      * @return if the specified {@link HandlerMethod} is no argument, return <code>true</code>, or <code>false</code>
      */
-    public static boolean isNoArgumentHandlerMethod(HandlerMethod handlerMethod) {
-        return isEmpty(handlerMethod.getMethodParameters());
+    public static boolean isNoArgumentHandlerMethod(@Nullable HandlerMethod handlerMethod) {
+        return handlerMethod == null ? false : isEmpty(handlerMethod.getMethodParameters());
     }
-
 
     private WebUtils() {
     }

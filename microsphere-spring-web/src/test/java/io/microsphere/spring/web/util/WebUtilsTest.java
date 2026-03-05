@@ -52,7 +52,11 @@ class WebUtilsTest {
 
     @Test
     void testIsNoArgumentHandlerMethod() {
+        assertTrue(isNoArgumentHandlerMethod((Object) new HandlerMethod(this, helloWorldMethod)));
         assertTrue(isNoArgumentHandlerMethod(new HandlerMethod(this, helloWorldMethod)));
+        assertFalse(isNoArgumentHandlerMethod(null));
+        assertFalse(isNoArgumentHandlerMethod((Object) null));
+        assertFalse(isNoArgumentHandlerMethod(greetingMethod));
         assertFalse(isNoArgumentHandlerMethod(new HandlerMethod(this, greetingMethod)));
     }
 }
