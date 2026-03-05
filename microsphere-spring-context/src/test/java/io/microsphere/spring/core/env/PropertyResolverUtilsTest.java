@@ -94,7 +94,7 @@ public class PropertyResolverUtilsTest {
         assertSame(source, resolvePlaceholders(source, null));
 
         assertNotSame(source, resolvePlaceholders(source, this.environment));
-        assertEquals(source, resolvePlaceholders(source, this.environment));
+        assertArrayEquals(source, resolvePlaceholders(source, this.environment));
 
         this.environment.setProperty("A", "1");
         this.environment.setProperty("B", "2");
