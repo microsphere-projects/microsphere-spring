@@ -150,7 +150,7 @@ public class InterceptingHandlerMethodProcessorTest extends AbstractWebMvcTest {
     }
 
     @Test
-    public void testPreHandle() {
+    public void testPreHandle() throws Exception {
         assertTrue(this.processor.preHandle(null, null, null));
     }
 
