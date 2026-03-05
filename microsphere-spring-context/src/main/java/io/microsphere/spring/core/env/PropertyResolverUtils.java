@@ -57,6 +57,13 @@ public abstract class PropertyResolverUtils implements Utils {
         return copy;
     }
 
+    /**
+     * Resolve the placeholders in the source {@link Object}
+     *
+     * @param source           the source {@link Object}
+     * @param propertyResolver the {@link PropertyResolver}
+     * @return the resolved {@link Object}
+     */
     @Nullable
     public static Object resolvePlaceholders(@Nullable Object source, @Nullable PropertyResolver propertyResolver) {
         if (source instanceof String) {
