@@ -26,7 +26,10 @@ import java.lang.reflect.Method;
 
 import static io.microsphere.spring.web.util.WebUtils.isHandlerMethod;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
+import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.BeanUtils.findMethod;
 
@@ -58,5 +61,14 @@ class WebUtilsTest {
         assertFalse(isNoArgumentHandlerMethod((Object) null));
         assertFalse(isNoArgumentHandlerMethod(greetingMethod));
         assertFalse(isNoArgumentHandlerMethod(new HandlerMethod(this, greetingMethod)));
+    }
+
+    @Test
+    void testResolveHandlerMethod() {
+        HandlerMethod handlerMethod = new HandlerMethod(this, helloWorldMethod);
+        assertSame(handlerMethod, resolveHandlerMethod(handlerMethod));
+
+        assertNull(resolveHandlerMethod(new Object()));
+        assertNull(resolveHandlerMethod(null));
     }
 }

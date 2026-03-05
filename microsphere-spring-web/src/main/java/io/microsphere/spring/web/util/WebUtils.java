@@ -66,6 +66,17 @@ public abstract class WebUtils implements Utils {
         return handlerMethod == null ? false : isEmpty(handlerMethod.getMethodParameters());
     }
 
+    /**
+     * Resolve the {@link HandlerMethod} from the specified handler
+     *
+     * @param handler the specified handler
+     * @return the resolved {@link HandlerMethod}
+     */
+    @Nullable
+    public static HandlerMethod resolveHandlerMethod(Object handler) {
+        return isHandlerMethod(handler) ? (HandlerMethod) handler : null;
+    }
+
     private WebUtils() {
     }
 }
