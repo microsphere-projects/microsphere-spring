@@ -32,17 +32,20 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.collection.Sets.ofSet;
+import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.BEAN_NAME;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.initBeanMetadataAttributes;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_UNKNOWN_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_MULTIPLE;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getRequiredAttribute;
@@ -120,7 +123,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         String prefix = getRequiredAttribute(attributes, "prefix");
 
-        prefix = environment.resolvePlaceholders(prefix);
+        prefix = this.environment.resolvePlaceholders(prefix);
 
         Class<?> configClass = getRequiredAttribute(attributes, "type");
 
@@ -138,7 +141,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
                                             boolean ignoreUnknownFields, boolean ignoreInvalidFields,
                                             BeanDefinitionRegistry registry) {
 
-        Map<String, Object> configurationProperties = getSubProperties(environment.getPropertySources(), environment, prefix);
+        Map<String, Object> configurationProperties = getSubProperties(this.environment.getPropertySources(), this.environment, prefix);
 
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(configurationProperties) :
                 ofSet(resolveSingleBeanName(configurationProperties, configClass, registry));
@@ -179,10 +182,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         registry.registerBeanDefinition(beanName, beanDefinition);
 
-        if (logger.isInfoEnabled()) {
-            logger.info("The configuration bean definition [name : " + beanName + ", content : " + beanDefinition
-                    + "] has been registered.");
-        }
+        registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     private Map<String, Object> resolveSubProperties(boolean multiple, String beanName,
@@ -203,8 +203,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
     }
 
     private void registerConfigurationBindingBeanPostProcessor(BeanDefinitionRegistry registry) {
-        registerInfrastructureBean(registry, ConfigurationBeanBindingPostProcessor.BEAN_NAME,
-                ConfigurationBeanBindingPostProcessor.class);
+        registerInfrastructureBean(registry, BEAN_NAME, ConfigurationBeanBindingPostProcessor.class);
     }
 
     @Override
@@ -214,11 +213,11 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
 
-        Set<String> beanNames = new LinkedHashSet<String>();
+        Set<String> beanNames = newLinkedHashSet();
 
         for (String propertyName : properties.keySet()) {
 
-            int index = propertyName.indexOf(".");
+            int index = propertyName.indexOf(DOT_CHAR);
 
             if (index > 0) {
 
