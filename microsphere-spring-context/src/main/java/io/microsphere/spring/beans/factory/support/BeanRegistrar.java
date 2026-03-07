@@ -35,7 +35,6 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinit
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.setInstanceSupplier;
 import static java.beans.Introspector.decapitalize;
-import static java.lang.String.format;
 import static org.springframework.aop.support.AopUtils.getTargetClass;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
@@ -492,7 +491,7 @@ public abstract class BeanRegistrar {
                     count++;
                 } else {
                     if (logger.isWarnEnabled()) {
-                        logger.warn(format("The Factory Class bean[%s] has been registered with bean name[%s]", factoryImplClassName, beanName));
+                        logger.warn("The Factory Class bean[ class : '{}' ] has been registered with bean name {}", factoryImplClassName, beanName);
                     }
                 }
             }
