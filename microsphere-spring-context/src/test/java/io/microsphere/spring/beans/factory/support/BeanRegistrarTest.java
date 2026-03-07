@@ -122,8 +122,11 @@ public class BeanRegistrarTest {
 
     @Test
     public void testHasAlias() {
+        assertFalse(hasAlias(this.beanFactory, null, null));
         String beanName = registerUserAsSingleton();
         String alias = "test-user";
+        assertFalse(hasAlias(this.beanFactory, beanName, null));
+        assertFalse(hasAlias(this.beanFactory, null, alias));
         assertFalse(hasAlias(this.beanFactory, beanName, alias));
 
         this.beanFactory.registerAlias(beanName, alias);
@@ -134,6 +137,7 @@ public class BeanRegistrarTest {
     public void testRegisterSpringFactoriesBeans() {
         int beansCount = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
         assertEquals(2, beansCount);
+        assertEquals(0, registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class));
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean.class.getSimpleName())));
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean2.class.getSimpleName())));
     }
