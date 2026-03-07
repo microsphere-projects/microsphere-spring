@@ -610,4 +610,7 @@ public abstract class BeanRegistrar {
         beanDefinition.setInstanceSupplier(() -> bean);
         registerBeanDefinition(registry, beanName, beanDefinition);
     }
+
+    private BeanRegistrar() {
+    }
 }
