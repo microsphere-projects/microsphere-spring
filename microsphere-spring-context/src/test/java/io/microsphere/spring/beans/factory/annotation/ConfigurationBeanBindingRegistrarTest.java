@@ -32,6 +32,7 @@ import java.util.Map;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_UNKNOWN_FIELDS;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_MULTIPLE;
+import static java.lang.String.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -111,7 +112,7 @@ class ConfigurationBeanBindingRegistrarTest {
             this.environment.setProperty("user.id", beanName);
         }
         this.environment.setProperty("user.name", name);
-        this.environment.setProperty("user.age", age);
+        this.environment.setProperty("user.age", valueOf(age));
 
         this.registrar.registerConfigurationBeanDefinitions(this.attributes, this.beanFactory);
 
