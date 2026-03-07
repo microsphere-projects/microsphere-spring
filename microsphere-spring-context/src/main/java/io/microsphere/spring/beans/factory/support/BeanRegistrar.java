@@ -616,4 +616,7 @@ public abstract class BeanRegistrar {
             registerFactoryBean(registry, beanName, bean, primary);
         }
     }
+
+    private BeanRegistrar() {
+    }
 }
