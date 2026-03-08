@@ -27,6 +27,8 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.unmodifiableMap;
 
 /**
@@ -72,7 +74,7 @@ import static java.util.Collections.unmodifiableMap;
 public class ResourceYamlProcessor extends YamlProcessor {
 
     public ResourceYamlProcessor(Resource resource) {
-        super.setResources(resource);
+        this(ofArray(resource));
     }
 
     public ResourceYamlProcessor(Resource... resources) {
@@ -95,22 +97,16 @@ public class ResourceYamlProcessor extends YamlProcessor {
         LoaderOptions loaderOptions = new LoaderOptions();
         loaderOptions.setAllowDuplicateKeys(false);
         loaderOptions.setProcessComments(true);
-        loaderOptions.setMaxAliasesForCollections(Integer.MAX_VALUE);
+        loaderOptions.setMaxAliasesForCollections(MAX_VALUE);
         loaderOptions.setAllowRecursiveKeys(true);
         DumperOptions dumperOptions = new DumperOptions();
         return new Yaml(new FilteringConstructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
     }
 
-    private class FilteringConstructor extends Constructor {
+    class FilteringConstructor extends Constructor {
 
         FilteringConstructor(LoaderOptions loaderOptions) {
             super(loaderOptions);
         }
-
-        @Override
-        protected Class<?> getClassForName(String name) throws ClassNotFoundException {
-            return super.getClassForName(name);
-        }
     }
-
 }
