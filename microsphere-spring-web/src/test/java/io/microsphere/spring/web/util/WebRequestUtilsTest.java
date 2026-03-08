@@ -27,6 +27,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import java.io.UnsupportedEncodingException;
+
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.constants.PathConstants.SLASH;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
@@ -60,7 +62,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
@@ -217,9 +218,12 @@ class WebRequestUtilsTest {
     }
 
     @Test
-    void testWriteResponseBody() {
+    void testWriteResponseBody() throws UnsupportedEncodingException {
         NativeWebRequest request = createWebRequest();
-        assertThrows(UnsupportedOperationException.class, () -> writeResponseBody(request, testName, testValue));
+        writeResponseBody(request, testName, testValue);
+        MockHttpServletResponse response = request.getNativeResponse(MockHttpServletResponse.class);
+        String contentAsString = response.getContentAsString();
+        assertEquals(testName + "=" + testValue, contentAsString);
     }
 
     @Test
