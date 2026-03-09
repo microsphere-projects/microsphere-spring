@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -29,6 +28,8 @@ import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.spring.beans.BeanUtils.resolveBeanType;
 import static io.microsphere.spring.beans.BeanUtils.sort;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
+import static io.microsphere.util.ArrayUtils.contains;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -63,7 +64,6 @@ class BeanUtilsTest {
 
     @Test
     void testIsBeanPresent() {
-
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
         assertFalse(isBeanPresent(registry, TestBean.class.getName(), true));
@@ -91,42 +91,35 @@ class BeanUtilsTest {
         assertFalse(isBeanPresent(registry, BeanUtils.class));
 
         assertTrue(isBeanPresent(registry, "testBean", TestBean.class));
+        assertFalse(isBeanPresent(registry, "testBean2", TestBean.class));
         assertTrue(isBeanPresent(registry, "testBean2", TestBean2.class));
+        assertFalse(isBeanPresent(registry, "testBean", TestBean2.class));
         assertFalse(isBeanPresent(registry, "beanUtils", BeanUtils.class));
+
+        assertFalse(isBeanPresent(registry, "not-found-class"));
+        assertFalse(isBeanPresent(registry, "not-found-class", true));
     }
 
     @Test
     void testGetBeanNamesOnAnnotationBean() {
-
-        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);
-
-        String[] beanNames = getBeanNames(applicationContext, String.class);
-
-        assertTrue(asList(beanNames).contains("testString"));
-
-        applicationContext.close();
+        testInSpringContainer(context -> {
+            String[] beanNames = getBeanNames(context, String.class);
+            assertTrue(contains(beanNames, "testString"));
+        }, Config.class);
     }
 
     @Test
     void testGetBeanNamesOnXmlBean() {
-
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-context.xml");
-
         String[] beanNames = getBeanNames(context, User.class);
-
-        assertTrue(asList(beanNames).contains("user"));
-
+        assertTrue(contains(beanNames, "user"));
         context.close();
-
     }
 
     @Test
     void testGetBeanNames() {
-
         DefaultListableBeanFactory parentBeanFactory = new DefaultListableBeanFactory();
-
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-
         beanFactory.setParentBeanFactory(parentBeanFactory);
 
         registerBeans(parentBeanFactory, TestBean.class);
@@ -226,23 +219,26 @@ class BeanUtilsTest {
 
     @Test
     void testGetOptionalBean() {
-
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
-
         TestBean testBean = getOptionalBean(registry, TestBean.class, true);
-
         assertNull(testBean);
 
         testBean = getOptionalBean(registry, TestBean.class);
-
         assertNull(testBean);
 
         registerBeans(registry, TestBean.class);
-
         testBean = getOptionalBean(registry, TestBean.class);
-
         assertNotNull(testBean);
+    }
 
+    @Test
+    void testGetOptionalBeanOnBeanCreationFailed() {
+        DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
+
+        registerBeans(registry, CharSequence.class);
+
+        assertNull(getOptionalBean(registry, CharSequence.class));
+        assertNull(getOptionalBean(registry, CharSequence.class, true));
     }
 
     @Test
@@ -280,17 +276,16 @@ class BeanUtilsTest {
 
     @Test
     void testSort() {
-
         int times = 9;
 
-        Map<String, OrderedBean> orderedBeansMap = new LinkedHashMap<String, OrderedBean>(times);
+        Map<String, OrderedBean> orderedBeansMap = new LinkedHashMap<>(times);
 
         for (int i = times; i > 0; i--) {
             OrderedBean orderedBean = new OrderedBean(i);
             orderedBeansMap.put(orderedBean.toString(), orderedBean);
         }
 
-        Map<String, OrderedBean> expectedBeansMap = new LinkedHashMap<String, OrderedBean>(times);
+        Map<String, OrderedBean> expectedBeansMap = new LinkedHashMap<>(times);
 
         for (int i = 1; i <= times; i++) {
             OrderedBean orderedBean = new OrderedBean(i);
@@ -300,27 +295,25 @@ class BeanUtilsTest {
         Map<String, OrderedBean> sortedBeansMap = sort(orderedBeansMap);
 
         assertArrayEquals(expectedBeansMap.values().toArray(), sortedBeansMap.values().toArray());
-
     }
 
     @Test
     void testInvokeAwareInterfaces() {
         TestBean testBean = new TestBean();
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.refresh();
-        BeanFactory beanFactory = context;
-        invokeAwareInterfaces(testBean, beanFactory);
-        assertSame(testBean.getMessageSource(), context);
-        assertSame(testBean.getApplicationContext(), context);
-        assertSame(testBean.getApplicationEventPublisher(), context);
-        assertSame(testBean.getBeanFactory(), context.getBeanFactory());
-        assertSame(testBean.getClassLoader(), context.getClassLoader());
-        assertSame(testBean.getEnvironment(), context.getEnvironment());
-        assertSame(testBean.getResourceLoader(), context);
-        assertNotNull(testBean.getResolver());
-        context.close();
-    }
 
+        testInSpringContainer(context -> {
+            BeanFactory beanFactory = context;
+            invokeAwareInterfaces(testBean, beanFactory);
+            assertSame(testBean.getMessageSource(), context);
+            assertSame(testBean.getApplicationContext(), context);
+            assertSame(testBean.getApplicationEventPublisher(), context);
+            assertSame(testBean.getBeanFactory(), context.getBeanFactory());
+            assertSame(testBean.getClassLoader(), context.getClassLoader());
+            assertSame(testBean.getEnvironment(), context.getEnvironment());
+            assertSame(testBean.getResourceLoader(), context);
+            assertNotNull(testBean.getResolver());
+        });
+    }
 
     private record OrderedBean(int order) implements Ordered {
 
