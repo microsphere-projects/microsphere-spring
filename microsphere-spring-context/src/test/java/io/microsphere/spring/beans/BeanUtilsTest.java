@@ -32,6 +32,7 @@ import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContai
 import static io.microsphere.util.ArrayUtils.contains;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -260,6 +261,12 @@ class BeanUtilsTest {
 
         assertEquals(testBean2, beans.get(1));
 
+    }
+
+    @Test
+    void testGetSortedBeansOnNull() {
+        assertSame(emptyList(), getSortedBeans((BeanFactory) null, String.class));
+        assertEquals(emptyList(), getSortedBeans((BeanFactory) new DefaultListableBeanFactory(), String.class));
     }
 
     @Test
