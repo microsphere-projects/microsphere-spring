@@ -7,7 +7,9 @@ import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -24,6 +26,10 @@ import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
 import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
+import static io.microsphere.spring.beans.BeanUtils.invokeBeanClassLoaderAware;
+import static io.microsphere.spring.beans.BeanUtils.invokeBeanFactoryAware;
+import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
+import static io.microsphere.spring.beans.BeanUtils.invokeBeanNameAware;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.spring.beans.BeanUtils.resolveBeanType;
 import static io.microsphere.spring.beans.BeanUtils.sort;
@@ -67,27 +73,26 @@ class BeanUtilsTest {
     void testIsBeanPresent() {
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
+        assertFalse(isBeanPresent(registry, TestBean.class, true));
+        assertFalse(isBeanPresent(registry, TestBean.class));
+
         assertFalse(isBeanPresent(registry, TestBean.class.getName(), true));
         assertFalse(isBeanPresent(registry, TestBean.class.getName()));
 
         registerBeans(registry, TestBean.class, TestBean2.class);
 
-
         assertTrue(isBeanPresent(registry, TestBean.class.getName(), true));
         assertTrue(isBeanPresent(registry, TestBean.class.getName()));
-
         assertTrue(isBeanPresent(registry, TestBean.class, true));
         assertTrue(isBeanPresent(registry, TestBean.class));
 
         assertTrue(isBeanPresent(registry, TestBean2.class.getName(), true));
         assertTrue(isBeanPresent(registry, TestBean2.class.getName()));
-
         assertTrue(isBeanPresent(registry, TestBean2.class, true));
         assertTrue(isBeanPresent(registry, TestBean2.class));
 
         assertFalse(isBeanPresent(registry, BeanUtils.class.getName(), true));
         assertFalse(isBeanPresent(registry, BeanUtils.class.getName()));
-
         assertFalse(isBeanPresent(registry, BeanUtils.class, true));
         assertFalse(isBeanPresent(registry, BeanUtils.class));
 
@@ -244,7 +249,6 @@ class BeanUtilsTest {
 
     @Test
     void testGetOptionalBeanExcludingAncestors() {
-
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
         registerBeans(registry, TestBean.class, TestBean2.class);
@@ -260,7 +264,6 @@ class BeanUtilsTest {
         TestBean2 testBean2 = getOptionalBean(registry, TestBean2.class);
 
         assertEquals(testBean2, beans.get(1));
-
     }
 
     @Test
@@ -271,14 +274,26 @@ class BeanUtilsTest {
 
     @Test
     void testGetBeanIfAvailable() {
-
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+        assertNull(getBeanIfAvailable(beanFactory, "testBean", TestBean.class));
+        assertNull(getBeanIfAvailable(beanFactory, "testBean2", TestBean2.class));
 
         registerBeans(beanFactory, TestBean.class, TestBean2.class);
 
         assertTrue(isAssignable(TestBean.class, getBeanIfAvailable(beanFactory, "testBean", TestBean.class).getClass()));
         assertTrue(isAssignable(TestBean2.class, getBeanIfAvailable(beanFactory, "testBean2", TestBean2.class).getClass()));
+    }
 
+    @Test
+    void testInvokeBeanInterfaces() {
+        testInSpringContainer(context -> {
+            TestBean bean = context.getBean(TestBean.class);
+            invokeBeanInterfaces(bean, (ApplicationContext) context);
+            invokeBeanInterfaces(bean, context);
+            invokeBeanInterfaces(null, context);
+            invokeBeanInterfaces(bean, null);
+        }, Config.class, TestBean.class, TestBean2.class);
     }
 
     @Test
@@ -307,10 +322,10 @@ class BeanUtilsTest {
     @Test
     void testInvokeAwareInterfaces() {
         TestBean testBean = new TestBean();
-
         testInSpringContainer(context -> {
             BeanFactory beanFactory = context;
             invokeAwareInterfaces(testBean, beanFactory);
+            invokeAwareInterfaces(testBean, context.getBeanFactory());
             assertSame(testBean.getMessageSource(), context);
             assertSame(testBean.getApplicationContext(), context);
             assertSame(testBean.getApplicationEventPublisher(), context);
@@ -319,6 +334,49 @@ class BeanUtilsTest {
             assertSame(testBean.getEnvironment(), context.getEnvironment());
             assertSame(testBean.getResourceLoader(), context);
             assertNotNull(testBean.getResolver());
+        });
+    }
+
+    @Test
+    void testInvokeBeanNameAware() {
+        String test = "test";
+        TestBean testBean = new TestBean();
+
+        testInSpringContainer(context -> {
+            BeanFactory beanFactory = context;
+            invokeBeanNameAware(testBean, beanFactory);
+            invokeBeanNameAware(test, beanFactory);
+            invokeBeanNameAware(test, (String) null);
+            invokeBeanNameAware(testBean, (String) null);
+            invokeBeanNameAware(testBean, "test");
+        });
+    }
+
+    @Test
+    void testInvokeBeanFactoryAware() {
+        String test = "test";
+        TestBean testBean = new TestBean();
+
+        testInSpringContainer(context -> {
+            BeanFactory beanFactory = context;
+            invokeBeanFactoryAware(testBean, beanFactory);
+            invokeBeanFactoryAware(testBean, null);
+            invokeBeanFactoryAware(test, beanFactory);
+            invokeBeanFactoryAware(test, null);
+        });
+    }
+
+    @Test
+    void testInvokeBeanClassLoaderAware() {
+        String test = "test";
+        TestBean testBean = new TestBean();
+
+        testInSpringContainer(context -> {
+            ConfigurableBeanFactory beanFactory = context.getBeanFactory();
+            invokeBeanClassLoaderAware(testBean, beanFactory);
+            invokeBeanClassLoaderAware(testBean, null);
+            invokeBeanClassLoaderAware(test, beanFactory);
+            invokeBeanClassLoaderAware(test, null);
         });
     }
 
