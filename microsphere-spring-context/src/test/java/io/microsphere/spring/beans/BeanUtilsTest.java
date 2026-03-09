@@ -6,6 +6,7 @@ import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.util.ClassUtils.isAssignable;
 
@@ -287,12 +289,18 @@ class BeanUtilsTest {
 
     @Test
     void testInvokeBeanInterfaces() {
+        InitializingBean failedBean = () -> {
+            throw new Exception("For testing");
+        };
+
         testInSpringContainer(context -> {
             TestBean bean = context.getBean(TestBean.class);
             invokeBeanInterfaces(bean, (ApplicationContext) context);
             invokeBeanInterfaces(bean, context);
             invokeBeanInterfaces(null, context);
             invokeBeanInterfaces(bean, null);
+            assertThrows(RuntimeException.class, () -> invokeBeanInterfaces(failedBean, (ApplicationContext) context));
+            assertThrows(RuntimeException.class, () -> invokeBeanInterfaces(failedBean, context));
         }, Config.class, TestBean.class, TestBean2.class);
     }
 
