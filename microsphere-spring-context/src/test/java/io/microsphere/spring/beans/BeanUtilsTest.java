@@ -6,6 +6,7 @@ import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -17,11 +18,13 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
@@ -47,6 +50,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.util.ClassUtils.isAssignable;
 
@@ -291,12 +295,18 @@ public class BeanUtilsTest {
 
     @Test
     public void testInvokeBeanInterfaces() {
+        InitializingBean failedBean = () -> {
+            throw new Exception("For testing");
+        };
+
         testInSpringContainer(context -> {
             TestBean bean = context.getBean(TestBean.class);
             invokeBeanInterfaces(bean, (ApplicationContext) context);
             invokeBeanInterfaces(bean, context);
             invokeBeanInterfaces(null, context);
             invokeBeanInterfaces(bean, null);
+            assertThrows(RuntimeException.class, () -> invokeBeanInterfaces(failedBean, (ApplicationContext) context));
+            assertThrows(RuntimeException.class, () -> invokeBeanInterfaces(failedBean, context));
         }, Config.class, TestBean.class, TestBean2.class);
     }
 
@@ -435,7 +445,6 @@ public class BeanUtilsTest {
         assertEquals(2, namingBean2.getOrder());
 
         assertEquals(-1, namingBean.compareTo(namingBean2));
-
     }
 
     @Test
@@ -444,4 +453,11 @@ public class BeanUtilsTest {
         assertNull(constructor);
     }
 
+    @Test
+    public void testFindPrimaryConstructorOnFailed() {
+        assertNull(findPrimaryConstructor(null, BeanUtilsTest.class));
+
+        MethodHandle methodHandle = findVirtual(BeanUtilsTest.class, "testFindPrimaryConstructorOnFailed");
+        assertNull(findPrimaryConstructor(methodHandle, BeanUtilsTest.class));
+    }
 }

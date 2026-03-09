@@ -823,14 +823,18 @@ public abstract class BeanUtils implements Utils {
      * @since Spring Framework 5.0
      */
     public static <T> Constructor<T> findPrimaryConstructor(@Nonnull Class<T> clazz) {
-        if (FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE == null) {
+        return findPrimaryConstructor(FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
+    }
+
+    static <T> Constructor<T> findPrimaryConstructor(MethodHandle methodHandle, @Nonnull Class<T> clazz) {
+        if (methodHandle == null) {
             return null;
         }
         Constructor<T> constructor = null;
         try {
-            constructor = (Constructor<T>) FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE.invokeExact(clazz);
+            constructor = (Constructor<T>) methodHandle.invokeExact(clazz);
         } catch (Throwable e) {
-            handleInvokeExactFailure(e, FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
+            handleInvokeExactFailure(e, methodHandle, clazz);
         }
         return constructor;
     }
