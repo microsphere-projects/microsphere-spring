@@ -43,6 +43,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asHierarchicalBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanPostProcessors;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getOptionalBean;
@@ -256,6 +257,11 @@ class BeanFactoryUtilsTest {
         assertSame(emptyList(), beanPostProcessors);
     }
 
+    @Test
+    void testGetBeanClassLoader() {
+        assertNull(getBeanClassLoader(null));
+        assertSame(this.beanFactory.getBeanClassLoader(), getBeanClassLoader(this.beanFactory));
+    }
 
     @Component("baseTestBean2")
     private static class BaseTestBean2 extends BaseTestBean {

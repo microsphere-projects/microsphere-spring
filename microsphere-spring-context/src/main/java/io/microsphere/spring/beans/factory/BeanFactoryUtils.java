@@ -528,6 +528,20 @@ public abstract class BeanFactoryUtils implements Utils {
         return beanPostProcessors;
     }
 
+    /**
+     * Retrieves the bean class loader from the given {@link BeanFactory}.
+     *
+     * @param beanFactory The target bean factory to retrieve the bean class loader from. May be {@code null}.
+     * @return The bean class loader if available; otherwise, {@code null}.
+     */
+    @Nullable
+    public static ClassLoader getBeanClassLoader(@Nullable BeanFactory beanFactory) {
+        if (beanFactory instanceof ConfigurableBeanFactory configurableBeanFactory) {
+            return configurableBeanFactory.getBeanClassLoader();
+        }
+        return null;
+    }
+
     private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
         if (beanFactory == null) {
             return null;
