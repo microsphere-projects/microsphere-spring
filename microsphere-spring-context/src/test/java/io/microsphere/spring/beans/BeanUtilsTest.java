@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.spring.beans.BeanUtils.doInvokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
@@ -400,6 +401,22 @@ public class BeanUtilsTest {
             invokeBeanClassLoaderAware(testBean, null);
             invokeBeanClassLoaderAware(test, beanFactory);
             invokeBeanClassLoaderAware(test, null);
+        });
+    }
+
+    @Test
+    public void testDoInvokeAwareInterfaces() {
+        String test = "test";
+        TestBean testBean = new TestBean();
+
+        testInSpringContainer(context -> {
+            ConfigurableBeanFactory beanFactory = context.getBeanFactory();
+            doInvokeAwareInterfaces(testBean, beanFactory);
+            doInvokeAwareInterfaces(testBean, null);
+            doInvokeAwareInterfaces(test, beanFactory);
+            doInvokeAwareInterfaces(test, null);
+            doInvokeAwareInterfaces(null, beanFactory);
+            doInvokeAwareInterfaces(null, null);
         });
     }
 
