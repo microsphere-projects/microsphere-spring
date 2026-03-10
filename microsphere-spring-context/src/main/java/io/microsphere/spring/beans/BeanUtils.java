@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
@@ -915,7 +914,7 @@ public abstract class BeanUtils implements Utils {
             return;
         }
 
-        ConfigurableListableBeanFactory beanFactory = asConfigurableListableBeanFactory(applicationContext);
+        ConfigurableListableBeanFactory beanFactory = applicationContext == null ? null : applicationContext.getBeanFactory();
 
         invokeBeanFactoryAwareInterfaces(bean, beanFactory, beanFactory);
 
