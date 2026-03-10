@@ -40,6 +40,7 @@ import java.util.Map.Entry;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
@@ -786,15 +787,15 @@ public abstract class BeanUtils implements Utils {
     /**
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, BeanFactory beanFactory,
+    static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, @Nullable BeanFactory beanFactory,
                                                  @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         invokeBeanNameAware(bean, beanFactory);
         invokeBeanClassLoaderAware(bean, configurableBeanFactory);
         invokeBeanFactoryAware(bean, beanFactory);
     }
 
-    static void invokeBeanNameAware(@Nonnull Object bean, @Nonnull BeanFactory beanFactory) {
-        if (bean instanceof BeanNameAware beanNameAware) {
+    static void invokeBeanNameAware(@Nonnull Object bean, @Nullable BeanFactory beanFactory) {
+        if (bean instanceof BeanNameAware beanNameAware && beanFactory != null) {
             BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
             BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
             String beanName = generateBeanName(beanDefinition, registry);
@@ -914,7 +915,7 @@ public abstract class BeanUtils implements Utils {
             return;
         }
 
-        ConfigurableListableBeanFactory beanFactory = applicationContext != null ? applicationContext.getBeanFactory() : null;
+        ConfigurableListableBeanFactory beanFactory = asConfigurableListableBeanFactory(applicationContext);
 
         invokeBeanFactoryAwareInterfaces(bean, beanFactory, beanFactory);
 
