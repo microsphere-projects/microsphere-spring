@@ -11,6 +11,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -63,7 +64,6 @@ import static org.springframework.util.ClassUtils.isAssignable;
  */
 @SuppressWarnings("unchecked")
 public class BeanUtilsTest {
-
 
     @Configuration
     public static class Config {
@@ -230,7 +230,6 @@ public class BeanUtilsTest {
         assertNull(beanType);
     }
 
-
     @Test
     public void testGetOptionalBean() {
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
@@ -341,7 +340,6 @@ public class BeanUtilsTest {
         assertArrayEquals(expectedBeansMap.values().toArray(), sortedBeansMap.values().toArray());
     }
 
-
     @Test
     public void testInvokeAwareInterfaces() {
         TestBean testBean = new TestBean();
@@ -349,6 +347,8 @@ public class BeanUtilsTest {
             BeanFactory beanFactory = context;
             invokeAwareInterfaces(testBean, beanFactory);
             invokeAwareInterfaces(testBean, context.getBeanFactory());
+            invokeAwareInterfaces(testBean, context, (ConfigurableApplicationContext) null);
+
             assertSame(testBean.getMessageSource(), context);
             assertSame(testBean.getApplicationContext(), context);
             assertSame(testBean.getApplicationEventPublisher(), context);
