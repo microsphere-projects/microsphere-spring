@@ -918,8 +918,11 @@ public abstract class BeanUtils implements Utils {
 
         invokeBeanFactoryAwareInterfaces(bean, beanFactory, beanFactory);
 
-        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
+        doInvokeAwareInterfaces(bean, beanFactory);
+    }
 
+    static void doInvokeAwareInterfaces(@Nullable Object bean, @Nullable BeanFactory beanFactory) {
+        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
         if (beanPostProcessor != null) {
             beanPostProcessor.postProcessBeforeInitialization(bean, "");
         }
