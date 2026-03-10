@@ -224,7 +224,6 @@ class BeanUtilsTest {
         assertNull(beanType);
     }
 
-
     @Test
     void testGetOptionalBean() {
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
@@ -235,9 +234,13 @@ class BeanUtilsTest {
         assertNull(testBean);
 
         registerBeans(registry, TestBean.class);
+        testBean = getOptionalBean(registry, TestBean.class, true);
+        assertNotNull(testBean);
+
         testBean = getOptionalBean(registry, TestBean.class);
         assertNotNull(testBean);
     }
+
 
     @Test
     void testGetOptionalBeanOnBeanCreationFailed() {
@@ -289,6 +292,9 @@ class BeanUtilsTest {
 
     @Test
     void testInvokeBeanInterfaces() {
+
+        InitializingBean vaildBean = () -> {
+        };
         InitializingBean failedBean = () -> {
             throw new Exception("For testing");
         };
@@ -299,6 +305,8 @@ class BeanUtilsTest {
             invokeBeanInterfaces(bean, context);
             invokeBeanInterfaces(null, context);
             invokeBeanInterfaces(bean, null);
+            invokeBeanInterfaces(vaildBean, (ApplicationContext) context);
+            invokeBeanInterfaces(vaildBean, null);
             assertThrows(RuntimeException.class, () -> invokeBeanInterfaces(failedBean, (ApplicationContext) context));
             assertThrows(RuntimeException.class, () -> invokeBeanInterfaces(failedBean, context));
         }, Config.class, TestBean.class, TestBean2.class);
