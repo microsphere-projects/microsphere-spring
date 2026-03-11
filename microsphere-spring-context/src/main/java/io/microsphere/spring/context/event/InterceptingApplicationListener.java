@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.lang.DelegatingWrapper;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.GenericApplicationListener;
@@ -30,7 +31,7 @@ import java.util.Objects;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class InterceptingApplicationListener implements GenericApplicationListenerAdapter {
+class InterceptingApplicationListener implements GenericApplicationListenerAdapter , DelegatingWrapper {
 
     private final ApplicationListener<?> delegate;
 
