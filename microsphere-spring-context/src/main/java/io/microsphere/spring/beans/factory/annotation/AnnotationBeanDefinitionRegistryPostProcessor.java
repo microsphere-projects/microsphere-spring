@@ -70,7 +70,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  *     aliases if present and main {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions},
  *     it's allowed to be override
  *     </li>
- *     <li>{@link #registerExtentedBeanDefinitions(ExposingClassPathBeanDefinitionScanner, Map, String[])} :
+ *     <li>{@link #registerExtendedBeanDefinitions(ExposingClassPathBeanDefinitionScanner, Map, String[])} :
  *      it's mandatory to be override by the sub-class to register secondary {@link BeanDefinition BeanDefinitions}
  *      if required
  *     </li>
@@ -184,7 +184,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
         // Register the main BeanDefinitions
         Map<String, AnnotatedBeanDefinition> mainBeanDefinitions = registerMainBeanDefinitions(scanner, basePackages);
         // Register the extended BeanDefinitions
-        registerExtentedBeanDefinitions(scanner, mainBeanDefinitions, basePackages);
+        registerExtendedBeanDefinitions(scanner, mainBeanDefinitions, basePackages);
     }
 
     /**
@@ -249,7 +249,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
      *                            {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions}, which may be empty
      * @param basePackages        the base packages to scan
      */
-    protected abstract void registerExtentedBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+    protected abstract void registerExtendedBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
                                                             Map<String, AnnotatedBeanDefinition> mainBeanDefinitions,
                                                             String[] basePackages);
 
