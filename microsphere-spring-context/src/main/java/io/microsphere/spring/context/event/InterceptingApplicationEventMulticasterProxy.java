@@ -80,13 +80,13 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
      * The method name of {@link ApplicationEventMulticaster#removeApplicationListeners(Predicate)}
      * since Spring Framework 5.3.5
      */
-    private static final Method removeApplicationListenersMethod = findDeclaredMethod(ApplicationEventMulticaster.class, "removeApplicationListeners", Predicate.class);
+    static final Method removeApplicationListenersMethod = findDeclaredMethod(ApplicationEventMulticaster.class, "removeApplicationListeners", Predicate.class);
 
     /**
      * The method name of {@link ApplicationEventMulticaster#removeApplicationListenerBeans(Predicate)}
      * since Spring Framework 5.3.5
      */
-    private static final Method removeApplicationListenerBeansMethod = findDeclaredMethod(ApplicationEventMulticaster.class, "removeApplicationListenerBeans", Predicate.class);
+    static final Method removeApplicationListenerBeansMethod = findDeclaredMethod(ApplicationEventMulticaster.class, "removeApplicationListenerBeans", Predicate.class);
 
     private final String delegateBeanName;
 

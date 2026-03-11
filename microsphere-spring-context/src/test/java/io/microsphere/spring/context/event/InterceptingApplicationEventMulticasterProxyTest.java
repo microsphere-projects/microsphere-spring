@@ -41,6 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.RESET_BEAN_NAME_PROPERTY_NAME;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
+import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.removeApplicationListenersMethod;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -131,6 +132,10 @@ public class InterceptingApplicationEventMulticasterProxyTest {
         this.proxy.removeApplicationListenerBean(TEST_APPLICATION_LISTENER_BEAN_NAME);
         this.proxy.removeApplicationListeners(l -> l == listener);
         this.proxy.removeApplicationListenerBeans(name -> TEST_APPLICATION_LISTENER_BEAN_NAME.equals(name));
+
+        if (removeApplicationListenersMethod == null) {
+            this.proxy.removeApplicationListener(listener);
+        }
 
         this.proxy.multicastEvent(event2);
         assertNull(getEvent());
