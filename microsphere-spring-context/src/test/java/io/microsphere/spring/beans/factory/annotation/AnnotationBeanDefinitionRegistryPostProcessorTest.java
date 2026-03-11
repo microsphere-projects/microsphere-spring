@@ -22,6 +22,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,9 +35,12 @@ import java.lang.annotation.Target;
 import java.util.Map;
 
 import static io.microsphere.spring.beans.factory.annotation.AnnotationBeanDefinitionRegistryPostProcessor.getAnnotation;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
@@ -64,6 +69,12 @@ public class AnnotationBeanDefinitionRegistryPostProcessorTest {
     @Autowired
     private String stringBean;
 
+    @Autowired
+    private DefaultListableBeanFactory beanFactory;
+
+    @Autowired
+    private AnnotationBeanDefinitionRegistryPostProcessor processor;
+
     @Test
     public void test() {
         assertNotNull(myService);
@@ -76,8 +87,30 @@ public class AnnotationBeanDefinitionRegistryPostProcessorTest {
     }
 
     @Test
-    public void testResolveBeanClass() {
+    public void testRegisterBeanDefinitions() {
+        this.processor.registerBeanDefinitions(this.beanFactory);
+    }
 
+    @Test
+    public void testLogBeanDefinitions() {
+        this.processor.logBeanDefinitions(emptySet(), "com.acme");
+    }
+
+    @Test
+    public void testPutBeanDefinitions() {
+        BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(genericBeanDefinition(this.getClass()), "test");
+        this.processor.putBeanDefinitions(emptyMap(), beanDefinitionHolder);
+    }
+
+    @Test
+    public void testGetter() {
+        assertNotNull(this.processor.getPackagesToScan());
+        assertNotNull(this.processor.getSupportedAnnotationTypes());
+        assertNotNull(this.processor.getSupportedAnnotationTypeNames());
+        assertNotNull(this.processor.getBeanFactory());
+        assertNotNull(this.processor.getEnvironment());
+        assertNotNull(this.processor.getResourceLoader());
+        assertNotNull(this.processor.getClassLoader());
     }
 
     @Target({TYPE, ANNOTATION_TYPE})
@@ -95,9 +128,9 @@ public class AnnotationBeanDefinitionRegistryPostProcessorTest {
         }
 
         @Override
-        protected void registerSecondaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
-                                                        Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
-                                                        String[] basePackages) {
+        protected void registerExtendedBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+                                                       Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
+                                                       String[] basePackages) {
             scanner.registerSingleton("stringBean", "Hello,World");
 
         }
