@@ -45,7 +45,7 @@ import static org.springframework.util.MimeType.valueOf;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
+class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
 
     public static final MimeType DEFAULT_MEDIA_TYPE = valueOf("text/properties");
 
