@@ -33,7 +33,7 @@
         <sqlite-jdbc.version>3.41.2.2</sqlite-jdbc.version>
         <hamcrest.version>3.0</hamcrest.version>
         <tomcat.version>10.1.49</tomcat.version>
-        <zookeeper.version>3.9.4</zookeeper.version>
+        <zookeeper.version>3.9.5</zookeeper.version>
         <curator.version>5.9.0</curator.version>
     </properties>
 
