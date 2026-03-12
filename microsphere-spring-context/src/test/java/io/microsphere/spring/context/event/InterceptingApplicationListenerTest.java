@@ -25,7 +25,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
-import org.springframework.core.ResolvableType;
 
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -64,17 +63,7 @@ public class InterceptingApplicationListenerTest {
 
     @Test
     public void testConstructor() {
-        GenericApplicationListener genericApplicationListener = new GenericApplicationListener() {
-            @Override
-            public void onApplicationEvent(ApplicationEvent event) {
-                listener.onApplicationEvent(event);
-            }
-
-            @Override
-            public boolean supportsEventType(ResolvableType eventType) {
-                return true;
-            }
-        };
+        GenericApplicationListener genericApplicationListener = new org.springframework.context.event.GenericApplicationListenerAdapter(this.listener);
         assertNotNull(new InterceptingApplicationListener(genericApplicationListener, emptyList()));
     }
 
