@@ -31,6 +31,7 @@ import java.util.List;
 
 import static java.nio.charset.Charset.defaultCharset;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.util.StreamUtils.copyToString;
 
 /**
@@ -61,6 +62,8 @@ public class SpringProtocolURLStreamHandlerTest {
     @Test
     public void testSpringEnvironmentURLConnectionFactory() throws Throwable {
         assertContent(new URL("spring:env:property-sources://microsphere.net/text/properties"));
+        URL url = new URL("spring:env:test://");
+        assertNull(url.openConnection());
     }
 
     @Test
