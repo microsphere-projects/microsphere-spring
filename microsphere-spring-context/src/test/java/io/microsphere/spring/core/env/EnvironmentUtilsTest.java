@@ -29,6 +29,7 @@ import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionServi
 import static io.microsphere.spring.core.env.EnvironmentUtils.getProperties;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolvePlaceholders;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -111,6 +112,12 @@ public class EnvironmentUtilsTest {
     }
 
     @Test
+    public void testResolveCommaDelimitedValueToListOnNull() {
+        List<String> list = resolveCommaDelimitedValueToList(environment, null);
+        assertSame(emptyList(), list);
+    }
+
+    @Test
     public void testResolvePlaceholders() {
         Object value = resolvePlaceholders(environment, null, Integer.class);
         assertNull(value);
@@ -120,6 +127,9 @@ public class EnvironmentUtilsTest {
 
         value = resolvePlaceholders(environment, "${d}", String.class, "default-value");
         assertEquals("${d}", value);
+
+        value = resolvePlaceholders(environment, "${d}", Test.class);
+        assertNull(value);
     }
 
     @Test
@@ -128,5 +138,3 @@ public class EnvironmentUtilsTest {
         assertSame(environment, configurableEnvironment);
     }
 }
-
-
