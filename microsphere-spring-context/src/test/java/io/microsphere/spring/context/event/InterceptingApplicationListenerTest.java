@@ -18,7 +18,6 @@
 package io.microsphere.spring.context.event;
 
 
-import com.sun.xml.internal.bind.v2.TODO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,10 +35,10 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
- * TODO
+ * {@link InterceptingApplicationListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see TODO
+ * @see InterceptingApplicationListener
  * @since 1.0.0
  */
 public class InterceptingApplicationListenerTest {
