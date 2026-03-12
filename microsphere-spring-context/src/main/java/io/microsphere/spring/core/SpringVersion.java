@@ -158,9 +158,27 @@ public enum SpringVersion {
 
     SPRING_6_2_12,
 
+    SPRING_6_2_13,
+
+    SPRING_6_2_14,
+
+    SPRING_6_2_15,
+
+    SPRING_6_2_16,
+
     SPRING_7_0,
 
     SPRING_7_0_0,
+
+    SPRING_7_0_1,
+
+    SPRING_7_0_2,
+
+    SPRING_7_0_3,
+
+    SPRING_7_0_4,
+
+    SPRING_7_0_5,
 
     CURRENT(of(org.springframework.core.SpringVersion.getVersion()));
 
