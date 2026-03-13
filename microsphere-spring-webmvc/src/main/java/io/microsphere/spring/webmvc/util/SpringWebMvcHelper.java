@@ -36,6 +36,7 @@ import static io.microsphere.spring.web.util.SpringWebType.WEB_MVC;
 import static io.microsphere.spring.web.util.WebRequestUtils.METHOD_HEADER_NAME;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
 import static io.microsphere.util.Assert.assertTrue;
+import static java.util.stream.Stream.of;
 import static org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 import static org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE;
 import static org.springframework.web.servlet.HandlerMapping.MATRIX_VARIABLES_ATTRIBUTE;
@@ -80,14 +81,15 @@ public class SpringWebMvcHelper implements SpringWebHelper {
     public String getCookieValue(NativeWebRequest request, String cookieName) {
         HttpServletRequest httpServletRequest = getHttpServletRequest(request);
         Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (Objects.equals(cookieName, cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
+        if (cookies == null) {
+            return null;
         }
-        return null;
+        return of(cookies)
+                .filter(Objects::nonNull)
+                .filter(cookie -> Objects.equals(cookieName, cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
     }
 
     @Override

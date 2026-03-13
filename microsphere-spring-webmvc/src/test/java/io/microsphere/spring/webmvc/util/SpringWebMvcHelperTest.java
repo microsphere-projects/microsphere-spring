@@ -20,6 +20,7 @@ package io.microsphere.spring.webmvc.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
 import io.microsphere.spring.test.web.controller.TestController;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
