@@ -51,7 +51,7 @@ public class LoggingLevelsRule implements TestRule {
         List<String> loggingLevelsClassNames = loadFactoryNames(LoggingLevelsStatement.class, classLoader);
         Statement targetStatement = base;
         for (String loggingLevelsClassName : loggingLevelsClassNames) {
-            Class<?> loggingLevelsClass = resolveClass(loggingLevelsClassName, classLoader);
+            Class<?> loggingLevelsClass = resolveClass(loggingLevelsClassName, classLoader, true);
             if (loggingLevelsClass != null) {
                 targetStatement = (Statement) newInstance(loggingLevelsClass, targetStatement, description, levels);
             }

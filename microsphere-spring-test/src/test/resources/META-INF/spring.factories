@@ -1,0 +1,2 @@
+io.microsphere.spring.test.junit4.rule.logging.LoggingLevelsStatement=\
+io.microsphere.spring.test.junit4.rule.logging.NotFoundLoggingLevelsStatement
