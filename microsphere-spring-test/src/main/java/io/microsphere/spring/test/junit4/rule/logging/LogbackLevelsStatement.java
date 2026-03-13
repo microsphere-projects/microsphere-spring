@@ -50,7 +50,7 @@ public class LogbackLevelsStatement extends LoggingLevelsStatement {
         Level orignalLevel = logger.getLevel();
         try {
             for (String levelString : levels) {
-                description.addChild(createTestDescription(testClass, "with logging level - " + levelString));
+                description.addChild(createTestDescription(testClass, description.getMethodName() + " with logging level - " + levelString));
                 Level level = toLevel(levelString);
                 logger.setLevel(level);
                 next.evaluate();
