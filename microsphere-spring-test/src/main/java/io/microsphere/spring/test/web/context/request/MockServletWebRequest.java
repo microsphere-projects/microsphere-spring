@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.web.context.request;
+package io.microsphere.spring.test.web.context.request;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -29,8 +29,8 @@ import javax.servlet.ServletContext;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ServletWebRequest
- * @see org.springframework.mock.web.MockHttpServletRequest
- * @see org.springframework.mock.web.MockHttpServletResponse
+ * @see MockHttpServletRequest
+ * @see MockHttpServletResponse
  * @since 1.0.0
  */
 public class MockServletWebRequest extends ServletWebRequest {
