@@ -54,7 +54,7 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
         AnnotationAttributes attributes = getAnnotationAttributes(metadata, ANNOTATION_TYPE);
         ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(attributes, getEnvironment());
-        loadPropertySource(annotationAttributes, registry);
+        loadPropertySource(annotationAttributes);
     }
 
     /**
@@ -62,9 +62,8 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
      * {@link PropertySource}
      *
      * @param attributes {@link AnnotationAttributes}
-     * @param registry   {@link BeanDefinitionRegistry}
      */
-    protected void loadPropertySource(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+    protected void loadPropertySource(AnnotationAttributes attributes) {
         Map<String, Object> defaultProperties = getDefaultProperties(this.environment);
         execute(() -> {
             loadPropertySourceFromLocations(attributes, defaultProperties);
@@ -85,6 +84,10 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
 
         PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes = buildExtensionAttributes(attributes);
         PropertySource<?> propertySource = delegate.loadPropertySource(extensionAttributes, propertySourceName);
+        loadPropertySource(propertySource, defaultProperties);
+    }
+
+    void loadPropertySource(PropertySource<?> propertySource, Map<String, Object> defaultProperties) {
         if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
             for (String propertyName : enumerablePropertySource.getPropertyNames()) {
                 Object propertyValue = propertySource.getProperty(propertyName);
