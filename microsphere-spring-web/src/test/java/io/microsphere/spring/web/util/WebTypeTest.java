@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.util;
 
 
-import io.microsphere.spring.web.context.request.MockServletWebRequest;
+import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.NativeWebRequest;
