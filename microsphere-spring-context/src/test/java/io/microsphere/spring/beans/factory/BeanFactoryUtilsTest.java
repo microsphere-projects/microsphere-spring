@@ -25,6 +25,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -176,7 +177,8 @@ class BeanFactoryUtilsTest {
         this.applicationContext.refresh();
         assertEquals(ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
                 getResolvableDependencyTypes(this.beanFactory));
-        assertSame(emptySet(), getResolvableDependencyTypes(null));
+        
+        assertSame(emptySet(), getResolvableDependencyTypes(new DefaultListableBeanFactory()));
     }
 
     @Test
