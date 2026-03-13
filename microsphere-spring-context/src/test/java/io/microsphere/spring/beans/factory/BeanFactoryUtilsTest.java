@@ -54,6 +54,7 @@ import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -175,6 +176,7 @@ class BeanFactoryUtilsTest {
         this.applicationContext.refresh();
         assertEquals(ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
                 getResolvableDependencyTypes(this.beanFactory));
+        assertSame(emptySet(), getResolvableDependencyTypes(null));
     }
 
     @Test
