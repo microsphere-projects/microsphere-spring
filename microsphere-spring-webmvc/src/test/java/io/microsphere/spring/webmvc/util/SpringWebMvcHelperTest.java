@@ -67,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -199,6 +200,11 @@ class SpringWebMvcHelperTest implements RequestBodyAdvice {
     @Test
     void testGetType() {
         assertSame(WEB_MVC, springWebMvcHelper.getType());
+    }
+
+    @Test
+    void testGetServletWebRequest() {
+        assertThrows(IllegalArgumentException.class, () -> this.springWebMvcHelper.getServletWebRequest(null));
     }
 
     void testGetMethod(ServletWebRequest request, HttpMethod httpMethod) {
