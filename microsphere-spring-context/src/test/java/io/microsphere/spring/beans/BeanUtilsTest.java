@@ -1,5 +1,6 @@
 package io.microsphere.spring.beans;
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import io.microsphere.spring.beans.BeanUtils.NamingBean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
@@ -60,6 +61,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
+@LoggingLevelsClass(levels = {"TRACE", "DEBUG", "INFO"})
 class BeanUtilsTest {
 
     @Configuration
