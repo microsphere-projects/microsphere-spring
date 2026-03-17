@@ -61,7 +61,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-@LoggingLevelsClass(levels = {"TRACE", "DEBUG", "INFO"})
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class BeanUtilsTest {
 
     @Configuration
