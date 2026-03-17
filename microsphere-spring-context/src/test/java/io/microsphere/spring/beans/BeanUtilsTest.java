@@ -70,7 +70,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
 public class BeanUtilsTest {
 
     @ClassRule
-    public static final LoggingLevelsRule loggingLevelsRule = levels("TRACE", "DEBUG", "INFO");
+    public static final LoggingLevelsRule loggingLevelsRule = levels("TRACE", "INFO", "ERROR");
 
     @Configuration
     public static class Config {
