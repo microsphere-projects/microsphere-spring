@@ -1,9 +1,11 @@
 package io.microsphere.spring.beans;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.beans.BeanUtils.NamingBean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.BeanUtils.doInvokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
@@ -65,6 +68,9 @@ import static org.springframework.util.ClassUtils.isAssignable;
  */
 @SuppressWarnings("unchecked")
 public class BeanUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule loggingLevelsRule = levels("TRACE", "DEBUG", "INFO");
 
     @Configuration
     public static class Config {
