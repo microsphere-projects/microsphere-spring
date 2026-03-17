@@ -646,4 +646,7 @@ public abstract class AnnotationUtils {
 
         return actualAnnotationAttributes;
     }
+
+    private AnnotationUtils() {
+    }
 }
