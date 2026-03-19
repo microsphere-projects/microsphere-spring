@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.first;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ArrayUtils.size;
@@ -90,7 +91,7 @@ public abstract class BeanFactoryUtils implements Utils {
         }
         String[] beanNames = ofArray(beanName);
         List<T> beans = getBeans(beanFactory, beanNames, beanType);
-        return isEmpty(beans) ? null : beans.get(0);
+        return first(beans);
     }
 
     /**
@@ -483,8 +484,8 @@ public abstract class BeanFactoryUtils implements Utils {
      */
     @Nonnull
     public static Set<Class<?>> getResolvableDependencyTypes(DefaultListableBeanFactory beanFactory) {
-        Map resolvableDependencies = getFieldValue(beanFactory, "resolvableDependencies", Map.class);
-        return resolvableDependencies == null ? emptySet() : resolvableDependencies.keySet();
+        Map<Class<?>, Object> resolvableDependencies = getFieldValue(beanFactory, "resolvableDependencies", Map.class);
+        return ofSet(resolvableDependencies);
     }
 
     /**
@@ -528,6 +529,20 @@ public abstract class BeanFactoryUtils implements Utils {
         return beanPostProcessors;
     }
 
+    /**
+     * Retrieves the bean class loader from the given {@link BeanFactory}.
+     *
+     * @param beanFactory The target bean factory to retrieve the bean class loader from. May be {@code null}.
+     * @return The bean class loader if available; otherwise, {@code null}.
+     */
+    @Nullable
+    public static ClassLoader getBeanClassLoader(@Nullable BeanFactory beanFactory) {
+        if (beanFactory instanceof ConfigurableBeanFactory configurableBeanFactory) {
+            return configurableBeanFactory.getBeanClassLoader();
+        }
+        return null;
+    }
+
     private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
         if (beanFactory == null) {
             return null;
@@ -539,6 +554,10 @@ public abstract class BeanFactoryUtils implements Utils {
                 "The 'beanFactory' argument is not a instance of " + extendedBeanFactoryType +
                         ", is it running in Spring container?");
         return extendedBeanFactoryType.cast(beanFactory);
+    }
+
+    static <K, V> Set<K> ofSet(Map<K, V> map) {
+        return isEmpty(map) ? emptySet() : map.keySet();
     }
 
     private BeanFactoryUtils() {

@@ -18,16 +18,15 @@ package io.microsphere.spring.core.annotation;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import io.microsphere.spring.core.env.PropertyResolverUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import static io.microsphere.collection.MapUtils.shallowCloneMap;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.ArrayUtils.length;
@@ -60,27 +59,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
             // source has been resolved
             return source;
         }
-        Map<String, Object> copy = shallowCloneMap(source);
-        for (Entry<String, Object> entry : copy.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof String stringValue) {
-                entry.setValue(resolvePlaceholder(stringValue, propertyResolver));
-            } else if (value instanceof String[] values) {
-                entry.setValue(resolvePlaceholders(values, propertyResolver));
-            }
-        }
-        return copy;
-    }
-
-    private static String[] resolvePlaceholders(String[] values, @Nullable PropertyResolver propertyResolver) {
-        for (int i = 0; i < values.length; i++) {
-            values[i] = resolvePlaceholder(values[i], propertyResolver);
-        }
-        return values;
-    }
-
-    private static String resolvePlaceholder(String value, @Nullable PropertyResolver propertyResolver) {
-        return propertyResolver == null ? value : propertyResolver.resolvePlaceholders(value);
+        return PropertyResolverUtils.resolvePlaceholders(source, propertyResolver);
     }
 
     /**
@@ -94,8 +73,8 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
     @Nonnull
     public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@Nonnull AnnotationAttributes attributes,
                                                                                          @Nullable PropertyResolver propertyResolver) {
-        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes resolvablePlaceholderAnnotationAttributes) {
-            return resolvablePlaceholderAnnotationAttributes;
+        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes) {
+            return (ResolvablePlaceholderAnnotationAttributes) attributes;
         }
         return new ResolvablePlaceholderAnnotationAttributes(attributes, propertyResolver);
     }

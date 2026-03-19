@@ -52,6 +52,8 @@ import java.util.Map;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
+import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
+import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
@@ -166,7 +168,10 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (isNoArgumentHandlerMethod(handler)) {
+            beforeExecute(new ServletWebRequest(request), (HandlerMethod) handler);
+        }
         return true;
     }
 
@@ -266,10 +271,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return context;
     }
 
-    private HandlerMethod resolveHandlerMethod(Object handler) {
-        return handler instanceof HandlerMethod handlerMethod ? handlerMethod : null;
-    }
-
     private void beforeResolveArgument(MethodParameter parameter, MethodParameterContext methodParameterContext,
                                        ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
                                        WebDataBinderFactory binderFactory) throws Exception {
@@ -300,16 +301,19 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private void beforeExecute(MethodParameter parameter, MethodParameterContext methodParameterContext,
                                NativeWebRequest webRequest, Object argument) throws Exception {
+        Object[] arguments = resolveArguments(webRequest, parameter, argument);
+        int parameterCount = methodParameterContext.parameterCount;
+        int parameterIndex = parameter.getParameterIndex();
+        if (parameterIndex == parameterCount - 1) {
+            HandlerMethod handlerMethod = methodParameterContext.method;
+            beforeExecute(webRequest, handlerMethod, arguments);
+        }
+    }
+
+    private void beforeExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object... arguments) throws Exception {
         for (int i = 0; i < handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
-            int parameterCount = methodParameterContext.parameterCount;
-            Object[] arguments = resolveArguments(webRequest, parameter, argument);
-
-            int parameterIndex = parameter.getParameterIndex();
-            if (parameterIndex == parameterCount - 1) {
-                HandlerMethod handlerMethod = methodParameterContext.method;
-                advice.beforeExecuteMethod(handlerMethod, arguments, webRequest);
-            }
+            advice.beforeExecuteMethod(handlerMethod, arguments, webRequest);
         }
     }
 

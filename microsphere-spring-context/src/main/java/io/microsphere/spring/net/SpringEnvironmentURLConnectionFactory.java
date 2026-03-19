@@ -66,16 +66,12 @@ public class SpringEnvironmentURLConnectionFactory extends SpringSubProtocolURLC
     @Override
     public URLConnection create(URL url, List<String> subProtocols, Proxy proxy) throws IOException {
         String type = getType(subProtocols);
-        URLConnection urlConnection = null;
-        switch (type) {
-            case PROFILES_TYPE:
-                // TODO
-                break;
-            case PROPERTY_SOURCES_TYPE:
-            default:
-                urlConnection = new SpringPropertySourcesURLConnectionAdapter(url, environment.getPropertySources(), conversionService);
+        if (PROPERTY_SOURCES_TYPE.equals(type)) {
+            return new SpringPropertySourcesURLConnectionAdapter(url, this.environment.getPropertySources(), this.conversionService);
+        } else if (PROFILES_TYPE.equals(type)) {
+            return new SpringProfilesURLConnectionAdapter(url, this.environment);
         }
-        return urlConnection;
+        return null;
     }
 
     private String getType(List<String> subProtocols) {
