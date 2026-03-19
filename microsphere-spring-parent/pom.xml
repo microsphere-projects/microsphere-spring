@@ -23,7 +23,7 @@
         <microsphere-logging.version>0.1.0</microsphere-logging.version>
         <servlet-api.version>6.1.0</servlet-api.version>
         <websocket-api.version>2.2.0</websocket-api.version>
-        <jackson.version>2.18.2</jackson.version>
+        <jackson.version>2.21.1</jackson.version>
         <snakeyaml.version>2.6</snakeyaml.version>
         <slf4j.version>2.0.17</slf4j.version>
         <p6spy.version>3.9.1</p6spy.version>
