@@ -28,6 +28,7 @@ import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSI
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CORE_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.getSpringVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -56,5 +57,10 @@ class SpringVersionUtilsTest {
         assertEquals(SPRING_AOP_VERSION, SPRING_BEANS_VERSION);
         assertEquals(SPRING_BEANS_VERSION, SPRING_CONTEXT_VERSION);
         assertEquals(SPRING_CONTEXT_VERSION, SPRING_CONTEXT_SUPPORT_VERSION);
+    }
+
+    @Test
+    void testGetSpringVersionOnNull() {
+        assertNull(getSpringVersion("not-found"));
     }
 }

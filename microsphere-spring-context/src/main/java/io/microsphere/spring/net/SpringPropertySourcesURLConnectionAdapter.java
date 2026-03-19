@@ -20,7 +20,6 @@ import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.PropertySources;
 import org.springframework.util.MimeType;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -31,6 +30,7 @@ import static io.microsphere.constants.PathConstants.SLASH_CHAR;
 import static io.microsphere.net.URLUtils.resolveAuthority;
 import static io.microsphere.net.URLUtils.resolvePath;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
+import static io.microsphere.util.StringUtils.isBlank;
 import static org.springframework.util.MimeType.valueOf;
 
 /**
@@ -45,7 +45,7 @@ import static org.springframework.util.MimeType.valueOf;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
+class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
 
     public static final MimeType DEFAULT_MEDIA_TYPE = valueOf("text/properties");
 
@@ -68,7 +68,7 @@ public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() {
         URL url = getURL();
         String prefix = getPropertyNamePrefix(url);
         Map<String, Object> properties = getSubProperties(propertySources, prefix);
@@ -84,7 +84,7 @@ public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() {
     }
 
     private Object convert(Object source, String sourceMediaType, String targetMediaType) throws UnsupportedOperationException {
@@ -103,7 +103,7 @@ public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
         return convert(source, sourceType, targetType);
     }
 
-    private <S, T> T convert(Object source, Class<S> sourceType, Class<T> targetType) throws UnsupportedOperationException {
+    <S, T> T convert(Object source, Class<S> sourceType, Class<T> targetType) throws UnsupportedOperationException {
         if (!conversionService.canConvert(sourceType, targetType)) {
             throw new UnsupportedOperationException("The source type['" + sourceType.getName() + "] can't be converted to the target type['" + targetType.getName() + "']!");
         }
@@ -114,13 +114,19 @@ public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
         return resolveAuthority(url.getAuthority());
     }
 
-    private MimeType getMediaType(URL url) {
+    static MimeType getMediaType(URL url) {
         String path = resolvePath(url);
+        return getMediaType(path);
+    }
+
+    static MimeType getMediaType(String path) {
+        if (isBlank(path)) {
+            return DEFAULT_MEDIA_TYPE;
+        }
         if (path.indexOf(SLASH_CHAR) == 0) {
             path = path.substring(1);
         }
-        MimeType mimeType = path == null ? DEFAULT_MEDIA_TYPE : valueOf(path);
-        return mimeType;
+        return isBlank(path) ? DEFAULT_MEDIA_TYPE : valueOf(path);
     }
 
     /**
@@ -129,7 +135,7 @@ public class SpringPropertySourcesURLConnectionAdapter extends URLConnection {
      * @param type the primary type or sub type from {@link MimeType media-type}
      * @return Java {@link Class} object
      */
-    private Class<?> getJavaType(String type) {
+    static Class<?> getJavaType(String type) {
         if ("text".equals(type)) {
             return String.class;
         } else if ("properties".equals(type)) {

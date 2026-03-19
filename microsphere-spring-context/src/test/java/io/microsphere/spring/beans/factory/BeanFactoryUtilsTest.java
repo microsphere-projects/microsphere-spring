@@ -25,6 +25,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -43,6 +44,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asHierarchicalBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanPostProcessors;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getOptionalBean;
@@ -53,6 +55,7 @@ import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -174,6 +177,8 @@ class BeanFactoryUtilsTest {
         this.applicationContext.refresh();
         assertEquals(ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
                 getResolvableDependencyTypes(this.beanFactory));
+        
+        assertSame(emptySet(), getResolvableDependencyTypes(new DefaultListableBeanFactory()));
     }
 
     @Test
@@ -256,6 +261,11 @@ class BeanFactoryUtilsTest {
         assertSame(emptyList(), beanPostProcessors);
     }
 
+    @Test
+    void testGetBeanClassLoader() {
+        assertNull(getBeanClassLoader(null));
+        assertSame(this.beanFactory.getBeanClassLoader(), getBeanClassLoader(this.beanFactory));
+    }
 
     @Component("baseTestBean2")
     private static class BaseTestBean2 extends BaseTestBean {

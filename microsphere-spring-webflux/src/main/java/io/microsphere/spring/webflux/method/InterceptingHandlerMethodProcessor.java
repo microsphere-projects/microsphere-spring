@@ -25,18 +25,23 @@ import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
+import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.Ordered;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.DispatcherHandler;
+import org.springframework.web.reactive.HandlerAdapter;
 import org.springframework.web.reactive.HandlerResult;
 import org.springframework.web.reactive.HandlerResultHandler;
 import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver;
 import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
@@ -45,12 +50,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
+import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
+import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
 import static java.util.Collections.emptyList;
+import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 import static reactor.core.publisher.Mono.error;
 import static reactor.core.publisher.Mono.just;
@@ -69,11 +78,14 @@ import static reactor.core.publisher.Mono.just;
  * @since 1.0.0
  */
 public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>
-        implements HandlerMethodArgumentResolver, HandlerResultHandler, WebExceptionHandler {
+        implements WebFilter, HandlerAdapter, HandlerMethodArgumentResolver, HandlerResultHandler, WebExceptionHandler,
+        Ordered {
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
 
     private static final Logger logger = getLogger(InterceptingHandlerMethodProcessor.class);
+
+    private static final RequestContextWebFilter delegateWebFilter = new RequestContextWebFilter();
 
     private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = new HashMap<>(256);
 
@@ -83,20 +95,29 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private List<HandlerResultHandler> handlerResultHandlers = emptyList();
 
-    static class MethodParameterContext {
-
-        private HandlerMethod method;
-
-        private HandlerMethodArgumentResolver resolver;
-
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        return delegateWebFilter.filter(exchange, chain);
     }
 
-    static class ReturnTypeContext {
+    @Override
+    public boolean supports(Object handler) {
+        if (isNoArgumentHandlerMethod(handler)) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            ServerWebRequest webRequest = (ServerWebRequest) getRequestAttributes();
+            execute(() -> beforeExecute(webRequest, handlerMethod));
+        }
+        return false;
+    }
 
-        private HandlerMethod method;
+    @Override
+    public Mono<HandlerResult> handle(ServerWebExchange exchange, Object handler) {
+        return null; // No access in the normal way.
+    }
 
-        private HandlerResultHandler handler;
-
+    @Override
+    public int getOrder() {
+        return HIGHEST_PRECEDENCE;
     }
 
     @Override
@@ -279,10 +300,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return returnTypeContext;
     }
 
-    private HandlerMethod resolveHandlerMethod(Object handler) {
-        return handler instanceof HandlerMethod ? (HandlerMethod) handler : null;
-    }
-
     private void beforeResolveArgument(MethodParameter parameter, NativeWebRequest webRequest, HandlerMethod handlerMethod) throws Exception {
         for (int i = 0; i < handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
@@ -301,10 +318,15 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                                Object[] arguments) throws Exception {
         int parameterIndex = parameter.getParameterIndex();
         if (parameterIndex == arguments.length - 1) { // match last parameter
-            for (int i = 0; i < handlerMethodAdvices.size(); i++) {
-                HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
-                handlerMethodAdvice.beforeExecuteMethod(handlerMethod, arguments, webRequest);
-            }
+            beforeExecute(webRequest, handlerMethod, arguments);
+        }
+    }
+
+    private void beforeExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object... arguments)
+            throws Exception {
+        for (int i = 0; i < handlerMethodAdvices.size(); i++) {
+            HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
+            handlerMethodAdvice.beforeExecuteMethod(handlerMethod, arguments, webRequest);
         }
     }
 
@@ -353,9 +375,10 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
             }
         }
 
-        if (targetResolver == null) {
-            logger.warn("No HandlerMethodArgumentResolver was found to support the parameter[{}]", methodParameter);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The HandlerMethodArgumentResolver was resolved by the parameter[{}] : {}", methodParameter, targetResolver);
         }
+
         return targetResolver;
     }
 
@@ -372,10 +395,27 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
             }
         }
 
-        if (targetHandler == null) {
-            logger.warn("No HandlerResultHandler was found to support the return type[{}]", handlerResult.getReturnType());
+        if (logger.isTraceEnabled()) {
+            logger.trace("The HandlerResultHandler was resolved by the result[return type : {}] : {}",
+                    handlerResult.getReturnType(), targetHandler);
         }
 
         return targetHandler;
+    }
+
+    static class MethodParameterContext {
+
+        private HandlerMethod method;
+
+        private HandlerMethodArgumentResolver resolver;
+
+    }
+
+    static class ReturnTypeContext {
+
+        private HandlerMethod method;
+
+        private HandlerResultHandler handler;
+
     }
 }

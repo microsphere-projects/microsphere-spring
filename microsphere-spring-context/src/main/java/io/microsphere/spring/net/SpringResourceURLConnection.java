@@ -43,12 +43,12 @@ public class SpringResourceURLConnection extends DelegatingURLConnection {
      * @param rawURL   the raw {@link URL}
      * @param resource the {@link Resource}
      */
-    public SpringResourceURLConnection(URL rawURL, Resource resource) throws IOException {
+    public SpringResourceURLConnection(URL rawURL, Resource resource) {
         super(getDelegate(rawURL, resource));
         this.resource = resource;
     }
 
-    private static URLConnection getDelegate(URL rawURL, Resource resource) {
+    static URLConnection getDelegate(URL rawURL, Resource resource) {
         URLConnection delegate = null;
         URL url = null;
         try {

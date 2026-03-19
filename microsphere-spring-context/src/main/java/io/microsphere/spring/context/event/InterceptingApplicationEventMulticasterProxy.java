@@ -18,10 +18,12 @@ package io.microsphere.spring.context.event;
 
 import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
+import io.microsphere.lang.DelegatingWrapper;
 import io.microsphere.spring.beans.factory.config.GenericBeanPostProcessorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -31,10 +33,13 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
 import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.concurrent.ExecutorUtils.shutdownOnExit;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticaster.resolveEventType;
@@ -48,7 +53,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @since 1.0.0
  */
 public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPostProcessorAdapter<ApplicationListener>
-        implements ApplicationEventMulticaster, BeanFactoryAware {
+        implements ApplicationEventMulticaster, BeanFactoryAware, DelegatingWrapper, DisposableBean {
 
     /**
      * The default reset bean name of {@link ApplicationEventMulticaster}.
@@ -78,6 +83,8 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
 
     private List<ApplicationListenerInterceptor> applicationListenerInterceptors;
 
+    private Map<ApplicationListener, InterceptingApplicationListener> applicationListenersMap;
+
     private Executor taskExecutor;
 
     public InterceptingApplicationEventMulticasterProxy(Environment environment) {
@@ -89,18 +96,27 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
     }
 
     @Override
-    public void addApplicationListener(ApplicationListener<?> listener) {
-        delegate.addApplicationListener(wrap(listener));
+    public synchronized void addApplicationListener(ApplicationListener<?> listener) {
+        InterceptingApplicationListener interceptingApplicationListener = wrap(listener);
+        this.delegate.addApplicationListener(interceptingApplicationListener);
     }
 
     @Override
     public void addApplicationListenerBean(String listenerBeanName) {
-        delegate.addApplicationListenerBean(listenerBeanName);
+        this.delegate.addApplicationListenerBean(listenerBeanName);
     }
 
     @Override
-    public void removeApplicationListener(ApplicationListener<?> listener) {
-        delegate.removeApplicationListener(listener);
+    public synchronized void removeApplicationListener(ApplicationListener<?> listener) {
+        final InterceptingApplicationListener wrapper;
+        if (isCachedInterceptingApplicationListener(listener)) {
+            wrapper = (InterceptingApplicationListener) listener;
+        } else {
+            wrapper = this.applicationListenersMap.remove(listener);
+        }
+        if (wrapper != null) {
+            this.delegate.removeApplicationListener(wrapper);
+        }
     }
 
     @Override
@@ -108,22 +124,27 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
         delegate.removeApplicationListenerBean(listenerBeanName);
     }
 
+    @Override
     public void removeApplicationListeners(Predicate<ApplicationListener<?>> predicate) {
-        this.delegate.removeApplicationListeners(predicate);
+        this.delegate.removeApplicationListeners(listener -> {
+            InterceptingApplicationListener wrapper = (InterceptingApplicationListener) listener;
+            return predicate.test(wrapper.getDelegate());
+        });
     }
 
+    @Override
     public void removeApplicationListenerBeans(Predicate<String> predicate) {
         this.delegate.removeApplicationListenerBeans(predicate);
     }
 
     @Override
     public void removeAllListeners() {
-        delegate.removeAllListeners();
+        this.delegate.removeAllListeners();
     }
 
     @Override
     public void multicastEvent(ApplicationEvent event) {
-        execute(() -> delegate.multicastEvent(event));
+        execute(() -> this.delegate.multicastEvent(event));
     }
 
     @Override
@@ -140,14 +161,24 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
         return wrap(bean);
     }
 
-    private ApplicationListener wrap(ApplicationListener listener) {
-        return listener instanceof InterceptingApplicationListener ?
-                listener :
-                new InterceptingApplicationListener(listener, applicationListenerInterceptors);
+    protected InterceptingApplicationListener wrap(ApplicationListener listener) {
+        if (listener instanceof InterceptingApplicationListener interceptingApplicationListener) {
+            if (!isCachedInterceptingApplicationListener(listener)) {
+                ApplicationListener<?> delegate = interceptingApplicationListener.getDelegate();
+                this.applicationListenersMap.put(delegate, interceptingApplicationListener);
+            }
+            return interceptingApplicationListener;
+        } else {
+            return this.applicationListenersMap.computeIfAbsent(listener, l -> new InterceptingApplicationListener(l, applicationListenerInterceptors));
+        }
+    }
+
+    protected boolean isCachedInterceptingApplicationListener(ApplicationListener listener) {
+        return this.applicationListenersMap.containsValue(listener);
     }
 
     private void onEvent(ApplicationEvent event, ResolvableType resolvableType) {
-        delegate.multicastEvent(event, resolvableType);
+        this.delegate.multicastEvent(event, resolvableType);
     }
 
     private void execute(Runnable runnable) {
@@ -159,10 +190,10 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
     }
 
     protected Executor getTaskExecutor() {
-        if (taskExecutor == null) {
-            taskExecutor = Runnable::run;
+        if (this.taskExecutor == null) {
+            setTaskExecutor(Runnable::run);
         }
-        return taskExecutor;
+        return this.taskExecutor;
     }
 
     @Override
@@ -171,5 +202,17 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
         this.delegate = beanFactory.getBean(this.delegateBeanName, ApplicationEventMulticaster.class);
         this.applicationEventInterceptors = getSortedBeans(listableBeanFactory, ApplicationEventInterceptor.class);
         this.applicationListenerInterceptors = getSortedBeans(listableBeanFactory, ApplicationListenerInterceptor.class);
+        this.applicationListenersMap = newLinkedHashMap();
+    }
+
+    @Override
+    public Object getDelegate() {
+        return this.delegate;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        this.applicationListenersMap.clear();
+        shutdownOnExit(this.taskExecutor);
     }
 }
