@@ -14,9 +14,9 @@ on:
   workflow_dispatch:
     inputs:
       revision:
-        description: 'The version to publish (must match major.minor.patch)'
+        description: 'The version to publish (must match ${major}.${minor}.${patch})'
         required: true
-        default: '0.2.6'
+        default: '${major}.${minor}.${patch}'
 
 jobs:
   build:
