@@ -29,7 +29,7 @@
         <p6spy.version>3.9.1</p6spy.version>
         <logback.version>1.5.32</logback.version>
         <junit.version>6.0.3</junit.version>
-        <mockito.version>5.22.0</mockito.version>
+        <mockito.version>5.23.0</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <sqlite-jdbc.version>3.41.2.2</sqlite-jdbc.version>
         <hamcrest.version>3.0</hamcrest.version>
