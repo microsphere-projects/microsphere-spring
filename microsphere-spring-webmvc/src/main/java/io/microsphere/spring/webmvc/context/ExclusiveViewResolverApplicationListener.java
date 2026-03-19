@@ -13,6 +13,7 @@ import org.springframework.web.servlet.view.ViewResolverComposite;
 
 import java.util.List;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
@@ -37,7 +38,7 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
     /**
      * The property name of the exclusive {@link ViewResolver} bean name
      */
-    @ConfigurationProperty
+    @ConfigurationProperty(source = APPLICATION_SOURCE)
     public static final String EXCLUSIVE_VIEW_RESOLVER_BEAN_NAME_PROPERTY_NAME =
             MICROSPHERE_SPRING_WEBMVC_VIEW_RESOLVER_PROPERTY_NAME_PREFIX + "exclusive-bean-name";
 
