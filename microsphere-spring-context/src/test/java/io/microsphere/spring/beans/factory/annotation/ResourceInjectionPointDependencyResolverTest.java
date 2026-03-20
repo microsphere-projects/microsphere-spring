@@ -18,14 +18,19 @@ package io.microsphere.spring.beans.factory.annotation;
 
 
 import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolverTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.util.ReflectionUtils.findField;
 import static org.springframework.util.ReflectionUtils.findMethod;
@@ -40,8 +45,12 @@ import static org.springframework.util.ReflectionUtils.findMethod;
 @ContextConfiguration(classes = {
         ResourceInjectionPointDependencyResolverTest.class,
         ResourceInjectionPointDependencyResolverTest.Config.class,
+        ResourceInjectionPointDependencyResolverTest.TypedConfig.class,
 })
 class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPointDependencyResolverTest<ResourceInjectionPointDependencyResolver> {
+
+    @Autowired
+    private ConfigurableListableBeanFactory beanFactory;
 
     @Override
     protected Field getField() {
@@ -73,6 +82,65 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
         assertTrue(dependentBeanNames.contains("resourceInjectionPointDependencyResolverTest"));
     }
 
+    /** Field without @Resource → resolver returns early, no bean names added */
+    @Test
+    void testResolveFieldWithoutResource() {
+        Field field = findField(TypedConfig.class, "noResourceField");
+        Set<String> names = new LinkedHashSet<>();
+        resolver.resolve(field, beanFactory, names);
+        assertTrue(names.isEmpty());
+    }
+
+    /** Field with @Resource(name="explicit") → uses the explicit bean name */
+    @Test
+    void testResolveFieldWithExplicitName() {
+        Field field = findField(TypedConfig.class, "namedField");
+        Set<String> names = new LinkedHashSet<>();
+        resolver.resolve(field, beanFactory, names);
+        assertEquals(1, names.size());
+        assertTrue(names.contains("explicitBeanName"));
+    }
+
+    /** Field with @Resource(type=ResourceInjectionPointDependencyResolverTest.class) → resolves by type */
+    @Test
+    void testResolveFieldWithExplicitType() {
+        Field field = findField(TypedConfig.class, "typedField");
+        Set<String> names = new LinkedHashSet<>();
+        resolver.resolve(field, beanFactory, names);
+        assertFalse(names.isEmpty());
+    }
+
+    /** Parameter on a non-setter method without explicit @Resource name → empty name added */
+    @Test
+    void testResolveParameterOnNonSetterMethod() {
+        Method method = findMethod(TypedConfig.class, "doSomething", ResourceInjectionPointDependencyResolverTest.class);
+        Set<String> names = new LinkedHashSet<>();
+        resolver.resolve(method.getParameters()[0], beanFactory, names);
+        // Method name "doSomething" doesn't start with "set", name from resource.name() is "", so "" is added
+        assertEquals(1, names.size());
+    }
+
+    /** Parameter on a setter method → bean name derived from method name */
+    @Test
+    void testResolveParameterOnSetterMethod() {
+        Method method = findMethod(Config.class, "setResourceInjectionPointDependencyResolverTest",
+                ResourceInjectionPointDependencyResolverTest.class);
+        Set<String> names = new LinkedHashSet<>();
+        resolver.resolve(method.getParameters()[0], beanFactory, names);
+        assertEquals(1, names.size());
+        assertTrue(names.contains("resourceInjectionPointDependencyResolverTest"));
+    }
+
+    /** Parameter with @Resource(name="explicit") on method → explicit name used */
+    @Test
+    void testResolveParameterWithExplicitName() {
+        Method method = findMethod(TypedConfig.class, "setNamedParam", ResourceInjectionPointDependencyResolverTest.class);
+        Set<String> names = new LinkedHashSet<>();
+        resolver.resolve(method.getParameters()[0], beanFactory, names);
+        assertEquals(1, names.size());
+        assertTrue(names.contains("myParam"));
+    }
+
     static class Config {
 
         @Resource
@@ -80,6 +148,30 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
 
         @Resource
         public void setResourceInjectionPointDependencyResolverTest(ResourceInjectionPointDependencyResolverTest test) {
+        }
+    }
+
+    static class TypedConfig {
+
+        // No @Resource annotation → early return
+        private ResourceInjectionPointDependencyResolverTest noResourceField;
+
+        // @Resource with explicit name
+        @Resource(name = "explicitBeanName")
+        private ResourceInjectionPointDependencyResolverTest namedField;
+
+        // @Resource with explicit type → resolves by type
+        @Resource(type = ResourceInjectionPointDependencyResolverTest.class)
+        private Object typedField;
+
+        // Non-setter method – @Resource on method (no name, no type)
+        @Resource
+        public void doSomething(ResourceInjectionPointDependencyResolverTest test) {
+        }
+
+        // Setter method with @Resource carrying explicit name for its parameter
+        @Resource(name = "myParam")
+        public void setNamedParam(ResourceInjectionPointDependencyResolverTest test) {
         }
     }
 }

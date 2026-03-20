@@ -18,8 +18,16 @@ package io.microsphere.spring.context.event;
 
 
 import io.microsphere.spring.test.domain.User;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * {@link DependencyAnalysisBeanFactoryListener} Test
@@ -31,11 +39,34 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = DependencyAnalysisBeanFactoryListenerTest.Config.class)
 class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventListenerTest<DependencyAnalysisBeanFactoryListener> {
 
+    @Autowired
+    private ConfigurableListableBeanFactory beanFactory;
+
+    /**
+     * Passing a different (non-matching) beanFactory triggers the
+     * DefaultListableBeanFactory cast and completes without error.
+     */
+    @Test
+    void testOnBeanFactoryConfigurationFrozenWithAnotherFactory() {
+        DefaultListableBeanFactory another = new DefaultListableBeanFactory();
+        another.registerBeanDefinition("user", new RootBeanDefinition(User.class));
+        // Must not throw; exercises the full analysis path on a fresh factory
+        beanFactoryListener.onBeanFactoryConfigurationFrozen(another);
+    }
 
     @Import(User.class)
     static class Config {
 
         public Config(User user) {
+        }
+
+        /**
+         * Bean with a dependency (Config depends on User), exercising the
+         * "depends on other beans" branch in resolveBeanDefinitionDependentBeanNames.
+         */
+        @Bean
+        public String greeting(User user) {
+            return "Hello " + user.getName();
         }
     }
 
