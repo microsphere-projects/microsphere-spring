@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
@@ -251,14 +252,10 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     @Nonnull
     public static String[] getPropertyNames(PropertySource propertySource) {
-        String[] propertyNames = propertySource instanceof EnumerablePropertySource enumerablePropertySource ?
-                enumerablePropertySource.getPropertyNames() : null;
-
-        if (propertyNames == null) {
-            propertyNames = EMPTY_STRING_ARRAY;
+        if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
+            return enumerablePropertySource.getPropertyNames();
         }
-
-        return propertyNames;
+        return EMPTY_STRING_ARRAY;
     }
 
     /**
@@ -270,7 +267,7 @@ public abstract class PropertySourcesUtils implements Utils {
     @Nonnull
     public static Map<String, Object> getProperties(PropertySource propertySource) {
         String[] propertyNames = getPropertyNames(propertySource);
-        int length = propertyNames.length;
+        int length = length(propertyNames);
         if (length < 1) {
             return emptyMap();
         }
@@ -388,4 +385,3 @@ public abstract class PropertySourcesUtils implements Utils {
     private PropertySourcesUtils() {
     }
 }
-
