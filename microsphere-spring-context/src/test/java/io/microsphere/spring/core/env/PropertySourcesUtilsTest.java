@@ -34,6 +34,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getPropertySou
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -207,6 +208,122 @@ class PropertySourcesUtilsTest {
         assertEquals(2, defaultProperties.size());
         assertEquals("value-1", defaultProperties.get("key-1"));
         assertEquals("value-2", defaultProperties.get("key-2"));
+    }
+
+    // ---- New tests to increase coverage ----
+
+    /** getDefaultProperties(env) single-arg creates the source if absent. */
+    @Test
+    void testGetDefaultPropertiesSingleArgCreatesIfAbsent() {
+        MockEnvironment env = new MockEnvironment();
+        // No "defaultProperties" source yet → must be created
+        Map<String, Object> props = getDefaultProperties(env);
+        assertNotNull(props);
+    }
+
+    /** getDefaultPropertiesPropertySource(env) single-arg creates source if absent. */
+    @Test
+    void testGetDefaultPropertiesPropertySourceSingleArgCreatesIfAbsent() {
+        MockEnvironment env = new MockEnvironment();
+        MapPropertySource source = getDefaultPropertiesPropertySource(env);
+        assertNotNull(source);
+        assertEquals(DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME, source.getName());
+    }
+
+    /** getDefaultPropertiesPropertySource with createIfAbsent=false when missing returns null (via getDefaultProperties). */
+    @Test
+    void testGetDefaultPropertiesPropertySourceNotCreatedWhenAbsent() {
+        MockEnvironment env = new MockEnvironment();
+        // First call creates the source (createIfAbsent=true is the default)
+        getDefaultPropertiesPropertySource(env);
+        // Second call with createIfAbsent=false should find the already-existing source
+        MapPropertySource source = getDefaultPropertiesPropertySource(env, false);
+        assertNotNull(source);
+        assertEquals(DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME, source.getName());
+    }
+
+    /** containsPropertySource returns true for an existing source, false otherwise. */
+    @Test
+    void testContainsPropertySource() {
+        assertTrue(PropertySourcesUtils.containsPropertySource(
+                environment, MockPropertySource.MOCK_PROPERTIES_PROPERTY_SOURCE_NAME));
+        assertFalse(PropertySourcesUtils.containsPropertySource(environment, "non-existent-source"));
+    }
+
+    /** containsBootstrapPropertySource returns false when the bootstrap source is absent. */
+    @Test
+    void testContainsBootstrapPropertySource() {
+        assertFalse(PropertySourcesUtils.containsBootstrapPropertySource(environment));
+    }
+
+    /** getProperties(enumerable) returns a map of all properties. */
+    @Test
+    void testGetPropertiesFromEnumerablePropertySource() {
+        MockPropertySource mock = new MockPropertySource("ps1");
+        mock.setProperty("p1", "v1");
+        mock.setProperty("p2", "v2");
+
+        Map<String, Object> props = PropertySourcesUtils.getProperties(mock);
+        assertEquals("v1", props.get("p1"));
+        assertEquals("v2", props.get("p2"));
+    }
+
+    /** getProperties(non-enumerable) returns an empty map. */
+    @Test
+    void testGetPropertiesFromNonEnumerablePropertySource() {
+        // Use an anonymous PropertySource that is not EnumerablePropertySource
+        PropertySource<?> nonEnum = new PropertySource<Object>("non-enum", new Object()) {
+            @Override
+            public Object getProperty(String name) {
+                return null;
+            }
+        };
+        Map<String, Object> props = PropertySourcesUtils.getProperties(nonEnum);
+        assertTrue(props.isEmpty());
+    }
+
+    /** getPropertyNames(non-enumerable) returns EMPTY_STRING_ARRAY. */
+    @Test
+    void testGetPropertyNamesFromNonEnumerablePropertySource() {
+        PropertySource<?> nonEnum = new PropertySource<Object>("non-enum2", new Object()) {
+            @Override
+            public Object getProperty(String name) {
+                return null;
+            }
+        };
+        String[] names = PropertySourcesUtils.getPropertyNames(nonEnum);
+        assertEquals(0, names.length);
+    }
+
+    /** findPropertyNames with a custom predicate returns matching property names. */
+    @Test
+    void testFindPropertyNamesWithCustomPredicate() {
+        Set<String> names = PropertySourcesUtils.findPropertyNames(environment, name -> name.endsWith("2"));
+        assertTrue(names.contains("test-key2"));
+        assertFalse(names.contains("test-key"));
+    }
+
+    /** findConfiguredPropertySource(propertySources, name) skips the "configurationProperties" source. */
+    @Test
+    void testFindConfiguredPropertySourceSkipsAttachedSource() {
+        MutablePropertySources propertySources = new MutablePropertySources();
+        // Add the "configurationProperties" attached source that should be skipped
+        MockPropertySource attached = new MockPropertySource("configurationProperties");
+        attached.setProperty("skip-key", "skip-value");
+        propertySources.addFirst(attached);
+
+        MockPropertySource real = new MockPropertySource("real");
+        real.setProperty("real-key", "real-value");
+        propertySources.addLast(real);
+
+        // "skip-key" lives in "configurationProperties" which is skipped
+        PropertySource found = PropertySourcesUtils.findConfiguredPropertySource(propertySources, "skip-key");
+        assertNull(found);
+
+        // "real-key" is in "real" which is not skipped
+        found = PropertySourcesUtils.findConfiguredPropertySource(propertySources, "real-key");
+        assertNotNull(found);
+        assertEquals("real", found.getName());
     }
 
 }

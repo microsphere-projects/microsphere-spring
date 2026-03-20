@@ -17,6 +17,18 @@
 package io.microsphere.spring.context.event;
 
 
+import io.microsphere.spring.test.domain.User;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * {@link ParallelPreInstantiationSingletonsBeanFactoryListener} Test
  *
@@ -24,6 +36,58 @@ package io.microsphere.spring.context.event;
  * @see ParallelPreInstantiationSingletonsBeanFactoryListener
  * @since 1.0.0
  */
+@ContextConfiguration(classes = ParallelPreInstantiationSingletonsBeanFactoryListenerTest.Config.class)
+@TestPropertySource(properties = {
+        ParallelPreInstantiationSingletonsBeanFactoryListener.THREADS_PROPERTY_NAME + "=2",
+        ParallelPreInstantiationSingletonsBeanFactoryListener.THREAD_NAME_PREFIX_PROPERTY_NAME + "=TestThread-"
+})
 class ParallelPreInstantiationSingletonsBeanFactoryListenerTest extends AbstractEventListenerTest<ParallelPreInstantiationSingletonsBeanFactoryListener> {
 
+    @Autowired
+    private ConfigurableListableBeanFactory beanFactory;
+
+    /**
+     * Listener is registered and injected by the AbstractEventListenerTest infrastructure.
+     */
+    @Test
+    @Override
+    void test() {
+        assertNotNull(beanFactoryListener);
+    }
+
+    /**
+     * Passing a different (non-matching) beanFactory logs a warning and returns immediately
+     * without throwing.
+     */
+    @Test
+    void testOnBeanFactoryConfigurationFrozenWithWrongFactory() {
+        DefaultListableBeanFactory anotherFactory = new DefaultListableBeanFactory();
+        anotherFactory.registerBeanDefinition("user", new RootBeanDefinition(User.class));
+        // Must not throw
+        beanFactoryListener.onBeanFactoryConfigurationFrozen(anotherFactory);
+    }
+
+    /**
+     * threads=0 disables parallel pre-instantiation (executor is not created).
+     */
+    @Test
+    void testOnBeanFactoryConfigurationFrozenThreadsZero() {
+        DefaultListableBeanFactory factory = (DefaultListableBeanFactory) beanFactory;
+        ParallelPreInstantiationSingletonsBeanFactoryListener listener =
+                new ParallelPreInstantiationSingletonsBeanFactoryListener();
+        listener.setBeanFactory(factory);
+
+        // Use a mock environment that returns 0 for the threads property
+        org.springframework.mock.env.MockEnvironment env = new org.springframework.mock.env.MockEnvironment();
+        env.setProperty(ParallelPreInstantiationSingletonsBeanFactoryListener.THREADS_PROPERTY_NAME, "0");
+        listener.setEnvironment(env);
+
+        // Must not throw and must complete quickly since no threads are created
+        listener.onBeanFactoryConfigurationFrozen(factory);
+    }
+
+    @Import(User.class)
+    static class Config {
+        public Config(User user) {}
+    }
 }

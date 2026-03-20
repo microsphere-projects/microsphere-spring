@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link AbstractPageRenderContextHandlerInterceptor} Test
@@ -71,5 +72,35 @@ class AbstractPageRenderContextHandlerInterceptorTest {
         modelAndView.setViewName("test-view");
         this.interceptor.postHandle(request, response, null, modelAndView);
         assertEquals(TEST_CONTENT, response.getContentAsString());
+    }
+
+    /**
+     * A ModelAndView with a blank (empty-string) view name is NOT a page-render request,
+     * so postHandleOnPageRenderContext must not be called.
+     */
+    @Test
+    void testPostHandleWithEmptyViewName() throws Exception {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName(""); // empty string → not a page-render request
+        this.interceptor.postHandle(request, response, null, modelAndView);
+        assertEquals(EMPTY_STRING, this.response.getContentAsString());
+    }
+
+    /**
+     * The default {@link HandlerInterceptor#preHandle} implementation returns {@code true}.
+     */
+    @Test
+    void testPreHandleDefaultReturnsTrue() throws Exception {
+        boolean result = this.interceptor.preHandle(request, response, null);
+        assertTrue(result);
+    }
+
+    /**
+     * The default {@link HandlerInterceptor#afterCompletion} must not throw.
+     */
+    @Test
+    void testAfterCompletionDefault() throws Exception {
+        this.interceptor.afterCompletion(request, response, null, null);
+        // no exception expected
     }
 }
