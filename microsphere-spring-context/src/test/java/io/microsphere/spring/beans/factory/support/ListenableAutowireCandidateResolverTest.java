@@ -1,6 +1,7 @@
 package io.microsphere.spring.beans.factory.support;
 
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import io.microsphere.spring.beans.test.TestBean;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                 ListenableAutowireCandidateResolverInitializer.class
         }
 )
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolvingListener, EnvironmentAware {
 
     @Value("${test.name}")
