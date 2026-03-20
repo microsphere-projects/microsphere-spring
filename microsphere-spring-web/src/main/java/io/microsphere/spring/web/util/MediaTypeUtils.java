@@ -47,4 +47,7 @@ public abstract class MediaTypeUtils {
             return super.compareParameters(mediaType1, mediaType2);
         }
     };
+
+    private MediaTypeUtils() {
+    }
 }
