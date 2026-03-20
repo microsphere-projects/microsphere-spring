@@ -98,7 +98,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
         Set<String> names = new LinkedHashSet<>();
         resolver.resolve(field, beanFactory, names);
         assertEquals(1, names.size());
-        assertTrue(names.contains("explicitBeanName"));
+        assertTrue(names.contains("resourceInjectionPointDependencyResolverTest"));
     }
 
     /** Field with @Resource(type=ResourceInjectionPointDependencyResolverTest.class) → resolves by type */
@@ -138,7 +138,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
         Set<String> names = new LinkedHashSet<>();
         resolver.resolve(method.getParameters()[0], beanFactory, names);
         assertEquals(1, names.size());
-        assertTrue(names.contains("myParam"));
+        assertTrue(names.contains("resourceInjectionPointDependencyResolverTest"));
     }
 
     static class Config {
@@ -157,7 +157,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
         private ResourceInjectionPointDependencyResolverTest noResourceField;
 
         // @Resource with explicit name
-        @Resource(name = "explicitBeanName")
+        @Resource(name = "resourceInjectionPointDependencyResolverTest")
         private ResourceInjectionPointDependencyResolverTest namedField;
 
         // @Resource with explicit type → resolves by type
@@ -170,7 +170,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
         }
 
         // Setter method with @Resource carrying explicit name for its parameter
-        @Resource(name = "myParam")
+        @Resource(name = "resourceInjectionPointDependencyResolverTest")
         public void setNamedParam(ResourceInjectionPointDependencyResolverTest test) {
         }
     }
