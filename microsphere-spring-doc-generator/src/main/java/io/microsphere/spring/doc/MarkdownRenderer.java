@@ -27,10 +27,10 @@ import java.util.List;
 public class MarkdownRenderer {
 
     private static final String VERSION_COMPATIBILITY_TABLE =
-            "| Branch | Spring Framework | Java Version |\n" +
-            "|--------|------------------|--------------|\n" +
-            "| 0.2.x  | 6.0.x - 7.0.x   | 17+          |\n" +
-            "| 0.1.x  | 4.3.x - 5.3.x   | 8+           |\n";
+            "| Branch | Spring Framework       | Java Version |\n" +
+            "|--------|------------------------|--------------|\n" +
+            "| 0.2.x  | 6.0, 6.1, 6.2, 7.0    | 17+          |\n" +
+            "| 0.1.x  | 4.3.x - 5.3.x         | 8+           |\n";
 
     private static final String SPRING_PROFILES_TABLE =
             "| Profile              | Spring Version | Reactor Version |\n" +

@@ -173,10 +173,10 @@ public class WikiDocGenerator {
         }
 
         md.append("## Version Compatibility\n\n");
-        md.append("| Branch | Spring Framework | Java Version |\n");
-        md.append("|--------|------------------|--------------|\n");
-        md.append("| 0.2.x  | 6.0.x - 7.0.x   | 17+          |\n");
-        md.append("| 0.1.x  | 4.3.x - 5.3.x   | 8+           |\n");
+        md.append("| Branch | Spring Framework       | Java Version |\n");
+        md.append("|--------|------------------------|--------------|\n");
+        md.append("| 0.2.x  | 6.0, 6.1, 6.2, 7.0    | 17+          |\n");
+        md.append("| 0.1.x  | 4.3.x - 5.3.x         | 8+           |\n");
         md.append("\n");
 
         md.append("---\n\n");
