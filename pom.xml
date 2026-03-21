@@ -67,6 +67,7 @@
         <module>microsphere-spring-guice</module>
         <module>microsphere-spring-test</module>
         <module>microsphere-spring-compatible</module>
+        <module>microsphere-spring-doc-generator</module>
     </modules>
 
 </project>
