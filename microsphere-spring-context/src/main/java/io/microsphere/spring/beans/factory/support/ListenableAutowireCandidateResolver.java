@@ -125,18 +125,71 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
 
     private String beanName;
 
+    /**
+     * Adds one or more {@link AutowireCandidateResolvingListener} instances to this resolver.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   resolver.addListener(new LoggingAutowireCandidateResolvingListener(),
+     *       new MetricsAutowireCandidateResolvingListener());
+     * }</pre>
+     *
+     * @param one  the first listener to add
+     * @param more additional listeners to add
+     */
     public void addListener(AutowireCandidateResolvingListener one, AutowireCandidateResolvingListener... more) {
         addListeners(combine(one, more));
     }
 
+    /**
+     * Adds an array of {@link AutowireCandidateResolvingListener} instances to this resolver.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   AutowireCandidateResolvingListener[] listeners = {
+     *       new LoggingAutowireCandidateResolvingListener()
+     *   };
+     *   resolver.addListeners(listeners);
+     * }</pre>
+     *
+     * @param listeners the array of listeners to add
+     */
     public void addListeners(AutowireCandidateResolvingListener[] listeners) {
         addListeners(ofList(listeners));
     }
 
+    /**
+     * Adds a list of {@link AutowireCandidateResolvingListener} instances to this resolver.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   resolver.addListeners(Collections.singletonList(
+     *       new LoggingAutowireCandidateResolvingListener()));
+     * }</pre>
+     *
+     * @param listeners the list of listeners to add
+     */
     public void addListeners(List<AutowireCandidateResolvingListener> listeners) {
         compositeListener.addListeners(listeners);
     }
 
+    /**
+     * Checks if a bean definition is an autowire candidate for the given dependency,
+     * delegating to the underlying {@link AutowireCandidateResolver}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   boolean candidate = resolver.isAutowireCandidate(beanDefinitionHolder, dependencyDescriptor);
+     * }</pre>
+     *
+     * @param bdHolder   the bean definition holder containing the candidate bean
+     * @param descriptor the descriptor for the target dependency
+     * @return {@code true} if the bean is an autowire candidate, {@code false} otherwise
+     */
     @Override
     public boolean isAutowireCandidate(BeanDefinitionHolder bdHolder, DependencyDescriptor descriptor) {
         return delegate.isAutowireCandidate(bdHolder, descriptor);
@@ -162,6 +215,19 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return delegate.hasQualifier(descriptor);
     }
 
+    /**
+     * Gets the suggested value for dependency injection, delegating to the underlying
+     * {@link AutowireCandidateResolver} and notifying listeners of the resolved value.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   Object suggestedValue = resolver.getSuggestedValue(dependencyDescriptor);
+     * }</pre>
+     *
+     * @param descriptor the descriptor for the target dependency
+     * @return the suggested value, or {@code null} if none found
+     */
     @Nullable
     @Override
     public Object getSuggestedValue(DependencyDescriptor descriptor) {
@@ -170,6 +236,20 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return suggestedValue;
     }
 
+    /**
+     * Gets a lazy resolution proxy for the given dependency if necessary, delegating to the
+     * underlying {@link AutowireCandidateResolver} and notifying listeners of the resolved proxy.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   Object proxy = resolver.getLazyResolutionProxyIfNecessary(dependencyDescriptor, "myBean");
+     * }</pre>
+     *
+     * @param descriptor the descriptor for the target dependency
+     * @param beanName   the name of the bean that is being resolved
+     * @return a lazy resolution proxy, or {@code null} if not necessary
+     */
     @Nullable
     @Override
     public Object getLazyResolutionProxyIfNecessary(DependencyDescriptor descriptor, String beanName) {
@@ -188,16 +268,51 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         return delegate.cloneIfNecessary();
     }
 
+    /**
+     * {@link BeanFactoryPostProcessor} callback that wraps the existing
+     * {@link AutowireCandidateResolver} in the given bean factory with this listenable resolver.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   resolver.postProcessBeanFactory(beanFactory);
+     * }</pre>
+     *
+     * @param beanFactory the bean factory to post-process
+     * @throws BeansException if an error occurs during post-processing
+     */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         wrap(beanFactory);
     }
 
+    /**
+     * {@link EnvironmentAware} callback that sets the {@link Environment} on this resolver.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   resolver.setEnvironment(applicationContext.getEnvironment());
+     * }</pre>
+     *
+     * @param environment the environment to set
+     */
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
+    /**
+     * {@link BeanNameAware} callback that sets the bean name of this resolver in the bean factory.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ListenableAutowireCandidateResolver resolver = new ListenableAutowireCandidateResolver();
+     *   resolver.setBeanName("listenableAutowireCandidateResolver");
+     * }</pre>
+     *
+     * @param name the name of this bean in the bean factory
+     */
     @Override
     public void setBeanName(String name) {
         this.beanName = name;

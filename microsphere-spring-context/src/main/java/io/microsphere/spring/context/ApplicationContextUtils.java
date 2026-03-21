@@ -59,14 +59,50 @@ public abstract class ApplicationContextUtils implements Utils {
     @Nullable
     public static final Class<?> APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS = resolveClass(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME);
 
+    /**
+     * Casts the given {@link ApplicationContext} to a {@link ConfigurableApplicationContext}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurableApplicationContext cac =
+     *       ApplicationContextUtils.asConfigurableApplicationContext(context);
+     * }</pre>
+     *
+     * @param context the application context to cast
+     * @return the context as a {@link ConfigurableApplicationContext}
+     */
     public static ConfigurableApplicationContext asConfigurableApplicationContext(ApplicationContext context) {
         return asConfigurableApplicationContext((Object) context);
     }
 
+    /**
+     * Casts the given object to a {@link ConfigurableApplicationContext}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurableApplicationContext cac =
+     *       ApplicationContextUtils.asConfigurableApplicationContext((Object) context);
+     * }</pre>
+     *
+     * @param object the object to cast
+     * @return the object as a {@link ConfigurableApplicationContext}
+     */
     public static ConfigurableApplicationContext asConfigurableApplicationContext(Object object) {
         return cast(object, ConfigurableApplicationContext.class);
     }
 
+    /**
+     * Gets the {@link ApplicationContext} from the given {@link BeanFactory} by casting.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ApplicationContext ac =
+     *       ApplicationContextUtils.asApplicationContext(context.getBeanFactory());
+     * }</pre>
+     *
+     * @param beanFactory the bean factory to cast
+     * @return the bean factory as an {@link ApplicationContext}
+     */
     public static ApplicationContext asApplicationContext(BeanFactory beanFactory) {
         return cast(beanFactory, ApplicationContext.class);
     }
