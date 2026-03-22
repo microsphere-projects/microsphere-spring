@@ -83,6 +83,20 @@ public class DeferredApplicationEventPublisher implements ApplicationEventPublis
         this(delegate, !supportsPublishEventMethod());
     }
 
+    /**
+     * Constructs a {@link DeferredApplicationEventPublisher} with explicit deferral control.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ApplicationEventPublisher publisher = applicationContext;
+     *   DeferredApplicationEventPublisher deferred =
+     *       new DeferredApplicationEventPublisher(publisher, true);
+     *   deferred.publishEvent(new MyApplicationEvent("Hello,World"));
+     * }</pre>
+     *
+     * @param delegate    the underlying {@link ApplicationEventPublisher} to delegate to
+     * @param shouldDefer whether to defer events until the application context is refreshed
+     */
     protected DeferredApplicationEventPublisher(ApplicationEventPublisher delegate, boolean shouldDefer) {
         assertNotNull(delegate, () -> "The ApplicationEventPublisher argument must not be null");
         this.delegate = delegate;
@@ -93,6 +107,20 @@ public class DeferredApplicationEventPublisher implements ApplicationEventPublis
         this.shouldDefer = shouldDefer;
     }
 
+    /**
+     * Publishes the given {@link ApplicationEvent}. If deferred mode is active, the event is
+     * stored and replayed after the application context is refreshed. Otherwise, the event
+     * is published immediately via the delegate.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   DeferredApplicationEventPublisher publisher =
+     *       new DeferredApplicationEventPublisher(applicationContext);
+     *   publisher.publishEvent(new TestEvent("Hello,World"));
+     * }</pre>
+     *
+     * @param event the {@link ApplicationEvent} to publish
+     */
     @Override
     public void publishEvent(ApplicationEvent event) {
         if (shouldDefer) {
@@ -125,6 +153,20 @@ public class DeferredApplicationEventPublisher implements ApplicationEventPublis
         }
     }
 
+    /**
+     * Handles the {@link ContextRefreshedEvent} to replay any deferred events once the
+     * application context has been fully initialized.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Automatically invoked by the Spring container when the context is refreshed.
+     *   // Deferred events published before context refresh are replayed at this point.
+     *   context.register(TestComponent.class);
+     *   context.refresh(); // triggers onApplicationEvent(ContextRefreshedEvent)
+     * }</pre>
+     *
+     * @param event the {@link ContextRefreshedEvent} indicating the context has been refreshed
+     */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (shouldDefer) {

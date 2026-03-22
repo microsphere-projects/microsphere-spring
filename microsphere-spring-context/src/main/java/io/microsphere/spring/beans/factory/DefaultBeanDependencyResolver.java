@@ -101,6 +101,22 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private final ExecutorService executorService;
 
+    /**
+     * Construct a new {@code DefaultBeanDependencyResolver} with the given {@link BeanFactory}
+     * and {@link ExecutorService} for parallel dependency resolution.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurableListableBeanFactory beanFactory = ...;
+     *   ExecutorService executorService = Executors.newSingleThreadExecutor();
+     *   DefaultBeanDependencyResolver resolver = new DefaultBeanDependencyResolver(beanFactory, executorService);
+     * }</pre>
+     *
+     * @param bf              the {@link BeanFactory} to resolve dependencies from,
+     *                        must be an instance of {@link DefaultListableBeanFactory}
+     * @param executorService the {@link ExecutorService} used for parallel bean class loading
+     *                        and dependency resolution
+     */
     public DefaultBeanDependencyResolver(BeanFactory bf, ExecutorService executorService) {
         this.beanFactory = asDefaultListableBeanFactory(bf);
         this.classLoader = this.beanFactory.getBeanClassLoader();
@@ -110,6 +126,27 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         this.executorService = executorService;
     }
 
+    /**
+     * Resolve all bean dependencies in the given {@link ConfigurableListableBeanFactory}.
+     * <p>
+     * Returns a map where each key is a root bean name and the value is the flattened set
+     * of all transitive dependent bean names. Only eligible (non-abstract, singleton,
+     * non-lazy-init) beans without an instance supplier are considered.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurableListableBeanFactory beanFactory = ...;
+     *   ExecutorService executorService = Executors.newSingleThreadExecutor();
+     *   DefaultBeanDependencyResolver resolver = new DefaultBeanDependencyResolver(beanFactory, executorService);
+     *   Map<String, Set<String>> dependentBeanNamesMap = resolver.resolve(beanFactory);
+     *   // dependentBeanNamesMap contains bean name -> set of transitive dependency bean names
+     * }</pre>
+     *
+     * @param bf the {@link ConfigurableListableBeanFactory} to resolve dependencies from;
+     *           must be the same instance passed to the constructor
+     * @return a {@link Map} of bean names to their flattened dependent bean name sets,
+     *         or an empty map if the factory does not match
+     */
     @Override
     public Map<String, Set<String>> resolve(ConfigurableListableBeanFactory bf) {
         DefaultListableBeanFactory beanFactory = this.beanFactory;
@@ -228,6 +265,29 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         return beanDefinition;
     }
 
+    /**
+     * Resolve the dependent bean names for a specific bean identified by its name and
+     * merged {@link RootBeanDefinition}.
+     * <p>
+     * This method resolves dependencies from the bean definition (depends-on, property references,
+     * factory bean), constructor parameters, and injection points (fields and methods).
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurableListableBeanFactory beanFactory = ...;
+     *   ExecutorService executorService = Executors.newSingleThreadExecutor();
+     *   DefaultBeanDependencyResolver resolver = new DefaultBeanDependencyResolver(beanFactory, executorService);
+     *   RootBeanDefinition beanDefinition = (RootBeanDefinition) beanFactory.getMergedBeanDefinition("myBean");
+     *   Set<String> dependencies = resolver.resolve("myBean", beanDefinition, beanFactory);
+     *   // dependencies contains the names of beans that "myBean" depends on
+     * }</pre>
+     *
+     * @param beanName              the name of the bean to resolve dependencies for
+     * @param mergedBeanDefinition  the merged {@link RootBeanDefinition} of the bean
+     * @param bf                    the {@link ConfigurableListableBeanFactory}; must be the same
+     *                              instance passed to the constructor
+     * @return a {@link Set} of dependent bean names, or an empty set if the factory does not match
+     */
     @Override
     public Set<String> resolve(String beanName, RootBeanDefinition mergedBeanDefinition, ConfigurableListableBeanFactory bf) {
         DefaultListableBeanFactory beanFactory = this.beanFactory;

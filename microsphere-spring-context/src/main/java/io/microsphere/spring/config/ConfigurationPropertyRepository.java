@@ -176,11 +176,42 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
         return maxSize;
     }
 
+    /**
+     * Sets the {@link Environment} and reads the maximum repository size from the
+     * {@value #MAX_SIZE_PROPERTY_NAME} configuration property. Falls back to
+     * {@link #DEFAULT_MAX_SIZE_PROPERTY_VALUE} if the property is not set.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+     *   // Assume the environment has "microsphere.spring.config-property-repository.max-size=3"
+     *   repository.setEnvironment(environment);
+     *   repository.afterPropertiesSet();
+     *   assertEquals(3, repository.getMaxSize());
+     * }</pre>
+     *
+     * @param environment the Spring {@link Environment} to read configuration from
+     */
     @Override
     public void setEnvironment(Environment environment) {
         this.maxSize = environment.getProperty(MAX_SIZE_PROPERTY_NAME, int.class, DEFAULT_MAX_SIZE_PROPERTY_VALUE);
     }
 
+    /**
+     * Initializes the internal repository map with a capacity derived from the configured
+     * {@link #getMaxSize() max size}. This method is typically called automatically by
+     * the Spring container after all properties have been set.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+     *   repository.setEnvironment(environment);
+     *   repository.afterPropertiesSet();
+     *   // The repository is now ready to store ConfigurationProperty instances
+     *   repository.add(new ConfigurationProperty("my.property"));
+     *   assertTrue(repository.contains("my.property"));
+     * }</pre>
+     */
     @Override
     public void afterPropertiesSet() {
         this.repository = newConcurrentHashMap(this.maxSize);
@@ -198,6 +229,20 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
         }
     }
 
+    /**
+     * Returns the internal repository map. If the repository has not been initialized yet,
+     * {@link #afterPropertiesSet()} is invoked to lazily initialize it.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // In a subclass overriding repository behavior:
+     *   Map<String, ConfigurationProperty> repo = getRepository();
+     *   repo.put("custom.property", new ConfigurationProperty("custom.property"));
+     *   assertTrue(repo.containsKey("custom.property"));
+     * }</pre>
+     *
+     * @return the internal map of property names to {@link ConfigurationProperty} instances
+     */
     protected Map<String, ConfigurationProperty> getRepository() {
         if (repository == null) {
             this.afterPropertiesSet();
