@@ -46,6 +46,22 @@ public class NamedBeanHolderComparator<T> implements Comparator<NamedBeanHolder<
 
     public static final NamedBeanHolderComparator INSTANCE = new NamedBeanHolderComparator();
 
+    /**
+     * Compares two {@link NamedBeanHolder} instances by delegating to
+     * {@link AnnotationAwareOrderComparator} using the held bean instances.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   NamedBeanHolder holder1 = new NamedBeanHolder("bean1", bean1);
+     *   NamedBeanHolder holder2 = new NamedBeanHolder("bean2", bean2);
+     *   int result = NamedBeanHolderComparator.INSTANCE.compare(holder1, holder2);
+     * }</pre>
+     *
+     * @param o1 the first {@link NamedBeanHolder} to compare
+     * @param o2 the second {@link NamedBeanHolder} to compare
+     * @return a negative integer, zero, or a positive integer as the first
+     *         holder's bean instance is less than, equal to, or greater than the second
+     */
     @Override
     public int compare(NamedBeanHolder<T> o1, NamedBeanHolder<T> o2) {
         return AnnotationAwareOrderComparator.INSTANCE.compare(o1.getBeanInstance(), o2.getBeanInstance());

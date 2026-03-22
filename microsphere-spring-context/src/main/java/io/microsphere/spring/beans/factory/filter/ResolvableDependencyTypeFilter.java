@@ -53,10 +53,36 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
 
     private final Set<Class<?>> resolvableDependencyTypes;
 
+    /**
+     * Constructs a new {@link ResolvableDependencyTypeFilter} from a {@link ConfigurableListableBeanFactory}.
+     * The factory is converted to a {@link DefaultListableBeanFactory} internally, and the filter
+     * registers itself as a singleton bean in the factory.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+     *   ResolvableDependencyTypeFilter filter = new ResolvableDependencyTypeFilter(beanFactory);
+     * }</pre>
+     *
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} to resolve dependency types from
+     */
     public ResolvableDependencyTypeFilter(ConfigurableListableBeanFactory beanFactory) {
         this(asDefaultListableBeanFactory(beanFactory));
     }
 
+    /**
+     * Constructs a new {@link ResolvableDependencyTypeFilter} from a {@link DefaultListableBeanFactory}.
+     * Retrieves the set of resolvable dependency types from the given factory and registers
+     * this filter as a singleton bean under the name {@link #BEAN_NAME}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+     *   ResolvableDependencyTypeFilter filter = new ResolvableDependencyTypeFilter(beanFactory);
+     * }</pre>
+     *
+     * @param beanFactory the {@link DefaultListableBeanFactory} to resolve dependency types from
+     */
     public ResolvableDependencyTypeFilter(DefaultListableBeanFactory beanFactory) {
         this.resolvableDependencyTypes = getResolvableDependencyTypes(beanFactory);
         register(beanFactory);
@@ -66,6 +92,19 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
         registerSingleton(registry, BEAN_NAME, this);
     }
 
+    /**
+     * Retrieves the existing {@link ResolvableDependencyTypeFilter} singleton from the given
+     * {@link BeanFactory}, or creates and registers a new one if none exists.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurableApplicationContext context = ...;
+     *   ResolvableDependencyTypeFilter filter = ResolvableDependencyTypeFilter.get(context.getBeanFactory());
+     * }</pre>
+     *
+     * @param beanFactory the {@link BeanFactory} to look up or register the filter in
+     * @return the existing or newly created {@link ResolvableDependencyTypeFilter} instance
+     */
     public static ResolvableDependencyTypeFilter get(BeanFactory beanFactory) {
         return get(asDefaultListableBeanFactory(beanFactory));
     }
@@ -75,6 +114,22 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
         return filter == null ? new ResolvableDependencyTypeFilter(beanFactory) : filter;
     }
 
+    /**
+     * Determines whether the given class is assignable to any of the known resolvable dependency types.
+     * Returns {@code true} if the class matches a resolvable dependency type, {@code false} otherwise.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ResolvableDependencyTypeFilter filter = ResolvableDependencyTypeFilter.get(beanFactory);
+     *   assertTrue(filter.accept(BeanFactory.class));
+     *   assertTrue(filter.accept(ApplicationContext.class));
+     *   assertFalse(filter.accept(MyCustomClass.class));
+     * }</pre>
+     *
+     * @param classToFilter the class to evaluate against resolvable dependency types
+     * @return {@code true} if the class is assignable to a resolvable dependency type, {@code false} otherwise
+     * @throws NullPointerException if {@code classToFilter} is {@code null}
+     */
     @Override
     public boolean accept(Class<?> classToFilter) {
         boolean filtered = false;
@@ -87,6 +142,18 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
         return filtered;
     }
 
+    /**
+     * Returns a string representation of this filter, including the set of resolvable dependency types.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ResolvableDependencyTypeFilter filter = ResolvableDependencyTypeFilter.get(beanFactory);
+     *   String description = filter.toString();
+     *   // e.g. "ResolvableDependencyTypeFilter{resolvableDependencyTypes=[interface org.springframework.beans.factory.BeanFactory, ...]}"
+     * }</pre>
+     *
+     * @return a string describing this filter and its resolvable dependency types
+     */
     @Override
     public String toString() {
         return "ResolvableDependencyTypeFilter{" +
