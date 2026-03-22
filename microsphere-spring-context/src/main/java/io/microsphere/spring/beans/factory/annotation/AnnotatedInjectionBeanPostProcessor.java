@@ -250,6 +250,29 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         setCacheSize(CACHE_SIZE);
     }
 
+    /**
+     * Determines candidate constructors for the given bean class by inspecting constructors annotated with the
+     * configured injection annotation types. This method resolves constructor-based injection candidates similarly
+     * to {@link AutowiredAnnotationBeanPostProcessor}, but uses custom annotation types.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Given a class with an annotated constructor:
+     *   public class GenericChild extends GenericParent<User> {
+     *       @Referenced
+     *       public GenericChild(@Referenced User user) {
+     *           this.user = user;
+     *       }
+     *   }
+     *   // The processor automatically determines the annotated constructor as a candidate
+     *   Constructor<?>[] constructors = processor.determineCandidateConstructors(GenericChild.class, "genericChild");
+     * }</pre>
+     *
+     * @param beanClass the raw class of the bean to inspect for candidate constructors
+     * @param beanName  the name of the bean
+     * @return the candidate constructors, or {@code null} if none were found
+     * @throws BeansException if an error occurs during constructor resolution
+     */
     @Override
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
