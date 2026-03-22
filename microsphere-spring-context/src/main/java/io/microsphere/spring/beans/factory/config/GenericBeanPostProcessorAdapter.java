@@ -43,10 +43,54 @@ public abstract class GenericBeanPostProcessorAdapter<T> implements BeanPostProc
 
     private final Class<T> beanType;
 
+    /**
+     * Default constructor that resolves the generic bean type {@code T} by inspecting the
+     * type argument of the concrete subclass.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   GenericBeanPostProcessorAdapter<User> adapter = new GenericBeanPostProcessorAdapter<User>() {
+     *       @Override
+     *       protected void processBeforeInitialization(User bean, String beanName) {
+     *           bean.setName("processed");
+     *       }
+     *   };
+     *   Class<User> type = adapter.getBeanType(); // User.class
+     * }</pre>
+     */
     public GenericBeanPostProcessorAdapter() {
         this.beanType = (Class<T>) resolveTypeArgument(getClass(), GenericBeanPostProcessorAdapter.class);
     }
 
+    /**
+     * Checks if the given bean matches the resolved type {@code T} and, if so, delegates to
+     * {@link #doPostProcessBeforeInitialization(Object, String)}. Beans that do not match
+     * the type are returned unchanged.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   GenericBeanPostProcessorAdapter<User> adapter = new GenericBeanPostProcessorAdapter<User>() {
+     *       @Override
+     *       protected User processBeforeInitialization(User bean, String beanName) {
+     *           bean.setName("processed");
+     *           return bean;
+     *       }
+     *   };
+     *   User user = new User();
+     *   Object result = adapter.postProcessBeforeInitialization(user, "testBean");
+     *   // result is the processed User
+     *
+     *   // Non-matching bean type passes through unchanged
+     *   String other = "notAUser";
+     *   Object same = adapter.postProcessBeforeInitialization(other, "otherBean");
+     *   // same == other
+     * }</pre>
+     *
+     * @param bean     the bean instance to process
+     * @param beanName the name of the bean
+     * @return the original or modified bean instance
+     * @throws BeansException in case of errors
+     */
     @Override
     public final Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         Class<?> beanClass = ultimateTargetClass(bean);
@@ -56,6 +100,34 @@ public abstract class GenericBeanPostProcessorAdapter<T> implements BeanPostProc
         return bean;
     }
 
+    /**
+     * Checks if the given bean matches the resolved type {@code T} and, if so, delegates to
+     * {@link #doPostProcessAfterInitialization(Object, String)}. Beans that do not match
+     * the type are returned unchanged.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   GenericBeanPostProcessorAdapter<User> adapter = new GenericBeanPostProcessorAdapter<User>() {
+     *       @Override
+     *       protected void processAfterInitialization(User bean, String beanName) {
+     *           bean.setActive(true);
+     *       }
+     *   };
+     *   User user = new User();
+     *   Object result = adapter.postProcessAfterInitialization(user, "testBean");
+     *   // result is the processed User with active = true
+     *
+     *   // Non-matching bean type passes through unchanged
+     *   String other = "notAUser";
+     *   Object same = adapter.postProcessAfterInitialization(other, "otherBean");
+     *   // same == other
+     * }</pre>
+     *
+     * @param bean     the bean instance to process
+     * @param beanName the name of the bean
+     * @return the original or modified bean instance
+     * @throws BeansException in case of errors
+     */
     @Override
     public final Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         Class<?> beanClass = ultimateTargetClass(bean);

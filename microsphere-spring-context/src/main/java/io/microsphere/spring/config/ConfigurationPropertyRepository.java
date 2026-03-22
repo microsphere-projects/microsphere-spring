@@ -179,20 +179,56 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
         return maxSize;
     }
 
+    /**
+     * Sets the {@link Environment} used to resolve the maximum repository size from the
+     * property {@value #MAX_SIZE_PROPERTY_NAME}. Implements {@link EnvironmentAware}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+     *   repository.setEnvironment(applicationContext.getEnvironment());
+     * }</pre>
+     *
+     * @param environment the Spring {@link Environment} to use for property resolution
+     */
     @Override
     public void setEnvironment(Environment environment) {
         this.maxSize = environment.getProperty(MAX_SIZE_PROPERTY_NAME, int.class, DEFAULT_MAX_SIZE_PROPERTY_VALUE);
     }
 
+    /**
+     * Initializes the underlying repository map. If the {@link Environment} has not been set,
+     * the default max size is used. Implements {@link InitializingBean}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+     *   repository.setEnvironment(applicationContext.getEnvironment());
+     *   repository.afterPropertiesSet();
+     *   // Repository is now ready for use
+     *   repository.add(configurationProperty);
+     * }</pre>
+     */
     @Override
     public void afterPropertiesSet() {
         this.repository = newConcurrentHashMap(this.maxSize);
     }
 
     /**
-     * clear the repository
+     * Clears all entries from the repository, releasing stored {@link ConfigurationProperty}
+     * instances. Implements {@link DisposableBean}.
      *
-     * @throws Exception
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+     *   repository.setEnvironment(applicationContext.getEnvironment());
+     *   repository.afterPropertiesSet();
+     *   repository.add(configurationProperty);
+     *   // When shutting down
+     *   repository.destroy(); // clears all stored properties
+     * }</pre>
+     *
+     * @throws Exception if an error occurs during cleanup
      */
     @Override
     public void destroy() throws Exception {
@@ -201,6 +237,19 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
         }
     }
 
+    /**
+     * Returns the underlying repository map, lazily initializing it via
+     * {@link #afterPropertiesSet()} if it has not been created yet.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // In a subclass:
+     *   Map<String, ConfigurationProperty> repo = getRepository();
+     *   repo.forEach((name, prop) -> System.out.println(name + " = " + prop.getValue()));
+     * }</pre>
+     *
+     * @return the mutable map of property names to {@link ConfigurationProperty} instances
+     */
     protected Map<String, ConfigurationProperty> getRepository() {
         if (repository == null) {
             this.afterPropertiesSet();
