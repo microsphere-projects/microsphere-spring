@@ -364,10 +364,44 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return (candidateConstructors.length > 0 ? candidateConstructors : null);
     }
 
+    /**
+     * Post-processes property values before they are applied to the given bean, delegating
+     * to {@link #postProcessProperties(PropertyValues, Object, String)}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Typically invoked by the Spring container during bean creation:
+     *   PropertyValues result = processor.postProcessPropertyValues(pvs, pds, myBean, "myBean");
+     * }</pre>
+     *
+     * @param pvs      the property values that the factory is about to apply
+     * @param pds      the relevant property descriptors for the target bean
+     * @param bean     the bean instance created, but whose properties have not yet been set
+     * @param beanName the name of the bean
+     * @return the actual property values to apply (can be the passed-in instance or a modified one)
+     * @throws BeanCreationException if injection of annotated dependencies fails
+     */
     public final PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
         return postProcessProperties(pvs, bean, beanName);
     }
 
+    /**
+     * Post-processes property values by finding and injecting dependencies annotated with
+     * the configured annotation types into the given bean.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Automatically called by Spring during bean population phase:
+     *   AnnotatedInjectionBeanPostProcessor processor = new MyAnnotationBeanPostProcessor();
+     *   PropertyValues result = processor.postProcessProperties(pvs, myServiceBean, "myService");
+     * }</pre>
+     *
+     * @param pvs      the property values that the factory is about to apply
+     * @param bean     the bean instance created, but whose properties have not yet been set
+     * @param beanName the name of the bean
+     * @return the actual property values to apply
+     * @throws BeansException if injection of annotated dependencies fails
+     */
     public final PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
         InjectionMetadata metadata = findInjectionMetadata(beanName, bean.getClass(), pvs);
         try {
