@@ -18,6 +18,7 @@
 package io.microsphere.spring.test.tomcat.embedded;
 
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.GenericApplicationContext;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see {@link EmbeddedTomcatContextLoader}
  * @since 1.0.0
  */
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class EmbeddedTomcatContextLoaderTest {
 
     private EmbeddedTomcatContextLoader loader;
