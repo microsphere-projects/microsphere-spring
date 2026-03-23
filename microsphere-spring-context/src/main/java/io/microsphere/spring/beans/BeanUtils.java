@@ -784,52 +784,6 @@ public abstract class BeanUtils implements Utils {
     }
 
     /**
-     * Find the primary constructor of the specified class.
-     *
-     * <p>
-     * For Kotlin classes, this method returns the Java constructor corresponding to the Kotlin primary constructor,
-     * as defined in the Kotlin specification. For non-Kotlin classes, this method typically returns {@code null}.
-     * </p>
-     *
-     * <h3>Example Usage</h3>
-     * <pre>{@code
-     * Constructor<MyClass> constructor = findPrimaryConstructor(MyClass.class);
-     * if (constructor != null) {
-     *     MyClass instance = constructor.newInstance();
-     * }
-     * }</pre>
-     *
-     * <h3>Behavior</h3>
-     * <ul>
-     *     <li>Returns the primary constructor if available.</li>
-     *     <li>Returns {@code null} if no primary constructor is found or if the class is not a Kotlin class.</li>
-     *     <li>If an error occurs during invocation, it is logged at warn level and null is returned.</li>
-     * </ul>
-     *
-     * @param clazz the class to check for a primary constructor, must not be {@code null}
-     * @param <T>   the type of the class
-     * @return the primary constructor of the class, or {@code null} if none is found
-     * @see org.springframework.beans.BeanUtils#findPrimaryConstructor(Class)
-     * @since Spring Framework 5.0
-     */
-    public static <T> Constructor<T> findPrimaryConstructor(@Nonnull Class<T> clazz) {
-        return findPrimaryConstructor(FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
-    }
-
-    static <T> Constructor<T> findPrimaryConstructor(MethodHandle methodHandle, @Nonnull Class<T> clazz) {
-        if (methodHandle == null) {
-            return null;
-        }
-        Constructor<T> constructor = null;
-        try {
-            constructor = (Constructor<T>) methodHandle.invokeExact(clazz);
-        } catch (Throwable e) {
-            handleInvokeExactFailure(e, methodHandle, clazz);
-        }
-        return constructor;
-    }
-
-    /**
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
     static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, @Nullable BeanFactory beanFactory,
