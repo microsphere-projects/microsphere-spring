@@ -17,14 +17,15 @@ import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.util.Arrays.asList;
@@ -66,7 +67,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
      */
     public static boolean isPresentBean(BeanDefinitionRegistry registry, Class<?> annotatedClass) {
 
-        boolean present = false;
+        String targetBeanName = null;
 
         String[] beanNames = registry.getBeanDefinitionNames();
 
@@ -78,18 +79,21 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
                 AnnotationMetadata annotationMetadata = ((AnnotatedBeanDefinition) beanDefinition).getMetadata();
                 String className = annotationMetadata.getClassName();
                 Class<?> targetClass = resolveClassName(className, classLoader);
-                present = nullSafeEquals(targetClass, annotatedClass);
-                if (present) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("The annotatedClass[class : '{}' , bean name : '{}'] was present in registry : {}",
-                                className, beanName, registry);
-                    }
+                if (nullSafeEquals(targetClass, annotatedClass)) {
+                    targetBeanName = beanName;
                     break;
                 }
             }
         }
 
-        return present;
+        if (targetBeanName != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("The annotatedClass[class : '{}' , bean name : '{}'] was present in registry : {}",
+                        annotatedClass.getName(), targetBeanName, registry);
+            }
+        }
+
+        return targetBeanName != null;
     }
 
     /**
@@ -152,11 +156,13 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
 
         AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(registry);
 
+        Class<?>[] componentClasses = classesToRegister.toArray(EMPTY_CLASS_ARRAY);
+
         if (logger.isTraceEnabled()) {
-            logger.trace(registry.getClass().getSimpleName() + " will register annotated classes : " + asList(annotatedClasses) + " .");
+            logger.trace("{} will register annotated classes : {}", registry.getClass().getSimpleName(), arrayToString(componentClasses));
         }
 
-        reader.register(classesToRegister.toArray(EMPTY_CLASS_ARRAY));
+        reader.register(componentClasses);
 
     }
 
@@ -189,7 +195,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
             boolean traceEnabled = logger.isTraceEnabled();
 
             if (traceEnabled) {
-                logger.trace(registry.getClass().getSimpleName() + " will scan base packages " + asList(basePackages) + ".");
+                logger.trace("{} will scan base packages {}", registry.getClass().getSimpleName(), arrayToString(basePackages));
             }
 
             List<String> registeredBeanNames = asList(registry.getBeanDefinitionNames());
@@ -197,18 +203,18 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
             ClassPathBeanDefinitionScanner classPathBeanDefinitionScanner = new ClassPathBeanDefinitionScanner(registry);
             count = classPathBeanDefinitionScanner.scan(basePackages);
 
-            List<String> scannedBeanNames = new ArrayList<String>(count);
+            List<String> scannedBeanNames = newArrayList(count);
             scannedBeanNames.addAll(asList(registry.getBeanDefinitionNames()));
             scannedBeanNames.removeAll(registeredBeanNames);
 
             if (traceEnabled) {
-                logger.trace("The Scanned Components[ count : " + count + "] under base packages " + asList(basePackages) + " : ");
+                logger.trace("The Scanned Components[count : {}] under base packages {} : ", count, arrayToString(basePackages));
             }
 
             for (String scannedBeanName : scannedBeanNames) {
                 BeanDefinition scannedBeanDefinition = registry.getBeanDefinition(scannedBeanName);
                 if (traceEnabled) {
-                    logger.trace("Component [ name : " + scannedBeanName + " , class : " + scannedBeanDefinition.getBeanClassName() + " ]");
+                    logger.trace("Component [ name : {} , class : {} ]", scannedBeanName, scannedBeanDefinition.getBeanClassName());
                 }
             }
         }
@@ -256,13 +262,12 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
 
         if (beanNameGenerator == null) {
 
-            if (logger.isInfoEnabled()) {
+            if (logger.isTraceEnabled()) {
 
-                logger.info("BeanNameGenerator bean can't be found in BeanFactory with name ["
-                        + CONFIGURATION_BEAN_NAME_GENERATOR + "]");
-                logger.info("BeanNameGenerator will be a instance of " +
-                        AnnotationBeanNameGenerator.class.getName() +
-                        " , it maybe a potential problem on bean name generation.");
+                logger.trace("BeanNameGenerator bean can't be found in BeanFactory with name [{}]",
+                        CONFIGURATION_BEAN_NAME_GENERATOR);
+                logger.trace("BeanNameGenerator will be a instance of {} , it maybe a potential problem on bean name generation.",
+                        AnnotationBeanNameGenerator.class.getName());
             }
 
             beanNameGenerator = new AnnotationBeanNameGenerator();
@@ -283,21 +288,46 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
      * <h3>Example Usage</h3>
      * <pre>{@code
      * ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry);
+     * Set<BeanDefinitionHolder> holders = AnnotatedBeanDefinitionRegistryUtils.findBeanDefinitionHolders(scanner, "com.example.app");
+     * }</pre>
+     *
+     * @param scanner       the {@link ClassPathBeanDefinitionScanner} used to scan for components
+     * @param packageToScan the package to scan for Spring components
+     * @return a non-null set of {@link BeanDefinitionHolder} instances representing the discovered bean definitions
+     */
+    @Nonnull
+    public static Set<BeanDefinitionHolder> findBeanDefinitionHolders(ClassPathBeanDefinitionScanner scanner,
+                                                                      String packageToScan) {
+        BeanDefinitionRegistry registry = scanner.getRegistry();
+        BeanNameGenerator beanNameGenerator = resolveAnnotatedBeanNameGenerator(registry);
+        return findBeanDefinitionHolders(scanner, packageToScan, beanNameGenerator);
+    }
+
+    /**
+     * Scans the specified package for candidate components (beans) using the provided scanner,
+     * generates bean names using the given bean name generator, and returns a set of
+     * {@link BeanDefinitionHolder} objects encapsulating the found bean definitions.
+     *
+     * <p>This method is typically used during component scanning to locate beans annotated with Spring stereotypes
+     * such as {@link Component @Component}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry);
      * BeanNameGenerator beanNameGenerator = AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator(registry);
-     * Set<BeanDefinitionHolder> holders = AnnotatedBeanDefinitionRegistryUtils.findBeanDefinitionHolders(scanner, "com.example.app", registry, beanNameGenerator);
+     * Set<BeanDefinitionHolder> holders = AnnotatedBeanDefinitionRegistryUtils.findBeanDefinitionHolders(scanner, "com.example.app", beanNameGenerator);
      * }</pre>
      *
      * @param scanner           the {@link ClassPathBeanDefinitionScanner} used to scan for components
      * @param packageToScan     the package to scan for Spring components
-     * @param registry          the {@link BeanDefinitionRegistry} used to generate and register bean names
      * @param beanNameGenerator the {@link BeanNameGenerator} used to generate bean names for discovered components
      * @return a non-null set of {@link BeanDefinitionHolder} instances representing the discovered bean definitions
      */
     @Nonnull
     public static Set<BeanDefinitionHolder> findBeanDefinitionHolders(ClassPathBeanDefinitionScanner scanner,
                                                                       String packageToScan,
-                                                                      BeanDefinitionRegistry registry,
                                                                       BeanNameGenerator beanNameGenerator) {
+        BeanDefinitionRegistry registry = scanner.getRegistry();
         Set<BeanDefinition> beanDefinitions = scanner.findCandidateComponents(packageToScan);
         Set<BeanDefinitionHolder> beanDefinitionHolders = newLinkedHashSet(beanDefinitions.size());
         for (BeanDefinition beanDefinition : beanDefinitions) {

@@ -25,14 +25,13 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.SpringVersion;
-
 import java.util.List;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanPostProcessors;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static io.microsphere.util.ClassUtils.cast;
+import static io.microsphere.util.ClassUtils.getTypeName;
 
 /**
  * {@link ApplicationContext} Utilities
@@ -56,6 +55,7 @@ public abstract class ApplicationContextUtils implements Utils {
      *
      * @see org.springframework.context.support.ApplicationContextAwareProcessor
      */
+    @Nullable
     public static final Class<?> APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS = resolveClass(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME);
 
     /**
@@ -131,21 +131,27 @@ public abstract class ApplicationContextUtils implements Utils {
         List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors(beanFactory);
         BeanPostProcessor applicationContextAwareProcessor = null;
         for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
-            if (beanPostProcessor.getClass().equals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS)) {
+            if (isApplicationContextAwareProcessor(beanPostProcessor)) {
                 applicationContextAwareProcessor = beanPostProcessor;
                 break;
             }
         }
-        if (applicationContextAwareProcessor == null) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("The BeanPostProcessor[class : '{}' , present : {}] was not added in the BeanFactory[{}] @ Spring Framework '{}'",
-                        APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME,
-                        APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS != null,
-                        beanFactory,
-                        SpringVersion.getVersion());
-            }
-        }
+        logger.trace("The ApplicationContextAwareProcessor bean : {}", applicationContextAwareProcessor);
         return applicationContextAwareProcessor;
+    }
+
+    /**
+     * Is the specified {@link BeanPostProcessor} is
+     * {@link org.springframework.context.support.ApplicationContextAwareProcessor}
+     *
+     * @param instance the specified {@link BeanPostProcessor}
+     * @return if the specified {@link BeanPostProcessor} is
+     * {@link org.springframework.context.support.ApplicationContextAwareProcessor},
+     * return <code>true</code>, or <code>false</code>
+     */
+    public static boolean isApplicationContextAwareProcessor(Object instance) {
+        String beanClassName = getTypeName(instance);
+        return APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME.equals(beanClassName);
     }
 
     private ApplicationContextUtils() {
