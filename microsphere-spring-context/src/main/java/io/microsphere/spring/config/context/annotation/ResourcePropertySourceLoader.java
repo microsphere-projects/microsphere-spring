@@ -60,6 +60,21 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     private StandardFileWatchService fileWatchService;
 
+    /**
+     * Initializes the {@link ResourcePatternResolver} and {@link PathMatcher} used for resolving
+     * resource patterns after all bean properties have been set.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Typically invoked automatically by the Spring container:
+     *   ResourcePropertySourceLoader loader = new ResourcePropertySourceLoader();
+     *   loader.setResourceLoader(applicationContext);
+     *   loader.afterPropertiesSet();
+     *   // loader is now ready to resolve resource patterns like "classpath*:/META-INF/test/*.properties"
+     * }</pre>
+     *
+     * @throws Exception if initialization fails
+     */
     @Override
     public void afterPropertiesSet() throws Exception {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getResourceLoader());
@@ -67,17 +82,71 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
         this.pathMatcher = resolver.getPathMatcher();
     }
 
+    /**
+     * Resolves the {@link Resource} instances matching the given resource value pattern
+     * using the internal {@link ResourcePatternResolver}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Within a subclass or test:
+     *   PropertySourceExtensionAttributes<ResourcePropertySource> attrs = ...;
+     *   Resource[] resources = loader.resolveResources(attrs, "myPropertySource",
+     *       "classpath*:/META-INF/test/*.properties");
+     *   // resources contains all .properties files matching the pattern
+     * }</pre>
+     *
+     * @param extensionAttributes the extension attributes of the {@link ResourcePropertySource} annotation
+     * @param propertySourceName  the name of the property source being loaded
+     * @param resourceValue       the resource location pattern to resolve (e.g. {@code "classpath*:/META-INF/test/*.properties"})
+     * @return an array of resolved {@link Resource} instances matching the pattern
+     * @throws Throwable if resource resolution fails
+     */
     @Override
     protected Resource[] resolveResources(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
                                           String propertySourceName, String resourceValue) throws Throwable {
         return this.resourcePatternResolver.getResources(resourceValue);
     }
 
+    /**
+     * Determines whether the given resource value is a pattern containing wildcards
+     * (e.g. {@code *}, {@code ?}) that requires pattern-based resource resolution.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ResourcePropertySourceLoader loader = ...;
+     *   boolean isPattern = loader.isResourcePattern("classpath*:/META-INF/test/*.properties"); // true
+     *   boolean isNotPattern = loader.isResourcePattern("classpath:/META-INF/test/a.properties"); // false
+     * }</pre>
+     *
+     * @param resourceValue the resource location string to test
+     * @return {@code true} if the resource value contains wildcard patterns, {@code false} otherwise
+     */
     @Override
     public boolean isResourcePattern(String resourceValue) {
         return pathMatcher.isPattern(resourceValue);
     }
 
+    /**
+     * Configures the {@link ResourcePropertySourcesRefresher} by setting up a
+     * {@link StandardFileWatchService} that watches file-based resources for changes.
+     * When a watched file is created, modified, or deleted, the refresher is triggered
+     * to reload the affected property sources.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Called internally by the property source loading lifecycle when autoRefreshed = true.
+     *   // For example, given the annotation:
+     *   // @ResourcePropertySource(value = "classpath*:/META-INF/test/*.properties", autoRefreshed = true)
+     *   // the loader internally invokes this method to set up file watching on the resolved
+     *   // .properties files, so that property sources are refreshed when files change on disk.
+     * }</pre>
+     *
+     * @param extensionAttributes    the extension attributes of the {@link ResourcePropertySource} annotation
+     * @param propertySourceResources the list of property source resources to watch
+     * @param propertySource         the composite property source that aggregates the individual sources
+     * @param refresher              the refresher to invoke when file changes are detected
+     * @throws Throwable if configuring the file watch service fails
+     */
     @Override
     protected void configureResourcePropertySourcesRefresher(PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes,
                                                              List<PropertySourceResource> propertySourceResources, CompositePropertySource propertySource,
@@ -117,11 +186,39 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             this.resourceValues = new HashSet<>(initialCapacity);
         }
 
+        /**
+         * Registers a file and its corresponding resource value for change tracking.
+         * The registered file will be monitored for modifications, and the resource value
+         * is used to identify which property source to refresh.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   ListenerAdapter adapter = new ListenerAdapter(refresher, 4);
+         *   File propertiesFile = new File("/META-INF/test/a.properties");
+         *   adapter.register(propertiesFile, "classpath*:/META-INF/test/*.properties");
+         * }</pre>
+         *
+         * @param file          the file to register for change tracking
+         * @param resourceValue the resource location value associated with the file
+         */
         public void register(File file, String resourceValue) {
             this.fileToResourceValues.put(file, resourceValue);
             this.resourceValues.add(resourceValue);
         }
 
+        /**
+         * Handles a file creation event by checking if the newly created file matches any
+         * registered resource patterns and triggering a property source refresh if so.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   // Automatically invoked by the file watch service when a new file is detected:
+         *   // e.g., creating "c.properties" in a watched directory triggers a refresh
+         *   // if it matches a registered pattern like "classpath*:/META-INF/test/*.properties"
+         * }</pre>
+         *
+         * @param event the file changed event containing the created file information
+         */
         @Override
         public void onFileCreated(FileChangedEvent event) {
             // new file created
@@ -153,6 +250,18 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             return null;
         }
 
+        /**
+         * Handles a file modification event by refreshing the property source associated with
+         * the modified file.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   // Automatically invoked by the file watch service when a tracked file is modified:
+         *   // e.g., modifying "b.properties" triggers a refresh of its associated property source
+         * }</pre>
+         *
+         * @param event the file changed event containing the modified file information
+         */
         @Override
         public void onFileModified(FileChangedEvent event) {
             File resourceFile = event.getFile();
@@ -162,6 +271,18 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
             }
         }
 
+        /**
+         * Handles a file deletion event by delegating to {@link #onFileModified(FileChangedEvent)},
+         * which triggers a refresh of the property source associated with the deleted file.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   // Automatically invoked by the file watch service when a tracked file is deleted:
+         *   // e.g., deleting "a.properties" triggers a refresh and removed properties are reported
+         * }</pre>
+         *
+         * @param event the file changed event containing the deleted file information
+         */
         @Override
         public void onFileDeleted(FileChangedEvent event) {
             onFileModified(event);
@@ -173,6 +294,20 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
         }
     }
 
+    /**
+     * Stops the internal {@link StandardFileWatchService} if it was started,
+     * releasing file watching resources.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Typically invoked automatically by the Spring container on shutdown:
+     *   ResourcePropertySourceLoader loader = ...;
+     *   loader.destroy();
+     *   // The file watch service is stopped and resources are released
+     * }</pre>
+     *
+     * @throws Exception if stopping the file watch service fails
+     */
     @Override
     public void destroy() throws Exception {
         if (fileWatchService != null) {

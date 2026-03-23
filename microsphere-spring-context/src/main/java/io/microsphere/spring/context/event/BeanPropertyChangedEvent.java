@@ -28,7 +28,7 @@ import java.util.StringJoiner;
  * during runtime.
  * </p>
  *
- * <h3>Example usage:</h3>
+ * <h3>Example Usage</h3>
  * <pre>
  * // Create and publish the event when a bean's property changes
  * BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "status", oldStatus, newStatus);
@@ -62,22 +62,80 @@ public class BeanPropertyChangedEvent extends ApplicationEvent {
         this.newValue = newValue;
     }
 
+    /**
+     * Returns the bean whose property was changed.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "event", null, newValue);
+     *   Object bean = event.getBean();
+     *   assertSame(myBean, bean);
+     * }</pre>
+     *
+     * @return the source bean whose property changed
+     */
     public Object getBean() {
         return getSource();
     }
 
+    /**
+     * Returns the name of the property that was changed.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "event", null, newValue);
+     *   assertEquals("event", event.getPropertyName());
+     * }</pre>
+     *
+     * @return the name of the changed property
+     */
     public String getPropertyName() {
         return propertyName;
     }
 
+    /**
+     * Returns the value of the property before the change.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "event", null, newValue);
+     *   assertNull(event.getOldValue());
+     * }</pre>
+     *
+     * @return the old property value, may be {@code null}
+     */
     public Object getOldValue() {
         return oldValue;
     }
 
+    /**
+     * Returns the value of the property after the change.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "event", null, newValue);
+     *   assertSame(newValue, event.getNewValue());
+     * }</pre>
+     *
+     * @return the new property value, may be {@code null}
+     */
     public Object getNewValue() {
         return newValue;
     }
 
+    /**
+     * Returns a string representation of this event, including the source bean,
+     * property name, old value, and new value.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   BeanPropertyChangedEvent event = new BeanPropertyChangedEvent(myBean, "event", null, newValue);
+     *   String str = event.toString();
+     *   assertNotNull(str);
+     * }</pre>
+     *
+     * @return a string representation of this event
+     */
     @Override
     public String toString() {
         return new StringJoiner(", ", BeanPropertyChangedEvent.class.getSimpleName() + "[", "]")

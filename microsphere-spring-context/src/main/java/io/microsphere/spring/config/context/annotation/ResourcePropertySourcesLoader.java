@@ -40,6 +40,30 @@ import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.
 class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<ResourcePropertySources> implements
         ResourceLoaderAware, BeanClassLoaderAware {
 
+    /**
+     * Loads property sources from each {@link ResourcePropertySource} annotation declared
+     * within the {@link ResourcePropertySources} container annotation. Each individual
+     * {@link ResourcePropertySource} is delegated to a {@link ResourcePropertySourceLoader}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Used implicitly via the @ResourcePropertySources annotation:
+     *   @ResourcePropertySources({
+     *       @ResourcePropertySource(value = {"classpath*:/META-INF/test/*.properties"}),
+     *       @ResourcePropertySource(value = {"classpath*:/META-INF/test/*.properties"})
+     *   })
+     *   public class AppConfig { }
+     *
+     *   // After loading, properties from the resources are available:
+     *   assertEquals("1", environment.getProperty("a"));
+     * }</pre>
+     *
+     * @param attributes         the annotation attributes of {@link ResourcePropertySources}
+     * @param metadata           the annotation metadata of the importing class
+     * @param propertySourceName the resolved name for the property source
+     * @param propertySources    the {@link MutablePropertySources} to add loaded sources to
+     * @throws Throwable if an error occurs during property source loading
+     */
     @Override
     protected void loadPropertySource(AnnotationAttributes attributes, AnnotationMetadata metadata, String propertySourceName,
                                       MutablePropertySources propertySources) throws Throwable {

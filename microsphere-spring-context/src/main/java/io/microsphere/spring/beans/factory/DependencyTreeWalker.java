@@ -29,6 +29,28 @@ import static io.microsphere.collection.CollectionUtils.isEmpty;
  */
 public class DependencyTreeWalker {
 
+    /**
+     * Walks the given {@link Dependency} tree, merging duplicate children into their siblings
+     * and removing duplicated entries. After this method returns, the tree will contain no
+     * duplicate nodes at any level; instead, their children will have been merged into the
+     * remaining occurrence.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   DependencyTreeWalker walker = new DependencyTreeWalker();
+     *   Dependency a = Dependency.create("A");
+     *   a.addChild("B")
+     *    .addChild("C")
+     *    .child("C")
+     *    .addChildren("D", "E").addChild("B");
+     *   // Before walk: A[B, C[D, E, B]]
+     *   walker.walk(a);
+     *   // After walk:  A[C[D, E, B]]
+     * }</pre>
+     *
+     * @param dependency the root {@link Dependency} whose tree will be walked and deduplicated
+     * @return the same {@link Dependency} instance after deduplication
+     */
     public Dependency walk(Dependency dependency) {
         List<Dependency> children = dependency.children;
         int size = children.size();

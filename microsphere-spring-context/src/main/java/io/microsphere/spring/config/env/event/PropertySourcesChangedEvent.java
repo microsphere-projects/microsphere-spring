@@ -75,10 +75,39 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
 
     private final List<PropertySourceChangedEvent> subEvents;
 
+    /**
+     * Constructs a new {@link PropertySourcesChangedEvent} with a varargs array of sub-events.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   PropertySourceChangedEvent addedEvent = PropertySourceChangedEvent.added(context, newPropertySource);
+     *   PropertySourceChangedEvent removedEvent = PropertySourceChangedEvent.removed(context, oldPropertySource);
+     *   PropertySourcesChangedEvent event = new PropertySourcesChangedEvent(context, addedEvent, removedEvent);
+     *   assertEquals(2, event.getSubEvents().size());
+     * }</pre>
+     *
+     * @param source    the {@link ApplicationContext} that published this event
+     * @param subEvents the individual {@link PropertySourceChangedEvent} instances representing each change
+     */
     public PropertySourcesChangedEvent(ApplicationContext source, PropertySourceChangedEvent... subEvents) {
         this(source, ofList(subEvents));
     }
 
+    /**
+     * Constructs a new {@link PropertySourcesChangedEvent} with a list of sub-events.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   PropertySourceChangedEvent addedEvent = PropertySourceChangedEvent.added(context, newPropertySource);
+     *   PropertySourceChangedEvent removedEvent = PropertySourceChangedEvent.removed(context, oldPropertySource);
+     *   List<PropertySourceChangedEvent> subEvents = Arrays.asList(addedEvent, removedEvent);
+     *   PropertySourcesChangedEvent event = new PropertySourcesChangedEvent(context, subEvents);
+     *   assertEquals(2, event.getSubEvents().size());
+     * }</pre>
+     *
+     * @param source    the {@link ApplicationContext} that published this event
+     * @param subEvents the list of {@link PropertySourceChangedEvent} instances representing each change
+     */
     public PropertySourcesChangedEvent(ApplicationContext source, List<PropertySourceChangedEvent> subEvents) {
         super(source);
         this.subEvents = subEvents;
@@ -118,6 +147,26 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
                 REMOVED);
     }
 
+    /**
+     * Extracts properties from sub-events whose {@link PropertySourceChangedEvent.Kind} matches any of
+     * the specified kinds. Uses the provided functions to obtain the relevant {@link PropertySource}
+     * and generate properties from it.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // In a subclass, retrieve added properties from sub-events:
+     *   Map<String, Object> addedProps = getProperties(
+     *       PropertySourceChangedEvent::getNewPropertySource,
+     *       PropertySourcesUtils::getProperties,
+     *       PropertySourceChangedEvent.Kind.ADDED);
+     *   // addedProps contains all properties from newly added PropertySource instances
+     * }</pre>
+     *
+     * @param propertySourceGetter function to extract the target {@link PropertySource} from a sub-event
+     * @param propertiesGenerator  function to generate a property map from a {@link PropertySource}
+     * @param kinds                the {@link PropertySourceChangedEvent.Kind} values to filter sub-events by
+     * @return an unmodifiable map of property names to values; empty if no sub-events match
+     */
     protected Map<String, Object> getProperties(Function<PropertySourceChangedEvent, PropertySource> propertySourceGetter,
                                                 Function<PropertySource, Map<String, Object>> propertiesGenerator,
                                                 PropertySourceChangedEvent.Kind... kinds) {
