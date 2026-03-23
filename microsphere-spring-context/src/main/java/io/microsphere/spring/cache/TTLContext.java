@@ -53,26 +53,19 @@ public class TTLContext {
     private static final ThreadLocal<Duration> ttlThreadLocal = new ThreadLocal<>();
 
     /**
-     * Executes the given {@link Consumer} with the effective TTL, which is the value from the
-     * current thread's {@link ThreadLocal} if set, or the provided default TTL otherwise.
-     * The thread-local TTL is cleared after execution.
+     * Executes the given {@link Consumer} with the effective TTL value. If a TTL has been
+     * previously set via {@link #setTTL(Duration)}, that value is used; otherwise, the
+     * provided {@code defaultTTL} is used. The TTL is cleared after the consumer completes.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   // Uses default TTL when no thread-local TTL is set
-     *   TTLContext.doWithTTL(ttl -> {
-     *       System.out.println("TTL: " + ttl); // TTL: PT1M
-     *   }, Duration.ofMinutes(1));
-     *
-     *   // Uses thread-local TTL when set
-     *   TTLContext.setTTL(Duration.ofSeconds(30));
-     *   TTLContext.doWithTTL(ttl -> {
-     *       System.out.println("TTL: " + ttl); // TTL: PT30S
-     *   }, Duration.ofMinutes(1));
+     *   doWithTTL(d -> {
+     *       System.out.println("TTL duration: " + d);
+     *   }, Duration.ofMillis(10));
      * }</pre>
      *
-     * @param ttlFunction the consumer to execute with the effective TTL
-     * @param defaultTTL  the default TTL to use if no thread-local TTL is set
+     * @param ttlFunction the consumer to execute with the effective TTL duration
+     * @param defaultTTL  the default TTL to use if no TTL has been set via {@link #setTTL(Duration)}
      */
     public static void doWithTTL(Consumer<Duration> ttlFunction, Duration defaultTTL) {
         doWithTTL(ttl -> {
@@ -82,24 +75,22 @@ public class TTLContext {
     }
 
     /**
-     * Executes the given {@link Function} with the effective TTL and returns the result.
-     * The effective TTL is the value from the current thread's {@link ThreadLocal} if set,
-     * or the provided default TTL otherwise. The thread-local TTL is cleared after execution.
+     * Executes the given {@link Function} with the effective TTL value and returns its result.
+     * If a TTL has been previously set via {@link #setTTL(Duration)}, that value is used;
+     * otherwise, the provided {@code defaultTTL} is used. The TTL is cleared after the
+     * function completes, even if an exception is thrown.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   TTLContext.setTTL(Duration.ofSeconds(30));
-     *   long seconds = TTLContext.doWithTTL(Duration::getSeconds, Duration.ofMinutes(1));
-     *   // seconds == 30
-     *
-     *   // With no thread-local TTL set, uses the default
-     *   long defaultSeconds = TTLContext.doWithTTL(Duration::getSeconds, Duration.ofMinutes(1));
-     *   // defaultSeconds == 60
+     *   Duration duration = Duration.ofMillis(10);
+     *   Duration result = doWithTTL(d -> {
+     *       return d;
+     *   }, duration);
      * }</pre>
      *
-     * @param ttlFunction the function to execute with the effective TTL
-     * @param defaultTTL  the default TTL to use if no thread-local TTL is set
-     * @param <R>         the return type of the function
+     * @param <R>         the type of the result returned by the function
+     * @param ttlFunction the function to execute with the effective TTL duration
+     * @param defaultTTL  the default TTL to use if no TTL has been set via {@link #setTTL(Duration)}
      * @return the result of applying the function to the effective TTL
      */
     public static <R> R doWithTTL(Function<Duration, R> ttlFunction, Duration defaultTTL) {
@@ -117,47 +108,52 @@ public class TTLContext {
     }
 
     /**
-     * Sets the TTL value in the current thread's {@link ThreadLocal} storage.
+     * Sets the TTL value for the current thread. This value will take precedence over the
+     * {@code defaultTTL} parameter in subsequent calls to
+     * {@link #doWithTTL(Consumer, Duration)} or {@link #doWithTTL(Function, Duration)}.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   TTLContext.setTTL(Duration.ofMinutes(5));
-     *   Duration ttl = TTLContext.getTTL();
-     *   // ttl == Duration.ofMinutes(5)
+     *   Duration duration = Duration.ofMillis(100);
+     *   setTTL(duration);
+     *   doWithTTL(d -> {
+     *       // d will be the previously set duration (100ms), not the default (10ms)
+     *       assertEquals(d, duration);
+     *   }, Duration.ofMillis(10));
      * }</pre>
      *
-     * @param ttl the TTL duration to store for the current thread
+     * @param ttl the TTL duration to set for the current thread
      */
     public static void setTTL(Duration ttl) {
         ttlThreadLocal.set(ttl);
     }
 
     /**
-     * Gets the TTL value from the current thread's {@link ThreadLocal} storage.
+     * Returns the TTL value that has been set for the current thread, or {@code null} if
+     * no TTL has been set or it has been cleared.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   TTLContext.setTTL(Duration.ofMinutes(5));
-     *   Duration ttl = TTLContext.getTTL(); // PT5M
-     *
-     *   TTLContext.clearTTL();
-     *   Duration cleared = TTLContext.getTTL(); // null
+     *   Duration duration = Duration.ofMillis(100);
+     *   setTTL(duration);
+     *   assertEquals(duration, getTTL());
      * }</pre>
      *
-     * @return the TTL duration for the current thread, or {@code null} if not set
+     * @return the current thread's TTL duration, or {@code null} if not set
      */
     public static Duration getTTL() {
         return ttlThreadLocal.get();
     }
 
     /**
-     * Clears the TTL value from the current thread's {@link ThreadLocal} storage.
+     * Clears the TTL value for the current thread. After calling this method,
+     * {@link #getTTL()} will return {@code null}.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   TTLContext.setTTL(Duration.ofMinutes(5));
-     *   TTLContext.clearTTL();
-     *   Duration ttl = TTLContext.getTTL(); // null
+     *   setTTL(Duration.ofMillis(100));
+     *   clearTTL();
+     *   assertNull(getTTL());
      * }</pre>
      */
     public static void clearTTL() {

@@ -103,6 +103,27 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
 
     private String placeholderSuffix = PLACEHOLDER_SUFFIX;
 
+    /**
+     * Invoked after a property is retrieved from the {@link ConfigurablePropertyResolver}.
+     * Records the property's target type, resolved value, and default value in the
+     * {@link ConfigurationPropertyRepository}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Triggered automatically when resolving a property:
+     *   String value = environment.getProperty("test-name");
+     *   // After resolution, the listener records the property details:
+     *   ConfigurationProperty property = repository.get("test-name");
+     *   assertEquals("test-value", property.getValue());
+     *   assertEquals(String.class.getName(), property.getType());
+     * }</pre>
+     *
+     * @param propertyResolver the {@link ConfigurablePropertyResolver} that resolved the property
+     * @param name             the property name
+     * @param targetType       the target type of the property value
+     * @param value            the resolved property value
+     * @param defaultValue     the default value if the property is not found
+     */
     @Override
     public void afterGetProperty(ConfigurablePropertyResolver propertyResolver, String name, Class<?> targetType,
                                  Object value, Object defaultValue) {
@@ -112,6 +133,26 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
         configurationProperty.setDefaultValue(defaultValue);
     }
 
+    /**
+     * Invoked after a required property is retrieved from the {@link ConfigurablePropertyResolver}.
+     * Records the property's target type and resolved value, and marks it as required in the
+     * {@link ConfigurationPropertyRepository}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Triggered automatically when resolving a required property:
+     *   String value = environment.getRequiredProperty("test-name");
+     *   // After resolution, the listener records the property as required:
+     *   ConfigurationProperty property = repository.get("test-name");
+     *   assertEquals("test-value", property.getValue());
+     *   assertTrue(property.isRequired());
+     * }</pre>
+     *
+     * @param propertyResolver the {@link ConfigurablePropertyResolver} that resolved the property
+     * @param name             the property name
+     * @param targetType       the target type of the property value
+     * @param value            the resolved property value
+     */
     @Override
     public void afterGetRequiredProperty(ConfigurablePropertyResolver propertyResolver, String name, Class<?> targetType,
                                          Object value) {
@@ -121,16 +162,62 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
         configurationProperty.setRequired(true);
     }
 
+    /**
+     * Invoked after the placeholder prefix is changed on the {@link ConfigurablePropertyResolver}.
+     * Updates the internally tracked placeholder prefix.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Change the placeholder prefix on the environment:
+     *   environment.setPlaceholderPrefix("#(");
+     *   // The listener tracks the updated prefix:
+     *   assertEquals("#(", listener.getPlaceholderPrefix());
+     * }</pre>
+     *
+     * @param propertyResolver the {@link ConfigurablePropertyResolver} whose prefix was changed
+     * @param prefix           the new placeholder prefix
+     */
     @Override
     public void afterSetPlaceholderPrefix(ConfigurablePropertyResolver propertyResolver, String prefix) {
         this.placeholderPrefix = prefix;
     }
 
+    /**
+     * Invoked after the placeholder suffix is changed on the {@link ConfigurablePropertyResolver}.
+     * Updates the internally tracked placeholder suffix.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Change the placeholder suffix on the environment:
+     *   environment.setPlaceholderSuffix(")");
+     *   // The listener tracks the updated suffix:
+     *   assertEquals(")", listener.getPlaceholderSuffix());
+     * }</pre>
+     *
+     * @param propertyResolver the {@link ConfigurablePropertyResolver} whose suffix was changed
+     * @param suffix           the new placeholder suffix
+     */
     @Override
     public void afterSetPlaceholderSuffix(ConfigurablePropertyResolver propertyResolver, String suffix) {
         this.placeholderSuffix = suffix;
     }
 
+    /**
+     * Sets the {@link BeanFactory} and registers the {@link ConfigurationPropertyRepository} bean definition
+     * as well as this listener as a named bean in the {@link BeanDefinitionRegistry}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Typically invoked automatically by Spring during context initialization:
+     *   CollectingConfigurationPropertyListener listener = new CollectingConfigurationPropertyListener();
+     *   listener.setBeanFactory(beanFactory);
+     *   // After setBeanFactory, the ConfigurationPropertyRepository is registered:
+     *   assertTrue(beanFactory.containsBean(ConfigurationPropertyRepository.BEAN_NAME));
+     * }</pre>
+     *
+     * @param beanFactory the owning {@link BeanFactory}
+     * @throws BeansException if registration fails
+     */
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
@@ -139,10 +226,38 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
         registerBean(registry, BEAN_NAME, this);
     }
 
+    /**
+     * Returns the current placeholder prefix used for property resolution.
+     * Defaults to {@code "${"} unless changed via
+     * {@link #afterSetPlaceholderPrefix(ConfigurablePropertyResolver, String)}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   CollectingConfigurationPropertyListener listener = ...; // obtained from Spring context
+     *   String prefix = listener.getPlaceholderPrefix();
+     *   assertEquals("${", prefix);
+     * }</pre>
+     *
+     * @return the current placeholder prefix
+     */
     public String getPlaceholderPrefix() {
         return placeholderPrefix;
     }
 
+    /**
+     * Returns the current placeholder suffix used for property resolution.
+     * Defaults to {@code "}"} unless changed via
+     * {@link #afterSetPlaceholderSuffix(ConfigurablePropertyResolver, String)}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   CollectingConfigurationPropertyListener listener = ...; // obtained from Spring context
+     *   String suffix = listener.getPlaceholderSuffix();
+     *   assertEquals("}", suffix);
+     * }</pre>
+     *
+     * @return the current placeholder suffix
+     */
     public String getPlaceholderSuffix() {
         return placeholderSuffix;
     }
