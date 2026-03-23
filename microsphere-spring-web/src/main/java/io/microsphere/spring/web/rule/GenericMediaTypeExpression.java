@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static org.springframework.http.MediaType.SPECIFICITY_COMPARATOR;
+import static io.microsphere.spring.web.util.MediaTypeUtils.SPECIFICITY_COMPARATOR;
 import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.util.StringUtils.hasText;
 

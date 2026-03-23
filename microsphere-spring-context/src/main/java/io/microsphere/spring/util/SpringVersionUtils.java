@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static io.microsphere.util.Version.of;
 
 /**
  * The Utilities class for Spring Framework Version
@@ -108,10 +109,7 @@ public abstract class SpringVersionUtils implements Utils {
             throw new IllegalArgumentException(errorMessage);
         }
         String implementationVersion = classPackage.getImplementationVersion();
-        if (implementationVersion == null) {
-
-        }
-        return implementationVersion == null ? null : Version.of(implementationVersion);
+        return of(implementationVersion);
     }
 
     private SpringVersionUtils() {
