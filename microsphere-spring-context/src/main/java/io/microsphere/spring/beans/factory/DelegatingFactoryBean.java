@@ -87,35 +87,39 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     private final boolean singleton;
 
     /**
-     * Constructs a {@link DelegatingFactoryBean} with the specified delegate object,
-     * defaulting to singleton mode.
+     * Creates a new {@link DelegatingFactoryBean} that wraps the given delegate object
+     * as a singleton bean (the default).
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   MyService service = new MyServiceImpl();
-     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(service);
-     *   assertTrue(factoryBean.isSingleton());
+     *   DisposableBean myBean = new MyDisposableBean();
+     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myBean);
+     *   // factoryBean.isSingleton() returns true
+     *   // factoryBean.getObject() returns myBean
      * }</pre>
      *
-     * @param delegate the object to delegate to
+     * @param delegate the object to delegate to; must not be {@code null}
      */
     public DelegatingFactoryBean(Object delegate) {
         this(delegate, true);
     }
 
     /**
-     * Constructs a {@link DelegatingFactoryBean} with the specified delegate object
-     * and singleton flag.
+     * Creates a new {@link DelegatingFactoryBean} that wraps the given delegate object
+     * with the specified singleton flag.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   MyService service = new MyServiceImpl();
-     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(service, false);
-     *   assertFalse(factoryBean.isSingleton());
+     *   User user = new User();
+     *   // Non-singleton: a new instance may be requested each time
+     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(user, false);
+     *   // factoryBean.isSingleton() returns false
+     *   // factoryBean.getObjectType() returns User.class
      * }</pre>
      *
-     * @param delegate  the object to delegate to
-     * @param singleton whether this factory bean produces a singleton
+     * @param delegate  the object to delegate to; must not be {@code null}
+     * @param singleton {@code true} if the factory bean should report itself as a singleton,
+     *                  {@code false} otherwise
      */
     public DelegatingFactoryBean(Object delegate, boolean singleton) {
         this.delegate = delegate;
@@ -125,16 +129,16 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
 
     /**
      * Returns the delegate object managed by this factory bean.
-     * Overrides {@link FactoryBean#getObject()}.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myService);
+     *   User user = new User();
+     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(user, false);
      *   Object obj = factoryBean.getObject();
-     *   assertSame(myService, obj);
+     *   // obj is the same instance as user
      * }</pre>
      *
-     * @return the delegate object
+     * @return the delegate object, never {@code null}
      * @throws Exception if object creation fails
      */
     @Override
@@ -143,17 +147,19 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     }
 
     /**
-     * Returns the type of the delegate object.
-     * Overrides {@link FactoryBean#getObjectType()}.
+     * Returns the type of the delegate object. The type is resolved using
+     * {@link org.springframework.aop.support.AopUtils#getTargetClass(Object)},
+     * which correctly resolves the target class even for AOP proxies.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myService);
+     *   User user = new User();
+     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(user, false);
      *   Class<?> type = factoryBean.getObjectType();
-     *   assertEquals(myService.getClass(), type);
+     *   // type is User.class
      * }</pre>
      *
-     * @return the {@link Class} of the delegate object
+     * @return the class of the delegate object
      */
     @Override
     public Class<?> getObjectType() {
@@ -162,16 +168,18 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
 
     /**
      * Invokes the {@link InitializingBean#afterPropertiesSet()} callback on the delegate
-     * if it implements {@link InitializingBean}.
-     * Overrides {@link InitializingBean#afterPropertiesSet()}.
+     * if it implements {@link InitializingBean}. This allows the delegate to perform
+     * initialization work after all properties have been set by the containing
+     * {@link org.springframework.beans.factory.BeanFactory}.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
      *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myInitializingBean);
-     *   factoryBean.afterPropertiesSet(); // delegates to myInitializingBean
+     *   // Triggers delegate's afterPropertiesSet() if it implements InitializingBean
+     *   factoryBean.afterPropertiesSet();
      * }</pre>
      *
-     * @throws Exception if initialization fails
+     * @throws Exception if the delegate's initialization fails
      */
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -179,18 +187,19 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     }
 
     /**
-     * Sets the {@link ApplicationContext} and delegates to the underlying object's
-     * aware interfaces if applicable.
-     * Overrides {@link ApplicationContextAware#setApplicationContext(ApplicationContext)}.
+     * Sets the {@link ApplicationContext} and propagates it to the delegate if the delegate
+     * implements any Spring aware interfaces (e.g., {@link ApplicationContextAware},
+     * {@link org.springframework.context.EnvironmentAware}, etc.).
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myAwareBean);
+     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myBean);
+     *   // If myBean implements ApplicationContextAware, it will receive the context
      *   factoryBean.setApplicationContext(applicationContext);
      * }</pre>
      *
-     * @param context the {@link ApplicationContext} to set
-     * @throws BeansException if context propagation fails
+     * @param context the {@link ApplicationContext} to propagate to the delegate
+     * @throws BeansException if the aware callback invocation fails
      */
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
@@ -198,14 +207,14 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     }
 
     /**
-     * Sets the bean name and delegates to the underlying object if it implements
+     * Sets the bean name and propagates it to the delegate if the delegate implements
      * {@link BeanNameAware}.
-     * Overrides {@link BeanNameAware#setBeanName(String)}.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
      *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myBean);
-     *   factoryBean.setBeanName("test");
+     *   // If myBean implements BeanNameAware, it will receive the name "factoryBean"
+     *   factoryBean.setBeanName("factoryBean");
      * }</pre>
      *
      * @param name the name of the bean in the Spring container
@@ -216,16 +225,19 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     }
 
     /**
-     * Returns whether the delegate is managed as a singleton.
-     * Overrides {@link FactoryBean#isSingleton()}.
+     * Returns whether this factory bean produces a singleton instance. The value is determined
+     * by the {@code singleton} parameter passed to the constructor.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myService);
-     *   assertTrue(factoryBean.isSingleton()); // defaults to true
+     *   DelegatingFactoryBean singletonBean = new DelegatingFactoryBean(delegate);
+     *   singletonBean.isSingleton(); // returns true (default)
+     *
+     *   DelegatingFactoryBean prototypeBean = new DelegatingFactoryBean(delegate, false);
+     *   prototypeBean.isSingleton(); // returns false
      * }</pre>
      *
-     * @return {@code true} if the delegate is a singleton, {@code false} otherwise
+     * @return {@code true} if this factory bean is a singleton, {@code false} otherwise
      */
     @Override
     public boolean isSingleton() {
@@ -233,17 +245,24 @@ public class DelegatingFactoryBean implements FactoryBean<Object>, InitializingB
     }
 
     /**
-     * Invokes the {@link DisposableBean#destroy()} callback on the delegate
-     * if it implements {@link DisposableBean}.
-     * Overrides {@link DisposableBean#destroy()}.
+     * Destroys the delegate by invoking its {@link DisposableBean#destroy()} method,
+     * but only if the delegate implements {@link DisposableBean}. If the delegate does not
+     * implement {@link DisposableBean}, this method is a no-op.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(myDisposableBean);
-     *   factoryBean.destroy(); // delegates to myDisposableBean.destroy()
+     *   DisposableBean disposable = new MyDisposableBean();
+     *   DelegatingFactoryBean factoryBean = new DelegatingFactoryBean(disposable);
+     *   // Invokes disposable.destroy()
+     *   factoryBean.destroy();
+     *
+     *   User user = new User();
+     *   DelegatingFactoryBean factoryBean2 = new DelegatingFactoryBean(user, false);
+     *   // No-op since User does not implement DisposableBean
+     *   factoryBean2.destroy();
      * }</pre>
      *
-     * @throws Exception if destruction fails
+     * @throws Exception if the delegate's destroy method fails
      */
     @Override
     public void destroy() throws Exception {

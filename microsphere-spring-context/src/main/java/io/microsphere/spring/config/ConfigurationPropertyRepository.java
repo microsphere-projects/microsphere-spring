@@ -180,16 +180,20 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     }
 
     /**
-     * Sets the {@link Environment} used to resolve the maximum repository size from the
-     * property {@value #MAX_SIZE_PROPERTY_NAME}. Implements {@link EnvironmentAware}.
+     * Sets the {@link Environment} and reads the maximum repository size from the
+     * {@value #MAX_SIZE_PROPERTY_NAME} configuration property. Falls back to
+     * {@link #DEFAULT_MAX_SIZE_PROPERTY_VALUE} if the property is not set.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
      *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
-     *   repository.setEnvironment(applicationContext.getEnvironment());
+     *   // Assume the environment has "microsphere.spring.config-property-repository.max-size=3"
+     *   repository.setEnvironment(environment);
+     *   repository.afterPropertiesSet();
+     *   assertEquals(3, repository.getMaxSize());
      * }</pre>
      *
-     * @param environment the Spring {@link Environment} to use for property resolution
+     * @param environment the Spring {@link Environment} to read configuration from
      */
     @Override
     public void setEnvironment(Environment environment) {
@@ -197,16 +201,18 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     }
 
     /**
-     * Initializes the underlying repository map. If the {@link Environment} has not been set,
-     * the default max size is used. Implements {@link InitializingBean}.
+     * Initializes the internal repository map with a capacity derived from the configured
+     * {@link #getMaxSize() max size}. This method is typically called automatically by
+     * the Spring container after all properties have been set.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
      *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
-     *   repository.setEnvironment(applicationContext.getEnvironment());
+     *   repository.setEnvironment(environment);
      *   repository.afterPropertiesSet();
-     *   // Repository is now ready for use
-     *   repository.add(configurationProperty);
+     *   // The repository is now ready to store ConfigurationProperty instances
+     *   repository.add(new ConfigurationProperty("my.property"));
+     *   assertTrue(repository.contains("my.property"));
      * }</pre>
      */
     @Override
@@ -215,8 +221,7 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     }
 
     /**
-     * Clears all entries from the repository, releasing stored {@link ConfigurationProperty}
-     * instances. Implements {@link DisposableBean}.
+     * clear the repository
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
@@ -238,17 +243,18 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     }
 
     /**
-     * Returns the underlying repository map, lazily initializing it via
-     * {@link #afterPropertiesSet()} if it has not been created yet.
+     * Returns the internal repository map. If the repository has not been initialized yet,
+     * {@link #afterPropertiesSet()} is invoked to lazily initialize it.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   // In a subclass:
+     *   // In a subclass overriding repository behavior:
      *   Map<String, ConfigurationProperty> repo = getRepository();
-     *   repo.forEach((name, prop) -> System.out.println(name + " = " + prop.getValue()));
+     *   repo.put("custom.property", new ConfigurationProperty("custom.property"));
+     *   assertTrue(repo.containsKey("custom.property"));
      * }</pre>
      *
-     * @return the mutable map of property names to {@link ConfigurationProperty} instances
+     * @return the internal map of property names to {@link ConfigurationProperty} instances
      */
     protected Map<String, ConfigurationProperty> getRepository() {
         if (repository == null) {

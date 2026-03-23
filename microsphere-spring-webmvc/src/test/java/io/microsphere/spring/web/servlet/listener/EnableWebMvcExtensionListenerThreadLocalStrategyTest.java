@@ -33,5 +33,4 @@ import static io.microsphere.spring.web.util.RequestContextStrategy.THREAD_LOCAL
  */
 @EnableWebMvcExtension(requestContextStrategy = THREAD_LOCAL)
 class EnableWebMvcExtensionListenerThreadLocalStrategyTest extends AbstractEnableWebMvcExtensionListenerTest {
-
 }

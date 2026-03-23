@@ -60,6 +60,24 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
 
     private final PropertySource oldPropertySource;
 
+    /**
+     * Constructs a new {@link PropertySourceChangedEvent} with the specified application context, kind,
+     * new property source, and old property source.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   PropertySourceChangedEvent event = new PropertySourceChangedEvent(
+     *       context, PropertySourceChangedEvent.Kind.REPLACED, newPropertySource, oldPropertySource);
+     *   assertEquals(PropertySourceChangedEvent.Kind.REPLACED, event.getKind());
+     *   assertSame(newPropertySource, event.getNewPropertySource());
+     *   assertSame(oldPropertySource, event.getOldPropertySource());
+     * }</pre>
+     *
+     * @param source            the {@link ApplicationContext} that published this event
+     * @param kind              the {@link Kind} of property source change
+     * @param newPropertySource the new {@link PropertySource}, or {@code null} if not applicable
+     * @param oldPropertySource the old {@link PropertySource}, or {@code null} if not applicable
+     */
     protected PropertySourceChangedEvent(ApplicationContext source, Kind kind, @Nullable PropertySource newPropertySource,
                                          @Nullable PropertySource oldPropertySource) {
         super(source);
@@ -68,6 +86,23 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
         this.oldPropertySource = oldPropertySource;
     }
 
+    /**
+     * Constructs a new {@link PropertySourceChangedEvent} with the specified application context, kind,
+     * and new property source. The old property source is set to {@code null}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   PropertySourceChangedEvent event = new PropertySourceChangedEvent(
+     *       context, PropertySourceChangedEvent.Kind.ADDED, newPropertySource);
+     *   assertEquals(PropertySourceChangedEvent.Kind.ADDED, event.getKind());
+     *   assertSame(newPropertySource, event.getNewPropertySource());
+     *   assertNull(event.getOldPropertySource());
+     * }</pre>
+     *
+     * @param source            the {@link ApplicationContext} that published this event
+     * @param kind              the {@link Kind} of property source change
+     * @param newPropertySource the new {@link PropertySource}, or {@code null} if not applicable
+     */
     protected PropertySourceChangedEvent(ApplicationContext source, Kind kind, @Nullable PropertySource newPropertySource) {
         this(source, kind, newPropertySource, null);
     }
@@ -95,6 +130,23 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
         return kind;
     }
 
+    /**
+     * Compares this event with the specified object for equality. Two {@link PropertySourceChangedEvent} instances
+     * are considered equal if they have the same {@link Kind}, new property source, and old property source.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   PropertySourceChangedEvent event1 = PropertySourceChangedEvent.added(context, newPropertySource);
+     *   PropertySourceChangedEvent event2 = PropertySourceChangedEvent.added(context, newPropertySource);
+     *   assertEquals(event1, event2);
+     *
+     *   PropertySourceChangedEvent event3 = PropertySourceChangedEvent.removed(context, oldPropertySource);
+     *   assertNotEquals(event1, event3);
+     * }</pre>
+     *
+     * @param o the object to compare with
+     * @return {@code true} if the specified object is equal to this event, {@code false} otherwise
+     */
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof PropertySourceChangedEvent)) return false;
@@ -105,6 +157,19 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
                 && Objects.equals(oldPropertySource, that.oldPropertySource);
     }
 
+    /**
+     * Returns a hash code value for this event based on the {@link Kind}, new property source,
+     * and old property source.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   PropertySourceChangedEvent event1 = PropertySourceChangedEvent.added(context, newPropertySource);
+     *   PropertySourceChangedEvent event2 = PropertySourceChangedEvent.added(context, newPropertySource);
+     *   assertEquals(event1.hashCode(), event2.hashCode());
+     * }</pre>
+     *
+     * @return a hash code value for this event
+     */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(kind);
