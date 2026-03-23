@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 
 /**
@@ -40,27 +41,26 @@ public class OnceApplicationContextEventListenerTest {
 
     @Test
     public void test() {
-
         for (int levels = 1; levels < 10; levels++) {
             testOnceApplicationContextEventListener(levels, true);
             testOnceApplicationContextEventListener(levels, false);
         }
     }
 
+    @Test
+    public void testGetApplicationContextOnNPE() {
+        MyContextEventListener listener = new MyContextEventListener();
+        assertThrows(NullPointerException.class, listener::getApplicationContext);
+    }
+
     private void testOnceApplicationContextEventListener(int levels, boolean listenersAsBean) {
-
         ConfigurableApplicationContext context = createContext(levels, listenersAsBean);
-
         context.start();
-
         context.stop();
-
         context.close();
-
     }
 
     private ConfigurableApplicationContext createContext(int levels, boolean listenersAsBean) {
-
         if (levels < 1) {
             return null;
         }
@@ -83,7 +83,6 @@ public class OnceApplicationContextEventListenerTest {
     static class MyContextEventListener extends OnceApplicationContextEventListener<ApplicationContextEvent> {
 
         public MyContextEventListener() {
-
         }
 
         public MyContextEventListener(ApplicationContext applicationContext) {
@@ -108,5 +107,4 @@ public class OnceApplicationContextEventListenerTest {
             assertEquals(0, count.getAndIncrement());
         }
     }
-
 }

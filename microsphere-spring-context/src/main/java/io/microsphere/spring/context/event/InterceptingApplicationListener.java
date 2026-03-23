@@ -16,13 +16,15 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.lang.DelegatingWrapper;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
-import java.util.Objects;
+
+import static io.microsphere.util.Assert.assertNotNull;
 
 /**
  * Intercepting {@link ApplicationListener} Wrapper
@@ -30,7 +32,7 @@ import java.util.Objects;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class InterceptingApplicationListener implements GenericApplicationListenerAdapter {
+class InterceptingApplicationListener implements GenericApplicationListenerAdapter, DelegatingWrapper {
 
     private final ApplicationListener<?> delegate;
 
@@ -38,10 +40,12 @@ class InterceptingApplicationListener implements GenericApplicationListenerAdapt
 
     private final List<ApplicationListenerInterceptor> interceptors;
 
-    InterceptingApplicationListener(ApplicationListener<?> delegate, List<ApplicationListenerInterceptor> interceptors) {
+    InterceptingApplicationListener(ApplicationListener<?> listener, List<ApplicationListenerInterceptor> interceptors) {
+        assertNotNull(listener, () -> "The 'listener' argument must not be null");
+        ApplicationListener<?> delegate = getDelegate(listener);
         this.delegate = delegate;
-        this.smartListener = (delegate instanceof GenericApplicationListener ?
-                (GenericApplicationListener) delegate : new org.springframework.context.event.GenericApplicationListenerAdapter(delegate));
+        this.smartListener = delegate instanceof GenericApplicationListener ? ((GenericApplicationListener) delegate) :
+                new org.springframework.context.event.GenericApplicationListenerAdapter(delegate);
         this.interceptors = interceptors;
     }
 
@@ -61,23 +65,32 @@ class InterceptingApplicationListener implements GenericApplicationListenerAdapt
     }
 
     public ApplicationListener<?> getDelegate() {
-        ApplicationListener delegate = this.delegate;
+        return this.delegate;
+    }
+
+    static ApplicationListener<?> getDelegate(ApplicationListener<?> listener) {
+        ApplicationListener delegate = listener;
         while (delegate instanceof InterceptingApplicationListener) {
-            delegate = ((InterceptingApplicationListener) delegate).delegate;
+            InterceptingApplicationListener interceptingApplicationListener = (InterceptingApplicationListener) delegate;
+            delegate = interceptingApplicationListener.delegate;
         }
         return delegate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof InterceptingApplicationListener)) {
+            return false;
+        }
         InterceptingApplicationListener that = (InterceptingApplicationListener) o;
         return getDelegate().equals(that.getDelegate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDelegate());
+        return getDelegate().hashCode();
     }
 }

@@ -31,6 +31,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -211,15 +212,33 @@ public abstract class BeanDefinitionUtils implements Utils {
      */
     @Nonnull
     public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType, int role, Object[] constructorArguments) {
-        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanType)
-                .setRole(role);
-        // Add the arguments of constructor if present
-        int length = length(constructorArguments);
-        for (int i = 0; i < length; i++) {
-            Object constructorArgument = constructorArguments[i];
-            beanDefinitionBuilder.addConstructorArgValue(constructorArgument);
-        }
+        return genericBeanDefinition(beanType, builder -> {
+            // set the role
+            builder.setRole(role);
+            // Add the arguments of constructor if present
+            int length = length(constructorArguments);
+            for (int i = 0; i < length; i++) {
+                Object constructorArgument = constructorArguments[i];
+                builder.addConstructorArgValue(constructorArgument);
+            }
+        });
+    }
+
+    /**
+     * Build a generic instance of {@link AbstractBeanDefinition} with the given bean type and builder consumer.
+     *
+     * @param beanType        the type of bean
+     * @param builderConsumer the consumer to customize the {@link BeanDefinitionBuilder}
+     * @return an instance of {@link AbstractBeanDefinition}
+     */
+    @Nonnull
+    public static AbstractBeanDefinition genericBeanDefinition(Class<?> beanType, Consumer<BeanDefinitionBuilder> builderConsumer) {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanType);
+        builderConsumer.accept(beanDefinitionBuilder);
         AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+        if (logger.isTraceEnabled()) {
+            logger.trace("Build an instance of {}", beanDefinition);
+        }
         return beanDefinition;
     }
 

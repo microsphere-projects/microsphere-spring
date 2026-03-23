@@ -19,17 +19,23 @@ package io.microsphere.spring.context;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ResourceLoader;
+
+import java.util.List;
 
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -45,19 +51,19 @@ public class ApplicationContextUtilsTest {
 
     @Before
     public void setUp() {
-        context = new GenericApplicationContext();
-        context.refresh();
+        this.context = new GenericApplicationContext();
+        this.context.refresh();
     }
 
     @After
     public void destroy() {
-        context.close();
+        this.context.close();
     }
 
     @Test
     public void testAsConfigurableApplicationContextWithContext() {
-        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(context);
-        assertSame(context, applicationContext);
+        ConfigurableApplicationContext applicationContext = asConfigurableApplicationContext(this.context);
+        assertSame(this.context, applicationContext);
     }
 
     @Test
@@ -68,13 +74,31 @@ public class ApplicationContextUtilsTest {
 
     @Test
     public void testAsApplicationContext() {
-        ApplicationContext applicationContext = asApplicationContext(context);
-        assertSame(context, applicationContext);
+        ApplicationContext applicationContext = asApplicationContext(this.context);
+        assertSame(this.context, applicationContext);
     }
 
     @Test
     public void testGetApplicationContextAwareProcessor() {
-        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(context);
+        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(this.context);
         assertEquals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS, beanPostProcessor.getClass());
+
+        ConfigurableListableBeanFactory beanFactory = this.context.getBeanFactory();
+        beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
+        assertEquals(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS, beanPostProcessor.getClass());
+
+        DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
+        assertNull(getApplicationContextAwareProcessor(defaultListableBeanFactory));
+
+        defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+        List<BeanPostProcessor> beanPostProcessors = defaultListableBeanFactory.getBeanPostProcessors();
+        beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
+        beanPostProcessors.remove(beanPostProcessor);
+        assertNull(getApplicationContextAwareProcessor(beanFactory));
+    }
+
+    @Test
+    public void testGetApplicationContextAwareProcessorWithNullBeanFactory() {
+        assertNull(getApplicationContextAwareProcessor((BeanFactory) null));
     }
 }

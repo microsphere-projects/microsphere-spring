@@ -120,7 +120,7 @@ public class EnableEventExtensionTest {
     }
 
     @After
-    public void rest() {
+    public void tearDown() {
         eventValueRef.set(0);
     }
 

@@ -118,13 +118,14 @@ public abstract class EnvironmentUtils implements Utils {
      * Get the {@link ConversionService} from the specified {@link Environment}
      *
      * @param environment {@link Environment}
-     * @return {@link ConversionService} if found, or <code>null</code>
+     * @return never <code>null</code>
      */
-    @Nullable
+    @Nonnull
     public static ConversionService getConversionService(Environment environment) {
         ConversionService conversionService = null;
         if (environment instanceof ConfigurablePropertyResolver) {
-            conversionService = ((ConfigurablePropertyResolver) environment).getConversionService();
+            ConfigurablePropertyResolver resolver = (ConfigurablePropertyResolver) environment;
+            conversionService = resolver.getConversionService();
         }
         if (conversionService == null) {
             conversionService = getSharedInstance();
@@ -176,9 +177,6 @@ public abstract class EnvironmentUtils implements Utils {
             return defaultValue;
         }
         ConversionService conversionService = getConversionService(environment);
-        if (conversionService == null) {
-            return defaultValue;
-        }
         final T targetValue;
         String resolvedPropertyValue = environment.resolvePlaceholders(propertyValue);
         if (conversionService.canConvert(String.class, targetType)) {

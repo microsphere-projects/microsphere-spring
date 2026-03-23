@@ -27,6 +27,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.constants.PathConstants.SLASH;
@@ -61,7 +62,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
@@ -218,9 +218,12 @@ public class WebRequestUtilsTest {
     }
 
     @Test
-    public void testWriteResponseBody() {
+    public void testWriteResponseBody() throws UnsupportedEncodingException {
         NativeWebRequest request = createWebRequest();
-        assertThrows(UnsupportedOperationException.class, () -> writeResponseBody(request, testName, testValue));
+        writeResponseBody(request, testName, testValue);
+        MockHttpServletResponse response = request.getNativeResponse(MockHttpServletResponse.class);
+        String contentAsString = response.getContentAsString();
+        assertEquals(testName + "=" + testValue, contentAsString);
     }
 
     @Test

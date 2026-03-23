@@ -52,7 +52,7 @@ class DefaultPropertiesPropertySourcesLoader extends BeanCapableImportCandidate 
         DefaultPropertiesPropertySourceLoader delegate = getDelegate();
 
         for (AnnotationAttributes elementAttributes : attributesSet) {
-            delegate.loadPropertySource(elementAttributes, registry);
+            delegate.loadPropertySource(elementAttributes);
         }
     }
 

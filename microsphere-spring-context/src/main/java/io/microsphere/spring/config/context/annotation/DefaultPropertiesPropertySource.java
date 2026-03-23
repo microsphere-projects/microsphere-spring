@@ -21,6 +21,7 @@ import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.DefaultPropertySourceFactory;
 import org.springframework.core.io.support.PropertySourceFactory;
@@ -94,6 +95,77 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface DefaultPropertiesPropertySource {
 
     /**
+     * <em>Inlined properties</em> in the form of <em>key-value</em> pairs that
+     * should be added to the Spring {@link org.springframework.core.env.PropertySource PropertySource}
+     * named {@link PropertySourcesUtils#DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME "defaultProperties"}.
+     * Multiple key-value pairs may be specified via a single <em>text block</em>.
+     *
+     * <h4>Supported Syntax</h4>
+     * <p>The supported syntax for key-value pairs is the same as the
+     * syntax defined for entries in a Java
+     * {@linkplain java.util.Properties#load(java.io.Reader) properties file}:
+     * <ul>
+     * <li>{@code "key=value"}</li>
+     * <li>{@code "key:value"}</li>
+     * <li>{@code "key value"}</li>
+     * </ul>
+     * <p><strong>WARNING</strong>: although properties can be defined using any
+     * of the above syntax variants and any number of spaces between the key and
+     * the value, it is recommended that you use one syntax variant and consistent
+     * spacing &mdash; for example, consider always using
+     * {@code "key = value"} instead of {@code "key= value"}, {@code "key=value"},
+     * etc. Similarly, if you define inlined properties using <em>text blocks</em>
+     * you should consistently use text blocks for inlined properties.
+     * The reason is that the exact strings you provide will be
+     * used to determine the key for the context cache. Consequently, to benefit
+     * from the context cache you must ensure that you define inlined properties
+     * consistently.
+     *
+     * <h4>Examples</h4>
+     * <pre class="code">
+     * &#47;&#47; Using an array of strings
+     * &#064;DefaultPropertiesPropertySource(properties = {
+     *     "key1 = value1",
+     *     "key2 = value2"
+     * })
+     * &#064;ContextConfiguration
+     * class MyTests {
+     *   // ...
+     * }</pre>
+     * <pre class="code">
+     * &#47;&#47; Using a single text block
+     * &#064;DefaultPropertiesPropertySource(properties = """
+     *     key1 = value1
+     *     key2 = value2
+     *     """
+     * )
+     * &#064;ContextConfiguration
+     * class MyTests {
+     *   // ...
+     * }</pre>
+     * <h4>Precedence</h4>
+     * <p>Properties declared via this attribute have higher precedence than
+     * properties loaded from resource {@link #locations}.
+     * <p>This attribute may be used in conjunction with {@link #value}
+     * <em>or</em> {@link #locations}.
+     *
+     * @see #locations
+     * @see org.springframework.core.env.PropertySource
+     * @see PropertySourcesUtils#DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME
+     */
+    String[] properties() default {};
+
+    /**
+     * Alias for {@link #locations}.
+     * <p>This attribute may <strong>not</strong> be used in conjunction with
+     * {@link #locations}, but it may be used <em>instead</em> of {@link #locations}.
+     *
+     * @see #locations
+     */
+    @AliasFor("locations")
+    String[] value() default {};
+
+    /**
      * Indicate the resource location(s) of the property source file to be loaded.
      * <p>Both traditional and XML-based properties file formats are supported
      * &mdash; for example, {@code "classpath:/com/myco/app.properties"}
@@ -104,7 +176,8 @@ public @interface DefaultPropertiesPropertySource {
      * <p>Each location will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
-    String[] value() default {};
+    @AliasFor("value")
+    String[] locations() default {};
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards

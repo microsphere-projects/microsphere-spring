@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static io.microsphere.spring.core.env.PropertyResolverUtils.resolvePlaceholders;
 import static io.microsphere.util.AnnotationUtils.isAnnotationPresent;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.contains;
@@ -32,7 +33,6 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
 import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
 import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnnotation;
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
-import static org.springframework.util.StringUtils.trimWhitespace;
 
 /**
  * {@link Annotation} Utilities
@@ -640,27 +640,13 @@ public abstract class AnnotationUtils {
                 continue;
             }
 
-            if (attributeValue instanceof String) {
-                attributeValue = resolvePlaceholders((String) attributeValue, propertyResolver);
-            } else if (attributeValue instanceof String[]) {
-                String[] values = (String[]) attributeValue;
-                for (int i = 0; i < values.length; i++) {
-                    values[i] = resolvePlaceholders(values[i], propertyResolver);
-                }
-                attributeValue = values;
-            }
+            attributeValue = resolvePlaceholders(attributeValue, propertyResolver);
             actualAnnotationAttributes.put(attributeName, attributeValue);
         }
 
         return actualAnnotationAttributes;
     }
 
-    static String resolvePlaceholders(String attributeValue, PropertyResolver propertyResolver) {
-        String resolvedValue = attributeValue;
-        if (propertyResolver != null) {
-            resolvedValue = propertyResolver.resolvePlaceholders(resolvedValue);
-            resolvedValue = trimWhitespace(resolvedValue);
-        }
-        return resolvedValue;
+    private AnnotationUtils() {
     }
 }

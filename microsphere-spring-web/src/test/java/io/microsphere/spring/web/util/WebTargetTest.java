@@ -25,6 +25,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
@@ -34,7 +35,6 @@ import static io.microsphere.spring.web.util.WebTarget.RESPONSE_BODY;
 import static io.microsphere.spring.web.util.WebTarget.RESPONSE_COOKIE;
 import static io.microsphere.spring.web.util.WebTarget.RESPONSE_HEADER;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
 /**
  * {@link WebTarget} Test
@@ -53,8 +53,11 @@ public class WebTargetTest {
     }
 
     @Test
-    public void testWriteValueForBODY() {
-        assertThrows(UnsupportedOperationException.class, () -> RESPONSE_BODY.writeValue(request, testName, testValue));
+    public void testWriteValueForBODY() throws UnsupportedEncodingException {
+        RESPONSE_BODY.writeValue(request, testName, testValue);
+        MockHttpServletResponse response = request.getNativeResponse(MockHttpServletResponse.class);
+        String contentAsString = response.getContentAsString();
+        assertEquals(testName + "=" + testValue, contentAsString);
     }
 
     @Test
