@@ -95,8 +95,8 @@ public class AnnotationBeanDefinitionRegistryPostProcessorTest {
         }
 
         @Override
-        protected void registerSecondaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
-                                                        Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
+        protected void registerExtendedBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+                                                        Map<String, AnnotatedBeanDefinition> mainBeanDefinitions,
                                                         String[] basePackages) {
             scanner.registerSingleton("stringBean", "Hello,World");
 

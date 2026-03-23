@@ -18,6 +18,7 @@ package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
+import io.microsphere.util.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
@@ -35,41 +36,42 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.context.annotation.AnnotatedBeanDefinitionRegistryUtils.resolveAnnotatedBeanNameGenerator;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
+import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static java.util.Arrays.asList;
+import static java.util.Collections.addAll;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.Assert.noNullElements;
 import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasText;
 
 /**
  * An abstract class for the extension to {@link BeanDefinitionRegistryPostProcessor}, which will execute two main registration
  * methods orderly:
  * <ol>
- *     <li>{@link #registerPrimaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner, String[])} : Scan and register
- *     the primary {@link BeanDefinition BeanDefinitions} that were annotated by
+ *     <li>{@link #registerMainBeanDefinitions(ExposingClassPathBeanDefinitionScanner, String[])} : Scan and register
+ *     the main {@link BeanDefinition BeanDefinitions} that were annotated by
  *     {@link #getSupportedAnnotationTypes() the supported annotation types}, and then return the {@link Map} with bean name plus
- *     aliases if present and primary {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions},
+ *     aliases if present and main {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions},
  *     it's allowed to be override
  *     </li>
- *     <li>{@link #registerSecondaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner, Map, String[])} :
- *      it's mandatory to be override by the sub-class to register secondary {@link BeanDefinition BeanDefinitions}
+ *     <li>{@link #registerExtendedBeanDefinitions(ExposingClassPathBeanDefinitionScanner, Map, String[])} :
+ *      it's mandatory to be override by the sub-class to register extended {@link BeanDefinition BeanDefinitions}
  *      if required
  *     </li>
  * </ol>
@@ -83,17 +85,17 @@ import static org.springframework.util.StringUtils.hasText;
  *         super(MyAnnotation.class, "com.example.package");
  *     }
  *
- *     protected Map<String, AnnotatedBeanDefinition> registerPrimaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+ *     protected Map<String, AnnotatedBeanDefinition> registerMainBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
  *                                                                                   String[] basePackages) {
- *         // Custom logic to register primary bean definitions
- *         return super.registerPrimaryBeanDefinitions(scanner, basePackages);
+ *         // Custom logic to register main bean definitions
+ *         return super.registerMainBeanDefinitions(scanner, basePackages);
  *     }
  *
  *     @Override
- *     protected void registerSecondaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
- *                                                    Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
+ *     protected void registerExtendedBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+ *                                                    Map<String, AnnotatedBeanDefinition> mainBeanDefinitions,
  *                                                    String[] basePackages) {
- *         // Logic to register secondary bean definitions based on primary ones
+ *         // Logic to register extended bean definitions based on main ones
  *     }
  * }
  * }</pre>
@@ -119,34 +121,30 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
 
     private ClassLoader classLoader;
 
-    public AnnotationBeanDefinitionRegistryPostProcessor(Class<? extends Annotation> primaryAnnotationType,
+    public AnnotationBeanDefinitionRegistryPostProcessor(Class<? extends Annotation> annotationType,
                                                          Class<?>... basePackageClasses) {
-        this(primaryAnnotationType, resolveBasePackages(basePackageClasses));
+        this(annotationType, resolveBasePackages(basePackageClasses));
     }
 
-    public AnnotationBeanDefinitionRegistryPostProcessor(Class<? extends Annotation> primaryAnnotationType,
+    public AnnotationBeanDefinitionRegistryPostProcessor(Class<? extends Annotation> annotationType,
                                                          String... packagesToScan) {
-        this(primaryAnnotationType, asList(packagesToScan));
+        this(annotationType, asList(packagesToScan));
     }
 
-    public AnnotationBeanDefinitionRegistryPostProcessor(Class<? extends Annotation> primaryAnnotationType,
+    public AnnotationBeanDefinitionRegistryPostProcessor(Class<? extends Annotation> annotationType,
                                                          Iterable<String> packagesToScan) {
-        this.supportedAnnotationTypes = new LinkedHashSet<Class<? extends Annotation>>();
-        addSupportedAnnotationType(primaryAnnotationType);
-        this.packagesToScan = new LinkedHashSet<String>();
-        Iterator<String> iterator = packagesToScan.iterator();
-        while (iterator.hasNext()) {
-            this.packagesToScan.add(iterator.next());
-        }
+        this.supportedAnnotationTypes = newLinkedHashSet();
+        this.packagesToScan = newLinkedHashSet(packagesToScan);
+        addSupportedAnnotationType(annotationType);
     }
 
     public void addSupportedAnnotationType(Class<? extends Annotation>... annotationTypes) {
         notEmpty(annotationTypes, "The argument of annotation types can't be empty");
         noNullElements(annotationTypes, "Any element of annotation types can't be null");
-        this.supportedAnnotationTypes.addAll(asList(annotationTypes));
+        addAll(this.supportedAnnotationTypes, annotationTypes);
     }
 
-    private static String[] resolveBasePackages(Class<?>... basePackageClasses) {
+    static String[] resolveBasePackages(Class<?>... basePackageClasses) {
         int size = basePackageClasses.length;
         String[] basePackages = new String[size];
         for (int i = 0; i < size; i++) {
@@ -156,28 +154,22 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     protected static Annotation getAnnotation(AnnotatedElement annotatedElement, Class<? extends Annotation> annotationType) {
-        Annotation annotation = tryGetMergedAnnotation(annotatedElement, annotationType);
-        if (annotation == null) {
-            annotation = annotatedElement.getAnnotation(annotationType);
-        }
-        return annotation;
+        return tryGetMergedAnnotation(annotatedElement, annotationType);
     }
 
     @Override
     public final void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-
         String[] basePackages = resolveBasePackages(getPackagesToScan());
-
-        if (isNotEmpty(basePackages)) {
-            registerBeanDefinitions(registry, basePackages);
-        } else {
-            if (logger.isWarnEnabled()) {
-                logger.warn("packagesToScan is empty , The BeanDefinition's registry will be ignored!");
-            }
-        }
+        registerBeanDefinitions(registry, basePackages);
     }
 
-    private void registerBeanDefinitions(BeanDefinitionRegistry registry, String[] basePackages) {
+    protected void registerBeanDefinitions(BeanDefinitionRegistry registry, String... basePackages) {
+        if (ArrayUtils.isEmpty(basePackages)) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("The 'packagesToScan' is empty , The BeanDefinition's registry will be ignored!");
+            }
+            return;
+        }
 
         ExposingClassPathBeanDefinitionScanner scanner = new ExposingClassPathBeanDefinitionScanner(registry, false,
                 getEnvironment(), getResourceLoader());
@@ -189,49 +181,49 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
         for (Class<? extends Annotation> supportedAnnotationType : getSupportedAnnotationTypes()) {
             scanner.addIncludeFilter(new AnnotationTypeFilter(supportedAnnotationType));
         }
-        // Register the primary BeanDefinitions
-        Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions = registerPrimaryBeanDefinitions(scanner, basePackages);
-        // Register the secondary BeanDefinitions
-        registerSecondaryBeanDefinitions(scanner, primaryBeanDefinitions, basePackages);
+        // Register the main BeanDefinitions
+        Map<String, AnnotatedBeanDefinition> mainBeanDefinitions = registerMainBeanDefinitions(scanner, basePackages);
+        // Register the extended BeanDefinitions
+        registerExtendedBeanDefinitions(scanner, mainBeanDefinitions, basePackages);
     }
 
     /**
-     * Scan and register the primary {@link BeanDefinition BeanDefinitions} that were annotated by
+     * Scan and register the main {@link BeanDefinition BeanDefinitions} that were annotated by
      * {@link #getSupportedAnnotationTypes() the supported annotation types}, and then return the {@link Map} with bean name plus
-     * aliases if present and primary {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions}.
+     * aliases if present and main {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions}.
      * <p>
      * Current method is allowed to be override by the sub-class to change the registration logic
      *
      * @param scanner      {@link ExposingClassPathBeanDefinitionScanner}
      * @param basePackages the base packages to scan
-     * @return the {@link Map} with bean name plus aliases if present and primary
+     * @return the {@link Map} with bean name plus aliases if present and main
      * {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions}
      */
-    protected Map<String, AnnotatedBeanDefinition> registerPrimaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+    protected Map<String, AnnotatedBeanDefinition> registerMainBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
                                                                                   String[] basePackages) {
         // Scan and register
-        Set<BeanDefinitionHolder> primaryBeanDefinitionHolders = scanner.doScan(basePackages);
-        // Log the primary BeanDefinitions
-        logPrimaryBeanDefinitions(primaryBeanDefinitionHolders, basePackages);
+        Set<BeanDefinitionHolder> mainBeanDefinitionHolders = scanner.doScan(basePackages);
+        // Log the main BeanDefinitions
+        logBeanDefinitions(mainBeanDefinitionHolders, basePackages);
 
-        Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions = new LinkedHashMap<String, AnnotatedBeanDefinition>();
+        Map<String, AnnotatedBeanDefinition> mainBeanDefinitions = newLinkedHashMap();
 
-        for (BeanDefinitionHolder beanDefinitionHolder : primaryBeanDefinitionHolders) {
-            putPrimaryBeanDefinitions(primaryBeanDefinitions, beanDefinitionHolder);
+        for (BeanDefinitionHolder beanDefinitionHolder : mainBeanDefinitionHolders) {
+            putBeanDefinitions(mainBeanDefinitions, beanDefinitionHolder);
         }
 
         // return
-        return primaryBeanDefinitions;
+        return mainBeanDefinitions;
     }
 
-    private void putPrimaryBeanDefinitions(Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
-                                           BeanDefinitionHolder beanDefinitionHolder) {
+    void putBeanDefinitions(Map<String, AnnotatedBeanDefinition> mainBeanDefinitions,
+                            BeanDefinitionHolder beanDefinitionHolder) {
         BeanDefinition beanDefinition = beanDefinitionHolder.getBeanDefinition();
 
         if (beanDefinition instanceof AnnotatedBeanDefinition) {
             AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
-            putPrimaryBeanDefinition(primaryBeanDefinitions, annotatedBeanDefinition, beanDefinitionHolder.getBeanName());
-            putPrimaryBeanDefinition(primaryBeanDefinitions, annotatedBeanDefinition, beanDefinitionHolder.getAliases());
+            putBeanDefinition(mainBeanDefinitions, annotatedBeanDefinition, beanDefinitionHolder.getBeanName());
+            putBeanDefinition(mainBeanDefinitions, annotatedBeanDefinition, beanDefinitionHolder.getAliases());
         } else {
             if (logger.isErrorEnabled()) {
                 logger.error("What's the problem? Please investigate " + beanDefinitionHolder);
@@ -239,28 +231,28 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
         }
     }
 
-    private void putPrimaryBeanDefinition(Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
+    private void putBeanDefinition(Map<String, AnnotatedBeanDefinition> mainBeanDefinitions,
                                           AnnotatedBeanDefinition annotatedBeanDefinition,
                                           String... keys) {
         if (isNotEmpty(keys)) {
             for (String key : keys) {
-                primaryBeanDefinitions.put(key, annotatedBeanDefinition);
+                mainBeanDefinitions.put(key, annotatedBeanDefinition);
             }
         }
     }
 
     /**
-     * Register the secondary {@link BeanDefinition BeanDefinitions}
+     * Register the extended {@link BeanDefinition BeanDefinitions}
      * <p>
      * Current method is allowed to be override by the sub-class to change the registration logic
      *
-     * @param scanner                the {@link ExposingClassPathBeanDefinitionScanner} instance
-     * @param primaryBeanDefinitions the {@link Map} with bean name plus aliases if present and primary
-     *                               {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions}, which may be empty
-     * @param basePackages           the base packages to scan
+     * @param scanner              the {@link ExposingClassPathBeanDefinitionScanner} instance
+     * @param mainBeanDefinitions  the {@link Map} with bean name plus aliases if present and main
+     *                             {@link AnnotatedBeanDefinition AnnotatedBeanDefinitions}, which may be empty
+     * @param basePackages         the base packages to scan
      */
-    protected abstract void registerSecondaryBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
-                                                             Map<String, AnnotatedBeanDefinition> primaryBeanDefinitions,
+    protected abstract void registerExtendedBeanDefinitions(ExposingClassPathBeanDefinitionScanner scanner,
+                                                             Map<String, AnnotatedBeanDefinition> mainBeanDefinitions,
                                                              String[] basePackages);
 
     @Override
@@ -268,16 +260,16 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
         // DO NOTHING
     }
 
-    private void logPrimaryBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitionHolders, String[] basePackages) {
+    void logBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitionHolders, String... basePackages) {
         if (isEmpty(beanDefinitionHolders)) {
             if (logger.isWarnEnabled()) {
-                logger.warn("No Spring Bean annotation @" + getSupportedAnnotationTypeNames() + " was found under base packages"
-                        + asList(basePackages));
+                logger.warn("No Spring Bean annotation @{} was found under base packages : {}",
+                        getSupportedAnnotationTypeNames(), arrayToString(basePackages));
             }
         } else {
             if (logger.isInfoEnabled()) {
-                logger.info(beanDefinitionHolders.size() + " annotations " + getSupportedAnnotationTypeNames() + " components { " +
-                        beanDefinitionHolders + " } were scanned under packages" + asList(basePackages));
+                logger.info("{} annotations {} components { {} } were scanned under packages : {}", beanDefinitionHolders.size(),
+                        getSupportedAnnotationTypeNames(), beanDefinitionHolders, arrayToString(basePackages));
             }
         }
     }
@@ -289,25 +281,10 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
      * @return non-null
      */
     protected String[] resolveBasePackages(Set<String> packagesToScan) {
-        Set<String> resolvedPackagesToScan = new LinkedHashSet<String>(packagesToScan.size());
-        for (String packageToScan : packagesToScan) {
-            if (hasText(packageToScan)) {
-                String resolvedPackageToScan = getEnvironment().resolvePlaceholders(packageToScan.trim());
-                resolvedPackagesToScan.add(resolvedPackageToScan);
-            }
-        }
-        // Set to Array
-        return packagesToScan.toArray(new String[packagesToScan.size()]);
-    }
-
-    protected final Class<?> resolveBeanClass(BeanDefinitionHolder beanDefinitionHolder) {
-        BeanDefinition beanDefinition = beanDefinitionHolder.getBeanDefinition();
-        return resolveBeanClass(beanDefinition);
-    }
-
-    protected final Class<?> resolveBeanClass(BeanDefinition beanDefinition) {
-        String beanClassName = beanDefinition.getBeanClassName();
-        return resolveClassName(beanClassName, getClassLoader());
+        return packagesToScan.stream()
+                .map(getEnvironment()::resolvePlaceholders)
+                .filter(StringUtils::hasText)
+                .toArray(String[]::new);
     }
 
     @Override
@@ -316,23 +293,23 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public Set<Class<? extends Annotation>> getSupportedAnnotationTypes() {
-        return unmodifiableSet(supportedAnnotationTypes);
+        return unmodifiableSet(this.supportedAnnotationTypes);
     }
 
     protected Set<String> getSupportedAnnotationTypeNames() {
-        Set<String> supportedAnnotationTypeNames = new LinkedHashSet<String>();
-        for (Class<? extends Annotation> supportedAnnotationType : supportedAnnotationTypes) {
-            supportedAnnotationTypeNames.add(supportedAnnotationType.getName());
-        }
+        Set<String> supportedAnnotationTypeNames = getSupportedAnnotationTypes()
+                .stream()
+                .map(Class::getName)
+                .collect(toSet());
         return unmodifiableSet(supportedAnnotationTypeNames);
     }
 
     public Set<String> getPackagesToScan() {
-        return packagesToScan;
+        return this.packagesToScan;
     }
 
     public ConfigurableListableBeanFactory getBeanFactory() {
-        return beanFactory;
+        return this.beanFactory;
     }
 
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -340,7 +317,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public ConfigurableEnvironment getEnvironment() {
-        return environment;
+        return this.environment;
     }
 
     @Override
@@ -349,7 +326,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public ResourceLoader getResourceLoader() {
-        return resourceLoader;
+        return this.resourceLoader;
     }
 
     @Override
@@ -358,10 +335,6 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
     }
 
     public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
+        return this.classLoader;
     }
 }
