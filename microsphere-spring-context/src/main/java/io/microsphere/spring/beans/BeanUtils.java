@@ -43,6 +43,7 @@ import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static io.microsphere.util.ArrayUtils.isEmpty;
@@ -169,11 +170,7 @@ public abstract class BeanUtils implements Utils {
      */
     public static boolean isBeanPresent(@Nonnull ListableBeanFactory beanFactory, @Nonnull String beanClassName,
                                         boolean includingAncestors) {
-        ClassLoader classLoader = null;
-        if (beanFactory instanceof ConfigurableBeanFactory) {
-            ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
-            classLoader = configurableBeanFactory.getBeanClassLoader();
-        }
+        ClassLoader classLoader = getBeanClassLoader(beanFactory);
 
         Class beanClass = resolveClass(beanClassName, classLoader);
         if (beanClass == null) {
@@ -842,15 +839,15 @@ public abstract class BeanUtils implements Utils {
     /**
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, BeanFactory beanFactory,
+    static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, @Nullable BeanFactory beanFactory,
                                                  @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         invokeBeanNameAware(bean, beanFactory);
         invokeBeanClassLoaderAware(bean, configurableBeanFactory);
         invokeBeanFactoryAware(bean, beanFactory);
     }
 
-    static void invokeBeanNameAware(@Nonnull Object bean, @Nonnull BeanFactory beanFactory) {
-        if (bean instanceof BeanNameAware) {
+    static void invokeBeanNameAware(@Nonnull Object bean, @Nullable BeanFactory beanFactory) {
+        if (bean instanceof BeanNameAware && beanFactory != null) {
             BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
             BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
             String beanName = generateBeanName(beanDefinition, registry);
@@ -970,12 +967,15 @@ public abstract class BeanUtils implements Utils {
             return;
         }
 
-        ConfigurableListableBeanFactory beanFactory = applicationContext != null ? applicationContext.getBeanFactory() : null;
+        ConfigurableListableBeanFactory beanFactory = applicationContext == null ? null : applicationContext.getBeanFactory();
 
         invokeBeanFactoryAwareInterfaces(bean, beanFactory, beanFactory);
 
-        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
+        doInvokeAwareInterfaces(bean, beanFactory);
+    }
 
+    static void doInvokeAwareInterfaces(@Nullable Object bean, @Nullable BeanFactory beanFactory) {
+        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
         if (beanPostProcessor != null) {
             beanPostProcessor.postProcessBeforeInitialization(bean, "");
         }
