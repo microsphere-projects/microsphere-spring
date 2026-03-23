@@ -21,6 +21,7 @@ import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.DefaultPropertySourceFactory;
 import org.springframework.core.io.support.PropertySourceFactory;
@@ -94,6 +95,34 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface DefaultPropertiesPropertySource {
 
     /**
+     * The properties content to be loaded into the
+     * {@link PropertySourcesUtils#DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME "defaultProperties"} {@link org.springframework.core.env.PropertySource}.
+     * <p>
+     * Each element should follow the standard Java properties format: {@code key=value}.
+     * <p>
+     * For example:
+     * <pre>{@code
+     * @DefaultPropertiesPropertySource(properties = {
+     *     "key1=value1",
+     *     "key2=value2"
+     * })
+     * }</pre>
+     *
+     * @return the properties content
+     */
+    String[] properties() default {};
+
+    /**
+     * Alias for {@link #locations()}.
+     * <p>
+     * Indicate the resource location(s) of the property source file to be loaded.
+     *
+     * @see #locations()
+     */
+    @AliasFor("locations")
+    String[] value() default {};
+
+    /**
      * Indicate the resource location(s) of the property source file to be loaded.
      * <p>Both traditional and XML-based properties file formats are supported
      * &mdash; for example, {@code "classpath:/com/myco/app.properties"}
@@ -104,7 +133,8 @@ public @interface DefaultPropertiesPropertySource {
      * <p>Each location will be added to the enclosing {@code Environment} as its own
      * property source, and in the order declared.
      */
-    String[] value() default {};
+    @AliasFor("value")
+    String[] locations() default {};
 
     /**
      * Indicate the resources to be sorted when {@link #value()} specifies the resource location wildcards

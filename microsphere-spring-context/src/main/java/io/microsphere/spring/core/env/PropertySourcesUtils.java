@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.microsphere.collection.MapUtils.MIN_LOAD_FACTOR;
-import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
@@ -253,13 +253,10 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     @Nonnull
     public static String[] getPropertyNames(PropertySource propertySource) {
-        String[] propertyNames = propertySource instanceof EnumerablePropertySource ? ((EnumerablePropertySource) propertySource).getPropertyNames() : null;
-
-        if (propertyNames == null) {
-            propertyNames = EMPTY_STRING_ARRAY;
+        if (propertySource instanceof EnumerablePropertySource) {
+            return ((EnumerablePropertySource) propertySource).getPropertyNames();
         }
-
-        return propertyNames;
+        return EMPTY_STRING_ARRAY;
     }
 
     /**
@@ -271,11 +268,11 @@ public abstract class PropertySourcesUtils implements Utils {
     @Nonnull
     public static Map<String, Object> getProperties(PropertySource propertySource) {
         String[] propertyNames = getPropertyNames(propertySource);
-        int length = propertyNames.length;
+        int length = length(propertyNames);
         if (length < 1) {
             return emptyMap();
         }
-        Map<String, Object> properties = newLinkedHashMap(length, MIN_LOAD_FACTOR);
+        Map<String, Object> properties = newFixedLinkedHashMap(length);
         for (int i = 0; i < length; i++) {
             String propertyName = propertyNames[i];
             properties.put(propertyName, propertySource.getProperty(propertyName));
