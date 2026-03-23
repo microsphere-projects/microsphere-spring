@@ -76,6 +76,15 @@
         </dependency>
 
         <!-- Testing -->
+
+        <!-- Microsphere Spring Test -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-spring-test</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -114,14 +123,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Microsphere Spring Test -->
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-test</artifactId>
-            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
 
