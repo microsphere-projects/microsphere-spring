@@ -341,10 +341,12 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                             if (defaultConstructor != null) {
                                 candidates.add(defaultConstructor);
                             } else if (candidates.size() == 1) {
-                                logger.info("Inconsistent constructor declaration on bean with name '{}': " +
-                                        "single injection constructor flagged as optional - " +
-                                        "this constructor is effectively required since there is no " +
-                                        "default constructor to fall back to: {}", beanName, candidates.get(0));
+                                if (logger.isInfoEnabled()) {
+                                    logger.info("Inconsistent constructor declaration on bean with name '{}': " +
+                                            "single injection constructor flagged as optional - " +
+                                            "this constructor is effectively required since there is no " +
+                                            "default constructor to fall back to: {}", beanName, candidates.get(0));
+                                }
                             }
                         }
                         candidateConstructors = candidates.toArray(new Constructor<?>[0]);
@@ -430,7 +432,9 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
                 if (attributes != null) {
                     if (isStatic(field.getModifiers())) {
-                        logger.warn("@{} is not supported on static fields: {}", annotationType.getName(), field);
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@{} is not supported on static fields: {}", annotationType.getName(), field);
+                        }
                         return;
                     }
                     boolean required = determineRequiredStatus(attributes);
@@ -471,11 +475,15 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
                 if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
                     if (isStatic(method.getModifiers())) {
-                        logger.warn("@{} annotation is not supported on static methods: {}", annotationType.getName(), method);
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@{} annotation is not supported on static methods: {}", annotationType.getName(), method);
+                        }
                         return;
                     }
                     if (method.getParameterTypes().length == 0) {
-                        logger.warn("@{} annotation should only be used on methods with parameters: {}", annotationType.getName(), method);
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@{} annotation should only be used on methods with parameters: {}", annotationType.getName(), method);
+                        }
                     }
                     PropertyDescriptor pd = findPropertyForMethod(bridgedMethod, beanClass);
                     boolean required = determineRequiredStatus(attributes);
@@ -625,7 +633,9 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
     public void destroy() {
         candidateConstructorsCache.clear();
         injectionMetadataCache.clear();
-        logger.info("{} was destroying!", getClass().getName());
+        if (logger.isInfoEnabled()) {
+            logger.info("{} was destroying!", getClass().getName());
+        }
     }
 
     /**
@@ -678,7 +688,9 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 if (this.beanFactory.containsBean(injectedBeanName)) {
                     this.beanFactory.registerDependentBean(injectedBeanName, beanName);
                 }
-                logger.trace("Injected by type from bean name '{}' to bean named '{}'", beanName, injectedBeanName);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Injected by type from bean name '{}' to bean named '{}'", beanName, injectedBeanName);
+                }
             }
         }
     }

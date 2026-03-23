@@ -298,9 +298,11 @@ public class ServerWebRequest implements NativeWebRequest {
 
     @Override
     public void registerDestructionCallback(String name, Runnable callback, int scope) {
-        logger.warn("The method 'registerDestructionCallback' is not supported in WebFlux, " +
-                        "the callback will not be registered for the attribute[name : '{}' , callback : {} , scope : {}]",
-                name, callback, scope);
+        if(logger.isWarnEnabled()) {
+            logger.warn("The method 'registerDestructionCallback' is not supported in WebFlux, " +
+                            "the callback will not be registered for the attribute[name : '{}' , callback : {} , scope : {}]",
+                    name, callback, scope);
+        }
     }
 
     @Override

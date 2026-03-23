@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 @SuppressWarnings({"deprecation", "unchecked"})
 class AnnotatedInjectionBeanPostProcessorTest {
 
@@ -113,7 +115,9 @@ class AnnotatedInjectionBeanPostProcessorTest {
         });
     }
 
-    /** Setters persist through getters; verify all configurable flags round-trip. */
+    /**
+     * Setters persist through getters; verify all configurable flags round-trip.
+     */
     @Test
     void testSettersAndGetters() {
         AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
@@ -129,7 +133,9 @@ class AnnotatedInjectionBeanPostProcessorTest {
         assertEquals(42, p.getOrder());
     }
 
-    /** afterPropertiesSet initialises caches; destroy clears them without error. */
+    /**
+     * afterPropertiesSet initialises caches; destroy clears them without error.
+     */
     @Test
     void testAfterPropertiesSetAndDestroy() throws Exception {
         AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
@@ -138,7 +144,9 @@ class AnnotatedInjectionBeanPostProcessorTest {
         p.destroy();             // must not throw
     }
 
-    /** postProcessMergedBeanDefinition must not throw for a known bean type. */
+    /**
+     * postProcessMergedBeanDefinition must not throw for a known bean type.
+     */
     @Test
     void testPostProcessMergedBeanDefinition() {
         org.springframework.beans.factory.support.RootBeanDefinition rbd =
@@ -147,7 +155,9 @@ class AnnotatedInjectionBeanPostProcessorTest {
         processor.postProcessMergedBeanDefinition(rbd, TestConfiguration.Parent.class, "parent");
     }
 
-    /** determineCandidateConstructors returns null for a class without injection annotations. */
+    /**
+     * determineCandidateConstructors returns null for a class without injection annotations.
+     */
     @Test
     void testDetermineCandidateConstructorsNoCandidates() {
         // PlainBean has no @Referenced annotation on constructors
@@ -156,8 +166,11 @@ class AnnotatedInjectionBeanPostProcessorTest {
     }
 
     static class PlainBean {
-        PlainBean() {}
-        PlainBean(String s) {}
+        PlainBean() {
+        }
+
+        PlainBean(String s) {
+        }
     }
 
     <T> T createProxy(Class<T> beanType) {

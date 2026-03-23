@@ -70,16 +70,22 @@ public class LoggingBeanFactoryListener implements BeanFactoryListener {
 
     @Override
     public void onBeanDefinitionRegistryReady(BeanDefinitionRegistry registry) {
-        logger.info("onBeanDefinitionRegistryReady - BeanDefinitionRegistry : {}", registry);
+        if (logger.isInfoEnabled()) {
+            logger.info("onBeanDefinitionRegistryReady - BeanDefinitionRegistry : {}", registry);
+        }
     }
 
     @Override
     public void onBeanFactoryReady(ConfigurableListableBeanFactory beanFactory) {
-        logger.info("onBeanFactoryReady - BeanFactory : {}", beanFactory);
+        if (logger.isInfoEnabled()) {
+            logger.info("onBeanFactoryReady - BeanFactory : {}", beanFactory);
+        }
     }
 
     @Override
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory beanFactory) {
-        logger.info("onBeanFactoryConfigurationFrozen - BeanFactory : {}", beanFactory);
+        if (logger.isInfoEnabled()) {
+            logger.info("onBeanFactoryConfigurationFrozen - BeanFactory : {}", beanFactory);
+        }
     }
 }

@@ -128,7 +128,9 @@ public abstract class EnvironmentUtils implements Utils {
         }
         if (conversionService == null) {
             conversionService = getSharedInstance();
-            logger.info("ConversionService can't be resolved from Environment[{}], the shared ConversionService will be used!", environment);
+            if (logger.isInfoEnabled()) {
+                logger.info("The ConversionService can't be resolved from Environment[{}], the shared ConversionService will be used!", environment);
+            }
         }
         return conversionService;
     }
@@ -180,13 +182,17 @@ public abstract class EnvironmentUtils implements Utils {
         String resolvedPropertyValue = environment.resolvePlaceholders(propertyValue);
         if (conversionService.canConvert(String.class, targetType)) {
             targetValue = conversionService.convert(resolvedPropertyValue, targetType);
-            logger.trace("The property value[origin : {} , resolved : {}] was converted to be {}(type :{})!", propertyValue, resolvedPropertyValue,
-                    targetValue, targetType);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The property value[origin : {} , resolved : {}] was converted to be {}(type :{})!", propertyValue, resolvedPropertyValue,
+                        targetValue, targetType);
+            }
 
         } else {
             targetValue = defaultValue;
-            logger.trace("The property value[origin : {} , resolved : {}] can't be converted to be the target type[{}], take the default value({}) as result!",
-                    propertyValue, resolvedPropertyValue, targetValue, targetType);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The property value[origin : {} , resolved : {}] can't be converted to be the target type[{}], take the default value({}) as result!",
+                        propertyValue, resolvedPropertyValue, targetValue, targetType);
+            }
         }
         return targetValue;
     }

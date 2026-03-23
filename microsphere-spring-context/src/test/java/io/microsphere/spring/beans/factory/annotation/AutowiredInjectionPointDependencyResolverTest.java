@@ -17,6 +17,7 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolverTest;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = AutowiredInjectionPointDependencyResolverTest.class)
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class AutowiredInjectionPointDependencyResolverTest extends AbstractInjectionPointDependencyResolverTest<AutowiredInjectionPointDependencyResolver> {
 
     @Override

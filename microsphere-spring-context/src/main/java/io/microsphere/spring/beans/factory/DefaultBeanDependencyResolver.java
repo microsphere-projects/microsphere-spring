@@ -143,13 +143,15 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
      * @param bf the {@link ConfigurableListableBeanFactory} to resolve dependencies from;
      *           must be the same instance passed to the constructor
      * @return a {@link Map} of bean names to their flattened dependent bean name sets,
-     *         or an empty map if the factory does not match
+     * or an empty map if the factory does not match
      */
     @Override
     public Map<String, Set<String>> resolve(ConfigurableListableBeanFactory bf) {
         DefaultListableBeanFactory beanFactory = this.beanFactory;
         if (beanFactory != bf) {
-            logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
+            if (logger.isWarnEnabled()) {
+                logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
+            }
             return emptyMap();
         }
 
@@ -280,17 +282,19 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
      *   // dependencies contains the names of beans that "myBean" depends on
      * }</pre>
      *
-     * @param beanName              the name of the bean to resolve dependencies for
-     * @param mergedBeanDefinition  the merged {@link RootBeanDefinition} of the bean
-     * @param bf                    the {@link ConfigurableListableBeanFactory}; must be the same
-     *                              instance passed to the constructor
+     * @param beanName             the name of the bean to resolve dependencies for
+     * @param mergedBeanDefinition the merged {@link RootBeanDefinition} of the bean
+     * @param bf                   the {@link ConfigurableListableBeanFactory}; must be the same
+     *                             instance passed to the constructor
      * @return a {@link Set} of dependent bean names, or an empty set if the factory does not match
      */
     @Override
     public Set<String> resolve(String beanName, RootBeanDefinition mergedBeanDefinition, ConfigurableListableBeanFactory bf) {
         DefaultListableBeanFactory beanFactory = this.beanFactory;
         if (beanFactory != bf) {
-            logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
+            if (logger.isWarnEnabled()) {
+                logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
+            }
             return emptySet();
         }
         return resolveDependentBeanNames(beanName, mergedBeanDefinition, beanFactory);
@@ -327,7 +331,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         for (String nonRootBeanName : nonRootBeanNames) {
             if (dependentBeanNamesMap.remove(nonRootBeanName) != null) {
-                logger.trace("Non Root Bean name was removed : {}", nonRootBeanName);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Non Root Bean name was removed : {}", nonRootBeanName);
+                }
             }
         }
 
@@ -400,7 +406,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         boolean isInterfaceBean = beanClass.isInterface();
 
         if (isInterfaceBean) {
-            logger.trace("The resolved type of BeanDefinition : {}", beanClass.getName());
+            if (logger.isTraceEnabled()) {
+                logger.trace("The resolved type of BeanDefinition : {}", beanClass.getName());
+            }
             return;
         }
 
@@ -431,7 +439,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
                     if (method.equals(getMostSpecificMethod(method, beanClass))) {
                         if (isBeanMemberResolved(method)) {
-                            logger.trace("The beans'[name : '{}'] method has been resolved : {}", beanName, method);
+                            if (logger.isTraceEnabled()) {
+                                logger.trace("The beans'[name : '{}'] method has been resolved : {}", beanName, method);
+                            }
                         } else {
                             resolvers.resolve(method, beanFactory, dependentBeanNames);
                             addResolvedBeanMember(method);
@@ -457,7 +467,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                     return;
                 }
                 if (isBeanMemberResolved(field)) {
-                    logger.trace("The beans'[name : '{}'] field has been resolved : {}", beanName, field);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("The beans'[name : '{}'] field has been resolved : {}", beanName, field);
+                    }
                 } else {
                     resolvers.resolve(field, beanFactory, dependentBeanNames);
                     addResolvedBeanMember(field);
@@ -478,7 +490,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         while (iterator.hasNext()) {
             String dependentBeanName = iterator.next();
             if (isBeanReady(dependentBeanName, beanFactory)) {
-                logger.trace("The dependent bean name['{}'] is removed since it's ready!", dependentBeanName);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("The dependent bean name['{}'] is removed since it's ready!", dependentBeanName);
+                }
                 iterator.remove();
             }
         }
@@ -544,11 +558,15 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             Constructor[] constructors = resolveConstructors(beanName, beanClass);
             int constructorsLength = constructors.length;
             if (constructorsLength != 1) {
-                logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
+                }
             } else {
                 Constructor constructor = constructors[0];
                 if (isBeanMemberResolved(constructor)) {
-                    logger.trace("The beans'[name : '{}'] constructor has been resolved : {}", beanName, constructor);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("The beans'[name : '{}'] constructor has been resolved : {}", beanName, constructor);
+                    }
                 } else {
                     resolvers.resolve(constructor, beanFactory, dependentBeanNames);
                     addResolvedBeanMember(constructor);
@@ -556,7 +574,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
             }
         } else { // the @Bean or customized Method Definition
             if (isBeanMemberResolved(factoryMethod)) {
-                logger.trace("The beans'[name : '{}'] factory-method has been resolved : {}", beanName, factoryMethod);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("The beans'[name : '{}'] factory-method has been resolved : {}", beanName, factoryMethod);
+                }
             } else {
                 resolvers.resolve(factoryMethod, beanFactory, dependentBeanNames);
                 addResolvedBeanMember(factoryMethod);
@@ -613,7 +633,9 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                 continue;
             }
             if (beanFactory.isCurrentlyInCreation(beanName)) {
-                logger.trace("The Bean[name : '{}'] is creating currently", beanName);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("The Bean[name : '{}'] is creating currently", beanName);
+                }
                 continue;
             }
 

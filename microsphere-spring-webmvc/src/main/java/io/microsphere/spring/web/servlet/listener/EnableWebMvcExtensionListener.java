@@ -145,7 +145,9 @@ public class EnableWebMvcExtensionListener implements ServletContainerInitialize
                 String name = "threadContextInheritable";
                 String value = valueOf(threadContextInheritable);
                 boolean set = servletRegistration.setInitParameter(name, value);
-                logger.trace("Set ServletConfig '{}' of {} to be {} for {}", name, servletClassName, value, set);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Set ServletConfig '{}' of {} to be {} for {}", name, servletClassName, value, set);
+                }
             }
         }
     }

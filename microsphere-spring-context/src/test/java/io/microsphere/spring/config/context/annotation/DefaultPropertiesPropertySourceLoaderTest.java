@@ -18,6 +18,7 @@
 package io.microsphere.spring.config.context.annotation;
 
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see DefaultPropertiesPropertySourceLoader
  * @since 1.0.0
  */
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class DefaultPropertiesPropertySourceLoaderTest {
 
     private DefaultPropertiesPropertySourceLoader loader;
