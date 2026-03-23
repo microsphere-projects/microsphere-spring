@@ -40,6 +40,7 @@ import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.BeanUtils.instantiateClass;
+import static org.springframework.core.io.support.SpringFactoriesLoader.FACTORIES_RESOURCE_LOCATION;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
@@ -81,8 +82,10 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
         int factorySize = factoryClassNames.size();
 
         if (factorySize < 1) {
-            logger.trace("No factory class {} were loaded from SpringFactoriesLoader[{}]", factoryClass.getName(),
-                    SpringFactoriesLoader.FACTORIES_RESOURCE_LOCATION);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No factory class {} were loaded from SpringFactoriesLoader[{}]", factoryClass.getName(),
+                        FACTORIES_RESOURCE_LOCATION);
+            }
             return emptyList();
         }
 

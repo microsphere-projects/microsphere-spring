@@ -137,7 +137,9 @@ public abstract class ApplicationContextUtils implements Utils {
                 break;
             }
         }
-        logger.trace("The ApplicationContextAwareProcessor bean : {}", applicationContextAwareProcessor);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The ApplicationContextAwareProcessor bean : {}", applicationContextAwareProcessor);
+        }
         return applicationContextAwareProcessor;
     }
 

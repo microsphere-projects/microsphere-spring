@@ -28,5 +28,4 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @ContextConfiguration(locations = "classpath:/user-context.xml")
 class LoggingBeanListenerTest extends AbstractEventListenerTest<LoggingBeanListener> {
-
 }

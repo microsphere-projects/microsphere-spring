@@ -107,12 +107,16 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         int webEndpointMappingId = request.getIntHeader(ID_HEADER_NAME);
         if (webEndpointMappingId == -1) {
-            logger.trace("No request header of the WebEndpointMapping ID [name : '{}'] is present", ID_HEADER_NAME);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No request header of the WebEndpointMapping ID [name : '{}'] is present", ID_HEADER_NAME);
+            }
             return null;
         }
         WebEndpointMapping webEndpointMapping = webEndpointMappingsCache.get(webEndpointMappingId);
         if (webEndpointMapping == null) {
-            logger.trace("No WebEndpointMapping was found by the request header[name : '{}' , value : {}]", ID_HEADER_NAME, webEndpointMappingId);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No WebEndpointMapping was found by the request header[name : '{}' , value : {}]", ID_HEADER_NAME, webEndpointMappingId);
+            }
             return null;
         }
         HandlerExecutionChain handlerExecutionChain = getHandlerExecutionChain(webEndpointMapping, request);
