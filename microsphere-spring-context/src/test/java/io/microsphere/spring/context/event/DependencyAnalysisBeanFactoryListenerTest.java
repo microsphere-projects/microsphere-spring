@@ -27,8 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * {@link DependencyAnalysisBeanFactoryListener} Test
  *

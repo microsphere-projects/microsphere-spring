@@ -27,9 +27,9 @@ import reactor.core.publisher.Mono;
 import java.util.LinkedList;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
-import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * Composite {@link WebFilter}
