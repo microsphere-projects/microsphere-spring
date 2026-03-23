@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see EnvironmentUtils
  * @since 1.0.0
  */
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class EnvironmentUtilsTest {
 
     private ConfigurableEnvironment environment;

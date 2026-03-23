@@ -261,13 +261,17 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private MethodParameterContext getParameterContext(MethodParameter parameter) {
         MethodParameterContext context = parameterContextsCache.get(parameter);
-        logger.trace("The MethodParameterContext is gotten by the parameter[{}] : {}", parameter, context);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The MethodParameterContext is gotten by the parameter[{}] : {}", parameter, context);
+        }
         return context;
     }
 
     private ReturnTypeContext getReturnTypeContext(MethodParameter returnType) {
         ReturnTypeContext context = returnTypeContextsCache.get(returnType);
-        logger.trace("The ReturnTypeContext is gotten by the return type[{}] : {}", returnType, context);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The ReturnTypeContext is gotten by the return type[{}] : {}", returnType, context);
+        }
         return context;
     }
 
@@ -375,8 +379,10 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                 if (targetResolver == null) {
                     targetResolver = resolver;
                 } else {
-                    logger.warn("The HandlerMethodArgumentResolver[class : '{}'] also supports the MethodParameter[{}] , the mapped one : {}",
-                            getClassName(resolver), methodParameter, getClassName(targetResolver));
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("The HandlerMethodArgumentResolver[class : '{}'] also supports the MethodParameter[{}] , the mapped one : {}",
+                                getClassName(resolver), methodParameter, getClassName(targetResolver));
+                    }
                 }
             }
         }
@@ -394,8 +400,10 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                 if (targetHandler == null) {
                     targetHandler = handler;
                 } else {
-                    logger.warn("The HandlerMethodReturnValueHandler[class : '{}'] also supports the return type[{}] , the mapped one : {}",
-                            getClassName(handler), handlerMethod, getClassName(targetHandler));
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("The HandlerMethodReturnValueHandler[class : '{}'] also supports the return type[{}] , the mapped one : {}",
+                                getClassName(handler), handlerMethod, getClassName(targetHandler));
+                    }
                 }
             }
         }

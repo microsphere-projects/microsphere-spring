@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context;
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see ApplicationContextUtils
  * @since 1.0.0
  */
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class ApplicationContextUtilsTest {
 
     private GenericApplicationContext context;

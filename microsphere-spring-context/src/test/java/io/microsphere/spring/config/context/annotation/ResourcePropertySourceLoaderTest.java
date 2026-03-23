@@ -18,6 +18,7 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.lang.function.ThrowableAction;
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +66,7 @@ import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProp
  * @see ResourcePropertySource
  * @since 1.0.0
  */
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
 class ResourcePropertySourceLoaderTest {
 
     static final Class<ResourcePropertySource> RESOURCE_PROPERTY_SOURCE_CLASS = ResourcePropertySource.class;

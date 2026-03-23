@@ -121,7 +121,9 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         if (propertySource == null) {
             String message = format("The PropertySources' Resource can't be found by the {} that annotated on {}", extensionAttributes, metadata.getClassName());
             if (extensionAttributes.isIgnoreResourceNotFound()) {
-                logger.warn(message);
+                if (logger.isWarnEnabled()) {
+                    logger.warn(message);
+                }
             } else {
                 throw new IllegalArgumentException(message);
             }
@@ -363,7 +365,9 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         if (propertySource instanceof CompositePropertySource) {
             return (CompositePropertySource) propertySource;
         } else {
-            logger.warn("The CompositePropertySource can't be found by the name : {} , actual : {}", propertySourceName, propertySource);
+            if (logger.isWarnEnabled()) {
+                logger.warn("The CompositePropertySource can't be found by the name : {} , actual : {}", propertySourceName, propertySource);
+            }
         }
         return null;
     }
