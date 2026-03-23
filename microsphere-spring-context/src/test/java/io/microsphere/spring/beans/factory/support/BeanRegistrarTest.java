@@ -138,6 +138,7 @@ public class BeanRegistrarTest {
         int beansCount = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
         assertEquals(2, beansCount);
         assertEquals(0, registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class));
+
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean.class.getSimpleName())));
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean2.class.getSimpleName())));
     }

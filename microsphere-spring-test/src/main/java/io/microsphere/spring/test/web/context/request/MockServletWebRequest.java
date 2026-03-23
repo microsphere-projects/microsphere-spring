@@ -50,5 +50,4 @@ public class MockServletWebRequest extends ServletWebRequest {
     public MockHttpServletResponse getMockHttpServletResponse() {
         return getNativeResponse(MockHttpServletResponse.class);
     }
-
 }

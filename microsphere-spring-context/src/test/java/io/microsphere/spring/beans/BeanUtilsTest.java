@@ -102,7 +102,6 @@ public class BeanUtilsTest {
 
         assertTrue(isBeanPresent(registry, TestBean2.class.getName(), true));
         assertTrue(isBeanPresent(registry, TestBean2.class.getName()));
-
         assertTrue(isBeanPresent(registry, TestBean2.class, true));
         assertTrue(isBeanPresent(registry, TestBean2.class));
 
@@ -325,17 +324,16 @@ public class BeanUtilsTest {
 
     @Test
     public void testSort() {
-
         int times = 9;
 
-        Map<String, OrderedBean> orderedBeansMap = new LinkedHashMap<String, OrderedBean>(times);
+        Map<String, OrderedBean> orderedBeansMap = new LinkedHashMap<>(times);
 
         for (int i = times; i > 0; i--) {
             OrderedBean orderedBean = new OrderedBean(i);
             orderedBeansMap.put(orderedBean.toString(), orderedBean);
         }
 
-        Map<String, OrderedBean> expectedBeansMap = new LinkedHashMap<String, OrderedBean>(times);
+        Map<String, OrderedBean> expectedBeansMap = new LinkedHashMap<>(times);
 
         for (int i = 1; i <= times; i++) {
             OrderedBean orderedBean = new OrderedBean(i);

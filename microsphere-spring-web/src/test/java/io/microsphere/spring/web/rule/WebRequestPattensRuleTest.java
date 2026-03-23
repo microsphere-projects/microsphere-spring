@@ -228,4 +228,3 @@ public class WebRequestPattensRuleTest extends BaseWebRequestRuleTest {
         assertEquals("[/api/*]", rule.toString());
     }
 }
-

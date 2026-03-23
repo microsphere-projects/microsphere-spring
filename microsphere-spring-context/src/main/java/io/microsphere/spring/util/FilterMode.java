@@ -4,6 +4,7 @@ package io.microsphere.spring.util;
 import io.microsphere.annotation.ConfigurationProperty;
 import org.springframework.core.env.Environment;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 
 /**
@@ -27,7 +28,8 @@ public enum FilterMode {
     @ConfigurationProperty(
             defaultValue = "SEQUENTIAL",
             type = FilterMode.class,
-            description = "The property name of the mode of Filter"
+            description = "The property name of the mode of Filter",
+            source = APPLICATION_SOURCE
     )
     public static final String PROPERTY_NAME = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "filter-mode";
 

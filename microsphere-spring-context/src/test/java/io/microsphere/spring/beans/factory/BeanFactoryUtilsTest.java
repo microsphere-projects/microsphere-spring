@@ -262,7 +262,6 @@ public class BeanFactoryUtilsTest {
         assertSame(this.beanFactory.getBeanClassLoader(), getBeanClassLoader(this.beanFactory));
     }
 
-
     @Component("baseTestBean2")
     private static class BaseTestBean2 extends BaseTestBean {
 
