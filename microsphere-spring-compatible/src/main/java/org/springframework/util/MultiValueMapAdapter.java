@@ -16,14 +16,14 @@
 
 package org.springframework.util;
 
+import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.springframework.lang.Nullable;
 
 /**
  * Adapts a given {@link Map} to the {@link MultiValueMap} contract.

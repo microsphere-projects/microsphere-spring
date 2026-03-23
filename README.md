@@ -9,7 +9,6 @@
 ![Maven](https://img.shields.io/maven-central/v/io.github.microsphere-projects/microsphere-spring.svg)
 ![License](https://img.shields.io/github/license/microsphere-projects/microsphere-spring.svg)
 
-
 The Microsphere Spring framework is built upon a sophisticated multi-layered architecture that enhances standard Spring
 Framework capabilities through modular extensions and advanced integration patterns. This architecture focuses on
 providing enhanced dependency injection, event processing, web endpoint management, and caching capabilities while

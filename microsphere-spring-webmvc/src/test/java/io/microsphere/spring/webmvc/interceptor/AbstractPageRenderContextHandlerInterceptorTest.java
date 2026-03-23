@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link AbstractPageRenderContextHandlerInterceptor} Test
@@ -72,5 +74,35 @@ public class AbstractPageRenderContextHandlerInterceptorTest {
         modelAndView.setViewName("test-view");
         this.interceptor.postHandle(request, response, null, modelAndView);
         assertEquals(TEST_CONTENT, response.getContentAsString());
+    }
+
+    /**
+     * A ModelAndView with a blank (empty-string) view name is NOT a page-render request,
+     * so postHandleOnPageRenderContext must not be called.
+     */
+    @Test
+    public void testPostHandleWithEmptyViewName() throws Exception {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName(""); // empty string → not a page-render request
+        this.interceptor.postHandle(request, response, null, modelAndView);
+        assertEquals(EMPTY_STRING, this.response.getContentAsString());
+    }
+
+    /**
+     * The default {@link HandlerInterceptor#preHandle} implementation returns {@code true}.
+     */
+    @Test
+    public void testPreHandleDefaultReturnsTrue() throws Exception {
+        boolean result = this.interceptor.preHandle(request, response, null);
+        assertTrue(result);
+    }
+
+    /**
+     * The default {@link HandlerInterceptor#afterCompletion} must not throw.
+     */
+    @Test
+    public void testAfterCompletionDefault() throws Exception {
+        this.interceptor.afterCompletion(request, response, null, null);
+        // no exception expected
     }
 }

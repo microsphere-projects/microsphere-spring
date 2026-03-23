@@ -76,11 +76,11 @@ public class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEna
         Idempotent idempotent = method.getAnnotation(Idempotent.class);
         IdempotentAttributes attributes = of(idempotent);
 
-        String token = idempotentService.renewToken(request, attributes);
-        this.mockMvc.perform(
-                        post("/idempotent")
-                                .header(attributes.getTokenName(), token)
-                ).andExpect(status().isOk())
-                .andExpect(content().string(this.idempotent()));
+        synchronized (this.idempotentService) {
+            String token = this.idempotentService.renewToken(request, attributes);
+            this.mockMvc.perform(post("/idempotent").header(attributes.getTokenName(), token))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string(this.idempotent()));
+        }
     }
 }

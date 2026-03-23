@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
-import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
@@ -223,7 +222,17 @@ public class ConfigurationPropertyRepository implements EnvironmentAware, Initia
     /**
      * clear the repository
      *
-     * @throws Exception
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ConfigurationPropertyRepository repository = new ConfigurationPropertyRepository();
+     *   repository.setEnvironment(applicationContext.getEnvironment());
+     *   repository.afterPropertiesSet();
+     *   repository.add(configurationProperty);
+     *   // When shutting down
+     *   repository.destroy(); // clears all stored properties
+     * }</pre>
+     *
+     * @throws Exception if an error occurs during cleanup
      */
     @Override
     public void destroy() throws Exception {

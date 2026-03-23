@@ -37,7 +37,6 @@ import java.util.Map;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
-import static java.lang.System.currentTimeMillis;
 import static org.junit.Assert.assertNull;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

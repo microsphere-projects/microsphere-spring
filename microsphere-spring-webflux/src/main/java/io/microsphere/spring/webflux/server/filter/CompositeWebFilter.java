@@ -18,7 +18,7 @@
 package io.microsphere.spring.webflux.server.filter;
 
 import io.microsphere.annotation.Nonnull;
-import org.slf4j.Logger;
+import io.microsphere.logging.Logger;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -27,9 +27,9 @@ import reactor.core.publisher.Mono;
 import java.util.LinkedList;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Composite {@link WebFilter}
