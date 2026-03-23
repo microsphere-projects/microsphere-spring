@@ -44,18 +44,15 @@ public abstract class GenericBeanPostProcessorAdapter<T> implements BeanPostProc
     private final Class<T> beanType;
 
     /**
-     * Default constructor that resolves the generic bean type {@code T} by inspecting the
-     * type argument of the concrete subclass.
+     * Constructs a new {@code GenericBeanPostProcessorAdapter}, resolving the generic bean type
+     * {@code T} from the subclass declaration. The resolved type is used to filter which beans
+     * this post-processor will handle.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   GenericBeanPostProcessorAdapter<User> adapter = new GenericBeanPostProcessorAdapter<User>() {
-     *       @Override
-     *       protected void processBeforeInitialization(User bean, String beanName) {
-     *           bean.setName("processed");
-     *       }
+     *   GenericBeanPostProcessorAdapter<Bean> processor = new GenericBeanPostProcessorAdapter<Bean>() {
      *   };
-     *   Class<User> type = adapter.getBeanType(); // User.class
+     *   assertEquals(Bean.class, processor.getBeanType());
      * }</pre>
      */
     public GenericBeanPostProcessorAdapter() {
@@ -63,33 +60,31 @@ public abstract class GenericBeanPostProcessorAdapter<T> implements BeanPostProc
     }
 
     /**
-     * Checks if the given bean matches the resolved type {@code T} and, if so, delegates to
-     * {@link #doPostProcessBeforeInitialization(Object, String)}. Beans that do not match
-     * the type are returned unchanged.
+     * Applies pre-initialization post-processing to the given bean if it matches the resolved
+     * bean type {@code T}. If the bean's type is assignable to {@code T}, delegates to
+     * {@link #doPostProcessBeforeInitialization(Object, String)}; otherwise, returns the bean
+     * unchanged.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   GenericBeanPostProcessorAdapter<User> adapter = new GenericBeanPostProcessorAdapter<User>() {
-     *       @Override
-     *       protected User processBeforeInitialization(User bean, String beanName) {
-     *           bean.setName("processed");
-     *           return bean;
+     *   TestBean testBean = new TestBean();
+     *   GenericBeanPostProcessorAdapter<Bean> processor = new GenericBeanPostProcessorAdapter<Bean>() {
+     *       protected void processBeforeInitialization(Bean bean, String beanName) {
+     *           // custom pre-initialization logic
      *       }
      *   };
-     *   User user = new User();
-     *   Object result = adapter.postProcessBeforeInitialization(user, "testBean");
-     *   // result is the processed User
-     *
-     *   // Non-matching bean type passes through unchanged
-     *   String other = "notAUser";
-     *   Object same = adapter.postProcessBeforeInitialization(other, "otherBean");
-     *   // same == other
+     *   // matching type: delegates to doPostProcessBeforeInitialization
+     *   assertEquals(testBean, processor.postProcessBeforeInitialization(testBean, "testBean"));
+     *   // non-matching type: returns bean unchanged
+     *   String other = "test";
+     *   assertEquals("test", processor.postProcessBeforeInitialization(other, ""));
      * }</pre>
      *
      * @param bean     the bean instance to process
      * @param beanName the name of the bean
-     * @return the original or modified bean instance
+     * @return the (possibly modified) bean instance, or the original bean if the type does not match
      * @throws BeansException in case of errors
+     * @see #doPostProcessBeforeInitialization(Object, String)
      */
     @Override
     public final Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -101,32 +96,31 @@ public abstract class GenericBeanPostProcessorAdapter<T> implements BeanPostProc
     }
 
     /**
-     * Checks if the given bean matches the resolved type {@code T} and, if so, delegates to
-     * {@link #doPostProcessAfterInitialization(Object, String)}. Beans that do not match
-     * the type are returned unchanged.
+     * Applies post-initialization post-processing to the given bean if it matches the resolved
+     * bean type {@code T}. If the bean's type is assignable to {@code T}, delegates to
+     * {@link #doPostProcessAfterInitialization(Object, String)}; otherwise, returns the bean
+     * unchanged.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   GenericBeanPostProcessorAdapter<User> adapter = new GenericBeanPostProcessorAdapter<User>() {
-     *       @Override
-     *       protected void processAfterInitialization(User bean, String beanName) {
-     *           bean.setActive(true);
+     *   TestBean testBean = new TestBean();
+     *   GenericBeanPostProcessorAdapter<Bean> processor = new GenericBeanPostProcessorAdapter<Bean>() {
+     *       protected void processAfterInitialization(Bean bean, String beanName) {
+     *           // custom post-initialization logic
      *       }
      *   };
-     *   User user = new User();
-     *   Object result = adapter.postProcessAfterInitialization(user, "testBean");
-     *   // result is the processed User with active = true
-     *
-     *   // Non-matching bean type passes through unchanged
-     *   String other = "notAUser";
-     *   Object same = adapter.postProcessAfterInitialization(other, "otherBean");
-     *   // same == other
+     *   // matching type: delegates to doPostProcessAfterInitialization
+     *   assertEquals(testBean, processor.postProcessAfterInitialization(testBean, "testBean"));
+     *   // non-matching type: returns bean unchanged
+     *   String other = "test";
+     *   assertEquals("test", processor.postProcessAfterInitialization(other, ""));
      * }</pre>
      *
      * @param bean     the bean instance to process
      * @param beanName the name of the bean
-     * @return the original or modified bean instance
+     * @return the (possibly modified) bean instance, or the original bean if the type does not match
      * @throws BeansException in case of errors
+     * @see #doPostProcessAfterInitialization(Object, String)
      */
     @Override
     public final Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {

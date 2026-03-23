@@ -35,6 +35,26 @@ import static org.springframework.util.StringUtils.hasText;
  */
 public class ResourceInjectionPointDependencyResolver extends AnnotatedInjectionPointDependencyResolver<Resource> {
 
+    /**
+     * Get the {@link Resource} annotation from the given {@link Parameter}.
+     * <p>
+     * Unlike typical annotation lookup, this method looks for {@code @Resource} on the
+     * declaring executable (method) rather than the parameter itself, since {@code @Resource}
+     * is typically placed on setter methods.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ResourceInjectionPointDependencyResolver resolver = new ResourceInjectionPointDependencyResolver();
+     *   // Given: @Resource public void setMyService(MyService service) { }
+     *   Method method = ReflectionUtils.findMethod(Config.class, "setMyService", MyService.class);
+     *   Parameter parameter = method.getParameters()[0];
+     *   Resource resource = resolver.getAnnotation(parameter);
+     *   // resource is non-null since @Resource is on the method
+     * }</pre>
+     *
+     * @param parameter the parameter whose declaring executable is inspected for {@link Resource}
+     * @return the {@link Resource} annotation, or {@code null} if not found on the declaring executable
+     */
     @Override
     public Resource getAnnotation(Parameter parameter) {
         // Find @Resource annotation in the method
@@ -43,6 +63,29 @@ public class ResourceInjectionPointDependencyResolver extends AnnotatedInjection
         return resource;
     }
 
+    /**
+     * Resolve the dependent bean names from the given {@link Field} if it is annotated
+     * with {@link Resource}. Fields without the annotation are silently skipped.
+     * <p>
+     * If the {@code @Resource} specifies an explicit {@code type()}, beans are looked up by that type.
+     * Otherwise, the bean name is resolved from the annotation's {@code name()} attribute,
+     * falling back to the field name.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ResourceInjectionPointDependencyResolver resolver = new ResourceInjectionPointDependencyResolver();
+     *   resolver.setBeanFactory(beanFactory);
+     *   // Given: @Resource private MyService resourceInjectionPointDependencyResolverTest;
+     *   Field field = ReflectionUtils.findField(Config.class, "resourceInjectionPointDependencyResolverTest");
+     *   Set<String> dependentBeanNames = new LinkedHashSet<>();
+     *   resolver.resolve(field, beanFactory, dependentBeanNames);
+     *   // dependentBeanNames contains "resourceInjectionPointDependencyResolverTest"
+     * }</pre>
+     *
+     * @param field              the field injection point to resolve
+     * @param beanFactory        the {@link ConfigurableListableBeanFactory} to look up beans
+     * @param dependentBeanNames the set to collect resolved dependent bean names into
+     */
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Resource resource = getAnnotation(field);
@@ -84,6 +127,33 @@ public class ResourceInjectionPointDependencyResolver extends AnnotatedInjection
         return name;
     }
 
+    /**
+     * Resolve the dependent bean names from the given {@link Parameter} if its declaring
+     * method is annotated with {@link Resource}. Parameters on methods without the annotation
+     * are silently skipped.
+     * <p>
+     * If the {@code @Resource} specifies an explicit {@code type()}, beans are looked up by that type.
+     * Otherwise, the bean name is resolved from the annotation's {@code name()} attribute,
+     * falling back to decapitalizing the setter method name (e.g., {@code setMyService} yields
+     * {@code "myService"}).
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   ResourceInjectionPointDependencyResolver resolver = new ResourceInjectionPointDependencyResolver();
+     *   resolver.setBeanFactory(beanFactory);
+     *   // Given: @Resource public void setResourceInjectionPointDependencyResolverTest(MyTest test) { }
+     *   Method method = ReflectionUtils.findMethod(Config.class,
+     *       "setResourceInjectionPointDependencyResolverTest", MyTest.class);
+     *   Parameter parameter = method.getParameters()[0];
+     *   Set<String> dependentBeanNames = new LinkedHashSet<>();
+     *   resolver.resolve(parameter, beanFactory, dependentBeanNames);
+     *   // dependentBeanNames contains "resourceInjectionPointDependencyResolverTest"
+     * }</pre>
+     *
+     * @param parameter          the parameter injection point to resolve
+     * @param beanFactory        the {@link ConfigurableListableBeanFactory} to look up beans
+     * @param dependentBeanNames the set to collect resolved dependent bean names into
+     */
     @Override
     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Resource resource = getAnnotation(parameter);

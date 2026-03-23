@@ -60,48 +60,52 @@ public abstract class ApplicationContextUtils implements Utils {
     public static final Class<?> APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS = resolveClass(APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME);
 
     /**
-     * Casts the given {@link ApplicationContext} to a {@link ConfigurableApplicationContext}.
+     * Casts the given {@link ApplicationContext} to a {@link ConfigurableApplicationContext} if possible.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   ConfigurableApplicationContext cac =
-     *       ApplicationContextUtils.asConfigurableApplicationContext(context);
+     *   GenericApplicationContext context = new GenericApplicationContext();
+     *   ConfigurableApplicationContext configurableContext = asConfigurableApplicationContext(context);
+     *   assertSame(context, configurableContext);
      * }</pre>
      *
-     * @param context the application context to cast
-     * @return the context as a {@link ConfigurableApplicationContext}
+     * @param context the {@link ApplicationContext} to cast
+     * @return the {@link ConfigurableApplicationContext}, or {@code null} if the cast is not possible
      */
     public static ConfigurableApplicationContext asConfigurableApplicationContext(ApplicationContext context) {
         return asConfigurableApplicationContext((Object) context);
     }
 
     /**
-     * Casts the given object to a {@link ConfigurableApplicationContext}.
+     * Casts the given object to a {@link ConfigurableApplicationContext} if possible.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   ConfigurableApplicationContext cac =
-     *       ApplicationContextUtils.asConfigurableApplicationContext((Object) context);
+     *   ResourceLoader resourceLoader = context; // context is a GenericApplicationContext
+     *   ConfigurableApplicationContext configurableContext =
+     *       asConfigurableApplicationContext(resourceLoader);
+     *   assertSame(context, configurableContext);
      * }</pre>
      *
      * @param object the object to cast
-     * @return the object as a {@link ConfigurableApplicationContext}
+     * @return the {@link ConfigurableApplicationContext}, or {@code null} if the cast is not possible
      */
     public static ConfigurableApplicationContext asConfigurableApplicationContext(Object object) {
         return cast(object, ConfigurableApplicationContext.class);
     }
 
     /**
-     * Gets the {@link ApplicationContext} from the given {@link BeanFactory} by casting.
+     * Casts the given {@link BeanFactory} to an {@link ApplicationContext} if possible.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     *   ApplicationContext ac =
-     *       ApplicationContextUtils.asApplicationContext(context.getBeanFactory());
+     *   GenericApplicationContext context = new GenericApplicationContext();
+     *   ApplicationContext applicationContext = asApplicationContext(context);
+     *   assertSame(context, applicationContext);
      * }</pre>
      *
-     * @param beanFactory the bean factory to cast
-     * @return the bean factory as an {@link ApplicationContext}
+     * @param beanFactory the {@link BeanFactory} to cast
+     * @return the {@link ApplicationContext}, or {@code null} if the cast is not possible
      */
     public static ApplicationContext asApplicationContext(BeanFactory beanFactory) {
         return cast(beanFactory, ApplicationContext.class);
