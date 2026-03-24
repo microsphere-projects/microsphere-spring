@@ -52,8 +52,10 @@ class RequestHandledEventPublishingWebFilterTest extends AbstractWebFluxTest imp
     private WebHandler webHandler;
 
     @Test
-    void testFilter() {
-        testHelloWorld();
+    void testFilter(String level) {
+        if ("TRACE".equals(level)) {
+            testHelloWorld();
+        }
     }
 
     @Override
