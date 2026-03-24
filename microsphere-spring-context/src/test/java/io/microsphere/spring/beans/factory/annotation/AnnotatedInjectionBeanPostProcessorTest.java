@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         ReferencedInjectedBeanPostProcessor.class,
         AnnotatedInjectionBeanPostProcessorTest.GenericConfiguration.class,
 })
-@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+@SpringLoggingTest
 @SuppressWarnings({"deprecation", "unchecked"})
 class AnnotatedInjectionBeanPostProcessorTest {
 

@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.method.support;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
                 DelegatingHandlerMethodAdviceTest.class
         }
 )
+@SpringLoggingTest
 class DelegatingHandlerMethodAdviceTest {
 
     @Bean

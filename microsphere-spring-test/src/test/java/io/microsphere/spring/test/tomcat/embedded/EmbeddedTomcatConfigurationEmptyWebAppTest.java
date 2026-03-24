@@ -17,7 +17,7 @@
 
 package io.microsphere.spring.test.tomcat.embedded;
 
-import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         },
         locations = "classpath:webapps/empty-app/WEB-INF/context.xml"
 )
-@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+@SpringLoggingTest
 class EmbeddedTomcatConfigurationEmptyWebAppTest {
 
     @Autowired(required = false)
