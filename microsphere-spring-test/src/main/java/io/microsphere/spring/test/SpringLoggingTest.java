@@ -15,39 +15,28 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.config.context.annotation;
+package io.microsphere.spring.test;
 
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 
-import io.microsphere.spring.test.SpringLoggingTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import java.util.Map;
-
-import static io.microsphere.collection.MapUtils.newHashMap;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * {@link DefaultPropertiesPropertySourceLoader} Test
+ * The annotation for Spring logging test with levels : TRACE , INFO , ERROR
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see DefaultPropertiesPropertySourceLoader
+ * @see LoggingLevelsClass
  * @since 1.0.0
  */
-@SpringLoggingTest
-class DefaultPropertiesPropertySourceLoaderTest {
-
-    private DefaultPropertiesPropertySourceLoader loader;
-
-    @BeforeEach
-    void setUp() {
-        this.loader = new DefaultPropertiesPropertySourceLoader();
-    }
-
-    @Test
-    void testLoadPropertySource() {
-        Map<String, Object> defaultProperties = newHashMap();
-        loader.loadPropertySource(null, defaultProperties);
-        assertTrue(defaultProperties.isEmpty());
-    }
+@Target({ANNOTATION_TYPE, TYPE})
+@Retention(RUNTIME)
+@Inherited
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+public @interface SpringLoggingTest {
 }

@@ -17,7 +17,7 @@
 package io.microsphere.spring.beans.factory;
 
 
-import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ import static org.springframework.util.ReflectionUtils.findField;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AbstractInjectionPointDependencyResolverTest.Config.class)
-@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+@SpringLoggingTest
 public abstract class AbstractInjectionPointDependencyResolverTest<R extends AbstractInjectionPointDependencyResolver> {
 
     protected R resolver;

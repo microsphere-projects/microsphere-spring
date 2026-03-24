@@ -1,7 +1,7 @@
 package io.microsphere.spring.jdbc.p6spy.beans.factory.config;
 
 import com.p6spy.engine.spy.P6DataSource;
-import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.jdbc.embedded.EnableEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestPropertySource(properties = {"microsphere.jdbc.p6spy.excluded-datasource-beans=nonWrappedDataSource"})
 @EnableEmbeddedDatabase(dataSource = "nonWrappedDataSource")
 @EnableEmbeddedDatabase(dataSource = "wrappedDataSource")
-@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+@SpringLoggingTest
 class P6DataSourceBeanPostProcessorTest {
 
     @Autowired

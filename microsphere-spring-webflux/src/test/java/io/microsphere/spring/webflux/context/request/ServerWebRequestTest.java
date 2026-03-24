@@ -18,6 +18,7 @@
 package io.microsphere.spring.webflux.context.request;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -64,6 +65,7 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @see ServerWebRequest
  * @since 1.0.0
  */
+@SpringLoggingTest
 class ServerWebRequestTest {
 
     private MockServerWebExchange serverWebExchange;

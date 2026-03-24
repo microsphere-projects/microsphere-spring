@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.event;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebEventPublisher
  * @since 1.0.0
  */
+@SpringLoggingTest
 class WebEventPublisherTest {
 
     @Test

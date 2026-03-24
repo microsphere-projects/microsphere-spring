@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.servlet.filter;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @see ContentCachingFilter
  * @since 1.0.0
  */
+@SpringLoggingTest
 class ContentCachingFilterTest {
 
     private HttpServletRequest request;

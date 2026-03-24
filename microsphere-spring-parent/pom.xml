@@ -19,8 +19,8 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.1.9</microsphere-java.version>
-        <microsphere-logging.version>0.1.0</microsphere-logging.version>
+        <microsphere-java.version>0.2.1</microsphere-java.version>
+        <microsphere-logging.version>0.1.1</microsphere-logging.version>
         <servlet-api.version>6.1.0</servlet-api.version>
         <websocket-api.version>2.2.0</websocket-api.version>
         <jackson.version>2.21.2</jackson.version>
