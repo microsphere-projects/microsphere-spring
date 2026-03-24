@@ -17,7 +17,7 @@
 package io.microsphere.spring.beans.factory;
 
 
-import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = DefaultBeanDependencyResolverTest.class)
 @TestInstance(PER_CLASS)
-@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+@SpringLoggingTest
 class DefaultBeanDependencyResolverTest {
 
     private DefaultBeanDependencyResolver resolver;

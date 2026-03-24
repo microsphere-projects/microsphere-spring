@@ -1,6 +1,6 @@
 package io.microsphere.spring.core.env;
 
-import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.ConversionService;
@@ -49,7 +49,7 @@ import static org.springframework.core.convert.support.DefaultConversionService.
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
-@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+@SpringLoggingTest
 class PropertySourcesUtilsTest {
 
     private ConfigurableEnvironment environment;

@@ -17,6 +17,7 @@
 package io.microsphere.spring.webflux.test;
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
@@ -52,6 +53,7 @@ import static reactor.core.publisher.Mono.just;
         RouterFunctionTestConfig.class  // Test RouterFunction
 })
 @EnableWebFlux
+@SpringLoggingTest
 public abstract class AbstractWebFluxTest {
 
     protected final Logger logger = getLogger(this.getClass());

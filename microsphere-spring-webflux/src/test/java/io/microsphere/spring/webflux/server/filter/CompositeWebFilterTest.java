@@ -18,6 +18,7 @@
 package io.microsphere.spring.webflux.server.filter;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see {@link CompositeWebFilter}
  * @since 1.0.0
  */
+@SpringLoggingTest
 class CompositeWebFilterTest {
 
     private CompositeWebFilter webFilter;

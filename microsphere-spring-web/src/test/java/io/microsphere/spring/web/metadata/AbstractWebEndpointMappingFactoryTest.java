@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.metadata;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +37,7 @@ import static org.springframework.http.HttpMethod.GET;
  * @see AbstractWebEndpointMappingFactory
  * @since 1.0.0
  */
+@SpringLoggingTest
 class AbstractWebEndpointMappingFactoryTest {
 
     private AbstractWebEndpointMappingFactory<String> factory;

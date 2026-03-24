@@ -18,6 +18,7 @@
 package io.microsphere.spring.webmvc.context;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         }
 )
 @EnableWebMvc
+@SpringLoggingTest
 class ExclusiveViewResolverApplicationListenerTest {
 
     @Autowired
