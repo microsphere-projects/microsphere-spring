@@ -19,6 +19,7 @@ package io.microsphere.spring.beans.factory.annotation;
 
 
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,6 @@ import static io.microsphere.spring.beans.factory.annotation.EnableConfiguration
 import static java.lang.String.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link ConfigurationBeanBindingRegistrar} Test

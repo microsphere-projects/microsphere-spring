@@ -17,6 +17,7 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -43,7 +44,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link AnnotationBeanDefinitionRegistryPostProcessor} Test

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link DependencyAnalysisBeanFactoryListener} Test
@@ -36,7 +35,6 @@ import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = DependencyAnalysisBeanFactoryListenerTest.Config.class)
-@SpringLoggingTest
 class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventListenerTest<DependencyAnalysisBeanFactoryListener> {
 
     @Autowired

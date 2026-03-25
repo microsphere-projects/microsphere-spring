@@ -43,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link InterceptingHandlerMethodProcessor} Test
@@ -58,7 +57,6 @@ import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 })
 @EnableWebMvcExtension(registerHandlerInterceptors = true)
 @Import(TestController.class)
-@SpringLoggingTest
 class InterceptingHandlerMethodProcessorTest extends AbstractWebMvcTest {
 
     @Autowired

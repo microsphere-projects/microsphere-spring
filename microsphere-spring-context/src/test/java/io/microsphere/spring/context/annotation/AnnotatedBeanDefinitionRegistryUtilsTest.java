@@ -3,6 +3,7 @@ package io.microsphere.spring.context.annotation;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.registerBeanDefinition;
 import static org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors;
 import static org.springframework.util.ObjectUtils.isEmpty;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link AnnotatedBeanDefinitionRegistryUtils} Test

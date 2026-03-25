@@ -16,14 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
-
 /**
  * {@link LoggingBeanFactoryListener} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@SpringLoggingTest
 class LoggingBeanFactoryListenerTest extends AbstractEventListenerTest<LoggingBeanFactoryListener> {
 }

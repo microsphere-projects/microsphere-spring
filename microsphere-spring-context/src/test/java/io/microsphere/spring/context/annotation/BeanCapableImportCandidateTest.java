@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.annotation;
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.BeansException;
@@ -36,7 +37,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link BeanCapableImportCandidate} Test

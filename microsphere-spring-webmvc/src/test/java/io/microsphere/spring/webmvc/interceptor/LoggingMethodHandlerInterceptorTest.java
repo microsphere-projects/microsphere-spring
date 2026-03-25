@@ -19,7 +19,6 @@ package io.microsphere.spring.webmvc.interceptor;
 
 
 import org.springframework.web.servlet.HandlerInterceptor;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link LoggingMethodHandlerInterceptor} Test
@@ -28,7 +27,6 @@ import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
  * @see LoggingMethodHandlerInterceptor
  * @since 1.0.0
  */
-@SpringLoggingTest
 class LoggingMethodHandlerInterceptorTest extends AbstractHandlerInterceptorTest {
 
     @Override

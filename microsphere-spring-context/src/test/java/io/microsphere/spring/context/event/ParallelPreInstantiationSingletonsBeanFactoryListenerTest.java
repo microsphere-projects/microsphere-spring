@@ -28,7 +28,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link ParallelPreInstantiationSingletonsBeanFactoryListener} Test
@@ -42,7 +41,6 @@ import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
         ParallelPreInstantiationSingletonsBeanFactoryListener.THREADS_PROPERTY_NAME + "=2",
         ParallelPreInstantiationSingletonsBeanFactoryListener.THREAD_NAME_PREFIX_PROPERTY_NAME + "=TestThread-"
 })
-@SpringLoggingTest
 class ParallelPreInstantiationSingletonsBeanFactoryListenerTest extends AbstractEventListenerTest<ParallelPreInstantiationSingletonsBeanFactoryListener> {
 
     @Autowired

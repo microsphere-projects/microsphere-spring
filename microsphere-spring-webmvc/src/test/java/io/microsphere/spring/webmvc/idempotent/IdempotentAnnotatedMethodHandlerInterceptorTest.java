@@ -40,7 +40,6 @@ import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link IdempotentAnnotatedMethodHandlerInterceptor} Test
@@ -58,7 +57,6 @@ import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
         IdempotentAnnotatedMethodHandlerInterceptor.class
 })
 @RestController
-@SpringLoggingTest
 class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEnableWebMvcExtensionTest {
 
     @Autowired

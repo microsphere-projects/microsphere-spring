@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocaleContext;
 import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link RequestContextWebFilter} Test
@@ -52,7 +51,6 @@ import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
                 RequestContextWebFilterTest.class
         }
 )
-@SpringLoggingTest
 class RequestContextWebFilterTest extends AbstractWebFluxTest implements WebFilter {
 
     @Autowired
