@@ -335,7 +335,9 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             Constructor[] constructors = resolveConstructors(beanName, beanClass, beanFactory);
             int constructorsLength = constructors.length;
             if (constructorsLength != 1) {
-                logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Why the Bean[name : '{}' , class : {} ] has {} constructors?", beanName, beanClass, constructorsLength);
+                }
                 parameters = EMPTY_PARAMETER_ARRAY;
             } else {
                 Constructor constructor = constructors[0];
@@ -354,7 +356,9 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {
-                logger.trace("The Bean[name : '{}'] is ready", beanName);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("The Bean[name : '{}'] is ready", beanName);
+                }
                 continue;
             }
             BeanDefinition beanDefinition = beanFactory.getMergedBeanDefinition(beanName);

@@ -84,7 +84,9 @@ class EnableEventExtensionTest {
         return ((listener, event, chain) -> {
             if (event instanceof PayloadApplicationEvent) {
                 eventValueRef.incrementAndGet();
-                logger.info("listener : {} , event : {} , chain : {}", listener, event, chain);
+                if (logger.isInfoEnabled()) {
+                    logger.info("listener : {} , event : {} , chain : {}", listener, event, chain);
+                }
             }
             chain.intercept(listener, event);
         });

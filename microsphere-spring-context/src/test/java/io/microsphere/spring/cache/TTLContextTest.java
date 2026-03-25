@@ -51,7 +51,9 @@ class TTLContextTest {
     @Test
     void testDoWithTTL() {
         doWithTTL(d -> {
-            logger.trace("doWithTTL(Consumer) : {}", d);
+            if (logger.isTraceEnabled()) {
+                logger.trace("doWithTTL(Consumer) : {}", d);
+            }
         }, ofMillis(10));
     }
 
@@ -59,7 +61,9 @@ class TTLContextTest {
     void testDoWithTTLWithFunction() {
         Duration duration = ofMillis(10);
         assertEquals(duration, doWithTTL(d -> {
-            logger.trace("doWithTTL(Function) : {}", d);
+            if (logger.isTraceEnabled()) {
+                logger.trace("doWithTTL(Function) : {}", d);
+            }
             return d;
         }, duration));
     }
