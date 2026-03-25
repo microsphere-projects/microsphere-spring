@@ -1,8 +1,6 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import io.microsphere.spring.beans.test.TestBean;
-import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
@@ -79,21 +77,15 @@ public class AnnotatedBeanDefinitionRegistryUtilsTest {
 
     @Test
     public void testScanBasePackages() {
+        String packageName = TestController.class.getPackage().getName();
 
-        int count = scanBasePackages(this.beanFactory, TestBean.class.getPackage().getName());
+        int count = scanBasePackages(this.beanFactory, packageName);
+        assertEquals(1, count);
 
-        assertEquals(2, count);
-
-        String[] beanNames = this.beanFactory.getBeanNamesForType(TestBean.class);
-
-        assertEquals(1, beanNames.length);
-
-        beanNames = this.beanFactory.getBeanNamesForType(TestBean2.class);
-
+        String[] beanNames = this.beanFactory.getBeanNamesForType(TestController.class);
         assertEquals(1, beanNames.length);
 
         count = scanBasePackages(this.beanFactory);
-
         assertEquals(0, count);
     }
 
