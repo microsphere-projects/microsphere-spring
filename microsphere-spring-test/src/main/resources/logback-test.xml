@@ -8,11 +8,11 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <root level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="io.microsphere" level="TRACE">
+    <logger name="io.microsphere" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
