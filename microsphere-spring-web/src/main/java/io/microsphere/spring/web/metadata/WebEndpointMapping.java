@@ -244,7 +244,7 @@ public class WebEndpointMapping<E> {
          *
          * <h3>Example Usage</h3>
          * <pre>{@code
-         * // For aServletendpoint
+         * // For a Servlet endpoint
          * WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet("myServlet");
          * builder.endpoint("myServlet");
          *
@@ -495,6 +495,20 @@ public class WebEndpointMapping<E> {
             return methods(ofList(methods));
         }
 
+        /**
+         * Set multiple HTTP methods to the endpoint mapping from a collection of strings.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   List<String> methodList = Arrays.asList("GET", "POST");
+         *   WebEndpointMapping.Builder<String> builder = WebEndpointMapping.servlet();
+         *   builder.endpoint("myServlet").patterns("/api").methods(methodList);
+         * }</pre>
+         *
+         * @param methods the collection of HTTP method strings (must not be empty or contain null elements)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the methods collection is empty or contains null elements
+         */
         public Builder<E> methods(@Nonnull Collection<String> methods) throws IllegalArgumentException {
             assertNotEmpty(methods, () -> "The 'methods' must not be empty");
             assertNoNullElements(methods, () -> "The 'methods' must not contain null element");
@@ -972,6 +986,23 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Toggle the negation status of this endpoint mapping. When negated, the mapping matches
+         * requests that do <em>not</em> match the configured patterns, methods, etc.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+         *       .endpoint(handlerMethod)
+         *       .pattern("/api/admin")
+         *       .method(HttpMethod.GET)
+         *       .negate()
+         *       .build();
+         *   boolean negated = mapping.isNegated(); // true
+         * }</pre>
+         *
+         * @return this builder instance for method chaining
+         */
         @Nonnull
         public Builder<E> negate() {
             this.negated = !this.negated;
@@ -1001,6 +1032,24 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Nest URL patterns from another builder by combining them with this builder's patterns.
+         * Each pattern in this builder is appended to each pattern in the other builder using URI path composition.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Builder<String> classLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/api");
+         *   Builder<String> methodLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/users");
+         *   methodLevel.nestPatterns(classLevel);
+         *   // Results in pattern "/api/users"
+         * }</pre>
+         *
+         * @param other the other builder whose patterns serve as prefixes (must not be null, must be same kind)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the other builder is null or has a different kind
+         */
         @Nonnull
         public Builder<E> nestPatterns(@Nonnull Builder<?> other) {
             assertBuilders(this, other);
@@ -1014,6 +1063,23 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Nest HTTP methods from another builder by merging the other builder's methods into this builder.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Builder<String> classLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/api").method(HttpMethod.GET);
+         *   Builder<String> methodLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/users").method(HttpMethod.POST);
+         *   methodLevel.nestMethods(classLevel);
+         *   // methodLevel now includes both POST and GET methods
+         * }</pre>
+         *
+         * @param other the other builder whose methods will be merged (must not be null, must be same kind)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the other builder is null or has a different kind
+         */
         @Nonnull
         public Builder<E> nestMethods(@Nonnull Builder<?> other) {
             assertBuilders(this, other);
@@ -1021,6 +1087,23 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Nest request parameters from another builder by merging the other builder's params into this builder.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Builder<String> classLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/api").param("version", "v1");
+         *   Builder<String> methodLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/users").param("active", "true");
+         *   methodLevel.nestParams(classLevel);
+         *   // methodLevel now includes both "active=true" and "version=v1" params
+         * }</pre>
+         *
+         * @param other the other builder whose params will be merged (must not be null, must be same kind)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the other builder is null or has a different kind
+         */
         @Nonnull
         public Builder<E> nestParams(@Nonnull Builder<?> other) {
             assertBuilders(this, other);
@@ -1028,6 +1111,23 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Nest request headers from another builder by merging the other builder's headers into this builder.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Builder<String> classLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/api").header("X-API-Version", "v1");
+         *   Builder<String> methodLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/users").header("Accept-Language", "en");
+         *   methodLevel.nestHeaders(classLevel);
+         *   // methodLevel now includes both headers
+         * }</pre>
+         *
+         * @param other the other builder whose headers will be merged (must not be null, must be same kind)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the other builder is null or has a different kind
+         */
         @Nonnull
         public Builder<E> nestHeaders(@Nonnull Builder<?> other) {
             assertBuilders(this, other);
@@ -1035,6 +1135,23 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Nest consumable media types from another builder by merging the other builder's consumes into this builder.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Builder<String> classLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/api").consume("application/json");
+         *   Builder<String> methodLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/users").consume("text/xml");
+         *   methodLevel.nestConsumes(classLevel);
+         *   // methodLevel now includes both "text/xml" and "application/json"
+         * }</pre>
+         *
+         * @param other the other builder whose consumes will be merged (must not be null, must be same kind)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the other builder is null or has a different kind
+         */
         @Nonnull
         public Builder<E> nestConsumes(@Nonnull Builder<?> other) {
             assertBuilders(this, other);
@@ -1042,6 +1159,23 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Nest producible media types from another builder by merging the other builder's produces into this builder.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Builder<String> classLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/api").produce("application/json");
+         *   Builder<String> methodLevel = WebEndpointMapping.webmvc()
+         *       .endpoint(handler).pattern("/users").produce("text/xml");
+         *   methodLevel.nestProduces(classLevel);
+         *   // methodLevel now includes both "text/xml" and "application/json"
+         * }</pre>
+         *
+         * @param other the other builder whose produces will be merged (must not be null, must be same kind)
+         * @return this builder instance for method chaining
+         * @throws IllegalArgumentException if the other builder is null or has a different kind
+         */
         @Nonnull
         public Builder<E> nestProduces(@Nonnull Builder<?> other) {
             assertBuilders(this, other);
@@ -1049,6 +1183,20 @@ public class WebEndpointMapping<E> {
             return this;
         }
 
+        /**
+         * Returns a string representation of this builder, including the kind, endpoint, source,
+         * and all configured mapping attributes.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Builder<String> builder = WebEndpointMapping.servlet();
+         *   builder.endpoint("myServlet").pattern("/api");
+         *   String description = builder.toString();
+         *   // "WebEndpointMapping.Builder{kind=SERVLET, endpoint=myServlet, ...}"
+         * }</pre>
+         *
+         * @return a string representation of this builder
+         */
         @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder("WebEndpointMapping.Builder{");
@@ -1065,6 +1213,21 @@ public class WebEndpointMapping<E> {
             return sb.toString();
         }
 
+        /**
+         * Create a name-value pair string. If the value is {@code null}, only the name is returned;
+         * otherwise returns "name=value".
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   String result = Builder.pair("version", "v1"); // "version=v1"
+         *   String nameOnly = Builder.pair("active", null); // "active"
+         * }</pre>
+         *
+         * @param name  the name part (must not be blank)
+         * @param value the value part (can be null)
+         * @return the formatted pair string
+         * @throws IllegalArgumentException if the name is blank
+         */
         protected static String pair(String name, @Nullable Object value) {
             assertNotBlank(name, () -> "The 'name' must not be blank");
             return value == null ? name : name + EQUAL_CHAR + value;
@@ -1076,10 +1239,34 @@ public class WebEndpointMapping<E> {
             assertTrue(one.kind == other.kind, () -> format("The Kind does not match[one : {} , other : {}]", one.kind, other.kind));
         }
 
+        /**
+         * Create a new empty {@link Set} with a small initial capacity, used internally by the builder
+         * to store patterns, methods, params, headers, consumes, and produces.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Set<String> values = Builder.newSet();
+         *   values.add("GET");
+         * }</pre>
+         *
+         * @return a new empty {@link Set} instance
+         */
         protected static Set<String> newSet() {
             return newLinkedHashSet(2);
         }
 
+        /**
+         * Convert a collection of strings to a string array.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   Collection<String> values = Arrays.asList("GET", "POST");
+         *   String[] result = Builder.toStrings(values); // ["GET", "POST"]
+         * }</pre>
+         *
+         * @param values the collection of strings to convert
+         * @return an array of strings, or an empty array if the collection is empty
+         */
         protected static String[] toStrings(Collection<String> values) {
             return toStrings(values, identity());
         }
@@ -1088,6 +1275,23 @@ public class WebEndpointMapping<E> {
             return toStrings(ofList(values), stringFunction);
         }
 
+        /**
+         * Convert a collection of values to a string array using the provided mapping function.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   List<HttpMethod> methods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
+         *   String[] result = Builder.toStrings(methods, HttpMethod::name); // ["GET", "POST"]
+         *
+         *   List<MediaType> types = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
+         *   String[] mediaTypes = Builder.toStrings(types, MediaType::toString);
+         * }</pre>
+         *
+         * @param values         the collection of values to convert
+         * @param stringFunction the function to map each value to a string
+         * @param <V>            the type of values in the collection
+         * @return an array of strings, or an empty array if the collection is empty
+         */
         protected static <V> String[] toStrings(Collection<V> values, Function<V, String> stringFunction) {
             if (isEmpty(values)) {
                 return EMPTY_STRING_ARRAY;
@@ -1313,36 +1517,129 @@ public class WebEndpointMapping<E> {
         return this.source;
     }
 
+    /**
+     * Get the URL patterns for this endpoint mapping.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET).build();
+     *   String[] patterns = mapping.getPatterns(); // ["/api/users"]
+     * }</pre>
+     *
+     * @return non-null array of URL patterns
+     */
     @Nonnull
     public String[] getPatterns() {
         return patterns;
     }
 
+    /**
+     * Get the HTTP methods for this endpoint mapping.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET).build();
+     *   String[] methods = mapping.getMethods(); // ["GET"]
+     * }</pre>
+     *
+     * @return non-null array of HTTP method strings
+     */
     @Nonnull
     public String[] getMethods() {
         return methods;
     }
 
+    /**
+     * Get the request parameters for this endpoint mapping.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET)
+     *       .param("page", "1").build();
+     *   String[] params = mapping.getParams(); // ["page=1"]
+     * }</pre>
+     *
+     * @return non-null array of request parameter strings
+     */
     @Nonnull
     public String[] getParams() {
         return params;
     }
 
+    /**
+     * Get the request headers for this endpoint mapping.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET)
+     *       .header("X-API-Version", "v1").build();
+     *   String[] headers = mapping.getHeaders(); // ["X-API-Version=v1"]
+     * }</pre>
+     *
+     * @return non-null array of request header strings
+     */
     @Nonnull
     public String[] getHeaders() {
         return headers;
     }
 
+    /**
+     * Get the consumable media types for this endpoint mapping.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.POST)
+     *       .consume("application/json").build();
+     *   String[] consumes = mapping.getConsumes(); // ["application/json"]
+     * }</pre>
+     *
+     * @return non-null array of consumable media type strings
+     */
     @Nonnull
     public String[] getConsumes() {
         return consumes;
     }
 
+    /**
+     * Get the producible media types for this endpoint mapping.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET)
+     *       .produce("application/json").build();
+     *   String[] produces = mapping.getProduces(); // ["application/json"]
+     * }</pre>
+     *
+     * @return non-null array of producible media type strings
+     */
     @Nonnull
     public String[] getProduces() {
         return produces;
     }
 
+    /**
+     * Set a custom attribute on this endpoint mapping. If the value is {@code null}, the attribute
+     * is not stored. Attributes provide an extensible metadata mechanism for endpoint mappings.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET).build();
+     *   mapping.setAttribute("deprecated", true);
+     *   mapping.setAttribute("since", "2.0");
+     * }</pre>
+     *
+     * @param name  the attribute name
+     * @param value the attribute value (if null, no attribute is stored)
+     * @param <V>   the type of the attribute value
+     * @return this {@link WebEndpointMapping} instance for method chaining
+     */
     public <V> WebEndpointMapping<E> setAttribute(String name, @Nullable V value) {
         if (value != null) {
             if (attributes == null) {
@@ -1353,6 +1650,22 @@ public class WebEndpointMapping<E> {
         return this;
     }
 
+    /**
+     * Get a custom attribute from this endpoint mapping by name.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET).build();
+     *   mapping.setAttribute("deprecated", true);
+     *   Boolean deprecated = mapping.getAttribute("deprecated"); // true
+     *   String missing = mapping.getAttribute("nonexistent");    // null
+     * }</pre>
+     *
+     * @param name the attribute name
+     * @param <V>  the expected type of the attribute value
+     * @return the attribute value, or {@code null} if not set
+     */
     @Nullable
     public <V> V getAttribute(String name) {
         if (attributes == null) {
@@ -1361,6 +1674,23 @@ public class WebEndpointMapping<E> {
         return (V) attributes.get(name);
     }
 
+    /**
+     * Determine whether this endpoint mapping is equal to the given object. Two {@link WebEndpointMapping}
+     * instances are considered equal if they have the same kind, negation status, patterns, methods,
+     * params, headers, consumes, and produces.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping m1 = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api").method(HttpMethod.GET).build();
+     *   WebEndpointMapping m2 = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api").method(HttpMethod.GET).build();
+     *   boolean isEqual = m1.equals(m2); // true
+     * }</pre>
+     *
+     * @param o the object to compare
+     * @return {@code true} if the objects are equal, {@code false} otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -1376,6 +1706,19 @@ public class WebEndpointMapping<E> {
                 && arrayEquals(produces, that.produces);
     }
 
+    /**
+     * Compute the hash code for this endpoint mapping based on its kind, negation status,
+     * patterns, methods, params, headers, consumes, and produces. The result is cached.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api").method(HttpMethod.GET).build();
+     *   int hash = mapping.hashCode();
+     * }</pre>
+     *
+     * @return the hash code value
+     */
     @Override
     public int hashCode() {
         int hashCode = this.hashCode;
@@ -1402,6 +1745,20 @@ public class WebEndpointMapping<E> {
         return hashCode;
     }
 
+    /**
+     * Returns a human-readable string representation of this endpoint mapping, including all
+     * configured attributes such as kind, endpoint, id, patterns, methods, and more.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET).build();
+     *   String text = mapping.toString();
+     *   // "WebEndpointMapping{kind=WEB_MVC, endpoint=..., patterns=[/api/users], methods=[GET], ...}"
+     * }</pre>
+     *
+     * @return a string representation of this endpoint mapping
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebEndpointMapping{");
@@ -1420,6 +1777,19 @@ public class WebEndpointMapping<E> {
         return sb.toString();
     }
 
+    /**
+     * Serialize this endpoint mapping to a JSON string representation.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     *       .endpoint(handler).pattern("/api/users").method(HttpMethod.GET).build();
+     *   String json = mapping.toJSON();
+     *   // {"id": ..., "kind": "WEB_MVC", "patterns": ["/api/users"], "methods": ["GET"], ...}
+     * }</pre>
+     *
+     * @return a JSON string representation of this endpoint mapping
+     */
     public String toJSON() {
         StringBuilder stringBuilder = new StringBuilder(LEFT_CURLY_BRACE).append(LINE_SEPARATOR);
         append(stringBuilder, "id", this.id);

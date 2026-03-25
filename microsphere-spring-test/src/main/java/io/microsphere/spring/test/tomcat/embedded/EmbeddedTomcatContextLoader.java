@@ -177,7 +177,9 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
      */
     @Nonnull
     protected Context deployContext(ConfigurableApplicationContext applicationContext, EmbeddedTomcatMergedContextConfiguration config) throws Exception {
-        logger.trace("Deploying Tomcat Context from the config : {}", config);
+        if (logger.isTraceEnabled()) {
+            logger.trace("Deploying Tomcat Context from the config : {}", config);
+        }
         Environment environment = applicationContext.getEnvironment();
         int port = config.getPort();
         String contextPath = resolvePath(environment, config.getContextPath());
@@ -185,8 +187,10 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
         String resourceBasePath = resolvePath(environment, config.getResourceBasePath());
         String alternativeWebXml = resolvePath(environment, config.getAlternativeWebXml());
 
-        logger.trace("[Resolved] contextPath : '{}' , basedir : '{}', resourceBasePath : '{}' , alternativeWebXml : '{}'",
-                contextPath, basedir, resourceBasePath, alternativeWebXml);
+        if (logger.isTraceEnabled()) {
+            logger.trace("[Resolved] contextPath : '{}' , basedir : '{}', resourceBasePath : '{}' , alternativeWebXml : '{}'",
+                    contextPath, basedir, resourceBasePath, alternativeWebXml);
+        }
 
         Tomcat tomcat = new Tomcat();
         tomcat.setAddDefaultWebXmlToWebapp(false);
@@ -202,11 +206,15 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
         if (hasText(alternativeWebXml)) {
             alternativeWebXmlFile = getResourceFile(applicationContext, alternativeWebXml);
             if (alternativeWebXmlFile == null) {
-                logger.warn("The alternative deployment descriptor 'web.xml' was not found on the path : '{}'", alternativeWebXml);
+                if (logger.isWarnEnabled()) {
+                    logger.warn("The alternative deployment descriptor 'web.xml' was not found on the path : '{}'", alternativeWebXml);
+                }
             } else {
                 docBaseDir = alternativeWebXmlFile.getParentFile();
-                logger.trace("The alternative deployment descriptor 'web.xml' was found", alternativeWebXml);
-                logger.trace("The Context's docBase directory is changed to {}", docBaseDir);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("The alternative deployment descriptor 'web.xml' was found", alternativeWebXml);
+                    logger.trace("The Context's docBase directory is changed to {}", docBaseDir);
+                }
                 resourceBasePath = null;
             }
         }
@@ -221,8 +229,10 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
 
         String docBasePath = docBaseDir.getAbsolutePath();
 
-        logger.trace("Adding the web application within contextPath : '{}' , basedir : '{}', resourceBasePath : '{}'" +
-                " , docBase : '{}'", contextPath, basedir, resourceBasePath, docBasePath);
+        if (logger.isTraceEnabled()) {
+            logger.trace("Adding the web application within contextPath : '{}' , basedir : '{}', resourceBasePath : '{}'" +
+                    " , docBase : '{}'", contextPath, basedir, resourceBasePath, docBasePath);
+        }
 
         Context context = tomcat.addWebapp(contextPath, docBasePath);
 

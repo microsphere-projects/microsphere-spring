@@ -16,19 +16,25 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getProperties;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolvePlaceholders;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,7 +48,12 @@ import static org.junit.Assert.assertSame;
  * @see EnvironmentUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class EnvironmentUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private ConfigurableEnvironment environment;
 
@@ -111,6 +122,12 @@ public class EnvironmentUtilsTest {
     }
 
     @Test
+    public void testResolveCommaDelimitedValueToListOnNull() {
+        List<String> list = resolveCommaDelimitedValueToList(environment, null);
+        assertSame(emptyList(), list);
+    }
+
+    @Test
     public void testResolvePlaceholders() {
         Object value = resolvePlaceholders(environment, null, Integer.class);
         assertNull(value);
@@ -120,6 +137,9 @@ public class EnvironmentUtilsTest {
 
         value = resolvePlaceholders(environment, "${d}", String.class, "default-value");
         assertEquals("${d}", value);
+
+        value = resolvePlaceholders(environment, "${d}", Test.class);
+        assertNull(value);
     }
 
     @Test
@@ -128,5 +148,3 @@ public class EnvironmentUtilsTest {
         assertSame(environment, configurableEnvironment);
     }
 }
-
-

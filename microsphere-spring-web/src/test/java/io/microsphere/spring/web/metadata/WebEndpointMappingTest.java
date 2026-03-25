@@ -627,7 +627,6 @@ public class WebEndpointMappingTest {
         assertEquals(builder.build().toString(), builder.build().toString());
     }
 
-
     @Test
     public void testToJSON() throws IOException {
         Resource fullJsonResource = new DefaultResourceLoader().getResource("classpath:META-INF/web-mapping-descriptor.json");
@@ -711,7 +710,6 @@ public class WebEndpointMappingTest {
         assertThrows(IllegalArgumentException.class, () -> assertBuilders(minServletBuilder(), null));
         assertThrows(IllegalArgumentException.class, () -> assertBuilders(minServletBuilder(), minBuilder(FILTER)));
     }
-
 
     Builder<?> minServletBuilder() {
         return minBuilder(SERVLET);

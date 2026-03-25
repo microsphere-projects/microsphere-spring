@@ -39,14 +39,18 @@ public class LoggingHandlerMethodArgumentResolverAdvice implements HandlerMethod
     @Override
     public void beforeResolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                       NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        logger.trace("beforeResolveArgument - parameter : {} , mavContainer : {} , webRequest : {} , binderFactory : {}",
-                parameter, mavContainer, webRequest, binderFactory);
+        if (logger.isTraceEnabled()) {
+            logger.trace("beforeResolveArgument - parameter : {} , mavContainer : {} , webRequest : {} , binderFactory : {}",
+                    parameter, mavContainer, webRequest, binderFactory);
+        }
     }
 
     @Override
     public void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, ModelAndViewContainer mavContainer,
                                      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        logger.trace("afterResolveArgument - parameter : {} , resolvedArgument : {} , mavContainer : {} , webRequest : {} , binderFactory : {}",
-                parameter, mavContainer, webRequest, binderFactory);
+        if (logger.isTraceEnabled()) {
+            logger.trace("afterResolveArgument - parameter : {} , resolvedArgument : {} , mavContainer : {} , webRequest : {} , binderFactory : {}",
+                    parameter, resolvedArgument, mavContainer, webRequest, binderFactory);
+        }
     }
 }

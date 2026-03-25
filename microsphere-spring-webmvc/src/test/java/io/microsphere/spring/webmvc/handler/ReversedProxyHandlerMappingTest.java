@@ -19,6 +19,7 @@ package io.microsphere.spring.webmvc.handler;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -26,6 +27,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,10 +36,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
-import static java.lang.System.currentTimeMillis;
 import static org.junit.Assert.assertNull;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -59,6 +61,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @EnableWebMvcExtension(reversedProxyHandlerMapping = true)
 public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     private ReversedProxyHandlerMapping mapping;

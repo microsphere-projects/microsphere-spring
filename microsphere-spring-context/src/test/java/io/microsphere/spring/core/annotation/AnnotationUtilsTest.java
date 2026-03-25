@@ -146,11 +146,9 @@ public class AnnotationUtilsTest {
 
         assertEquals("parameter2", runtimeAnnotation.value());
 
-
         annotationsList = annotationsMap.get(ElementType.PACKAGE);
 
         assertNull(annotationsList);
-
 
         method = findMethod(ClassAnnotationHandler.class, "handle", String.class);
 
@@ -432,7 +430,6 @@ public class AnnotationUtilsTest {
             return message;
         }
 
-
         @RuntimeAnnotation("method")
         public String handle(@RuntimeAnnotation("parameter1") String message,
                              @RuntimeAnnotation("parameter2") String message2) {
@@ -451,7 +448,6 @@ public class AnnotationUtilsTest {
             return message;
         }
     }
-
 
     @Target({TYPE, PARAMETER, METHOD})
     @Retention(RUNTIME)

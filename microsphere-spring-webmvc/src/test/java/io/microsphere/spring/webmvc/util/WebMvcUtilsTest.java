@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.util;
 
-
 import io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer;
 import io.microsphere.spring.context.event.EventPublishingBeanInitializer;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;

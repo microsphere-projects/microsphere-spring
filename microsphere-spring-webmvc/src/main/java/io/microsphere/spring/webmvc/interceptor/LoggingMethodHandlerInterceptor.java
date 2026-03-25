@@ -39,18 +39,24 @@ public class LoggingMethodHandlerInterceptor extends MethodHandlerInterceptor {
 
     @Override
     protected boolean preHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
-        logger.trace("preHandle - handlerMethod : {}", handlerMethod);
+        if(logger.isTraceEnabled()) {
+            logger.trace("preHandle - handlerMethod : {}", handlerMethod);
+        }
         return true;
     }
 
     @Override
     protected void postHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, ModelAndView modelAndView) {
-        logger.trace("postHandle - handlerMethod : {} , modelAndView : {}", handlerMethod, modelAndView);
+        if(logger.isTraceEnabled()) {
+            logger.trace("postHandle - handlerMethod : {} , modelAndView : {}", handlerMethod, modelAndView);
+        }
     }
 
     @Override
     protected void afterCompletion(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex) {
-        logger.trace("afterCompletion - handlerMethod : {} , exception : {}", handlerMethod, ex);
+        if(logger.isTraceEnabled()) {
+            logger.trace("afterCompletion - handlerMethod : {} , exception : {}", handlerMethod, ex);
+        }
     }
 
     @Override

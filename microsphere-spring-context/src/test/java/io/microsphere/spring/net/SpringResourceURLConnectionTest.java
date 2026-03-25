@@ -14,16 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.event;
 
+package io.microsphere.spring.net;
+
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import static org.junit.Assert.assertSame;
 
 /**
- * {@link ParallelPreInstantiationSingletonsBeanFactoryListener} Test
+ * {@link SpringResourceURLConnection} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ParallelPreInstantiationSingletonsBeanFactoryListener
+ * @see SpringResourceURLConnection
  * @since 1.0.0
  */
-public class ParallelPreInstantiationSingletonsBeanFactoryListenerTest extends AbstractEventListenerTest<ParallelPreInstantiationSingletonsBeanFactoryListener> {
+public class SpringResourceURLConnectionTest {
 
+    @Test
+    public void test() {
+        Resource resource = new ClassPathResource("META-INF/data/temp.txt");
+        SpringResourceURLConnection connection = new SpringResourceURLConnection(null, resource);
+        assertSame(resource, connection.getResource());
+    }
+
+    @Test
+    public void testOnFailed() {
+        Resource resource = new ClassPathResource("/not-found.res");
+        SpringResourceURLConnection connection = new SpringResourceURLConnection(null, resource);
+        assertSame(resource, connection.getResource());
+    }
 }

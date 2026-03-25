@@ -16,9 +16,13 @@
  */
 package io.microsphere.spring.beans.factory.config;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
@@ -34,6 +38,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.doGetResolvableType;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findBeanNames;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.findInfrastructureBeanNames;
@@ -67,7 +72,12 @@ import static org.springframework.core.ResolvableType.NONE;
  * @see BeanDefinitionUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class BeanDefinitionUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private static final boolean isGESpring5 = CURRENT.gt(SPRING_5_0);
 

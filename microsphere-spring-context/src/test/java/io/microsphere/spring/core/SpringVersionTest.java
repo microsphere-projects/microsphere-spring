@@ -19,8 +19,13 @@ package io.microsphere.spring.core;
 import io.microsphere.util.Version;
 import org.junit.Test;
 
+import static io.microsphere.spring.core.SpringVersion.CURRENT;
+import static io.microsphere.spring.core.SpringVersion.SPRING_5_3_38;
+import static io.microsphere.spring.core.SpringVersion.SPRING_5_3_39;
 import static io.microsphere.spring.core.SpringVersion.resolveVersion;
+import static io.microsphere.spring.core.SpringVersion.valueOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -57,7 +62,7 @@ public class SpringVersionTest {
 
     private void testVersionRange(SpringVersion baseVersion, int start, int end) {
         for (int i = start; i <= end; i++) {
-            SpringVersion springVersion = SpringVersion.valueOf(baseVersion.name() + "_" + i);
+            SpringVersion springVersion = valueOf(baseVersion.name() + "_" + i);
             Version version = springVersion.getVersion();
             assertNotNull(version);
             assertEquals(baseVersion.getMajor(), version.getMajor());
@@ -69,12 +74,39 @@ public class SpringVersionTest {
     @Test
     public void testGetVersion() {
         for (SpringVersion springVersion : SpringVersion.values()) {
-            if (SpringVersion.CURRENT.equals(springVersion)) {
+            if (CURRENT.equals(springVersion)) {
                 continue;
             }
             Version version = resolveVersion(springVersion.name());
             assertEquals(springVersion.getVersion(), version);
             assertTrue(springVersion.getVersion().eq(version));
         }
+    }
+
+    @Test
+    public void testOperators() {
+        assertEquals(5, SPRING_5_3_39.getMajor());
+        assertEquals(3, SPRING_5_3_39.getMinor());
+        assertEquals(39, SPRING_5_3_39.getPatch());
+
+        assertTrue(SPRING_5_3_39.eq(SPRING_5_3_39));
+        assertTrue(SPRING_5_3_39.equals(SPRING_5_3_39));
+        assertTrue(SPRING_5_3_39.gt(SPRING_5_3_38));
+        assertFalse(SPRING_5_3_38.isGreaterThan(SPRING_5_3_39));
+
+        assertTrue(SPRING_5_3_39.ge(SPRING_5_3_39));
+        assertTrue(SPRING_5_3_39.ge(SPRING_5_3_38));
+        assertTrue(SPRING_5_3_39.isGreaterOrEqual(SPRING_5_3_39));
+        assertFalse(SPRING_5_3_38.isGreaterOrEqual(SPRING_5_3_39));
+
+        assertFalse(SPRING_5_3_39.lt(SPRING_5_3_38));
+        assertTrue(SPRING_5_3_38.lt(SPRING_5_3_39));
+        assertFalse(SPRING_5_3_39.isLessThan(SPRING_5_3_38));
+        assertTrue(SPRING_5_3_38.isLessThan(SPRING_5_3_39));
+
+        assertFalse(SPRING_5_3_39.le(SPRING_5_3_38));
+        assertTrue(SPRING_5_3_39.le(SPRING_5_3_39));
+        assertTrue(SPRING_5_3_39.isLessOrEqual(SPRING_5_3_39));
+        assertTrue(SPRING_5_3_38.isLessOrEqual(SPRING_5_3_39));
     }
 }

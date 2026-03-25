@@ -17,9 +17,9 @@
 
 package io.microsphere.spring.web.util;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +31,7 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -60,11 +61,13 @@ import static io.microsphere.collection.MapUtils.ofMap;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_MVC;
+import static io.microsphere.spring.web.util.WebRequestUtils.METHOD_HEADER_NAME;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT;
@@ -235,6 +238,10 @@ public class SpringWebMvcHelperTest implements RequestBodyAdvice {
     void testGetMethod(ServletWebRequest request, HttpMethod httpMethod) {
         String method = this.springWebMvcHelper.getMethod(request);
         assertEquals(httpMethod.name(), method);
+
+        MockHttpServletRequest mockHttpServletRequest = (MockHttpServletRequest) request.getRequest();
+        mockHttpServletRequest.addHeader(METHOD_HEADER_NAME, method);
+        assertEquals(method, this.springWebMvcHelper.getMethod(request));
     }
 
     void testGetCookieValue(ServletWebRequest request, Cookie... cookies) {
@@ -242,6 +249,9 @@ public class SpringWebMvcHelperTest implements RequestBodyAdvice {
             String cookieValue = this.springWebMvcHelper.getCookieValue(request, cookie.getName());
             assertEquals(cookie.getValue(), cookieValue);
         }
+
+        MockServletWebRequest newRequest = new MockServletWebRequest();
+        assertNull(this.springWebMvcHelper.getCookieValue(newRequest, "non-existent-cookie"));
     }
 
     void testGetBestMatchingHandler(NativeWebRequest request, String methodName, Class<?>... parameterTypes) {

@@ -43,6 +43,7 @@ import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.getApplicationContextAwareProcessor;
 import static io.microsphere.util.ArrayUtils.isEmpty;
@@ -169,12 +170,7 @@ public abstract class BeanUtils implements Utils {
      */
     public static boolean isBeanPresent(@Nonnull ListableBeanFactory beanFactory, @Nonnull String beanClassName,
                                         boolean includingAncestors) {
-        ClassLoader classLoader = null;
-        if (beanFactory instanceof ConfigurableBeanFactory) {
-            ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
-            classLoader = configurableBeanFactory.getBeanClassLoader();
-        }
-
+        ClassLoader classLoader = getBeanClassLoader(beanFactory);
         Class beanClass = resolveClass(beanClassName, classLoader);
         if (beanClass == null) {
             return false;
@@ -827,14 +823,18 @@ public abstract class BeanUtils implements Utils {
      * @since Spring Framework 5.0
      */
     public static <T> Constructor<T> findPrimaryConstructor(@Nonnull Class<T> clazz) {
-        if (FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE == null) {
+        return findPrimaryConstructor(FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
+    }
+
+    static <T> Constructor<T> findPrimaryConstructor(MethodHandle methodHandle, @Nonnull Class<T> clazz) {
+        if (methodHandle == null) {
             return null;
         }
         Constructor<T> constructor = null;
         try {
-            constructor = (Constructor<T>) FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE.invokeExact(clazz);
+            constructor = (Constructor<T>) methodHandle.invokeExact(clazz);
         } catch (Throwable e) {
-            handleInvokeExactFailure(e, FIND_PRIMARY_CONSTRUCTOR_METHOD_HANDLE, clazz);
+            handleInvokeExactFailure(e, methodHandle, clazz);
         }
         return constructor;
     }
@@ -842,15 +842,15 @@ public abstract class BeanUtils implements Utils {
     /**
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, BeanFactory beanFactory,
+    static void invokeBeanFactoryAwareInterfaces(@Nonnull Object bean, @Nullable BeanFactory beanFactory,
                                                  @Nullable ConfigurableBeanFactory configurableBeanFactory) {
         invokeBeanNameAware(bean, beanFactory);
         invokeBeanClassLoaderAware(bean, configurableBeanFactory);
         invokeBeanFactoryAware(bean, beanFactory);
     }
 
-    static void invokeBeanNameAware(@Nonnull Object bean, @Nonnull BeanFactory beanFactory) {
-        if (bean instanceof BeanNameAware) {
+    static void invokeBeanNameAware(@Nonnull Object bean, @Nullable BeanFactory beanFactory) {
+        if (bean instanceof BeanNameAware && beanFactory != null) {
             BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
             BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
             String beanName = generateBeanName(beanDefinition, registry);
@@ -970,12 +970,15 @@ public abstract class BeanUtils implements Utils {
             return;
         }
 
-        ConfigurableListableBeanFactory beanFactory = applicationContext != null ? applicationContext.getBeanFactory() : null;
+        ConfigurableListableBeanFactory beanFactory = applicationContext == null ? null : applicationContext.getBeanFactory();
 
         invokeBeanFactoryAwareInterfaces(bean, beanFactory, beanFactory);
 
-        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
+        doInvokeAwareInterfaces(bean, beanFactory);
+    }
 
+    static void doInvokeAwareInterfaces(@Nullable Object bean, @Nullable BeanFactory beanFactory) {
+        BeanPostProcessor beanPostProcessor = getApplicationContextAwareProcessor(beanFactory);
         if (beanPostProcessor != null) {
             beanPostProcessor.postProcessBeforeInitialization(bean, "");
         }
@@ -1025,11 +1028,36 @@ public abstract class BeanUtils implements Utils {
         }
 
 
+        /**
+         * Compares this {@link NamingBean} with another based on their ordering.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   NamingBean nb1 = new NamingBean("bean1", orderedBean1);
+         *   NamingBean nb2 = new NamingBean("bean2", orderedBean2);
+         *   int result = nb1.compareTo(nb2); // negative, zero, or positive
+         * }</pre>
+         *
+         * @param o the other {@link NamingBean} to compare against
+         * @return a negative integer, zero, or a positive integer as this object
+         *         is less than, equal to, or greater than the specified object
+         */
         @Override
         public int compareTo(NamingBean o) {
             return compare(this, o);
         }
 
+        /**
+         * Returns the order value of the contained bean.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   NamingBean nb = new NamingBean("testBean", myOrderedBean);
+         *   int order = nb.getOrder(); // e.g. 1
+         * }</pre>
+         *
+         * @return the order value derived from the contained bean
+         */
         @Override
         public int getOrder() {
             return getOrder(bean);

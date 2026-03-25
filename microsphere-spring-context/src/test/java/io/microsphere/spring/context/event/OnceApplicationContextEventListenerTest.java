@@ -16,7 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -27,7 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 
 /**
@@ -36,31 +42,35 @@ import static org.junit.Assert.assertEquals;
  * @see OnceApplicationContextEventListener
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class OnceApplicationContextEventListenerTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void test() {
-
         for (int levels = 1; levels < 10; levels++) {
             testOnceApplicationContextEventListener(levels, true);
             testOnceApplicationContextEventListener(levels, false);
         }
     }
 
+    @Test
+    public void testGetApplicationContextOnNPE() {
+        MyContextEventListener listener = new MyContextEventListener();
+        assertThrows(NullPointerException.class, listener::getApplicationContext);
+    }
+
     private void testOnceApplicationContextEventListener(int levels, boolean listenersAsBean) {
-
         ConfigurableApplicationContext context = createContext(levels, listenersAsBean);
-
         context.start();
-
         context.stop();
-
         context.close();
-
     }
 
     private ConfigurableApplicationContext createContext(int levels, boolean listenersAsBean) {
-
         if (levels < 1) {
             return null;
         }
@@ -83,7 +93,6 @@ public class OnceApplicationContextEventListenerTest {
     static class MyContextEventListener extends OnceApplicationContextEventListener<ApplicationContextEvent> {
 
         public MyContextEventListener() {
-
         }
 
         public MyContextEventListener(ApplicationContext applicationContext) {
@@ -108,5 +117,4 @@ public class OnceApplicationContextEventListenerTest {
             assertEquals(0, count.getAndIncrement());
         }
     }
-
 }

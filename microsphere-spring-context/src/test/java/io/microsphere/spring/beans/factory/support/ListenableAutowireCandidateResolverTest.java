@@ -1,7 +1,9 @@
 package io.microsphere.spring.beans.factory.support;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.beans.test.TestBean;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.ObjectProvider;
@@ -23,6 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.reflect.Field;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.FieldUtils.findField;
 import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver.ENABLED_PROPERTY_NAME;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
@@ -55,6 +58,9 @@ import static org.junit.Assert.assertSame;
         }
 )
 public class ListenableAutowireCandidateResolverTest implements AutowireCandidateResolvingListener, EnvironmentAware {
+
+    @ClassRule
+    public static final LoggingLevelsRule loggingLevelsRule = levels("TRACE", "INFO", "ERROR");
 
     private static final boolean isGESpring5_1 = CURRENT.gt(SPRING_5_1);
 

@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.util;
 
-
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.After;

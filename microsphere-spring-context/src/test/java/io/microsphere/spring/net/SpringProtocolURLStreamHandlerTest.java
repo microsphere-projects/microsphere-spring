@@ -27,10 +27,11 @@ import java.io.InputStream;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
 import java.util.List;
 
+import static java.nio.charset.Charset.defaultCharset;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.util.StreamUtils.copyToString;
 
 /**
@@ -42,8 +43,15 @@ import static org.springframework.util.StreamUtils.copyToString;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {SpringProtocolURLStreamHandler.class, SpringTestURLConnectionFactory.class})
-@TestPropertySource(properties = {"microsphere.net.a=1", "microsphere.net.b=2", "microsphere.net.c=3",})
+@ContextConfiguration(classes = {
+        SpringProtocolURLStreamHandler.class,
+        SpringTestURLConnectionFactory.class
+})
+@TestPropertySource(properties = {
+        "microsphere.net.a=1",
+        "microsphere.net.b=2",
+        "microsphere.net.c=3"
+})
 public class SpringProtocolURLStreamHandlerTest {
 
     @Test
@@ -54,6 +62,8 @@ public class SpringProtocolURLStreamHandlerTest {
     @Test
     public void testSpringEnvironmentURLConnectionFactory() throws Throwable {
         assertContent(new URL("spring:env:property-sources://microsphere.net/text/properties"));
+        URL url = new URL("spring:env:test://");
+        assertNull(url.openConnection());
     }
 
     @Test
@@ -62,11 +72,12 @@ public class SpringProtocolURLStreamHandlerTest {
     }
 
     private void assertContent(URL url) throws Throwable {
-        String content = null;
-        try (InputStream inputStream = url.openStream()) {
-            content = copyToString(inputStream, Charset.defaultCharset());
+        URLConnection urlConnection = url.openConnection();
+        urlConnection.connect();
+        try (InputStream inputStream = urlConnection.getInputStream()) {
+            String content = copyToString(inputStream, defaultCharset());
+            assertNotNull(content);
         }
-        assertNotNull(content);
     }
 }
 

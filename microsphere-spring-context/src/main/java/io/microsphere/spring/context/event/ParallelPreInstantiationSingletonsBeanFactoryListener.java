@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
@@ -118,7 +119,8 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
      */
     @ConfigurationProperty(
             type = int.class,
-            description = "the number of threads to pre-instantiate singletons in parallel"
+            description = "the number of threads to pre-instantiate singletons in parallel",
+            source = APPLICATION_SOURCE
     )
     public static final String THREADS_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "threads";
 
@@ -132,7 +134,8 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
      */
     @ConfigurationProperty(
             defaultValue = DEFAULT_THREAD_NAME_PREFIX,
-            description = "the prefix of the thread name to pre-instantiate singletons in parallel"
+            description = "the prefix of the thread name to pre-instantiate singletons in parallel",
+            source = APPLICATION_SOURCE
     )
     public static final String THREAD_NAME_PREFIX_PROPERTY_NAME = PROPERTY_NAME_PREFIX + "thread.name-prefix";
 
@@ -146,7 +149,9 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
     public void onBeanFactoryConfigurationFrozen(ConfigurableListableBeanFactory bf) {
         DefaultListableBeanFactory beanFactory = this.beanFactory;
         if (bf != beanFactory) {
-            logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
+            if (logger.isWarnEnabled()) {
+                logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
+            }
             return;
         }
 
@@ -162,7 +167,9 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
             }
         }
 
-        logger.info(stopWatch.toString());
+        if (logger.isInfoEnabled()) {
+            logger.info(stopWatch.toString());
+        }
     }
 
     private ExecutorService newExecutorService() {
@@ -198,7 +205,9 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
             executorService.submit(() -> {
                 for (String beanName : beanNamesInDependencyPath) {
                     Object bean = beanFactory.getBean(beanName);
-                    logger.trace("The bean[name : '{}'] was created : {}", beanName, bean);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("The bean[name : '{}'] was created : {}", beanName, bean);
+                    }
                 }
                 return null;
             });

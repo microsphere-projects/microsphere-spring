@@ -109,5 +109,4 @@ public abstract class MimeTypeUtils implements Utils {
 
     private MimeTypeUtils() {
     }
-
 }

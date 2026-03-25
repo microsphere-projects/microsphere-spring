@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.util;
 
-
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMethod;

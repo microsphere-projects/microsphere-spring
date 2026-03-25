@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.metadata;
 
-
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestFilterRegistration;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
@@ -73,7 +72,6 @@ public class FilterRegistrationWebEndpointMappingFactoryTest {
         assertTrue(factory.supports(DEFAULT_FILTER_NAME));
         assertFalse(factory.supports(DEFAULT_SERVLET_NAME));
     }
-
 
     @Test
     public void testGetMethods() {

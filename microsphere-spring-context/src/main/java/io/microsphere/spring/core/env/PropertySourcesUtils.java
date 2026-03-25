@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.microsphere.collection.MapUtils.MIN_LOAD_FACTOR;
-import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
@@ -77,20 +77,28 @@ public abstract class PropertySourcesUtils implements Utils {
         PropertySource propertySource = propertySources.get(propertySourceName);
         T targetPropertySource = null;
         if (propertySource == null) {
-            logger.trace("The '{}' PropertySource can't be found!", propertySourceName);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The '{}' PropertySource can't be found!", propertySourceName);
+            }
             if (propertySourceSupplierIfAbsent != null) {
                 targetPropertySource = propertySourceSupplierIfAbsent.get();
                 if (targetPropertySource != null) {
-                    logger.trace("A new PropertySource[{}] will be created.", targetPropertySource);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("A new PropertySource[{}] will be created.", targetPropertySource);
+                    }
                     propertySources.addLast(targetPropertySource);
                 }
             }
         } else if (propertySourceType.isInstance(propertySource)) {
-            logger.trace("The '{}' PropertySource[type: {}] was found!", propertySourceName, propertySource.getClass().getName());
+            if (logger.isTraceEnabled()) {
+                logger.trace("The '{}' PropertySource[type: {}] was found!", propertySourceName, propertySource.getClass().getName());
+            }
             targetPropertySource = propertySourceType.cast(propertySource);
         } else {
-            logger.warn("The '{}' PropertySource is not a {} instance, actual type : {}", propertySource.getClass().getName(),
-                    propertySourceType.getName());
+            if (logger.isWarnEnabled()) {
+                logger.warn("The '{}' PropertySource is not a {} instance, actual type : {}", propertySource.getClass().getName(),
+                        propertySourceType.getName());
+            }
         }
         return targetPropertySource;
     }
@@ -253,13 +261,11 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     @Nonnull
     public static String[] getPropertyNames(PropertySource propertySource) {
-        String[] propertyNames = propertySource instanceof EnumerablePropertySource ? ((EnumerablePropertySource) propertySource).getPropertyNames() : null;
-
-        if (propertyNames == null) {
-            propertyNames = EMPTY_STRING_ARRAY;
+        if (propertySource instanceof EnumerablePropertySource) {
+            EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+            return enumerablePropertySource.getPropertyNames();
         }
-
-        return propertyNames;
+        return EMPTY_STRING_ARRAY;
     }
 
     /**
@@ -271,11 +277,11 @@ public abstract class PropertySourcesUtils implements Utils {
     @Nonnull
     public static Map<String, Object> getProperties(PropertySource propertySource) {
         String[] propertyNames = getPropertyNames(propertySource);
-        int length = propertyNames.length;
+        int length = length(propertyNames);
         if (length < 1) {
             return emptyMap();
         }
-        Map<String, Object> properties = newLinkedHashMap(length, MIN_LOAD_FACTOR);
+        Map<String, Object> properties = newFixedLinkedHashMap(length);
         for (int i = 0; i < length; i++) {
             String propertyName = propertyNames[i];
             properties.put(propertyName, propertySource.getProperty(propertyName));
@@ -322,7 +328,9 @@ public abstract class PropertySourcesUtils implements Utils {
         MapPropertySource defaultPropertiesPropertySource = getDefaultPropertiesPropertySource(environment, createIfAbsent);
         if (defaultPropertiesPropertySource != null) {
             defaultProperties = defaultPropertiesPropertySource.getSource();
-            logger.trace("The 'defaultProperties' property was obtained successfully, and the current content is: {}", defaultProperties);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The 'defaultProperties' property was obtained successfully, and the current content is: {}", defaultProperties);
+            }
         }
         return defaultProperties;
     }
@@ -352,14 +360,20 @@ public abstract class PropertySourcesUtils implements Utils {
         PropertySource propertySource = propertySources.get(name);
         MapPropertySource defaultPropertiesPropertySource = null;
         if (propertySource == null && createIfAbsent) {
-            logger.warn("The 'defaultProperties' property will create an MapPropertySource[name:{}] by default", name);
+            if (logger.isWarnEnabled()) {
+                logger.warn("The 'defaultProperties' property will create an MapPropertySource[name:{}] by default", name);
+            }
             defaultPropertiesPropertySource = new MapPropertySource(name, new HashMap<>());
             propertySources.addLast(defaultPropertiesPropertySource);
         } else if (propertySource instanceof MapPropertySource) {
-            logger.trace("The 'defaultProperties' property was initialized");
+            if (logger.isTraceEnabled()) {
+                logger.trace("The 'defaultProperties' property was initialized");
+            }
             defaultPropertiesPropertySource = (MapPropertySource) propertySource;
         } else {
-            logger.warn("'defaultProperties' PropertySource[name: {}] is not an MapPropertySource instance; it is actually: {}", name, propertySource.getClass().getName());
+            if (logger.isWarnEnabled()) {
+                logger.warn("'defaultProperties' PropertySource[name: {}] is not an MapPropertySource instance; it is actually: {}", name, propertySource.getClass().getName());
+            }
         }
         return defaultPropertiesPropertySource;
     }
@@ -389,4 +403,3 @@ public abstract class PropertySourcesUtils implements Utils {
     private PropertySourcesUtils() {
     }
 }
-

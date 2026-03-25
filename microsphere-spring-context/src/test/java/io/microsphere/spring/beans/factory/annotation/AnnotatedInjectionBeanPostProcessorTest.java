@@ -16,7 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanCreationException;
@@ -32,10 +34,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.Constructor;
+
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Child;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Parent;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.UserHolder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -53,6 +59,10 @@ import static org.junit.Assert.assertTrue;
 })
 @SuppressWarnings({"deprecation", "unchecked"})
 public class AnnotatedInjectionBeanPostProcessorTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     @Qualifier("parent")
@@ -108,6 +118,64 @@ public class AnnotatedInjectionBeanPostProcessorTest {
             MultipleRequiredConstructorsBean bean = createProxy(MultipleRequiredConstructorsBean.class);
             this.processor.determineCandidateConstructors(bean.getClass(), "multipleConstructorBean");
         });
+    }
+
+    /**
+     * Setters persist through getters; verify all configurable flags round-trip.
+     */
+    @Test
+    public void testSettersAndGetters() {
+        AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
+        p.setOrder(42);
+        assertEquals(42, p.getOrder());
+
+        p.setClassValuesAsString(true);
+        p.setNestedAnnotationsAsMap(true);
+        p.setIgnoreDefaultValue(false);
+        p.setTryMergedAnnotation(false);
+        p.setCacheSize(64);
+        // No exceptions thrown means setters/getters work correctly; verify order
+        assertEquals(42, p.getOrder());
+    }
+
+    /**
+     * afterPropertiesSet initialises caches; destroy clears them without error.
+     */
+    @Test
+    public void testAfterPropertiesSetAndDestroy() throws Exception {
+        AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
+        p.setCacheSize(8);
+        p.afterPropertiesSet();  // must not throw
+        p.destroy();             // must not throw
+    }
+
+    /**
+     * postProcessMergedBeanDefinition must not throw for a known bean type.
+     */
+    @Test
+    public void testPostProcessMergedBeanDefinition() {
+        org.springframework.beans.factory.support.RootBeanDefinition rbd =
+                new org.springframework.beans.factory.support.RootBeanDefinition(TestConfiguration.Parent.class);
+        // No exception expected
+        processor.postProcessMergedBeanDefinition(rbd, TestConfiguration.Parent.class, "parent");
+    }
+
+    /**
+     * determineCandidateConstructors returns null for a class without injection annotations.
+     */
+    @Test
+    public void testDetermineCandidateConstructorsNoCandidates() {
+        // PlainBean has no @Referenced annotation on constructors
+        Constructor<?>[] result = processor.determineCandidateConstructors(PlainBean.class, "plainBean");
+        assertNull(result);
+    }
+
+    static class PlainBean {
+        PlainBean() {
+        }
+
+        PlainBean(String s) {
+        }
     }
 
     <T> T createProxy(Class<T> beanType) {

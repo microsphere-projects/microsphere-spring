@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.test.util;
 
-
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;

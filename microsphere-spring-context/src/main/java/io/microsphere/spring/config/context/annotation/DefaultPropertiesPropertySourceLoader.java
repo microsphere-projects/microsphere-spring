@@ -17,6 +17,7 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -25,11 +26,17 @@ import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
+import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProperties;
+import static io.microsphere.spring.core.io.support.PropertiesUtils.loadProperties;
+import static io.microsphere.util.ArrayUtils.isEmpty;
 
 /**
  * The Loader class for {@link DefaultPropertiesPropertySource @DefaultPropertiesPropertySource}
@@ -41,12 +48,13 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProp
  */
 class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
 
+    private static final Class<DefaultPropertiesPropertySource> ANNOTATION_TYPE = DefaultPropertiesPropertySource.class;
+
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata, DefaultPropertiesPropertySource.class);
-
-        loadPropertySource(attributes, registry);
+        AnnotationAttributes attributes = getAnnotationAttributes(metadata, ANNOTATION_TYPE);
+        ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(attributes, getEnvironment());
+        loadPropertySource(annotationAttributes);
     }
 
     /**
@@ -54,28 +62,60 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
      * {@link PropertySource}
      *
      * @param attributes {@link AnnotationAttributes}
-     * @param registry   {@link BeanDefinitionRegistry}
      */
-    protected void loadPropertySource(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+    protected void loadPropertySource(AnnotationAttributes attributes) {
+        Map<String, Object> defaultProperties = getDefaultProperties(this.environment);
+        execute(() -> {
+            loadPropertySourceFromLocations(attributes, defaultProperties);
+            loadPropertySourceFromProperties(attributes, defaultProperties);
+        });
+    }
+
+    void loadPropertySourceFromLocations(AnnotationAttributes attributes, Map<String, Object> defaultProperties) throws Throwable {
+        String[] locations = attributes.getStringArray("locations");
+        if (isEmpty(locations)) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("The 'locations' or 'value' attribute is undefined from : {}", attributes);
+            }
+            return;
+        }
         // The property source name of current single @DefaultPropertiesPropertySource
         String propertySourceName = DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME + "@" + hashCode();
         // Reuse ResourcePropertySourceLoader
         ResourcePropertySourceLoader delegate = getDelegate();
 
-        Map<String, Object> defaultProperties = getDefaultProperties(this.environment);
-
         PropertySourceExtensionAttributes<ResourcePropertySource> extensionAttributes = buildExtensionAttributes(attributes);
-        try {
-            PropertySource<?> propertySource = delegate.loadPropertySource(extensionAttributes, propertySourceName);
-            if (propertySource instanceof EnumerablePropertySource) {
-                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
-                for (String propertyName : enumerablePropertySource.getPropertyNames()) {
-                    Object propertyValue = propertySource.getProperty(propertyName);
-                    defaultProperties.put(propertyName, propertyValue);
+        PropertySource<?> propertySource = delegate.loadPropertySource(extensionAttributes, propertySourceName);
+        loadPropertySource(propertySource, defaultProperties);
+    }
+
+    void loadPropertySource(PropertySource<?> propertySource, Map<String, Object> defaultProperties) {
+        if (propertySource instanceof EnumerablePropertySource) {
+            EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+            for (String propertyName : enumerablePropertySource.getPropertyNames()) {
+                Object propertyValue = propertySource.getProperty(propertyName);
+                defaultProperties.put(propertyName, propertyValue);
+            }
+        }
+    }
+
+    void loadPropertySourceFromProperties(AnnotationAttributes attributes, Map<String, Object> defaultProperties) throws IOException {
+        String[] propertiesValue = attributes.getStringArray("properties");
+        if (isEmpty(propertiesValue)) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("The 'properties' attribute is undefined from : {}", attributes);
+            }
+            return;
+        }
+        Properties properties = loadProperties(propertiesValue);
+        for (String propertyName : properties.stringPropertyNames()) {
+            String propertyValue = properties.getProperty(propertyName);
+            Object oldPropertyValue = defaultProperties.put(propertyName, propertyValue);
+            if (oldPropertyValue != null) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Overriding property '{}' with value '{}' from '{}'", propertyName, propertyValue, oldPropertyValue);
                 }
             }
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
         }
     }
 

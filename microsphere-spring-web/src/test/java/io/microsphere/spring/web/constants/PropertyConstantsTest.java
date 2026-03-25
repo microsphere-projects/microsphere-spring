@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.constants;
 
-
 import org.junit.Test;
 
 import static io.microsphere.spring.web.constants.PropertyConstants.MICROSPHERE_SPRING_WEB_PROPERTY_NAME_PREFIX;

@@ -96,9 +96,13 @@ class BeanFactoryListeners implements BeanFactoryListener {
             String listenerBeanName = namedListener.getBeanName();
             try {
                 listenerConsumer.accept(listener);
-                logger.trace("BeanDefinitionListener[name : '{}' , order : {}] execution {} -> '{}'", listenerBeanName, listener, i, action);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("BeanDefinitionListener[name : '{}' , order : {}] execution {} -> '{}'", listenerBeanName, listener, i, action);
+                }
             } catch (Throwable e) {
-                logger.error("BeanDefinitionListener[name : '{}' , order : {}] execution {} -> '{}' failed", listenerBeanName, listener, i, action, e);
+                if (logger.isErrorEnabled()) {
+                    logger.error("BeanDefinitionListener[name : '{}' , order : {}] execution {} -> '{}' failed", listenerBeanName, listener, i, action, e);
+                }
             }
         }
     }

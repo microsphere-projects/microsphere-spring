@@ -99,6 +99,20 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
 
     protected ResourceLoader resourceLoader;
 
+    /**
+     * Sets the {@link ClassLoader} used by the bean. This method also asserts that the
+     * subclass properly implements {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Automatically invoked by the Spring container during @Import processing.
+     *   // For example, when using:
+     *   @Import(MyImportSelector.class)
+     *   public class AppConfig { }
+     * }</pre>
+     *
+     * @param classLoader the owning class loader
+     */
     @Override
     public final void setBeanClassLoader(ClassLoader classLoader) {
         if (this.classLoader == null) {
@@ -108,6 +122,21 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     }
 
 
+    /**
+     * Sets the {@link BeanFactory} that created this bean, stored as a
+     * {@link ConfigurableListableBeanFactory}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Automatically invoked by the Spring container during @Import processing.
+     *   // After this call, getBeanFactory() returns the ConfigurableListableBeanFactory.
+     *   @Import(MyImportBeanDefinitionRegistrar.class)
+     *   public class AppConfig { }
+     * }</pre>
+     *
+     * @param beanFactory the owning {@link BeanFactory}
+     * @throws BeansException if the bean factory cannot be cast to {@link ConfigurableListableBeanFactory}
+     */
     @Override
     public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         if (this.beanFactory == null) {
@@ -115,6 +144,20 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
         }
     }
 
+    /**
+     * Sets the {@link Environment} in which this bean operates, stored as a
+     * {@link ConfigurableEnvironment}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Automatically invoked by the Spring container during @Import processing.
+     *   // After this call, getEnvironment() returns the ConfigurableEnvironment.
+     *   @Import(MyImportSelector.class)
+     *   public class AppConfig { }
+     * }</pre>
+     *
+     * @param environment the {@link Environment} for this bean
+     */
     @Override
     public final void setEnvironment(Environment environment) {
         if (this.environment == null) {
@@ -122,6 +165,22 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
         }
     }
 
+    /**
+     * Sets the {@link ResourceLoader} for this bean. This is the last callback in the
+     * sequence, and triggers the self-initialization of this bean as a Spring-managed bean
+     * to support full bean lifecycle (population, initialization, and destruction).
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Automatically invoked by the Spring container during @Import processing.
+     *   // After this call, getResourceLoader() returns the ResourceLoader and the
+     *   // bean is fully initialized with Spring bean lifecycle support.
+     *   @Import(MyImportBeanDefinitionRegistrar.class)
+     *   public class AppConfig { }
+     * }</pre>
+     *
+     * @param resourceLoader the {@link ResourceLoader} for this bean
+     */
     @Override
     public final void setResourceLoader(ResourceLoader resourceLoader) {
         if (this.resourceLoader == null) {

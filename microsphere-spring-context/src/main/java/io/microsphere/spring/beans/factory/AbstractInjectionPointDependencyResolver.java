@@ -108,6 +108,26 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
     @Nonnull
     protected AutowireCandidateResolver autowireCandidateResolver;
 
+    /**
+     * Resolve the dependent bean names from the given {@link Field} injection point.
+     * <p>
+     * First attempts to resolve by name using the {@link AutowireCandidateResolver}.
+     * If no name is suggested, falls back to resolving by the field's generic type.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   AbstractInjectionPointDependencyResolver resolver = ...;
+     *   resolver.setBeanFactory(beanFactory);
+     *   Field field = ReflectionUtils.findField(MyConfig.class, "myDependency");
+     *   Set<String> dependentBeanNames = new LinkedHashSet<>();
+     *   resolver.resolve(field, beanFactory, dependentBeanNames);
+     *   // dependentBeanNames now contains the bean names matching the field
+     * }</pre>
+     *
+     * @param field              the field injection point to resolve
+     * @param beanFactory        the {@link ConfigurableListableBeanFactory} to look up beans
+     * @param dependentBeanNames the set to collect resolved dependent bean names into
+     */
     @Override
     public void resolve(Field field, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         String dependentBeanName = resolveDependentBeanNameByName(field, beanFactory);
@@ -118,11 +138,34 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
         }
     }
 
+    /**
+     * Resolve the dependent bean names from the given {@link Method} injection point.
+     * <p>
+     * Iterates over each parameter of the method and delegates resolution to
+     * {@link #resolve(Parameter, ConfigurableListableBeanFactory, Set)}.
+     * Methods with no parameters are ignored.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   AbstractInjectionPointDependencyResolver resolver = ...;
+     *   resolver.setBeanFactory(beanFactory);
+     *   Method method = MethodUtils.findMethod(MyConfig.class, "user", MyDependency[].class);
+     *   Set<String> dependentBeanNames = new LinkedHashSet<>();
+     *   resolver.resolve(method, beanFactory, dependentBeanNames);
+     *   // dependentBeanNames now contains bean names matching the method parameters
+     * }</pre>
+     *
+     * @param method             the method injection point to resolve
+     * @param beanFactory        the {@link ConfigurableListableBeanFactory} to look up beans
+     * @param dependentBeanNames the set to collect resolved dependent bean names into
+     */
     @Override
     public void resolve(Method method, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         int parametersCount = method.getParameterCount();
         if (parametersCount < 1) {
-            logger.trace("The no-argument method[{}] will be ignored", method);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The no-argument method[{}] will be ignored", method);
+            }
             return;
         }
         Parameter[] parameters = method.getParameters();
@@ -132,11 +175,34 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
         }
     }
 
+    /**
+     * Resolve the dependent bean names from the given {@link Constructor} injection point.
+     * <p>
+     * Iterates over each parameter of the constructor and delegates resolution to
+     * {@link #resolve(Parameter, ConfigurableListableBeanFactory, Set)}.
+     * Constructors with no parameters are ignored.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   AbstractInjectionPointDependencyResolver resolver = ...;
+     *   resolver.setBeanFactory(beanFactory);
+     *   Constructor<?> constructor = ConstructorUtils.findConstructor(MyConfig.class, Map.class);
+     *   Set<String> dependentBeanNames = new LinkedHashSet<>();
+     *   resolver.resolve(constructor, beanFactory, dependentBeanNames);
+     *   // dependentBeanNames now contains bean names matching the constructor parameters
+     * }</pre>
+     *
+     * @param constructor        the constructor injection point to resolve
+     * @param beanFactory        the {@link ConfigurableListableBeanFactory} to look up beans
+     * @param dependentBeanNames the set to collect resolved dependent bean names into
+     */
     @Override
     public void resolve(Constructor constructor, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         int parametersCount = constructor.getParameterCount();
         if (parametersCount < 1) {
-            logger.trace("The no-argument constructor[{}] will be ignored", constructor);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The no-argument constructor[{}] will be ignored", constructor);
+            }
             return;
         }
         Parameter[] parameters = constructor.getParameters();
@@ -146,6 +212,27 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
         }
     }
 
+    /**
+     * Resolve the dependent bean names from the given {@link Parameter} injection point.
+     * <p>
+     * First attempts to resolve by name using the {@link AutowireCandidateResolver}.
+     * If no name is suggested, falls back to resolving by the parameter's parameterized type.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   AbstractInjectionPointDependencyResolver resolver = ...;
+     *   resolver.setBeanFactory(beanFactory);
+     *   Method method = MethodUtils.findMethod(MyConfig.class, "user", MyDependency[].class);
+     *   Parameter parameter = method.getParameters()[0];
+     *   Set<String> dependentBeanNames = new LinkedHashSet<>();
+     *   resolver.resolve(parameter, beanFactory, dependentBeanNames);
+     *   // dependentBeanNames now contains bean names matching the parameter type
+     * }</pre>
+     *
+     * @param parameter          the parameter injection point to resolve
+     * @param beanFactory        the {@link ConfigurableListableBeanFactory} to look up beans
+     * @param dependentBeanNames the set to collect resolved dependent bean names into
+     */
     @Override
     public void resolve(Parameter parameter, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         String dependentBeanName = resolveDependentBeanNameByName(parameter, beanFactory);
@@ -156,27 +243,104 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
         }
     }
 
+    /**
+     * Initialize this resolver by extracting the {@link ResolvableDependencyTypeFilter}
+     * and {@link AutowireCandidateResolver} from the given {@link BeanFactory}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   AbstractInjectionPointDependencyResolver resolver = new MyDependencyResolver();
+     *   resolver.setBeanFactory(beanFactory);
+     *   // resolver is now ready to resolve injection point dependencies
+     * }</pre>
+     *
+     * @param beanFactory the owning {@link BeanFactory}
+     * @throws BeansException if initialization fails
+     */
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.resolvableDependencyTypeFilter = get(beanFactory);
         this.autowireCandidateResolver = getAutowireCandidateResolver(beanFactory);
     }
 
+    /**
+     * Resolve the dependent bean name by name for the given {@link Field} using
+     * the {@link AutowireCandidateResolver}'s suggested value.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   Field field = ReflectionUtils.findField(MyConfig.class, "myService");
+     *   String beanName = resolveDependentBeanNameByName(field, beanFactory);
+     *   // beanName is the suggested name, or null if none was suggested
+     * }</pre>
+     *
+     * @param field       the field to resolve the dependent bean name from
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} (unused but available for subclass overrides)
+     * @return the suggested bean name, or {@code null} if no name was suggested
+     */
     protected String resolveDependentBeanNameByName(Field field, ConfigurableListableBeanFactory beanFactory) {
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(field, true, false);
         return resolveDependentBeanNameByName(dependencyDescriptor);
     }
 
+    /**
+     * Resolve the dependent bean name by name for the given {@link Parameter} using
+     * the {@link AutowireCandidateResolver}'s suggested value.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   Parameter parameter = method.getParameters()[0];
+     *   String beanName = resolveDependentBeanNameByName(parameter, beanFactory);
+     *   // beanName is the suggested name, or null if none was suggested
+     * }</pre>
+     *
+     * @param parameter   the parameter to resolve the dependent bean name from
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} (unused but available for subclass overrides)
+     * @return the suggested bean name, or {@code null} if no name was suggested
+     */
     protected String resolveDependentBeanNameByName(Parameter parameter, ConfigurableListableBeanFactory beanFactory) {
         DependencyDescriptor dependencyDescriptor = new DependencyDescriptor(forParameter(parameter), true, false);
         return resolveDependentBeanNameByName(dependencyDescriptor);
     }
 
+    /**
+     * Resolve the dependent bean name by name from the given {@link DependencyDescriptor}
+     * using the {@link AutowireCandidateResolver}'s suggested value.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   DependencyDescriptor descriptor = new DependencyDescriptor(field, true, false);
+     *   String beanName = resolveDependentBeanNameByName(descriptor);
+     *   // beanName is non-null only if the resolver suggests a String value
+     * }</pre>
+     *
+     * @param dependencyDescriptor the {@link DependencyDescriptor} to resolve the bean name from
+     * @return the suggested bean name as a {@link String}, or {@code null} if the suggested
+     *         value is not a {@code String} or is {@code null}
+     */
     protected String resolveDependentBeanNameByName(DependencyDescriptor dependencyDescriptor) {
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);
         return suggestedValue instanceof String ? (String) suggestedValue : null;
     }
 
+    /**
+     * Resolve dependent bean names by type from the given type supplier.
+     * <p>
+     * The resolved type is checked against the {@link ResolvableDependencyTypeFilter};
+     * if it is a resolvable dependency type (e.g., {@code BeanFactory}, {@code ApplicationContext}),
+     * it is skipped. Otherwise, all bean names matching the type are added to the result set.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   Set<String> dependentBeanNames = new LinkedHashSet<>();
+     *   resolveDependentBeanNamesByType(field::getGenericType, beanFactory, dependentBeanNames);
+     *   // dependentBeanNames now contains all bean names matching the field's type
+     * }</pre>
+     *
+     * @param typeSupplier       a supplier providing the {@link Type} to resolve bean names for
+     * @param beanFactory        the {@link ConfigurableListableBeanFactory} to look up beans
+     * @param dependentBeanNames the set to collect resolved dependent bean names into
+     */
     protected void resolveDependentBeanNamesByType(Supplier<Type> typeSupplier, ConfigurableListableBeanFactory beanFactory, Set<String> dependentBeanNames) {
         Class<?> dependentType = resolveDependentType(typeSupplier);
         if (resolvableDependencyTypeFilter.accept(dependentType)) {
@@ -197,6 +361,25 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
         return resolveDependentType(type);
     }
 
+    /**
+     * Resolve the dependent {@link Class} from the given {@link Type}.
+     * <p>
+     * Handles plain classes (including array component types), and parameterized types
+     * such as {@code ObjectProvider<SomeBean>}, {@code List<SomeBean>},
+     * {@code Map<String, SomeBean>}, etc. For parameterized types, the last type argument
+     * is recursively resolved.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // For a field declared as Optional<List<MyBean>>
+     *   Type type = field.getGenericType();
+     *   Class<?> dependentType = resolveDependentType(type);
+     *   // dependentType == MyBean.class
+     * }</pre>
+     *
+     * @param type the {@link Type} to resolve
+     * @return the resolved {@link Class}, or {@code null} if the type cannot be resolved
+     */
     protected Class<?> resolveDependentType(Type type) {
         if (isClass(type)) {
             Class klass = (Class) type;

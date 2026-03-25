@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -179,7 +180,8 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     @ConfigurationProperty(
             name = CACHE_SIZE_PROPERTY_NAME,
             defaultValue = DEFAULT_CACHE_SIZE_PROPERTY_VALUE,
-            description = "The size of metadata cache"
+            description = "The size of metadata cache",
+            source = SYSTEM_PROPERTIES_SOURCE
     )
     public final static int CACHE_SIZE = getInteger(CACHE_SIZE_PROPERTY_NAME, DEFAULT_CACHE_SIZE);
 
@@ -250,6 +252,29 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         setCacheSize(CACHE_SIZE);
     }
 
+    /**
+     * Determines candidate constructors for the given bean class by inspecting constructors annotated with the
+     * configured injection annotation types. This method resolves constructor-based injection candidates similarly
+     * to {@link AutowiredAnnotationBeanPostProcessor}, but uses custom annotation types.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Given a class with an annotated constructor:
+     *   public class GenericChild extends GenericParent<User> {
+     *       @Referenced
+     *       public GenericChild(@Referenced User user) {
+     *           this.user = user;
+     *       }
+     *   }
+     *   // The processor automatically determines the annotated constructor as a candidate
+     *   Constructor<?>[] constructors = processor.determineCandidateConstructors(GenericChild.class, "genericChild");
+     * }</pre>
+     *
+     * @param beanClass the raw class of the bean to inspect for candidate constructors
+     * @param beanName  the name of the bean
+     * @return the candidate constructors, or {@code null} if none were found
+     * @throws BeansException if an error occurs during constructor resolution
+     */
     @Override
     public final Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) throws BeansException {
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
@@ -317,10 +342,12 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                             if (defaultConstructor != null) {
                                 candidates.add(defaultConstructor);
                             } else if (candidates.size() == 1) {
-                                logger.info("Inconsistent constructor declaration on bean with name '{}': " +
-                                        "single injection constructor flagged as optional - " +
-                                        "this constructor is effectively required since there is no " +
-                                        "default constructor to fall back to: {}", beanName, candidates.get(0));
+                                if (logger.isInfoEnabled()) {
+                                    logger.info("Inconsistent constructor declaration on bean with name '{}': " +
+                                            "single injection constructor flagged as optional - " +
+                                            "this constructor is effectively required since there is no " +
+                                            "default constructor to fall back to: {}", beanName, candidates.get(0));
+                                }
                             }
                         }
                         candidateConstructors = candidates.toArray(new Constructor<?>[0]);
@@ -341,10 +368,44 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
         return (candidateConstructors.length > 0 ? candidateConstructors : null);
     }
 
+    /**
+     * Post-processes property values before they are applied to the given bean, delegating
+     * to {@link #postProcessProperties(PropertyValues, Object, String)}.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Typically invoked by the Spring container during bean creation:
+     *   PropertyValues result = processor.postProcessPropertyValues(pvs, pds, myBean, "myBean");
+     * }</pre>
+     *
+     * @param pvs      the property values that the factory is about to apply
+     * @param pds      the relevant property descriptors for the target bean
+     * @param bean     the bean instance created, but whose properties have not yet been set
+     * @param beanName the name of the bean
+     * @return the actual property values to apply (can be the passed-in instance or a modified one)
+     * @throws BeanCreationException if injection of annotated dependencies fails
+     */
     public final PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeanCreationException {
         return postProcessProperties(pvs, bean, beanName);
     }
 
+    /**
+     * Post-processes property values by finding and injecting dependencies annotated with
+     * the configured annotation types into the given bean.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   // Automatically called by Spring during bean population phase:
+     *   AnnotatedInjectionBeanPostProcessor processor = new MyAnnotationBeanPostProcessor();
+     *   PropertyValues result = processor.postProcessProperties(pvs, myServiceBean, "myService");
+     * }</pre>
+     *
+     * @param pvs      the property values that the factory is about to apply
+     * @param bean     the bean instance created, but whose properties have not yet been set
+     * @param beanName the name of the bean
+     * @return the actual property values to apply
+     * @throws BeansException if injection of annotated dependencies fails
+     */
     public final PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
         InjectionMetadata metadata = findInjectionMetadata(beanName, bean.getClass(), pvs);
         try {
@@ -372,7 +433,9 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 AnnotationAttributes attributes = doGetAnnotationAttributes(field, annotationType);
                 if (attributes != null) {
                     if (isStatic(field.getModifiers())) {
-                        logger.warn("@{} is not supported on static fields: {}", annotationType.getName(), field);
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@{} is not supported on static fields: {}", annotationType.getName(), field);
+                        }
                         return;
                     }
                     boolean required = determineRequiredStatus(attributes);
@@ -413,11 +476,15 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 AnnotationAttributes attributes = doGetAnnotationAttributes(bridgedMethod, annotationType);
                 if (attributes != null && method.equals(getMostSpecificMethod(method, beanClass))) {
                     if (isStatic(method.getModifiers())) {
-                        logger.warn("@{} annotation is not supported on static methods: {}", annotationType.getName(), method);
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@{} annotation is not supported on static methods: {}", annotationType.getName(), method);
+                        }
                         return;
                     }
                     if (method.getParameterTypes().length == 0) {
-                        logger.warn("@{} annotation should only be used on methods with parameters: {}", annotationType.getName(), method);
+                        if (logger.isWarnEnabled()) {
+                            logger.warn("@{} annotation should only be used on methods with parameters: {}", annotationType.getName(), method);
+                        }
                     }
                     PropertyDescriptor pd = findPropertyForMethod(bridgedMethod, beanClass);
                     boolean required = determineRequiredStatus(attributes);
@@ -567,7 +634,9 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     public void destroy() {
         candidateConstructorsCache.clear();
         injectionMetadataCache.clear();
-        logger.info("{} was destroying!", getClass().getName());
+        if (logger.isInfoEnabled()) {
+            logger.info("{} was destroying!", getClass().getName());
+        }
     }
 
     /**
@@ -620,7 +689,9 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 if (this.beanFactory.containsBean(injectedBeanName)) {
                     this.beanFactory.registerDependentBean(injectedBeanName, beanName);
                 }
-                logger.trace("Injected by type from bean name '{}' to bean named '{}'", beanName, injectedBeanName);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Injected by type from bean name '{}' to bean named '{}'", beanName, injectedBeanName);
+                }
             }
         }
     }

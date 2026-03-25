@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.interceptor;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;

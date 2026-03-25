@@ -66,7 +66,6 @@ public class InterceptingApplicationEventMulticasterTest {
     @Autowired
     private ConfigurableApplicationContext context;
 
-
     @Test
     public void test() {
         AtomicReference<String> eventValueRef = new AtomicReference<>();

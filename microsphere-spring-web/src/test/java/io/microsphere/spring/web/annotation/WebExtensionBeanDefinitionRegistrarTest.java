@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.annotation;
 
-
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
@@ -37,7 +36,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class WebExtensionBeanDefinitionRegistrarTest {
 
-
     @EnableWebExtension
     static class DefaultConfig {
     }
@@ -53,7 +51,6 @@ public class WebExtensionBeanDefinitionRegistrarTest {
     @EnableWebExtension(publishEvents = false)
     static class DisablePublishEventConfig {
     }
-
 
     @Test
     public void testDefaultConfig() {

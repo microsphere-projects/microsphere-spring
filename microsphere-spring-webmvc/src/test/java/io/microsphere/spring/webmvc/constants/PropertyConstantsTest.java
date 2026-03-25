@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.constants;
 
-
 import org.junit.Test;
 
 import static io.microsphere.spring.webmvc.constants.PropertyConstants.MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX;

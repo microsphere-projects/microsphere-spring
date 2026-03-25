@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.metadata;
 
-
 import org.junit.Before;
 import org.junit.Test;
 

@@ -18,9 +18,13 @@
 package io.microsphere.spring.webmvc.method.support;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.DefaultDataBinderFactory;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -29,6 +33,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.lang.reflect.Method;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 
@@ -39,7 +44,12 @@ import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebReques
  * @see LoggingHandlerMethodArgumentResolverAdvice
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class LoggingHandlerMethodArgumentResolverAdviceTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private LoggingHandlerMethodArgumentResolverAdvice advice;
 
