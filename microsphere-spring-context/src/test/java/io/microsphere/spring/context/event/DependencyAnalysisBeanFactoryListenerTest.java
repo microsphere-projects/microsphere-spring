@@ -27,6 +27,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 /**
  * {@link DependencyAnalysisBeanFactoryListener} Test
  *
@@ -46,10 +48,12 @@ class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventListenerTes
      */
     @Test
     void testOnBeanFactoryConfigurationFrozenWithAnotherFactory() {
-        DefaultListableBeanFactory another = new DefaultListableBeanFactory();
-        another.registerBeanDefinition("user", new RootBeanDefinition(User.class));
-        // Must not throw; exercises the full analysis path on a fresh factory
-        beanFactoryListener.onBeanFactoryConfigurationFrozen(another);
+        assertDoesNotThrow(() -> {
+            DefaultListableBeanFactory another = new DefaultListableBeanFactory();
+            another.registerBeanDefinition("user", new RootBeanDefinition(User.class));
+            // Must not throw; exercises the full analysis path on a fresh factory
+            beanFactoryListener.onBeanFactoryConfigurationFrozen(another);
+        });
     }
 
     @Import(User.class)

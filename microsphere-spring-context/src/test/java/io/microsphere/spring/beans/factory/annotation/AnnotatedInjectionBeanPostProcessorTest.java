@@ -16,14 +16,15 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,7 @@ import java.lang.reflect.Constructor;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Child;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Parent;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.UserHolder;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -137,11 +139,13 @@ class AnnotatedInjectionBeanPostProcessorTest {
      * afterPropertiesSet initialises caches; destroy clears them without error.
      */
     @Test
-    void testAfterPropertiesSetAndDestroy() throws Exception {
-        AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
-        p.setCacheSize(8);
-        p.afterPropertiesSet();  // must not throw
-        p.destroy();             // must not throw
+    void testAfterPropertiesSetAndDestroy() {
+        assertDoesNotThrow(() -> {
+            AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
+            p.setCacheSize(8);
+            p.afterPropertiesSet();  // must not throw
+            p.destroy();             // must not throw
+        });
     }
 
     /**
@@ -149,10 +153,11 @@ class AnnotatedInjectionBeanPostProcessorTest {
      */
     @Test
     void testPostProcessMergedBeanDefinition() {
-        org.springframework.beans.factory.support.RootBeanDefinition rbd =
-                new org.springframework.beans.factory.support.RootBeanDefinition(TestConfiguration.Parent.class);
-        // No exception expected
-        processor.postProcessMergedBeanDefinition(rbd, TestConfiguration.Parent.class, "parent");
+        assertDoesNotThrow(() -> {
+            RootBeanDefinition rbd = new RootBeanDefinition(TestConfiguration.Parent.class);
+            // No exception expected
+            processor.postProcessMergedBeanDefinition(rbd, TestConfiguration.Parent.class, "parent");
+        });
     }
 
     /**
