@@ -19,7 +19,7 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.lang.function.ThrowableAction;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

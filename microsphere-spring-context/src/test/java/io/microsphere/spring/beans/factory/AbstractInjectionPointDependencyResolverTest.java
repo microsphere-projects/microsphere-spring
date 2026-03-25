@@ -17,7 +17,7 @@
 package io.microsphere.spring.beans.factory;
 
 
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
