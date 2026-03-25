@@ -41,7 +41,9 @@ public abstract class AbstractWebEndpointMappingFactory<E> implements WebEndpoin
         try {
             mapping = doCreate(endpoint);
         } catch (Throwable e) {
-            logger.error("The WebEndpointMapping instance can't be created by the source : {}", endpoint, e);
+            if (logger.isErrorEnabled()) {
+                logger.error("The WebEndpointMapping instance can't be created by the source : {}", endpoint, e);
+            }
         }
         return ofNullable((WebEndpointMapping<E>) mapping);
     }

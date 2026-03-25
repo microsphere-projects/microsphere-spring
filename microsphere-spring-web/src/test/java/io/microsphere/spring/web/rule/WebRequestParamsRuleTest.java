@@ -59,7 +59,6 @@ public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
         assertEquals(" && ", rule.getToStringInfix());
     }
 
-
     @Override
     protected void doTestEquals() {
         WebRequestParamsRule rule = new WebRequestParamsRule("param1=value1", "param2=value2");

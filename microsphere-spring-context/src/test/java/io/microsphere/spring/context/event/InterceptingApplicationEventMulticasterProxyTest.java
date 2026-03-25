@@ -200,7 +200,9 @@ public class InterceptingApplicationEventMulticasterProxyTest {
     @Bean(TEST_APPLICATION_LISTENER_BEAN_NAME)
     public static ApplicationListener applicationListener() {
         return event -> {
-            logger.trace("ApplicationListener is listening event : {}", event);
+            if (logger.isTraceEnabled()) {
+                logger.trace("ApplicationListener is listening event : {}", event);
+            }
             eventHolder.set(event);
         };
     }

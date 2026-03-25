@@ -95,7 +95,9 @@ public class IdempotentAnnotatedMethodHandlerInterceptor extends AnnotatedMethod
     protected void initIdempotentService(ApplicationContext context) {
         IdempotentService idempotentService = getOptionalBean(context, IdempotentService.class);
         if (idempotentService == null) {
-            logger.trace("The IdempotentService bean can't be found, DefaultIdempotentService will be used!");
+            if (logger.isTraceEnabled()) {
+                logger.trace("The IdempotentService bean can't be found, DefaultIdempotentService will be used!");
+            }
             idempotentService = new DefaultIdempotentService();
         }
         this.idempotentService = idempotentService;

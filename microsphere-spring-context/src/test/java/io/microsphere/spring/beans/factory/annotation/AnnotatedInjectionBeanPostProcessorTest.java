@@ -113,7 +113,9 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         });
     }
 
-    /** Setters persist through getters; verify all configurable flags round-trip. */
+    /**
+     * Setters persist through getters; verify all configurable flags round-trip.
+     */
     @Test
     public void testSettersAndGetters() {
         AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
@@ -129,7 +131,9 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         assertEquals(42, p.getOrder());
     }
 
-    /** afterPropertiesSet initialises caches; destroy clears them without error. */
+    /**
+     * afterPropertiesSet initialises caches; destroy clears them without error.
+     */
     @Test
     public void testAfterPropertiesSetAndDestroy() throws Exception {
         AnnotatedInjectionBeanPostProcessor p = new AnnotatedInjectionBeanPostProcessor(Referenced.class);
@@ -138,7 +142,9 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         p.destroy();             // must not throw
     }
 
-    /** postProcessMergedBeanDefinition must not throw for a known bean type. */
+    /**
+     * postProcessMergedBeanDefinition must not throw for a known bean type.
+     */
     @Test
     public void testPostProcessMergedBeanDefinition() {
         org.springframework.beans.factory.support.RootBeanDefinition rbd =
@@ -147,7 +153,9 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         processor.postProcessMergedBeanDefinition(rbd, TestConfiguration.Parent.class, "parent");
     }
 
-    /** determineCandidateConstructors returns null for a class without injection annotations. */
+    /**
+     * determineCandidateConstructors returns null for a class without injection annotations.
+     */
     @Test
     public void testDetermineCandidateConstructorsNoCandidates() {
         // PlainBean has no @Referenced annotation on constructors
@@ -156,8 +164,11 @@ public class AnnotatedInjectionBeanPostProcessorTest {
     }
 
     static class PlainBean {
-        PlainBean() {}
-        PlainBean(String s) {}
+        PlainBean() {
+        }
+
+        PlainBean(String s) {
+        }
     }
 
     <T> T createProxy(Class<T> beanType) {

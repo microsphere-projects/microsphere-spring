@@ -34,6 +34,8 @@ public class BeanTimeStatisticsTest extends AbstractEventListenerTest<BeanTimeSt
     public void test() {
         BeanTimeStatistics beanTimeStatistics = this.beanFactoryListener;
         StopWatch stopWatch = beanTimeStatistics.getStopWatch();
-        logger.info(stopWatch.toString());
+        if (logger.isInfoEnabled()) {
+            logger.info(stopWatch.toString());
+        }
     }
 }

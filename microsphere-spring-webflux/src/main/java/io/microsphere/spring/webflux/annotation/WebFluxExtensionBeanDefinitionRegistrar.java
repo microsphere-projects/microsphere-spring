@@ -153,6 +153,8 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
     }
 
     private void log(String messagePattern, Object... args) {
-        logger.trace(messagePattern, args);
+        if (logger.isTraceEnabled()) {
+            logger.trace(messagePattern, args);
+        }
     }
 }

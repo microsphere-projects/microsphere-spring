@@ -1028,11 +1028,36 @@ public abstract class BeanUtils implements Utils {
         }
 
 
+        /**
+         * Compares this {@link NamingBean} with another based on their ordering.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   NamingBean nb1 = new NamingBean("bean1", orderedBean1);
+         *   NamingBean nb2 = new NamingBean("bean2", orderedBean2);
+         *   int result = nb1.compareTo(nb2); // negative, zero, or positive
+         * }</pre>
+         *
+         * @param o the other {@link NamingBean} to compare against
+         * @return a negative integer, zero, or a positive integer as this object
+         *         is less than, equal to, or greater than the specified object
+         */
         @Override
         public int compareTo(NamingBean o) {
             return compare(this, o);
         }
 
+        /**
+         * Returns the order value of the contained bean.
+         *
+         * <h3>Example Usage</h3>
+         * <pre>{@code
+         *   NamingBean nb = new NamingBean("testBean", myOrderedBean);
+         *   int order = nb.getOrder(); // e.g. 1
+         * }</pre>
+         *
+         * @return the order value derived from the contained bean
+         */
         @Override
         public int getOrder() {
             return getOrder(bean);

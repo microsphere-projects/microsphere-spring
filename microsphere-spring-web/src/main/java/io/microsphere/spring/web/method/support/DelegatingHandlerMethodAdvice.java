@@ -59,8 +59,10 @@ public class DelegatingHandlerMethodAdvice extends OnceApplicationContextEventLi
     }
 
     private void log(ApplicationContext context) {
-        logger.trace("{} HandlerMethodArgumentInterceptors and {} HandlerMethodInterceptors were initialized in the ApplicationContext[id : '{}']",
-                this.argumentInterceptors.size(), this.methodInterceptors.size(), context.getId());
+        if (logger.isTraceEnabled()) {
+            logger.trace("{} HandlerMethodArgumentInterceptors and {} HandlerMethodInterceptors were initialized in the ApplicationContext[id : '{}']",
+                    this.argumentInterceptors.size(), this.methodInterceptors.size(), context.getId());
+        }
     }
 
     @Override

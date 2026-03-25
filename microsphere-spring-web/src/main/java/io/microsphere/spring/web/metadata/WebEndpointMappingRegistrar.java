@@ -69,7 +69,9 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
         WebEndpointMappingRegistry registry = getRegistry();
         Collection<WebEndpointMapping> webEndpointMappings = resolveWebEndpointMappings();
         int count = registry.register(webEndpointMappings);
-        this.logger.info("{} WebEndpointMappings were registered from the Spring context[id :'{}']", count, this.context.getId());
+        if (logger.isInfoEnabled()) {
+            this.logger.info("{} WebEndpointMappings were registered from the Spring context[id :'{}']", count, this.context.getId());
+        }
     }
 
     /**
