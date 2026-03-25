@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.rule;
 
-
 import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
 import org.junit.Before;
 import org.junit.Test;

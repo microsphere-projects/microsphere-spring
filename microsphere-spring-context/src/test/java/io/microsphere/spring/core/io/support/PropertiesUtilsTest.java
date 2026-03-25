@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.core.io.support;
 
-
 import org.junit.Test;
 
 import java.io.IOException;

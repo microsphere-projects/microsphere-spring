@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.core.env;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.env.MockEnvironment;

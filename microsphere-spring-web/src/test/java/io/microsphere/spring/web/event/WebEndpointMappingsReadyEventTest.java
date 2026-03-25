@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.event;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;

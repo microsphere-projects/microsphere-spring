@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.util;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Test;
 import org.springframework.web.method.HandlerMethod;

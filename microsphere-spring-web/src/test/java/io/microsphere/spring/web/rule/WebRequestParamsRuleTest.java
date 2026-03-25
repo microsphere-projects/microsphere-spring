@@ -31,7 +31,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
 
-
     // ==================== Constructor ====================
     @Test
     public void testConstructorWithParams() {
@@ -58,7 +57,6 @@ public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
         WebRequestParamsRule rule = new WebRequestParamsRule();
         assertEquals(" && ", rule.getToStringInfix());
     }
-
 
     @Override
     protected void doTestEquals() {

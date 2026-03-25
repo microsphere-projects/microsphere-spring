@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -159,7 +158,6 @@ public class ObjectProviderUtilsTest {
         ifUnique(this.objectProvider, null);
         ifUnique(this.optionalProvider, null);
     }
-
 
     @Test
     public void testIterator() {

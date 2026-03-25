@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.util;
 
-
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
@@ -71,7 +70,6 @@ public class WebSourceTest {
         NativeWebRequest request = createWebRequest(r -> r.getSession().setAttribute(testName, testValue));
         assertEquals(testValue, SESSION_ATTRIBUTE.getValue(request, testName));
     }
-
 
     @Test
     public void testGetValueForPARAMETER() {

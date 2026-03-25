@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.util;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
@@ -241,7 +240,6 @@ public class SpringWebMvcHelperTest implements RequestBodyAdvice {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) getRequestAttributes();
         return new ServletWebRequest(requestAttributes.getRequest(), requestAttributes.getResponse());
     }
-
 
     void testGetMethod(ServletWebRequest request, HttpMethod httpMethod) {
         String method = this.springWebMvcHelper.getMethod(request);

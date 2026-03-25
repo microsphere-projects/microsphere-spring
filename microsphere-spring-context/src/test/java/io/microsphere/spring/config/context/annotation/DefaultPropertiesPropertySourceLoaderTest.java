@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.config.context.annotation;
 
-
 import org.junit.Before;
 import org.junit.Test;
 

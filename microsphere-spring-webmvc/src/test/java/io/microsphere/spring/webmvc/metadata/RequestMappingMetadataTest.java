@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.metadata;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,10 +29,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.servlet.mvc.method.RequestMappingInfo.paths;
 
 /**
- * TODO
+ * {@link RequestMappingMetadata} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see TODO
+ * @see RequestMappingMetadata
  * @since 1.0.0
  */
 public class RequestMappingMetadataTest {

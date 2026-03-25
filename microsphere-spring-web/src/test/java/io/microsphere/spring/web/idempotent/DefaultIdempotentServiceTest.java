@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.idempotent;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -129,7 +128,6 @@ public class DefaultIdempotentServiceTest {
 
         // throw a IdempotentException if the token is absent in the request
         assertThrows(IdempotentException.class, () -> this.idempotentService.validateToken(this.request, this.attributes));
-
 
         newToken = this.idempotentService.generateToken(this.request, this.attributes);
 

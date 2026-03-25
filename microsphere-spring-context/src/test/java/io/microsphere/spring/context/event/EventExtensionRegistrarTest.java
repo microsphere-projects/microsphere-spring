@@ -19,7 +19,11 @@ package io.microsphere.spring.context.event;
 
 
 import io.microsphere.lang.MutableInteger;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.PayloadApplicationEvent;
@@ -30,6 +34,7 @@ import org.springframework.core.task.TaskExecutor;
 
 import java.util.function.Consumer;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +45,12 @@ import static org.junit.Assert.assertEquals;
  * @see EventExtensionRegistrar
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class EventExtensionRegistrarTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     static class ExecutorConfig {
         @Bean

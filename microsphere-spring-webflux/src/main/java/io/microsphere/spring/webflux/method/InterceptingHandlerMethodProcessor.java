@@ -289,7 +289,9 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         MethodParameter returnType = handlerResult.getReturnTypeSource();
         ReturnTypeContext returnTypeContext = returnTypeContextsCache.get(returnType);
         if (returnTypeContext == null) {
-            logger.trace("No ReturnTypeContext was found by the return type[{}]", returnType);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No ReturnTypeContext was found by the return type[{}]", returnType);
+            }
             HandlerResultHandler handler = resolveHandlerResultHandler(handlerResult);
             if (handler != null) {
                 returnTypeContext = new ReturnTypeContext();

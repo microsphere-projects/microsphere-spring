@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.context.annotation;
 
-
 import io.microsphere.spring.test.domain.User;
 import org.junit.Test;
 

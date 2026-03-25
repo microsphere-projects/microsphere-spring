@@ -110,7 +110,9 @@ public class RequestMappingMetadataWebEndpointMappingFactory extends HandlerMapp
             try {
                 patterns = (Set<String>) GET_PATTERNS_VALUES_METHOD_HANDLE.invokeExact(source);
             } catch (Throwable e) {
-                logger.error("RequestMappingInfo.getPatternValues() can't be invoked by {}", GET_PATTERNS_VALUES_METHOD_HANDLE, e);
+                if(logger.isErrorEnabled()) {
+                    logger.error("RequestMappingInfo.getPatternValues() can't be invoked by {}", GET_PATTERNS_VALUES_METHOD_HANDLE, e);
+                }
             }
         }
         if (isEmpty(patterns)) {

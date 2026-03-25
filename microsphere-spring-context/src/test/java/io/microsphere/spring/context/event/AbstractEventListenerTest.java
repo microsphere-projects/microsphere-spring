@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-
 import io.microsphere.logging.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;

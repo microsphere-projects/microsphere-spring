@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNull;
  */
 public class DependencyTreeWalkerTest {
 
-
     @Test
     public void testWalk() {
         DependencyTreeWalker walker = new DependencyTreeWalker();

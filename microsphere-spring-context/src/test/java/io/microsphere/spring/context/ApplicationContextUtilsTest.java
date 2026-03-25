@@ -16,9 +16,13 @@
  */
 package io.microsphere.spring.context;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -30,6 +34,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.util.List;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
@@ -45,7 +50,12 @@ import static org.junit.Assert.assertSame;
  * @see ApplicationContextUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class ApplicationContextUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private GenericApplicationContext context;
 

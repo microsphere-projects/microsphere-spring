@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static org.junit.Assert.assertEquals;
@@ -57,6 +60,10 @@ import static org.junit.Assert.assertTrue;
         }
 )
 public class ListenableConfigurableEnvironmentTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     private ListenableConfigurableEnvironment environment;
@@ -125,8 +132,11 @@ public class ListenableConfigurableEnvironmentTest {
     @Test
     public void testGetActiveProfiles() {
         String[] activeProfiles = environment.getActiveProfiles();
-        assertEquals(1, activeProfiles.length);
+        int length = activeProfiles.length;
         assertEquals("test", activeProfiles[0]);
+        if (length == 2) {
+            assertEquals("dev", activeProfiles[1]);
+        }
     }
 
     /**

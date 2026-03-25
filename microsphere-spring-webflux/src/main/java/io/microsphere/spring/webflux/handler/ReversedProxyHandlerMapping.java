@@ -90,12 +90,16 @@ public class ReversedProxyHandlerMapping extends AbstractHandlerMapping implemen
         ServerHttpRequest request = serverWebExchange.getRequest();
         String webEndpointMappingId = request.getHeaders().getFirst(ID_HEADER_NAME);
         if (isBlank(webEndpointMappingId)) {
-            logger.trace("No request header of the WebEndpointMapping ID [name : '{}'] is present", ID_HEADER_NAME);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No request header of the WebEndpointMapping ID [name : '{}'] is present", ID_HEADER_NAME);
+            }
             return empty();
         }
         WebEndpointMapping webEndpointMapping = webEndpointMappingsCache.get(webEndpointMappingId);
         if (webEndpointMapping == null) {
-            logger.trace("No WebEndpointMapping was found by the request header[name : '{}' , value : {}]", ID_HEADER_NAME, webEndpointMappingId);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No WebEndpointMapping was found by the request header[name : '{}' , value : {}]", ID_HEADER_NAME, webEndpointMappingId);
+            }
             return empty();
         }
         return getHandlerInternal(webEndpointMapping);

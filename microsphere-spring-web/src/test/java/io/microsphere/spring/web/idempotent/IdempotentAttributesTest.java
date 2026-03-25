@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.idempotent;
 
-
 import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.web.util.WebSource;
 import io.microsphere.spring.web.util.WebTarget;

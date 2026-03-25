@@ -116,56 +116,78 @@ public class LoggingBeanListener implements BeanListener {
 
     @Override
     public void onBeanDefinitionReady(String beanName, RootBeanDefinition mergedBeanDefinition) {
-        logger.info("onBeanDefinitionReady - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
+        if (logger.isInfoEnabled()) {
+            logger.info("onBeanDefinitionReady - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
+        }
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition) {
-        logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
+        if(logger.isInfoEnabled()) {
+            logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {}", beanName, mergedBeanDefinition);
+        }
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Constructor<?> constructor, Object[] args) {
-        logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {} , constructor : {} , args : {}", beanName, mergedBeanDefinition, constructor, arrayToString(args));
+        if(logger.isInfoEnabled()) {
+            logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {} , constructor : {} , args : {}", beanName, mergedBeanDefinition, constructor, arrayToString(args));
+        }
     }
 
     @Override
     public void onBeforeBeanInstantiate(String beanName, RootBeanDefinition mergedBeanDefinition, Object factoryBean, Method factoryMethod, Object[] args) {
-        logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {} , factoryBean : {} , factoryMethod : {} , args : {}", beanName, mergedBeanDefinition, factoryBean, factoryMethod, arrayToString(args));
+        if(logger.isInfoEnabled()) {
+            logger.info("onBeforeBeanInstantiate - bean name : {} , definition : {} , factoryBean : {} , factoryMethod : {} , args : {}", beanName, mergedBeanDefinition, factoryBean, factoryMethod, arrayToString(args));
+        }
     }
 
     @Override
     public void onAfterBeanInstantiated(String beanName, RootBeanDefinition mergedBeanDefinition, Object bean) {
-        logger.info("onAfterBeanInstantiated - bean name : {} , definition : {} , instance : {}", beanName, mergedBeanDefinition, bean);
+        if(logger.isInfoEnabled()) {
+            logger.info("onAfterBeanInstantiated - bean name : {} , definition : {} , instance : {}", beanName, mergedBeanDefinition, bean);
+        }
     }
 
     @Override
     public void onBeanPropertyValuesReady(String beanName, Object bean, PropertyValues pvs) {
-        logger.info("onBeanPropertyValuesReady - bean name : {} , instance : {} , PropertyValues : {}", beanName, bean, pvs);
+        if(logger.isInfoEnabled()) {
+            logger.info("onBeanPropertyValuesReady - bean name : {} , instance : {} , PropertyValues : {}", beanName, bean, pvs);
+        }
     }
 
     @Override
     public void onBeforeBeanInitialize(String beanName, Object bean) {
-        logger.info("onBeforeBeanInitialize - bean name : {} , instance : {}", beanName, bean);
+        if(logger.isInfoEnabled()) {
+            logger.info("onBeforeBeanInitialize - bean name : {} , instance : {}", beanName, bean);
+        }
     }
 
     @Override
     public void onAfterBeanInitialized(String beanName, Object bean) {
-        logger.info("onAfterBeanInitialized - bean name : {} , instance : {}", beanName, bean);
+        if(logger.isInfoEnabled()) {
+            logger.info("onAfterBeanInitialized - bean name : {} , instance : {}", beanName, bean);
+        }
     }
 
     @Override
     public void onBeanReady(String beanName, Object bean) {
-        logger.info("onBeanReady - bean name : {} , instance : {}", beanName, bean);
+        if(logger.isInfoEnabled()) {
+            logger.info("onBeanReady - bean name : {} , instance : {}", beanName, bean);
+        }
     }
 
     @Override
     public void onBeforeBeanDestroy(String beanName, Object bean) {
-        logger.info("onBeforeBeanDestroy - bean name : {} , instance : {}", beanName, bean);
+        if(logger.isInfoEnabled()) {
+            logger.info("onBeforeBeanDestroy - bean name : {} , instance : {}", beanName, bean);
+        }
     }
 
     @Override
     public void onAfterBeanDestroy(String beanName, Object bean) {
-        logger.info("onAfterBeanDestroy - bean name : {} , instance : {}", beanName, bean);
+        if(logger.isInfoEnabled()) {
+            logger.info("onAfterBeanDestroy - bean name : {} , instance : {}", beanName, bean);
+        }
     }
 }

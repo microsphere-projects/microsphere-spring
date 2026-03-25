@@ -58,7 +58,9 @@ public class RequestContextWebFilter implements WebFilter, Ordered {
         initContextHolders(requestAttributes);
         return chain.filter(exchange).doOnTerminate(() -> {
             resetContextHolders();
-            logger.trace("Cleared thread-bound request context: " + exchange);
+            if (logger.isTraceEnabled()) {
+                logger.trace("Cleared thread-bound request context: {}", exchange);
+            }
         });
     }
 
@@ -97,7 +99,9 @@ public class RequestContextWebFilter implements WebFilter, Ordered {
         Locale locale = getLocale(requestAttributes);
         setLocale(locale, this.threadContextInheritable);
         setRequestAttributes(requestAttributes, this.threadContextInheritable);
-        logger.trace("Bound request context to thread[inheritable : {}]: {}", this.threadContextInheritable, requestAttributes);
+        if (logger.isTraceEnabled()) {
+            logger.trace("Bound request context to thread[inheritable : {}]: {}", this.threadContextInheritable, requestAttributes);
+        }
     }
 
     protected Locale getLocale(ServerWebRequest requestAttributes) {

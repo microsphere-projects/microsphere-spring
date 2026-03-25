@@ -70,8 +70,10 @@ public class ContentCachingFilter extends OncePerRequestFilter {
             content = new String(responseWrapper.getContentAsByteArray(), response.getCharacterEncoding());
             request.setAttribute(RESPONSE_CONTENT_REQUEST_ATTRIBUTE_NAME, content);
         } catch (Throwable e) {
-            logger.error("ContentCachingResponseWrapper[contentSize : {} , encoding : '{}'] convert failed!",
-                    contentSize, response.getCharacterEncoding(), e);
+            if (logger.isErrorEnabled()) {
+                logger.error("ContentCachingResponseWrapper[contentSize : {} , encoding : '{}'] convert failed!",
+                        contentSize, response.getCharacterEncoding(), e);
+            }
         }
 
         return content;

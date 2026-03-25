@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.net;
 
-
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

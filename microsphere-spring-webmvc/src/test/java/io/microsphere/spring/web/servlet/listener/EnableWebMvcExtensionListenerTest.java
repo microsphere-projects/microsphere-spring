@@ -18,15 +18,20 @@
 package io.microsphere.spring.web.servlet.listener;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestServlet;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.web.servlet.FrameworkServlet;
 
 import static io.microsphere.collection.Sets.ofSet;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.servlet.listener.AbstractEnableWebMvcExtensionListenerTest.assertRequestContextFilter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,7 +46,12 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 @EnableWebMvcExtension
+@RunWith(JUnit4.class)
 public class EnableWebMvcExtensionListenerTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private EnableWebMvcExtensionListener listener;
 

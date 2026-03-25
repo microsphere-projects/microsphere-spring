@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.config;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,7 +94,6 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurerTest {
     @Test
     public void testConfigureContentNegotiation() throws HttpMediaTypeNotAcceptableException {
         assertNotNull(this.contentNegotiationManager);
-
 
         List<ContentNegotiationStrategy> strategies = this.contentNegotiationManager.getStrategies();
         assertEquals(4, strategies.size());

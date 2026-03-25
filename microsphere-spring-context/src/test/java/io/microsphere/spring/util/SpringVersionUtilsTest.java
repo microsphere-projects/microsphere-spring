@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.util;
 
-
 import io.microsphere.util.Version;
 import org.junit.Test;
 import org.springframework.util.StringUtils;

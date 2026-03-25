@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.context.annotation;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,6 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-
 
 /**
  * {@link ExposingClassPathBeanDefinitionScanner} Test

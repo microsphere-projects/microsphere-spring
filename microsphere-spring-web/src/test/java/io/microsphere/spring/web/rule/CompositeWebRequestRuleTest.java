@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.rule;
 
-
 import org.junit.Test;
 import org.springframework.web.context.request.NativeWebRequest;
 

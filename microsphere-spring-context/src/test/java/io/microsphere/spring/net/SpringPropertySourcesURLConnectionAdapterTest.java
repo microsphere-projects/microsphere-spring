@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.net;
 
-
 import org.junit.Test;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.PropertySources;

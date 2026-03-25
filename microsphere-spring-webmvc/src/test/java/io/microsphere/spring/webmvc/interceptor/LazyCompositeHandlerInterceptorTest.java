@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.interceptor;
 
-
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;

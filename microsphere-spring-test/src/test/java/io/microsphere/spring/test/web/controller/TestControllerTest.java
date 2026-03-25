@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.test.web.controller;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Before;

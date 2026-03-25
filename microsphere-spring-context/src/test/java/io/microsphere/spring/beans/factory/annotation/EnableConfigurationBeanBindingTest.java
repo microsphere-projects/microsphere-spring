@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Bean;
 
 import static org.junit.Assert.assertEquals;
 
-
 @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
 public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBeanBindingTest {
 

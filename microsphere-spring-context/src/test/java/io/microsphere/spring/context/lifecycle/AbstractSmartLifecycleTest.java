@@ -45,12 +45,16 @@ public class AbstractSmartLifecycleTest {
         lifecycle = new AbstractSmartLifecycle() {
             @Override
             protected void doStart() {
-                logger.trace("doStart");
+                if (logger.isTraceEnabled()) {
+                    logger.trace("doStart");
+                }
             }
 
             @Override
             protected void doStop() {
-                logger.trace("doStop");
+                if (logger.isTraceEnabled()) {
+                    logger.trace("doStop");
+                }
             }
         };
     }
@@ -89,7 +93,9 @@ public class AbstractSmartLifecycleTest {
     public void testStopWithRunnable() {
         assertFalse(lifecycle.isStarted());
         lifecycle.stop(() -> {
-            logger.trace("stop running");
+            if (logger.isTraceEnabled()) {
+                logger.trace("stop running");
+            }
         });
         assertFalse(lifecycle.isStarted());
     }

@@ -74,7 +74,9 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
     void loadPropertySourceFromLocations(AnnotationAttributes attributes, Map<String, Object> defaultProperties) throws Throwable {
         String[] locations = attributes.getStringArray("locations");
         if (isEmpty(locations)) {
-            logger.trace("The 'locations' or 'value' attribute is undefined from : {}", attributes);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The 'locations' or 'value' attribute is undefined from : {}", attributes);
+            }
             return;
         }
         // The property source name of current single @DefaultPropertiesPropertySource
@@ -100,7 +102,9 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
     void loadPropertySourceFromProperties(AnnotationAttributes attributes, Map<String, Object> defaultProperties) throws IOException {
         String[] propertiesValue = attributes.getStringArray("properties");
         if (isEmpty(propertiesValue)) {
-            logger.trace("The 'properties' attribute is undefined from : {}", attributes);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The 'properties' attribute is undefined from : {}", attributes);
+            }
             return;
         }
         Properties properties = loadProperties(propertiesValue);
@@ -108,7 +112,9 @@ class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate i
             String propertyValue = properties.getProperty(propertyName);
             Object oldPropertyValue = defaultProperties.put(propertyName, propertyValue);
             if (oldPropertyValue != null) {
-                logger.info("Overriding property '{}' with value '{}' from '{}'", propertyName, propertyValue, oldPropertyValue);
+                if (logger.isInfoEnabled()) {
+                    logger.info("Overriding property '{}' with value '{}' from '{}'", propertyName, propertyValue, oldPropertyValue);
+                }
             }
         }
     }

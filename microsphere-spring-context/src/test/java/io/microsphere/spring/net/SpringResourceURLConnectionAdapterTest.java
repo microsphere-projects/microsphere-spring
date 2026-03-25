@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.net;
 
-
 import org.junit.Before;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.io.FileSystemResource;
