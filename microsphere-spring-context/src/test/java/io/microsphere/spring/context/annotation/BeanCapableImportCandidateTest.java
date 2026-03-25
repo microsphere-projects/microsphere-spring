@@ -36,6 +36,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link BeanCapableImportCandidate} Test
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
         BeanCapableImportCandidateTest.MyImportSelector.class,
         BeanCapableImportCandidateTest.MyImportBeanDefinitionRegistrar.class
 })
+@SpringLoggingTest
 class BeanCapableImportCandidateTest {
 
     @Autowired

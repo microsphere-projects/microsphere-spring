@@ -27,12 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.context.ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME;
 import static org.springframework.util.ClassUtils.isAssignable;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link ConversionServiceResolver} Test
  *
  * @since 1.0.0
  */
+@SpringLoggingTest
 class ConversionServiceResolverTest {
 
     @Test

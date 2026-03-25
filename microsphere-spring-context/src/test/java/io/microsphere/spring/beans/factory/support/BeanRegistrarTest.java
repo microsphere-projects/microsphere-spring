@@ -47,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link BeanRegistrar} Test
@@ -55,6 +56,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @see BeanRegistrar
  * @since 1.0.0
  */
+@SpringLoggingTest
 class BeanRegistrarTest {
 
     private DefaultListableBeanFactory beanFactory;

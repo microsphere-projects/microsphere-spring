@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.registerBeanDefinition;
 import static org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors;
 import static org.springframework.util.ObjectUtils.isEmpty;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link AnnotatedBeanDefinitionRegistryUtils} Test
@@ -37,6 +38,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @see AnnotatedBeanDefinitionRegistryUtils
  * @since 1.0.0
  */
+@SpringLoggingTest
 class AnnotatedBeanDefinitionRegistryUtilsTest {
 
     private DefaultListableBeanFactory beanFactory = null;

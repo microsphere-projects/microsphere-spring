@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link ListenableConfigurableEnvironment} Test
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                 "score=99"
         }
 )
+@SpringLoggingTest
 class ListenableConfigurableEnvironmentTest {
 
     @Autowired

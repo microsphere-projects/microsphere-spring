@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link BeanDefinitionUtils} Test
@@ -53,6 +54,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @see BeanDefinitionUtils
  * @since 1.0.0
  */
+@SpringLoggingTest
 class BeanDefinitionUtilsTest {
 
     private static final String USER_BEAN_NAME = "user";

@@ -44,6 +44,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link ReversedProxyHandlerMapping} Test
@@ -57,6 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         ReversedProxyHandlerMappingTest.class
 })
 @EnableWebMvcExtension(reversedProxyHandlerMapping = true)
+@SpringLoggingTest
 class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
 
     @Autowired

@@ -43,6 +43,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link AnnotationBeanDefinitionRegistryPostProcessor} Test
@@ -56,6 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         AnnotationBeanDefinitionRegistryPostProcessorTest.class
 })
 @Configuration
+@SpringLoggingTest
 class AnnotationBeanDefinitionRegistryPostProcessorTest {
 
     @Service

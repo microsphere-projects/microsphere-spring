@@ -9,6 +9,7 @@ import static io.microsphere.spring.context.lifecycle.AbstractSmartLifecycle.DEF
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link LoggingSmartLifecycle} Test
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see LoggingSmartLifecycle
  * @since 1.0.0
  */
+@SpringLoggingTest
 class LoggingSmartLifecycleTest {
 
     private static final Logger logger = getLogger(LoggingSmartLifecycleTest.class);

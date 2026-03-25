@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link SpringFactoriesLoaderUtils} Test
@@ -48,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see SpringFactoriesLoaderUtils
  * @since 1.0.0
  */
+@SpringLoggingTest
 class SpringFactoriesLoaderUtilsTest {
 
     private GenericApplicationContext context;

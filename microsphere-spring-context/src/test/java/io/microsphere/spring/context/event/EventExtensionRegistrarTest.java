@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link EventExtensionRegistrar} Test
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see EventExtensionRegistrar
  * @since 1.0.0
  */
+@SpringLoggingTest
 class EventExtensionRegistrarTest {
 
     static class ExecutorConfig {

@@ -38,6 +38,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link TTLCacheResolver} Test
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         TTLCacheResolverTest.TestData.class
 })
 @EnableTTLCaching(proxyTargetClass = true)
+@SpringLoggingTest
 class TTLCacheResolverTest {
 
     /** Verifies that the well-known bean name constant has the expected value. */

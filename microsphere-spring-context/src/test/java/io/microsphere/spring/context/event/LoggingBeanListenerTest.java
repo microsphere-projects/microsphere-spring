@@ -18,6 +18,7 @@ package io.microsphere.spring.context.event;
 
 
 import org.springframework.test.context.ContextConfiguration;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link LoggingBeanListener} Test
@@ -27,5 +28,6 @@ import org.springframework.test.context.ContextConfiguration;
  * @since 1.0.0
  */
 @ContextConfiguration(locations = "classpath:/user-context.xml")
+@SpringLoggingTest
 class LoggingBeanListenerTest extends AbstractEventListenerTest<LoggingBeanListener> {
 }

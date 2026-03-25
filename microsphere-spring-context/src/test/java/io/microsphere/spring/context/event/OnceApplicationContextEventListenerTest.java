@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 
 /**
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see OnceApplicationContextEventListener
  * @since 1.0.0
  */
+@SpringLoggingTest
 class OnceApplicationContextEventListenerTest {
 
     @Test

@@ -35,6 +35,7 @@ import static io.microsphere.spring.beans.factory.annotation.EnableConfiguration
 import static java.lang.String.valueOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 
 /**
  * {@link ConfigurationBeanBindingRegistrar} Test
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @see ConfigurationBeanBindingRegistrar
  * @since 1.0.0
  */
+@SpringLoggingTest
 class ConfigurationBeanBindingRegistrarTest {
 
     private AnnotationConfigApplicationContext context;
