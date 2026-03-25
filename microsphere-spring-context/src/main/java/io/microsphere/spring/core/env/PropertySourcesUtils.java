@@ -365,11 +365,11 @@ public abstract class PropertySourcesUtils implements Utils {
             }
             defaultPropertiesPropertySource = new MapPropertySource(name, new HashMap<>());
             propertySources.addLast(defaultPropertiesPropertySource);
-        } else if (propertySource instanceof MapPropertySource mapPropertySource) {
+        } else if (propertySource instanceof MapPropertySource) {
             if (logger.isTraceEnabled()) {
                 logger.trace("The 'defaultProperties' property was initialized");
             }
-            defaultPropertiesPropertySource = mapPropertySource;
+            defaultPropertiesPropertySource = (MapPropertySource) propertySource;
         } else {
             if (logger.isWarnEnabled()) {
                 logger.warn("'defaultProperties' PropertySource[name: {}] is not an MapPropertySource instance; it is actually: {}", name, propertySource.getClass().getName());
