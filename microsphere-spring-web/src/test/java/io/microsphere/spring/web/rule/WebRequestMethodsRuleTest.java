@@ -16,16 +16,11 @@
  */
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,12 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class WebRequestMethodsRuleTest extends BaseWebRequestRuleTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testConstructorWithRequestMethods() {

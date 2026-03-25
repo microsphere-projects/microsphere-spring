@@ -17,20 +17,14 @@
 
 package io.microsphere.spring.context.event;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -45,12 +39,7 @@ import static org.junit.Assert.assertTrue;
  * @see InterceptingApplicationListener
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class InterceptingApplicationListenerTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final ThreadLocal<ApplicationEvent> eventHolder = new ThreadLocal<>();
 

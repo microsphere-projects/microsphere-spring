@@ -16,12 +16,8 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.MutablePropertySources;
@@ -30,19 +26,13 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePropertySource;
 
 import java.io.IOException;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * Abstract Test cases for {@link EnableConfigurationBeanBinding}
  *
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public abstract class AbstractEnableConfigurationBeanBindingTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     protected AnnotationConfigApplicationContext context;
 

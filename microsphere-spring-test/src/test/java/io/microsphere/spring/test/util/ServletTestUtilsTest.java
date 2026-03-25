@@ -17,21 +17,15 @@
 
 package io.microsphere.spring.test.util;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestServlet;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletRegistration;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestFilter;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
 import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_NAME;
@@ -51,12 +45,7 @@ import static org.junit.Assert.assertEquals;
  * @see ServletTestUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ServletTestUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private TestServletContext servletContext;
 

@@ -16,9 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.beans.PropertyChangeSupport;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -42,10 +39,6 @@ import static org.junit.Assert.assertNull;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {JavaBeansPropertyChangeListenerAdapterTest.class})
 public class JavaBeansPropertyChangeListenerAdapterTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private ConfigurableApplicationContext context;

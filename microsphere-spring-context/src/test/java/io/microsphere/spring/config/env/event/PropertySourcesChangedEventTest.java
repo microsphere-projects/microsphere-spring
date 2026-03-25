@@ -16,14 +16,9 @@
  */
 package io.microsphere.spring.config.env.event;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.MutablePropertySources;
@@ -32,7 +27,6 @@ import org.springframework.mock.env.MockPropertySource;
 import java.util.Map;
 
 import static io.microsphere.collection.ListUtils.ofList;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.added;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.removed;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.replaced;
@@ -49,12 +43,7 @@ import static org.junit.Assert.assertTrue;
  * @see PropertySourcesChangedEvent
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class PropertySourcesChangedEventTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private ConfigurableApplicationContext context;
 

@@ -17,18 +17,12 @@
 
 package io.microsphere.spring.web.metadata;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Collection;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import static io.microsphere.collection.ListUtils.ofList;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -43,17 +37,11 @@ import static org.springframework.http.HttpMethod.GET;
  * @see WebEndpointMappingRegistry
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class WebEndpointMappingRegistryTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final WebEndpointMapping mapping = servlet().endpoint(Object.class).patterns("/*").method(GET).build();
 
     private static final WebEndpointMapping non_mapping = servlet().endpoint(Object.class).patterns("!/*").method(GET).build();
-
 
     static class WebEndpointMappingRegistryImpl implements WebEndpointMappingRegistry {
 

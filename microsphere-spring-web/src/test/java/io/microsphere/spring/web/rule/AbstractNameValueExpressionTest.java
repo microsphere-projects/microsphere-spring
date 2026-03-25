@@ -17,14 +17,9 @@
 
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -38,12 +33,7 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 
-@RunWith(JUnit4.class)
 public class AbstractNameValueExpressionTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     // Concrete implementation for testing
     static class TestExpression extends AbstractNameValueExpression<String> {

@@ -16,16 +16,13 @@
  */
 package io.microsphere.spring.core.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.of;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -41,10 +38,6 @@ import static org.springframework.core.annotation.AnnotationUtils.getAnnotationA
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {GenericAnnotationAttributesTest.class})
 public class GenericAnnotationAttributesTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private ContextConfiguration contextConfiguration;
 

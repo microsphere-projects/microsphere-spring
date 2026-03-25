@@ -16,8 +16,6 @@
  */
 package io.microsphere.spring.net;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,11 +26,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import static io.microsphere.collection.Lists.ofList;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.reflect.FieldUtils.setFieldValue;
 import static java.lang.System.currentTimeMillis;
@@ -54,12 +49,7 @@ import static org.junit.Assert.assertTrue;
  * @see AbstractSpringResourceURLConnection
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public abstract class AbstractSpringResourceURLConnectionTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public abstract void testConnectTimeout();
@@ -324,7 +314,6 @@ public abstract class AbstractSpringResourceURLConnectionTest {
             setFieldValue(urlConnection, connectedFieldName, connected);
         }
     }
-
 
     void testGetHeaderEntryOnOutOfRange(AbstractSpringResourceURLConnection urlConnection) {
         assertNull(urlConnection.getHeaderEntry(-1));

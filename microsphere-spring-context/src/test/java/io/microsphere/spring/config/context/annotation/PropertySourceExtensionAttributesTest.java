@@ -1,9 +1,7 @@
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.config.env.support.DefaultResourceComparator;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.core.io.support.DefaultPropertySourceFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.config.context.annotation.PropertySourceExtensionAttributes.validateAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.ArrayUtils.ofArray;
@@ -47,10 +44,6 @@ import static org.junit.Assert.assertTrue;
         encoding = "UTF-8"
 )
 public class PropertySourceExtensionAttributesTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final Class<ResourcePropertySource> annotationType = ResourcePropertySource.class;
 

@@ -17,13 +17,9 @@
 package io.microsphere.spring.web.metadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.web.metadata.WebEndpointMapping.Builder;
 import io.microsphere.spring.web.metadata.WebEndpointMapping.Kind;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
@@ -35,7 +31,6 @@ import java.util.Objects;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.io.IOUtils.copyToString;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.assertBuilders;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.pair;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.toStrings;
@@ -87,12 +82,7 @@ import static org.springframework.http.MediaType.TEXT_XML_VALUE;
  * @see WebEndpointMapping
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class WebEndpointMappingTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     public static final String[] TEST_URL_PATTERNS = ofArray("/test");
 
@@ -637,7 +627,6 @@ public class WebEndpointMappingTest {
         assertEquals(builder.build().toString(), builder.build().toString());
     }
 
-
     @Test
     public void testToJSON() throws IOException {
         Resource fullJsonResource = new DefaultResourceLoader().getResource("classpath:META-INF/web-mapping-descriptor.json");
@@ -721,7 +710,6 @@ public class WebEndpointMappingTest {
         assertThrows(IllegalArgumentException.class, () -> assertBuilders(minServletBuilder(), null));
         assertThrows(IllegalArgumentException.class, () -> assertBuilders(minServletBuilder(), minBuilder(FILTER)));
     }
-
 
     Builder<?> minServletBuilder() {
         return minBuilder(SERVLET);

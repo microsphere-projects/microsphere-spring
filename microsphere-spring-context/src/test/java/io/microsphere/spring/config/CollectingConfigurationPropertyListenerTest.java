@@ -1,10 +1,8 @@
 package io.microsphere.spring.config;
 
 import io.microsphere.beans.ConfigurationProperty;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironment;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_PREFIX;
@@ -40,10 +37,6 @@ import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_SUFFIX;
         }
 )
 public class CollectingConfigurationPropertyListenerTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private ListenableConfigurableEnvironment environment;

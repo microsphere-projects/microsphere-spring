@@ -16,10 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.ObjectProvider;
@@ -32,7 +29,6 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import static io.microsphere.lang.function.ThrowableAction.execute;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.ObjectProviderUtils.getIfAvailable;
 import static io.microsphere.spring.beans.factory.ObjectProviderUtils.getIfUnique;
 import static io.microsphere.spring.beans.factory.ObjectProviderUtils.ifAvailable;
@@ -58,10 +54,6 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = ObjectProviderUtilsTest.class)
 public class ObjectProviderUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final boolean isBelowSpring51 = SPRING_5_1.gt(CURRENT);
 
@@ -166,7 +158,6 @@ public class ObjectProviderUtilsTest {
         ifUnique(this.objectProvider, null);
         ifUnique(this.optionalProvider, null);
     }
-
 
     @Test
     public void testIterator() {

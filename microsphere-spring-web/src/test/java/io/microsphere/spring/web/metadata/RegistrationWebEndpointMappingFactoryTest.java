@@ -17,19 +17,14 @@
 
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockServletContext;
 
 import javax.servlet.Registration;
 import javax.servlet.ServletContext;
 import java.util.Collection;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertFalse;
@@ -43,12 +38,7 @@ import static org.junit.Assert.assertSame;
  * @see RegistrationWebEndpointMappingFactory
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class RegistrationWebEndpointMappingFactoryTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     static class RegistrationWebEndpointMappingFactoryImpl extends RegistrationWebEndpointMappingFactory<Registration> {
 

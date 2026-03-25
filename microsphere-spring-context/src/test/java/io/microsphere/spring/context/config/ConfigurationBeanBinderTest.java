@@ -1,18 +1,13 @@
 package io.microsphere.spring.context.config;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * {@link ConfigurationBeanBinder} Test
@@ -21,12 +16,7 @@ import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
  * @see ConfigurationBeanBinder
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ConfigurationBeanBinderTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final Logger logger = getLogger(ConfigurationBeanBinderTest.class);
 

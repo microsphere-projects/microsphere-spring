@@ -16,15 +16,10 @@
  */
 package io.microsphere.spring.util;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.util.MimeType;
 
 import static io.microsphere.collection.Lists.ofList;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL;
 import static io.microsphere.spring.util.MimeTypeUtils.APPLICATION_GRAPHQL_VALUE;
 import static io.microsphere.spring.util.MimeTypeUtils.equalsTypeAndSubtype;
@@ -44,12 +39,7 @@ import static org.junit.Assert.assertTrue;
  * @see MimeTypeUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class MimeTypeUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final MimeType APPLICATION_TEXT = new MimeType("application", "text");
 

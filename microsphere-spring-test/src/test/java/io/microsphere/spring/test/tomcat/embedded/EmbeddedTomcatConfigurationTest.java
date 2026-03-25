@@ -17,8 +17,6 @@
 
 package io.microsphere.spring.test.tomcat.embedded;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -45,10 +42,6 @@ import static org.junit.Assert.assertNotSame;
 @RunWith(SpringRunner.class)
 @EmbeddedTomcatConfiguration
 public class EmbeddedTomcatConfigurationTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private ConfigurableWebApplicationContext wac;

@@ -16,14 +16,9 @@
  */
 package io.microsphere.spring.core;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.util.Version;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_3_38;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_3_39;
@@ -40,12 +35,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class SpringVersionTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testVersionRange() {

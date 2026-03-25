@@ -17,10 +17,7 @@
 
 package io.microsphere.spring.webmvc.config;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +39,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.webmvc.config.ConfigurableContentNegotiationManagerWebMvcConfigurerTest.MEDIA_TYPES_JSON;
 import static org.junit.Assert.assertEquals;
@@ -86,10 +82,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @EnableWebMvc
 public class ConfigurableContentNegotiationManagerWebMvcConfigurerTest {
 
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
-
     static final String MEDIA_TYPES_JSON = "{" +
             "  \"json\": \"application/json\"," +
             "  \"txt\": \"text/plain\"," +
@@ -102,7 +94,6 @@ public class ConfigurableContentNegotiationManagerWebMvcConfigurerTest {
     @Test
     public void testConfigureContentNegotiation() throws HttpMediaTypeNotAcceptableException {
         assertNotNull(this.contentNegotiationManager);
-
 
         List<ContentNegotiationStrategy> strategies = this.contentNegotiationManager.getStrategies();
         assertEquals(4, strategies.size());

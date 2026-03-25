@@ -16,12 +16,8 @@
  */
 package io.microsphere.spring.core.io;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -30,7 +26,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.function.Function;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceUtils.FILE_URL_RESOURCE_CLASS;
 import static org.junit.Assert.assertEquals;
@@ -42,12 +37,7 @@ import static org.junit.Assert.assertEquals;
  * @see ResourceUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ResourceUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final ResourceLoader resourceLoader = getResourceLoader();
 

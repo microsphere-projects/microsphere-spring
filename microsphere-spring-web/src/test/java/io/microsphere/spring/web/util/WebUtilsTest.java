@@ -17,18 +17,12 @@
 
 package io.microsphere.spring.web.util;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.util.WebUtils.isHandlerMethod;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
 import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
@@ -45,12 +39,7 @@ import static org.springframework.beans.BeanUtils.findMethod;
  * @see WebUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class WebUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final Method helloWorldMethod = findMethod(TestController.class, "helloWorld");
 

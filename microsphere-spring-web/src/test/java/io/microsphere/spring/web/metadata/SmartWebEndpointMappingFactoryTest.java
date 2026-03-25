@@ -16,9 +16,7 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
@@ -49,10 +46,6 @@ import static org.springframework.util.StreamUtils.copyToString;
         SmartWebEndpointMappingFactoryTest.class
 })
 public class SmartWebEndpointMappingFactoryTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Value("classpath:META-INF/web-mapping-descriptor.json")
     private Resource fullJsonResource;

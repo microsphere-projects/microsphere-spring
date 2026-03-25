@@ -17,17 +17,12 @@
 
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.http.MediaType;
 
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.ofMap;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.rule.GenericMediaTypeExpression.matchParameters;
 import static io.microsphere.spring.web.rule.GenericMediaTypeExpression.of;
 import static java.util.Collections.emptyMap;
@@ -40,19 +35,13 @@ import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.MediaType.parseMediaType;
 
-
 /**
  * {@link GenericMediaTypeExpression} test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class GenericMediaTypeExpressionTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testConstructor() {

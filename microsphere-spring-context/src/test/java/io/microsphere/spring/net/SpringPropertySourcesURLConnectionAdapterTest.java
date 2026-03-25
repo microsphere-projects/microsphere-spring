@@ -17,12 +17,7 @@
 
 package io.microsphere.spring.net;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.PropertySources;
 import org.springframework.mock.env.MockEnvironment;
@@ -31,7 +26,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.net.URLUtils.ofURL;
 import static io.microsphere.spring.net.SpringPropertySourcesURLConnectionAdapter.DEFAULT_MEDIA_TYPE;
 import static io.microsphere.spring.net.SpringPropertySourcesURLConnectionAdapter.getJavaType;
@@ -48,12 +42,7 @@ import static org.springframework.util.MimeTypeUtils.TEXT_HTML;
  * @see SpringPropertySourcesURLConnectionAdapter
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class SpringPropertySourcesURLConnectionAdapterTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testConvert() {

@@ -16,9 +16,6 @@
  */
 package io.microsphere.spring.core.env;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -41,10 +37,6 @@ import static org.junit.Assert.assertNotNull;
         ListenableConfigurableEnvironmentInitializer.class
 })
 public class ListenableConfigurableEnvironmentInitializerTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private Environment environment;

@@ -17,14 +17,8 @@
 
 package io.microsphere.spring.webmvc.util;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.BEAN_NAME_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.CONTENT_NEGOTIATING_VIEW_RESOLVER_BEAN_NAME;
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.FREEMARKER_VIEW_RESOLVER_BEAN_NAME;
@@ -43,12 +37,7 @@ import static org.junit.Assert.assertEquals;
  * @see ViewResolverUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ViewResolverUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testConstants() {

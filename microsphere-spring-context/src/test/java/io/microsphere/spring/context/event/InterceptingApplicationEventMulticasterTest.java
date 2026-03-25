@@ -16,8 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
@@ -46,10 +43,6 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
         InterceptingApplicationEventMulticasterTest.class
 })
 public class InterceptingApplicationEventMulticasterTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Bean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
     public static ApplicationEventMulticaster applicationEventMulticaster() {
@@ -72,7 +65,6 @@ public class InterceptingApplicationEventMulticasterTest {
 
     @Autowired
     private ConfigurableApplicationContext context;
-
 
     @Test
     public void test() {

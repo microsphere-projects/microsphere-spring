@@ -1,13 +1,8 @@
 package io.microsphere.spring.util;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.mock.env.MockEnvironment;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.util.FilterMode.CONDITIONAL;
 import static io.microsphere.spring.util.FilterMode.PROPERTY_NAME;
 import static io.microsphere.spring.util.FilterMode.SEQUENTIAL;
@@ -24,12 +19,7 @@ import static org.junit.Assert.assertTrue;
  * @see FilterMode
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class FilterModeTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testConstants() {

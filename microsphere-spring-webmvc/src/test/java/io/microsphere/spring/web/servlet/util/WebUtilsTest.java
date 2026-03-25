@@ -17,16 +17,11 @@
 
 package io.microsphere.spring.web.servlet.util;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestServlet;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.FrameworkServlet;
@@ -37,7 +32,6 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletRegistration;
 import java.util.Map;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.servlet.util.WebUtils.findFilterRegistrations;
 import static io.microsphere.spring.web.servlet.util.WebUtils.findServletRegistrations;
 import static io.microsphere.spring.web.servlet.util.WebUtils.getServletContext;
@@ -55,12 +49,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class WebUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     static final String testServletName = "testServlet";
 

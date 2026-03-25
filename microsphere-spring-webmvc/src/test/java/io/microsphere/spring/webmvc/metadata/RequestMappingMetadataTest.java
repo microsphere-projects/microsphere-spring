@@ -17,18 +17,12 @@
 
 package io.microsphere.spring.webmvc.metadata;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static org.junit.Assert.assertSame;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -41,12 +35,7 @@ import static org.springframework.web.servlet.mvc.method.RequestMappingInfo.path
  * @see RequestMappingMetadata
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class RequestMappingMetadataTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private RequestMappingInfo requestMappingInfo;
 

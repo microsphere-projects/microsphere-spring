@@ -1,15 +1,10 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
@@ -20,12 +15,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  * @see ApplicationListenerInterceptor
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ApplicationListenerInterceptorTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final Logger logger = getLogger(ApplicationListenerInterceptorTest.class);
 

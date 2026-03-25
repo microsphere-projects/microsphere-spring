@@ -18,14 +18,10 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.lang.function.ThrowableAction;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -49,7 +45,6 @@ import java.util.function.Consumer;
 
 import static io.microsphere.io.FileUtils.forceDelete;
 import static io.microsphere.lang.function.ThrowableAction.execute;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static java.lang.Thread.sleep;
 import static java.util.UUID.randomUUID;
@@ -70,12 +65,7 @@ import static org.springframework.core.io.support.PropertiesLoaderUtils.loadProp
  * @see ResourcePropertySource
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ResourcePropertySourceLoaderTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     static final Class<ResourcePropertySource> RESOURCE_PROPERTY_SOURCE_CLASS = ResourcePropertySource.class;
 

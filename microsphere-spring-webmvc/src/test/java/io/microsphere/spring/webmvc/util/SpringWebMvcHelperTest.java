@@ -17,14 +17,11 @@
 
 package io.microsphere.spring.webmvc.util;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +59,6 @@ import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.ofMap;
 import static io.microsphere.collection.Sets.ofSet;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_MVC;
 import static io.microsphere.spring.web.util.WebRequestUtils.METHOD_HEADER_NAME;
@@ -108,10 +104,6 @@ import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 @EnableWebMvc
 @RestControllerAdvice(assignableTypes = TestController.class)
 public class SpringWebMvcHelperTest implements RequestBodyAdvice {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final String PROCESSED_LISTENERS_ATTRIBUTE_NAME = "processedListeners";
 
@@ -248,7 +240,6 @@ public class SpringWebMvcHelperTest implements RequestBodyAdvice {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) getRequestAttributes();
         return new ServletWebRequest(requestAttributes.getRequest(), requestAttributes.getResponse());
     }
-
 
     void testGetMethod(ServletWebRequest request, HttpMethod httpMethod) {
         String method = this.springWebMvcHelper.getMethod(request);

@@ -17,16 +17,10 @@
 
 package io.microsphere.spring.net;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -36,12 +30,7 @@ import static org.junit.Assert.assertSame;
  * @see SpringResourceURLConnection
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class SpringResourceURLConnectionTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void test() {

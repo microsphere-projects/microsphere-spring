@@ -17,14 +17,9 @@
 
 package io.microsphere.spring.context.annotation;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -34,11 +29,9 @@ import org.springframework.core.env.Environment;
 
 import java.util.Set;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-
 
 /**
  * {@link ExposingClassPathBeanDefinitionScanner} Test
@@ -47,12 +40,7 @@ import static org.junit.Assert.assertSame;
  * @see ExposingClassPathBeanDefinitionScanner
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ExposingClassPathBeanDefinitionScannerTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private ConfigurableApplicationContext context;
 

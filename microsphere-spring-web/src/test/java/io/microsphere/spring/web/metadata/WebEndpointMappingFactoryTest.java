@@ -17,15 +17,9 @@
 
 package io.microsphere.spring.web.metadata;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.util.Optional.empty;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -38,12 +32,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebEndpointMappingFactory
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class WebEndpointMappingFactoryTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private WebEndpointMappingFactory factory;
 

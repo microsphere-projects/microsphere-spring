@@ -17,16 +17,10 @@
 
 package io.microsphere.spring.web.util;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static io.microsphere.spring.web.util.HttpUtils.supportsMethod;
 import static org.junit.Assert.assertFalse;
@@ -41,12 +35,7 @@ import static org.springframework.http.HttpMethod.values;
  * @see HttpUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class HttpUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testALL_HTTP_METHODS() {

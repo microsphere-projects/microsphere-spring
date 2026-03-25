@@ -17,14 +17,9 @@
 
 package io.microsphere.spring.webmvc.interceptor;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.method.HandlerMethod;
@@ -34,7 +29,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static org.junit.Assert.assertTrue;
 
@@ -45,12 +39,7 @@ import static org.junit.Assert.assertTrue;
  * @see HandlerInterceptor
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public abstract class AbstractHandlerInterceptorTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     protected HandlerInterceptor interceptor;
 

@@ -17,13 +17,9 @@
 
 package io.microsphere.spring.core;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.MethodParameter;
 
 import java.lang.reflect.Constructor;
@@ -31,7 +27,6 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.AccessibleObjectUtils.trySetAccessible;
 import static io.microsphere.reflect.ConstructorUtils.findConstructor;
 import static io.microsphere.reflect.MethodUtils.findMethod;
@@ -49,12 +44,7 @@ import static org.junit.Assert.assertThrows;
  * @see MethodParameterUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class MethodParameterUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private Constructor constructor;
 

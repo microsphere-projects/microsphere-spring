@@ -16,8 +16,6 @@
  */
 package io.microsphere.spring.cache.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static io.microsphere.collection.Lists.ofList;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.assertEquals;
 
@@ -49,10 +46,6 @@ import static org.junit.Assert.assertEquals;
 })
 @EnableTTLCaching(proxyTargetClass = true)
 public class EnableTTLCachingTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Bean
     public static CacheManager cacheManager() {

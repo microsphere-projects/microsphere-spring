@@ -17,10 +17,8 @@
 
 package io.microsphere.spring.test.zookeeper.embedded;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,7 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.charset.Charset;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.curator.framework.CuratorFrameworkFactory.newClient;
 import static org.junit.Assert.assertEquals;
@@ -44,10 +41,6 @@ import static org.junit.Assert.assertEquals;
 @EmbeddedZookeeperServer
 @ContextConfiguration(classes = EmbeddedZookeeperServerTest.class)
 public class EmbeddedZookeeperServerTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void test() throws Exception {

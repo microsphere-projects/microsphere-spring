@@ -17,16 +17,11 @@
 
 package io.microsphere.spring.web.rule;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.http.MediaType;
 
 import java.util.List;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExpressions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,12 +39,7 @@ import static org.springframework.http.MediaType.valueOf;
  *
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ConsumeMediaTypeExpressionTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testMatchWhenPositiveMatch() {

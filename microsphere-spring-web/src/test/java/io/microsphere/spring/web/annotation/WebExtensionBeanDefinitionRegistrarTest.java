@@ -17,17 +17,11 @@
 
 package io.microsphere.spring.web.annotation;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static org.junit.Assert.assertFalse;
@@ -40,13 +34,7 @@ import static org.junit.Assert.assertTrue;
  * @see WebExtensionBeanDefinitionRegistrar
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class WebExtensionBeanDefinitionRegistrarTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
-
 
     @EnableWebExtension
     static class DefaultConfig {
@@ -63,7 +51,6 @@ public class WebExtensionBeanDefinitionRegistrarTest {
     @EnableWebExtension(publishEvents = false)
     static class DisablePublishEventConfig {
     }
-
 
     @Test
     public void testDefaultConfig() {

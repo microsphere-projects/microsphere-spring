@@ -16,9 +16,7 @@
  */
 package io.microsphere.spring.core.convert.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.core.convert.support.ConversionServiceResolver;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Duration;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -42,10 +39,6 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes = EnableSpringConverterAdapterTest.class)
 @EnableSpringConverterAdapter
 public class EnableSpringConverterAdapterTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private ConfigurableBeanFactory beanFactory;

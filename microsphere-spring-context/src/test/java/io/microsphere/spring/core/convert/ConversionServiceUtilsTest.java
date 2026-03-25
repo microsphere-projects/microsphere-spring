@@ -17,14 +17,8 @@
 
 package io.microsphere.spring.core.convert;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.convert.ConversionServiceUtils.getSharedInstance;
 import static org.junit.Assert.assertNotNull;
 
@@ -35,12 +29,7 @@ import static org.junit.Assert.assertNotNull;
  * @see ConversionServiceUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class ConversionServiceUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testGetSharedInstance() {

@@ -17,12 +17,9 @@
 
 package io.microsphere.spring.web.servlet.listener;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration;
 import io.microsphere.spring.web.util.RequestContextStrategy;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,6 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.util.ArrayUtils.asArray;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertArrayEquals;
@@ -55,10 +51,6 @@ import static org.springframework.web.context.support.WebApplicationContextUtils
 @RunWith(SpringRunner.class)
 @EmbeddedTomcatConfiguration(classes = Object.class)
 abstract class AbstractEnableWebMvcExtensionListenerTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     WebApplicationContext wac;

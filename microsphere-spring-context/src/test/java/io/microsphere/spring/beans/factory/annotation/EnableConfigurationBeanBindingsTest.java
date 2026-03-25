@@ -16,15 +16,10 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.context.annotation.Configuration;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -36,12 +31,7 @@ import static org.junit.Assert.assertEquals;
         @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
 )
 @Configuration
-@RunWith(JUnit4.class)
 public class EnableConfigurationBeanBindingsTest extends AbstractEnableConfigurationBeanBindingTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testUser() {

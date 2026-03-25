@@ -17,8 +17,6 @@
 
 package io.microsphere.spring.webmvc.util;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer;
 import io.microsphere.spring.context.event.EventPublishingBeanInitializer;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;
@@ -28,10 +26,7 @@ import io.microsphere.spring.test.web.servlet.TestServlet;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -53,7 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
 import static io.microsphere.collection.Sets.ofSet;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.INIT_PARAM_DELIMITERS;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.SUPPORTED_CONVERTER_TYPES;
 import static io.microsphere.spring.webmvc.util.WebMvcUtils.getClassNames;
@@ -92,12 +86,7 @@ import static org.springframework.web.context.request.RequestContextHolder.setRe
  * @since 1.0.0
  */
 @ControllerAdvice
-@RunWith(JUnit4.class)
 public class WebMvcUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final Class<? extends ApplicationContextInitializer>[] INITIALIZER_CLASSES = ofArray(
             ListenableConfigurableEnvironmentInitializer.class,

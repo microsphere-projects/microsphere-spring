@@ -16,13 +16,9 @@
  */
 package io.microsphere.spring.beans.factory;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -40,7 +36,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static io.microsphere.collection.SetUtils.ofSet;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asAutowireCapableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
@@ -72,12 +67,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class BeanFactoryUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private AnnotationConfigApplicationContext applicationContext;
 

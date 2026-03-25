@@ -17,21 +17,16 @@
 
 package io.microsphere.spring.webmvc.metadata;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import java.util.Optional;
 
 import static io.microsphere.collection.Sets.ofSet;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
 import static io.microsphere.spring.web.util.HttpUtils.ALL_HTTP_METHODS;
 import static org.junit.Assert.assertEquals;
@@ -45,12 +40,7 @@ import static org.junit.Assert.assertTrue;
  * @see HandlerMetadataWebEndpointMappingFactory
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class HandlerMetadataWebEndpointMappingFactoryTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private HandlerMetadataWebEndpointMappingFactory factory;
 

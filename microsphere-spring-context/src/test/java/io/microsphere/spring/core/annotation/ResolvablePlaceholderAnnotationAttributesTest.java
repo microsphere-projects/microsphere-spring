@@ -16,8 +16,6 @@
  */
 package io.microsphere.spring.core.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.ofMap;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.ConstructorUtils.findConstructor;
 import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.ofSet;
@@ -50,10 +47,6 @@ import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 @ContextConfiguration(classes = {ResolvablePlaceholderAnnotationAttributesTest.class})
 @TestPropertySource(properties = {"a=1", "b=2"})
 public class ResolvablePlaceholderAnnotationAttributesTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private Environment environment;

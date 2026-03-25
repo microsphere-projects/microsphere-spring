@@ -17,16 +17,11 @@
 
 package io.microsphere.spring.web.util;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -35,7 +30,6 @@ import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.MethodParameterUtils.forExecutable;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodRequestBodyArgument;
@@ -54,12 +48,7 @@ import static org.springframework.web.context.request.RequestContextHolder.setRe
  * @see RequestAttributesUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class RequestAttributesUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private MockHttpServletRequest servletRequest;
 

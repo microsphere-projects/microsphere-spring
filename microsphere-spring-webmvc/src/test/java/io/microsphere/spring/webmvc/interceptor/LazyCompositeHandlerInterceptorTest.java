@@ -17,12 +17,7 @@
 
 package io.microsphere.spring.webmvc.interceptor;
 
-
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor.BEAN_NAME;
 import static io.microsphere.util.ExceptionUtils.create;
@@ -45,12 +39,7 @@ import static org.junit.Assert.assertTrue;
  * @see LazyCompositeHandlerInterceptor
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class LazyCompositeHandlerInterceptorTest extends AbstractHandlerInterceptorTest implements HandlerInterceptor {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final String exceptionTypeAttributeName = "_exception_type_";
 

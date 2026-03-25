@@ -17,13 +17,10 @@
 
 package io.microsphere.spring.context.event;
 
-
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.util.ValueHolder;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +38,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.RESET_BEAN_NAME_PROPERTY_NAME;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.removeApplicationListenersMethod;
@@ -68,10 +64,6 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
 @DirtiesContext
 public class InterceptingApplicationEventMulticasterProxyTest {
 
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
-
     private static final Logger logger = getLogger(InterceptingApplicationEventMulticasterProxyTest.class);
 
     private static final String TEST_APPLICATION_LISTENER_BEAN_NAME = "testApplicationListener";
@@ -96,7 +88,6 @@ public class InterceptingApplicationEventMulticasterProxyTest {
         this.proxy = (InterceptingApplicationEventMulticasterProxy) applicationEventMulticaster;
         resetEvent();
     }
-
 
     @After
     public void tearDown() {

@@ -1,11 +1,7 @@
 package io.microsphere.spring.core.annotation;
 
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +19,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotations;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
@@ -61,12 +56,7 @@ import static org.springframework.util.ReflectionUtils.findMethod;
  * @see AnnotationUtils
  * @since 1.0.0
  */
-@RunWith(JUnit4.class)
 public class AnnotationUtilsTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final String dummyBeanName = "dummy-bean";
 
@@ -156,11 +146,9 @@ public class AnnotationUtilsTest {
 
         assertEquals("parameter2", runtimeAnnotation.value());
 
-
         annotationsList = annotationsMap.get(ElementType.PACKAGE);
 
         assertNull(annotationsList);
-
 
         method = findMethod(ClassAnnotationHandler.class, "handle", String.class);
 
@@ -442,7 +430,6 @@ public class AnnotationUtilsTest {
             return message;
         }
 
-
         @RuntimeAnnotation("method")
         public String handle(@RuntimeAnnotation("parameter1") String message,
                              @RuntimeAnnotation("parameter2") String message2) {
@@ -461,7 +448,6 @@ public class AnnotationUtilsTest {
             return message;
         }
     }
-
 
     @Target({TYPE, PARAMETER, METHOD})
     @Retention(RUNTIME)

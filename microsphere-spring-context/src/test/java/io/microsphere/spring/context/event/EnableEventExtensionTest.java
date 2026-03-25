@@ -17,9 +17,7 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
-import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.After;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -39,7 +37,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
@@ -57,10 +54,6 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
 })
 @EnableEventExtension(executorForListener = "taskExecutor")
 public class EnableEventExtensionTest {
-
-    @ClassRule
-    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private static final Logger logger = getLogger(EnableEventExtensionTest.class);
 
@@ -132,7 +125,6 @@ public class EnableEventExtensionTest {
     public void tearDown() {
         eventValueRef.set(0);
     }
-
 
     @Test
     public void test() {
