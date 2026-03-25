@@ -17,6 +17,8 @@
 
 package io.microsphere.spring.test.jdbc.embedded;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * {@link EnableEmbeddedDatabase} Test
@@ -44,6 +47,10 @@ import java.sql.Statement;
                 "username=admin"
         })
 public class EnableEmbeddedDatabaseTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     @Qualifier("primary")

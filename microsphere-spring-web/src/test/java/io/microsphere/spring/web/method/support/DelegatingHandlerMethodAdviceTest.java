@@ -18,12 +18,15 @@
 package io.microsphere.spring.web.method.support;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * {@link DelegatingHandlerMethodAdvice} Test
@@ -40,6 +43,10 @@ import org.springframework.test.context.junit4.SpringRunner;
         }
 )
 public class DelegatingHandlerMethodAdviceTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Bean
     public static HandlerMethodArgumentInterceptor handlerMethodArgumentInterceptor() {

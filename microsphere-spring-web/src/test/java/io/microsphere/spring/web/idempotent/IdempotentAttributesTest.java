@@ -19,15 +19,20 @@ package io.microsphere.spring.web.idempotent;
 
 
 import io.microsphere.annotation.Nullable;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.web.util.WebSource;
 import io.microsphere.spring.web.util.WebTarget;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Method;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.web.idempotent.Idempotent.DEFAULT_TOKEN_NAME;
 import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
@@ -50,7 +55,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @see IdempotentAttributes
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class IdempotentAttributesTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testDefaultAttributes() {

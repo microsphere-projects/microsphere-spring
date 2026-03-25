@@ -16,7 +16,11 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -27,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -37,7 +42,12 @@ import static org.junit.Assert.assertThrows;
  * @see OnceApplicationContextEventListener
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class OnceApplicationContextEventListenerTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void test() {

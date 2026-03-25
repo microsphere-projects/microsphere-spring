@@ -18,6 +18,8 @@
 package io.microsphere.spring.config.env.config;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Map;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -39,6 +42,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = ResourceYamlProcessorTest.class)
 public class ResourceYamlProcessorTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Value("META-INF/test/yaml/1.yaml")
     private Resource yamlResource1;

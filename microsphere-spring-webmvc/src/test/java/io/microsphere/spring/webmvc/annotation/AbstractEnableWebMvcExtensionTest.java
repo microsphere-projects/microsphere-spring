@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
@@ -29,9 +30,13 @@ import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingRes
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
@@ -45,7 +50,12 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 @Ignore
+@RunWith(JUnit4.class)
 public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     protected boolean registerWebEndpointMappings;
 

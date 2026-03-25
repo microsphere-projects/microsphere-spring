@@ -18,8 +18,13 @@
 package io.microsphere.spring.web.method.support;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * {@link HandlerMethodInterceptor} Test
@@ -28,7 +33,12 @@ import org.junit.Test;
  * @see HandlerMethodInterceptor
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class HandlerMethodInterceptorTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private HandlerMethodInterceptor interceptor;
 

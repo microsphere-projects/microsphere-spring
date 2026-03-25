@@ -18,11 +18,16 @@
 package io.microsphere.spring.core.io.support;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Properties;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.io.support.PropertiesUtils.loadProperties;
 import static org.junit.Assert.assertEquals;
 
@@ -33,7 +38,12 @@ import static org.junit.Assert.assertEquals;
  * @see PropertiesUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class PropertiesUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     static final String PROPERTIES = "a = 1\n" +
             "            b : 2\n" +

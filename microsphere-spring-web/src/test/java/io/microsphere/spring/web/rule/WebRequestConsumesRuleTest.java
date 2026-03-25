@@ -17,11 +17,16 @@
 
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExpressions;
@@ -42,7 +47,12 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
  * @see WebRequestConsumesRule
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebRequestConsumesRuleTest extends BaseWebRequestRuleTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     // Test when request is preflight (should return false)
     @Test

@@ -18,15 +18,20 @@
 package io.microsphere.spring.web.metadata;
 
 import io.microsphere.filter.Filter;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Set;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.filter.FilterOperator.AND;
 import static io.microsphere.filter.FilterOperator.OR;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.filter;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -43,7 +48,12 @@ import static org.springframework.http.HttpMethod.GET;
  * @see FilteringWebEndpointMappingRegistry
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class FilteringWebEndpointMappingRegistryTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private Set<WebEndpointMapping> webEndpointMappings;
 

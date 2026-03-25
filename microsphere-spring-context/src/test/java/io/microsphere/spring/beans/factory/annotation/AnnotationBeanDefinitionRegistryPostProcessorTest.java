@@ -16,7 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -34,6 +36,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.Map;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.annotation.AnnotationBeanDefinitionRegistryPostProcessor.getAnnotation;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
@@ -57,6 +60,10 @@ import static org.junit.Assert.assertEquals;
 })
 @Configuration
 public class AnnotationBeanDefinitionRegistryPostProcessorTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Service
     static class MyService {

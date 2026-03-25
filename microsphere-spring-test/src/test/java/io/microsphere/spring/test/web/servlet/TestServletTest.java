@@ -18,8 +18,12 @@
 package io.microsphere.spring.test.web.servlet;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -27,6 +31,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_NAME;
 import static io.microsphere.spring.test.web.servlet.TestServlet.DEFAULT_SERVLET_URL_PATTERN;
 import static io.microsphere.spring.test.web.servlet.TestServlet.SERVLET_CLASS_NAME;
@@ -41,7 +46,12 @@ import static org.junit.Assert.assertSame;
  * @see TestServlet
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class TestServletTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private MockHttpServletRequest request;
 

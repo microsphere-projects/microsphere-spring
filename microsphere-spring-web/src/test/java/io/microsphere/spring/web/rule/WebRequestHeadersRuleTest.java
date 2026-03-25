@@ -18,9 +18,14 @@
 package io.microsphere.spring.web.rule;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithHeaders;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,7 +43,12 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
  * @see WebRequestHeadersRule
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebRequestHeadersRuleTest extends BaseWebRequestRuleTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testGetContent() {

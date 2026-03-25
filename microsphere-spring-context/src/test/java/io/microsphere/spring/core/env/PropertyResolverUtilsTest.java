@@ -18,13 +18,18 @@
 package io.microsphere.spring.core.env;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.util.Map;
 
 import static io.microsphere.collection.Maps.ofMap;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.env.PropertyResolverUtils.resolvePlaceholders;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
@@ -43,7 +48,12 @@ import static org.junit.Assert.assertSame;
  * @see PropertyResolverUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class PropertyResolverUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private MockEnvironment environment;
 

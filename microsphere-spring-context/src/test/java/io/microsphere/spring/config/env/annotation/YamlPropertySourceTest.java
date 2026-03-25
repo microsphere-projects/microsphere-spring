@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.config.env.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import java.nio.file.Files;
 import java.util.Date;
 import java.util.Objects;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
@@ -49,6 +52,10 @@ import static org.junit.Assert.assertEquals;
 }, autoRefreshed = true
 )
 public class YamlPropertySourceTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Value("${my.name}")
     private String myName;

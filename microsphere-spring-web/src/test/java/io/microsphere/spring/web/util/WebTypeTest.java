@@ -18,11 +18,16 @@
 package io.microsphere.spring.web.util;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.util.WebType.NONE;
 import static io.microsphere.spring.web.util.WebType.REACTIVE;
 import static io.microsphere.spring.web.util.WebType.SERVLET;
@@ -39,7 +44,12 @@ import static org.mockito.Mockito.when;
  * @see WebType
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebTypeTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testValueOf() {

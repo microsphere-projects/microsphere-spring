@@ -18,8 +18,12 @@
 package io.microsphere.spring.webmvc.advice;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -29,6 +33,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -40,7 +45,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  * @see ResponseBodyAdviceAdapter
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class ResponseBodyAdviceAdapterTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private MethodParameter returnType;
 

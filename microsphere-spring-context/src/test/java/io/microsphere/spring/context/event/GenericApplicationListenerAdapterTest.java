@@ -17,6 +17,8 @@
 
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -44,6 +47,10 @@ import static org.springframework.core.ResolvableType.forClass;
                 GenericApplicationListenerAdapterTest.GenericApplicationListenerAdapterImpl.class
         })
 public class GenericApplicationListenerAdapterTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     static class GenericApplicationListenerAdapterImpl implements GenericApplicationListenerAdapter {
 

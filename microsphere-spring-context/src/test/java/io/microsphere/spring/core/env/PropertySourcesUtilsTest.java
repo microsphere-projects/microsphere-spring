@@ -1,7 +1,11 @@
 package io.microsphere.spring.core.env;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.AbstractEnvironment;
@@ -20,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
@@ -48,7 +53,12 @@ import static org.springframework.core.convert.support.DefaultConversionService.
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
+@RunWith(JUnit4.class)
 public class PropertySourcesUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private ConfigurableEnvironment environment;
 

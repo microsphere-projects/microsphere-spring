@@ -18,9 +18,11 @@
 package io.microsphere.spring.webmvc.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.ServletException;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -58,6 +61,10 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 })
 @EnableWebMvc
 public abstract class AbstractWebMvcTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     protected ConfigurableWebApplicationContext context;

@@ -1,3 +1,8 @@
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 ///*
 // * Licensed to the Apache Software Foundation (ASF) under one or more
 // * contributor license agreements.  See the NOTICE file distributed with

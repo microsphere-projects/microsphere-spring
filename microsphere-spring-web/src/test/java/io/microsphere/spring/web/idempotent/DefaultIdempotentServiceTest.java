@@ -18,11 +18,16 @@
 package io.microsphere.spring.web.idempotent;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.clearAttributes;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
@@ -41,7 +46,12 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @since 1.0.0
  */
 @Idempotent
+@RunWith(JUnit4.class)
 public class DefaultIdempotentServiceTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private NativeWebRequest request;
 

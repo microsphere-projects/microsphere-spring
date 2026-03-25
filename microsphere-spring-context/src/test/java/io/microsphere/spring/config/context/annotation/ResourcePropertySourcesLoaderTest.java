@@ -17,6 +17,8 @@
 
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -45,6 +48,10 @@ import static org.junit.Assert.assertEquals;
         @ResourcePropertySource(value = {"${value}"})
 })
 public class ResourcePropertySourcesLoaderTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     private Environment environment;

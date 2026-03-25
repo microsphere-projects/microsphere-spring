@@ -17,7 +17,12 @@
 
 package io.microsphere.spring.web.rule;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * Base {@link WebRequestRule} Test
@@ -26,7 +31,12 @@ import org.junit.Test;
  * @see WebRequestRule
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public abstract class BaseWebRequestRuleTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public final void testGetToStringInfix() {

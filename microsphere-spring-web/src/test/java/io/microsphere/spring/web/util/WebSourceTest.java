@@ -18,7 +18,11 @@
 package io.microsphere.spring.web.util;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -29,6 +33,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import static io.microsphere.collection.Maps.ofMap;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
@@ -54,7 +59,12 @@ import static org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIAB
  * @see WebSource
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebSourceTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     static final String testName = "test";
 

@@ -1,13 +1,23 @@
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 
+@RunWith(JUnit4.class)
 public class ConfigurationBeanAliasGeneratorTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private final Class<?> clazz = Foo.class;
     private final String beanName = "bean";

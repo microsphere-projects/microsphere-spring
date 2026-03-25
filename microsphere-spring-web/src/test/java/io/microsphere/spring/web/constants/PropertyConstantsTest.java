@@ -18,8 +18,13 @@
 package io.microsphere.spring.web.constants;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.constants.PropertyConstants.MICROSPHERE_SPRING_WEB_PROPERTY_NAME_PREFIX;
 import static org.junit.Assert.assertEquals;
 
@@ -30,7 +35,12 @@ import static org.junit.Assert.assertEquals;
  * @see PropertyConstants
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class PropertyConstantsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testConstants() {

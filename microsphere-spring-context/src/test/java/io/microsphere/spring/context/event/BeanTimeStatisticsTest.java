@@ -16,9 +16,14 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.util.StopWatch;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.test.context.ContextConfiguration;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * {@link BeanTimeStatistics} Test
@@ -28,7 +33,12 @@ import org.springframework.test.context.ContextConfiguration;
  * @since 1.0.0
  */
 @ContextConfiguration(locations = "classpath:/user-context.xml")
+@RunWith(JUnit4.class)
 public class BeanTimeStatisticsTest extends AbstractEventListenerTest<BeanTimeStatistics> {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void test() {

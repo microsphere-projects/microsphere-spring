@@ -23,18 +23,28 @@ package io.microsphere.spring.beans.factory.annotation;
  * @since 1.0.0
  */
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
 import io.microsphere.spring.test.domain.User;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.context.annotation.Bean;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 
 
 @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
+@RunWith(JUnit4.class)
 public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBeanBindingTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Bean
     public ConfigurationBeanCustomizer customizer() {

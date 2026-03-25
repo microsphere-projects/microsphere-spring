@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.net;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,6 +31,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.nio.charset.Charset.defaultCharset;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -53,6 +56,10 @@ import static org.springframework.util.StreamUtils.copyToString;
         "microsphere.net.c=3"
 })
 public class SpringProtocolURLStreamHandlerTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testSpringResourceURLConnectionFactory() throws Throwable {

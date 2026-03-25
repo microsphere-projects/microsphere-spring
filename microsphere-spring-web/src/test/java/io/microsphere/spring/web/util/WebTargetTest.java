@@ -18,8 +18,12 @@
 package io.microsphere.spring.web.util;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -27,6 +31,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.addCookie;
 import static io.microsphere.spring.web.util.WebSourceTest.testName;
@@ -43,7 +48,12 @@ import static org.junit.Assert.assertEquals;
  * @see WebTarget
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebTargetTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private NativeWebRequest request;
 

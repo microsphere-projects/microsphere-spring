@@ -18,8 +18,13 @@
 package io.microsphere.spring.test.util;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static io.microsphere.util.ExceptionUtils.create;
 import static org.junit.Assert.assertNotNull;
@@ -32,7 +37,12 @@ import static org.junit.Assert.assertThrows;
  * @see SpringTestUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class SpringTestUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testTestInSpringContainer() {

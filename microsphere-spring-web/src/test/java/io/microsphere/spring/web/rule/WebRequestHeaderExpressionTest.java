@@ -18,14 +18,19 @@
 package io.microsphere.spring.web.rule;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.context.request.MockServletWebRequest;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.rule.WebRequestHeaderExpression.parseExpressions;
 import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.Assert.assertEquals;
@@ -42,7 +47,12 @@ import static org.mockito.Mockito.mock;
  * @see WebRequestHeaderExpression
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebRequestHeaderExpressionTest extends BaseNameValueExpressionTest<WebRequestHeaderExpression> {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     WebRequestHeaderExpression nameOnlyExpression;
 

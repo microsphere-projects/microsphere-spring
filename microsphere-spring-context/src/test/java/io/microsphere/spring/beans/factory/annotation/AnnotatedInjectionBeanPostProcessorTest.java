@@ -16,7 +16,9 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanCreationException;
@@ -34,6 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.reflect.Constructor;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Child;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.Parent;
 import static io.microsphere.spring.beans.factory.annotation.AnnotatedInjectionBeanPostProcessorTest.TestConfiguration.UserHolder;
@@ -56,6 +59,10 @@ import static org.junit.Assert.assertTrue;
 })
 @SuppressWarnings({"deprecation", "unchecked"})
 public class AnnotatedInjectionBeanPostProcessorTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     @Qualifier("parent")

@@ -16,7 +16,9 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -42,6 +45,10 @@ import static org.junit.Assert.assertTrue;
 @DefaultPropertiesPropertySource(value = {"classpath*:/META-INF/test/b.properties"})
 @DefaultPropertiesPropertySource(properties = {"a=0", "b=1", "c=2"})
 public class DefaultPropertiesPropertySourcesTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     private ConfigurableEnvironment environment;

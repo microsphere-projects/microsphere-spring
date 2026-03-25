@@ -18,6 +18,8 @@ package io.microsphere.spring.context.event;
 
 
 import io.microsphere.logging.Logger;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import java.util.EventListener;
 import java.util.List;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.core.ResolvableType.forClass;
@@ -51,6 +54,10 @@ import static org.springframework.core.ResolvableType.forClass;
                 EventPublishingBeanInitializer.class
         })
 public abstract class AbstractEventListenerTest<L extends EventListener> {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     protected final Logger logger = getLogger(getClass());
 

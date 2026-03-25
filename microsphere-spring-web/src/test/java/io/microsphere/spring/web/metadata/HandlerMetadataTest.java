@@ -18,11 +18,16 @@
 package io.microsphere.spring.web.metadata;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Objects;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -33,7 +38,12 @@ import static org.junit.Assert.assertNotEquals;
  * @see HandlerMetadata
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class HandlerMetadataTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private HandlerMetadata<String, String> metadata;
 

@@ -16,7 +16,11 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
@@ -24,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -37,7 +42,12 @@ import static org.springframework.util.ReflectionUtils.findMethod;
  * @see AnnotatedInjectionPointDependencyResolver
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class AnnotatedInjectionPointDependencyResolverTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     // ---- Helper types used in tests ----
 

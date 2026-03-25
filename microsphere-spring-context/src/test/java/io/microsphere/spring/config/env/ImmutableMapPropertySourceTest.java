@@ -1,5 +1,7 @@
 package io.microsphere.spring.config.env;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -7,7 +9,10 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static org.junit.Assert.assertEquals;
@@ -19,7 +24,12 @@ import static org.junit.Assert.assertEquals;
  * @see ImmutableMapPropertySource
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class ImmutableMapPropertySourceTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private static final String NAME = "test";
 

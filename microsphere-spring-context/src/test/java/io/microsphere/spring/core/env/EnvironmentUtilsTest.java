@@ -16,14 +16,19 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getProperties;
@@ -43,7 +48,12 @@ import static org.junit.Assert.assertSame;
  * @see EnvironmentUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class EnvironmentUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private ConfigurableEnvironment environment;
 

@@ -17,8 +17,10 @@
 package io.microsphere.spring.beans.factory;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.ConstructorUtils.findConstructor;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static org.junit.Assert.assertTrue;
@@ -52,6 +55,10 @@ import static org.springframework.util.ReflectionUtils.findField;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AbstractInjectionPointDependencyResolverTest.Config.class)
 public abstract class AbstractInjectionPointDependencyResolverTest<R extends AbstractInjectionPointDependencyResolver> {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     protected R resolver;
 

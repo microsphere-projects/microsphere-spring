@@ -15,12 +15,17 @@
  */
 package io.microsphere.spring.core.convert.support;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +38,12 @@ import static org.springframework.util.ClassUtils.isAssignable;
  *
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class ConversionServiceResolverTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testGetResolvedBeanIfAvailable() {

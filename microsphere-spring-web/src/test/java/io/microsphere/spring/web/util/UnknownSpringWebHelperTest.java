@@ -18,11 +18,16 @@
 package io.microsphere.spring.web.util;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.util.SpringWebType.UNKNOWN;
 import static io.microsphere.spring.web.util.UnknownSpringWebHelper.INSTANCE;
 import static org.junit.Assert.assertNull;
@@ -35,7 +40,12 @@ import static org.junit.Assert.assertSame;
  * @see UnknownSpringWebHelper
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class UnknownSpringWebHelperTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private MockHttpServletRequest servletRequest;
 

@@ -17,8 +17,12 @@
 package io.microsphere.spring.context.event;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -26,6 +30,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 
 /**
@@ -36,7 +41,12 @@ import org.springframework.test.context.ContextConfiguration;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = DependencyAnalysisBeanFactoryListenerTest.Config.class)
+@RunWith(JUnit4.class)
 public class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventListenerTest<DependencyAnalysisBeanFactoryListener> {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     private ConfigurableListableBeanFactory beanFactory;

@@ -18,11 +18,15 @@
 package io.microsphere.spring.webmvc.method.support;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
@@ -33,6 +37,7 @@ import org.springframework.web.method.HandlerMethod;
 import javax.servlet.ServletException;
 import java.lang.reflect.Method;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static java.util.Collections.emptyList;
@@ -57,7 +62,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @EnableWebMvcExtension(registerHandlerInterceptors = true)
 @Import(TestController.class)
+@RunWith(JUnit4.class)
 public class InterceptingHandlerMethodProcessorTest extends AbstractWebMvcTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Autowired
     private InterceptingHandlerMethodProcessor processor;

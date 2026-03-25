@@ -18,15 +18,18 @@
 package io.microsphere.spring.webmvc.metadata;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import io.microsphere.spring.webmvc.test.SimpleUrlHandlerMappingTestConfig;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
 /**
  * {@link HandlerMappingWebEndpointMappingResolver} Test
@@ -45,6 +48,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @Import(TestController.class)
 @EnableWebMvcExtension
 public class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebMvcTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testResolve() {

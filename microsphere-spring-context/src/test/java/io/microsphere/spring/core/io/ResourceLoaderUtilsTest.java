@@ -16,10 +16,15 @@
  */
 package io.microsphere.spring.core.io;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.clearResourceLoadersCache;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourcePatternResolver;
@@ -35,7 +40,12 @@ import static org.junit.Assert.assertSame;
  * @see 1.0.0
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class ResourceLoaderUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Before
     public void setUp() {

@@ -16,13 +16,17 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.beans.test.Bean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -31,6 +35,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
@@ -55,7 +60,12 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @see BeanRegistrar
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class BeanRegistrarTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private DefaultListableBeanFactory beanFactory;
 

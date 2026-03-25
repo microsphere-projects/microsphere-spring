@@ -17,14 +17,19 @@
 
 package io.microsphere.spring.web.util;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.Map;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
 import static io.microsphere.spring.web.util.WebScope.SESSION;
 import static io.microsphere.spring.web.util.WebScope.clearAttributes;
@@ -48,7 +53,12 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @see WebScope
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebScopeTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     public static final String ATTRIBUTE_NAME = "test-name";
 

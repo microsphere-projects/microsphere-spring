@@ -16,16 +16,21 @@
  */
 package io.microsphere.spring.util;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.beans.factory.support.BeanRegistrar;
 import io.microsphere.spring.beans.test.Bean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
@@ -39,7 +44,12 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  *
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class BeanInitializerTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private static final String BEAN_NAME = "testBean";
 

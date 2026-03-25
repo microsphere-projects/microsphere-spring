@@ -18,9 +18,14 @@
 package io.microsphere.spring.test.jdbc.embedded;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.BeanCreationException;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static org.junit.Assert.assertThrows;
 
@@ -31,7 +36,12 @@ import static org.junit.Assert.assertThrows;
  * @see EmbeddedDataBaseBeanDefinitionRegistrar
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class EmbeddedDataBaseBeanDefinitionRegistrarTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void test() {

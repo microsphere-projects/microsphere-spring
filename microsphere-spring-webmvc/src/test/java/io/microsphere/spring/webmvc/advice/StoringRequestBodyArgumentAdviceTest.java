@@ -19,9 +19,11 @@ package io.microsphere.spring.webmvc.advice;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.servlet.util.WebUtils.getServletContext;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.HANDLER_METHOD_REQUEST_BODY_ARGUMENT_ATTRIBUTE_NAME_PREFIX;
 import static org.junit.Assert.assertEquals;
@@ -65,6 +68,10 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 })
 @EnableWebMvc
 public class StoringRequestBodyArgumentAdviceTest extends WebMvcConfigurerAdapter {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private static final String USER_ATTRIBUTE_NAME = "user";
 

@@ -18,6 +18,8 @@
 package io.microsphere.spring.net;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +32,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import static io.microsphere.io.IOUtils.copyToString;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.net.SpringProfilesURLConnectionAdapter.getEncoding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -53,6 +56,10 @@ import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
         }
 )
 public class SpringProfilesURLConnectionAdapterTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void test() throws IOException {

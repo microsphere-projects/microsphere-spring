@@ -18,11 +18,16 @@
 package io.microsphere.spring.test.util;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.clearAttributes;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
@@ -43,7 +48,12 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_SE
  * @see SpringTestWebUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class SpringTestWebUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     static final String TEST_ATTRIBUTE_NAME = "test-name";
 

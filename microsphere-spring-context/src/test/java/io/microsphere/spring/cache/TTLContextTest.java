@@ -18,12 +18,17 @@ package io.microsphere.spring.cache;
 
 
 import io.microsphere.logging.Logger;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.After;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.time.Duration;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.cache.TTLContext.clearTTL;
 import static io.microsphere.spring.cache.TTLContext.doWithTTL;
 import static io.microsphere.spring.cache.TTLContext.getTTL;
@@ -39,7 +44,12 @@ import static org.junit.Assert.assertNull;
  * @see TTLContext
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class TTLContextTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private static final Logger logger = getLogger(TTLContextTest.class);
 

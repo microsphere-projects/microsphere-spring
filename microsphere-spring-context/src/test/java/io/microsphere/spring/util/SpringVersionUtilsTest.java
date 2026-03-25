@@ -17,10 +17,15 @@
 package io.microsphere.spring.util;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.util.Version;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.util.StringUtils;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_AOP_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_BEANS_VERSION;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_SUPPORT_VERSION;
@@ -37,7 +42,12 @@ import static org.junit.Assert.assertThrows;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class SpringVersionUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Test
     public void testGetSpringVersionOnNPE() {

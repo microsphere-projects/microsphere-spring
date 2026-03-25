@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.config.env.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -41,6 +44,10 @@ import static org.junit.Assert.assertEquals;
 })
 @TestPropertySource(properties = "value=classpath*:/META-INF/test/json/*.json")
 public class JsonPropertySourceTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     @Value("${my.name}")
     private String myName;

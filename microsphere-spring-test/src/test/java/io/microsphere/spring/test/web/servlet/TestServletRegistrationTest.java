@@ -18,14 +18,19 @@
 package io.microsphere.spring.test.web.servlet;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletSecurityElement;
 import java.util.Set;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import static io.microsphere.collection.MapUtils.of;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.web.servlet.TestServletContextTest.testServletClass;
 import static io.microsphere.spring.test.web.servlet.TestServletContextTest.testServletClassName;
 import static io.microsphere.spring.test.web.servlet.TestServletContextTest.testServletName;
@@ -47,7 +52,12 @@ import static org.junit.Assert.assertTrue;
  * @see TestServletRegistration
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class TestServletRegistrationTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private TestServletRegistration registration;
 

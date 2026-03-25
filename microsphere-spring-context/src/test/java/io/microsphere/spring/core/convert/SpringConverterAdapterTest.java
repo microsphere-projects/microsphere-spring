@@ -16,7 +16,11 @@
  */
 package io.microsphere.spring.core.convert;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 
@@ -25,6 +29,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.convert.SpringConverterAdapter.INSTANCE;
 import static io.microsphere.spring.core.convert.SpringConverterAdapter.buildConvertiblePair;
 import static org.junit.Assert.assertArrayEquals;
@@ -39,7 +44,12 @@ import static org.springframework.core.convert.TypeDescriptor.valueOf;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class SpringConverterAdapterTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private final SpringConverterAdapter converterAdapter = INSTANCE;
 

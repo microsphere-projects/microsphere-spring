@@ -18,11 +18,16 @@
 package io.microsphere.spring.web.event;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -36,7 +41,12 @@ import static org.junit.Assert.assertTrue;
  * @see WebEndpointMappingsReadyEvent
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebEndpointMappingsReadyEventTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private ApplicationContext context;
 

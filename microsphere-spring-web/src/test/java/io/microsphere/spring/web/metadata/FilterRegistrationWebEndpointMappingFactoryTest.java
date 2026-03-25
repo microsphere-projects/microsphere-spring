@@ -18,18 +18,23 @@
 package io.microsphere.spring.web.metadata;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestFilterRegistration;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import java.util.Collection;
 import java.util.LinkedList;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestFilter;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
 import static io.microsphere.spring.test.web.servlet.TestFilter.DEFAULT_FILTER_NAME;
@@ -53,7 +58,12 @@ import static org.junit.Assert.assertTrue;
  * @see FilterRegistrationWebEndpointMappingFactory
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class FilterRegistrationWebEndpointMappingFactoryTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private ServletContext servletContext;
 
