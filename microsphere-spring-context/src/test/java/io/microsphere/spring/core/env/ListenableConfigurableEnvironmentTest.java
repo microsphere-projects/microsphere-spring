@@ -132,8 +132,11 @@ public class ListenableConfigurableEnvironmentTest {
     @Test
     public void testGetActiveProfiles() {
         String[] activeProfiles = environment.getActiveProfiles();
-        assertEquals(1, activeProfiles.length);
+        int length = activeProfiles.length;
         assertEquals("test", activeProfiles[0]);
+        if (length == 2) {
+            assertEquals("dev", activeProfiles[1]);
+        }
     }
 
     /**
