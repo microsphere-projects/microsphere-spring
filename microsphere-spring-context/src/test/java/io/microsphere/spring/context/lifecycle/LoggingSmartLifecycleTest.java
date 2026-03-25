@@ -62,7 +62,9 @@ class LoggingSmartLifecycleTest {
     void testStopWithRunnable() {
         assertFalse(lifecycle.isStarted());
         lifecycle.stop(() -> {
-            logger.trace("stop running");
+            if (logger.isTraceEnabled()) {
+                logger.trace("stop running");
+            }
         });
         assertFalse(lifecycle.isStarted());
     }

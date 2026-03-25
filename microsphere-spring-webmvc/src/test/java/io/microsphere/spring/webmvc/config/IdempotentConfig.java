@@ -37,11 +37,15 @@ public class IdempotentConfig {
 
     @EventListener(WebEndpointMappingsReadyEvent.class)
     public void onEvent(WebEndpointMappingsReadyEvent event) {
-        logger.info(event.toString());
+        if (logger.isInfoEnabled()) {
+            logger.info(event.toString());
+        }
     }
 
     @EventListener(HandlerMethodArgumentsResolvedEvent.class)
     public void onEvent(HandlerMethodArgumentsResolvedEvent event) {
-        logger.info(event.toString());
+        if (logger.isInfoEnabled()) {
+            logger.info(event.toString());
+        }
     }
 }
