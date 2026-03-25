@@ -165,7 +165,9 @@ class BeanListeners implements BeanListener {
             try {
                 if (listener.supports(beanName)) {
                     listenerConsumer.accept(listener);
-                    logger.trace("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution {} -> '{}'", listenerBeanName, listener, i, beanName, action);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution {} -> '{}'", listenerBeanName, listener, i, beanName, action);
+                    }
                 }
             } catch (Throwable e) {
                 logger.error("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution {} -> '{}' failed", listenerBeanName, listener, i, beanName, action, e);

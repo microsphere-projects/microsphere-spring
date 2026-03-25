@@ -96,6 +96,8 @@ public class DelegatingFactoryBeanTest implements DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        logger.debug("destroy...");
+        if (logger.isDebugEnabled()) {
+            logger.debug("destroy...");
+        }
     }
 }
