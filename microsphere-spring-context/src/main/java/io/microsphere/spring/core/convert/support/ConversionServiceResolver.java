@@ -26,7 +26,6 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
-import static io.microsphere.text.FormatUtils.format;
 import static org.springframework.context.ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME;
 import static org.springframework.context.ConfigurableApplicationContext.ENVIRONMENT_BEAN_NAME;
 
@@ -119,7 +118,7 @@ public class ConversionServiceResolver {
 
     private void trace(String message, Object... args) {
         if (logger.isTraceEnabled()) {
-            logger.trace(args.length < 1 ? message : format(message, args));
+            logger.trace(message, args);
         }
     }
 }
