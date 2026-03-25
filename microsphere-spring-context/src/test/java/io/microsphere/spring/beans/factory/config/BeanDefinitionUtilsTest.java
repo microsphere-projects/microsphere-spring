@@ -17,6 +17,7 @@
 package io.microsphere.spring.beans.factory.config;
 
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -53,6 +54,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
  * @see BeanDefinitionUtils
  * @since 1.0.0
  */
+@SpringLoggingTest
 class BeanDefinitionUtilsTest {
 
     private static final String USER_BEAN_NAME = "user";
