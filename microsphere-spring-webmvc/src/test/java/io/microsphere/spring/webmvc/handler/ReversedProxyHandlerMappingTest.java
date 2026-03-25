@@ -29,8 +29,6 @@ import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -62,7 +60,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         ReversedProxyHandlerMappingTest.class
 })
 @EnableWebMvcExtension(reversedProxyHandlerMapping = true)
-@RunWith(JUnit4.class)
 public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
 
     @ClassRule
