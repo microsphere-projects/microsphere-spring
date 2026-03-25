@@ -18,6 +18,7 @@
 package io.microsphere.spring.webmvc.method.support;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebReques
  * @see LoggingHandlerMethodArgumentResolverAdvice
  * @since 1.0.0
  */
+@SpringLoggingTest
 class LoggingHandlerMethodArgumentResolverAdviceTest {
 
     private LoggingHandlerMethodArgumentResolverAdvice advice;

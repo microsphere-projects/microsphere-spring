@@ -68,13 +68,17 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
     void configureExclusiveViewResolver(ApplicationContext context) {
         String beanName = this.exclusiveViewResolverBeanName;
         if (isBlank(beanName)) {
-            logger.trace("The 'exclusiveViewResolverBeanName' is blank, the configuration will be ignored!");
+            if (logger.isTraceEnabled()) {
+                logger.trace("The 'exclusiveViewResolverBeanName' is blank, the configuration will be ignored!");
+            }
             return;
         }
 
         ViewResolver exclusiveViewResolver = getBeanIfAvailable(context, beanName, ViewResolver.class);
         if (exclusiveViewResolver == null) {
-            logger.trace("No ViewResolver was found by the bean name : '{}'", beanName);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No ViewResolver was found by the bean name : '{}'", beanName);
+            }
             return;
         }
 
@@ -86,7 +90,9 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
         ContentNegotiatingViewResolver contentNegotiatingViewResolver = getOptionalBean(context, ContentNegotiatingViewResolver.class);
 
         if (contentNegotiatingViewResolver == null) {
-            logger.trace("No ContentNegotiatingViewResolver was found in the application context : {}", context);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No ContentNegotiatingViewResolver was found in the application context : {}", context);
+            }
             configureViewResolverComposite(exclusiveViewResolver, context);
             return;
         }
@@ -95,15 +101,19 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
 
         contentNegotiatingViewResolver.setViewResolvers(ofList(exclusiveViewResolver));
 
-        logger.trace("The view resolvers of ContentNegotiatingViewResolver has been reset , before : {} , after : {}",
-                viewResolvers, exclusiveViewResolver);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The view resolvers of ContentNegotiatingViewResolver has been reset , before : {} , after : {}",
+                    viewResolvers, exclusiveViewResolver);
+        }
     }
 
     private void configureViewResolverComposite(ViewResolver exclusiveViewResolver, ApplicationContext context) {
         ViewResolverComposite viewResolverComposite = getBeanIfAvailable(context, VIEW_RESOLVER_COMPOSITE_BEAN_NAME, ViewResolverComposite.class);
 
         if (viewResolverComposite == null) {
-            logger.trace("No ViewResolverComposite was found in the application context : {}", context);
+            if (logger.isTraceEnabled()) {
+                logger.trace("No ViewResolverComposite was found in the application context : {}", context);
+            }
             return;
         }
 
@@ -111,7 +121,9 @@ public class ExclusiveViewResolverApplicationListener implements ApplicationList
 
         viewResolverComposite.setViewResolvers(ofList(exclusiveViewResolver));
 
-        logger.trace("The view resolvers of ViewResolverComposite has been reset , before : {} , after : {}",
-                viewResolvers, exclusiveViewResolver);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The view resolvers of ViewResolverComposite has been reset , before : {} , after : {}",
+                    viewResolvers, exclusiveViewResolver);
+        }
     }
 }

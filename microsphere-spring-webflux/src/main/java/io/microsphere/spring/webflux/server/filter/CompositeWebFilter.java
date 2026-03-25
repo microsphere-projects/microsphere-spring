@@ -27,9 +27,9 @@ import reactor.core.publisher.Mono;
 import java.util.LinkedList;
 import java.util.List;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
-import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
  * Composite {@link WebFilter}
@@ -60,19 +60,27 @@ public class CompositeWebFilter implements WebFilter {
      */
     public boolean addFilter(WebFilter webFilter) {
         if (webFilter == null) {
-            logger.warn("The WebFilter must not be null");
+            if (logger.isWarnEnabled()) {
+                logger.warn("The WebFilter must not be null");
+            }
             return false;
         }
         if (webFilter == this) {
-            logger.warn("The WebFilter must not be itself");
+            if (logger.isWarnEnabled()) {
+                logger.warn("The WebFilter must not be itself");
+            }
             return false;
         }
         if (webFilters.contains(webFilter)) {
-            logger.warn("The WebFilter was already added : {} ", webFilter);
+            if (logger.isWarnEnabled()) {
+                logger.warn("The WebFilter was already added : {} ", webFilter);
+            }
             return false;
         }
         webFilters.add(webFilter);
-        logger.trace("The WebFilter was added : {} ", webFilter);
+        if (logger.isTraceEnabled()) {
+            logger.trace("The WebFilter was added : {} ", webFilter);
+        }
         return true;
     }
 
@@ -86,7 +94,9 @@ public class CompositeWebFilter implements WebFilter {
         if (webFilter == null) {
             return false;
         }
-        logger.warn("The WebFilter is about to be removed : {} ", webFilter);
+        if (logger.isWarnEnabled()) {
+            logger.warn("The WebFilter is about to be removed : {} ", webFilter);
+        }
         return webFilters.remove(webFilter);
     }
 

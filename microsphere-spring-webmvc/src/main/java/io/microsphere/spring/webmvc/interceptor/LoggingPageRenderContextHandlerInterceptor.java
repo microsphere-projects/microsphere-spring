@@ -37,7 +37,9 @@ public class LoggingPageRenderContextHandlerInterceptor extends AbstractPageRend
 
     @Override
     protected void postHandleOnPageRenderContext(HttpServletRequest request, HttpServletResponse response,
-                                                 Object handler, ModelAndView modelAndView) throws Exception {
-        logger.trace("The handler : {} , modelAndView : {}", handler, modelAndView);
+                                                 Object handler, ModelAndView modelAndView) {
+        if (logger.isTraceEnabled()) {
+            logger.trace("The handler : {} , modelAndView : {}", handler, modelAndView);
+        }
     }
 }

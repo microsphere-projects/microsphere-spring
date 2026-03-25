@@ -18,6 +18,7 @@ package io.microsphere.spring.context.event;
 
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ import static org.springframework.core.ResolvableType.forClass;
         initializers = {
                 EventPublishingBeanInitializer.class
         })
+@SpringLoggingTest
 public abstract class AbstractEventListenerTest<L extends EventListener> {
 
     protected final Logger logger = getLogger(getClass());

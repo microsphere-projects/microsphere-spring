@@ -18,6 +18,7 @@
 package io.microsphere.spring.webmvc.interceptor;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see HandlerInterceptor
  * @since 1.0.0
  */
+@SpringLoggingTest
 public abstract class AbstractHandlerInterceptorTest {
 
     protected HandlerInterceptor interceptor;

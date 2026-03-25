@@ -14,18 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.context.event;
 
+package io.microsphere.spring.test;
 
-import org.springframework.test.context.ContextConfiguration;
+import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * {@link LoggingBeanListener} Test
+ * The annotation for Spring logging test with levels : TRACE , INFO , ERROR
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see LoggingBeanListener
+ * @see LoggingLevelsClass
  * @since 1.0.0
  */
-@ContextConfiguration(locations = "classpath:/user-context.xml")
-class LoggingBeanListenerTest extends AbstractEventListenerTest<LoggingBeanListener> {
+@Target({ANNOTATION_TYPE, TYPE})
+@Retention(RUNTIME)
+@Inherited
+@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
+public @interface SpringLoggingTest {
 }

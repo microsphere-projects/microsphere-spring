@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.metadata;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see WebEndpointMappingRegistrar
  * @since 1.0.0
  */
+@SpringLoggingTest
 class WebEndpointMappingRegistrarTest {
 
     private AnnotationConfigWebApplicationContext context;

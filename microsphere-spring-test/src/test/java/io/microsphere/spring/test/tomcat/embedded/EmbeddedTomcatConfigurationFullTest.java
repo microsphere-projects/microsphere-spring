@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.test.tomcat.embedded;
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -75,6 +76,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
         }
 )
 @TestPropertySource(locations = "classpath:config/test.properties")
+@SpringLoggingTest
 class EmbeddedTomcatConfigurationFullTest implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Autowired

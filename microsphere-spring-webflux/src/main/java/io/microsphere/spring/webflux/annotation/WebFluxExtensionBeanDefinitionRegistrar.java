@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.webflux.annotation;
 
+import io.microsphere.logging.Logger;
 import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
@@ -25,7 +26,6 @@ import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentIntercepto
 import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
 import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
 import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishingWebFilter;
-import io.microsphere.logging.Logger;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -33,10 +33,10 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.logging.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.uncapitalize;
 
 /**
@@ -153,6 +153,8 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
     }
 
     private void log(String messagePattern, Object... args) {
-        logger.trace(messagePattern, args);
+        if (logger.isTraceEnabled()) {
+            logger.trace(messagePattern, args);
+        }
     }
 }

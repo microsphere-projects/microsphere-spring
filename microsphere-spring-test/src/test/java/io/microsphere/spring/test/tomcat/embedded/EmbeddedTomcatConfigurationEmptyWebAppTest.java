@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.test.tomcat.embedded;
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         },
         locations = "classpath:webapps/empty-app/WEB-INF/context.xml"
 )
+@SpringLoggingTest
 class EmbeddedTomcatConfigurationEmptyWebAppTest {
 
     @Autowired(required = false)

@@ -107,7 +107,9 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
             loadPropertySource(attributes, metadata, propertySourceName, propertySources);
         } catch (Throwable e) {
             String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationClassName + "] can't load the PropertySource[name : '" + propertySourceName + "']";
-            logger.error(errorMessage, e);
+            if (logger.isErrorEnabled()) {
+                logger.error(errorMessage, e);
+            }
             throw new BeanCreationException(errorMessage, e);
         }
         return NO_CLASS_TO_IMPORT;

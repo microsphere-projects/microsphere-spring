@@ -18,6 +18,7 @@
 package io.microsphere.spring.webmvc.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import jakarta.servlet.ServletException;
@@ -56,6 +57,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
         RouterFunctionTestConfig.class  // Test RouterFunction
 })
 @EnableWebMvc
+@SpringLoggingTest
 public abstract class AbstractWebMvcTest {
 
     @Autowired

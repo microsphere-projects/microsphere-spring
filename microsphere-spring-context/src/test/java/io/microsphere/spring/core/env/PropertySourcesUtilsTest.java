@@ -1,5 +1,6 @@
 package io.microsphere.spring.core.env;
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.ConversionService;
@@ -48,6 +49,7 @@ import static org.springframework.core.convert.support.DefaultConversionService.
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
+@SpringLoggingTest
 class PropertySourcesUtilsTest {
 
     private ConfigurableEnvironment environment;
@@ -212,7 +214,9 @@ class PropertySourcesUtilsTest {
 
     // ---- New tests to increase coverage ----
 
-    /** getDefaultProperties(env) single-arg creates the source if absent. */
+    /**
+     * getDefaultProperties(env) single-arg creates the source if absent.
+     */
     @Test
     void testGetDefaultPropertiesSingleArgCreatesIfAbsent() {
         MockEnvironment env = new MockEnvironment();
@@ -221,7 +225,9 @@ class PropertySourcesUtilsTest {
         assertNotNull(props);
     }
 
-    /** getDefaultPropertiesPropertySource(env) single-arg creates source if absent. */
+    /**
+     * getDefaultPropertiesPropertySource(env) single-arg creates source if absent.
+     */
     @Test
     void testGetDefaultPropertiesPropertySourceSingleArgCreatesIfAbsent() {
         MockEnvironment env = new MockEnvironment();
@@ -230,7 +236,9 @@ class PropertySourcesUtilsTest {
         assertEquals(DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME, source.getName());
     }
 
-    /** getDefaultPropertiesPropertySource with createIfAbsent=false when missing returns null (via getDefaultProperties). */
+    /**
+     * getDefaultPropertiesPropertySource with createIfAbsent=false when missing returns null (via getDefaultProperties).
+     */
     @Test
     void testGetDefaultPropertiesPropertySourceNotCreatedWhenAbsent() {
         MockEnvironment env = new MockEnvironment();
@@ -242,7 +250,9 @@ class PropertySourcesUtilsTest {
         assertEquals(DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME, source.getName());
     }
 
-    /** containsPropertySource returns true for an existing source, false otherwise. */
+    /**
+     * containsPropertySource returns true for an existing source, false otherwise.
+     */
     @Test
     void testContainsPropertySource() {
         assertTrue(PropertySourcesUtils.containsPropertySource(
@@ -250,13 +260,17 @@ class PropertySourcesUtilsTest {
         assertFalse(PropertySourcesUtils.containsPropertySource(environment, "non-existent-source"));
     }
 
-    /** containsBootstrapPropertySource returns false when the bootstrap source is absent. */
+    /**
+     * containsBootstrapPropertySource returns false when the bootstrap source is absent.
+     */
     @Test
     void testContainsBootstrapPropertySource() {
         assertFalse(PropertySourcesUtils.containsBootstrapPropertySource(environment));
     }
 
-    /** getProperties(enumerable) returns a map of all properties. */
+    /**
+     * getProperties(enumerable) returns a map of all properties.
+     */
     @Test
     void testGetPropertiesFromEnumerablePropertySource() {
         MockPropertySource mock = new MockPropertySource("ps1");
@@ -268,7 +282,9 @@ class PropertySourcesUtilsTest {
         assertEquals("v2", props.get("p2"));
     }
 
-    /** getProperties(non-enumerable) returns an empty map. */
+    /**
+     * getProperties(non-enumerable) returns an empty map.
+     */
     @Test
     void testGetPropertiesFromNonEnumerablePropertySource() {
         // Use an anonymous PropertySource that is not EnumerablePropertySource
@@ -282,7 +298,9 @@ class PropertySourcesUtilsTest {
         assertTrue(props.isEmpty());
     }
 
-    /** getPropertyNames(non-enumerable) returns EMPTY_STRING_ARRAY. */
+    /**
+     * getPropertyNames(non-enumerable) returns EMPTY_STRING_ARRAY.
+     */
     @Test
     void testGetPropertyNamesFromNonEnumerablePropertySource() {
         PropertySource<?> nonEnum = new PropertySource<Object>("non-enum2", new Object()) {
@@ -295,7 +313,9 @@ class PropertySourcesUtilsTest {
         assertEquals(0, names.length);
     }
 
-    /** findPropertyNames with a custom predicate returns matching property names. */
+    /**
+     * findPropertyNames with a custom predicate returns matching property names.
+     */
     @Test
     void testFindPropertyNamesWithCustomPredicate() {
         Set<String> names = PropertySourcesUtils.findPropertyNames(environment, name -> name.endsWith("2"));
@@ -303,7 +323,9 @@ class PropertySourcesUtilsTest {
         assertFalse(names.contains("test-key"));
     }
 
-    /** findConfiguredPropertySource(propertySources, name) skips the "configurationProperties" source. */
+    /**
+     * findConfiguredPropertySource(propertySources, name) skips the "configurationProperties" source.
+     */
     @Test
     void testFindConfiguredPropertySourceSkipsAttachedSource() {
         MutablePropertySources propertySources = new MutablePropertySources();

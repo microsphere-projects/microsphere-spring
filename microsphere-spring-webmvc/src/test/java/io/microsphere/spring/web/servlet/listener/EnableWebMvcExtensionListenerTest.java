@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.servlet.listener;
 
 
+import io.microsphere.spring.test.SpringLoggingTest;
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestServlet;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @EnableWebMvcExtension
+@SpringLoggingTest
 class EnableWebMvcExtensionListenerTest {
 
     private EnableWebMvcExtensionListener listener;
