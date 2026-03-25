@@ -7,6 +7,8 @@ import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -67,6 +69,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
  * @since 1.0.0
  */
 @SuppressWarnings("unchecked")
+@RunWith(JUnit4.class)
 public class BeanUtilsTest {
 
     @ClassRule
