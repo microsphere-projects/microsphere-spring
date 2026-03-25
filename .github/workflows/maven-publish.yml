@@ -50,6 +50,7 @@ jobs:
           --file pom.xml
           -Drevision=${{ inputs.revision }}
           -Dgpg.skip=true
+          -Dsurefire.useSystemClassLoader=false
           deploy
           --activate-profiles publish,ci
         env:
