@@ -3,7 +3,7 @@ package io.microsphere.spring.beans;
 import io.microsphere.spring.beans.BeanUtils.NamingBean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;

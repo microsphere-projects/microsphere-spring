@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.servlet.listener;
 
 
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestServlet;
 import io.microsphere.spring.test.web.servlet.TestServletContext;

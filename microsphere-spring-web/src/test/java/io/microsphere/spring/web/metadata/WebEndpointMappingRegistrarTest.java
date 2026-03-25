@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.metadata;
 
 
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

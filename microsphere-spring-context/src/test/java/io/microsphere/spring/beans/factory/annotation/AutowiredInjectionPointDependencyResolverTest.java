@@ -18,7 +18,7 @@ package io.microsphere.spring.beans.factory.annotation;
 
 
 import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolverTest;
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Set;

@@ -1,7 +1,7 @@
 package io.microsphere.spring.jdbc.p6spy.beans.factory.config;
 
 import com.p6spy.engine.spy.P6DataSource;
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.jdbc.embedded.EnableEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
