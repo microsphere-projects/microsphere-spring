@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.event;
 
 
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;

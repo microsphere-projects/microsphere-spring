@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.context;
 
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

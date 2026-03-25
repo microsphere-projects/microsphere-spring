@@ -18,7 +18,7 @@
 package io.microsphere.spring.test.tomcat.embedded;
 
 
-import io.microsphere.spring.test.SpringLoggingTest;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.GenericApplicationContext;

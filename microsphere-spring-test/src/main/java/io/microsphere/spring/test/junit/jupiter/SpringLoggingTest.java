@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.test;
+package io.microsphere.spring.test.junit.jupiter;
 
 import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
 
