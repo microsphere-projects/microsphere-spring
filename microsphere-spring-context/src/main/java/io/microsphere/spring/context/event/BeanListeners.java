@@ -170,9 +170,7 @@ class BeanListeners implements BeanListener {
                     }
                 }
             } catch (Throwable e) {
-                if (logger.isErrorEnabled()) {
-                    logger.error("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution {} -> '{}' failed", listenerBeanName, listener, i, beanName, action, e);
-                }
+                logger.error("BeanEventListener[name : '{}' , bean : '{}', order : {}] execution {} -> '{}' failed", listenerBeanName, listener, i, beanName, action, e);
             }
         }
     }
