@@ -21,6 +21,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: ${{ inputs.revision }}
     steps:
       - name: Validate version format
