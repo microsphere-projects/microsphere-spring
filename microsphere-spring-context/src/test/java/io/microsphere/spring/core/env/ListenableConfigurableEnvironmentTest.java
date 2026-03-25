@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.core.env;
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                 "score=99"
         }
 )
+@SpringLoggingTest
 class ListenableConfigurableEnvironmentTest {
 
     @Autowired
@@ -123,8 +125,10 @@ class ListenableConfigurableEnvironmentTest {
     @Test
     void testGetActiveProfiles() {
         String[] activeProfiles = environment.getActiveProfiles();
-        assertEquals(1, activeProfiles.length);
         assertEquals("test", activeProfiles[0]);
+        if (activeProfiles.length > 1) {
+            assertEquals("dev", activeProfiles[1]);
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package io.microsphere.spring.context.annotation;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.beans.test.TestBean2;
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
  * @see AnnotatedBeanDefinitionRegistryUtils
  * @since 1.0.0
  */
+@SpringLoggingTest
 class AnnotatedBeanDefinitionRegistryUtilsTest {
 
     private DefaultListableBeanFactory beanFactory = null;

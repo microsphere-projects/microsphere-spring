@@ -18,8 +18,8 @@
 package io.microsphere.spring.webmvc.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;

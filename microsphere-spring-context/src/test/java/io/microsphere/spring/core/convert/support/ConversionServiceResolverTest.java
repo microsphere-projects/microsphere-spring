@@ -15,6 +15,7 @@
  */
 package io.microsphere.spring.core.convert.support;
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.convert.ConversionService;
@@ -33,6 +34,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
  *
  * @since 1.0.0
  */
+@SpringLoggingTest
 class ConversionServiceResolverTest {
 
     @Test

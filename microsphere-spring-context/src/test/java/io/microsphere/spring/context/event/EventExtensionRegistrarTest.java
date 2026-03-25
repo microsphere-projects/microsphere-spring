@@ -19,6 +19,7 @@ package io.microsphere.spring.context.event;
 
 
 import io.microsphere.lang.MutableInteger;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see EventExtensionRegistrar
  * @since 1.0.0
  */
+@SpringLoggingTest
 class EventExtensionRegistrarTest {
 
     static class ExecutorConfig {

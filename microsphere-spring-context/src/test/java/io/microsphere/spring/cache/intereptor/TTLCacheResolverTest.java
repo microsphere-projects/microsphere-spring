@@ -18,6 +18,7 @@ package io.microsphere.spring.cache.intereptor;
 
 import io.microsphere.spring.cache.annotation.EnableTTLCaching;
 import io.microsphere.spring.cache.annotation.TTLCacheable;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         TTLCacheResolverTest.TestData.class
 })
 @EnableTTLCaching(proxyTargetClass = true)
+@SpringLoggingTest
 class TTLCacheResolverTest {
 
     /** Verifies that the well-known bean name constant has the expected value. */
