@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.annotation;
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.BeansException;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
         BeanCapableImportCandidateTest.MyImportSelector.class,
         BeanCapableImportCandidateTest.MyImportBeanDefinitionRegistrar.class
 })
+@SpringLoggingTest
 class BeanCapableImportCandidateTest {
 
     @Autowired

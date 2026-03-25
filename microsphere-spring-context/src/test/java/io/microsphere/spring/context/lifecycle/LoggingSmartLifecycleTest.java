@@ -1,6 +1,7 @@
 package io.microsphere.spring.context.lifecycle;
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see LoggingSmartLifecycle
  * @since 1.0.0
  */
+@SpringLoggingTest
 class LoggingSmartLifecycleTest {
 
     private static final Logger logger = getLogger(LoggingSmartLifecycleTest.class);

@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see OnceApplicationContextEventListener
  * @since 1.0.0
  */
+@SpringLoggingTest
 class OnceApplicationContextEventListenerTest {
 
     @Test

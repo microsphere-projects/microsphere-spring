@@ -17,6 +17,7 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.context.annotation.ExposingClassPathBeanDefinitionScanner;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -56,6 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         AnnotationBeanDefinitionRegistryPostProcessorTest.class
 })
 @Configuration
+@SpringLoggingTest
 class AnnotationBeanDefinitionRegistryPostProcessorTest {
 
     @Service
