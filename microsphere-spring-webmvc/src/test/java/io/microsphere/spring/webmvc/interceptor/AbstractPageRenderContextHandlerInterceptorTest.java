@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.interceptor;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

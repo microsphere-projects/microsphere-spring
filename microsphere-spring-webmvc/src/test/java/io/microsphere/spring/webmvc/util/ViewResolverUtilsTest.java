@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.util;
 
-
 import org.junit.Test;
 
 import static io.microsphere.spring.webmvc.util.ViewResolverUtils.BEAN_NAME_VIEW_RESOLVER_BEAN_NAME;

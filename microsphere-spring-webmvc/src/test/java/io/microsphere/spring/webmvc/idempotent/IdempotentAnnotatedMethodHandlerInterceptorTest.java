@@ -18,6 +18,7 @@
 package io.microsphere.spring.webmvc.idempotent;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.web.idempotent.DefaultIdempotentService;
 import io.microsphere.spring.web.idempotent.Idempotent;
 import io.microsphere.spring.web.idempotent.IdempotentAttributes;
@@ -25,6 +26,7 @@ import io.microsphere.spring.web.idempotent.IdempotentService;
 import io.microsphere.spring.webmvc.annotation.AbstractEnableWebMvcExtensionTest;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.EnableWebMvcExtensionInterceptorsTestConfig;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,6 +36,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import java.lang.reflect.Method;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.idempotent.IdempotentAttributes.of;
@@ -58,6 +61,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @RestController
 public class IdempotentAnnotatedMethodHandlerInterceptorTest extends AbstractEnableWebMvcExtensionTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
     @Autowired
     private IdempotentService idempotentService;

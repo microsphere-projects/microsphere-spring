@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.filter;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;

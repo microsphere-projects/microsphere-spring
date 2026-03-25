@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.servlet.listener;
 
-
 import io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatConfiguration;
 import io.microsphere.spring.web.util.RequestContextStrategy;
 import org.junit.Before;

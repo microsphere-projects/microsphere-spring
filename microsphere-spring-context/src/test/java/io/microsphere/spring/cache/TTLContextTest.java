@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.cache;
 
-
 import io.microsphere.logging.Logger;
 import org.junit.After;
 import org.junit.Test;

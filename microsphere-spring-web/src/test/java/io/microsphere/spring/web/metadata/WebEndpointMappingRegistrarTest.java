@@ -18,13 +18,18 @@
 package io.microsphere.spring.web.metadata;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestFilter;
 import static io.microsphere.spring.test.util.ServletTestUtils.addTestServlet;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
@@ -38,7 +43,12 @@ import static org.junit.Assert.assertTrue;
  * @see WebEndpointMappingRegistrar
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class WebEndpointMappingRegistrarTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private AnnotationConfigWebApplicationContext context;
 

@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-
 import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolverTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

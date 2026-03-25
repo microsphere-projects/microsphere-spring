@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.metadata;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;

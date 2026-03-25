@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.test.util;
 
-
 import org.junit.Test;
 
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;

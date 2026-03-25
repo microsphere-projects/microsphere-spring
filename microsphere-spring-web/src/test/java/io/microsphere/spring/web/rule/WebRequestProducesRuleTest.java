@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.rule;
 
-
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -164,7 +163,6 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
         assertFalse(rule.matches(request));
-
 
         rule = new WebRequestProducesRule("!application/xml");
         assertFalse(rule.matches(request));

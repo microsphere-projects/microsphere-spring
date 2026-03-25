@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.test.web.servlet;
 
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,7 +87,6 @@ public class TestServletContextTest {
     public void testCreateServlet() throws ServletException {
         assertNotNull(servletContext.createServlet(testServletClass));
     }
-
 
     @Test
     public void testGetServletRegistration() {

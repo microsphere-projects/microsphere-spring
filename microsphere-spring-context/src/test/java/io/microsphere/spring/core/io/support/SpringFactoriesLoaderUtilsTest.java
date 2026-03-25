@@ -16,13 +16,17 @@
  */
 package io.microsphere.spring.core.io.support;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.beans.test.Bean;
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.util.UserFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -31,6 +35,7 @@ import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.List;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
@@ -48,7 +53,12 @@ import static org.junit.Assert.assertThrows;
  * @see SpringFactoriesLoaderUtils
  * @since 1.0.0
  */
+@RunWith(JUnit4.class)
 public class SpringFactoriesLoaderUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
+
 
     private GenericApplicationContext context;
 

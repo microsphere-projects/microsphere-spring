@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.context.event;
 
-
 import io.microsphere.logging.Logger;
 import io.microsphere.util.ValueHolder;
 import org.junit.After;
@@ -89,7 +88,6 @@ public class InterceptingApplicationEventMulticasterProxyTest {
         this.proxy = (InterceptingApplicationEventMulticasterProxy) applicationEventMulticaster;
         resetEvent();
     }
-
 
     @After
     public void tearDown() {
