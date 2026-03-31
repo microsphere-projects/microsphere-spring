@@ -65,7 +65,7 @@ public class WebEventPublisher extends AbstractSmartLifecycle implements Handler
         WebEndpointMappingRegistry webEndpointMappingRegistry = getOptionalBean(this.context, WebEndpointMappingRegistry.class);
         if (webEndpointMappingRegistry == null) {
             if (logger.isWarnEnabled()) {
-                logger.warn("WebEndpointMappingRegistry Bean is not available , caused by @EnableWebExtension.registerWebEndpointMappings() == false");
+                logger.warn("No WebEndpointMappingRegistry Bean was registered, caused by @EnableWebExtension.registerWebEndpointMappings() == false");
             }
             return;
         }
