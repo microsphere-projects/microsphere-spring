@@ -19,16 +19,12 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.2.1</microsphere-java.version>
-        <microsphere-logging.version>0.1.1</microsphere-logging.version>
+        <microsphere-logging.version>0.1.2</microsphere-logging.version>
         <servlet-api.version>6.1.0</servlet-api.version>
         <websocket-api.version>2.2.0</websocket-api.version>
         <jackson.version>2.21.2</jackson.version>
         <snakeyaml.version>2.6</snakeyaml.version>
-        <slf4j.version>2.0.17</slf4j.version>
         <p6spy.version>3.9.1</p6spy.version>
-        <logback.version>1.5.32</logback.version>
-        <junit.version>6.0.3</junit.version>
         <mockito.version>5.23.0</mockito.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <sqlite-jdbc.version>3.51.3.0</sqlite-jdbc.version>
@@ -92,15 +88,6 @@
                 <version>${p6spy.version}</version>
             </dependency>
 
-            <!-- JUnit BOM -->
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <!-- Mockito BOM -->
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -131,26 +118,6 @@
                 <version>${sqlite-jdbc.version}</version>
             </dependency>
 
-            <!-- Slf4j -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-
-            <!-- Logback -->
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
             <!-- Spring Framework BOM -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -165,15 +132,6 @@
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
                 <version>${reactor.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Microsphere Dependencies -->
-            <dependency>
-                <groupId>io.github.microsphere-projects</groupId>
-                <artifactId>microsphere-java-dependencies</artifactId>
-                <version>${microsphere-java.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
