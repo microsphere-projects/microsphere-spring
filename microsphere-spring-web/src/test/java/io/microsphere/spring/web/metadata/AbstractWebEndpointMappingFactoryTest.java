@@ -22,10 +22,10 @@ import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import java.util.Optional;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.Optional;
 
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
