@@ -135,8 +135,8 @@ jobs:
             echo "::error::Branch 'main' does not exist. Skipping merge."
             exit 1
           fi
-          if ! git merge --no-ff origin/main -m "chore: merge main into main [skip ci]"; then
-            echo "::error::Merge conflict detected when merging main into main. Manual intervention required."
+          if ! git merge --no-ff origin/release -m "chore: merge release into main [skip ci]"; then
+            echo "::error::Merge conflict detected when merging release into main. Manual intervention required."
             exit 1
           fi
           git push origin main
