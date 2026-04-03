@@ -115,18 +115,6 @@ jobs:
           git diff --cached --quiet && echo "No changes to commit" || \
             git commit -m "chore: bump version to next patch after publishing ${{ inputs.revision }}" && git push
 
-  merge-to-main:
-    name: Merge release → main
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Merge release into main
         run: |
           git config user.name "github-actions[bot]"
