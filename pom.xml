@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>io.github.microsphere-projects</groupId>
-        <artifactId>microsphere-java-dependencies</artifactId>
-        <version>0.2.1</version>
+        <artifactId>microsphere-build</artifactId>
+        <version>0.2.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -52,7 +52,7 @@
     </scm>
 
     <properties>
-        <revision>0.2.8-SNAPSHOT</revision>
+        <revision>0.2.8</revision>
         <java.version>17</java.version>
     </properties>
 
