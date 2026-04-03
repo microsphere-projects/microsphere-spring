@@ -113,3 +113,17 @@ jobs:
           git add pom.xml
           git diff --cached --quiet && echo "No changes to commit" || \
             git commit -m "chore: bump version to next patch after publishing ${{ inputs.revision }}" && git push
+
+      - name: Merge release-1.x into dev-1.x
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git checkout dev-1.x; then
+            echo "::error::Branch 'dev-1.x' does not exist. Skipping merge."
+            exit 1
+          fi
+          if ! git merge --no-ff origin/release-1.x -m "chore: merge release-1.x into dev-1.x [skip ci]"; then
+            echo "::error::Merge conflict detected when merging release-1.x into dev-1.x. Manual intervention required."
+            exit 1
+          fi
+          git push origin dev-1.x

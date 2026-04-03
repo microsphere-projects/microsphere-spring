@@ -17,14 +17,6 @@
 
 package io.microsphere.spring.webflux.metadata;
 
-/**
- * TODO
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see TODO
- * @since 1.0.0
- */
-
 import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import org.springframework.web.reactive.HandlerMapping;
 

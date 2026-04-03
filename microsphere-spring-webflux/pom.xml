@@ -118,7 +118,7 @@
         <profile>
             <id>spring-framework-4.3</id>
             <properties>
-                <spring.version>5.0.20.RELEASE</spring.version>
+                <spring-framework.version>5.0.20.RELEASE</spring-framework.version>
             </properties>
         </profile>
     </profiles>
