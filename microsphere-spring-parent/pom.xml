@@ -19,7 +19,6 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-bom.version>0.1.5</microsphere-bom.version>
         <microsphere-java.version>0.2.6</microsphere-java.version>
         <microsphere-logging.version>0.1.5</microsphere-logging.version>
         <jakartaee.version>11.0.0</jakartaee.version>
