@@ -43,7 +43,6 @@ jobs:
           --update-snapshots
           --file pom.xml
           -Drevision=0.0.1-SNAPSHOT
-          -Dsurefire.useSystemClassLoader=false
           test
           --activate-profiles test,coverage,${{ matrix.maven-profile-spring-framework }}
 
