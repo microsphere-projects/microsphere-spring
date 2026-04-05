@@ -24,11 +24,7 @@
         <jackson.version>2.18.2</jackson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
         <p6spy.version>3.9.1</p6spy.version>
-        <junit.version>4.13.2</junit.version>
-        <mockito.version>4.11.0</mockito.version>
-        <jsonassert.version>1.5.3</jsonassert.version>
-        <sqlite-jdbc.version>3.41.2.2</sqlite-jdbc.version>
-        <tomcat.version>9.0.109</tomcat.version>
+        <tomcat.version>9.0.117</tomcat.version>
         <zookeeper.version>3.9.5</zookeeper.version>
         <curator.version>5.9.0</curator.version>
     </properties>
@@ -58,7 +54,7 @@
                 <artifactId>p6spy</artifactId>
                 <version>${p6spy.version}</version>
             </dependency>
-            
+
             <!-- Apache Zookeeper -->
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
