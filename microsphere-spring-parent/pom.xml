@@ -19,16 +19,12 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.2.5</microsphere-java.version>
-        <microsphere-logging.version>0.1.4</microsphere-logging.version>
-        <jackson.version>2.18.2</jackson.version>
-        <snakeyaml.version>2.3</snakeyaml.version>
+        <microsphere-java.version>0.2.6</microsphere-java.version>
+        <microsphere-logging.version>0.1.5</microsphere-logging.version>
+        <jackson.version>2.21.2</jackson.version>
+        <snakeyaml.version>2.6</snakeyaml.version>
         <p6spy.version>3.9.1</p6spy.version>
-        <junit.version>4.13.2</junit.version>
-        <mockito.version>4.11.0</mockito.version>
-        <jsonassert.version>1.5.3</jsonassert.version>
-        <sqlite-jdbc.version>3.41.2.2</sqlite-jdbc.version>
-        <tomcat.version>9.0.109</tomcat.version>
+        <tomcat.version>9.0.117</tomcat.version>
         <zookeeper.version>3.9.5</zookeeper.version>
         <curator.version>5.9.0</curator.version>
     </properties>
@@ -57,45 +53,6 @@
                 <groupId>p6spy</groupId>
                 <artifactId>p6spy</artifactId>
                 <version>${p6spy.version}</version>
-            </dependency>
-            
-            <!-- JSONassert -->
-            <dependency>
-                <groupId>org.skyscreamer</groupId>
-                <artifactId>jsonassert</artifactId>
-                <version>${jsonassert.version}</version>
-            </dependency>
-
-            <!-- SQLite -->
-            <dependency>
-                <groupId>org.xerial</groupId>
-                <artifactId>sqlite-jdbc</artifactId>
-                <version>${sqlite-jdbc.version}</version>
-            </dependency>
-
-            <!-- Apache Tomcat -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-jasper</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-tribes</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-catalina-ha</artifactId>
-                <version>${tomcat.version}</version>
             </dependency>
 
             <!-- Apache Zookeeper -->

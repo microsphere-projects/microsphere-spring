@@ -21,6 +21,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: ${{ inputs.revision }}
     steps:
       - name: Validate version format
@@ -50,7 +52,6 @@ jobs:
           --file pom.xml
           -Drevision=${{ inputs.revision }}
           -Dgpg.skip=true
-          -Dsurefire.useSystemClassLoader=false
           deploy
           --activate-profiles publish,ci
         env:
