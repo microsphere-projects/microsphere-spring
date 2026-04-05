@@ -8,6 +8,9 @@
 
 name: Maven Build
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ 'dev-1.x' ]
