@@ -25,7 +25,6 @@
         <jackson.version>2.21.2</jackson.version>
         <snakeyaml.version>2.6</snakeyaml.version>
         <p6spy.version>3.9.1</p6spy.version>
-        <mockito.version>5.23.0</mockito.version>
         <zookeeper.version>3.9.5</zookeeper.version>
         <curator.version>5.9.0</curator.version>
     </properties>
