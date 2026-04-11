@@ -51,6 +51,7 @@ jobs:
           --update-snapshots
           --file pom.xml
           -Drevision=${{ inputs.revision }}
+          -Dsurefire.useSystemClassLoader=false
           -Dgpg.skip=true
           deploy
           --activate-profiles publish,ci
@@ -66,6 +67,7 @@ jobs:
     needs: build
     permissions:
       contents: write
+      models: read
     steps:
       - name: Checkout Source
         uses: actions/checkout@v5
