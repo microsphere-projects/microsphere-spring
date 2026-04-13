@@ -27,3 +27,23 @@
 
 For a detailed view of the changes, refer to the [commit history](https://github.com/mercyblitz/microsphere-spring/commits/main).
 
+## v0.1.11
+
+# Release Notes for v0.1.11
+
+## Dependency Updates
+- Updated Maven wrapper to version `3.9.14`. ([3d74a856](#))
+
+## Build and Workflow Enhancements
+- Enhanced release notes and release creation workflow. ([4a7892a1](#))
+- Removed `surefire.useSystemClassLoader` flag for simplified builds. ([bcf2dfbe](#))
+
+## Other Changes
+- Added a trailing newline to `maven-wrapper.properties`. ([461991f2](#))
+- Bumped version number to prepare for the next patch release. ([b10b3193](#))
+
+---
+
+For a complete list of changes, refer to the full [changelog](#).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.10...0.1.11
