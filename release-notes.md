@@ -25,4 +25,21 @@
 ## Other Changes
 - Version bumped to prepare for development after release. ([1f145354](https://github.com/microsphere-projects/repo/commit/1f145354))
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.9...0.2.10
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.9...0.2.10## v0.2.11
+
+# Release Notes - Version 0.2.11  
+
+## Dependency Updates
+- Updated Maven Wrapper to version `3.9.14`.  
+- Added a final newline to `maven-wrapper.properties` for improved configuration.  
+
+## Build and Workflow Enhancements
+- Removed `surefire.useSystemClassLoader` flag for streamlining test execution.  
+- Bumped parent version to `0.2.7` for consistency.  
+
+## Other Changes
+- Added a comment for `P6Spy` in the parent POM for clarification.  
+
+---  
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.10...0.2.11
