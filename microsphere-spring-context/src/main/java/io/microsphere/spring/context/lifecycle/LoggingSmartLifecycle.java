@@ -78,15 +78,15 @@ public class LoggingSmartLifecycle extends AbstractSmartLifecycle {
 
     @Override
     protected void doStart() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("doStart()...");
+        if (logger.isInfoEnabled()) {
+            logger.info("doStart()...");
         }
     }
 
     @Override
     protected void doStop() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("doStop()...");
+        if (logger.isInfoEnabled()) {
+            logger.info("doStop()...");
         }
     }
 }
