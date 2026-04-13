@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.concurrent.ExecutorUtils.shutdownOnExit;
 import static io.microsphere.reflect.MethodUtils.findDeclaredMethod;
@@ -72,7 +73,8 @@ public class InterceptingApplicationEventMulticasterProxy extends GenericBeanPos
      */
     @ConfigurationProperty(
             defaultValue = DEFAULT_RESET_BEAN_NAME,
-            description = "The property name of the reset bean name of ApplicationEventMulticaster"
+            description = "The property name of the reset bean name of ApplicationEventMulticaster",
+            source = APPLICATION_SOURCE
     )
     public static final String RESET_BEAN_NAME_PROPERTY_NAME = "microsphere.spring.application-event-multicaster.reset-bean-name";
 
