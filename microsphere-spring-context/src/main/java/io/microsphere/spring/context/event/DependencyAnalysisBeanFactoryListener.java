@@ -358,7 +358,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {
-                if(logger.isTraceEnabled()) {
+                if (logger.isTraceEnabled()) {
                     logger.trace("The Bean[name : '{}'] is ready", beanName);
                 }
                 continue;
