@@ -65,6 +65,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- P6Spy -->
             <dependency>
                 <groupId>p6spy</groupId>
                 <artifactId>p6spy</artifactId>
