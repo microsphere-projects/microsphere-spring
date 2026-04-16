@@ -21,6 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 5
       matrix:
         java: [ '8' , '11' , '17' , '21' , '25' ]
         maven-profile-spring-framework: [
