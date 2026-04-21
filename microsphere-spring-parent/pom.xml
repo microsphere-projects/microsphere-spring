@@ -163,8 +163,8 @@
         <profile>
             <id>spring-framework-6.2</id>
             <properties>
-                <spring-framework.version>6.2.17</spring-framework.version>
-                <reactor.version>2024.0.16</reactor.version>
+                <spring-framework.version>6.2.18</spring-framework.version>
+                <reactor.version>2024.0.17</reactor.version>
             </properties>
         </profile>
 
