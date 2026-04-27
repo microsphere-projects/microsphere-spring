@@ -32,19 +32,11 @@
 
     <dependencyManagement>
         <dependencies>
-            
+
             <!-- Microsphere BOMs -->
             <dependency>
                 <groupId>io.github.microsphere-projects</groupId>
                 <artifactId>microsphere-javadb-bom</artifactId>
-                <version>${microsphere-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.microsphere-projects</groupId>
-                <artifactId>microsphere-tomcat-bom</artifactId>
                 <version>${microsphere-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -141,6 +133,13 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Apache Tomcat -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 
