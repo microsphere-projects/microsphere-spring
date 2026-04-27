@@ -28,10 +28,8 @@ import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
-import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -57,6 +55,7 @@ import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 import static org.apache.catalina.startup.Tomcat.initWebappDefaults;
 import static org.springframework.util.StringUtils.cleanPath;
 import static org.springframework.util.StringUtils.hasText;
@@ -245,9 +244,7 @@ class EmbeddedTomcatContextLoader extends AbstractGenericContextLoader {
 
         tomcat.start();
 
-        applicationContext.addApplicationListener((ApplicationListener<ContextClosedEvent>) event -> {
-            execute(tomcat::stop);
-        });
+        addShutdownHookCallback(() -> execute(tomcat::stop));
 
         return context;
     }
