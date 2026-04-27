@@ -19,8 +19,9 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.2.9</microsphere-java.version>
-        <microsphere-logging.version>0.1.7</microsphere-logging.version>
+        <microsphere-bom.version>0.2.1</microsphere-bom.version>
+        <microsphere-java.version>0.3.0</microsphere-java.version>
+        <microsphere-logging.version>0.1.8</microsphere-logging.version>
         <jakartaee.version>11.0.0</jakartaee.version>
         <jackson.version>2.21.2</jackson.version>
         <snakeyaml.version>2.6</snakeyaml.version>
@@ -39,6 +40,23 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Microsphere BOMs -->
+            <dependency>
+                <groupId>io.github.microsphere-projects</groupId>
+                <artifactId>microsphere-javadb-bom</artifactId>
+                <version>${microsphere-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.microsphere-projects</groupId>
+                <artifactId>microsphere-tomcat-bom</artifactId>
+                <version>${microsphere-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <!-- Jackson BOM -->
             <dependency>
