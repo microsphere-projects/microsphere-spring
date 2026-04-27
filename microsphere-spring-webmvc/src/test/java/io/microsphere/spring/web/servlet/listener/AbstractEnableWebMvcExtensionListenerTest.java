@@ -74,7 +74,7 @@ abstract class AbstractEnableWebMvcExtensionListenerTest {
     static void assertServletContext(WebApplicationContext wac, ServletContext servletContext) {
         assertNotNull(wac);
         assertNotNull(servletContext);
-        assertSame(wac, getRequiredWebApplicationContext(servletContext));
+        assertSame(wac.getParent(), getRequiredWebApplicationContext(servletContext));
     }
 
     static void assertDispatcherServlet(ServletContext servletContext) {
