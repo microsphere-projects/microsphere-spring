@@ -80,4 +80,16 @@ For a complete list of changes, refer to the full [changelog](#).
 
 **Full Changelog**: [0.1.11...0.1.13](https://github.com/microsphere-projects/compare/0.1.11...0.1.13)
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.11...0.1.13
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.11...0.1.13## v0.1.14
+
+# Release Notes - Version 0.1.14
+
+## Build and Workflow Enhancements
+- Expanded Java matrix to include newer versions. ([#219](https://github.com/microsphere-projects/dev-1.x))
+- Tidy up dependencies and bumped Microsphere versions. ([#220](https://github.com/microsphere-projects/dev-1.x))
+- Merged `release-1.x` into `dev-1.x` branch. ([#220](https://github.com/microsphere-projects/dev-1.x))
+
+## Other Changes
+- Bumped version to `0.1.14` after publishing `0.1.13`. ([#219](https://github.com/microsphere-projects/dev-1.x)) 
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.13...0.1.14
