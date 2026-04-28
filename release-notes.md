@@ -42,4 +42,32 @@
 
 ---  
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.10...0.2.11
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.10...0.2.11## v0.2.13
+
+# Release Notes for Version 0.2.13
+
+## Dependency Updates
+- Updated `spring-framework-bom` from `7.0.6` to `7.0.7`. ([#216](https://github.com/microsphere-projects/microsphere-spring/pull/216))
+- Updated `reactor-bom` from `2025.0.4` to `2025.0.5`. ([#215](https://github.com/microsphere-projects/microsphere-spring/pull/215))
+- Bumped `microsphere-java` to `0.2.9`.
+- Bumped `microsphere-logging` to `0.1.7`.
+- Updated Microsphere versions and imported BOMs.
+
+## Build and Workflow Enhancements
+- Switched Maven wrapper to the official Maven repository for improved compatibility.
+- Updated Maven wrapper to version `3.9.15`.
+
+## Bug Fixes
+- Removed unnecessary blank lines in `applicationContext.xml`.
+- Eliminated empty `contextConfigLocation` init-param in configurations.
+- Added `contextConfigLocation` init-param to `web.xml` for improved initialization.
+
+## Test Improvements
+- Added support for Spring `6.2.17`, `6.2.18`, `7.0.6`, and `7.0.7`, and updated test ranges accordingly.
+
+## Other Changes
+- Removed unused Tomcat optional dependencies to streamline the build.
+
+### [Full Changelog](https://github.com/microsphere-projects/microsphere-spring/compare/0.2.11...0.2.13)
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.11...0.2.13
