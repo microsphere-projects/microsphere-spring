@@ -70,4 +70,15 @@
 
 ### [Full Changelog](https://github.com/microsphere-projects/microsphere-spring/compare/0.2.11...0.2.13)
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.11...0.2.13
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.11...0.2.13## v0.2.14
+
+# Release Notes for v0.2.14
+
+## Dependency Updates
+- Updated Microsphere versions and removed BOM imports. ([30f00fc2](<commit-link>))
+
+## Other Changes
+- Version bumped to 0.2.14 following release of 0.2.13. ([845f509d](<commit-link>))
+- Merged `main` into `release` and vice versa. ([6c67a00d](<commit-link>), [b99d3b42](<commit-link>)) 
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.13...0.2.14
