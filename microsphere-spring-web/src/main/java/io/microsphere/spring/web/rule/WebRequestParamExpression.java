@@ -68,7 +68,7 @@ public class WebRequestParamExpression extends AbstractNameValueExpression<Strin
         return containsElement(parameterValues, this.value);
     }
 
-    protected static List<WebRequestParamExpression> parseExpressions(String... params) {
+    public static List<WebRequestParamExpression> parseExpressions(String... params) {
         if (isEmpty(params)) {
             return emptyList();
         }

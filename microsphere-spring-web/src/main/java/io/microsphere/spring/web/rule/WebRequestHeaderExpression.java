@@ -67,7 +67,7 @@ public class WebRequestHeaderExpression extends AbstractNameValueExpression<Stri
         return containsElement(values, this.value);
     }
 
-    protected static List<WebRequestHeaderExpression> parseExpressions(String... headers) {
+    public static List<WebRequestHeaderExpression> parseExpressions(String... headers) {
         List<WebRequestHeaderExpression> expressions = emptyList();
         int size = size(headers);
         if (size > 0) {
