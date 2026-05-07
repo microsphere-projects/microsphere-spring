@@ -19,6 +19,7 @@ package io.microsphere.spring.webmvc.interceptor;
 import io.microsphere.lang.function.ThrowableConsumer;
 import io.microsphere.lang.function.ThrowableFunction;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
+import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
@@ -86,7 +87,7 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
         for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {
             Collection<? extends HandlerInterceptor> interceptors = context.getBeansOfType(interceptorClass).values();
             for (HandlerInterceptor interceptor : interceptors) {
-                if (interceptor == this) {
+                if (interceptor == this || interceptor instanceof InterceptingHandlerMethodProcessor) {
                     continue;
                 }
                 allInterceptors.add(interceptor);
