@@ -40,6 +40,8 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandlerCom
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import java.lang.reflect.Method;
@@ -70,7 +72,7 @@ import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
  * @since 1.0.0
  */
 public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>
-        implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler, HandlerInterceptor {
+        implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler, HandlerInterceptor, WebMvcConfigurer {
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
 
@@ -123,6 +125,11 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         initHandlerMethodAdvices(context);
         initHandlerMethodArgumentResolverAdvices(context);
         initRequestMappingHandlerAdapters(event, context);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(this);
     }
 
     @Override
