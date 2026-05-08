@@ -30,15 +30,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Function;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
+import static io.microsphere.constants.SymbolConstants.EQUAL;
 import static io.microsphere.constants.SymbolConstants.EQUAL_CHAR;
 import static io.microsphere.constants.SymbolConstants.LEFT_CURLY_BRACE;
+import static io.microsphere.constants.SymbolConstants.LEFT_PARENTHESIS;
 import static io.microsphere.constants.SymbolConstants.RIGHT_CURLY_BRACE;
+import static io.microsphere.constants.SymbolConstants.RIGHT_PARENTHESIS;
 import static io.microsphere.net.URLUtils.buildURI;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
@@ -49,13 +53,16 @@ import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.ArrayUtils.arrayEquals;
 import static io.microsphere.util.ArrayUtils.arrayToString;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
+import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.Assert.assertNoNullElements;
 import static io.microsphere.util.Assert.assertNotBlank;
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
 import static io.microsphere.util.Assert.assertTrue;
 import static io.microsphere.util.IterableUtils.iterate;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
+import static io.microsphere.util.StringUtils.split;
 import static java.util.function.Function.identity;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -1214,92 +1221,6 @@ public class WebEndpointMapping<E> {
         }
 
         /**
-         * Create a name-value pair string. If the value is {@code null}, only the name is returned;
-         * otherwise returns "name=value".
-         *
-         * <h3>Example Usage</h3>
-         * <pre>{@code
-         *   String result = Builder.pair("version", "v1"); // "version=v1"
-         *   String nameOnly = Builder.pair("active", null); // "active"
-         * }</pre>
-         *
-         * @param name  the name part (must not be blank)
-         * @param value the value part (can be null)
-         * @return the formatted pair string
-         * @throws IllegalArgumentException if the name is blank
-         */
-        protected static String pair(String name, @Nullable Object value) {
-            assertNotBlank(name, () -> "The 'name' must not be blank");
-            return value == null ? name : name + EQUAL_CHAR + value;
-        }
-
-        static void assertBuilders(Builder<?> one, Builder<?> other) {
-            assertNotNull(one, () -> "The 'one' Builder must not be null!");
-            assertNotNull(other, () -> "The 'other' Builder must not be null!");
-            assertTrue(one.kind == other.kind, () -> format("The Kind does not match[one : {} , other : {}]", one.kind, other.kind));
-        }
-
-        /**
-         * Create a new empty {@link Set} with a small initial capacity, used internally by the builder
-         * to store patterns, methods, params, headers, consumes, and produces.
-         *
-         * <h3>Example Usage</h3>
-         * <pre>{@code
-         *   Set<String> values = Builder.newSet();
-         *   values.add("GET");
-         * }</pre>
-         *
-         * @return a new empty {@link Set} instance
-         */
-        protected static Set<String> newSet() {
-            return newLinkedHashSet(2);
-        }
-
-        /**
-         * Convert a collection of strings to a string array.
-         *
-         * <h3>Example Usage</h3>
-         * <pre>{@code
-         *   Collection<String> values = Arrays.asList("GET", "POST");
-         *   String[] result = Builder.toStrings(values); // ["GET", "POST"]
-         * }</pre>
-         *
-         * @param values the collection of strings to convert
-         * @return an array of strings, or an empty array if the collection is empty
-         */
-        protected static String[] toStrings(Collection<String> values) {
-            return toStrings(values, identity());
-        }
-
-        static <V> String[] toStrings(V[] values, Function<V, String> stringFunction) {
-            return toStrings(ofList(values), stringFunction);
-        }
-
-        /**
-         * Convert a collection of values to a string array using the provided mapping function.
-         *
-         * <h3>Example Usage</h3>
-         * <pre>{@code
-         *   List<HttpMethod> methods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
-         *   String[] result = Builder.toStrings(methods, HttpMethod::name); // ["GET", "POST"]
-         *
-         *   List<MediaType> types = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
-         *   String[] mediaTypes = Builder.toStrings(types, MediaType::toString);
-         * }</pre>
-         *
-         * @param values         the collection of values to convert
-         * @param stringFunction the function to map each value to a string
-         * @param <V>            the type of values in the collection
-         * @return an array of strings, or an empty array if the collection is empty
-         */
-        protected static <V> String[] toStrings(Collection<V> values, Function<V, String> stringFunction) {
-            if (isEmpty(values)) {
-                return EMPTY_STRING_ARRAY;
-            }
-            return values.stream().map(stringFunction).toArray(String[]::new);
-        }
-
-        /**
          * Build {@link WebEndpointMapping}
          *
          * @return non-null
@@ -1331,79 +1252,6 @@ public class WebEndpointMapping<E> {
                     toStrings(this.produces)
             );
         }
-    }
-
-    /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#SERVLET servlet}.
-     *
-     * @param <E> the type of endpoint
-     * @return a {@link Builder} of {@link WebEndpointMapping}
-     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
-     */
-    @Nonnull
-    public static <E> Builder<E> servlet() throws IllegalArgumentException {
-        return of(SERVLET);
-    }
-
-    /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#FILTER filter}.
-     *
-     * @param <E> the type of endpoint
-     * @return a {@link Builder} of {@link WebEndpointMapping}
-     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
-     */
-    @Nonnull
-    public static <E> Builder<E> filter() throws IllegalArgumentException {
-        return of(FILTER);
-    }
-
-    /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_MVC webMvc}.
-     *
-     * @param <E> the type of endpoint
-     * @return a {@link Builder} of {@link WebEndpointMapping}
-     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
-     */
-    @Nonnull
-    public static <E> Builder<E> webmvc() throws IllegalArgumentException {
-        return of(WEB_MVC);
-    }
-
-    /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_FLUX webFlux}.
-     *
-     * @param <E> the type of endpoint
-     * @return a {@link Builder} of {@link WebEndpointMapping}
-     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
-     */
-    @Nonnull
-    public static <E> Builder<E> webflux() throws IllegalArgumentException {
-        return of(WEB_FLUX);
-    }
-
-    /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#CUSTOMIZED customized}.
-     *
-     * @param <E> the type of endpoint
-     * @return a {@link Builder} of {@link WebEndpointMapping}
-     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
-     */
-    @Nonnull
-    public static <E> Builder<E> customized() throws IllegalArgumentException {
-        return of(CUSTOMIZED);
-    }
-
-    /**
-     * Create a {@link Builder} of {@link WebEndpointMapping} with specified kind.
-     *
-     * @param kind the kind of endpoint
-     * @param <E>  the type of endpoint
-     * @return a {@link Builder} of {@link WebEndpointMapping}
-     * @throws IllegalArgumentException if the {@code kind} or {@code endpoint} is {@code null}
-     */
-    @Nonnull
-    public static <E> Builder<E> of(@Nonnull Kind kind) throws IllegalArgumentException {
-        return new Builder<>(kind);
     }
 
     private WebEndpointMapping(
@@ -1805,6 +1653,80 @@ public class WebEndpointMapping<E> {
         return stringBuilder.toString();
     }
 
+    /**
+     * Convert this endpoint mapping to a expression string representation.
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * WebEndpointMapping mapping = WebEndpointMapping.webmvc()
+     * .endpoint(handler)
+     * .methods("GET")
+     * .patterns("/a")
+     * .build();
+     * String expression = mapping.toExpression();
+     * assertEquals("(GET && /a)", expression);
+     *
+     * mapping = WebEndpointMapping.webmvc()
+     * .endpoint(handler)
+     * .methods("GET")
+     * .patterns("/a")
+     * .param("a", "1")
+     * .build();
+     * expression = mapping.toExpression();
+     * assertEquals("((GET && /a) && ?a == 1)", expression);
+     *
+     * mapping = WebEndpointMapping.webmvc()
+     * .endpoint(handler)
+     * .methods("GET")
+     * .patterns("/a")
+     * .param("a", "1")
+     * .header("h", "2")
+     * .build();
+     * expression = mapping.toExpression();
+     * assertEquals("(((GET && /a) && ?a == 1) && h: 2)", expression);
+     *
+     * mapping = WebEndpointMapping.webmvc()
+     * .methods("GET")
+     * .patterns("/a")
+     * .param("a", "1")
+     * .header("h", "2")
+     * .consume("application/json")
+     * .build();
+     * expression = mapping.toExpression();
+     * assertEquals("((((GET && /a) && ?a == 1) && h: 2) && Content-Type: application/json)", expression);
+     *
+     * mapping = WebEndpointMapping.webmvc()
+     * .endpoint(handler)
+     * .methods("GET")
+     * .patterns("/a")
+     * .param("a", "1")
+     * .header("h", "2")
+     * .consume("application/json")
+     * .produce("text/html")
+     * .build();
+     * expression = mapping.toExpression();
+     * assertEquals("(((((GET && /a) && ?a == 1) && h: 2) && Content-Type: application/json) && Accept: text/html)", expression);
+     *
+     * mapping = WebEndpointMapping.webmvc()
+     * .endpoint(handler)
+     * .methods("GET")
+     * .patterns("/a")
+     * .param("a", "1")
+     * .header("h", "2")
+     * .consume("application/json")
+     * .produce("text/html")
+     * .negate()
+     * .build();
+     * expression = mapping.toExpression();
+     * assertEquals("!(((((GET && /a) && ?a == 1) && h: 2) && Content-Type: application/json) && Accept: text/html)", expression);
+     * }</pre>
+     *
+     * @return a expression string representation
+     */
+    @Nonnull
+    public String toExpression() {
+        return toExpression(this);
+    }
+
     private void append(StringBuilder appendable, String name, int value) {
         JSONUtils.append(appendable, name, value);
     }
@@ -1831,5 +1753,298 @@ public class WebEndpointMapping<E> {
         for (int i = 0; i < values.length; i++) {
             appendable.append(values[i]);
         }
+    }
+
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#SERVLET servlet}.
+     *
+     * @param <E> the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> servlet() throws IllegalArgumentException {
+        return of(SERVLET);
+    }
+
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#FILTER filter}.
+     *
+     * @param <E> the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> filter() throws IllegalArgumentException {
+        return of(FILTER);
+    }
+
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_MVC webMvc}.
+     *
+     * @param <E> the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> webmvc() throws IllegalArgumentException {
+        return of(WEB_MVC);
+    }
+
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#WEB_FLUX webFlux}.
+     *
+     * @param <E> the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> webflux() throws IllegalArgumentException {
+        return of(WEB_FLUX);
+    }
+
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} for {@link Kind#CUSTOMIZED customized}.
+     *
+     * @param <E> the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> customized() throws IllegalArgumentException {
+        return of(CUSTOMIZED);
+    }
+
+    /**
+     * Create a {@link Builder} of {@link WebEndpointMapping} with specified kind.
+     *
+     * @param kind the kind of endpoint
+     * @param <E>  the type of endpoint
+     * @return a {@link Builder} of {@link WebEndpointMapping}
+     * @throws IllegalArgumentException if the {@code kind} or {@code endpoint} is {@code null}
+     */
+    @Nonnull
+    public static <E> Builder<E> of(@Nonnull Kind kind) throws IllegalArgumentException {
+        return new Builder<>(kind);
+    }
+
+    /**
+     * Create a name-value pair string. If the value is {@code null}, only the name is returned;
+     * otherwise returns "name=value".
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   String result = Builder.pair("version", "v1"); // "version=v1"
+     *   String nameOnly = Builder.pair("active", null); // "active"
+     * }</pre>
+     *
+     * @param name  the name part (must not be blank)
+     * @param value the value part (can be null)
+     * @return the formatted pair string
+     * @throws IllegalArgumentException if the name is blank
+     */
+    protected static String pair(String name, @Nullable Object value) {
+        assertNotBlank(name, () -> "The 'name' must not be blank");
+        return value == null ? name : name + EQUAL_CHAR + value;
+    }
+
+    static void assertBuilders(Builder<?> one, Builder<?> other) {
+        assertNotNull(one, () -> "The 'one' Builder must not be null!");
+        assertNotNull(other, () -> "The 'other' Builder must not be null!");
+        assertTrue(one.kind == other.kind, () -> format("The Kind does not match[one : {} , other : {}]", one.kind, other.kind));
+    }
+
+    /**
+     * Create a new empty {@link Set} with a small initial capacity, used internally by the builder
+     * to store patterns, methods, params, headers, consumes, and produces.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   Set<String> values = Builder.newSet();
+     *   values.add("GET");
+     * }</pre>
+     *
+     * @return a new empty {@link Set} instance
+     */
+    protected static Set<String> newSet() {
+        return newLinkedHashSet(2);
+    }
+
+    /**
+     * Convert a collection of strings to a string array.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   Collection<String> values = Arrays.asList("GET", "POST");
+     *   String[] result = Builder.toStrings(values); // ["GET", "POST"]
+     * }</pre>
+     *
+     * @param values the collection of strings to convert
+     * @return an array of strings, or an empty array if the collection is empty
+     */
+    protected static String[] toStrings(Collection<String> values) {
+        return toStrings(values, identity());
+    }
+
+    static <V> String[] toStrings(V[] values, Function<V, String> stringFunction) {
+        return toStrings(ofList(values), stringFunction);
+    }
+
+    /**
+     * Convert a collection of values to a string array using the provided mapping function.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     *   List<HttpMethod> methods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
+     *   String[] result = Builder.toStrings(methods, HttpMethod::name); // ["GET", "POST"]
+     *
+     *   List<MediaType> types = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_XML);
+     *   String[] mediaTypes = Builder.toStrings(types, MediaType::toString);
+     * }</pre>
+     *
+     * @param values         the collection of values to convert
+     * @param stringFunction the function to map each value to a string
+     * @param <V>            the type of values in the collection
+     * @return an array of strings, or an empty array if the collection is empty
+     */
+    protected static <V> String[] toStrings(Collection<V> values, Function<V, String> stringFunction) {
+        if (isEmpty(values)) {
+            return EMPTY_STRING_ARRAY;
+        }
+        return values.stream().map(stringFunction).toArray(String[]::new);
+    }
+
+    static String toExpression(WebEndpointMapping mapping) {
+        String[] methods = mapping.getMethods();
+        String[] patterns = mapping.getPatterns();
+        String[] params = mapping.getParams();
+        String[] headers = mapping.getHeaders();
+        String[] consumes = mapping.getConsumes();
+        String[] produces = mapping.getProduces();
+        boolean negated = mapping.isNegated();
+
+        String expression = toExpression(methods);
+
+        expression = toExpression(expression, patterns);
+
+        expression = toExpression(expression, normalize(params, WebEndpointMapping::normalizeParam));
+
+        expression = toExpression(expression, normalize(headers, WebEndpointMapping::normalizeHeader));
+
+        expression = toExpression(expression, normalize(consumes, WebEndpointMapping::normalizeConsume));
+
+        expression = toExpression(expression, normalize(produces, WebEndpointMapping::normalizeProduce));
+
+        if (negated) {
+            expression = "!" + expression;
+        }
+
+        return expression;
+    }
+
+    static String toExpression(String[] values) {
+        int length = length(values);
+        if (length == 0) {
+            return EMPTY_STRING;
+        } else if (length == 1) {
+            return values[0];
+        }
+        StringJoiner expressionBuilder = new StringJoiner(" || ", LEFT_PARENTHESIS, RIGHT_PARENTHESIS);
+        for (int i = 0; i < length; i++) {
+            String value = values[i];
+            expressionBuilder.add(value);
+        }
+        return expressionBuilder.toString();
+    }
+
+    static String toExpression(String lExpression, String[] right) {
+        String rExpression = toExpression(right);
+        if (EMPTY_STRING.equals(rExpression)) {
+            return lExpression;
+        }
+        return toExpression(lExpression, rExpression);
+    }
+
+    static String toExpression(String left, String right) {
+        if (EMPTY_STRING.equals(left)) {
+            return right;
+        }
+        StringJoiner expressionBuilder = new StringJoiner(" && ", LEFT_PARENTHESIS, RIGHT_PARENTHESIS);
+        expressionBuilder.add(left).add(right);
+        return expressionBuilder.toString();
+    }
+
+    /**
+     * Normalize the given values using the provided normalizer function.
+     *
+     * @param values     the values to normalize
+     * @param normalizer the normalizer function
+     * @return the normalized values
+     */
+    static String[] normalize(String[] values, Function<String, String> normalizer) {
+        return toStrings(values, normalizer);
+    }
+
+    /**
+     * Normalize the header expression.
+     * <p>
+     * For example, "name=value" will be normalized to "name: value".
+     * </p>
+     *
+     * @param header the header expression
+     * @return the normalized header expression
+     */
+    static String normalizeHeader(String header) {
+        String[] nameAndValue = parseNameAndValue(header);
+        String name = nameAndValue[0];
+        String value = nameAndValue[1];
+        return format("{}: {}", name, value);
+    }
+
+    /**
+     * Normalize the param expression.
+     * <p>
+     * For example, "name=value" will be normalized to "?name == value".
+     * </p>
+     *
+     * @param param the param expression
+     * @return the normalized param expression
+     */
+    static String normalizeParam(String param) {
+        String[] nameAndValue = parseNameAndValue(param);
+        String name = nameAndValue[0];
+        String value = nameAndValue[1];
+        return format("?{} == {}", name, value);
+    }
+
+    /**
+     * Normalize the consume expression.
+     * <p>
+     * For example, "application/json" will be normalized to "Content-Type: application/json".
+     * </p>
+     *
+     * @param consume the consume expression
+     * @return the normalized consume expression
+     */
+    static String normalizeConsume(String consume) {
+        return format("Content-Type: {}", consume);
+    }
+
+    /**
+     * Normalize the produce expression.
+     * <p>
+     * For example, "application/json" will be normalized to "Accept: application/json".
+     * </p>
+     *
+     * @param produce the produce expression
+     * @return the normalized produce expression
+     */
+
+    static String normalizeProduce(String produce) {
+        return format("Accept: {}", produce);
+    }
+
+    static String[] parseNameAndValue(String expression) {
+        return split(expression, EQUAL);
     }
 }
