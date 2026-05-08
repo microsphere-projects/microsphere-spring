@@ -18,6 +18,10 @@ package io.microsphere.spring.constants;
 
 import org.junit.jupiter.api.Test;
 
+import static io.microsphere.spring.constants.PropertyConstants.AUTO_REGISTERED_PROPERTY_NAME_SUFFIX;
+import static io.microsphere.spring.constants.PropertyConstants.BEANS_PROPERTY_NAME_PREFIX;
+import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_PROPERTY_VALUE;
+import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,5 +37,9 @@ class PropertyConstantsTest {
     @Test
     void test() {
         assertEquals("microsphere.spring.", MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX);
+        assertEquals("microsphere.spring.beans.", BEANS_PROPERTY_NAME_PREFIX);
+        assertEquals("auto-registered", AUTO_REGISTERED_PROPERTY_NAME_SUFFIX);
+        assertEquals("true", DEFAULT_AUTO_REGISTERED_PROPERTY_VALUE);
+        assertEquals(true, DEFAULT_AUTO_REGISTERED_VALUE);
     }
 }

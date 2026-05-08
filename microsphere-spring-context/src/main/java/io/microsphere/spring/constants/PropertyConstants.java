@@ -17,6 +17,7 @@
 package io.microsphere.spring.constants;
 
 import static io.microsphere.constants.PropertyConstants.MICROSPHERE_PROPERTY_NAME_PREFIX;
+import static java.lang.Boolean.parseBoolean;
 
 /**
  * The Property constants for Microsphere Spring
@@ -30,4 +31,24 @@ public interface PropertyConstants {
      * The property name prefix of Microsphere Spring : "microsphere.spring."
      */
     String MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX = MICROSPHERE_PROPERTY_NAME_PREFIX + "spring.";
+
+    /**
+     * The property name prefix of beans : "microsphere.spring.beans."
+     */
+    String BEANS_PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "beans.";
+
+    /**
+     * The property name suffix of auto registered : "auto-registered"
+     */
+    String AUTO_REGISTERED_PROPERTY_NAME_SUFFIX = "auto-registered";
+
+    /**
+     * The default value of property of auto registered : "true"
+     */
+    String DEFAULT_AUTO_REGISTERED_PROPERTY_VALUE = "true";
+
+    /**
+     * The default value of auto registered : true
+     */
+    boolean DEFAULT_AUTO_REGISTERED_VALUE = parseBoolean(DEFAULT_AUTO_REGISTERED_PROPERTY_VALUE);
 }
