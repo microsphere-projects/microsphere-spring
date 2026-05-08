@@ -29,6 +29,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Import;
@@ -207,6 +208,17 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     @Nonnull
     public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
+    }
+
+
+    /**
+     * The {@link ConfigurableApplicationContext} instance
+     *
+     * @return non-null
+     */
+    @Nonnull
+    public final ConfigurableApplicationContext getApplicationContext() {
+        return (ConfigurableApplicationContext) getResourceLoader();
     }
 
     /**
