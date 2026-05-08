@@ -31,23 +31,25 @@ import java.util.Objects;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.io.IOUtils.copyToString;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.assertBuilders;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.pair;
-import static io.microsphere.spring.web.metadata.WebEndpointMapping.Builder.toStrings;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_FLUX;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.WEB_MVC;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.UNKNOWN_SOURCE;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.assertBuilders;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.customized;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.filter;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.of;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.pair;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.toExpression;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.toStrings;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -710,6 +712,87 @@ class WebEndpointMappingTest {
         assertThrows(IllegalArgumentException.class, () -> assertBuilders(null, null));
         assertThrows(IllegalArgumentException.class, () -> assertBuilders(minServletBuilder(), null));
         assertThrows(IllegalArgumentException.class, () -> assertBuilders(minServletBuilder(), minBuilder(FILTER)));
+    }
+
+    @Test
+    void testToExpression() {
+        WebEndpointMapping mapping = builder()
+                .methods("GET")
+                .patterns("/a")
+                .build();
+        String expression = mapping.toExpression();
+        assertEquals("(GET && /a)", expression);
+
+        mapping = builder()
+                .methods("GET")
+                .patterns("/a")
+                .param("a", "1")
+                .build();
+        expression = mapping.toExpression();
+        assertEquals("((GET && /a) && ?a == 1)", expression);
+
+        mapping = builder()
+                .methods("GET")
+                .patterns("/a")
+                .param("a", "1")
+                .header("h", "2")
+                .build();
+        expression = mapping.toExpression();
+        assertEquals("(((GET && /a) && ?a == 1) && h: 2)", expression);
+
+        mapping = builder()
+                .methods("GET")
+                .patterns("/a")
+                .param("a", "1")
+                .header("h", "2")
+                .consume(APPLICATION_JSON_VALUE)
+                .build();
+        expression = mapping.toExpression();
+        assertEquals("((((GET && /a) && ?a == 1) && h: 2) && Content-Type: application/json)", expression);
+
+        mapping = builder()
+                .methods("GET")
+                .patterns("/a")
+                .param("a", "1")
+                .header("h", "2")
+                .consume(APPLICATION_JSON_VALUE)
+                .produce(TEXT_HTML_VALUE)
+                .build();
+        expression = mapping.toExpression();
+        assertEquals("(((((GET && /a) && ?a == 1) && h: 2) && Content-Type: application/json) && Accept: text/html)", expression);
+
+        mapping = builder()
+                .methods("GET")
+                .patterns("/a")
+                .param("a", "1")
+                .header("h", "2")
+                .consume(APPLICATION_JSON_VALUE)
+                .produce(TEXT_HTML_VALUE)
+                .negate()
+                .build();
+        expression = mapping.toExpression();
+        assertEquals("!(((((GET && /a) && ?a == 1) && h: 2) && Content-Type: application/json) && Accept: text/html)", expression);
+
+        mapping = builder()
+                .negate()
+                .patterns("/a", "/b", "/c")
+                .methods("GET", "POST")
+                .params("a=1", "b=2")
+                .headers("c=3", "d!=4")
+                .consumes(APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE)
+                .produces(TEXT_HTML_VALUE, TEXT_XML_VALUE)
+                .build();
+
+        expression = mapping.toExpression();
+        assertEquals("!((((((GET || POST) && (/a || /b || /c)) && (?a == 1 || ?b == 2)) && (c: 3 || d!: 4)) && (Content-Type: application/json || Content-Type: application/xml)) && (Accept: text/html || Accept: text/xml))", expression);
+
+        assertNull(toExpression(EMPTY_STRING, (String) null));
+        assertEquals(EMPTY_STRING, toExpression(EMPTY_STRING, EMPTY_STRING));
+        assertEquals("test", toExpression(EMPTY_STRING, "test"));
+    }
+
+    Builder<?> builder() {
+        return customized().endpoint(this);
     }
 
 
