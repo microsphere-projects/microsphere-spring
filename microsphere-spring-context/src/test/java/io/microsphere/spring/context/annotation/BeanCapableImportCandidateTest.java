@@ -74,6 +74,7 @@ class BeanCapableImportCandidateTest {
     @Test
     void test() {
         assertSame(myImportSelector.applicationContext, this.applicationContext);
+        assertSame(myImportSelector.getApplicationContext(), this.applicationContext);
         assertSame(myImportSelector.environment, this.environment);
         assertSame(myImportSelector.resourceLoader, this.resourceLoader);
 
