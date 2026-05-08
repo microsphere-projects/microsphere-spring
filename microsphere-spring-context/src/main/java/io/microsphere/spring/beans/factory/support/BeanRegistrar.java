@@ -606,6 +606,7 @@ public abstract class BeanRegistrar {
     public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
         Class beanClass = getTargetClass(bean);
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass);
+        beanDefinition.setPrimary(primary);
         beanDefinition.setInstanceSupplier(() -> bean);
         registerBeanDefinition(registry, beanName, beanDefinition);
     }
