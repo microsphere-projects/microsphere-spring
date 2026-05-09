@@ -30,6 +30,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -51,6 +53,7 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.lang.Integer.toHexString;
 
 /**
@@ -94,13 +97,20 @@ import static java.lang.Integer.toHexString;
  * @since 1.0.0
  */
 public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware,
-        ResourceLoaderAware {
+        ApplicationContextAware, ResourceLoaderAware {
+
+    /**
+     * Indicates that no class to import
+     */
+    public static final String[] NO_CLASS_TO_IMPORT = EMPTY_STRING_ARRAY;
 
     protected final Logger logger = getLogger(this.getClass());
 
     protected ClassLoader classLoader;
 
     protected ConfigurableListableBeanFactory beanFactory;
+
+    protected ConfigurableApplicationContext applicationContext;
 
     protected ConfigurableEnvironment environment;
 
@@ -195,6 +205,11 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
         }
     }
 
+    @Override
+    public final void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = (ConfigurableApplicationContext) applicationContext;
+    }
+
     /**
      * Get the {@link ClassLoader} instance
      *
@@ -215,7 +230,6 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
         return beanFactory;
     }
 
-
     /**
      * The {@link ConfigurableApplicationContext} instance
      *
@@ -223,7 +237,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
      */
     @Nonnull
     public final ConfigurableApplicationContext getApplicationContext() {
-        return (ConfigurableApplicationContext) getResourceLoader();
+        return this.applicationContext;
     }
 
     /**
