@@ -44,7 +44,8 @@ import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.l
  * @see SpringFactoriesLoader
  * @since 1.0.0
  */
-class AutoRegistrationBeanRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<EnableAutoRegistrationBean>
+        implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {

@@ -20,11 +20,9 @@ import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.config.env.event.PropertySourceChangedEvent;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
-import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -58,7 +56,6 @@ import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.sort;
 import static org.springframework.beans.BeanUtils.instantiateClass;
-import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -75,11 +72,9 @@ import static org.springframework.util.StringUtils.hasText;
  * @since 1.0.0
  */
 public abstract class PropertySourceExtensionLoader<A extends Annotation, EA extends PropertySourceExtensionAttributes<A>>
-        extends AnnotatedPropertySourceLoader<A> implements ApplicationContextAware {
+        extends AnnotatedPropertySourceLoader<A> {
 
     private final Class<EA> extensionAttributesType;
-
-    private ApplicationContext context;
 
     public PropertySourceExtensionLoader() {
         super();
@@ -87,9 +82,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     }
 
     protected Class<EA> resolveExtensionAttributesType() {
-        ResolvableType type = forType(this.getClass());
-        ResolvableType superType = type.as(PropertySourceExtensionLoader.class);
-        return (Class<EA>) superType.resolveGeneric(1);
+        return super.resolveGeneric(PropertySourceExtensionLoader.class, 1);
     }
 
     /**
@@ -232,12 +225,12 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             }
 
         };
-
     }
 
     private void publishPropertySourcesChangedEvent(List<PropertySourceChangedEvent> subEvents) {
-        PropertySourcesChangedEvent propertySourcesChangedEvent = new PropertySourcesChangedEvent(this.context, subEvents);
-        this.context.publishEvent(propertySourcesChangedEvent);
+        ConfigurableApplicationContext context = getApplicationContext();
+        PropertySourcesChangedEvent propertySourcesChangedEvent = new PropertySourcesChangedEvent(context, subEvents);
+        context.publishEvent(propertySourcesChangedEvent);
     }
 
     private void refreshPropertySources(EA extensionAttributes, String propertySourceName, PropertySourceFactory factory,
@@ -299,7 +292,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             }
         }
         if (removeResourcePropertySource != null) {
-            subEvents.add(PropertySourceChangedEvent.removed(this.context, removeResourcePropertySource));
+            subEvents.add(PropertySourceChangedEvent.removed(getApplicationContext(), removeResourcePropertySource));
         }
     }
 
@@ -319,6 +312,8 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
     private void updateResourcePropertySources(Iterable<ResourcePropertySource> newResourcePropertySources,
                                                List<ResourcePropertySource> resourcePropertySources, List<PropertySourceChangedEvent> subEvents) {
 
+        ConfigurableApplicationContext context = getApplicationContext();
+
         for (ResourcePropertySource newResourcePropertySource : newResourcePropertySources) {
             String newResourcePropertySourceName = newResourcePropertySource.getName();
             String newSourceName = handleSourceName(newResourcePropertySourceName);
@@ -332,13 +327,13 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
                 // Remove the old ResourcePropertySource if exists
                 String oldSourceName = handleSourceName(oldResourcePropertySourceName);
                 if (newSourceName.equals(oldSourceName) && newResourcePropertySourceName.equals(oldResourcePropertySourceName)) {
-                    subEvents.add(replaced(this.context, newResourcePropertySource, resourcePropertySource));
+                    subEvents.add(replaced(context, newResourcePropertySource, resourcePropertySource));
                     addedSubEvent = true;
                     iterator.remove();
                 }
             }
             if (!addedSubEvent) {
-                subEvents.add(added(this.context, newResourcePropertySource));
+                subEvents.add(added(context, newResourcePropertySource));
             }
             // Add new ResourcePropertySource
             resourcePropertySources.add(newResourcePropertySource);
