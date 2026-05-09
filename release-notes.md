@@ -92,4 +92,34 @@ For a complete list of changes, refer to the full [changelog](#).
 ## Other Changes
 - Bumped version to `0.1.14` after publishing `0.1.13`. ([#219](https://github.com/microsphere-projects/dev-1.x)) 
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.13...0.1.14
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.13...0.1.14## v0.1.15
+
+# Release Notes for v0.1.15
+
+## New Features
+- **AutoRegistrationBean**: Introduced support for `AutoRegistrationBean`.  
+- Added `AnnotatedBeanCapableImportCandidate` for improved annotation-based imports and related refactor.  
+- `parseExpressions` methods are now public to enhance configurability (#223).  
+
+## Bug Fixes
+- **WebEndpointMapping**: Fixed handling of `toExpression` and normalization logic.  
+- Removed redundant `WebEndpointMappingExpressionVisitor` for improved clarity and performance.  
+
+## Documentation
+- Updated `README` to reflect branch versions and compatibility details for better transparency.  
+
+## Build and Workflow Enhancements
+- Changed CI workflow Java version from 11 to 8 for broader compatibility.
+  
+## Test Improvements
+- Reordered imports in WebMVC test classes for better readability.  
+- Added new `toExpression` tests for `WebEndpointMapping`.  
+
+## Other Changes
+- Moved web test utilities to `microsphere-spring-test`.  
+- Introduced `WebMvcConfigurerAdapter` and a default adapter implementation (#224).  
+- Registered processor as an interceptor (#222).  
+
+---
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.14...0.1.15
