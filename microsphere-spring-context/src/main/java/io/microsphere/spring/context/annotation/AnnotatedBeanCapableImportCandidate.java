@@ -24,9 +24,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.lang.annotation.Annotation;
-import java.util.Map;
 
-import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static org.springframework.core.ResolvableType.forType;
 
 /**
@@ -58,10 +56,7 @@ public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> 
      */
     @Nonnull
     protected ResolvablePlaceholderAnnotationAttributes<A> getAnnotationAttributes(AnnotationMetadata metadata) {
-        Class<A> annotationType = getAnnotationType();
-        String annotationClassName = annotationType.getName();
-        Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
-        return of(annotationAttributes, annotationType, getEnvironment());
+        return super.getAnnotationAttributes(metadata, getAnnotationType());
     }
 
     /**
