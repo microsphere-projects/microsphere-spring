@@ -21,7 +21,6 @@ import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -75,7 +74,6 @@ public abstract class AbstractWebFluxTest {
      * @see #testResponseEntity()
      * @see #testUpdatePerson()
      */
-    @Test
     protected void testWebEndpoints() {
         this.testHelloWorld();
         this.testGreeting();
