@@ -17,27 +17,36 @@
 
 package io.microsphere.spring.test.webflux;
 
+
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link AbstractWebFluxTest} Test
+ * {@link SimpleUrlHandlerMappingTestConfig} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see AbstractWebFluxTest
+ * @see SimpleUrlHandlerMappingTestConfig
  * @since 1.0.0
  */
 @SpringJUnitConfig(classes = {
-        WebFluxTest.class
+        SimpleUrlHandlerMappingTestConfig.class,
+        SimpleUrlHandlerMappingTestConfigTest.class
 })
-class WebFluxTest extends AbstractWebFluxTest {
+class SimpleUrlHandlerMappingTestConfigTest {
+
+    @Autowired
+    private SimpleUrlHandlerMappingTestConfig testConfig;
+
+    @Autowired
+    private SimpleUrlHandlerMapping handlerMapping;
 
     @Test
-    void test() {
-        assertNotNull(this.context);
-        assertNotNull(this.testController);
-        assertNotNull(this.webTestClient);
+    void testSimpleUrlHandlerMapping() {
+        assertNotNull(this.testConfig);
+        assertNotNull(this.handlerMapping);
     }
 }
