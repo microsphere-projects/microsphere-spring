@@ -73,14 +73,13 @@ import static java.lang.Integer.toHexString;
  *     <li>{@link #setBeanFactory(BeanFactory)}</li>
  *     <li>{@link #setEnvironment(Environment)}</li>
  *     <li>{@link #setResourceLoader(ResourceLoader)}</li>
+ *     <li>{@link #setApplicationContext(ApplicationContext)}</li>
  * </ul>
  *
  * <h3>Example Usage</h3>
  *
  * <pre>{@code
  * public class MyImportRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
- *
- *     private final Logger logger = getLogger(this.getClass());
  *
  *     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
  *         logger.info("Registering beans from custom registrar");

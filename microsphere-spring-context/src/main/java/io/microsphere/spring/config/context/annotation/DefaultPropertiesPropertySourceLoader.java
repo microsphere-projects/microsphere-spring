@@ -16,8 +16,7 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
-import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
 import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -31,8 +30,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import static io.microsphere.lang.function.ThrowableAction.execute;
-import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getDefaultProperties;
 import static io.microsphere.spring.core.io.support.PropertiesUtils.loadProperties;
@@ -46,14 +43,12 @@ import static io.microsphere.util.ArrayUtils.isEmpty;
  * @see ResourcePropertySourceLoader
  * @since 1.0.0
  */
-class DefaultPropertiesPropertySourceLoader extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
-
-    private static final Class<DefaultPropertiesPropertySource> ANNOTATION_TYPE = DefaultPropertiesPropertySource.class;
+class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportCandidate<DefaultPropertiesPropertySource>
+        implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata, ANNOTATION_TYPE);
-        ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(attributes, getEnvironment());
+        AnnotationAttributes annotationAttributes = getAnnotationAttributes(metadata);
         loadPropertySource(annotationAttributes);
     }
 
