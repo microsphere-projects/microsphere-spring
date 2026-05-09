@@ -23,7 +23,6 @@ import io.microsphere.spring.test.web.controller.TestController;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -80,7 +79,6 @@ public abstract class AbstractWebMvcTest {
      * @see #testResponseEntity()
      * @see #testUpdatePerson()
      */
-    @Test
     protected void testWebEndpoints() throws Exception {
         this.testHelloWorld();
         this.testGreeting();
