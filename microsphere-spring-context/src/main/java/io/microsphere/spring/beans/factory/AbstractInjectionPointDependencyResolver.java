@@ -316,7 +316,7 @@ public abstract class AbstractInjectionPointDependencyResolver implements Inject
      *
      * @param dependencyDescriptor the {@link DependencyDescriptor} to resolve the bean name from
      * @return the suggested bean name as a {@link String}, or {@code null} if the suggested
-     *         value is not a {@code String} or is {@code null}
+     * value is not a {@code String} or is {@code null}
      */
     protected String resolveDependentBeanNameByName(DependencyDescriptor dependencyDescriptor) {
         Object suggestedValue = autowireCandidateResolver.getSuggestedValue(dependencyDescriptor);

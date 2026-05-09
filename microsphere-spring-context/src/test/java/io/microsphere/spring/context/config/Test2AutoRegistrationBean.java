@@ -15,33 +15,21 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.test;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
-
-import java.util.Map;
-
-import static io.microsphere.collection.MapUtils.ofMap;
+package io.microsphere.spring.context.config;
 
 /**
- * {@link SimpleUrlHandlerMapping} Test Config
+ * {@link AutoRegistrationBean} for testing disabled
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see SimpleUrlHandlerMapping
+ * @see AutoRegistrationBean
  * @since 1.0.0
  */
-public class SimpleUrlHandlerMappingTestConfig {
+public class Test2AutoRegistrationBean implements AutoRegistrationBean {
 
-    public static final String BASE_PATH = "/simple";
+    public static final String BEAN_NAME = "test-2";
 
-    public static final String FIRST_PATH = BASE_PATH + "/1";
-
-    @Bean
-    public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
-        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-        Map<String, ?> urlMap = ofMap(BASE_PATH, this, FIRST_PATH, this);
-        mapping.setUrlMap(urlMap);
-        return mapping;
+    @Override
+    public String getBeanName() {
+        return BEAN_NAME;
     }
 }

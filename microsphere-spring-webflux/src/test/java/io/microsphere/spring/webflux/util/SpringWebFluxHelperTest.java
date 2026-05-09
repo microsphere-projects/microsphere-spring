@@ -22,14 +22,17 @@ import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
+import io.microsphere.spring.webflux.server.filter.CompositeWebFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
@@ -46,12 +49,12 @@ import static io.microsphere.collection.MapUtils.ofMap;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_3;
+import static io.microsphere.spring.test.web.WebTestUtils.HEADER_NAME;
+import static io.microsphere.spring.test.web.WebTestUtils.HEADER_NAME_2;
+import static io.microsphere.spring.test.web.WebTestUtils.HEADER_VALUE;
+import static io.microsphere.spring.test.web.WebTestUtils.HEADER_VALUE_2;
+import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_FLUX;
-import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_NAME;
-import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_NAME_2;
-import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_VALUE;
-import static io.microsphere.spring.webflux.test.WebTestUtils.HEADER_VALUE_2;
-import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -67,6 +70,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import static org.springframework.test.web.reactive.server.WebTestClient.bindToApplicationContext;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 import static reactor.core.publisher.Mono.just;
 
@@ -90,6 +94,8 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
     private MockServerWebExchange serverWebExchange;
 
     private ServerWebRequest serverWebRequest;
+
+    private CompositeWebFilter compositeWebFilter;
 
     @BeforeEach
     void setUp() {
@@ -340,5 +346,13 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
             producibleMediaTypes = emptySet();
         }
         assertEquals(ofSet(mediaTypes), producibleMediaTypes);
+    }
+
+    @Override
+    protected WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
+        this.compositeWebFilter = new CompositeWebFilter();
+        return bindToApplicationContext(context)
+                .webFilter(this.compositeWebFilter)
+                .build();
     }
 }

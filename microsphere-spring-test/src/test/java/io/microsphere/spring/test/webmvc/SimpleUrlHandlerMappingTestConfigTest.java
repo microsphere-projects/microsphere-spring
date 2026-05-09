@@ -15,45 +15,41 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.metadata;
+package io.microsphere.spring.test.webmvc;
 
-import io.microsphere.spring.test.web.controller.TestController;
-import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
-import io.microsphere.spring.test.webmvc.SimpleUrlHandlerMappingTestConfig;
-import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link HandlerMappingWebEndpointMappingResolver} Test
+ * {@link SimpleUrlHandlerMappingTestConfig} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see HandlerMappingWebEndpointMappingResolver
+ * @see SimpleUrlHandlerMappingTestConfig
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
         SimpleUrlHandlerMappingTestConfig.class,
-        HandlerMappingWebEndpointMappingResolver.class,
-        HandlerMappingWebEndpointMappingResolverTest.class,
-
+        SimpleUrlHandlerMappingTestConfigTest.class
 })
-@Import(TestController.class)
-@EnableWebMvcExtension
-public class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebMvcTest {
+public class SimpleUrlHandlerMappingTestConfigTest {
+
+    @Autowired
+    private SimpleUrlHandlerMappingTestConfig testConfig;
+
+    @Autowired
+    private SimpleUrlHandlerMapping handlerMapping;
 
     @Test
-    public void testResolve() {
-    }
-
-    @Test
-    public void testResolveFromAbstractUrlHandlerMapping() {
-    }
-
-    @Test
-    public void testResolveFromRequestMappingInfoHandlerMapping() {
+    public void testSimpleUrlHandlerMapping() {
+        assertNotNull(this.testConfig);
+        assertNotNull(this.handlerMapping);
     }
 }

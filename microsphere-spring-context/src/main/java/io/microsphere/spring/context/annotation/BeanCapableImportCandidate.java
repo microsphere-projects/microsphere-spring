@@ -18,6 +18,7 @@ package io.microsphere.spring.context.annotation;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -29,6 +30,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Import;
@@ -37,13 +41,19 @@ import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.type.AnnotationMetadata;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
+import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
+import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.lang.Integer.toHexString;
 
 /**
@@ -63,14 +73,13 @@ import static java.lang.Integer.toHexString;
  *     <li>{@link #setBeanFactory(BeanFactory)}</li>
  *     <li>{@link #setEnvironment(Environment)}</li>
  *     <li>{@link #setResourceLoader(ResourceLoader)}</li>
+ *     <li>{@link #setApplicationContext(ApplicationContext)}</li>
  * </ul>
  *
  * <h3>Example Usage</h3>
  *
  * <pre>{@code
  * public class MyImportRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
- *
- *     private final Logger logger = getLogger(this.getClass());
  *
  *     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
  *         logger.info("Registering beans from custom registrar");
@@ -87,13 +96,20 @@ import static java.lang.Integer.toHexString;
  * @since 1.0.0
  */
 public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware,
-        ResourceLoaderAware {
+        ApplicationContextAware, ResourceLoaderAware {
+
+    /**
+     * Indicates that no class to import
+     */
+    public static final String[] NO_CLASS_TO_IMPORT = EMPTY_STRING_ARRAY;
 
     protected final Logger logger = getLogger(this.getClass());
 
     protected ClassLoader classLoader;
 
     protected ConfigurableListableBeanFactory beanFactory;
+
+    protected ConfigurableApplicationContext applicationContext;
 
     protected ConfigurableEnvironment environment;
 
@@ -120,7 +136,6 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
             assertImportCandidate();
         }
     }
-
 
     /**
      * Sets the {@link BeanFactory} that created this bean, stored as a
@@ -189,6 +204,11 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
         }
     }
 
+    @Override
+    public final void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = (ConfigurableApplicationContext) applicationContext;
+    }
+
     /**
      * Get the {@link ClassLoader} instance
      *
@@ -210,6 +230,16 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     }
 
     /**
+     * The {@link ConfigurableApplicationContext} instance
+     *
+     * @return non-null
+     */
+    @Nonnull
+    public final ConfigurableApplicationContext getApplicationContext() {
+        return this.applicationContext;
+    }
+
+    /**
      * The {@link ConfigurableEnvironment} instance
      *
      * @return non-null
@@ -227,6 +257,21 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     @Nonnull
     public final ResourceLoader getResourceLoader() {
         return resourceLoader;
+    }
+
+    /**
+     * Get the {@link ResolvablePlaceholderAnnotationAttributes} of the specified {@link Annotation}
+     *
+     * @param metadata       {@link AnnotationMetadata}
+     * @param annotationType the annotation type
+     * @param <A>            the annotation type
+     * @return non-null
+     */
+    @Nonnull
+    protected <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> getAnnotationAttributes(AnnotationMetadata metadata, Class<A> annotationType) {
+        String annotationClassName = annotationType.getName();
+        Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
+        return of(annotationAttributes, annotationType, getEnvironment());
     }
 
     private void assertImportCandidate() {

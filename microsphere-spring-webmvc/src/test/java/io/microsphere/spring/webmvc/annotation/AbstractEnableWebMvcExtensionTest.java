@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
+import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
@@ -27,11 +29,12 @@ import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
-import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
@@ -46,6 +49,9 @@ import static org.junit.Assert.assertTrue;
  */
 @Ignore
 public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
     protected boolean registerWebEndpointMappings;
 
@@ -96,21 +102,8 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
         assertEquals(this.reversedProxyHandlerMapping, isBeanPresent(this.context, ReversedProxyHandlerMapping.class));
     }
 
-    /**
-     * Test the Web Endpoints
-     *
-     * @see #testHelloWorld()
-     * @see #testGreeting()
-     * @see #testUser()
-     * @see #testError()
-     * @see #testResponseEntity()
-     */
     @Test
     public void testWebEndpoints() throws Exception {
-        this.testHelloWorld();
-        this.testGreeting();
-        this.testUser();
-        this.testError();
-        this.testResponseEntity();
+        super.testWebEndpoints();
     }
 }

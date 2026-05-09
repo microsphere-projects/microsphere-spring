@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.webmvc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;

@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.test;
+package io.microsphere.spring.test.webflux;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;

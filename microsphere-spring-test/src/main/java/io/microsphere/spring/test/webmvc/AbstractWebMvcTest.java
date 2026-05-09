@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.webmvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
@@ -70,6 +70,23 @@ public abstract class AbstractWebMvcTest {
     @Before
     public void setUp() {
         this.mockMvc = webAppContextSetup(this.context).build();
+    }
+
+    /**
+     * Test the Web Endpoints
+     *
+     * @see #testHelloWorld()
+     * @see #testGreeting()
+     * @see #testUser()
+     * @see #testError()
+     * @see #testResponseEntity()
+     */
+    public void testWebEndpoints() throws Exception {
+        this.testHelloWorld();
+        this.testGreeting();
+        this.testUser();
+        this.testError();
+        this.testResponseEntity();
     }
 
     /**

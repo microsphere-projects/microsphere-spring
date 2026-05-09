@@ -20,11 +20,10 @@ import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Import;
@@ -37,7 +36,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
+import static io.microsphere.spring.context.annotation.BeanCapableImportCandidate.NO_CLASS_TO_IMPORT;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
+import static io.microsphere.util.ClassUtils.getTypeName;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -60,12 +63,14 @@ public class BeanCapableImportCandidateTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     @Autowired
     private MyImportSelector myImportSelector;
 
     @Autowired
     private MyImportBeanDefinitionRegistrar myImportBeanDefinitionRegistrar;
+
+    @Autowired
+    private BeanFactory beanFactory;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -78,25 +83,33 @@ public class BeanCapableImportCandidateTest {
 
     @Test
     public void test() {
-        assertSame(myImportSelector.applicationContext, this.applicationContext);
-        assertSame(myImportSelector.environment, this.environment);
-        assertSame(myImportSelector.resourceLoader, this.resourceLoader);
-
-        assertSame(myImportBeanDefinitionRegistrar.applicationEventPublisher, this.applicationContext);
-        assertSame(myImportBeanDefinitionRegistrar.environment, this.environment);
-        assertSame(myImportBeanDefinitionRegistrar.resourceLoader, this.resourceLoader);
+        assertBeanCapableImportCandidate(this.myImportSelector);
+        assertBeanCapableImportCandidate(this.myImportBeanDefinitionRegistrar);
     }
 
+    void assertBeanCapableImportCandidate(BeanCapableImportCandidate candidate) {
+        assertSame(EMPTY_STRING_ARRAY, NO_CLASS_TO_IMPORT);
 
-    static class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector, ApplicationContextAware {
+        assertNotNull(candidate.logger);
+        assertEquals(getTypeName(candidate),candidate.logger.getName());
 
-        private ApplicationContext applicationContext;
+        assertSame(candidate.beanFactory, this.beanFactory);
+        assertSame(candidate.getBeanFactory(), this.beanFactory);
 
+        assertSame(candidate.applicationContext, this.applicationContext);
+        assertSame(candidate.getApplicationContext(), this.applicationContext);
 
-        @Override
-        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-            this.applicationContext = applicationContext;
-        }
+        assertSame(candidate.environment, this.environment);
+        assertSame(candidate.getEnvironment(), this.environment);
+
+        assertSame(candidate.resourceLoader, this.resourceLoader);
+        assertSame(candidate.getResourceLoader(), this.resourceLoader);
+
+        assertSame(candidate.classLoader, this.resourceLoader.getClassLoader());
+        assertSame(candidate.getClassLoader(), this.resourceLoader.getClassLoader());
+    }
+
+    static class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector {
 
         @Override
         public String[] selectImports(AnnotationMetadata importingClassMetadata) {
