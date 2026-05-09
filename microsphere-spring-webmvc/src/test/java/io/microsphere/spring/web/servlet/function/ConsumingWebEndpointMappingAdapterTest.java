@@ -18,7 +18,7 @@
 package io.microsphere.spring.web.servlet.function;
 
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
-import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
+import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.servlet.function.RouterFunction;

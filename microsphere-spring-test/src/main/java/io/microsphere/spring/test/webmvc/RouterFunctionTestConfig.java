@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.webmvc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
-import static io.microsphere.spring.webmvc.test.WebTestUtils.TEST_ROOT_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.servlet.function.RequestPredicates.DELETE;
 import static org.springframework.web.servlet.function.RequestPredicates.GET;

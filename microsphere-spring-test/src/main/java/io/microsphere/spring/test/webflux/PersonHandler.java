@@ -15,33 +15,41 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.webflux;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
-import static io.microsphere.collection.MapUtils.ofMap;
+import static reactor.core.publisher.Mono.empty;
 
 /**
- * {@link SimpleUrlHandlerMapping} Test Config
+ * Person Handler
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see SimpleUrlHandlerMapping
+ * @see ServerRequest
+ * @see ServerResponse
  * @since 1.0.0
  */
-public class SimpleUrlHandlerMappingTestConfig {
+public class PersonHandler {
 
-    public static final String BASE_PATH = "/simple";
+    public Mono<ServerResponse> listPeople(ServerRequest request) {
+        return empty();
+    }
 
-    public static final String FIRST_PATH = BASE_PATH + "/1";
+    public Mono<ServerResponse> createPerson(ServerRequest request) {
+        return empty();
+    }
 
-    @Bean
-    public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
-        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-        Map<String, ?> urlMap = ofMap(BASE_PATH, this, FIRST_PATH, this);
-        mapping.setUrlMap(urlMap);
-        return mapping;
+    public Mono<ServerResponse> getPerson(ServerRequest request) {
+        return empty();
+    }
+
+    public Mono<ServerResponse> updatePerson(ServerRequest request) {
+        return empty();
+    }
+
+    public Mono<ServerResponse> deletePerson(ServerRequest request) {
+        return empty();
     }
 }

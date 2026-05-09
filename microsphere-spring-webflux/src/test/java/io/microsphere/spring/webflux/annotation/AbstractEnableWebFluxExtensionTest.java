@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webflux.annotation;
 
+import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistrar;
@@ -28,7 +29,6 @@ import io.microsphere.spring.webflux.method.StoringRequestBodyArgumentIntercepto
 import io.microsphere.spring.webflux.method.StoringResponseBodyReturnValueInterceptor;
 import io.microsphere.spring.webflux.server.filter.RequestContextWebFilter;
 import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishingWebFilter;
-import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
