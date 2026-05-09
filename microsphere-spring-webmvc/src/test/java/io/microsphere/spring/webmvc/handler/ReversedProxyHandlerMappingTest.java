@@ -22,10 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
+import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
-import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -64,7 +64,6 @@ public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private ReversedProxyHandlerMapping mapping;

@@ -15,45 +15,29 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.metadata;
+package io.microsphere.spring.test.webmvc;
 
-import io.microsphere.spring.test.web.controller.TestController;
-import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
-import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
-import io.microsphere.spring.test.webmvc.SimpleUrlHandlerMappingTestConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * {@link HandlerMappingWebEndpointMappingResolver} Test
+ * {@link AbstractWebMvcTest} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see HandlerMappingWebEndpointMappingResolver
+ * @see AbstractWebMvcTest
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {
-        SimpleUrlHandlerMappingTestConfig.class,
-        HandlerMappingWebEndpointMappingResolver.class,
-        HandlerMappingWebEndpointMappingResolverTest.class,
-
+        WebMvcTest.class
 })
-@Import(TestController.class)
-@EnableWebMvcExtension
-public class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebMvcTest {
+public class WebMvcTest extends AbstractWebMvcTest {
 
     @Test
-    public void testResolve() {
-    }
-
-    @Test
-    public void testResolveFromAbstractUrlHandlerMapping() {
-    }
-
-    @Test
-    public void testResolveFromRequestMappingInfoHandlerMapping() {
+    @Override
+    public void testWebEndpoints() throws Exception {
+        super.testWebEndpoints();
     }
 }

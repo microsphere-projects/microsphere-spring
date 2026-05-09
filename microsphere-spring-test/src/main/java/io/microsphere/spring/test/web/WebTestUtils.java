@@ -15,20 +15,23 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.test;
+package io.microsphere.spring.test.web;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.WebSession;
+import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
 
-import static io.microsphere.spring.web.util.MonoUtils.getValue;
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Locale.getDefault;
 import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
 import static org.springframework.mock.web.server.MockServerWebExchange.from;
+import static reactor.core.scheduler.Schedulers.isInNonBlockingThread;
 
 /**
  * The utility class for testing in Spring Web
@@ -62,6 +65,18 @@ public class WebTestUtils {
 
     public static final String[] PARAM_VALUE_2 = ofArray("test-param-value-2", "test-param-value-3");
 
+    public static final String PERSON_PATH = "/person";
+
+    public static final String PERSON_TEST_PATH = TEST_ROOT_PATH + PERSON_PATH;
+
+    public static final String PERSON_ID_PATH = "/{id}";
+
+    public static final String AUTH_NAME = "_auth";
+
+    public static final String AUTH_VALUE = "123456789";
+
+    public static final String GET_PERSON_PATH = PERSON_TEST_PATH + PERSON_ID_PATH;
+
     public static final InetSocketAddress REMOTE_ADDRESS = new InetSocketAddress("127.0.0.1", 12345);
 
     public static MockServerWebExchange mockServerWebExchange() {
@@ -79,6 +94,23 @@ public class WebTestUtils {
 
         WebSession webSession = getValue(serverWebExchange.getSession());
         webSession.getAttributes().put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
         return serverWebExchange;
+    }
+
+    /**
+     * Get the emitted value from {@link Mono}
+     *
+     * @param mono {@link Mono}
+     * @param <T>  the type of value
+     * @return the emitted value
+     */
+    @Nullable
+    public static <T> T getValue(Mono<T> mono) {
+        if (isInNonBlockingThread()) {
+            return execute(() -> mono.toFuture().get());
+        } else {
+            return mono.block();
+        }
     }
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.test;
+package io.microsphere.spring.test.webflux;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;

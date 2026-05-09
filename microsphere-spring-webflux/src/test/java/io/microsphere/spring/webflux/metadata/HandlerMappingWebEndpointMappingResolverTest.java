@@ -18,10 +18,10 @@
 package io.microsphere.spring.webflux.metadata;
 
 
+import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
+import io.microsphere.spring.test.webflux.SimpleUrlHandlerMappingTestConfig;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
-import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
-import io.microsphere.spring.webflux.test.SimpleUrlHandlerMappingTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
