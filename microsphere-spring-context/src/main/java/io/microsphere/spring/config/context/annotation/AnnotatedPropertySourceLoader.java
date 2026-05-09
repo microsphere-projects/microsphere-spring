@@ -72,10 +72,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
 
     private String propertySourceName;
 
-    public AnnotatedPropertySourceLoader() {
-        super();
-    }
-
     @Override
     public final String[] selectImports(AnnotationMetadata metadata) {
         ResolvablePlaceholderAnnotationAttributes attributes = getAnnotationAttributes(metadata);
