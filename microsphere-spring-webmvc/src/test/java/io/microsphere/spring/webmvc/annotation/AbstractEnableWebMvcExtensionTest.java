@@ -16,6 +16,8 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
+import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
@@ -27,7 +29,6 @@ import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingResolver;
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
-import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 @Disabled
+@SpringLoggingTest
 public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTest {
 
     protected boolean registerWebEndpointMappings;
@@ -94,25 +96,5 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
         assertEquals(this.storeRequestBodyArgument, isBeanPresent(this.context, StoringRequestBodyArgumentAdvice.class));
         assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueAdvice.class));
         assertEquals(this.reversedProxyHandlerMapping, isBeanPresent(this.context, ReversedProxyHandlerMapping.class));
-    }
-
-    /**
-     * Test the Web Endpoints
-     *
-     * @see #testHelloWorld()
-     * @see #testGreeting()
-     * @see #testUser()
-     * @see #testError()
-     * @see #testResponseEntity()
-     * @see #testUpdatePerson()
-     */
-    @Test
-    protected void testWebEndpoints() throws Exception {
-        this.testHelloWorld();
-        this.testGreeting();
-        this.testUser();
-        this.testError();
-        this.testResponseEntity();
-        this.testUpdatePerson();
     }
 }

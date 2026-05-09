@@ -20,7 +20,7 @@ package io.microsphere.spring.webmvc.method.support;
 
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
-import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
+import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

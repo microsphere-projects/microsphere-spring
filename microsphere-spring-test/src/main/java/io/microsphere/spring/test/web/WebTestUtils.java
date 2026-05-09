@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.web;
 
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
@@ -25,8 +25,6 @@ import java.util.Map;
 
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Locale.getDefault;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
-import static org.springframework.mock.web.server.MockServerWebExchange.from;
 
 /**
  * The utility class for testing in Spring Web
@@ -60,10 +58,22 @@ public class WebTestUtils {
 
     public static final String[] PARAM_VALUE_2 = ofArray("test-param-value-2", "test-param-value-3");
 
+    public static final String PERSON_PATH = "/person";
+
+    public static final String PERSON_TEST_PATH = TEST_ROOT_PATH + PERSON_PATH;
+
+    public static final String PERSON_ID_PATH = "/{id}";
+
+    public static final String AUTH_NAME = "_auth";
+
+    public static final String AUTH_VALUE = "123456789";
+
+    public static final String GET_PERSON_PATH = PERSON_TEST_PATH + PERSON_ID_PATH;
+
     public static final InetSocketAddress REMOTE_ADDRESS = new InetSocketAddress("127.0.0.1", 12345);
 
     public static MockServerWebExchange mockServerWebExchange() {
-        MockServerHttpRequest request = get(TEST_ROOT_PATH)
+        MockServerHttpRequest request = MockServerHttpRequest.get(TEST_ROOT_PATH)
                 .header(HEADER_NAME, HEADER_VALUE)
                 .header(HEADER_NAME_2, HEADER_VALUE_2)
                 .acceptLanguageAsLocales(getDefault())
@@ -71,7 +81,7 @@ public class WebTestUtils {
                 .queryParam(PARAM_NAME, PARAM_VALUE)
                 .queryParam(PARAM_NAME_2, PARAM_VALUE_2)
                 .build();
-        MockServerWebExchange serverWebExchange = from(request);
+        MockServerWebExchange serverWebExchange = MockServerWebExchange.from(request);
         Map<String, Object> attributes = serverWebExchange.getAttributes();
         attributes.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 

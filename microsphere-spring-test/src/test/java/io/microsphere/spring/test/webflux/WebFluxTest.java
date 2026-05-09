@@ -15,41 +15,29 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.test;
+package io.microsphere.spring.test.webflux;
 
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import static reactor.core.publisher.Mono.empty;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Person Handler
+ * {@link AbstractWebFluxTest} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ServerRequest
- * @see ServerResponse
+ * @see AbstractWebFluxTest
  * @since 1.0.0
  */
-public class PersonHandler {
+@SpringJUnitConfig(classes = {
+        WebFluxTest.class
+})
+class WebFluxTest extends AbstractWebFluxTest {
 
-    public Mono<ServerResponse> listPeople(ServerRequest request) {
-        return empty();
-    }
-
-    public Mono<ServerResponse> createPerson(ServerRequest request) {
-        return empty();
-    }
-
-    public Mono<ServerResponse> getPerson(ServerRequest request) {
-        return empty();
-    }
-
-    public Mono<ServerResponse> updatePerson(ServerRequest request) {
-        return empty();
-    }
-
-    public Mono<ServerResponse> deletePerson(ServerRequest request) {
-        return empty();
+    @Test
+    void test() {
+        assertNotNull(this.context);
+        assertNotNull(this.testController);
+        assertNotNull(this.webTestClient);
     }
 }

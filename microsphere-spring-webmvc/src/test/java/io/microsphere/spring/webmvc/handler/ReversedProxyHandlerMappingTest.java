@@ -24,7 +24,7 @@ import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
-import io.microsphere.spring.webmvc.test.AbstractWebMvcTest;
+import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

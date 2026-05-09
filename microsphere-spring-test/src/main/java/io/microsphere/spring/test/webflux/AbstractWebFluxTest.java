@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.webflux.test;
+package io.microsphere.spring.test.webflux;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.test.domain.User;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
-import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
-import io.microsphere.spring.webflux.server.filter.CompositeWebFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.config.EnableWebFlux;
@@ -43,17 +40,14 @@ import static reactor.core.publisher.Mono.just;
  * Abstract WebFlux Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see EnableWebFluxExtension
  * @since 1.0.0
  */
 @Disabled
-@SpringJUnitConfig
-@ContextConfiguration(classes = {
+@SpringJUnitConfig(classes = {
         TestController.class,           // Test Controller
         RouterFunctionTestConfig.class  // Test RouterFunction
 })
 @EnableWebFlux
-@SpringLoggingTest
 public abstract class AbstractWebFluxTest {
 
     protected final Logger logger = getLogger(this.getClass());
@@ -66,12 +60,29 @@ public abstract class AbstractWebFluxTest {
 
     protected WebTestClient webTestClient;
 
-    protected CompositeWebFilter compositeWebFilter;
-
     @BeforeEach
     final void init() {
-        this.compositeWebFilter = new CompositeWebFilter();
         this.webTestClient = buildWebTestClient(this.context);
+    }
+
+    /**
+     * Test the Web Endpoints
+     *
+     * @see #testHelloWorld()
+     * @see #testGreeting()
+     * @see #testUser()
+     * @see #testError()
+     * @see #testResponseEntity()
+     * @see #testUpdatePerson()
+     */
+    @Test
+    protected void testWebEndpoints() {
+        this.testHelloWorld();
+        this.testGreeting();
+        this.testUser();
+        this.testError();
+        this.testResponseEntity();
+        this.testUpdatePerson();
     }
 
     /**
@@ -144,16 +155,6 @@ public abstract class AbstractWebFluxTest {
     }
 
     /**
-     * Test {@link TestController#view()}
-     */
-    protected void testView() {
-        this.webTestClient.get()
-                .uri("/test/view")
-                .exchange()
-                .expectStatus().isOk();
-    }
-
-    /**
      * @see RouterFunctionTestConfig#nestedPersonRouterFunction(PersonHandler)
      */
     protected void testUpdatePerson() {
@@ -163,9 +164,8 @@ public abstract class AbstractWebFluxTest {
                 .expectStatus().isOk();
     }
 
-    public WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
+    protected WebTestClient buildWebTestClient(ConfigurableApplicationContext context) {
         return bindToApplicationContext(context)
-                .webFilter(this.compositeWebFilter)
                 .build();
     }
 }

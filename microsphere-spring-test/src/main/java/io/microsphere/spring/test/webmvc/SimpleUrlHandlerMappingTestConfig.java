@@ -15,38 +15,33 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.webmvc;
 
-import org.springframework.web.servlet.function.ServerRequest;
-import org.springframework.web.servlet.function.ServerResponse;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+
+import java.util.Map;
+
+import static io.microsphere.collection.MapUtils.ofMap;
 
 /**
- * Person Handler
+ * {@link SimpleUrlHandlerMapping} Test Config
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ServerRequest
- * @see ServerResponse
+ * @see SimpleUrlHandlerMapping
  * @since 1.0.0
  */
-public class PersonHandler {
+public class SimpleUrlHandlerMappingTestConfig {
 
-    public ServerResponse listPeople(ServerRequest request) {
-        return null;
-    }
+    public static final String BASE_PATH = "/simple";
 
-    public ServerResponse createPerson(ServerRequest request) {
-        return null;
-    }
+    public static final String FIRST_PATH = BASE_PATH + "/1";
 
-    public ServerResponse getPerson(ServerRequest request) {
-        return null;
-    }
-
-    public ServerResponse updatePerson(ServerRequest request) {
-        return null;
-    }
-
-    public ServerResponse deletePerson(ServerRequest request) {
-        return null;
+    @Bean
+    public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
+        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        Map<String, ?> urlMap = ofMap(BASE_PATH, this, FIRST_PATH, this);
+        mapping.setUrlMap(urlMap);
+        return mapping;
     }
 }
