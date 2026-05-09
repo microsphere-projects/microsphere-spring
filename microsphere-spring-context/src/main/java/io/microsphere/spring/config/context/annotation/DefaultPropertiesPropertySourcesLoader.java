@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -25,7 +25,6 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Set;
 
-import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.ofSet;
 
 /**
@@ -38,12 +37,13 @@ import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.
  * @see AnnotatedPropertySourceLoader
  * @since 1.0.0
  */
-class DefaultPropertiesPropertySourcesLoader extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+class DefaultPropertiesPropertySourcesLoader extends AnnotatedBeanCapableImportCandidate<DefaultPropertiesPropertySources>
+        implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata, DefaultPropertiesPropertySources.class);
+        AnnotationAttributes attributes = getAnnotationAttributes(metadata);
 
         AnnotationAttributes[] annotationAttributesArray = attributes.getAnnotationArray("value");
 

@@ -35,13 +35,11 @@ import static io.microsphere.util.ClassLoaderUtils.resolveClass;
  * @see ImportSelector
  * @since 1.0.0
  */
-class ImportOptionalSelector extends BeanCapableImportCandidate implements ImportSelector {
-
-    private static final Class<ImportOptional> ANNOTATION_TYPE = ImportOptional.class;
+class ImportOptionalSelector extends AnnotatedBeanCapableImportCandidate<ImportOptional> implements ImportSelector {
 
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
-        ResolvablePlaceholderAnnotationAttributes attributes = getAnnotationAttributes(metadata, ANNOTATION_TYPE);
+        ResolvablePlaceholderAnnotationAttributes attributes = getAnnotationAttributes(metadata);
         String[] classNames = attributes.getStringArray("value");
         return Stream.of(classNames)
                 .map(className -> resolveClass(className, getClassLoader()))
