@@ -19,6 +19,7 @@ package io.microsphere.spring.context.annotation;
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
@@ -33,7 +34,11 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static io.microsphere.spring.context.annotation.BeanCapableImportCandidate.NO_CLASS_TO_IMPORT;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
+import static io.microsphere.util.ClassUtils.getTypeName;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
@@ -61,6 +66,9 @@ class BeanCapableImportCandidateTest {
     private MyImportBeanDefinitionRegistrar myImportBeanDefinitionRegistrar;
 
     @Autowired
+    private BeanFactory beanFactory;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -71,16 +79,31 @@ class BeanCapableImportCandidateTest {
 
     @Test
     void test() {
-        assertSame(myImportSelector.applicationContext, this.applicationContext);
-        assertSame(myImportSelector.getApplicationContext(), this.applicationContext);
-        assertSame(myImportSelector.environment, this.environment);
-        assertSame(myImportSelector.resourceLoader, this.resourceLoader);
-
-        assertSame(myImportBeanDefinitionRegistrar.applicationEventPublisher, this.applicationContext);
-        assertSame(myImportBeanDefinitionRegistrar.environment, this.environment);
-        assertSame(myImportBeanDefinitionRegistrar.resourceLoader, this.resourceLoader);
+        assertBeanCapableImportCandidate(this.myImportSelector);
+        assertBeanCapableImportCandidate(this.myImportBeanDefinitionRegistrar);
     }
 
+    void assertBeanCapableImportCandidate(BeanCapableImportCandidate candidate) {
+        assertSame(EMPTY_STRING_ARRAY, NO_CLASS_TO_IMPORT);
+
+        assertNotNull(candidate.logger);
+        assertEquals(getTypeName(candidate), candidate.logger.getName());
+
+        assertSame(candidate.beanFactory, this.beanFactory);
+        assertSame(candidate.getBeanFactory(), this.beanFactory);
+
+        assertSame(candidate.applicationContext, this.applicationContext);
+        assertSame(candidate.getApplicationContext(), this.applicationContext);
+
+        assertSame(candidate.environment, this.environment);
+        assertSame(candidate.getEnvironment(), this.environment);
+
+        assertSame(candidate.resourceLoader, this.resourceLoader);
+        assertSame(candidate.getResourceLoader(), this.resourceLoader);
+
+        assertSame(candidate.classLoader, this.resourceLoader.getClassLoader());
+        assertSame(candidate.getClassLoader(), this.resourceLoader.getClassLoader());
+    }
 
     static class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector {
 
