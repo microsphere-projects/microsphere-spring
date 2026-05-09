@@ -20,6 +20,9 @@ package io.microsphere.spring.test.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.microsphere.spring.test.web.WebTestUtils.ATTRIBUTE_NAME;
 import static io.microsphere.spring.test.web.WebTestUtils.ATTRIBUTE_VALUE;
@@ -40,11 +43,14 @@ import static io.microsphere.spring.test.web.WebTestUtils.PERSON_PATH;
 import static io.microsphere.spring.test.web.WebTestUtils.PERSON_TEST_PATH;
 import static io.microsphere.spring.test.web.WebTestUtils.REMOTE_ADDRESS;
 import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.getValue;
 import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static reactor.core.publisher.Mono.just;
+import static reactor.core.scheduler.Schedulers.newSingle;
 
 /**
  * {@link WebTestUtils} Test
@@ -82,5 +88,29 @@ class WebTestUtilsTest {
     void testMockServerWebExchange() {
         MockServerWebExchange mockServerWebExchange = mockServerWebExchange();
         assertNotNull(mockServerWebExchange);
+    }
+
+    @Test
+    void testGetValueOnBlockingThread() {
+        String value = "Hello,World";
+        Mono<String> mono = just("Hello,World");
+        assertEquals(value, getValue(mono));
+    }
+
+    @Test
+    void testGetValueOnNonBlockingThread() throws InterruptedException {
+        String value = "Hello,World";
+        Mono<String> mono = just("Hello,World");
+
+        AtomicBoolean executed = new AtomicBoolean(false);
+
+        newSingle("test").schedule(() -> {
+            assertEquals(value, getValue(mono));
+            executed.set(true);
+        });
+
+        while (!executed.get()) {
+            Thread.sleep(100L);
+        }
     }
 }

@@ -26,10 +26,10 @@ import org.springframework.web.reactive.function.server.RequestPredicate;
 import java.util.Set;
 
 import static io.microsphere.collection.Sets.ofSet;
+import static io.microsphere.spring.test.web.WebTestUtils.PARAM_NAME;
+import static io.microsphere.spring.test.web.WebTestUtils.PARAM_VALUE;
+import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKindTest.TEST_PATH_EXTENSION;
-import static io.microsphere.spring.webflux.test.WebTestUtils.PARAM_NAME;
-import static io.microsphere.spring.webflux.test.WebTestUtils.PARAM_VALUE;
-import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
