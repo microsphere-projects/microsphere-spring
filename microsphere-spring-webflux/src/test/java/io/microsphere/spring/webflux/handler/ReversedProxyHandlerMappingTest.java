@@ -20,10 +20,10 @@ package io.microsphere.spring.webflux.handler;
 
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
+import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
-import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
