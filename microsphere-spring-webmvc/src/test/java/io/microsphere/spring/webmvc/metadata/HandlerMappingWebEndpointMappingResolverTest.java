@@ -18,9 +18,9 @@
 package io.microsphere.spring.webmvc.metadata;
 
 import io.microsphere.spring.test.web.controller.TestController;
-import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;
 import io.microsphere.spring.test.webmvc.SimpleUrlHandlerMappingTestConfig;
+import io.microsphere.spring.webmvc.annotation.EnableWebMvcExtension;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Import;
