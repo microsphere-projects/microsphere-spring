@@ -19,11 +19,9 @@ package io.microsphere.spring.context.annotation;
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.annotation.Import;
@@ -84,15 +82,7 @@ class BeanCapableImportCandidateTest {
     }
 
 
-    static class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector, ApplicationContextAware {
-
-        private ApplicationContext applicationContext;
-
-
-        @Override
-        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-            this.applicationContext = applicationContext;
-        }
+    static class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector {
 
         @Override
         public String[] selectImports(AnnotationMetadata importingClassMetadata) {
