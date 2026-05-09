@@ -43,9 +43,13 @@ public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> 
     }
 
     protected Class<A> resolveAnnotationType() {
-        ResolvableType type = forType(this.getClass());
-        ResolvableType superType = type.as(AnnotatedBeanCapableImportCandidate.class);
-        return (Class<A>) superType.resolveGeneric(0);
+        return resolveGeneric(AnnotatedBeanCapableImportCandidate.class, 0);
+    }
+
+    protected <T> Class<T> resolveGeneric(Class<?> declaredClass, int index) {
+        ResolvableType type = forType(getClass());
+        ResolvableType superType = type.as(declaredClass);
+        return (Class<T>) superType.resolveGeneric(index);
     }
 
     /**
