@@ -18,8 +18,9 @@
 package io.microsphere.spring.webflux.server.filter;
 
 
-import io.microsphere.spring.webflux.context.event.ServerRequestHandledEvent;
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
+import io.microsphere.spring.webflux.context.event.ServerRequestHandledEvent;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         RequestHandledEventPublishingWebFilter.class,
         RequestHandledEventPublishingWebFilterTest.class,
 })
+@SpringLoggingTest
 class RequestHandledEventPublishingWebFilterTest extends AbstractWebFluxTest implements ApplicationListener<ServerRequestHandledEvent> {
 
     @Autowired

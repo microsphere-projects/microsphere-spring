@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.test.webmvc;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
@@ -30,4 +31,10 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
         WebMvcTest.class
 })
 class WebMvcTest extends AbstractWebMvcTest {
+
+    @Test
+    @Override
+    protected void testWebEndpoints() throws Exception {
+        super.testWebEndpoints();
+    }
 }

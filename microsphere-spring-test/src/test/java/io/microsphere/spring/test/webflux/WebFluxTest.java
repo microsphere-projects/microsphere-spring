@@ -40,4 +40,10 @@ class WebFluxTest extends AbstractWebFluxTest {
         assertNotNull(this.testController);
         assertNotNull(this.webTestClient);
     }
+
+    @Test
+    @Override
+    protected void testWebEndpoints() {
+        super.testWebEndpoints();
+    }
 }

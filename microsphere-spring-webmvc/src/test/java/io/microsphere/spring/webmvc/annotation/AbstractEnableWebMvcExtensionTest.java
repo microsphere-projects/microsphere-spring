@@ -97,4 +97,10 @@ public abstract class AbstractEnableWebMvcExtensionTest extends AbstractWebMvcTe
         assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueAdvice.class));
         assertEquals(this.reversedProxyHandlerMapping, isBeanPresent(this.context, ReversedProxyHandlerMapping.class));
     }
+
+    @Test
+    @Override
+    protected void testWebEndpoints() throws Exception {
+        super.testWebEndpoints();
+    }
 }

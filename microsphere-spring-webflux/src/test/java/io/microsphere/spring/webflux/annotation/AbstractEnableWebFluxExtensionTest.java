@@ -102,4 +102,9 @@ public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFlux
         assertEquals(this.storeResponseBodyReturnValue, isBeanPresent(this.context, StoringResponseBodyReturnValueInterceptor.class));
         assertEquals(this.reversedProxyHandlerMapping, isBeanPresent(this.context, ReversedProxyHandlerMapping.class));
     }
+
+    @Test
+    protected void testWebEndpoints() {
+        super.testWebEndpoints();
+    }
 }
