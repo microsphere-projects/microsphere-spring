@@ -18,7 +18,6 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.BeanCreationException;
@@ -75,11 +74,7 @@ import static org.springframework.util.StringUtils.hasText;
 public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends BeanCapableImportCandidate
         implements ImportSelector {
 
-    private static final String[] NO_CLASS_TO_IMPORT = EMPTY_STRING_ARRAY;
-
     protected static final String NAME_ATTRIBUTE_NAME = "name";
-
-    protected final Logger logger = getLogger(this.getClass());
 
     private final Class<A> annotationType;
 

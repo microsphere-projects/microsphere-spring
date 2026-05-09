@@ -526,11 +526,6 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         return instantiateClass(type);
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext context) {
-        this.context = context;
-    }
-
     /**
      * The resource of {@link PropertySource}
      */
