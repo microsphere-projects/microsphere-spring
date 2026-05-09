@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.webmvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
-import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,14 +49,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @since 1.0.0
  */
 @Disabled
-@SpringJUnitConfig
 @WebAppConfiguration
-@ContextConfiguration(classes = {
+@SpringJUnitConfig(classes = {
         TestController.class,           // Test Controller
         RouterFunctionTestConfig.class  // Test RouterFunction
 })
 @EnableWebMvc
-@SpringLoggingTest
 public abstract class AbstractWebMvcTest {
 
     @Autowired
@@ -71,6 +68,26 @@ public abstract class AbstractWebMvcTest {
     @BeforeEach
     protected void setUp() {
         this.mockMvc = webAppContextSetup(this.context).build();
+    }
+
+    /**
+     * Test the Web Endpoints
+     *
+     * @see #testHelloWorld()
+     * @see #testGreeting()
+     * @see #testUser()
+     * @see #testError()
+     * @see #testResponseEntity()
+     * @see #testUpdatePerson()
+     */
+    @Test
+    protected void testWebEndpoints() throws Exception {
+        this.testHelloWorld();
+        this.testGreeting();
+        this.testUser();
+        this.testError();
+        this.testResponseEntity();
+        this.testUpdatePerson();
     }
 
     /**

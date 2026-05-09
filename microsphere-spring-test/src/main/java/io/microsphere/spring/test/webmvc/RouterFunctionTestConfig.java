@@ -15,25 +15,32 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.test;
+package io.microsphere.spring.test.webmvc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerResponse;
 
-import static io.microsphere.spring.webflux.test.WebTestUtils.TEST_ROOT_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.AUTH_NAME;
+import static io.microsphere.spring.test.web.WebTestUtils.AUTH_VALUE;
+import static io.microsphere.spring.test.web.WebTestUtils.GET_PERSON_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_ID_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_TEST_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
-import static org.springframework.web.reactive.function.server.RequestPredicates.PUT;
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
-import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
-import static org.springframework.web.reactive.function.server.RequestPredicates.path;
-import static org.springframework.web.reactive.function.server.RequestPredicates.queryParam;
-import static org.springframework.web.reactive.function.server.RouterFunctions.nest;
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
+import static org.springframework.web.servlet.function.RequestPredicates.DELETE;
+import static org.springframework.web.servlet.function.RequestPredicates.GET;
+import static org.springframework.web.servlet.function.RequestPredicates.POST;
+import static org.springframework.web.servlet.function.RequestPredicates.PUT;
+import static org.springframework.web.servlet.function.RequestPredicates.accept;
+import static org.springframework.web.servlet.function.RequestPredicates.contentType;
+import static org.springframework.web.servlet.function.RequestPredicates.param;
+import static org.springframework.web.servlet.function.RequestPredicates.path;
+import static org.springframework.web.servlet.function.RouterFunctions.nest;
+import static org.springframework.web.servlet.function.RouterFunctions.route;
+
 
 /**
  * {@link RouterFunction} Test Config
@@ -45,23 +52,11 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @Import(PersonHandler.class)
 public class RouterFunctionTestConfig {
 
-    public static final String PERSON_PATH = "/person";
-
-    public static final String PERSON_TEST_PATH = TEST_ROOT_PATH + PERSON_PATH;
-
-    public static final String PERSON_ID_PATH = "/{id}";
-
-    public static final String AUTH_NAME = "_auth";
-
-    public static final String AUTH_VALUE = "123456789";
-
-    public static final String GET_PERSON_PATH = PERSON_TEST_PATH + PERSON_ID_PATH;
-
     @Bean
     public RouterFunction<ServerResponse> personRouterFunction(PersonHandler handler) {
         return route(GET(GET_PERSON_PATH).and(accept(APPLICATION_JSON)), handler::getPerson)
                 .andRoute(GET(PERSON_TEST_PATH).and(contentType(APPLICATION_JSON)), handler::listPeople)
-                .andRoute(POST(PERSON_TEST_PATH).and(queryParam(AUTH_NAME, AUTH_VALUE)), handler::createPerson);
+                .andRoute(POST(PERSON_TEST_PATH).and(param(AUTH_NAME, AUTH_VALUE)), handler::createPerson);
     }
 
     @Bean

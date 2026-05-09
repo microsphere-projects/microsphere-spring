@@ -15,33 +15,38 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webmvc.test;
+package io.microsphere.spring.test.webmvc;
 
-import org.springframework.context.annotation.Bean;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
-import java.util.Map;
-
-import static io.microsphere.collection.MapUtils.ofMap;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link SimpleUrlHandlerMapping} Test Config
+ * {@link SimpleUrlHandlerMappingTestConfig} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see SimpleUrlHandlerMapping
+ * @see SimpleUrlHandlerMappingTestConfig
  * @since 1.0.0
  */
-public class SimpleUrlHandlerMappingTestConfig {
+@SpringJUnitConfig(classes = {
+        SimpleUrlHandlerMappingTestConfig.class,
+        SimpleUrlHandlerMappingTestConfigTest.class
+})
+class SimpleUrlHandlerMappingTestConfigTest {
 
-    public static final String BASE_PATH = "/simple";
+    @Autowired
+    private SimpleUrlHandlerMappingTestConfig testConfig;
 
-    public static final String FIRST_PATH = BASE_PATH + "/1";
+    @Autowired
+    private SimpleUrlHandlerMapping handlerMapping;
 
-    @Bean
-    public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
-        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-        Map<String, ?> urlMap = ofMap(BASE_PATH, this, FIRST_PATH, this);
-        mapping.setUrlMap(urlMap);
-        return mapping;
+    @Test
+    void testSimpleUrlHandlerMapping() {
+        assertNotNull(this.testConfig);
+        assertNotNull(this.handlerMapping);
     }
 }
