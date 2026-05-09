@@ -58,6 +58,18 @@ public class WebTestUtils {
 
     public static final String[] PARAM_VALUE_2 = ofArray("test-param-value-2", "test-param-value-3");
 
+    public static final String PERSON_PATH = "/person";
+
+    public static final String PERSON_TEST_PATH = TEST_ROOT_PATH + PERSON_PATH;
+
+    public static final String PERSON_ID_PATH = "/{id}";
+
+    public static final String AUTH_NAME = "_auth";
+
+    public static final String AUTH_VALUE = "123456789";
+
+    public static final String GET_PERSON_PATH = PERSON_TEST_PATH + PERSON_ID_PATH;
+
     public static final InetSocketAddress REMOTE_ADDRESS = new InetSocketAddress("127.0.0.1", 12345);
 
     public static MockServerWebExchange mockServerWebExchange() {

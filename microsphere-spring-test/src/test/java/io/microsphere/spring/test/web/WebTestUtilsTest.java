@@ -23,6 +23,9 @@ import org.springframework.mock.web.server.MockServerWebExchange;
 
 import static io.microsphere.spring.test.web.WebTestUtils.ATTRIBUTE_NAME;
 import static io.microsphere.spring.test.web.WebTestUtils.ATTRIBUTE_VALUE;
+import static io.microsphere.spring.test.web.WebTestUtils.AUTH_NAME;
+import static io.microsphere.spring.test.web.WebTestUtils.AUTH_VALUE;
+import static io.microsphere.spring.test.web.WebTestUtils.GET_PERSON_PATH;
 import static io.microsphere.spring.test.web.WebTestUtils.HEADER_NAME;
 import static io.microsphere.spring.test.web.WebTestUtils.HEADER_NAME_2;
 import static io.microsphere.spring.test.web.WebTestUtils.HEADER_VALUE;
@@ -32,6 +35,9 @@ import static io.microsphere.spring.test.web.WebTestUtils.PARAM_NAME;
 import static io.microsphere.spring.test.web.WebTestUtils.PARAM_NAME_2;
 import static io.microsphere.spring.test.web.WebTestUtils.PARAM_VALUE;
 import static io.microsphere.spring.test.web.WebTestUtils.PARAM_VALUE_2;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_ID_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_TEST_PATH;
 import static io.microsphere.spring.test.web.WebTestUtils.REMOTE_ADDRESS;
 import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
 import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
@@ -63,6 +69,12 @@ class WebTestUtilsTest {
         assertEquals("test-param-value", PARAM_VALUE);
         assertEquals("test-param-name-2", PARAM_NAME_2);
         assertArrayEquals(ofArray("test-param-value-2", "test-param-value-3"), PARAM_VALUE_2);
+        assertEquals("/person", PERSON_PATH);
+        assertEquals("/test/person", PERSON_TEST_PATH);
+        assertEquals("/{id}", PERSON_ID_PATH);
+        assertEquals("_auth", AUTH_NAME);
+        assertEquals("123456789", AUTH_VALUE);
+        assertEquals("/test/person/{id}", GET_PERSON_PATH);
         assertNotNull(REMOTE_ADDRESS);
     }
 

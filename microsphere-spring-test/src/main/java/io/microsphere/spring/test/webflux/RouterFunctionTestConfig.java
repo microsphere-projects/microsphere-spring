@@ -22,6 +22,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static io.microsphere.spring.test.web.WebTestUtils.AUTH_NAME;
+import static io.microsphere.spring.test.web.WebTestUtils.AUTH_VALUE;
+import static io.microsphere.spring.test.web.WebTestUtils.GET_PERSON_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_ID_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_PATH;
+import static io.microsphere.spring.test.web.WebTestUtils.PERSON_TEST_PATH;
 import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
@@ -44,18 +50,6 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
  */
 @Import(PersonHandler.class)
 public class RouterFunctionTestConfig {
-
-    public static final String PERSON_PATH = "/person";
-
-    public static final String PERSON_TEST_PATH = TEST_ROOT_PATH + PERSON_PATH;
-
-    public static final String PERSON_ID_PATH = "/{id}";
-
-    public static final String AUTH_NAME = "_auth";
-
-    public static final String AUTH_VALUE = "123456789";
-
-    public static final String GET_PERSON_PATH = PERSON_TEST_PATH + PERSON_ID_PATH;
 
     @Bean
     public RouterFunction<ServerResponse> personRouterFunction(PersonHandler handler) {
