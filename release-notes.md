@@ -81,4 +81,42 @@
 - Version bumped to 0.2.14 following release of 0.2.13. ([845f509d](<commit-link>))
 - Merged `main` into `release` and vice versa. ([6c67a00d](<commit-link>), [b99d3b42](<commit-link>)) 
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.13...0.2.14
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.13...0.2.14## v0.2.15
+
+# Release Notes - Version 0.2.15
+
+## New Features
+- **WebSocket APIs**: Added support for WebSocket APIs with optional test dependencies. ([2b551f2b](https://github.com/user/repo/commit/2b551f2b))
+- **Auto-Registration**:
+    - Introduced `AutoRegistrationBean` interface and `EnableAutoRegistrationBean` for SPI-based auto-registration. ([14d7bc20](https://github.com/user/repo/commit/14d7bc20), [ad306cec](https://github.com/user/repo/commit/ad306cec))
+    - Added constants for auto-registered beans configuration. ([7fd89ff1](https://github.com/user/repo/commit/7fd89ff1))
+    - Implemented automatic registration for `InterceptingHandlerMethodProcessor`. ([496cf078](https://github.com/user/repo/commit/496cf078))
+- **Spring MVC & WebFlux Improvements**:
+    - Added `SimpleUrlHandlerMapping` test and updated related configurations. ([59fe4737](https://github.com/user/repo/commit/59fe4737))
+    - Added MVC test utilities and refactored testing approach. ([3f3c911f](https://github.com/user/repo/commit/3f3c911f))
+    - Introduced `AbstractWebFluxTest` and `WebFluxTest`. ([0783c476](https://github.com/user/repo/commit/0783c476)) 
+
+## Test Improvements
+- Consolidated test utilities into `microsphere-spring-test` module. ([e4d72165](https://github.com/user/repo/commit/e4d72165), [3b9a529e](https://github.com/user/repo/commit/3b9a529e))
+- Introduced helpers for annotation attribute loading. ([7742fb9e](https://github.com/user/repo/commit/7742fb9e), [5728ef79](https://github.com/user/repo/commit/5728ef79), [c791ca6d](https://github.com/user/repo/commit/c791ca6d))
+- Improved test structure:
+    - Moved `@Test` annotations to concrete test classes. ([4bd0016f](https://github.com/user/repo/commit/4bd0016f))
+    - Added unit tests for `PersonHandler`. ([6756fe16](https://github.com/user/repo/commit/6756fe16))
+    - Added tests for `EnableAutoRegistrationBean`. ([fee35c29](https://github.com/user/repo/commit/fee35c29))
+    - Refactored test assertions for `BeanCapable` candidates. ([bb331320](https://github.com/user/repo/commit/bb331320))
+
+## Dependency Updates
+- Updated `com.fasterxml.jackson:jackson-bom` from `2.21.2` to `2.21.3`. ([d29a9277](https://github.com/user/repo/commit/d29a9277))
+
+## Documentation
+- Updated README to include branch compatibility and version details. ([a4eb0ee4](https://github.com/user/repo/commit/a4eb0ee4))
+
+## Build and Workflow Enhancements
+- Merged main branch changes into release branch. ([3c7812e2](https://github.com/user/repo/commit/3c7812e2), [6087e219](https://github.com/user/repo/commit/6087e219), [98a79609](https://github.com/user/repo/commit/98a79609))
+- Increased version to next patch post-release. ([a26ceb18](https://github.com/user/repo/commit/a26ceb18))
+
+---
+
+**Note**: For a detailed view of all changes, refer to the [Full Changelog](https://github.com/user/repo/compare/0.2.14...0.2.15).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.14...0.2.15
