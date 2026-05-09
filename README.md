@@ -64,8 +64,8 @@ The easiest way to get started is by adding the Microsphere Spring BOM (Bill of 
 
 | **Branches** | **Purpose**                                    | **Latest Version** |
 |--------------|------------------------------------------------|--------------------|
-| **0.2.x**    | Compatible with Spring Framework 6.0.x - 6.2.x | 0.2.6-SNAPSHOT     |          |
-| **0.1.x**    | Compatible with Spring Framework 4.3.x - 5.3.x | 0.1.6-SNAPSHOT     |
+| **0.2.x**    | Compatible with Spring Framework 6.0.x - 7.0.x | 0.2.15             |      
+| **0.1.x**    | Compatible with Spring Framework 4.3.x - 5.3.x | 0.1.15             |
 
 Then add the specific modules you need:
 
