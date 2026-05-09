@@ -17,14 +17,21 @@
 
 package io.microsphere.spring.test.web;
 
+import io.microsphere.annotation.Nullable;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
+import org.springframework.web.server.WebSession;
+import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
 
+import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Locale.getDefault;
+import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
+import static org.springframework.mock.web.server.MockServerWebExchange.from;
+import static reactor.core.scheduler.Schedulers.isInNonBlockingThread;
 
 /**
  * The utility class for testing in Spring Web
@@ -73,7 +80,7 @@ public class WebTestUtils {
     public static final InetSocketAddress REMOTE_ADDRESS = new InetSocketAddress("127.0.0.1", 12345);
 
     public static MockServerWebExchange mockServerWebExchange() {
-        MockServerHttpRequest request = MockServerHttpRequest.get(TEST_ROOT_PATH)
+        MockServerHttpRequest request = get(TEST_ROOT_PATH)
                 .header(HEADER_NAME, HEADER_VALUE)
                 .header(HEADER_NAME_2, HEADER_VALUE_2)
                 .acceptLanguageAsLocales(getDefault())
@@ -81,10 +88,29 @@ public class WebTestUtils {
                 .queryParam(PARAM_NAME, PARAM_VALUE)
                 .queryParam(PARAM_NAME_2, PARAM_VALUE_2)
                 .build();
-        MockServerWebExchange serverWebExchange = MockServerWebExchange.from(request);
+        MockServerWebExchange serverWebExchange = from(request);
         Map<String, Object> attributes = serverWebExchange.getAttributes();
         attributes.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
 
+        WebSession webSession = getValue(serverWebExchange.getSession());
+        webSession.getAttributes().put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+
         return serverWebExchange;
+    }
+
+    /**
+     * Get the emitted value from {@link Mono}
+     *
+     * @param mono {@link Mono}
+     * @param <T>  the type of value
+     * @return the emitted value
+     */
+    @Nullable
+    public static <T> T getValue(Mono<T> mono) {
+        if (isInNonBlockingThread()) {
+            return execute(() -> mono.toFuture().get());
+        } else {
+            return mono.block();
+        }
     }
 }

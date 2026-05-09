@@ -30,7 +30,7 @@ import org.springframework.web.server.WebHandler;
 import org.springframework.web.server.handler.DefaultWebFilterChain;
 
 import static io.microsphere.collection.Lists.ofList;
-import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
+import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;

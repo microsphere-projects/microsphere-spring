@@ -18,9 +18,9 @@
 package io.microsphere.spring.webflux.metadata;
 
 
-import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.test.webflux.SimpleUrlHandlerMappingTestConfig;
+import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
