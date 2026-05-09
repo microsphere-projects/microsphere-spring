@@ -22,3 +22,8 @@ io.microsphere.spring.config.CollectingConfigurationPropertyListener
 
 org.springframework.test.context.ContextCustomizerFactory=\
 io.microsphere.spring.context.event.AbstractEventListenerTest.Factory
+
+io.microsphere.spring.context.config.AutoRegistrationBean=\
+io.microsphere.spring.context.config.Test1AutoRegistrationBean,\
+io.microsphere.spring.context.config.Test2AutoRegistrationBean
+

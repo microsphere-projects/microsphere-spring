@@ -26,8 +26,8 @@ import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
+import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodReturnValue;
-import static io.microsphere.spring.webflux.test.WebTestUtils.mockServerWebExchange;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**

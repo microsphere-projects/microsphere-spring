@@ -17,9 +17,9 @@
 
 package io.microsphere.spring.webflux.function.server;
 
+import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
-import io.microsphere.spring.webflux.test.AbstractWebFluxTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.reactive.function.server.RouterFunction;

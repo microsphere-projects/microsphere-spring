@@ -15,41 +15,21 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.webflux.test;
-
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
-
-import static reactor.core.publisher.Mono.empty;
+package io.microsphere.spring.context.config;
 
 /**
- * Person Handler
+ * {@link AutoRegistrationBean} for testing
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see ServerRequest
- * @see ServerResponse
+ * @see AutoRegistrationBean
  * @since 1.0.0
  */
-public class PersonHandler {
+public class Test1AutoRegistrationBean implements AutoRegistrationBean {
 
-    public Mono<ServerResponse> listPeople(ServerRequest request) {
-        return empty();
-    }
+    public static final String BEAN_NAME = "test-1";
 
-    public Mono<ServerResponse> createPerson(ServerRequest request) {
-        return empty();
-    }
-
-    public Mono<ServerResponse> getPerson(ServerRequest request) {
-        return empty();
-    }
-
-    public Mono<ServerResponse> updatePerson(ServerRequest request) {
-        return empty();
-    }
-
-    public Mono<ServerResponse> deletePerson(ServerRequest request) {
-        return empty();
+    @Override
+    public String getBeanName() {
+        return BEAN_NAME;
     }
 }

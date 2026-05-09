@@ -18,25 +18,18 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.logging.Logger;
-import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
-import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.lang.annotation.Annotation;
-import java.util.Map;
 
-import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
-import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
-import static org.springframework.core.ResolvableType.forType;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
@@ -72,41 +65,23 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends BeanCapableImportCandidate
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends AnnotatedBeanCapableImportCandidate<A>
         implements ImportSelector {
-
-    private static final String[] NO_CLASS_TO_IMPORT = EMPTY_STRING_ARRAY;
 
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 
-    protected final Logger logger = getLogger(this.getClass());
-
-    private final Class<A> annotationType;
-
     private String propertySourceName;
-
-    public AnnotatedPropertySourceLoader() {
-        this.annotationType = resolveAnnotationType();
-    }
-
-    protected Class<A> resolveAnnotationType() {
-        ResolvableType type = forType(this.getClass());
-        ResolvableType superType = type.as(AnnotatedPropertySourceLoader.class);
-        return (Class<A>) superType.resolveGeneric(0);
-    }
 
     @Override
     public final String[] selectImports(AnnotationMetadata metadata) {
-        String annotationClassName = annotationType.getName();
-        Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
-        ResolvablePlaceholderAnnotationAttributes attributes = of(annotationAttributes, annotationType, getEnvironment());
+        ResolvablePlaceholderAnnotationAttributes attributes = getAnnotationAttributes(metadata);
         String propertySourceName = resolvePropertySourceName(attributes, metadata);
         this.propertySourceName = propertySourceName;
         MutablePropertySources propertySources = getEnvironment().getPropertySources();
         try {
             loadPropertySource(attributes, metadata, propertySourceName, propertySources);
         } catch (Throwable e) {
-            String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationClassName + "] can't load the PropertySource[name : '" + propertySourceName + "']";
+            String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationType.getName() + "] can't load the PropertySource[name : '" + propertySourceName + "']";
             if (logger.isErrorEnabled()) {
                 logger.error(errorMessage, e);
             }

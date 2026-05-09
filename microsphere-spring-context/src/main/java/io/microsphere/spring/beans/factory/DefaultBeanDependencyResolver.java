@@ -145,7 +145,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
      * @param bf the {@link ConfigurableListableBeanFactory} to resolve dependencies from;
      *           must be the same instance passed to the constructor
      * @return a {@link Map} of bean names to their flattened dependent bean name sets,
-     *         or an empty map if the factory does not match
+     * or an empty map if the factory does not match
      */
     @Override
     public Map<String, Set<String>> resolve(ConfigurableListableBeanFactory bf) {
@@ -284,10 +284,10 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
      *   // dependencies contains the names of beans that "myBean" depends on
      * }</pre>
      *
-     * @param beanName              the name of the bean to resolve dependencies for
-     * @param mergedBeanDefinition  the merged {@link RootBeanDefinition} of the bean
-     * @param bf                    the {@link ConfigurableListableBeanFactory}; must be the same
-     *                              instance passed to the constructor
+     * @param beanName             the name of the bean to resolve dependencies for
+     * @param mergedBeanDefinition the merged {@link RootBeanDefinition} of the bean
+     * @param bf                   the {@link ConfigurableListableBeanFactory}; must be the same
+     *                             instance passed to the constructor
      * @return a {@link Set} of dependent bean names, or an empty set if the factory does not match
      */
     @Override

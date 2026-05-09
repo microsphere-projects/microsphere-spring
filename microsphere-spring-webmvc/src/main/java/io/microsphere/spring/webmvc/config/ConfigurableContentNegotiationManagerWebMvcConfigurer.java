@@ -10,7 +10,6 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Map;
@@ -35,7 +34,7 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * @see DataBinder
  * @since 1.0.0
  */
-public class ConfigurableContentNegotiationManagerWebMvcConfigurer extends WebMvcConfigurerAdapter implements EnvironmentAware {
+public class ConfigurableContentNegotiationManagerWebMvcConfigurer implements WebMvcConfigurerAdapter, EnvironmentAware {
 
     /**
      * The property name prefix of {@link ContentNegotiationManager} : "microsphere.spring.webmvc.content-negotiation."
