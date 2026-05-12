@@ -27,6 +27,7 @@ jobs:
           'spring-framework-6.0' , 'spring-framework-6.1', 'spring-framework-6.2',
           'spring-framework-7.0'
         ]
+
     steps:
       - name: Checkout Source
         uses: actions/checkout@v5
@@ -36,9 +37,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
+          cache: maven
 
       - name: Build with Maven
-        run: ./mvnw
+        run: mvn
           --batch-mode
           --update-snapshots
           --file pom.xml
