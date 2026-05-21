@@ -119,4 +119,26 @@
 
 **Note**: For a detailed view of all changes, refer to the [Full Changelog](https://github.com/user/repo/compare/0.2.14...0.2.15).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.14...0.2.15
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.14...0.2.15## v0.2.16
+
+# Release Notes for v0.2.16
+
+## Dependency Updates
+- Bumped `microsphere-logging` to v0.1.10.  
+- Updated Microsphere module and parent versions.  
+
+## Build and Workflow Enhancements
+- Adjusted Maven workflows and appended EOF in scripts.  
+- Updated `maven-publish.yml`.  
+
+## Documentation
+- Updated `README` to reflect bumped branch versions.  
+
+## Other Changes
+- Removed `logback-test.xml` from the webmvc module.  
+
+---
+
+Thank you for using our library! 🚀
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.15...0.2.16
