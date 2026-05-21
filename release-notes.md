@@ -122,4 +122,25 @@ For a complete list of changes, refer to the full [changelog](#).
 
 ---
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.14...0.1.15
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.14...0.1.15## v0.1.16
+
+# Release Notes for Version 0.1.16
+
+## Build and Workflow Enhancements
+- Removed `max-parallel` limit from CI matrix to optimize testing. ([b0c74f65](https://github.com/mercyblitz/repo/commit/b0c74f65))
+- Added OSSRH credentials to Maven publish workflow. ([836fb445](https://github.com/mercyblitz/repo/commit/836fb445))
+- Improved Maven usage with caching and adjusted `mvn/mvnw` in workflows. ([64381fc9](https://github.com/mercyblitz/repo/commit/64381fc9))
+- Fixed Java setup step name and normalized matrix case in workflows. ([8cfd5c1d](https://github.com/mercyblitz/repo/commit/8cfd5c1d))
+
+## Dependency Updates
+- Upgraded `microsphere-logging` to version 0.1.10. ([3aa82ee9](https://github.com/mercyblitz/repo/commit/3aa82ee9))
+- Updated `microsphere-java` and parent project versions. ([d30029c7](https://github.com/mercyblitz/repo/commit/d30029c7))
+
+## Documentation
+- Updated branch versions in `README`. ([de642806](https://github.com/mercyblitz/repo/commit/de642806))
+
+## Other Changes
+- Merged `release-1.x` into `dev-1.x`. ([dcf0ce99](https://github.com/mercyblitz/repo/commit/dcf0ce99))
+- Incremented version number to 0.1.16 for the new release. ([dc746de4](https://github.com/mercyblitz/repo/commit/dc746de4)) 
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.15...0.1.16
