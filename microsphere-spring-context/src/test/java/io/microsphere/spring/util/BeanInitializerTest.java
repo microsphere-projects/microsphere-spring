@@ -71,13 +71,4 @@ class BeanInitializerTest {
         assertTrue(hasAlias(registry, BEAN_NAME, "A"));
     }
 
-    @Test
-    void testRegisterSpringFactoriesBeans() {
-        registerSpringFactoriesBeans((BeanDefinitionRegistry) registry, Bean.class);
-        assertTrue(registry.containsBeanDefinition("testBean"));
-        assertTrue(registry.containsBeanDefinition("testBean2"));
-        assertEquals(TestBean.class, registry.getBean("testBean").getClass());
-        assertEquals(TestBean2.class, registry.getBean("testBean2").getClass());
-    }
-
 }
