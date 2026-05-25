@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.microsphere.spring.beans.BeanUtils.doInvokeAwareInterfaces;
+import static io.microsphere.spring.beans.BeanUtils.generateBeanName;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
 import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
@@ -72,6 +73,15 @@ class BeanUtilsTest {
             return "test";
         }
 
+    }
+
+    @Test
+    void testGenerateBeanName() {
+        String beanName = generateBeanName(Config.class);
+        assertEquals("beanUtilsTest.Config", beanName);
+
+        beanName = generateBeanName(String.class);
+        assertEquals("string", beanName);
     }
 
     @Test
