@@ -29,6 +29,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -137,9 +138,10 @@ class BeanRegistrarTest {
 
     @Test
     void testRegisterSpringFactoriesBeans() {
-        int beansCount = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
-        assertEquals(2, beansCount);
-        assertEquals(0, registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class));
+        Map<Class, String> classStringMap = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
+        assertEquals(2, classStringMap.size());
+        classStringMap = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
+        assertEquals(0, classStringMap.size());
 
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean.class.getSimpleName())));
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean2.class.getSimpleName())));
