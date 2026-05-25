@@ -18,6 +18,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -916,7 +917,7 @@ public abstract class BeanUtils implements Utils {
         if (bean instanceof BeanNameAware && beanFactory != null) {
             BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
             BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
-            String beanName = generateBeanName(beanDefinition, registry);
+            String beanName = BeanDefinitionReaderUtils.generateBeanName(beanDefinition, registry);
             ((BeanNameAware) bean).setBeanName(beanName);
         }
     }
