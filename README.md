@@ -8,45 +8,74 @@
 ![Maven](https://img.shields.io/maven-central/v/io.github.microsphere-projects/microsphere-spring.svg)
 ![License](https://img.shields.io/github/license/microsphere-projects/microsphere-spring.svg)
 
-The Microsphere Spring framework is built upon a sophisticated multi-layered architecture that enhances standard Spring
-Framework capabilities through modular extensions and advanced integration patterns. This architecture focuses on
-providing enhanced dependency injection, event processing, web endpoint management, and caching capabilities while
-maintaining seamless compatibility with existing Spring applications.
+Microsphere Spring is a modular library of Spring Framework extensions that solves real-world challenges in production
+Spring applications. It enhances dependency injection, configuration management, web endpoint handling, event
+processing, caching, and JDBC monitoring — all while remaining a drop-in addition to any existing Spring application.
 
-## Purpose and Scope
+## Table of Contents
 
-Microsphere Spring aims to address common challenges and limitations in Spring applications by offering:
+- [Features](#features)
+- [Modules](#modules)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Usage Examples](#usage-examples)
+- [Building from Source](#building-from-source)
+- [Documentation](#documentation)
+- [Getting Help](#getting-help)
+- [Contributing](#contributing)
+- [Maintainers](#maintainers)
+- [License](#license)
 
-1. Enhanced bean lifecycle management with dependency analysis and parallel instantiation
-2. Extended configuration system with listenable environment and advanced property resolution
-3. Improved web framework capabilities for both Spring MVC and WebFlux
-4. Flexible event processing with interception mechanisms
-5. Integration with additional technologies like Google Guice and P6Spy for JDBC monitoring
+## Features
+
+- **Parallel bean instantiation** — resolves bean dependency graphs and initializes independent singletons concurrently
+  to reduce startup time
+- **Listenable `Environment`** — intercept property resolution and profile activation events via `EnvironmentListener`
+  and `PropertyResolverListener`
+- **Enhanced `@PropertySource`** — `@ResourcePropertySource` adds wildcard resource patterns, ordering control,
+  inheritance, auto-refresh on change, and built-in YAML/JSON support (`@YamlPropertySource`, `@JsonPropertySource`)
+- **TTL caching** — `@EnableTTLCaching` / `@TTLCacheable` extend Spring Cache with per-entry time-to-live configuration,
+  including Redis support
+- **Web endpoint registry** — collects `WebEndpointMapping` metadata from Spring MVC, WebFlux, and classic Servlet at
+  startup for introspection and routing
+- **Handler method interception** — `HandlerMethodInterceptor` / `HandlerMethodArgumentInterceptor` provide AOP-style
+  hooks around MVC and WebFlux controller invocations
+- **P6Spy JDBC monitoring** — `@EnableP6DataSource` wraps existing `DataSource` beans transparently for SQL tracing
+- **Google Guice integration** — `@EnableGuice` bridges Guice `@Inject` injection points into the Spring bean lifecycle
+- **Rich testing utilities** — `EmbeddedTomcatContextLoader`, `EnableEmbeddedDatabase`, `AbstractWebFluxTest`, and
+  servlet/MVC test helpers
 
 ## Modules
 
-| **Module**                          | **Purpose**                           | **Key Features**                             |
-|-------------------------------------|---------------------------------------|----------------------------------------------|
-| **microsphere-spring-parent**       | Parent POM with dependency management | Centralized version control, dependency BOMs |
-| **microsphere-spring-dependencies** | External dependency versions          | Framework compatibility matrix               |
-| **microsphere-spring-context**      | Core Spring Context enhancements      | Bean utilities, configuration management     |
-| **microsphere-spring-web**          | Web framework extensions              | Endpoint mapping, request handling           |
-| **microsphere-spring-webmvc**       | Spring MVC specific extensions        | Controller enhancements, method support      |
-| **microsphere-spring-webflux**      | Reactive web extensions               | WebFlux utilities, reactive patterns         |
-| **microsphere-spring-jdbc**         | Database access enhancements          | Connection utilities, query support          |
-| **microsphere-spring-guice**        | Google Guice integration              | Dependency injection bridge                  |
-| **microsphere-spring-test**         | Testing framework integration         | Test utilities, mocking support              |
+| Module                              | Purpose                                 | Key Annotations / APIs                                                                                                          |
+|-------------------------------------|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| **microsphere-spring-parent**       | Parent POM with dependency management   | —                                                                                                                               |
+| **microsphere-spring-dependencies** | External dependency BOM                 | —                                                                                                                               |
+| **microsphere-spring-context**      | Core context & configuration extensions | `@ResourcePropertySource`, `@YamlPropertySource`, `@JsonPropertySource`, `@EnableTTLCaching`, `@EnableConfigurationBeanBinding` |
+| **microsphere-spring-web**          | Shared web abstractions                 | `WebEndpointMapping`, `HandlerMethodInterceptor`, `@EnableWebExtension`, `@Idempotent`                                          |
+| **microsphere-spring-webmvc**       | Spring MVC extensions                   | `@EnableWebMvcExtension`, `MethodHandlerInterceptor`, `ReversedProxyHandlerMapping`                                             |
+| **microsphere-spring-webflux**      | Reactive web extensions                 | `@EnableWebFluxExtension`, `InterceptingHandlerMethodProcessor`, `ReversedProxyHandlerMapping`                                  |
+| **microsphere-spring-jdbc**         | JDBC / P6Spy integration                | `@EnableP6DataSource`                                                                                                           |
+| **microsphere-spring-guice**        | Google Guice bridge                     | `@EnableGuice`                                                                                                                  |
+| **microsphere-spring-test**         | Testing utilities                       | `@EnableEmbeddedDatabase`, `EmbeddedTomcatContextLoader`, `AbstractWebFluxTest`                                                 |
+
+## Prerequisites
+
+- **Java 17** or later
+- **Maven 3.6+** (or use the included `mvnw` / `mvnw.cmd` wrapper)
+- Spring Framework **6.0.x – 7.0.x** (`main` branch) or **4.3.x – 5.3.x** (`1.x` branch)
 
 ## Getting Started
 
-The easiest way to get started is by adding the Microsphere Spring BOM (Bill of Materials) to your project's pom.xml:
+### 1. Import the BOM
+
+Add `microsphere-spring-dependencies` to your `<dependencyManagement>` block so you never need to manage individual
+module versions:
 
 ```xml
 
 <dependencyManagement>
     <dependencies>
-        ...
-        <!-- Microsphere Spring Dependencies -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-dependencies</artifactId>
@@ -54,116 +83,173 @@ The easiest way to get started is by adding the Microsphere Spring BOM (Bill of 
             <type>pom</type>
             <scope>import</scope>
         </dependency>
-        ...
     </dependencies>
 </dependencyManagement>
 ```
 
-`${microsphere-spring.version}` has two branches:
+Choose the version that matches your Spring Framework line:
 
-| **Branches** | **Purpose**                                    | **Latest Version** |
-|--------------|------------------------------------------------|--------------------|
-| **main**     | Compatible with Spring Framework 6.0.x - 7.0.x | 0.2.17             |      
-| **1.x**      | Compatible with Spring Framework 4.3.x - 5.3.x | 0.1.17             |
+| Branch | Spring Framework compatibility | Latest version |
+|--------|--------------------------------|----------------|
+| `main` | 6.0.x – 7.0.x                  | 0.2.17         |
+| `1.x`  | 4.3.x – 5.3.x                  | 0.1.17         |
 
-Then add the specific modules you need:
+### 2. Add individual modules
+
+Include only the modules you need — no version required after importing the BOM:
 
 ```xml
 
 <dependencies>
-    <!-- Microsphere Spring Context -->
+    <!-- Core context enhancements -->
     <dependency>
         <groupId>io.github.microsphere-projects</groupId>
         <artifactId>microsphere-spring-context</artifactId>
     </dependency>
+
+    <!-- Spring MVC extensions (optional) -->
+    <dependency>
+        <groupId>io.github.microsphere-projects</groupId>
+        <artifactId>microsphere-spring-webmvc</artifactId>
+    </dependency>
 </dependencies>
 ```
 
-### Example : Auto-Refreshable Spring `@PropertySource` variant - `@ResourcePropertySource`
+## Usage Examples
 
-1. To add The Java Properties resource(located classpath `META-INF/test/a.properties`):
+### Auto-refreshable property source — `@ResourcePropertySource`
 
-```properties
-a=1
-b=3
-```
-
-2. To add the test class for `@ResourcePropertySource`:
+`@ResourcePropertySource` extends Spring's `@PropertySource` with wildcard patterns, ordering, inheritance, and live
+reload when the underlying file changes.
 
 ```java
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration
+@Configuration
 @ResourcePropertySource(
-        name = "test-property-source",
-        value = "classpath*:/META-INF/test/*.properties",
-        autoRefreshed = true
+        name = "app-config",
+        value = "classpath*:/META-INF/config/*.properties",
+        autoRefreshed = true   // reload whenever any matched file changes
 )
-class PropertySourceExtensionAttributesTest {
-
+public class AppConfig {
     @Autowired
     private Environment environment;
-
-    @Test
-    void test() {
-        assertEquals("1", environment.getProperty("a"));
-    }
-
 }
 ```
 
-> If the resource `META-INF/test/a.properties` is modified, the `@ResourcePropertySource` will be automatically
-> refreshed, and the `Environment` will be updated with the new property values.
+### YAML and JSON property sources
+
+```java
+
+@Configuration
+@YamlPropertySource("classpath:/config/application.yaml")
+@JsonPropertySource("classpath:/config/feature-flags.json")
+public class AppConfig {
+}
+```
+
+### TTL caching — `@EnableTTLCaching` and `@TTLCacheable`
+
+Add per-entry time-to-live to any Spring-managed cache (including Redis):
+
+```java
+
+@Configuration
+@EnableTTLCaching
+public class CachingConfig {
+}
+
+// In a service bean:
+@TTLCacheable(cacheNames = "products", ttl = 300, timeUnit = TimeUnit.SECONDS)
+public Product findById(Long id) { ...}
+```
+
+### Spring MVC extensions — `@EnableWebMvcExtension`
+
+Enable handler method interception, web endpoint metadata collection, and more with a single annotation:
+
+```java
+
+@Configuration
+@EnableWebMvcExtension(
+        interceptHandlerMethods = true,   // wrap controller methods
+        registerWebEndpointMappings = true // expose endpoint metadata at startup
+)
+public class WebConfig {
+}
+```
+
+Implement `HandlerMethodInterceptor` to add cross-cutting behavior around any controller invocation:
+
+```java
+
+@Component
+public class LoggingInterceptor implements HandlerMethodInterceptor {
+    @Override
+    public void beforeExecute(HandlerMethod handlerMethod, Object[] args, ...) {
+        log.info("Invoking {}", handlerMethod.getMethod().getName());
+    }
+}
+```
+
+### P6Spy JDBC monitoring — `@EnableP6DataSource`
+
+Wrap every existing `DataSource` bean for transparent SQL tracing without changing application code:
+
+```java
+
+@Configuration
+@EnableP6DataSource
+public class DataSourceConfig {
+}
+```
+
+### Google Guice integration — `@EnableGuice`
+
+Allow Guice `@Inject`-annotated fields to be satisfied by Spring-managed beans:
+
+```java
+
+@Configuration
+@EnableGuice
+public class IntegrationConfig {
+}
+```
 
 ## Building from Source
 
-You don't need to build from source unless you want to try out the latest code or contribute to the project.
-
-To build the project, follow these steps:
-
-1. Clone the repository:
+You don't need to build from source to use the library. Only do this if you want to try unreleased changes or contribute
+to the project.
 
 ```bash
+# Clone the repository
 git clone https://github.com/microsphere-projects/microsphere-spring.git
-```
+cd microsphere-spring
 
-2. Build the source:
-
-- Linux/MacOS:
-
-```bash
+# Linux / macOS
 ./mvnw package
-```
 
-- Windows:
-
-```powershell
+# Windows
 mvnw.cmd package
 ```
 
-## Contributing
+Run the full test suite:
 
-We welcome your contributions! Please read [Code of Conduct](./CODE_OF_CONDUCT.md) before submitting a pull request.
+```bash
+# Linux / macOS
+./mvnw verify
 
-## Reporting Issues
-
-* Before you log a bug, please search the [issues](https://github.com/microsphere-projects/microsphere-spring/issues)
-  to see if someone has already reported the problem.
-* If the issue doesn't already
-  exist, [create a new issue](https://github.com/microsphere-projects/microsphere-spring/issues/new).
-* Please provide as much information as possible with the issue report.
+# Windows
+mvnw.cmd verify
+```
 
 ## Documentation
 
-### User Guide
-
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/microsphere-projects/microsphere-spring)
-
-[![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=flat&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/microsphere-projects/microsphere-spring)
-
-### Wiki
-
-[Github Host](https://github.com/microsphere-projects/microsphere-spring/wiki)
+| Resource                    | Link                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Interactive docs (DeepWiki) | [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/microsphere-projects/microsphere-spring)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Interactive docs (Zread)    | [![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=flat&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/microsphere-projects/microsphere-spring) |
+| GitHub Wiki                 | [microsphere-spring wiki](https://github.com/microsphere-projects/microsphere-spring/wiki)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Release notes               | [release-notes.md](./release-notes.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ### JavaDoc
 
@@ -175,6 +261,35 @@ We welcome your contributions! Please read [Code of Conduct](./CODE_OF_CONDUCT.m
 - [microsphere-spring-guice](https://javadoc.io/doc/io.github.microsphere-projects/microsphere-spring-guice)
 - [microsphere-spring-test](https://javadoc.io/doc/io.github.microsphere-projects/microsphere-spring-test)
 
+## Getting Help
+
+- **Bug reports and feature requests** — search
+  the [existing issues](https://github.com/microsphere-projects/microsphere-spring/issues) first; if not
+  found, [open a new issue](https://github.com/microsphere-projects/microsphere-spring/issues/new) and include your
+  Spring and Java versions, a minimal reproducer, and the full stack trace if applicable
+- **Questions and discussions** —
+  use [GitHub Discussions](https://github.com/microsphere-projects/microsphere-spring/discussions)
+- **Interactive documentation** — ask questions directly against the codebase
+  via [DeepWiki](https://deepwiki.com/microsphere-projects/microsphere-spring)
+  or [Zread](https://zread.ai/microsphere-projects/microsphere-spring)
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Read the [Code of Conduct](./CODE_OF_CONDUCT.md) before participating
+2. Fork the repository and create a feature branch from `main`
+3. Write or update tests for any changed behavior
+4. Submit a pull request — the CI build (Maven + JUnit) must pass
+
+## Maintainers
+
+| Name                                      | Role                       | Contact              |
+|-------------------------------------------|----------------------------|----------------------|
+| [Mercy Ma](https://github.com/mercyblitz) | Lead architect & developer | mercyblitz@gmail.com |
+
+The project is developed under the [Microsphere Projects](https://github.com/microsphere-projects) organisation.
+
 ## License
 
-The Microsphere Spring is released under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+Microsphere Spring is released under the [Apache License 2.0](./LICENSE).
