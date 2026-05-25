@@ -141,4 +141,34 @@
 
 Thank you for using our library! 🚀
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.15...0.2.16
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.15...0.2.16## v0.2.17
+
+# Release Notes for v0.2.17
+
+## New Features
+- Introduced `generateBeanName` methods for improved default bean name generation.  
+- Updated usage to leverage `Set` and `BeanUtils` for factory bean name handling.  
+
+## Bug Fixes
+- Fixed variable case in `setup-java` step of the workflow configuration.
+
+## Documentation
+- Revamped README with comprehensive content, formatted text, tables, and badges for improved clarity.  
+
+## Dependency Updates
+- Bumped `microsphere-logging` to v0.1.11.  
+- Bumped `microsphere-java` to v0.3.3.  
+
+## Test Improvements
+- Removed redundant and idempotent test classes:
+  - `IdempotentConfig`
+  - `testRegisterSpringFactoriesBeans`
+  - Return-value assertion in `BeanInitializerTest`.  
+
+## Build and Workflow Enhancements
+- Updated branch names in README table for consistency.  
+
+## Other Changes
+- Various chore updates and merges to streamline the project structure and align branches `[skip ci]`.
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.16...0.2.17
