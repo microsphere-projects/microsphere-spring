@@ -17,6 +17,7 @@
 package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.beans.BeanUtils;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -28,16 +29,19 @@ import org.springframework.core.AliasRegistry;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
-import static java.beans.Introspector.decapitalize;
+import static java.util.Collections.unmodifiableMap;
 import static org.springframework.aop.support.AopUtils.getTargetClass;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactoryNames;
-import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ClassUtils.resolveClassName;
 import static org.springframework.util.ObjectUtils.containsElement;
 import static org.springframework.util.StringUtils.hasText;
@@ -407,37 +411,30 @@ public abstract class BeanRegistrar {
     }
 
     /**
-     * Registers beans from the specified factory classes using Spring's {@link SpringFactoriesLoader}.
-     * <p>
-     * This method loads the fully qualified implementation class names from the classpath resources located in
-     * {@code META-INF/spring.factories} for each given factory interface or abstract class. It then registers each
-     * implementation class as a bean in the provided {@link BeanFactory}.
-     * </p>
+     * Registers beans into the Spring {@link BeanFactory} by loading their implementation class names from
+     * the classpath resource file {@code META-INF/spring.factories}. This method delegates to
+     * {@link #registerSpringFactoriesBeans(BeanDefinitionRegistry, Class...)} after converting the
+     * {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
      *
-     * <h3>How It Works</h3>
-     * <ol>
-     *   <li>For each given factory class, it loads the list of implementation class names using
-     *       {@link SpringFactoriesLoader#loadFactoryNames(Class, ClassLoader)}.</li>
-     *   <li>Each implementation class is resolved and registered as a Spring bean with a generated name derived from
-     *       its short class name (starting with a lowercase letter).</li>
-     *   <li>If a bean with the same name already exists and overriding is disabled, it logs a warning but skips registration.</li>
-     * </ol>
+     * <p>If the provided {@link BeanFactory} does not implement {@link BeanDefinitionRegistry}, this method
+     * will attempt to unwrap it or return an empty map depending on the implementation of
+     * {@link io.microsphere.spring.beans.factory.BeanFactoryUtils#asBeanDefinitionRegistry(Object)}.</p>
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     * int count = registerSpringFactoriesBeans(beanFactory, MyFactory.class);
-     * System.out.println(count + " beans were successfully registered.");
+     * // Assuming beanFactory is an instance of ConfigurableApplicationContext or similar
+     * Map<Class, String> registeredBeans = registerSpringFactoriesBeans(beanFactory, MyFactory.class);
+     * registeredBeans.forEach((clazz, name) -> {
+     *     System.out.println("Registered bean: " + name + " of type: " + clazz.getName());
+     * });
      * }</pre>
      *
-     * <p><strong>Note:</strong> This method delegates to the overloaded version that accepts a
-     * {@link BeanDefinitionRegistry} by converting the given {@link BeanFactory} into one via
-     * {@link BeanFactoryUtils#asBeanDefinitionRegistry(Object)}.</p>
-     *
-     * @param beanFactory    The {@link BeanFactory} where the beans will be registered.
-     * @param factoryClasses The array of factory classes used to locate implementations from spring.factories files.
-     * @return The number of beans that were successfully registered.
+     * @param beanFactory    The {@link BeanFactory} where beans will be registered.
+     * @param factoryClasses An array of factory interface or abstract base classes used to locate implementations via spring.factories.
+     * @return A map of successfully registered bean classes to their assigned bean names. The map is unmodifiable.
+     * @see #registerSpringFactoriesBeans(BeanDefinitionRegistry, Class...)
      */
-    public static int registerSpringFactoriesBeans(BeanFactory beanFactory, Class<?>... factoryClasses) {
+    public static Map<Class, String> registerSpringFactoriesBeans(BeanFactory beanFactory, Class<?>... factoryClasses) {
         return registerSpringFactoriesBeans(asBeanDefinitionRegistry(beanFactory), factoryClasses);
     }
 
@@ -461,32 +458,34 @@ public abstract class BeanRegistrar {
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
-     * int count = registerSpringFactoriesBeans(registry, MyFactory.class);
-     * System.out.println(count + " beans were successfully registered.");
+     * Map<Class, String> registeredBeans = registerSpringFactoriesBeans(registry, MyFactory.class);
+     * registeredBeans.forEach((clazz, name) -> {
+     *     System.out.println("Registered bean: " + name + " of type: " + clazz.getName());
+     * });
      * }</pre>
      *
      * <h4>Generated Bean Name Example</h4>
      * Given an implementation class named {@code io.example.MyServiceImpl}, the generated bean name would be:
      * <pre>{@code
-     * String beanName = decapitalize(getShortName("io.example.MyServiceImpl")); // returns "myServiceImpl"
+     * String beanName = BeanUtils.generateBeanName("io.example.MyServiceImpl"); // returns "myServiceImpl"
      * }</pre>
      *
      * @param registry       The {@link BeanDefinitionRegistry} where beans will be registered.
      * @param factoryClasses An array of factory interface or abstract base classes used to locate implementations via spring.factories.
-     * @return The number of beans that were successfully registered.
+     * @return A map of successfully registered bean classes to their assigned bean names. The map is unmodifiable.
      */
-    public static int registerSpringFactoriesBeans(BeanDefinitionRegistry registry, Class<?>... factoryClasses) {
-        int count = 0;
-
-        for (int i = 0; i < factoryClasses.length; i++) {
-            Class<?> factoryClass = factoryClasses[i];
+    public static Map<Class, String> registerSpringFactoriesBeans(BeanDefinitionRegistry registry, Class<?>... factoryClasses) {
+        // Convert the array of factory classes into a Set for efficient lookup and to avoid duplicates
+        Set<Class<?>> factoryClassesSet = ofSet(factoryClasses);
+        Map<Class, String> registeredBeanClassesAndNames = newHashMap(factoryClassesSet.size() * 2);
+        for (Class<?> factoryClass : factoryClassesSet) {
             ClassLoader classLoader = factoryClass.getClassLoader();
             List<String> factoryImplClassNames = loadFactoryNames(factoryClass, classLoader);
             for (String factoryImplClassName : factoryImplClassNames) {
                 Class<?> factoryImplClass = resolveClassName(factoryImplClassName, classLoader);
-                String beanName = decapitalize(getShortName(factoryImplClassName));
+                String beanName = BeanUtils.generateBeanName(factoryImplClassName);
                 if (registerInfrastructureBean(registry, beanName, factoryImplClass)) {
-                    count++;
+                    registeredBeanClassesAndNames.put(factoryImplClass, beanName);
                 } else {
                     if (logger.isWarnEnabled()) {
                         logger.warn("The Factory Class bean[ class : '{}' ] has been registered with bean name {}", factoryImplClassName, beanName);
@@ -494,8 +493,7 @@ public abstract class BeanRegistrar {
                 }
             }
         }
-
-        return count;
+        return unmodifiableMap(registeredBeanClassesAndNames);
     }
 
     /**
