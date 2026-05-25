@@ -143,4 +143,29 @@ For a complete list of changes, refer to the full [changelog](#).
 - Merged `release-1.x` into `dev-1.x`. ([dcf0ce99](https://github.com/mercyblitz/repo/commit/dcf0ce99))
 - Incremented version number to 0.1.16 for the new release. ([dc746de4](https://github.com/mercyblitz/repo/commit/dc746de4)) 
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.15...0.1.16
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.15...0.1.16## v0.1.17
+
+# Release Notes for Version 0.1.17
+
+## New Features
+- Added `generateBeanName` and a map-returning registrar for enhanced bean naming support. ([88d3351e](https://github.com/mercyblitz/microsphere-spring/commit/88d3351e))
+- Utilized `BeanUtils.generateBeanName` and `BeanDefinitionReaderUtils` for consistent bean name generation. ([44e1e75d](https://github.com/mercyblitz/microsphere-spring/commit/44e1e75d), [3b0a879d](https://github.com/mercyblitz/microsphere-spring/commit/3b0a879d))
+
+## Bug Fixes
+- Fixed README table alignment for better clarity. ([711f5747](https://github.com/mercyblitz/microsphere-spring/commit/711f5747))
+
+## Documentation
+- Enhanced README with TOC, examples, and additional documentation. ([0692f1ac](https://github.com/mercyblitz/microsphere-spring/commit/0692f1ac))
+- Updated branch names in README for accuracy. ([550b9ea6](https://github.com/mercyblitz/microsphere-spring/commit/550b9ea6), [ea7eec55](https://github.com/mercyblitz/microsphere-spring/commit/ea7eec55))
+
+## Dependency Updates
+- Bumped Microsphere Java version and logging library version. ([8b5981d9](https://github.com/mercyblitz/microsphere-spring/commit/8b5981d9))
+
+## Test Improvements
+- Removed obsolete test classes: `IdempotentConfig` and `testRegisterSpringFactoriesBeans`. ([4fdba373](https://github.com/mercyblitz/microsphere-spring/commit/4fdba373), [91ccb844](https://github.com/mercyblitz/microsphere-spring/commit/91ccb844))
+
+## Other Changes
+- Removed idempotent implementation and corresponding tests. ([064fd636](https://github.com/mercyblitz/microsphere-spring/commit/064fd636))
+- Version bumped to 0.1.17 after publishing 0.1.16. ([0048a2d6](https://github.com/mercyblitz/microsphere-spring/commit/0048a2d6))
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.16...0.1.17
