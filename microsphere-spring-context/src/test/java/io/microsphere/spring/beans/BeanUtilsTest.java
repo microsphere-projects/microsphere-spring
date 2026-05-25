@@ -33,6 +33,7 @@ import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.beans.BeanUtils.doInvokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.findPrimaryConstructor;
+import static io.microsphere.spring.beans.BeanUtils.generateBeanName;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
 import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
@@ -86,8 +87,16 @@ public class BeanUtilsTest {
     }
 
     @Test
-    public void testIsBeanPresent() {
+    public void testGenerateBeanName() {
+        String beanName = generateBeanName(Config.class);
+        assertEquals("beanUtilsTest.Config", beanName);
 
+        beanName = generateBeanName(String.class);
+        assertEquals("string", beanName);
+    }
+
+    @Test
+    public void testIsBeanPresent() {
         DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
 
         assertFalse(isBeanPresent(registry, TestBean.class, true));

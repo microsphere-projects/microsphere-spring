@@ -28,6 +28,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import static io.microsphere.constants.SymbolConstants.DOT;
+import static io.microsphere.spring.beans.BeanUtils.generateBeanName;
 import static io.microsphere.spring.constants.PropertyConstants.AUTO_REGISTERED_PROPERTY_NAME_SUFFIX;
 import static io.microsphere.spring.constants.PropertyConstants.BEANS_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
@@ -75,8 +76,7 @@ public interface AutoRegistrationBean extends Ordered {
      */
     @Nonnull
     default String getBeanName() {
-        String simpleClassName = getBeanType().getSimpleName();
-        return uncapitalize(simpleClassName);
+        return generateBeanName(getBeanType());
     }
 
     /**
