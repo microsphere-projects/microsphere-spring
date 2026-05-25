@@ -18,6 +18,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,6 +47,7 @@ import static io.microsphere.spring.context.ApplicationContextUtils.getApplicati
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static io.microsphere.util.ArrayUtils.isNotEmpty;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static java.beans.Introspector.decapitalize;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -53,7 +55,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTyp
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
-import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
+import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ClassUtils.getUserClass;
 
 /**
@@ -65,6 +67,67 @@ import static org.springframework.util.ClassUtils.getUserClass;
 public abstract class BeanUtils implements Utils {
 
     private static final Logger logger = getLogger(BeanUtils.class);
+
+    /**
+     * Generate a default bean name for the given bean class.
+     * <p>
+     * The generated bean name is derived from the short name of the class (without package qualification),
+     * with the first character decapitalized according to JavaBeans convention.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * String beanName = BeanUtils.generateBeanName(MyService.class);
+     * // Returns "myService"
+     *
+     * String anotherBeanName = BeanUtils.generateBeanName(XMLParser.class);
+     * // Returns "xmlParser"
+     * }</pre>
+     *
+     * <h3>Behavior</h3>
+     * <ul>
+     *     <li>If the class name starts with multiple uppercase letters (e.g., {@code XMLParser}), only the first character is decapitalized if followed by a lowercase letter, otherwise it remains as is per {@link java.beans.Introspector#decapitalize(String)} rules.</li>
+     *     <li>The method uses {@link org.springframework.util.ClassUtils#getShortName(Class)} to extract the simple class name.</li>
+     * </ul>
+     *
+     * @param beanClass the {@link Class} for which to generate a bean name
+     * @return the generated bean name, never {@code null}
+     * @see #generateBeanName(String)
+     */
+    @Nonnull
+    public static String generateBeanName(@Nonnull Class<?> beanClass) {
+        return generateBeanName(beanClass.getName());
+    }
+
+    /**
+     * Generate a default bean name for the given class name.
+     * <p>
+     * The generated bean name is derived from the short name of the class (without package qualification),
+     * with the first character decapitalized according to JavaBeans convention.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * String beanName = BeanUtils.generateBeanName("com.example.MyService");
+     * // Returns "myService"
+     *
+     * String anotherBeanName = BeanUtils.generateBeanName("com.example.XMLParser");
+     * // Returns "xmlParser"
+     * }</pre>
+     *
+     * <h3>Behavior</h3>
+     * <ul>
+     *     <li>If the class name starts with multiple uppercase letters (e.g., {@code XMLParser}), only the first character is decapitalized if followed by a lowercase letter, otherwise it remains as is per {@link java.beans.Introspector#decapitalize(String)} rules.</li>
+     *     <li>The method uses {@link org.springframework.util.ClassUtils#getShortName(String)} to extract the simple class name.</li>
+     * </ul>
+     *
+     * @param className the fully qualified class name for which to generate a bean name
+     * @return the generated bean name, never {@code null}
+     */
+    @Nonnull
+    public static String generateBeanName(@Nonnull String className) {
+        return decapitalize(getShortName(className));
+    }
 
     /**
      * Is Bean Present or not?
@@ -797,7 +860,7 @@ public abstract class BeanUtils implements Utils {
         if (bean instanceof BeanNameAware beanNameAware && beanFactory != null) {
             BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
             BeanDefinition beanDefinition = rootBeanDefinition(bean.getClass()).getBeanDefinition();
-            String beanName = generateBeanName(beanDefinition, registry);
+            String beanName = BeanDefinitionReaderUtils.generateBeanName(beanDefinition, registry);
             beanNameAware.setBeanName(beanName);
         }
     }
@@ -984,7 +1047,7 @@ public abstract class BeanUtils implements Utils {
          *
          * @param o the other {@link NamingBean} to compare against
          * @return a negative integer, zero, or a positive integer as this object
-         *         is less than, equal to, or greater than the specified object
+         * is less than, equal to, or greater than the specified object
          */
         @Override
         public int compareTo(NamingBean o) {
