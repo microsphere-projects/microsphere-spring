@@ -7,6 +7,12 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test cases for {@link ConfigurationBeanAliasGenerator}
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
+ */
 class ConfigurationBeanAliasGeneratorTest {
 
     private final Class<?> clazz = Foo.class;
