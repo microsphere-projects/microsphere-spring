@@ -37,6 +37,8 @@ import static org.springframework.context.ConfigurableApplicationContext.ENVIRON
  * @see ConfigurableApplicationContext#CONVERSION_SERVICE_BEAN_NAME
  * @see SingletonBeanRegistry#registerSingleton(String, Object)
  * @since 1.0.0
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 public class ConversionServiceResolver {
 
