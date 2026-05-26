@@ -67,6 +67,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@link BeanFactoryUtils} Test
  *
  * @since 1.0.0
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 class BeanFactoryUtilsTest {
 

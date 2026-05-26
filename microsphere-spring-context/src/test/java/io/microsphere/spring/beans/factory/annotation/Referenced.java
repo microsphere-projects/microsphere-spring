@@ -1,4 +1,4 @@
-package io.microsphere.spring.beans.factory.annotation;/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +14,7 @@ package io.microsphere.spring.beans.factory.annotation;/*
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.microsphere.spring.beans.factory.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -25,6 +26,12 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * Marker annotation to indicate a referenced field or parameter
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
+ */
 @Target({CONSTRUCTOR, FIELD, METHOD, PARAMETER})
 @Retention(RUNTIME)
 @Documented

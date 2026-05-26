@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @see ListenableAutowireCandidateResolverInitializer
  * @since 1.0.0
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
