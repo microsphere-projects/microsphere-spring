@@ -171,4 +171,32 @@ Thank you for using our library! 🚀
 ## Other Changes
 - Various chore updates and merges to streamline the project structure and align branches `[skip ci]`.
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.16...0.2.17
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.16...0.2.17## v0.2.18
+
+# Release Notes for Version 0.2.18
+
+## New Features
+- Added `@SpringLoggingTest` annotation to `WebRequestUtilsTest`. ([e6fa00bd](https://github.com/microsphere-projects/microsphere/commit/e6fa00bd))
+- Introduced `onboarding-plan.md` for new team members onboarding. ([227b1fde](https://github.com/microsphere-projects/microsphere/commit/227b1fde))
+
+## Bug Fixes
+- Addressed resource leak, silent exception, and `ThreadLocal` memory leak based on code review feedback. ([aecf7a97](https://github.com/microsphere-projects/microsphere/commit/aecf7a97))
+
+## Dependency Updates
+- Updated `microsphere-logging` to `0.1.12`. ([3d58c28f](https://github.com/microsphere-projects/microsphere/commit/3d58c28f))
+- Bumped `microsphere-java` to `0.3.4`. ([8c1eac83](https://github.com/microsphere-projects/microsphere/commit/8c1eac83))
+
+## Test Improvements
+- Added unit tests for 8 previously untested classes in `microsphere-spring-context`. ([1c75a784](https://github.com/microsphere-projects/microsphere/commit/1c75a784))
+
+## Documentations
+- Personalization of onboarding prompt values. ([234a88da](https://github.com/microsphere-projects/microsphere/commit/234a88da))
+- Added `.github` prompt templates to streamline development workflows. ([e08f7c90](https://github.com/microsphere-projects/microsphere/commit/e08f7c90))
+
+## Other Changes
+- Removed redundant YAML resource test. ([c93dedc2](https://github.com/microsphere-projects/microsphere/commit/c93dedc2))
+- Various merge and version bump commits. 
+
+--- 
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.17...0.2.18
