@@ -18,6 +18,7 @@
 package io.microsphere.spring.web.util;
 
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,6 +80,7 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
  * @see WebRequestUtils
  * @since 1.0.0
  */
+@SpringLoggingTest
 class WebRequestUtilsTest {
 
     private MockHttpServletRequest servletRequest;

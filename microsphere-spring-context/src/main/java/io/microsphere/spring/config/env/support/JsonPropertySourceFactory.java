@@ -24,6 +24,7 @@ import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -70,7 +71,9 @@ public class JsonPropertySourceFactory implements PropertySourceFactory {
     @Override
     public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        Map source = objectMapper.readValue(resource.getReader(), LinkedHashMap.class);
-        return new MapPropertySource(name, source);
+        try (Reader reader = resource.getReader()) {
+            Map source = objectMapper.readValue(reader, LinkedHashMap.class);
+            return new MapPropertySource(name, source);
+        }
     }
 }
