@@ -27,7 +27,19 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Marker annotation to indicate a referenced field or parameter
+ * Marker annotation to indicate that a field, parameter, or method references another Spring bean.
+ * This annotation is primarily used on constructor or method parameters to mark them as bean dependencies
+ * that should be injected by the {@link AnnotatedInjectionBeanPostProcessor}.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyService {
+ *     @Referenced
+ *     public MyService(UserRepository userRepository) {
+ *         this.userRepository = userRepository;
+ *     }
+ * }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
