@@ -54,6 +54,7 @@ import static org.springframework.context.annotation.AnnotationConfigUtils.regis
  *     scanner.registerSingleton("mySingleton", new MySingleton());
  * }</pre>
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ClassPathBeanDefinitionScanner
  * @see BeanDefinitionRegistry
  * @see SingletonBeanRegistry
