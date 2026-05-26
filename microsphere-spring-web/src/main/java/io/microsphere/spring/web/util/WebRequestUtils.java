@@ -18,6 +18,7 @@ package io.microsphere.spring.web.util;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import io.microsphere.logging.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpMethod;
@@ -43,6 +44,7 @@ import java.util.Set;
 import static io.microsphere.spring.web.util.SpringWebType.valueOf;
 import static io.microsphere.spring.web.util.UnknownSpringWebHelper.INSTANCE;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ClassLoaderUtils.getClassLoader;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactories;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
@@ -62,6 +64,8 @@ import static org.springframework.util.StringUtils.hasText;
  * @since 1.0.0
  */
 public abstract class WebRequestUtils {
+
+    private static final Logger logger = getLogger(WebRequestUtils.class);
 
     private static EnumMap<SpringWebType, SpringWebHelper> springWebHelpers = loadSpringWebHelpers();
 
@@ -109,11 +113,14 @@ public abstract class WebRequestUtils {
 
     @Nullable
     public static MediaType parseContentType(@Nonnull NativeWebRequest request) {
+        String contentTypeValue = getContentType(request);
         MediaType mediaType = null;
         try {
-            String contentTypeValue = getContentType(request);
             mediaType = hasLength(contentTypeValue) ? parseMediaType(contentTypeValue) : APPLICATION_OCTET_STREAM;
         } catch (InvalidMediaTypeException ex) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Failed to parse content type from request: {}", contentTypeValue, ex);
+            }
         }
         return mediaType;
     }

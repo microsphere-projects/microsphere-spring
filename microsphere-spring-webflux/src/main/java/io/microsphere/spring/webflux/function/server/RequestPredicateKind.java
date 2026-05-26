@@ -691,13 +691,16 @@ public enum RequestPredicateKind {
             List<RequestPredicate> requestPredicates = newArrayList(size);
             // set the requestPredicates
             requestPredicateThreadLocal.set(requestPredicates);
-            for (int i = 0; i < size; i++) {
-                String composeExpression = composeExpressions.get(i);
-                RequestPredicate predicate = buildRequestPredicate(composeExpression);
-                requestPredicates.add(predicate);
+            try {
+                for (int i = 0; i < size; i++) {
+                    String composeExpression = composeExpressions.get(i);
+                    RequestPredicate predicate = buildRequestPredicate(composeExpression);
+                    requestPredicates.add(predicate);
+                }
+            } finally {
+                // clear the requestPredicates
+                requestPredicateThreadLocal.remove();
             }
-            // clear the requestPredicates
-            requestPredicateThreadLocal.remove();
 
             RequestPredicate predicate = requestPredicates.get(size - 1);
             return NEGATE.matches(expression) ? predicate.negate() : predicate;
