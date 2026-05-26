@@ -20,7 +20,7 @@
 
     <properties>
         <microsphere-java.version>0.3.4</microsphere-java.version>
-        <microsphere-logging.version>0.1.11</microsphere-logging.version>
+        <microsphere-logging.version>0.1.12</microsphere-logging.version>
         <jakartaee.version>11.0.0</jakartaee.version>
         <jackson.version>2.21.3</jackson.version>
         <snakeyaml.version>2.6</snakeyaml.version>
