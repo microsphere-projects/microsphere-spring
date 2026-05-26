@@ -168,4 +168,38 @@ For a complete list of changes, refer to the full [changelog](#).
 - Removed idempotent implementation and corresponding tests. ([064fd636](https://github.com/mercyblitz/microsphere-spring/commit/064fd636))
 - Version bumped to 0.1.17 after publishing 0.1.16. ([0048a2d6](https://github.com/mercyblitz/microsphere-spring/commit/0048a2d6))
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.16...0.1.17
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.16...0.1.17## v0.1.18
+
+# Release Notes - v0.1.18
+
+## New Features
+- **Personalized Onboarding:** Added personalized onboarding prompt for Microsphere. (#95a20d4a)
+
+## Test Improvements
+- Added unit tests for:
+  - `DefaultApplicationListenerInterceptorChain`. (#51dfd9ab)
+  - `DefaultApplicationEventInterceptorChain`. (#d591c1c2)
+  - `YamlPropertySourceFactory`. (#3a0e2577)
+  - `JsonPropertySourceFactory`. (#29e00624)
+  - `DefaultResourceComparator`. (#16d93234)
+  - `CompositeAutowireCandidateResolvingListener`. (#3c3d3d2c)
+- Added tests for autowire resolving listener and initializer. (#a1a47b76, #b8f80626)
+
+## Documentation
+- Added missing JavaDoc `@author` and `@since` tags to 5 Java files. (#187c469c)
+
+## Dependency Updates
+- Bumped `microsphere-logging` to **v0.1.12**. (#20a87900)
+- Bumped `microsphere-java` to **v0.3.4**. (#6b28caa5)
+
+## Build and Workflow Enhancements
+- Added `.github` prompt templates for development assistants. (#c6a8aafe)  
+- Merged `release-1.x` into `dev-1.x` for workflow consistency. (#23fd909e)  
+- Adjusted version bumping process after publishing. (#92d3f3a4)
+
+## Other Changes
+- Improved resource handling through reader closure, added logging, and ensured `ThreadLocal` cleanup. (#e4bb2dcd)  
+
+**[Full Changelog](https://github.com/mercyblitz/microsphere-spring/compare/0.1.17...0.1.18)**
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.17...0.1.18
