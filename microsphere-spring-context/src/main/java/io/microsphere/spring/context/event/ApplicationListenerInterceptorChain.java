@@ -53,9 +53,11 @@ import org.springframework.context.ApplicationListener;
  * ensures the chain continues execution.
  * </p>
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ApplicationListenerInterceptor
  * @see ApplicationListener
  * @see ApplicationEvent
+ * @since 1.0.0
  */
 public interface ApplicationListenerInterceptorChain {
 
