@@ -61,6 +61,9 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
  * These settings affect how caching advice is applied across your application. For example,
  * using the AspectJ mode enables more comprehensive interception compared to the default proxy-based approach.
  * </p>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
  */
 @Target(TYPE)
 @Retention(RUNTIME)

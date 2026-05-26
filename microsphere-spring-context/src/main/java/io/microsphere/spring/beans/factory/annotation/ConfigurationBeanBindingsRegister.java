@@ -30,6 +30,7 @@ import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvi
 /**
  * The {@link ImportBeanDefinitionRegistrar Registrar class} for {@link EnableConfigurationBeanBindings}
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 public class ConfigurationBeanBindingsRegister implements ImportBeanDefinitionRegistrar, EnvironmentAware {

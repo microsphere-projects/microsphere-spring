@@ -17,7 +17,9 @@
 
 package io.microsphere.spring.web.util;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -30,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.constants.PathConstants.SLASH;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.PATH_ATTRIBUTE;
@@ -79,6 +82,9 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
  * @since 1.0.0
  */
 public class WebRequestUtilsTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
     private MockHttpServletRequest servletRequest;
 
