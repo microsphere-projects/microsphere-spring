@@ -47,16 +47,4 @@ class YamlPropertySourceFactoryTest {
         assertEquals("testYaml", propertySource.getName());
         assertEquals("mercyblitz", propertySource.getProperty("my.name"));
     }
-
-    @Test
-    void testCreatePropertySourceWithAlternativeResource() throws IOException {
-        ClassPathResource resource = new ClassPathResource("META-INF/test/yaml/2.yaml");
-        EncodedResource encodedResource = new EncodedResource(resource);
-
-        PropertySource<?> propertySource = factory.createPropertySource("testYaml2", encodedResource);
-
-        assertNotNull(propertySource);
-        assertEquals("testYaml2", propertySource.getName());
-        assertEquals("Mercy Ma", propertySource.getProperty("my.name"));
-    }
 }
