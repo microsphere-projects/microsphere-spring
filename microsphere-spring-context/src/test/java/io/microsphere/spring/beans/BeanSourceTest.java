@@ -18,13 +18,14 @@
 package io.microsphere.spring.beans;
 
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 
 import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;
 import static io.microsphere.spring.beans.BeanSource.JAVA_SERVICE_PROVIDER;
 import static io.microsphere.spring.beans.BeanSource.SPRING_FACTORIES;
 import static io.microsphere.spring.beans.BeanSource.values;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link BeanSource} Test
@@ -33,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @see BeanSource
  * @since 1.0.0
  */
-class BeanSourceTest {
+public class BeanSourceTest {
 
     @Test
-    void test() {
+    public void test() {
         BeanSource[] values = values();
         assertEquals(3, values.length);
         assertEquals(BEAN_FACTORY, values[0]);
