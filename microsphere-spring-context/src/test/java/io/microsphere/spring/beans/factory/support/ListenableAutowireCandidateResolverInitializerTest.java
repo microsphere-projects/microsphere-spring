@@ -25,7 +25,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.microsphere.util.Assert.assertNotNull;
 
-
 /**
  * {@link ListenableAutowireCandidateResolverInitializer} Test
  *

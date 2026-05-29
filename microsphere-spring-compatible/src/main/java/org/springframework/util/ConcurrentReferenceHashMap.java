@@ -74,7 +74,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 
 	private static final int MAXIMUM_SEGMENT_SIZE = 1 << 30;
 
-
 	/**
 	 * Array of segments indexed using the high order bits from the hash.
 	 */
@@ -100,7 +99,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 	 */
 	@Nullable
 	private volatile Set<Map.Entry<K, V>> entrySet;
-
 
 	/**
 	 * Create a new {@code ConcurrentReferenceHashMap} instance.
@@ -188,7 +186,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		}
 		this.segments = segments;
 	}
-
 
 	protected final float getLoadFactor() {
 		return this.loadFactor;
@@ -383,7 +380,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		}
 	}
 
-
 	@Override
 	public int size() {
 		int size = 0;
@@ -440,7 +436,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		return shift;
 	}
 
-
 	/**
 	 * Various reference types supported by this map.
 	 */
@@ -452,7 +447,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		/** Use {@link WeakReference WeakReferences}. */
 		WEAK
 	}
-
 
 	/**
 	 * A single segment used to divide the map to allow better concurrent performance.
@@ -679,7 +673,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		}
 	}
 
-
 	/**
 	 * A reference to an {@link Entry} contained in the map. Implementations are usually
 	 * wrappers around specific Java reference implementations (e.g., {@link SoftReference}).
@@ -711,7 +704,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		 */
 		void release();
 	}
-
 
 	/**
 	 * A single map entry.
@@ -775,7 +767,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		}
 	}
 
-
 	/**
 	 * A task that can be {@link Segment#doTask run} against a {@link Segment}.
 	 */
@@ -817,7 +808,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		}
 	}
 
-
 	/**
 	 * Various options supported by a {@code Task}.
 	 */
@@ -825,7 +815,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 
 		RESTRUCTURE_BEFORE, RESTRUCTURE_AFTER, SKIP_IF_EMPTY, RESIZE
 	}
-
 
 	/**
 	 * Allows a task access to {@link Segment} entries.
@@ -838,7 +827,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		 */
 		void add(@Nullable V value);
 	}
-
 
 	/**
 	 * Internal entry-set implementation.
@@ -882,7 +870,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 			ConcurrentReferenceHashMap.this.clear();
 		}
 	}
-
 
 	/**
 	 * Internal entry iterator implementation.
@@ -969,7 +956,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		}
 	}
 
-
 	/**
 	 * The types of restructuring that can be performed.
 	 */
@@ -977,7 +963,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 
 		WHEN_NECESSARY, NEVER
 	}
-
 
 	/**
 	 * Strategy class used to manage {@link Reference References}.
@@ -1015,7 +1000,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 		}
 	}
 
-
 	/**
 	 * Internal {@link Reference} implementation for {@link SoftReference SoftReferences}.
 	 */
@@ -1051,7 +1035,6 @@ public class ConcurrentReferenceHashMap<K, V> extends AbstractMap<K, V> implemen
 			clear();
 		}
 	}
-
 
 	/**
 	 * Internal {@link Reference} implementation for {@link WeakReference WeakReferences}.

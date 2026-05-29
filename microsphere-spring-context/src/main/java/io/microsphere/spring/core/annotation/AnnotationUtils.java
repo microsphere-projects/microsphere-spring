@@ -86,7 +86,6 @@ public abstract class AnnotationUtils {
 
         ElementType[] elementTypes = target.value();
 
-
         for (ElementType elementType : elementTypes) {
 
             List<A> annotationsList = newLinkedList();

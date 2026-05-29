@@ -171,7 +171,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         return result;
     }
 
-
     @Override
     public Mono<Void> handleResult(ServerWebExchange exchange, HandlerResult handlerResult) {
         ReturnTypeContext context = getReturnTypeContext(handlerResult);

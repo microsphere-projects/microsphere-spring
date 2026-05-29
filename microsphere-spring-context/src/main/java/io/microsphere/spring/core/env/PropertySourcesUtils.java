@@ -65,7 +65,6 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     public static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrap";
 
-
     public static <T extends PropertySource<?>> T getPropertySource(ConfigurableEnvironment environment, String propertySourceName,
                                                                     Class<T> propertySourceType) {
         return getPropertySource(environment, propertySourceName, propertySourceType, null);

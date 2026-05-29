@@ -29,7 +29,6 @@ import static io.microsphere.spring.web.rule.ConsumeMediaTypeExpression.parseExp
 import static io.microsphere.spring.web.util.WebRequestUtils.isPreFlightRequest;
 import static io.microsphere.spring.web.util.WebRequestUtils.parseContentType;
 
-
 /**
  * {@link NativeWebRequest WebRequest} Consumes {@link WebRequestRule}
  * <p>

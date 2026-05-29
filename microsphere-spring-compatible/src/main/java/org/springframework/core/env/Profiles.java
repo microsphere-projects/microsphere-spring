@@ -40,7 +40,6 @@ public interface Profiles {
      */
     boolean matches(Predicate<String> activeProfiles);
 
-
     /**
      * Create a new {@link Profiles} instance that checks for matches against
      * the given <em>profile expressions</em>.

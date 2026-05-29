@@ -59,7 +59,6 @@ public abstract class ReflectionUtils {
 	public static final FieldFilter COPYABLE_FIELDS =
 			(field -> !(Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())));
 
-
 	/**
 	 * Naming prefix for CGLIB-renamed methods.
 	 * @see #isCglibRenamedMethod
@@ -74,7 +73,6 @@ public abstract class ReflectionUtils {
 
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 
-
 	/**
 	 * Cache for {@link Class#getDeclaredMethods()} plus equivalent default methods
 	 * from Java 8 based interfaces, allowing for fast iteration.
@@ -85,7 +83,6 @@ public abstract class ReflectionUtils {
 	 * Cache for {@link Class#getDeclaredFields()}, allowing for fast iteration.
 	 */
 	private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentReferenceHashMap<>(256);
-
 
 	// Exception handling
 
@@ -168,7 +165,6 @@ public abstract class ReflectionUtils {
 		throw new UndeclaredThrowableException(ex);
 	}
 
-
 	// Constructor handling
 
 	/**
@@ -202,7 +198,6 @@ public abstract class ReflectionUtils {
 			ctor.setAccessible(true);
 		}
 	}
-
 
 	// Method handling
 
@@ -570,7 +565,6 @@ public abstract class ReflectionUtils {
 		}
 	}
 
-
 	// Field handling
 
 	/**
@@ -784,7 +778,6 @@ public abstract class ReflectionUtils {
 		}
 	}
 
-
 	// Cache handling
 
 	/**
@@ -795,7 +788,6 @@ public abstract class ReflectionUtils {
 		declaredMethodsCache.clear();
 		declaredFieldsCache.clear();
 	}
-
 
 	/**
 	 * Action to take on each method.
@@ -809,7 +801,6 @@ public abstract class ReflectionUtils {
 		 */
 		void doWith(Method method) throws IllegalArgumentException, IllegalAccessException;
 	}
-
 
 	/**
 	 * Callback optionally used to filter methods to be operated on by a method callback.
@@ -837,7 +828,6 @@ public abstract class ReflectionUtils {
 		}
 	}
 
-
 	/**
 	 * Callback interface invoked on each field in the hierarchy.
 	 */
@@ -850,7 +840,6 @@ public abstract class ReflectionUtils {
 		 */
 		void doWith(Field field) throws IllegalArgumentException, IllegalAccessException;
 	}
-
 
 	/**
 	 * Callback optionally used to filter fields to be operated on by a field callback.

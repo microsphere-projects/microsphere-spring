@@ -28,7 +28,6 @@ public class LoggingSmartLifecycleTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     private static final Logger logger = getLogger(LoggingSmartLifecycleTest.class);
 
     private LoggingSmartLifecycle lifecycle;

@@ -1,6 +1,5 @@
 package io.microsphere.spring.util;
 
-
 import io.microsphere.annotation.ConfigurationProperty;
 import org.springframework.core.env.Environment;
 

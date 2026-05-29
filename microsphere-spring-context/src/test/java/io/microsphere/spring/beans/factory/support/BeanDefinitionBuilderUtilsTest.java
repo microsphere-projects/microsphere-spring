@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.beans.factory.support;
 
-
 import org.junit.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

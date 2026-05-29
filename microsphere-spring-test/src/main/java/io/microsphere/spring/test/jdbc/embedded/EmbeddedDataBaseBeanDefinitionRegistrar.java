@@ -80,7 +80,6 @@ class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionReg
         registerDataSourceBeanDefinition("jdbc:sqlite::memory:", attributes, registry);
     }
 
-
     private void registerDataSourceBeanDefinition(String jdbcURL,
                                                   AnnotationAttributes attributes,
                                                   BeanDefinitionRegistry registry) {

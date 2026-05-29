@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.beans.factory.annotation;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import org.junit.After;
@@ -53,7 +52,6 @@ public class ConfigurationBeanBindingRegistrarTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private AnnotationConfigApplicationContext context;
 

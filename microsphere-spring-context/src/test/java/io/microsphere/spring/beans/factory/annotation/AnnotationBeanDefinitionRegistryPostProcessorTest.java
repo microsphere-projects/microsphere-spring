@@ -64,7 +64,6 @@ public class AnnotationBeanDefinitionRegistryPostProcessorTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     @Service
     static class MyService {
     }

@@ -56,7 +56,6 @@ public class ApplicationContextUtilsTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     private GenericApplicationContext context;
 
     @Before

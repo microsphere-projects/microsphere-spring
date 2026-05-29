@@ -35,7 +35,6 @@ import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-
 /**
  * {@link OnceApplicationContextEventListener} Test
  *
@@ -48,7 +47,6 @@ public class OnceApplicationContextEventListenerTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void test() {
@@ -99,7 +97,6 @@ public class OnceApplicationContextEventListenerTest {
         public MyContextEventListener(ApplicationContext applicationContext) {
             super(applicationContext);
         }
-
 
         private final Map<EventObject, AtomicInteger> eventsHandledCount = newLinkedHashMap();
 

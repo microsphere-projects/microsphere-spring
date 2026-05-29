@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import org.junit.Before;
@@ -58,7 +57,6 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     protected R resolver;
 

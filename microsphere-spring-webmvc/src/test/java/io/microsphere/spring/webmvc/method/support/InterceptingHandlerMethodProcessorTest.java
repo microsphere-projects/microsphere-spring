@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.method.support;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.test.webmvc.AbstractWebMvcTest;

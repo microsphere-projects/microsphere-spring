@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.context.event;
 
-
 import org.junit.Test;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
@@ -41,7 +40,6 @@ import static org.springframework.core.ResolvableType.forClass;
  * @since 1.0.0
  */
 public class DefaultApplicationEventInterceptorChainTest {
-
 
     static class TestEvent extends ApplicationEvent {
         TestEvent(Object source) {

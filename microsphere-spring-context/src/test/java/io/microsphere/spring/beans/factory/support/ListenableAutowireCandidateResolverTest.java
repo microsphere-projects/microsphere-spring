@@ -1,6 +1,5 @@
 package io.microsphere.spring.beans.factory.support;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.beans.test.TestBean;
 import org.junit.ClassRule;

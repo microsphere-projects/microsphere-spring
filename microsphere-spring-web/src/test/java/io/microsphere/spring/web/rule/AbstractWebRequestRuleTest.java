@@ -199,4 +199,3 @@ public class AbstractWebRequestRuleTest {
         assertEquals("[x && y]", rule.toString());
     }
 }
-

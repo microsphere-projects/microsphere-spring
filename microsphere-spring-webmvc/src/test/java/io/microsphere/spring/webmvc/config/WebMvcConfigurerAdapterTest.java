@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.config;
 
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertNull;

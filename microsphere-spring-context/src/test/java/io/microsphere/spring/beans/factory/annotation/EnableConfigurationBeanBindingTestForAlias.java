@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
         type = User.class, multiple = true, ignoreUnknownFields = false, ignoreInvalidFields = false)
 public class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableConfigurationBeanBindingTest {
 
-
     @Test
     public void test() {
         testAlice("a", () -> ofList("UserA", "users-a", "users_a"));
