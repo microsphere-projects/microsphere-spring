@@ -123,7 +123,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     private List<ProfileListener> loadProfileListeners(ConfigurableApplicationContext applicationContext,
                                                        List<EnvironmentListener> environmentListeners) {
         // Add all EnvironmentListener instances
-        List<ProfileListener> profileListeners = newLinkedList(environmentListeners);
+        List<ProfileListener> profileListeners = (List) newLinkedList(environmentListeners);
         // Load Spring Factories with extension
         profileListeners.addAll(loadFactories(applicationContext, ProfileListener.class));
         // Sort
