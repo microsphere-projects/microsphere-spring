@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.first;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ArrayUtils.size;
@@ -132,7 +133,7 @@ public abstract class BeanFactoryUtils implements Utils {
         }
 
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType, true, false);
-        List<T> beans = new ArrayList<T>(size);
+        List<T> beans = newArrayList(size);
         for (int i = 0; i < size; i++) {
             String beanName = beanNames[i];
             if (containsElement(allBeanNames, beanName)) {
