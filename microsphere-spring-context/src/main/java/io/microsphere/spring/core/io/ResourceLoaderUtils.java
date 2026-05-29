@@ -27,6 +27,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 
@@ -39,7 +40,7 @@ import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
  */
 public abstract class ResourceLoaderUtils implements Utils {
 
-    private static ConcurrentMap<ClassLoader, ResourceLoader> resourceLoadersCache = new ConcurrentHashMap<>();
+    private static ConcurrentMap<ClassLoader, ResourceLoader> resourceLoadersCache = newConcurrentHashMap();
 
     static {
         addShutdownHookCallback(ResourceLoaderUtils::clearResourceLoadersCache);
