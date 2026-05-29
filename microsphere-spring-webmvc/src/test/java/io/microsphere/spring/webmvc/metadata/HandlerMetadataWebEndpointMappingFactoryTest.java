@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.metadata;
 
-
 import io.microsphere.spring.web.metadata.HandlerMetadata;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
 import org.junit.jupiter.api.BeforeEach;

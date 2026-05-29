@@ -29,7 +29,6 @@ import static io.microsphere.spring.beans.BeanUtils.invokeBeanNameAware;
 import static io.microsphere.spring.beans.BeanUtils.invokeInitializingBean;
 import static org.springframework.aop.support.AopUtils.getTargetClass;
 
-
 /**
  * A {@link FactoryBean} implementation that delegates to an existing object instance,
  * providing lifecycle management and integration with Spring's {@link ApplicationContext}.

@@ -41,7 +41,6 @@ import static org.springframework.web.servlet.function.RequestPredicates.path;
 import static org.springframework.web.servlet.function.RouterFunctions.nest;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 
-
 /**
  * {@link RouterFunction} Test Config
  *

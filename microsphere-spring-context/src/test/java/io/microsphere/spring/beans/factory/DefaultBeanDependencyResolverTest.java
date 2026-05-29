@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory;
 
-
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

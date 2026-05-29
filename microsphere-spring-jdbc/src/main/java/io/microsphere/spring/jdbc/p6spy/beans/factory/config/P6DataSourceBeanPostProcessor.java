@@ -73,7 +73,6 @@ public class P6DataSourceBeanPostProcessor extends GenericBeanPostProcessorAdapt
         return targetDataSource;
     }
 
-
     @Override
     public void setEnvironment(Environment environment) {
         this.excludedDataSourceBeanNames = environment.getProperty(EXCLUDED_DATASOURCE_BEAN_NAMES_PROPERTY_NAME, Set.class, emptySet());

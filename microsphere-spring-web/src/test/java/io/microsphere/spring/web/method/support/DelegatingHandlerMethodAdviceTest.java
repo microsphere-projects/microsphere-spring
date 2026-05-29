@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.method.support;
 
-
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

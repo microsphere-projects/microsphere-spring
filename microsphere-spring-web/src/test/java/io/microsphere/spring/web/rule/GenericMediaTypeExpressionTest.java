@@ -35,7 +35,6 @@ import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.MediaType.parseMediaType;
 
-
 /**
  * {@link GenericMediaTypeExpression} test
  *

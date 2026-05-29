@@ -93,7 +93,6 @@ class BeanListeners implements BeanListener {
         return namedListeners;
     }
 
-
     @Override
     public boolean supports(String beanName) {
         return true;

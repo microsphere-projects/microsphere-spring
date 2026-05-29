@@ -105,7 +105,6 @@ public class ResourceInjectionPointDependencyResolver extends AnnotatedInjection
         }
     }
 
-
     private String resolveBeanName(Field field, Resource resource, ConfigurableListableBeanFactory beanFactory) {
         String name = resource.name();
         if (hasText(name)) {

@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         type = User.class, multiple = true, ignoreUnknownFields = false, ignoreInvalidFields = false)
 class EnableConfigurationBeanBindingTestForAlias extends AbstractEnableConfigurationBeanBindingTest {
 
-
     @Test
     void test() {
         testAlice("a", () -> ofList("UserA", "users-a", "users_a"));

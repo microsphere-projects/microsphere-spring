@@ -51,4 +51,3 @@ class ConsumingWebEndpointMappingAdapterTest extends AbstractWebMvcTest {
     }
 
 }
-

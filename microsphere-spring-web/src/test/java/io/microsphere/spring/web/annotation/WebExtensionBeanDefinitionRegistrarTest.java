@@ -52,7 +52,6 @@ class WebExtensionBeanDefinitionRegistrarTest {
     static class DisablePublishEventConfig {
     }
 
-
     @Test
     void testDefaultConfig() {
         testInSpringContainer(context -> {

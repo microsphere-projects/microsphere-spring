@@ -126,7 +126,6 @@ class EnableEventExtensionTest {
         eventValueRef.set(0);
     }
 
-
     @Test
     void test() {
 
