@@ -35,6 +35,7 @@ import static org.springframework.core.ResolvableType.forClass;
  * {@link DefaultApplicationEventInterceptorChain} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see DefaultApplicationEventInterceptorChain
  * @see ApplicationEventInterceptorChain
  * @since 1.0.0

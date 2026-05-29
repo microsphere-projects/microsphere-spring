@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * {@link EnableConfigurationBeanBindings} Test cases
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @EnableConfigurationBeanBindings(

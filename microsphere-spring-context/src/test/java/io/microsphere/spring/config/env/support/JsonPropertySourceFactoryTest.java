@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link JsonPropertySourceFactory} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see JsonPropertySourceFactory
  * @since 1.0.0
  */

@@ -18,7 +18,9 @@ package io.microsphere.spring.jdbc.p6spy.annotation;
 
 import com.p6spy.engine.common.ConnectionInformation;
 import com.p6spy.engine.logging.LoggingEventListener;
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.jdbc.embedded.EnableEmbeddedDatabase;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
@@ -46,6 +49,9 @@ import static org.junit.Assert.assertSame;
 @EnableP6DataSource
 @EnableEmbeddedDatabase(dataSource = "testDataSource")
 public class EnableP6DataSourceTest extends LoggingEventListener {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
     @Autowired
     @Qualifier("testDataSource")

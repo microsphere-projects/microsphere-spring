@@ -7,6 +7,12 @@ import java.util.Map;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test cases for {@link ConfigurationBeanAliasGenerator}
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
+ */
 public class ConfigurationBeanAliasGeneratorTest {
 
     private final Class<?> clazz = Foo.class;

@@ -36,6 +36,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
 /**
  * {@link ConversionServiceResolver} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(JUnit4.class)

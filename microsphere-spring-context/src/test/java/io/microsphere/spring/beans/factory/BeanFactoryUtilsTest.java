@@ -67,6 +67,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link BeanFactoryUtils} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 public class BeanFactoryUtilsTest {

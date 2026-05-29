@@ -17,8 +17,6 @@
 
 package io.microsphere.spring.beans;
 
-
-
 import org.junit.Test;
 
 import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;

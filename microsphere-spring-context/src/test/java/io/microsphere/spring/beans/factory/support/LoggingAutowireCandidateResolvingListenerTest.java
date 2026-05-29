@@ -25,6 +25,7 @@ import static io.microsphere.reflect.FieldUtils.findField;
 /**
  * {@link LoggingAutowireCandidateResolvingListener} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see LoggingAutowireCandidateResolvingListener
  * @since 1.0.0
  */

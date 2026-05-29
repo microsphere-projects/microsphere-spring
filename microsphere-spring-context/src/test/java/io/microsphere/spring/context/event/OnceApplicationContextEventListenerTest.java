@@ -39,6 +39,7 @@ import static org.junit.Assert.assertThrows;
 /**
  * {@link OnceApplicationContextEventListener} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see OnceApplicationContextEventListener
  * @since 1.0.0
  */

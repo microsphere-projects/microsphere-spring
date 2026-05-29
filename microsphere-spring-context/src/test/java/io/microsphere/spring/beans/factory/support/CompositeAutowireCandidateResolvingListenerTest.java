@@ -32,6 +32,7 @@ import static org.junit.Assert.assertThrows;
 /**
  * {@link CompositeAutowireCandidateResolvingListener} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see CompositeAutowireCandidateResolvingListener
  * @since 1.0.0
  */

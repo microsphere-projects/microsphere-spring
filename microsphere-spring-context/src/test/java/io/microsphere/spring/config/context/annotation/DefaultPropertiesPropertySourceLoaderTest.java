@@ -17,12 +17,15 @@
 
 package io.microsphere.spring.config.context.annotation;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -33,6 +36,9 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 public class DefaultPropertiesPropertySourceLoaderTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
     private DefaultPropertiesPropertySourceLoader loader;
 

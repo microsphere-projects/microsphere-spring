@@ -33,6 +33,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
 /**
  * {@link BeanRegistrar} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 public class BeanInitializerTest {

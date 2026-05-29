@@ -16,12 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-/**
- * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.0
- */
 
 import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
@@ -32,6 +26,12 @@ import org.springframework.context.annotation.Bean;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
+ */
 @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)
 public class EnableConfigurationBeanBindingTest extends AbstractEnableConfigurationBeanBindingTest {
 
