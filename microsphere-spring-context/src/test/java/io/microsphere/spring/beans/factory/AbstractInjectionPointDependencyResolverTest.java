@@ -32,12 +32,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.ConstructorUtils.findConstructor;
 import static io.microsphere.reflect.MethodUtils.findMethod;
@@ -75,7 +75,7 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
                 .resolve(Object.class)
                 .newInstance();
         this.resolver.setBeanFactory(beanFactory);
-        this.dependentBeanNames = new LinkedHashSet<>();
+        this.dependentBeanNames = newLinkedHashSet();
     }
 
     protected Field getField() {

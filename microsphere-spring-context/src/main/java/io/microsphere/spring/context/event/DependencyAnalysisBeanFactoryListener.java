@@ -40,7 +40,6 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +51,7 @@ import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
@@ -111,7 +111,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
                 continue;
             }
             String beanName = entry.getKey();
-            Set<String> flattenDependentBeanNames = new LinkedHashSet<>(dependentBeanNames.size() * 2);
+            Set<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
             // flat
             flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
             // Replace flattenDependentBeanNames to dependentBeanNames
@@ -153,7 +153,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             return;
         }
         for (String dependentBeanName : dependentBeanNames) {
-            Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>());
+            Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> newLinkedHashSet());
             dependencies.add(beanName);
             flattenDependentBeanNames.add(dependentBeanName);
             flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
@@ -178,7 +178,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         RootBeanDefinition beanDefinition = (RootBeanDefinition) beanDefinitionHolder.getBeanDefinition();
 
 
-        Set<String> dependentBeanNames = new LinkedHashSet<>();
+        Set<String> dependentBeanNames = newLinkedHashSet();
         List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);
         List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolders, beanFactory);
         List<String> injectedBeanNames = resolveInjectionDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolder, beanFactory);

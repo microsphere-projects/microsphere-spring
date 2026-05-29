@@ -5,9 +5,9 @@ import org.junit.Test;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newTreeMap;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static org.junit.Assert.assertEquals;
@@ -27,7 +27,7 @@ public class ImmutableMapPropertySourceTest {
 
     @Test
     public void testNewFromSortedMap() {
-        ImmutableMapPropertySource propertySource = createPropertySource(new TreeMap<>());
+        ImmutableMapPropertySource propertySource = createPropertySource(newTreeMap());
         assertPropertySource(propertySource);
     }
 
