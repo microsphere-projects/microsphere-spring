@@ -61,5 +61,4 @@ public interface HandlerMethodArgumentResolverAdvice {
     void afterResolveArgument(MethodParameter parameter, Object resolvedArgument, @Nullable ModelAndViewContainer mavContainer,
                               NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception;
 
-
 }

@@ -315,7 +315,6 @@ public abstract class AbstractSpringResourceURLConnectionTest {
         }
     }
 
-
     void testGetHeaderEntryOnOutOfRange(AbstractSpringResourceURLConnection urlConnection) {
         assertNull(urlConnection.getHeaderEntry(-1));
         assertNull(urlConnection.getHeaderEntry(1));

@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.method.support;
 
-
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;

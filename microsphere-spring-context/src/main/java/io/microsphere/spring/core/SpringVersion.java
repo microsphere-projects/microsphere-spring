@@ -167,7 +167,7 @@ public enum SpringVersion {
     SPRING_6_2_16,
 
     SPRING_6_2_17,
-    
+
     SPRING_6_2_18,
 
     SPRING_7_0,

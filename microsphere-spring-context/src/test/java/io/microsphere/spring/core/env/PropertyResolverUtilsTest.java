@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.core.env;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
