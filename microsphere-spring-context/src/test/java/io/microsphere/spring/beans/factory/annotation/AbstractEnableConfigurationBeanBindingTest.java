@@ -30,9 +30,8 @@ import java.io.IOException;
 /**
  * Abstract Test cases for {@link EnableConfigurationBeanBinding}
  *
- * @since 1.0.0
- *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
  */
 public abstract class AbstractEnableConfigurationBeanBindingTest {
 
