@@ -50,9 +50,11 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getOptionalBe
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvableDependencyTypes;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isDefaultListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.nullSafeBeanClassLoader;
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
+import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
@@ -260,6 +262,12 @@ public class BeanFactoryUtilsTest {
     public void testGetBeanClassLoader() {
         assertNull(getBeanClassLoader(null));
         assertSame(this.beanFactory.getBeanClassLoader(), getBeanClassLoader(this.beanFactory));
+    }
+
+    @Test
+    public void testNullSafeBeanClassLoader() {
+        assertSame(getDefaultClassLoader(), nullSafeBeanClassLoader(null));
+        assertSame(this.beanFactory.getBeanClassLoader(), nullSafeBeanClassLoader(this.beanFactory));
     }
 
     @Component("baseTestBean2")
