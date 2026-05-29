@@ -126,13 +126,11 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         logDependentTrace(dependentBeanNamesMap);
     }
 
-
     private void logDependenciesTrace(String dependentBeanName, Entry<String, Set<String>> dependencies) {
         if (logger.isTraceEnabled()) {
             logger.trace("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
         }
     }
-
 
     private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
         if (logger.isTraceEnabled()) {
@@ -141,7 +139,6 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             }
         }
     }
-
 
     private void flatDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap,
                                         Map<String, Set<String>> dependenciesMap,
@@ -174,7 +171,6 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
                                                   DefaultListableBeanFactory beanFactory) {
         String beanName = beanDefinitionHolder.getBeanName();
         RootBeanDefinition beanDefinition = (RootBeanDefinition) beanDefinitionHolder.getBeanDefinition();
-
 
         Set<String> dependentBeanNames = newLinkedHashSet();
         List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);

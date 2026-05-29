@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.servlet.filter;
 
-
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

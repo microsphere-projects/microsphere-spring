@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.annotation;
 
-
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -39,7 +38,7 @@ import static io.microsphere.spring.web.util.RequestContextStrategy.INHERITABLE_
 /**
  * {@link EnableWebMvcExtension} Test when all status are enabled with test cases:
  * <ul>
- *     <li>All {@link WebEndpointMapping WebEndpointMappings} will be exposed from {@link Controller @Controller} and 
+ *     <li>All {@link WebEndpointMapping WebEndpointMappings} will be exposed from {@link Controller @Controller} and
  *     {@link RouterFunction}</li>
  *     <li>All {@link HandlerMethodArgumentInterceptor} or {@link HandlerMethodInterceptor} beans will be registered and
  *     intercept the {@link HandlerMethod HandlerMethods} of {@link Controller @Controller}</li>

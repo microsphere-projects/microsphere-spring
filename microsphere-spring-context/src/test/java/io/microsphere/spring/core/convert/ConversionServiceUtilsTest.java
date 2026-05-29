@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.core.convert;
 
-
 import org.junit.jupiter.api.Test;
 
 import static io.microsphere.spring.core.convert.ConversionServiceUtils.getSharedInstance;

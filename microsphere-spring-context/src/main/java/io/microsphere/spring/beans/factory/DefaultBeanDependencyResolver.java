@@ -480,7 +480,6 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
         } while (targetClass != null && targetClass != Object.class);
     }
 
-
     private void removeReadyBeanNames(Set<String> dependentBeanNames, DefaultListableBeanFactory beanFactory) {
         if (dependentBeanNames.isEmpty()) {
             return;

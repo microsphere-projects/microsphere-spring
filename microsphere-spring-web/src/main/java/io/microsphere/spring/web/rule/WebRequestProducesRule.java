@@ -36,7 +36,6 @@ import static java.util.Collections.sort;
 import static org.springframework.http.MediaType.ALL;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
-
 /**
  * {@link NativeWebRequest WebRequest} Produces {@link WebRequestRule}
  * <p>

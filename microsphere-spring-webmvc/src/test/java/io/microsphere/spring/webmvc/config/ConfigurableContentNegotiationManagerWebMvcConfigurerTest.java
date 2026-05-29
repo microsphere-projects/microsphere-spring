@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.config;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

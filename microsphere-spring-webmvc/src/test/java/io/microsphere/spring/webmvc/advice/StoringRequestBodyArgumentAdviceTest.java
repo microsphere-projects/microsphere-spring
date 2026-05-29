@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.advice;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;

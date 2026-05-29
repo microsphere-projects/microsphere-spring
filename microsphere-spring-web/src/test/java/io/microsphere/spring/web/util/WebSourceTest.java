@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.util;
 
-
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.LinkedMultiValueMap;
@@ -71,7 +70,6 @@ class WebSourceTest {
         NativeWebRequest request = createWebRequest(r -> r.getSession().setAttribute(testName, testValue));
         assertEquals(testValue, SESSION_ATTRIBUTE.getValue(request, testName));
     }
-
 
     @Test
     void testGetValueForPARAMETER() {

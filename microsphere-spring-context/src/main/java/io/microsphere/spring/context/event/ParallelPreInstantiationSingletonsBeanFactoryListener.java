@@ -182,7 +182,6 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
         return executorService;
     }
 
-
     private Map<String, Set<String>> resolveDependentBeanNamesMap(DefaultListableBeanFactory beanFactory, ExecutorService executorService, StopWatch stopWatch) {
         stopWatch.start("resolveDependentBeanNamesMap");
 
@@ -275,7 +274,6 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
             allBeanNames.addAll(dependentBeanNames);
         }
     }
-
 
     @Override
     public void setEnvironment(Environment environment) {

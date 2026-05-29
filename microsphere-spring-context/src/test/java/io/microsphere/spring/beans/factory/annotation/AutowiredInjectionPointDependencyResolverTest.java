@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-
 import io.microsphere.spring.beans.factory.AbstractInjectionPointDependencyResolverTest;
 import org.springframework.test.context.ContextConfiguration;
 

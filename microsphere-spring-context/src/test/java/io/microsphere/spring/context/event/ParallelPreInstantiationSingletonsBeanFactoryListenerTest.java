@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

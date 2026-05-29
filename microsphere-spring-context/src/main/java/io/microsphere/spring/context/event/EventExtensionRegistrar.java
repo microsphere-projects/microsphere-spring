@@ -165,7 +165,6 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
         }
     }
 
-
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;

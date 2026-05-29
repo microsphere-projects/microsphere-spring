@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.util;
 
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;

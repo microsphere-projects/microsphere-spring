@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webflux.metadata;
 
-
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.spring.web.metadata.AbstractWebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.HandlerMetadata;
@@ -104,4 +103,3 @@ public abstract class HandlerMappingWebEndpointMappingFactory<H, M> extends Abst
         // The sub-class implements the current method
     }
 }
-
