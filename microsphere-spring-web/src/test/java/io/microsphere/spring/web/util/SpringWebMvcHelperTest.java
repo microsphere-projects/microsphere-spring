@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

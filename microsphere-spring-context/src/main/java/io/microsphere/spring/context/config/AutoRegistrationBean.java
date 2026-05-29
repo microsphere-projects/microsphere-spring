@@ -34,7 +34,6 @@ import static io.microsphere.spring.constants.PropertyConstants.BEANS_PROPERTY_N
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
 import static io.microsphere.text.FormatUtils.format;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
-import static org.springframework.util.StringUtils.uncapitalize;
 
 /**
  * The marker interface for auto-registration bean, the implemention class will be loaded by {@link SpringFactoriesLoader
