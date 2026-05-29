@@ -22,7 +22,6 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperti
 import static io.microsphere.spring.webmvc.constants.PropertyConstants.MICROSPHERE_SPRING_WEBMVC_PROPERTY_NAME_PREFIX;
 import static org.springframework.util.ReflectionUtils.doWithFields;
 
-
 /**
  * Configurable {@link ContentNegotiationManager} {@link WebMvcConfigurer}
  *

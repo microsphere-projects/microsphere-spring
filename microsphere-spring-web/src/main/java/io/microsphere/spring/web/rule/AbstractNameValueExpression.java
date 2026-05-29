@@ -120,7 +120,6 @@ public abstract class AbstractNameValueExpression<T> implements NameValueExpress
 
     protected abstract boolean matchValue(NativeWebRequest request);
 
-
     @Override
     public boolean equals(@Nullable Object other) {
         if (this == other) {

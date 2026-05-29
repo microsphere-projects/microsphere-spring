@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.config.env.event;
 
-
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import org.springframework.context.ApplicationContext;

@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.method.support;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.Before;
@@ -49,7 +48,6 @@ public class LoggingHandlerMethodArgumentResolverAdviceTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private LoggingHandlerMethodArgumentResolverAdvice advice;
 

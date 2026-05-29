@@ -215,7 +215,6 @@ public abstract class RequestAttributesUtils {
         return arguments;
     }
 
-
     /**
      * Set the {@link HandlerMethod} method return value to the {@link RequestContextHolder#getRequestAttributes()}
      *

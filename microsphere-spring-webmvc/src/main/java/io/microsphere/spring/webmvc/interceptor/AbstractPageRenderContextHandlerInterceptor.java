@@ -19,7 +19,6 @@ import static io.microsphere.spring.webmvc.util.WebMvcUtils.isPageRenderRequest;
  */
 public abstract class AbstractPageRenderContextHandlerInterceptor extends HandlerInterceptorAdapter {
 
-
     public final void postHandle(
             HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
             throws Exception {

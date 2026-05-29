@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webflux.metadata;
 
-
 import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.test.webflux.SimpleUrlHandlerMappingTestConfig;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;

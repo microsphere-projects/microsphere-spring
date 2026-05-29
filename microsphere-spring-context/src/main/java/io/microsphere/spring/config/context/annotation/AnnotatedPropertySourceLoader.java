@@ -90,7 +90,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
         return NO_CLASS_TO_IMPORT;
     }
 
-
     /**
      * Resolve the name of {@link PropertySource}
      *
@@ -121,7 +120,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
         }
         return null;
     }
-
 
     /**
      * Build the default name of {@link PropertySource}

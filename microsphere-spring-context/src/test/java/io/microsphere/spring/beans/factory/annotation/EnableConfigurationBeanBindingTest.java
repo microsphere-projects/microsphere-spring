@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-
 import io.microsphere.spring.context.config.ConfigurationBeanBinder;
 import io.microsphere.spring.context.config.ConfigurationBeanCustomizer;
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;

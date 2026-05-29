@@ -171,7 +171,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     }
 
-
     class ListenerAdapter implements FileChangedListener {
 
         private final ResourcePropertySourcesRefresher refresher;
