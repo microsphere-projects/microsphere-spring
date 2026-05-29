@@ -17,6 +17,8 @@
 
 package io.microsphere.spring.webflux.server.filter;
 
+import io.microsphere.spring.context.event.DependencyAnalysisBeanFactoryListener;
+import io.microsphere.spring.context.event.EventPublishingBeanInitializer;
 import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,9 +47,13 @@ import static org.springframework.web.context.request.RequestContextHolder.getRe
  * @since 1.0.0
  */
 @ContextConfiguration(
+        initializers = {
+                EventPublishingBeanInitializer.class
+        },
         classes = {
                 RequestContextWebFilter.class,
-                RequestContextWebFilterTest.class
+                RequestContextWebFilterTest.class,
+                DependencyAnalysisBeanFactoryListener.class
         }
 )
 class RequestContextWebFilterTest extends AbstractWebFluxTest implements WebFilter {

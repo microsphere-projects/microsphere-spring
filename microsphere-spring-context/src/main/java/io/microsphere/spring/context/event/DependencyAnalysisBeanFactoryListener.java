@@ -19,6 +19,7 @@ package io.microsphere.spring.context.event;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.filter.Filter;
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.beans.factory.DependencyGraph;
 import io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
@@ -88,20 +89,38 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
         Filter<Class<?>> resolvableDependencyTypeFilter = new ResolvableDependencyTypeFilter(beanFactory);
 
+        DependencyGraph dependencyGraph = new DependencyGraph();
+
+
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         List<BeanDefinitionHolder> beanDefinitionHolders = getNonLazyInitSingletonMergedBeanDefinitionHolders(bf);
         int beansCount = beanDefinitionHolders.size();
         Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
         for (int i = 0; i < beansCount; i++) {
             BeanDefinitionHolder beanDefinitionHolder = beanDefinitionHolders.get(i);
+            String beanName = beanDefinitionHolder.getBeanName();
             Set<String> dependentBeanNames = resolveDependentBeanNames(beanDefinitionHolder,
                     resolvableDependencyTypeFilter, beanDefinitionHolders, beanFactory);
+
+            dependencyGraph.addDependencyNode(beanName);
+            for (String dependentBeanName : dependentBeanNames) {
+                dependencyGraph.addDependencyRelation(beanName, dependentBeanName);
+            }
+
             dependentBeanNamesMap.put(beanDefinitionHolder.getBeanName(), dependentBeanNames);
         }
+
+        List<List<String>> leveledGraph = dependencyGraph.calculateGraph();
+        logger.info("The leveled graph in order (same line can run concurrently):");
+        for (int i = 0; i < leveledGraph.size(); i++) {
+            logger.info("Level " + (i + 1) + ": " + leveledGraph.get(i));
+        }
+
         flattenDependentBeanNamesMap(dependentBeanNamesMap);
     }
 
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
+
         Map<String, Set<String>> dependenciesMap = newLinkedHashMap(dependentBeanNamesMap.size());
         for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
