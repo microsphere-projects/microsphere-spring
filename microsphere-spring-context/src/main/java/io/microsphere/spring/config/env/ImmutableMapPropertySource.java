@@ -18,12 +18,10 @@ package io.microsphere.spring.config.env;
 
 import org.springframework.core.env.MapPropertySource;
 
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
