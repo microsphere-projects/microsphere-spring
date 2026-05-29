@@ -29,6 +29,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -59,7 +60,6 @@ import static io.microsphere.util.StringUtils.startsWith;
 import static io.microsphere.util.StringUtils.substringAfter;
 import static io.microsphere.util.StringUtils.substringBetween;
 import static java.lang.Integer.parseInt;
-import static java.util.Objects.equals;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.of;
 import static org.springframework.http.HttpMethod.OPTIONS;
@@ -644,7 +644,7 @@ public enum RequestPredicateKind {
     public abstract String expression(RequestPredicate predicate);
 
     static boolean matches(RequestPredicate predicate, String className) {
-        return equals(getTypeName(predicate), className);
+        return Objects.equals(getTypeName(predicate), className);
     }
 
     /**

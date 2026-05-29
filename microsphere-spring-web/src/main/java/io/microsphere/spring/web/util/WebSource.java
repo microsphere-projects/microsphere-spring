@@ -32,13 +32,13 @@ import org.springframework.web.context.request.NativeWebRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import static io.microsphere.collection.ListUtils.first;
 import static io.microsphere.spring.web.util.WebRequestUtils.getCookieValue;
 import static io.microsphere.spring.web.util.WebRequestUtils.getMatrixVariables;
 import static io.microsphere.spring.web.util.WebRequestUtils.getRequestBody;
 import static io.microsphere.spring.web.util.WebRequestUtils.getUriTemplateVariables;
-import static java.util.Objects.equals;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
 import static io.microsphere.spring.web.util.WebScope.SESSION;
 
@@ -158,7 +158,7 @@ public enum WebSource {
             if (variables != null) {
                 for (MultiValueMap<String, String> parameters : variables.values()) {
                     for (Entry<String, List<String>> entry : parameters.entrySet()) {
-                        if (equals(name, entry.getKey())) {
+                        if (Objects.equals(name, entry.getKey())) {
                             List<String> values = entry.getValue();
                             return first(values);
                         }

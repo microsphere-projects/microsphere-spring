@@ -29,13 +29,13 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_MVC;
 import static io.microsphere.spring.web.util.WebRequestUtils.METHOD_HEADER_NAME;
 import static io.microsphere.spring.web.util.WebScope.REQUEST;
-import static java.util.Objects.equals;
 import static io.microsphere.util.Assert.assertTrue;
 import static org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 import static org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE;
@@ -83,7 +83,7 @@ public class SpringWebMvcHelper implements SpringWebHelper {
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (equals(cookieName, cookie.getName())) {
+                if (Objects.equals(cookieName, cookie.getName())) {
                     return cookie.getValue();
                 }
             }
