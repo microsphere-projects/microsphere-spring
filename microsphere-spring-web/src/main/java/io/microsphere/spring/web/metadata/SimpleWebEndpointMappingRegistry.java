@@ -17,7 +17,6 @@
 package io.microsphere.spring.web.metadata;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newHashMap;

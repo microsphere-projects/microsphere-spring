@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory.support;
 
 import org.springframework.beans.factory.config.DependencyDescriptor;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static io.microsphere.collection.ListUtils.forEach;

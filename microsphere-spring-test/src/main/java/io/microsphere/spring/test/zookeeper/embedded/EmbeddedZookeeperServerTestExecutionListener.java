@@ -28,7 +28,6 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newHashMap;

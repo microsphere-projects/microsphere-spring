@@ -19,7 +19,6 @@ package io.microsphere.spring.beans.factory.support;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 

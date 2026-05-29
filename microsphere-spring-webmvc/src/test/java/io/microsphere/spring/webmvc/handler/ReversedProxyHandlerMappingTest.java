@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newHashMap;

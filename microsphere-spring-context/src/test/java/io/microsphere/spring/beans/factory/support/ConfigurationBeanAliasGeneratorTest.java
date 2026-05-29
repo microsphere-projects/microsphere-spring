@@ -2,7 +2,6 @@ package io.microsphere.spring.beans.factory.support;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
