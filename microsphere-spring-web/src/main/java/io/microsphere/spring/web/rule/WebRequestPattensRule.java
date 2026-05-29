@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newFixedHashSet;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.constants.PathConstants.SLASH;
@@ -69,7 +70,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
 
     private final boolean useTrailingSlashMatch;
 
-    private final List<String> fileExtensions = new ArrayList<>();
+    private final List<String> fileExtensions = newArrayList();
 
     /**
      * Constructor with URL patterns which are prepended with "/" if necessary.
@@ -175,7 +176,7 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
         for (String pattern : this.patterns) {
             String match = getMatchingPattern(pattern, lookupPath);
             if (match != null) {
-                matches = (matches != null ? matches : new ArrayList<>());
+                matches = (matches != null ? matches : newArrayList());
                 matches.add(match);
             }
         }

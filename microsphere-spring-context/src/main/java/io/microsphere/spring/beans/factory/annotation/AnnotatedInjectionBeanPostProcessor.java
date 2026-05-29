@@ -65,6 +65,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
 import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -427,7 +428,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
      */
     protected List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedFieldElement> elements = new LinkedList<>();
+        final List<AnnotatedFieldElement> elements = newLinkedList();
 
         doWithFields(beanClass, field -> {
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
@@ -521,7 +522,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
     private InjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
         Collection<AnnotatedFieldElement> fieldElements = findFieldAnnotationMetadata(beanClass);
         Collection<AnnotatedMethodElement> methodElements = findAnnotatedMethodMetadata(beanClass);
-        List<InjectedElement> elements = new ArrayList<>(fieldElements.size() + methodElements.size());
+        List<InjectedElement> elements = newArrayList(fieldElements.size() + methodElements.size());
         elements.addAll(fieldElements);
         elements.addAll(methodElements);
         return new InjectionMetadata(beanClass, elements);

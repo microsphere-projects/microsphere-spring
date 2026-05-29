@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
@@ -85,7 +86,7 @@ class BeanListeners implements BeanListener {
     private List<NamedBeanHolder<BeanListener>> getBeanListeners(ConfigurableListableBeanFactory beanFactory) {
         registerSpringFactoriesBeans(beanFactory, BeanListener.class);
         Map<String, BeanListener> beanEventListenersMap = beanFactory.getBeansOfType(BeanListener.class);
-        List<NamedBeanHolder<BeanListener>> namedListeners = new ArrayList<>(beanEventListenersMap.size());
+        List<NamedBeanHolder<BeanListener>> namedListeners = newArrayList(beanEventListenersMap.size());
         for (Entry<String, BeanListener> entry : beanEventListenersMap.entrySet()) {
             NamedBeanHolder<BeanListener> namedListener = new NamedBeanHolder<>(entry.getKey(), entry.getValue());
             namedListeners.add(namedListener);

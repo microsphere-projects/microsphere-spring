@@ -53,6 +53,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
@@ -604,7 +605,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory instanceof DefaultListableBeanFactory dbf) {
-            List<SmartInstantiationAwareBeanPostProcessor> processors = new LinkedList<>();
+            List<SmartInstantiationAwareBeanPostProcessor> processors = newLinkedList();
             List<BeanPostProcessor> beanPostProcessors = dbf.getBeanPostProcessors();
             for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
                 if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor siaBeanProcessor) {

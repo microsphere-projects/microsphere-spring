@@ -27,6 +27,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.unmodifiableList;
@@ -75,7 +76,7 @@ public interface AutowireCandidateResolvingListener {
      * @see SpringFactoriesLoaderUtils#loadFactories(BeanFactory, Class)
      */
     static List<AutowireCandidateResolvingListener> loadListeners(@Nullable BeanFactory beanFactory) {
-        List<AutowireCandidateResolvingListener> listeners = new LinkedList<>();
+        List<AutowireCandidateResolvingListener> listeners = newLinkedList();
         // Add all Spring SPI with extension
         listeners.addAll(loadFactories(beanFactory, AutowireCandidateResolvingListener.class));
         // Add all Spring Beans if BeanFactory is available

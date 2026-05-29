@@ -44,6 +44,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Maps.ofMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
@@ -90,7 +92,7 @@ public class TTLCacheResolver extends OnceApplicationContextEventListener<Contex
 
         int cachesSize = cacheNamesSize * cacheManagersSize;
 
-        Collection<Cache> caches = new ArrayList<>(cachesSize);
+        Collection<Cache> caches = newArrayList(cachesSize);
 
         AnnotationAttributes ttlAnnotationAttributes = getTTLAnnotationAttributes(context, cacheOperation);
 
@@ -102,7 +104,7 @@ public class TTLCacheResolver extends OnceApplicationContextEventListener<Contex
         if (isEmpty(cacheManagerBeanNames)) {
             targetCacheManagers = namedCacheManagersMap.values();
         } else {
-            targetCacheManagers = new LinkedList<>();
+            targetCacheManagers = newLinkedList();
             for (String cacheManagerBeanName : cacheManagerBeanNames) {
                 CacheManager cacheManager = namedCacheManagersMap.get(cacheManagerBeanName);
                 targetCacheManagers.add(cacheManager);
