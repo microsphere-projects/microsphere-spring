@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see {@link CompositeWebFilter}
  * @since 1.0.0
  */
+@SpringLoggingTest
 class CompositeWebFilterTest {
 
     private CompositeWebFilter webFilter;

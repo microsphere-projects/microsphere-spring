@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webflux.annotation;
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @since 1.0.0
  */
 @Disabled
+@SpringLoggingTest
 public abstract class AbstractEnableWebFluxExtensionTest extends AbstractWebFluxTest {
 
     protected boolean registerWebEndpointMappings;

@@ -17,7 +17,9 @@
 
 package io.microsphere.spring.test.tomcat.embedded;
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.MergedContextConfiguration;
@@ -27,6 +29,7 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import java.io.IOException;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.tomcat.embedded.EmbeddedTomcatContextLoader.setParent;
 import static io.microsphere.util.ArrayUtils.EMPTY_CLASS_ARRAY;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
@@ -40,6 +43,9 @@ import static org.junit.Assert.assertThrows;
  * @since 1.0.0
  */
 public class EmbeddedTomcatContextLoaderTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
     private EmbeddedTomcatContextLoader loader;
 
