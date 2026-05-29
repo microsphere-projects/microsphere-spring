@@ -60,7 +60,6 @@ public class TTLCacheResolverTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     /** Verifies that the well-known bean name constant has the expected value. */
     @Test
     public void testBeanName() {

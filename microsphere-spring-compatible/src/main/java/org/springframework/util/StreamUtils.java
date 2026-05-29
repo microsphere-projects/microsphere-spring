@@ -53,7 +53,6 @@ public abstract class StreamUtils {
 
 	private static final byte[] EMPTY_CONTENT = new byte[0];
 
-
 	/**
 	 * Copy the contents of the given InputStream into a new byte array.
 	 * <p>Leaves the stream open when done.
@@ -262,7 +261,6 @@ public abstract class StreamUtils {
 		return new NonClosingOutputStream(out);
 	}
 
-
 	private static class NonClosingInputStream extends FilterInputStream {
 
 		public NonClosingInputStream(InputStream in) {
@@ -273,7 +271,6 @@ public abstract class StreamUtils {
 		public void close() throws IOException {
 		}
 	}
-
 
 	private static class NonClosingOutputStream extends FilterOutputStream {
 

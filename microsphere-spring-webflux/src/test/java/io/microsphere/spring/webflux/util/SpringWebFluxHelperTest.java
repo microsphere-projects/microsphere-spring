@@ -17,8 +17,8 @@
 
 package io.microsphere.spring.webflux.util;
 
-
 import io.microsphere.spring.test.domain.User;
+import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
 import io.microsphere.spring.webflux.context.request.ServerWebRequest;
@@ -82,6 +82,7 @@ import static reactor.core.publisher.Mono.just;
  * @since 1.0.0
  */
 @ContextConfiguration(classes = {
+        TestController.class,
         SpringWebFluxHelper.class,
         SpringWebFluxHelperTest.class
 })
@@ -226,7 +227,6 @@ class SpringWebFluxHelperTest extends AbstractEnableWebFluxExtensionTest {
         ServerHttpResponse response = this.serverWebRequest.getResponse();
         assertEquals(value, response.getCookies().get(name).get(0).getValue());
     }
-
 
     @Test
     void testGetRequestBody() {

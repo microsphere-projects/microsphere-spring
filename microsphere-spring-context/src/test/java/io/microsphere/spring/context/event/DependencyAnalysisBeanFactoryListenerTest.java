@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.domain.User;
 import org.junit.ClassRule;
@@ -31,7 +30,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 
-
 /**
  * {@link DependencyAnalysisBeanFactoryListener} Test
  *
@@ -44,7 +42,6 @@ public class DependencyAnalysisBeanFactoryListenerTest extends AbstractEventList
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private ConfigurableListableBeanFactory beanFactory;

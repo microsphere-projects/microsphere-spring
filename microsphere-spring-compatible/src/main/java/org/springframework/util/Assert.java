@@ -682,7 +682,6 @@ public abstract class Assert {
 		isAssignable(superType, subType, "");
 	}
 
-
 	private static void instanceCheckFailed(Class<?> type, @Nullable Object obj, @Nullable String msg) {
 		String className = (obj != null ? obj.getClass().getName() : "null");
 		String result = "";

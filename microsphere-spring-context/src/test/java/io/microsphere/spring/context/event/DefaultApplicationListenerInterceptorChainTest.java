@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.context.event;
 
-
 import org.junit.Test;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -35,7 +34,10 @@ import static org.junit.Assert.assertSame;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see DefaultApplicationListenerInterceptorChain
+ * @see ApplicationListenerInterceptorChain
  * @since 1.0.0
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 public class DefaultApplicationListenerInterceptorChainTest {
 

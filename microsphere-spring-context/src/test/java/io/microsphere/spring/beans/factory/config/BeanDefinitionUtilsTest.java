@@ -78,7 +78,6 @@ public class BeanDefinitionUtilsTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     private static final boolean isGESpring5 = CURRENT.gt(SPRING_5_0);
 
     private static final boolean isGESpring5_1 = CURRENT.gt(SPRING_5_1);
@@ -206,7 +205,6 @@ public class BeanDefinitionUtilsTest {
             assertEquals(Config.class, resolvableType.getRawClass());
         }, Config.class);
     }
-
 
     @Test
     public void testIsInfrastructureBean() {

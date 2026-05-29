@@ -50,7 +50,6 @@ public abstract class CollectionUtils {
 	 */
 	static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
-
 	/**
 	 * Return {@code true} if the supplied Collection is {@code null} or empty.
 	 * Otherwise, return {@code false}.
@@ -160,7 +159,6 @@ public abstract class CollectionUtils {
 			}
 		}
 	}
-
 
 	/**
 	 * Check whether the given Iterator contains the given element.
@@ -484,7 +482,6 @@ public abstract class CollectionUtils {
 		return toMultiValueMap(unmodifiableMap);
 	}
 
-
 	/**
 	 * Iterator wrapping an Enumeration.
 	 */
@@ -511,6 +508,5 @@ public abstract class CollectionUtils {
 			throw new UnsupportedOperationException("Not supported");
 		}
 	}
-
 
 }

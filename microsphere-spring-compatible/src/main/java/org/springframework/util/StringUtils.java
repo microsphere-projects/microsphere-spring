@@ -79,7 +79,6 @@ public abstract class StringUtils {
 
 	private static final String TRUNCATION_SUFFIX = " (truncated)...";
 
-
 	//---------------------------------------------------------------------
 	// General convenience methods for working with Strings
 	//---------------------------------------------------------------------
@@ -938,7 +937,6 @@ public abstract class StringUtils {
 		}
 		return timeZone;
 	}
-
 
 	//---------------------------------------------------------------------
 	// Convenience methods for working with String arrays

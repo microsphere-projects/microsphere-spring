@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.servlet.filter;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -52,7 +51,6 @@ public class ContentCachingFilterTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private HttpServletRequest request;
 

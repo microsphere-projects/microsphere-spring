@@ -30,7 +30,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.StopWatch;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
@@ -182,7 +182,6 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
         return executorService;
     }
 
-
     private Map<String, Set<String>> resolveDependentBeanNamesMap(DefaultListableBeanFactory beanFactory, ExecutorService executorService, StopWatch stopWatch) {
         stopWatch.start("resolveDependentBeanNamesMap");
 
@@ -270,12 +269,11 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
 
             String beanName = dependentEntry.getKey();
             Set<String> dependentBeanNames = dependentEntry.getValue();
-            Set<String> allBeanNames = new LinkedHashSet<>(1 + dependentBeanNames.size());
+            Set<String> allBeanNames = newLinkedHashSet(1 + dependentBeanNames.size());
             allBeanNames.add(beanName);
             allBeanNames.addAll(dependentBeanNames);
         }
     }
-
 
     @Override
     public void setEnvironment(Environment environment) {

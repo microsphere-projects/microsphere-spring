@@ -25,10 +25,10 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequestWithHeaders;
 import static java.util.Collections.singletonMap;
@@ -146,7 +146,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     public void testMatchingExpressionsReturnFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE, TEXT_PLAIN_VALUE);
 
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Matches first expression
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
@@ -158,7 +158,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     public void testWildcardMediaTypeReturnsFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, "*/*"); // Wildcard media type
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
@@ -173,7 +173,7 @@ public class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     public void testSuccessfulMatchReturnsTrue() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Doesn't match rule expressions
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);

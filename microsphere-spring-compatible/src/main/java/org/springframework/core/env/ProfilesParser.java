@@ -41,7 +41,6 @@ final class ProfilesParser {
     private ProfilesParser() {
     }
 
-
     static Profiles parse(String... expressions) {
         Assert.notEmpty(expressions, "Must specify at least one profile expression");
         Profiles[] parsed = new Profiles[expressions.length];
@@ -141,11 +140,9 @@ final class ProfilesParser {
         return profiles -> profiles.matches(activeProfiles);
     }
 
-
     private enum Operator { AND, OR }
 
     private enum Context { NONE, NEGATE, PARENTHESIS }
-
 
     private static class ParsedProfiles implements Profiles {
 

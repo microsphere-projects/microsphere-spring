@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-
 /**
  * {@link BeanFactoryListenerAdapter} Test
  *

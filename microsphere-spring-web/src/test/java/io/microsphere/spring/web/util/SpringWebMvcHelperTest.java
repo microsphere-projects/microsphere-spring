@@ -53,11 +53,11 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.ofMap;
+import static io.microsphere.collection.SetUtils.newHashSet;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.SpringWebType.WEB_MVC;
@@ -220,7 +220,7 @@ public class SpringWebMvcHelperTest implements RequestBodyAdvice {
         ServletContext servletContext = getServletContext();
         Set<Object> processedListeners = (Set<Object>) servletContext.getAttribute(PROCESSED_LISTENERS_ATTRIBUTE_NAME);
         if (processedListeners == null) {
-            processedListeners = new HashSet<>();
+            processedListeners = newHashSet();
             servletContext.setAttribute(PROCESSED_LISTENERS_ATTRIBUTE_NAME, processedListeners);
         }
         processedListeners.add(listener);

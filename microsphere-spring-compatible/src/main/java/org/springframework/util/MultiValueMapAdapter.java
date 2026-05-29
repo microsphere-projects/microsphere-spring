@@ -41,7 +41,6 @@ public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializ
 
     private final Map<K, List<V>> targetMap;
 
-
     /**
      * Wrap the given target {@link Map} as a {@link MultiValueMap} adapter.
      * @param targetMap the plain target {@code Map}
@@ -50,7 +49,6 @@ public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializ
         Assert.notNull(targetMap, "'targetMap' must not be null");
         this.targetMap = targetMap;
     }
-
 
     // MultiValueMap implementation
 
@@ -102,7 +100,6 @@ public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializ
         });
         return singleValueMap;
     }
-
 
     // Map implementation
 

@@ -19,11 +19,11 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.env.MockPropertySource;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
@@ -58,7 +58,6 @@ public class PropertySourcesUtilsTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private ConfigurableEnvironment environment;
 
@@ -160,8 +159,8 @@ public class PropertySourcesUtilsTest {
 
         MutablePropertySources propertySources = environment.getPropertySources();
 
-        Map<String, Object> source = new HashMap<String, Object>();
-        Map<String, Object> source2 = new HashMap<String, Object>();
+        Map<String, Object> source = newHashMap();
+        Map<String, Object> source2 = newHashMap();
 
         MapPropertySource propertySource = new MapPropertySource("propertySource", source);
         MapPropertySource propertySource2 = new MapPropertySource("propertySource2", source2);
@@ -180,7 +179,7 @@ public class PropertySourcesUtilsTest {
         source2.put("user.name", "mercyblitz");
         source2.put("user.age", "32");
 
-        Map<String, Object> expected = new HashMap<String, Object>();
+        Map<String, Object> expected = newHashMap();
         expected.put("name", "Mercy");
         expected.put("age", "31");
 

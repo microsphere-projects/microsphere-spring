@@ -135,4 +135,3 @@ public class EnableAutoRegistrationBeanTest {
     static class DuplicatedConfig {
     }
 }
-

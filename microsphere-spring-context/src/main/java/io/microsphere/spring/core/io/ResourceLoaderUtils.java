@@ -24,9 +24,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
 
@@ -39,7 +39,7 @@ import static io.microsphere.util.ShutdownHookUtils.addShutdownHookCallback;
  */
 public abstract class ResourceLoaderUtils implements Utils {
 
-    private static ConcurrentMap<ClassLoader, ResourceLoader> resourceLoadersCache = new ConcurrentHashMap<>();
+    private static ConcurrentMap<ClassLoader, ResourceLoader> resourceLoadersCache = newConcurrentHashMap();
 
     static {
         addShutdownHookCallback(ResourceLoaderUtils::clearResourceLoadersCache);
@@ -63,7 +63,7 @@ public abstract class ResourceLoaderUtils implements Utils {
      */
     @Nonnull
     public static ResourceLoader getResourceLoader(@Nullable ClassLoader classLoader) {
-        ClassLoader targetClassLoader = classLoader == null ? getDefaultClassLoader() : classLoader;
+        ClassLoader targetClassLoader = ClassLoaderUtils.nullSafeClassLoader(classLoader);
         return resourceLoadersCache.computeIfAbsent(targetClassLoader, PathMatchingResourcePatternResolver::new);
     }
 
@@ -85,9 +85,9 @@ public abstract class ResourceLoaderUtils implements Utils {
      */
     @Nonnull
     public static ResourcePatternResolver getResourcePatternResolver(@Nullable ResourceLoader resourceLoader) {
-        ClassLoader classLoader = getClassLoader(resourceLoader);
+        ClassLoader classLoader = nullSafeClassLoader(resourceLoader);
         return (ResourcePatternResolver) resourceLoadersCache.computeIfAbsent(classLoader, cl -> {
-            ResourcePatternResolver resourcePatternResolver = null;
+            final ResourcePatternResolver resourcePatternResolver;
             if (resourceLoader instanceof ResourcePatternResolver) {
                 resourcePatternResolver = (ResourcePatternResolver) resourceLoader;
             } else {
@@ -97,9 +97,37 @@ public abstract class ResourceLoaderUtils implements Utils {
         });
     }
 
-    protected static ClassLoader getClassLoader(@Nullable ResourceLoader resourceLoader) {
-        ClassLoader classLoader = resourceLoader == null ? null : resourceLoader.getClassLoader();
-        return classLoader == null ? getDefaultClassLoader() : classLoader;
+    /**
+     * Get the {@link ClassLoader} from the specified {@link ResourceLoader}.
+     * <p>
+     * If the {@code resourceLoader} is {@code null}, returns {@code null}.
+     * Otherwise, retrieves the {@link ClassLoader} via {@link ResourceLoader#getClassLoader()}.
+     *
+     * @param resourceLoader the {@link ResourceLoader} instance, may be {@code null}
+     * @return the associated {@link ClassLoader}, or {@code null} if the {@code resourceLoader} is {@code null}
+     * @see ResourceLoader#getClassLoader()
+     */
+    @Nullable
+    public static ClassLoader getClassLoader(@Nullable ResourceLoader resourceLoader) {
+        return resourceLoader == null ? null : resourceLoader.getClassLoader();
+    }
+
+    /**
+     * Get the null-safe {@link ClassLoader} from the specified {@link ResourceLoader}.
+     * <p>
+     * If the {@code resourceLoader} is {@code null}, or its associated {@link ClassLoader} is {@code null},
+     * returns the default {@link ClassLoader} via {@link ClassLoaderUtils#getDefaultClassLoader()}.
+     * Otherwise, returns the {@link ClassLoader} associated with the {@code resourceLoader}.
+     *
+     * @param resourceLoader the {@link ResourceLoader} instance, may be {@code null}
+     * @return the non-null {@link ClassLoader}
+     * @see #getClassLoader(ResourceLoader)
+     * @see ClassLoaderUtils#nullSafeClassLoader(ClassLoader)
+     */
+    @Nonnull
+    public static ClassLoader nullSafeClassLoader(@Nullable ResourceLoader resourceLoader) {
+        ClassLoader classLoader = getClassLoader(resourceLoader);
+        return ClassLoaderUtils.nullSafeClassLoader(classLoader);
     }
 
     static void clearResourceLoadersCache() {

@@ -28,6 +28,9 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * {@link WebRequestParamsRule} Test
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
  */
 public class WebRequestParamsRuleTest extends BaseWebRequestRuleTest {
 

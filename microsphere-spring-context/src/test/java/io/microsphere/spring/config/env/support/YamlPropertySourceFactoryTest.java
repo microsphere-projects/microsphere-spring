@@ -26,10 +26,10 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 /**
  * {@link YamlPropertySourceFactory} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see YamlPropertySourceFactory
  * @since 1.0.0
  */

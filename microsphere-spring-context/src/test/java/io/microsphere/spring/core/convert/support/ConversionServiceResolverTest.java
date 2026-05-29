@@ -36,6 +36,7 @@ import static org.springframework.util.ClassUtils.isAssignable;
 /**
  * {@link ConversionServiceResolver} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
 @RunWith(JUnit4.class)
@@ -43,7 +44,6 @@ public class ConversionServiceResolverTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testGetResolvedBeanIfAvailable() {

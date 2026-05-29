@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.context;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -71,7 +70,6 @@ public class ExclusiveViewResolverApplicationListenerTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Autowired
     private ConfigurableApplicationContext context;

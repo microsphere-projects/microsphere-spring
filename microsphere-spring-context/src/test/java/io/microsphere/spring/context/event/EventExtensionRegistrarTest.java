@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.context.event;
 
-
 import io.microsphere.lang.MutableInteger;
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.ClassRule;
@@ -50,7 +49,6 @@ public class EventExtensionRegistrarTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     static class ExecutorConfig {
         @Bean

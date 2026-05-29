@@ -31,15 +31,16 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.first;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ArrayUtils.size;
+import static io.microsphere.util.ClassLoaderUtils.nullSafeClassLoader;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
@@ -131,7 +132,7 @@ public abstract class BeanFactoryUtils implements Utils {
         }
 
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType, true, false);
-        List<T> beans = new ArrayList<T>(size);
+        List<T> beans = newArrayList(size);
         for (int i = 0; i < size; i++) {
             String beanName = beanNames[i];
             if (containsElement(allBeanNames, beanName)) {
@@ -533,6 +534,27 @@ public abstract class BeanFactoryUtils implements Utils {
     /**
      * Retrieves the bean class loader from the given {@link BeanFactory}.
      *
+     * <p>
+     * This method attempts to extract the {@link ClassLoader} used for loading bean classes.
+     * If the provided bean factory implements {@link ConfigurableBeanFactory}, its configured
+     * bean class loader is returned. Otherwise, this method returns {@code null}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * BeanFactory beanFactory = ...; // Obtain or inject the bean factory
+     *
+     * ClassLoader classLoader = BeanFactoryUtils.getBeanClassLoader(beanFactory);
+     *
+     * if (classLoader != null) {
+     *     // Use the class loader for dynamic class loading or resource access
+     *     Class<?> clazz = classLoader.loadClass("com.example.MyClass");
+     * } else {
+     *     // Handle case where class loader is not available
+     *     System.out.println("Bean class loader is not available.");
+     * }
+     * }</pre>
+     *
      * @param beanFactory The target bean factory to retrieve the bean class loader from. May be {@code null}.
      * @return The bean class loader if available; otherwise, {@code null}.
      */
@@ -545,12 +567,43 @@ public abstract class BeanFactoryUtils implements Utils {
         return null;
     }
 
+    /**
+     * Retrieves the bean class loader from the given {@link BeanFactory} in a null-safe manner.
+     *
+     * <p>
+     * This method attempts to extract the {@link ClassLoader} used for loading bean classes.
+     * If the provided bean factory implements {@link ConfigurableBeanFactory}, its configured
+     * bean class loader is returned. If the bean factory is {@code null} or does not provide
+     * a class loader, this method returns a safe default class loader (typically the context
+     * class loader of the current thread).
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * BeanFactory beanFactory = ...; // Obtain or inject the bean factory
+     *
+     * ClassLoader classLoader = BeanFactoryUtils.nullSafeBeanClassLoader(beanFactory);
+     *
+     * // Use the class loader safely without null checks
+     * Class<?> clazz = classLoader.loadClass("com.example.MyClass");
+     * }</pre>
+     *
+     * @param beanFactory The target bean factory to retrieve the bean class loader from. May be {@code null}.
+     * @return The bean class loader if available; otherwise, a non-null default class loader.
+     */
+    @Nonnull
+    public static ClassLoader nullSafeBeanClassLoader(@Nullable BeanFactory beanFactory) {
+        ClassLoader classLoader = getBeanClassLoader(beanFactory);
+        return nullSafeClassLoader(classLoader);
+    }
+
     private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
         if (beanFactory == null) {
             return null;
         }
         if (beanFactory instanceof ApplicationContext) {
-            beanFactory = ((ApplicationContext) beanFactory).getAutowireCapableBeanFactory();
+            ApplicationContext context = (ApplicationContext) beanFactory;
+            beanFactory = context.getAutowireCapableBeanFactory();
         }
         isInstanceOf(extendedBeanFactoryType, beanFactory,
                 "The 'beanFactory' argument is not a instance of " + extendedBeanFactoryType +

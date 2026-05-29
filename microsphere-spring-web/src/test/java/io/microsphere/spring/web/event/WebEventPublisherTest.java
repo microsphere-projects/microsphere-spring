@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.event;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
@@ -49,7 +48,6 @@ public class WebEventPublisherTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     @Test
     public void testBeforeExecute() {

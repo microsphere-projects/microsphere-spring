@@ -64,7 +64,6 @@ public class ListenableConfigurableEnvironmentTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     @Autowired
     private ListenableConfigurableEnvironment environment;
 

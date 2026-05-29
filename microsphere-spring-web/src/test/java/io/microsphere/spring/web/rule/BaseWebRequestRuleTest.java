@@ -20,7 +20,7 @@ package io.microsphere.spring.web.rule;
 import org.junit.Test;
 
 /**
- * Base {@link WebRequestRule} Test
+ * Base Test for {@link WebRequestRule}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see WebRequestRule

@@ -136,7 +136,6 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
         registerConfigurationBeans(prefix, configClass, multiple, ignoreUnknownFields, ignoreInvalidFields, registry);
     }
 
-
     private void registerConfigurationBeans(String prefix, Class<?> configClass, boolean multiple,
                                             boolean ignoreUnknownFields, boolean ignoreInvalidFields,
                                             BeanDefinitionRegistry registry) {

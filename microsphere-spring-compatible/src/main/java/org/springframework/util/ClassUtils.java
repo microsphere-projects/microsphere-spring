@@ -91,7 +91,6 @@ public abstract class ClassUtils {
 	/** Precomputed value for the combination of public and protected modifiers. */
 	private static final int OVERRIDABLE_MODIFIER = Modifier.PUBLIC | Modifier.PROTECTED;
 
-
 	/**
 	 * Map with primitive wrapper type as key and corresponding primitive
 	 * type as value, for example: Integer.class -> int.class.
@@ -126,7 +125,6 @@ public abstract class ClassUtils {
 	 * Cache for equivalent methods on an interface implemented by the declaring class.
 	 */
 	private static final Map<Method, Method> interfaceMethodCache = new ConcurrentReferenceHashMap<>(256);
-
 
 	static {
 		primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
@@ -167,7 +165,6 @@ public abstract class ClassUtils {
 		registerCommonClasses(javaLanguageInterfaceArray);
 		javaLanguageInterfaces = new HashSet<>(Arrays.asList(javaLanguageInterfaceArray));
 	}
-
 
 	/**
 	 * Register the given common classes with the ClassUtils cache.
@@ -1423,7 +1420,6 @@ public abstract class ClassUtils {
 			return null;
 		}
 	}
-
 
 	@Nullable
 	private static Method getMethodOrNull(Class<?> clazz, String methodName, Class<?>[] paramTypes) {

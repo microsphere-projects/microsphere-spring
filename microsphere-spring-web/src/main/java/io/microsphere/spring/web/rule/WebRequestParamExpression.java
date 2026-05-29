@@ -18,11 +18,11 @@ package io.microsphere.spring.web.rule;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.SetUtils.newHashSet;
 import static io.microsphere.util.ArrayUtils.isEmpty;
 import static java.util.Collections.emptyList;
 import static org.springframework.util.ObjectUtils.containsElement;
@@ -37,7 +37,7 @@ import static org.springframework.web.util.WebUtils.SUBMIT_IMAGE_SUFFIXES;
  */
 public class WebRequestParamExpression extends AbstractNameValueExpression<String> {
 
-    private final Set<String> namesToMatch = new HashSet<>(SUBMIT_IMAGE_SUFFIXES.length + 1);
+    private final Set<String> namesToMatch = newHashSet(SUBMIT_IMAGE_SUFFIXES.length + 1);
 
     public WebRequestParamExpression(String expression) {
         super(expression, true);
@@ -73,7 +73,7 @@ public class WebRequestParamExpression extends AbstractNameValueExpression<Strin
             return emptyList();
         }
         int length = params.length;
-        List<WebRequestParamExpression> expressions = new ArrayList<>(length);
+        List<WebRequestParamExpression> expressions = newArrayList(length);
         for (int i = 0; i < length; i++) {
             String param = params[i];
             expressions.add(new WebRequestParamExpression(param));

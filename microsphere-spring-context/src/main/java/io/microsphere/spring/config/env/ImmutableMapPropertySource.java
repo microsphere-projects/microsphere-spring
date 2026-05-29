@@ -18,13 +18,14 @@ package io.microsphere.spring.config.env;
 
 import org.springframework.core.env.MapPropertySource;
 
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.MapUtils.newTreeMap;
 import static java.util.Collections.unmodifiableMap;
 
 /**
@@ -79,13 +80,13 @@ public class ImmutableMapPropertySource extends MapPropertySource {
 
     private static Map newMap(Map source) {
         if (source instanceof SortedMap) {
-            return new TreeMap(source);
+            return newTreeMap(source);
         } else if (source instanceof LinkedHashMap) {
-            return new LinkedHashMap(source);
+            return newLinkedHashMap(source);
         } else if (source instanceof IdentityHashMap) {
             return new IdentityHashMap(source);
         } else {
-            return new HashMap(source);
+            return newHashMap(source);
         }
     }
 }

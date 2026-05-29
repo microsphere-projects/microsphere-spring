@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webflux.handler;
 
-
 import io.microsphere.spring.test.domain.User;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.test.webflux.AbstractWebFluxTest;
@@ -31,9 +30,9 @@ import org.springframework.test.context.ContextConfiguration;
 import reactor.core.publisher.Mono;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.webflux;
@@ -72,7 +71,7 @@ class ReversedProxyHandlerMappingTest extends AbstractWebFluxTest {
 
     private void initWebEndpointMappingsMap() {
         Collection<WebEndpointMapping> webEndpointMappings = this.webEndpointMappingRegistry.getWebEndpointMappings();
-        this.webEndpointMappingsMap = new HashMap<>(webEndpointMappings.size());
+        this.webEndpointMappingsMap = newHashMap(webEndpointMappings.size());
         for (WebEndpointMapping webEndpointMapping : webEndpointMappings) {
             this.webEndpointMappingsMap.put(webEndpointMapping.getPatterns()[0], webEndpointMapping);
         }

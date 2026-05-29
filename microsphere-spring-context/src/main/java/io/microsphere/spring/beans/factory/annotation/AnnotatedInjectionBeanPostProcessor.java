@@ -54,18 +54,18 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.FieldUtils.setFieldValue;
 import static io.microsphere.reflect.MethodUtils.invokeMethod;
@@ -291,7 +291,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                                 "Resolution of declared constructors on bean Class [" + beanClass.getName() +
                                         "] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
                     }
-                    List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
+                    List<Constructor<?>> candidates = newArrayList(rawCandidates.length);
                     Constructor<?> requiredConstructor = null;
                     Constructor<?> defaultConstructor = null;
                     Constructor<?> primaryConstructor = findPrimaryConstructor(beanClass);
@@ -426,7 +426,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     protected List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedFieldElement> elements = new LinkedList<>();
+        final List<AnnotatedFieldElement> elements = newLinkedList();
 
         doWithFields(beanClass, field -> {
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
@@ -465,7 +465,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
      */
     protected List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedMethodElement> elements = new LinkedList<>();
+        final List<AnnotatedMethodElement> elements = newLinkedList();
 
         doWithMethods(beanClass, method -> {
             Method bridgedMethod = findBridgedMethod(method);
@@ -520,7 +520,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
     private InjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
         Collection<AnnotatedFieldElement> fieldElements = findFieldAnnotationMetadata(beanClass);
         Collection<AnnotatedMethodElement> methodElements = findAnnotatedMethodMetadata(beanClass);
-        List<InjectedElement> elements = new ArrayList<>(fieldElements.size() + methodElements.size());
+        List<InjectedElement> elements = newArrayList(fieldElements.size() + methodElements.size());
         elements.addAll(fieldElements);
         elements.addAll(methodElements);
         return new InjectionMetadata(beanClass, elements);
@@ -799,7 +799,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 boolean required = isRequired();
                 DependencyDescriptor desc = new DependencyDescriptor(field, required);
                 desc.setContainingClass(bean.getClass());
-                Set<String> injectedBeanNames = new LinkedHashSet<>(1);
+                Set<String> injectedBeanNames = newLinkedHashSet(1);
                 value = resolveDependency(desc, beanName, injectedBeanNames);
                 cacheFieldValue(field, desc, beanName, injectedBeanNames, value, required);
             }
@@ -885,7 +885,7 @@ public class AnnotatedInjectionBeanPostProcessor extends InstantiationAwareBeanP
                 int argumentCount = method.getParameterCount();
                 arguments = new Object[argumentCount];
                 DependencyDescriptor[] descriptors = new DependencyDescriptor[argumentCount];
-                Set<String> injectedBeanNames = new LinkedHashSet<>(argumentCount);
+                Set<String> injectedBeanNames = newLinkedHashSet(argumentCount);
                 for (int i = 0; i < arguments.length; i++) {
                     MethodParameter methodParam = new MethodParameter(method, i);
                     DependencyDescriptor currDesc = new DependencyDescriptor(methodParam, required);
