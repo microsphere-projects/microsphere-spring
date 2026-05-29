@@ -31,11 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * {@link DefaultApplicationEventInterceptorChain} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see DefaultApplicationEventInterceptorChain
  * @see ApplicationEventInterceptorChain
  * @since 1.0.0
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 class DefaultApplicationEventInterceptorChainTest {
 

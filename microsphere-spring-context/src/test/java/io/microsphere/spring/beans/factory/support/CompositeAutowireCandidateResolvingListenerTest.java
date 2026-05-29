@@ -31,10 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * {@link CompositeAutowireCandidateResolvingListener} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see CompositeAutowireCandidateResolvingListener
  * @since 1.0.0
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 class CompositeAutowireCandidateResolvingListenerTest {
 

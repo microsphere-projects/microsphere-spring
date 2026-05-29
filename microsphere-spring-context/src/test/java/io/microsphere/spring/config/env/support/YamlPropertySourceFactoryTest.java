@@ -29,10 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * {@link YamlPropertySourceFactory} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see YamlPropertySourceFactory
  * @since 1.0.0
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 class YamlPropertySourceFactoryTest {
 

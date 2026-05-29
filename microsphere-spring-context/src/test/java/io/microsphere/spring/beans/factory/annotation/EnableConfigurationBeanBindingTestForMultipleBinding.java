@@ -16,13 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-/**
- * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.0
- */
-
 import io.microsphere.spring.context.config.DefaultConfigurationBeanBinder;
 import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * {@link io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding} Test
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
+ */
 @EnableConfigurationBeanBinding(prefix = "users", type = User.class, multiple = true, ignoreUnknownFields = false,
         ignoreInvalidFields = false)
 class EnableConfigurationBeanBindingTestForMultipleBinding extends AbstractEnableConfigurationBeanBindingTest {
