@@ -34,11 +34,11 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.invoke.MethodHandleUtils.findStatic;
 import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -58,7 +58,6 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTyp
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
-import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ClassUtils.getUserClass;
 
@@ -1070,7 +1069,7 @@ public abstract class BeanUtils implements Utils {
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 
-        Map<String, T> sortedBeansMap = new LinkedHashMap<String, T>(beansMap.size());
+        Map<String, T> sortedBeansMap = newLinkedHashMap(beansMap.size());
 
         for (NamingBean<T> namingBean : namingBeans) {
             sortedBeansMap.put(namingBean.name, namingBean.bean);

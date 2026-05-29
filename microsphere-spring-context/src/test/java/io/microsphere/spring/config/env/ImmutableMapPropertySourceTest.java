@@ -3,10 +3,10 @@ package io.microsphere.spring.config.env;
 import org.junit.Test;
 
 import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.collection.MapUtils.newTreeMap;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
@@ -33,7 +33,7 @@ public class ImmutableMapPropertySourceTest {
 
     @Test
     public void testNewFromLinkedHashMap() {
-        ImmutableMapPropertySource propertySource = createPropertySource(new LinkedHashMap<>());
+        ImmutableMapPropertySource propertySource = createPropertySource(newLinkedHashMap());
         assertPropertySource(propertySource);
     }
 

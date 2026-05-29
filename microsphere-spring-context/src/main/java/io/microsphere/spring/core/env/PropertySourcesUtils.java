@@ -14,7 +14,6 @@ import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -23,6 +22,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.length;
@@ -226,7 +226,7 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     public static Map<String, Object> getSubProperties(PropertySources propertySources, PropertyResolver propertyResolver, String prefix) {
 
-        Map<String, Object> subProperties = new LinkedHashMap<String, Object>();
+        Map<String, Object> subProperties = newLinkedHashMap();
 
         String normalizedPrefix = normalizePrefix(prefix);
 

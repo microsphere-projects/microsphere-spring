@@ -27,10 +27,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.event.ApplicationContextEvent;
 
 import java.util.EventObject;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -100,7 +100,7 @@ public class OnceApplicationContextEventListenerTest {
         }
 
 
-        private final Map<EventObject, AtomicInteger> eventsHandledCount = new LinkedHashMap<EventObject, AtomicInteger>();
+        private final Map<EventObject, AtomicInteger> eventsHandledCount = newLinkedHashMap();
 
         @Override
         protected void onApplicationContextEvent(ApplicationContextEvent event) {
