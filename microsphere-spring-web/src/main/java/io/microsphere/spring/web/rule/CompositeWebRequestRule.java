@@ -19,10 +19,10 @@ package io.microsphere.spring.web.rule;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
-import java.util.Objects;
 
 import static io.microsphere.collection.Lists.ofList;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.equals;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
@@ -60,7 +60,7 @@ public class CompositeWebRequestRule implements WebRequestRule {
             return false;
         }
         CompositeWebRequestRule that = (CompositeWebRequestRule) o;
-        return Objects.equals(webRequestRules, that.webRequestRules);
+        return equals(webRequestRules, that.webRequestRules);
     }
 
     @Override

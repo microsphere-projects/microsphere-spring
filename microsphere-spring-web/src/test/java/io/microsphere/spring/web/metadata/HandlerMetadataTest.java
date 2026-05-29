@@ -21,8 +21,7 @@ package io.microsphere.spring.web.metadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
-
+import static java.util.Objects.hash;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -64,7 +63,7 @@ class HandlerMetadataTest {
 
     @Test
     void testHashCode() {
-        assertEquals(this.metadata.hashCode(), Objects.hash("handler", "metadata"));
+        assertEquals(this.metadata.hashCode(), hash("handler", "metadata"));
     }
 
     @Test

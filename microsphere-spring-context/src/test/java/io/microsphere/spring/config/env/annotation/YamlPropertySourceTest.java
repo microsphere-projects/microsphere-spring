@@ -28,9 +28,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Date;
-import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.equals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -66,7 +66,7 @@ class YamlPropertySourceTest {
         String name = "Mercy Ma @ " + new Date();
         write(1, "my.name2 : " + name);
 
-        while (!Objects.equals(name, environment.getProperty("my.name2"))) {
+        while (!equals(name, environment.getProperty("my.name2"))) {
             Thread.sleep((long) 1000);
         }
     }

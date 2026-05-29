@@ -20,7 +20,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringValueResolver;
 
-import java.util.Objects;
+import static java.util.Objects.equals;
+import static java.util.Objects.hash;
 
 /**
  * Test Bean
@@ -138,19 +139,19 @@ public class TestBean implements Bean, BeanFactoryAware, BeanClassLoaderAware, E
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TestBean testBean = (TestBean) o;
-        return Objects.equals(classLoader, testBean.classLoader) &&
-                Objects.equals(beanFactory, testBean.beanFactory) &&
-                Objects.equals(applicationContext, testBean.applicationContext) &&
-                Objects.equals(applicationEventPublisher, testBean.applicationEventPublisher) &&
-                Objects.equals(resolver, testBean.resolver) &&
-                Objects.equals(environment, testBean.environment) &&
-                Objects.equals(messageSource, testBean.messageSource) &&
-                Objects.equals(resourceLoader, testBean.resourceLoader);
+        return equals(classLoader, testBean.classLoader) &&
+                equals(beanFactory, testBean.beanFactory) &&
+                equals(applicationContext, testBean.applicationContext) &&
+                equals(applicationEventPublisher, testBean.applicationEventPublisher) &&
+                equals(resolver, testBean.resolver) &&
+                equals(environment, testBean.environment) &&
+                equals(messageSource, testBean.messageSource) &&
+                equals(resourceLoader, testBean.resourceLoader);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(classLoader, beanFactory, applicationContext, applicationEventPublisher, resolver, environment, messageSource, resourceLoader);
+        return hash(classLoader, beanFactory, applicationContext, applicationEventPublisher, resolver, environment, messageSource, resourceLoader);
     }
 
 }

@@ -30,7 +30,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
 
-import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -38,6 +37,7 @@ import static io.microsphere.spring.context.event.EnableEventExtension.NO_EXECUT
 import static io.microsphere.spring.context.event.EventExtensionAttributes.EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME;
 import static io.microsphere.spring.context.event.EventExtensionAttributes.INTERCEPTED_ATTRIBUTE_NAME;
 import static io.microsphere.spring.context.event.InterceptingApplicationEventMulticasterProxy.getResetBeanName;
+import static java.util.Objects.equals;
 import static org.springframework.context.support.AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME;
 
 /**
@@ -112,10 +112,10 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
     }
 
     private boolean isSameBeanDefinition(BeanDefinition beanDefinition, boolean intercepted, String executorForListener) {
-        if (!Objects.equals(intercepted, beanDefinition.getAttribute(INTERCEPTED_ATTRIBUTE_NAME))) {
+        if (!equals(intercepted, beanDefinition.getAttribute(INTERCEPTED_ATTRIBUTE_NAME))) {
             return false;
         }
-        if (!Objects.equals(executorForListener, beanDefinition.getAttribute(EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME))) {
+        if (!equals(executorForListener, beanDefinition.getAttribute(EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME))) {
             return false;
         }
         return true;

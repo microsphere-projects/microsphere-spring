@@ -27,7 +27,6 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerRequest.Headers;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.ofList;
@@ -37,6 +36,7 @@ import static io.microsphere.constants.SymbolConstants.DOT;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.test.web.WebTestUtils.TEST_ROOT_PATH;
 import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
+import static java.util.Objects.equals;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.ACCEPT;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.AND;
 import static io.microsphere.spring.webflux.function.server.RequestPredicateKind.CONTENT_TYPE;
@@ -526,9 +526,9 @@ class RequestPredicateKindTest {
         ServerRequest request = mock(ServerRequest.class, withSettings().defaultAnswer(invocation -> {
             Method method = invocation.getMethod();
             String methodName = method.getName();
-            if (Objects.equals("exchange", methodName)) {
+            if (equals("exchange", methodName)) {
                 return mockServerWebExchange();
-            } else if (Objects.equals("requestPath", methodName)) {
+            } else if (equals("requestPath", methodName)) {
                 return mockServerWebExchange().getRequest().getPath();
             }
             return null;

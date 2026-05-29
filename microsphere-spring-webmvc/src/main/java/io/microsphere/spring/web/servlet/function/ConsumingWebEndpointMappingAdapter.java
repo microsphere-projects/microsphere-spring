@@ -25,7 +25,6 @@ import org.springframework.web.servlet.function.RequestPredicate;
 
 import java.util.LinkedList;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -39,6 +38,7 @@ import static io.microsphere.spring.web.metadata.WebEndpointMapping.webmvc;
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.Assert.assertTrue;
 import static java.lang.ThreadLocal.withInitial;
+import static java.util.Objects.equals;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -155,7 +155,7 @@ public class ConsumingWebEndpointMappingAdapter implements RequestPredicateVisit
         LinkedList<Entry<RequestPredicate, Builder<?>>> stack = getNestedRequestPredicateToBuilderStack();
         Entry<RequestPredicate, Builder<?>> entry = stack.pop();
         RequestPredicate predicate = entry.getKey();
-        assertTrue(Objects.equals(predicateToTest, predicate), () -> format("The popped RequestPredicate[{}] does not match the actual one : {}", predicate, predicateToTest));
+        assertTrue(equals(predicateToTest, predicate), () -> format("The popped RequestPredicate[{}] does not match the actual one : {}", predicate, predicateToTest));
         return stack;
     }
 

@@ -16,8 +16,8 @@
  */
 package io.microsphere.spring.web.metadata;
 
-import java.util.Objects;
-
+import static java.util.Objects.equals;
+import static java.util.Objects.hash;
 import static org.springframework.util.Assert.notNull;
 
 /**
@@ -54,12 +54,12 @@ public class HandlerMetadata<H, M> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HandlerMetadata<?, ?> that = (HandlerMetadata<?, ?>) o;
-        return Objects.equals(handler, that.handler) && Objects.equals(metadata, that.metadata);
+        return equals(handler, that.handler) && equals(metadata, that.metadata);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(handler, metadata);
+        return hash(handler, metadata);
     }
 
     @Override

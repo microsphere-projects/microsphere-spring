@@ -24,11 +24,11 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 
-import java.util.Objects;
-
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.ADDED;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REMOVED;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REPLACED;
+import static java.util.Objects.equals;
+import static java.util.Objects.hashCode;
 import static org.springframework.util.Assert.notNull;
 
 /**
@@ -153,8 +153,8 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
 
         PropertySourceChangedEvent that = (PropertySourceChangedEvent) o;
         return kind == that.kind
-                && Objects.equals(newPropertySource, that.newPropertySource)
-                && Objects.equals(oldPropertySource, that.oldPropertySource);
+                && equals(newPropertySource, that.newPropertySource)
+                && equals(oldPropertySource, that.oldPropertySource);
     }
 
     /**
@@ -172,9 +172,9 @@ public class PropertySourceChangedEvent extends ApplicationContextEvent {
      */
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(kind);
-        result = 31 * result + Objects.hashCode(newPropertySource);
-        result = 31 * result + Objects.hashCode(oldPropertySource);
+        int result = hashCode(kind);
+        result = 31 * result + hashCode(newPropertySource);
+        result = 31 * result + hashCode(oldPropertySource);
         return result;
     }
 

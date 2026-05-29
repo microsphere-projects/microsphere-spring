@@ -23,8 +23,9 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.StringJoiner;
+
+import static java.util.Objects.equals;
 
 /**
  * <p>{@code BeanTimeStatistics} is a {@link BeanListener} implementation that tracks and measures the time spent
@@ -147,7 +148,7 @@ public class BeanTimeStatistics implements BeanListener, BeanNameAware {
     }
 
     private boolean isIgnoredBean(String beanName) {
-        return Objects.equals(this.beanName, beanName);
+        return equals(this.beanName, beanName);
     }
 
     @Override

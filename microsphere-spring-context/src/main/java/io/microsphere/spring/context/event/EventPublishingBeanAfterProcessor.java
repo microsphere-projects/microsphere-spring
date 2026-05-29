@@ -31,13 +31,13 @@ import org.springframework.core.ResolvableType;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
 import static io.microsphere.spring.context.event.BeanListeners.getBean;
 import static io.microsphere.spring.context.event.BeanListeners.getReadyBeanNames;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
+import static java.util.Objects.equals;
 import static org.springframework.util.ReflectionUtils.doWithFields;
 
 /**
@@ -85,7 +85,7 @@ class EventPublishingBeanAfterProcessor implements InstantiationAwareBeanPostPro
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (!Objects.equals(context, event.getSource())) {
+        if (!equals(context, event.getSource())) {
             return;
         }
         if (event instanceof ContextRefreshedEvent contextRefreshedEvent) {
