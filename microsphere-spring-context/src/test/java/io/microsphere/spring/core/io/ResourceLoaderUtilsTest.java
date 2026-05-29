@@ -18,14 +18,18 @@ package io.microsphere.spring.core.io;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.clearResourceLoadersCache;
+import static io.microsphere.spring.core.io.ResourceLoaderUtils.getClassLoader;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourceLoader;
 import static io.microsphere.spring.core.io.ResourceLoaderUtils.getResourcePatternResolver;
+import static io.microsphere.spring.core.io.ResourceLoaderUtils.nullSafeClassLoader;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
 import static java.lang.Thread.currentThread;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
@@ -77,5 +81,21 @@ class ResourceLoaderUtilsTest {
     void testGetResourcePatternResolverWithNullResourceLoader() {
         assertNotNull(getResourcePatternResolver(null));
         assertSame(getResourcePatternResolver(), getResourcePatternResolver(null));
+    }
+
+    @Test
+    void testGetClassLoader() {
+        assertNull(getClassLoader(null));
+
+        ResourceLoader resourceLoader = getResourceLoader();
+        assertSame(resourceLoader.getClassLoader(), getClassLoader(resourceLoader));
+    }
+
+    @Test
+    void testNullSafeClassLoader() {
+        assertSame(getDefaultClassLoader(), nullSafeClassLoader(null));
+
+        ResourceLoader resourceLoader = getResourceLoader();
+        assertSame(resourceLoader.getClassLoader(), nullSafeClassLoader(resourceLoader));
     }
 }
