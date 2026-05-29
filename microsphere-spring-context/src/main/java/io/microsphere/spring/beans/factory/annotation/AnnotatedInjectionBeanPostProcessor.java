@@ -66,6 +66,7 @@ import java.util.concurrent.ConcurrentMap;
 import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.FieldUtils.setFieldValue;
 import static io.microsphere.reflect.MethodUtils.invokeMethod;
@@ -798,7 +799,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 boolean required = isRequired();
                 DependencyDescriptor desc = new DependencyDescriptor(field, required);
                 desc.setContainingClass(bean.getClass());
-                Set<String> injectedBeanNames = new LinkedHashSet<>(1);
+                Set<String> injectedBeanNames = newLinkedHashSet(1);
                 value = resolveDependency(desc, beanName, injectedBeanNames);
                 cacheFieldValue(field, desc, beanName, injectedBeanNames, value, required);
             }
@@ -884,7 +885,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 int argumentCount = method.getParameterCount();
                 arguments = new Object[argumentCount];
                 DependencyDescriptor[] descriptors = new DependencyDescriptor[argumentCount];
-                Set<String> injectedBeanNames = new LinkedHashSet<>(argumentCount);
+                Set<String> injectedBeanNames = newLinkedHashSet(argumentCount);
                 for (int i = 0; i < arguments.length; i++) {
                     MethodParameter methodParam = new MethodParameter(method, i);
                     DependencyDescriptor currDesc = new DependencyDescriptor(methodParam, required);

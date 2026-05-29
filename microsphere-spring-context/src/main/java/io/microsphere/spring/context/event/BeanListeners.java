@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
@@ -70,7 +71,7 @@ class BeanListeners implements BeanListener {
     }
 
     static Set<String> getReadyBeanNames(ConfigurableListableBeanFactory beanFactory) {
-        Set<String> readyBeanNames = new LinkedHashSet<>();
+        Set<String> readyBeanNames = newLinkedHashSet();
         String[] singletonNames = beanFactory.getSingletonNames();
         readyBeanNames.addAll(asList(singletonNames));
         return readyBeanNames;

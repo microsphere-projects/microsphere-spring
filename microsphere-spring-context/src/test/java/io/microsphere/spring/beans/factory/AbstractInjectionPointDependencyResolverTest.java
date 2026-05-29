@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.reflect.ConstructorUtils.findConstructor;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,7 +71,7 @@ public abstract class AbstractInjectionPointDependencyResolverTest<R extends Abs
                 .resolve(Object.class)
                 .newInstance();
         this.resolver.setBeanFactory(beanFactory);
-        this.dependentBeanNames = new LinkedHashSet<>();
+        this.dependentBeanNames = newLinkedHashSet();
     }
 
     protected Field getField() {

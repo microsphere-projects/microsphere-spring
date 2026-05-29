@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
@@ -146,7 +147,7 @@ public abstract class PropertySourcesUtils implements Utils {
     }
 
     public static Set<String> findPropertyNames(ConfigurableEnvironment environment, Predicate<String> propertyNameFilter) {
-        Set<String> propertyNames = new LinkedHashSet<>();
+        Set<String> propertyNames = newLinkedHashSet();
         for (PropertySource propertySource : environment.getPropertySources()) {
             if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
                 for (String propertyName : enumerablePropertySource.getPropertyNames()) {

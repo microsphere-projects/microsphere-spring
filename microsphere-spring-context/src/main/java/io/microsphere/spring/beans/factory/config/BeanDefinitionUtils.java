@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.lang.function.Predicates.and;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
@@ -312,7 +313,7 @@ public abstract class BeanDefinitionUtils implements Utils {
             return emptySet();
         }
         Predicate<? super BeanDefinition> predicate = and(predicates);
-        Set<String> matchedBeanNames = new LinkedHashSet<>();
+        Set<String> matchedBeanNames = newLinkedHashSet();
         String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
