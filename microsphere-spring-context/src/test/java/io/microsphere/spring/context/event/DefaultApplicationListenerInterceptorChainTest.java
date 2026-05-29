@@ -31,11 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * {@link DefaultApplicationListenerInterceptorChain} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see DefaultApplicationListenerInterceptorChain
  * @see ApplicationListenerInterceptorChain
  * @since 1.0.0
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 class DefaultApplicationListenerInterceptorChainTest {
 
@@ -58,7 +57,8 @@ class DefaultApplicationListenerInterceptorChainTest {
                 }
         );
 
-        ApplicationListener<TestEvent> listener = event -> {};
+        ApplicationListener<TestEvent> listener = event -> {
+        };
         TestEvent event = new TestEvent(this);
 
         chain.intercept(listener, event);
@@ -82,7 +82,8 @@ class DefaultApplicationListenerInterceptorChainTest {
                 (listener, event) -> consumerCallCount.incrementAndGet()
         );
 
-        ApplicationListener<TestEvent> listener = event -> {};
+        ApplicationListener<TestEvent> listener = event -> {
+        };
         chain.intercept(listener, new TestEvent(this));
 
         assertEquals(1, interceptorCallCount.get());
@@ -103,7 +104,8 @@ class DefaultApplicationListenerInterceptorChainTest {
                 (listener, event) -> consumerCallCount.incrementAndGet()
         );
 
-        ApplicationListener<TestEvent> listener = event -> {};
+        ApplicationListener<TestEvent> listener = event -> {
+        };
         chain.intercept(listener, new TestEvent(this));
 
         assertEquals(0, consumerCallCount.get());
@@ -127,7 +129,8 @@ class DefaultApplicationListenerInterceptorChainTest {
                 (listener, event) -> order.append("end")
         );
 
-        ApplicationListener<TestEvent> listener = event -> {};
+        ApplicationListener<TestEvent> listener = event -> {
+        };
         chain.intercept(listener, new TestEvent(this));
 
         assertEquals("12end", order.toString());
