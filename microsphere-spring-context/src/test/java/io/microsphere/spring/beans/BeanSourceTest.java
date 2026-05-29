@@ -15,28 +15,31 @@
  * limitations under the License.
  */
 
-package io.microsphere.spring.test.junit.jupiter;
+package io.microsphere.spring.beans;
 
-import io.microsphere.logging.test.jupiter.LoggingLevelsClass;
+import org.junit.Test;
 
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;
+import static io.microsphere.spring.beans.BeanSource.JAVA_SERVICE_PROVIDER;
+import static io.microsphere.spring.beans.BeanSource.SPRING_FACTORIES;
+import static io.microsphere.spring.beans.BeanSource.values;
+import static org.junit.Assert.assertEquals;
 
 /**
- * The annotation for Spring logging test with levels : TRACE , INFO , ERROR
+ * {@link BeanSource} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see LoggingLevelsClass
+ * @see BeanSource
  * @since 1.0.0
  */
-@Target({ANNOTATION_TYPE, TYPE})
-@Retention(RUNTIME)
-@Inherited
-@LoggingLevelsClass(levels = {"TRACE", "INFO", "ERROR"})
-public @interface SpringLoggingTest {
+public class BeanSourceTest {
+
+    @Test
+    public void test() {
+        BeanSource[] values = values();
+        assertEquals(3, values.length);
+        assertEquals(BEAN_FACTORY, values[0]);
+        assertEquals(SPRING_FACTORIES, values[1]);
+        assertEquals(JAVA_SERVICE_PROVIDER, values[2]);
+    }
 }

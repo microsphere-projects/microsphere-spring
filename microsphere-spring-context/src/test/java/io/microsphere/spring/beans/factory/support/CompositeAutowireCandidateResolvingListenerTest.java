@@ -19,10 +19,10 @@ package io.microsphere.spring.beans.factory.support;
 import org.junit.Test;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.reflect.FieldUtils.findField;
 import static java.util.Collections.emptyList;
@@ -32,6 +32,7 @@ import static org.junit.Assert.assertThrows;
 /**
  * {@link CompositeAutowireCandidateResolvingListener} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see CompositeAutowireCandidateResolvingListener
  * @since 1.0.0
  */
@@ -46,7 +47,7 @@ public class CompositeAutowireCandidateResolvingListenerTest {
 
     @Test
     public void testConstructorWithNullElementThrowsException() {
-        List<AutowireCandidateResolvingListener> listeners = new ArrayList<>();
+        List<AutowireCandidateResolvingListener> listeners = newArrayList();
         listeners.add(null);
         assertThrows(IllegalArgumentException.class, () -> new CompositeAutowireCandidateResolvingListener(listeners));
     }

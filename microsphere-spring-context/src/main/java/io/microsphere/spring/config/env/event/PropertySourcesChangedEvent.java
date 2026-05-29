@@ -16,14 +16,12 @@
  */
 package io.microsphere.spring.config.env.event;
 
-
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.core.env.PropertySource;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +29,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.ADDED;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REMOVED;
 import static io.microsphere.spring.config.env.event.PropertySourceChangedEvent.Kind.REPLACED;
@@ -177,7 +176,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
 
         Predicate<PropertySourceChangedEvent.Kind> predicate = findAny(kinds);
 
-        Map<String, Object> properties = new LinkedHashMap<>();
+        Map<String, Object> properties = newLinkedHashMap();
 
         for (int i = 0; i < size; i++) {
             PropertySourceChangedEvent event = subEvents.get(i);

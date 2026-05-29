@@ -14,17 +14,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.spring.core.env.PropertyResolverUtils.resolvePlaceholders;
 import static io.microsphere.util.AnnotationUtils.isAnnotationPresent;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.contains;
 import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.util.ObjectUtils.defaultIfNull;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
@@ -79,16 +80,15 @@ public abstract class AnnotationUtils {
             return emptyMap();
         }
 
-        Map<ElementType, List<A>> annotationsMap = new LinkedHashMap<>();
+        Map<ElementType, List<A>> annotationsMap = newLinkedHashMap();
 
         Target target = annotationClass.getAnnotation(Target.class);
 
         ElementType[] elementTypes = target.value();
 
-
         for (ElementType elementType : elementTypes) {
 
-            List<A> annotationsList = new LinkedList<A>();
+            List<A> annotationsList = newLinkedList();
 
             switch (elementType) {
                 case PARAMETER:
@@ -264,7 +264,7 @@ public abstract class AnnotationUtils {
     @Nullable
     public static <T> T getAttribute(Map<String, Object> attributes, String attributeName, T defaultValue) {
         T value = (T) attributes.get(attributeName);
-        return value == null ? defaultValue : value;
+        return defaultIfNull(value, defaultValue);
     }
 
     /**

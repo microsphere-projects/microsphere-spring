@@ -25,10 +25,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.microsphere.util.Assert.assertNotNull;
 
-
 /**
  * {@link ListenableAutowireCandidateResolverInitializer} Test
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ListenableAutowireCandidateResolverInitializer
  * @since 1.0.0
  */

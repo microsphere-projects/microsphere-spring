@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.metadata;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -46,7 +45,6 @@ public class AbstractWebEndpointMappingFactoryTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private AbstractWebEndpointMappingFactory<String> factory;
 

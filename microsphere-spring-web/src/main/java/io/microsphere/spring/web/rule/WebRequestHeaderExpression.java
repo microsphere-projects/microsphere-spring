@@ -18,11 +18,11 @@ package io.microsphere.spring.web.rule;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.SetUtils.newHashSet;
 import static io.microsphere.util.ArrayUtils.size;
 import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpHeaders.ACCEPT;
@@ -41,7 +41,7 @@ import static org.springframework.web.util.WebUtils.SUBMIT_IMAGE_SUFFIXES;
  */
 public class WebRequestHeaderExpression extends AbstractNameValueExpression<String> {
 
-    private final Set<String> namesToMatch = new HashSet<>(SUBMIT_IMAGE_SUFFIXES.length + 1);
+    private final Set<String> namesToMatch = newHashSet(SUBMIT_IMAGE_SUFFIXES.length + 1);
 
     public WebRequestHeaderExpression(String expression) {
         super(expression);
@@ -71,7 +71,7 @@ public class WebRequestHeaderExpression extends AbstractNameValueExpression<Stri
         List<WebRequestHeaderExpression> expressions = emptyList();
         int size = size(headers);
         if (size > 0) {
-            expressions = new ArrayList<>(size);
+            expressions = newArrayList(size);
             for (int i = 0; i < size; i++) {
                 String header = headers[i];
                 WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);

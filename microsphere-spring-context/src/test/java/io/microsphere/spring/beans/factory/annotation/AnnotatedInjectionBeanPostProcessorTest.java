@@ -63,7 +63,6 @@ public class AnnotatedInjectionBeanPostProcessorTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     @Autowired
     @Qualifier("parent")
     private Parent parent;
@@ -250,7 +249,6 @@ public class AnnotatedInjectionBeanPostProcessorTest {
             User user;
         }
 
-
         @Bean
         public Parent parent() {
             return new Parent();
@@ -260,7 +258,6 @@ public class AnnotatedInjectionBeanPostProcessorTest {
         public Child child() {
             return new Child();
         }
-
 
         @Bean
         public User user() {

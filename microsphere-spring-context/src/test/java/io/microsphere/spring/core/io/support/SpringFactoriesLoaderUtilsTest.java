@@ -59,7 +59,6 @@ public class SpringFactoriesLoaderUtilsTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     private GenericApplicationContext context;
 
     private DefaultListableBeanFactory beanFactory;

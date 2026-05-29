@@ -32,12 +32,12 @@ import org.springframework.util.PathMatcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.SetUtils.newHashSet;
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
@@ -171,7 +171,6 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
     }
 
-
     class ListenerAdapter implements FileChangedListener {
 
         private final ResourcePropertySourcesRefresher refresher;
@@ -182,8 +181,8 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
 
         ListenerAdapter(ResourcePropertySourcesRefresher refresher, int initialCapacity) {
             this.refresher = refresher;
-            this.fileToResourceValues = new HashMap<>(initialCapacity);
-            this.resourceValues = new HashSet<>(initialCapacity);
+            this.fileToResourceValues = newHashMap(initialCapacity);
+            this.resourceValues = newHashSet(initialCapacity);
         }
 
         /**

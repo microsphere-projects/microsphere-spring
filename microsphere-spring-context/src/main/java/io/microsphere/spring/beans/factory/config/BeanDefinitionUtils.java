@@ -29,12 +29,12 @@ import org.springframework.core.ResolvableType;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.lang.function.Predicates.and;
@@ -365,7 +365,7 @@ public abstract class BeanDefinitionUtils implements Utils {
             return emptySet();
         }
         Predicate<? super BeanDefinition> predicate = and(predicates);
-        Set<String> matchedBeanNames = new LinkedHashSet<>();
+        Set<String> matchedBeanNames = newLinkedHashSet();
         String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);

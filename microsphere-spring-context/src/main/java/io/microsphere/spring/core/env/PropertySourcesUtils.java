@@ -13,10 +13,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -24,6 +21,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
+import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
@@ -64,7 +64,6 @@ public abstract class PropertySourcesUtils implements Utils {
      * @see org.springframework.cloud.bootstrap.BootstrapApplicationListener#BOOTSTRAP_PROPERTY_SOURCE_NAME
      */
     public static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrap";
-
 
     public static <T extends PropertySource<?>> T getPropertySource(ConfigurableEnvironment environment, String propertySourceName,
                                                                     Class<T> propertySourceType) {
@@ -109,7 +108,7 @@ public abstract class PropertySourcesUtils implements Utils {
 
     public static MapPropertySource getMapPropertySource(ConfigurableEnvironment environment, String propertySourceName, boolean created) {
         Supplier<MapPropertySource> propertySourceSupplierIfAbsent =
-                created ? () -> new MapPropertySource(propertySourceName, new HashMap<>()) : null;
+                created ? () -> new MapPropertySource(propertySourceName, newHashMap()) : null;
         return getPropertySource(environment, propertySourceName, MapPropertySource.class, propertySourceSupplierIfAbsent);
     }
 
@@ -145,7 +144,7 @@ public abstract class PropertySourcesUtils implements Utils {
     }
 
     public static Set<String> findPropertyNames(ConfigurableEnvironment environment, Predicate<String> propertyNameFilter) {
-        Set<String> propertyNames = new LinkedHashSet<>();
+        Set<String> propertyNames = newLinkedHashSet();
         for (PropertySource propertySource : environment.getPropertySources()) {
             if (propertySource instanceof EnumerablePropertySource) {
                 EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
@@ -226,7 +225,7 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     public static Map<String, Object> getSubProperties(PropertySources propertySources, PropertyResolver propertyResolver, String prefix) {
 
-        Map<String, Object> subProperties = new LinkedHashMap<String, Object>();
+        Map<String, Object> subProperties = newLinkedHashMap();
 
         String normalizedPrefix = normalizePrefix(prefix);
 
@@ -363,7 +362,7 @@ public abstract class PropertySourcesUtils implements Utils {
             if (logger.isWarnEnabled()) {
                 logger.warn("The 'defaultProperties' property will create an MapPropertySource[name:{}] by default", name);
             }
-            defaultPropertiesPropertySource = new MapPropertySource(name, new HashMap<>());
+            defaultPropertiesPropertySource = new MapPropertySource(name, newHashMap());
             propertySources.addLast(defaultPropertiesPropertySource);
         } else if (propertySource instanceof MapPropertySource) {
             if (logger.isTraceEnabled()) {

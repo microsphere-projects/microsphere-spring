@@ -33,12 +33,12 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.invoke.MethodHandleUtils.findStatic;
 import static io.microsphere.invoke.MethodHandleUtils.handleInvokeExactFailure;
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -58,7 +58,6 @@ import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTyp
 import static org.springframework.beans.factory.BeanFactoryUtils.beanOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
-import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.generateBeanName;
 import static org.springframework.util.ClassUtils.getShortName;
 import static org.springframework.util.ClassUtils.getUserClass;
 
@@ -603,7 +602,7 @@ public abstract class BeanUtils implements Utils {
     @Nonnull
     public static <T> List<T> getSortedBeans(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<T> type) {
         Map<String, T> beansOfType = beansOfTypeIncludingAncestors(beanFactory, type);
-        List<T> beansList = new ArrayList<T>(beansOfType.values());
+        List<T> beansList = newArrayList(beansOfType.values());
         AnnotationAwareOrderComparator.sort(beansList);
         return unmodifiableList(beansList);
     }
@@ -1059,7 +1058,7 @@ public abstract class BeanUtils implements Utils {
 
         Map<String, T> unmodifiableBeansMap = unmodifiableMap(beansMap);
 
-        List<NamingBean<T>> namingBeans = new ArrayList<>(unmodifiableBeansMap.size());
+        List<NamingBean<T>> namingBeans = newArrayList(unmodifiableBeansMap.size());
 
         for (Entry<String, T> entry : unmodifiableBeansMap.entrySet()) {
             String beanName = entry.getKey();
@@ -1070,7 +1069,7 @@ public abstract class BeanUtils implements Utils {
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 
-        Map<String, T> sortedBeansMap = new LinkedHashMap<String, T>(beansMap.size());
+        Map<String, T> sortedBeansMap = newLinkedHashMap(beansMap.size());
 
         for (NamingBean<T> namingBean : namingBeans) {
             sortedBeansMap.put(namingBean.name, namingBean.bean);
@@ -1090,7 +1089,6 @@ public abstract class BeanUtils implements Utils {
             this.name = name;
             this.bean = bean;
         }
-
 
         /**
          * Compares this {@link NamingBean} with another based on their ordering.

@@ -38,11 +38,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,6 +48,9 @@ import java.util.function.Supplier;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
@@ -93,7 +92,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         List<BeanDefinitionHolder> beanDefinitionHolders = getNonLazyInitSingletonMergedBeanDefinitionHolders(bf);
         int beansCount = beanDefinitionHolders.size();
-        Map<String, Set<String>> dependentBeanNamesMap = new HashMap<>(beansCount);
+        Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
         for (int i = 0; i < beansCount; i++) {
             BeanDefinitionHolder beanDefinitionHolder = beanDefinitionHolders.get(i);
             Set<String> dependentBeanNames = resolveDependentBeanNames(beanDefinitionHolder,
@@ -104,14 +103,14 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     }
 
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
-        Map<String, Set<String>> dependenciesMap = new LinkedHashMap<>(dependentBeanNamesMap.size());
+        Map<String, Set<String>> dependenciesMap = newLinkedHashMap(dependentBeanNamesMap.size());
         for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
             if (dependentBeanNames.isEmpty()) { // No Dependent bean name
                 continue;
             }
             String beanName = entry.getKey();
-            Set<String> flattenDependentBeanNames = new LinkedHashSet<>(dependentBeanNames.size() * 2);
+            Set<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
             // flat
             flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
             // Replace flattenDependentBeanNames to dependentBeanNames
@@ -128,13 +127,11 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         logDependentTrace(dependentBeanNamesMap);
     }
 
-
     private void logDependenciesTrace(String dependentBeanName, Entry<String, Set<String>> dependencies) {
         if (logger.isTraceEnabled()) {
             logger.trace("The bean dependency : '{}' -> beans : {}", dependentBeanName, dependencies.getValue());
         }
     }
-
 
     private void logDependentTrace(Map<String, Set<String>> dependentBeanNamesMap) {
         if (logger.isTraceEnabled()) {
@@ -144,7 +141,6 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         }
     }
 
-
     private void flatDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap,
                                         Map<String, Set<String>> dependenciesMap,
                                         Set<String> flattenDependentBeanNames) {
@@ -153,7 +149,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             return;
         }
         for (String dependentBeanName : dependentBeanNames) {
-            Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>());
+            Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> newLinkedHashSet());
             dependencies.add(beanName);
             flattenDependentBeanNames.add(dependentBeanName);
             flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
@@ -177,8 +173,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         String beanName = beanDefinitionHolder.getBeanName();
         RootBeanDefinition beanDefinition = (RootBeanDefinition) beanDefinitionHolder.getBeanDefinition();
 
-
-        Set<String> dependentBeanNames = new LinkedHashSet<>();
+        Set<String> dependentBeanNames = newLinkedHashSet();
         List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);
         List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolders, beanFactory);
         List<String> injectedBeanNames = resolveInjectionDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolder, beanFactory);
@@ -392,7 +387,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory instanceof DefaultListableBeanFactory) {
             DefaultListableBeanFactory dbf = (DefaultListableBeanFactory) beanFactory;
-            List<SmartInstantiationAwareBeanPostProcessor> processors = new LinkedList<>();
+            List<SmartInstantiationAwareBeanPostProcessor> processors = newLinkedList();
             List<BeanPostProcessor> beanPostProcessors = dbf.getBeanPostProcessors();
             for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
                 if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor) {

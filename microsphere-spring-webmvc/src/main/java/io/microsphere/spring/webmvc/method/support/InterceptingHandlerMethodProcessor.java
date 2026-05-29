@@ -45,12 +45,12 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
@@ -78,9 +78,9 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private static final Logger logger = getLogger(InterceptingHandlerMethodProcessor.class);
 
-    private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = new HashMap<>(256);
+    private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = newHashMap(256);
 
-    private final Map<MethodParameter, ReturnTypeContext> returnTypeContextsCache = new HashMap<>(256);
+    private final Map<MethodParameter, ReturnTypeContext> returnTypeContextsCache = newHashMap(256);
 
     private List<HandlerMethodAdvice> handlerMethodAdvices;
 
@@ -229,12 +229,12 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
             }
         }
 
-        List<HandlerMethodArgumentResolver> newResolvers = new ArrayList<>(resolvers.size() + 1);
+        List<HandlerMethodArgumentResolver> newResolvers = newArrayList(resolvers.size() + 1);
         // Current instance is the first element, others as the fallback if first can't resolve
         newResolvers.add(this);
         newResolvers.addAll(resolvers);
 
-        List<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>(handlers.size() + 1);
+        List<HandlerMethodReturnValueHandler> newHandlers = newArrayList(handlers.size() + 1);
         // Current instance is the first element, others as the fallback if first can't handle
         newHandlers.add(this);
         newHandlers.addAll(handlers);

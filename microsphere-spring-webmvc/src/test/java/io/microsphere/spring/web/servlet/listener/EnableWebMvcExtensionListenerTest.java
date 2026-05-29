@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.servlet.listener;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.servlet.TestFilter;
 import io.microsphere.spring.test.web.servlet.TestServlet;
@@ -51,7 +50,6 @@ public class EnableWebMvcExtensionListenerTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private EnableWebMvcExtensionListener listener;
 

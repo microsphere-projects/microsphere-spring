@@ -56,7 +56,6 @@ class DefaultPropertiesPropertySourcesLoader extends AnnotatedBeanCapableImportC
         }
     }
 
-
     private DefaultPropertiesPropertySourceLoader getDelegate() {
         DefaultPropertiesPropertySourceLoader delegate = new DefaultPropertiesPropertySourceLoader();
         delegate.setEnvironment(getEnvironment());

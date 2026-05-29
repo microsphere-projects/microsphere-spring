@@ -73,7 +73,6 @@ public abstract class ObjectUtils {
 	private static final String COLLECTION = "[...]";
 	private static final String MAP = NON_EMPTY_ARRAY;
 
-
 	/**
 	 * Return whether the given throwable is a checked exception:
 	 * that is, neither a RuntimeException nor an Error.
@@ -314,7 +313,6 @@ public abstract class ObjectUtils {
 		}
 		return newArray;
 	}
-
 
 	//---------------------------------------------------------------------
 	// Convenience methods for content-based equality/hash-code handling
@@ -610,7 +608,6 @@ public abstract class ObjectUtils {
 	public static int hashCode(long lng) {
 		return Long.hashCode(lng);
 	}
-
 
 	//---------------------------------------------------------------------
 	// Convenience methods for toString output

@@ -26,17 +26,19 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.List;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.nullSafeBeanClassLoader;
 import static io.microsphere.spring.context.ApplicationContextUtils.asApplicationContext;
 import static io.microsphere.spring.context.ApplicationContextUtils.asConfigurableApplicationContext;
+import static io.microsphere.spring.core.io.ResourceLoaderUtils.nullSafeClassLoader;
 import static io.microsphere.util.ArrayUtils.length;
-import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.BeanUtils.instantiateClass;
@@ -61,7 +63,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
     }
 
     public static <T> List<T> loadFactories(@Nullable ConfigurableApplicationContext context, Class<T> factoryType) {
-        ClassLoader classLoader = context == null ? getDefaultClassLoader() : context.getClassLoader();
+        ClassLoader classLoader = nullSafeClassLoader(context);
         List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
         for (int i = 0; i < factories.size(); i++) {
             T factory = factories.get(i);
@@ -76,7 +78,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
             return loadFactories(context, factoryClass);
         }
 
-        ClassLoader classLoader = context == null ? getDefaultClassLoader() : context.getClassLoader();
+        ClassLoader classLoader = nullSafeClassLoader(context);
         List<String> factoryClassNames = loadFactoryNames(factoryClass, classLoader);
 
         int factorySize = factoryClassNames.size();
@@ -89,7 +91,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
             return emptyList();
         }
 
-        List<T> factories = new ArrayList<>(factorySize);
+        List<T> factories = newArrayList(factorySize);
 
         for (String factoryClassName : factoryClassNames) {
             Class<?> factoryImplClass = resolveClassName(factoryClassName, classLoader);
@@ -110,7 +112,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
 
         ConfigurableBeanFactory configurableBeanFactory = asConfigurableBeanFactory(beanFactory);
 
-        ClassLoader classLoader = configurableBeanFactory == null ? getDefaultClassLoader() : configurableBeanFactory.getBeanClassLoader();
+        ClassLoader classLoader = nullSafeBeanClassLoader(configurableBeanFactory);
         List<T> factories = SpringFactoriesLoader.loadFactories(factoryType, classLoader);
         for (int i = 0; i < factories.size(); i++) {
             T factory = factories.get(i);
@@ -147,7 +149,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
         }
 
         if (targetConstructor == null) {
-            throw new IllegalArgumentException(String.format("No Constructor of Factory class[name : %s] was found for arguments : %s",
+            throw new IllegalArgumentException(format("No Constructor of Factory class[name : %s] was found for arguments : %s",
                     factoryImplClass.getName(), arrayToCommaDelimitedString(args)));
         }
 
@@ -156,5 +158,4 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
 
     private SpringFactoriesLoaderUtils() {
     }
-
 }

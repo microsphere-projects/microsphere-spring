@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.metadata;
 
-
 import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import io.microsphere.spring.test.web.servlet.TestServletContext;
 import org.junit.Before;
@@ -48,7 +47,6 @@ public class WebEndpointMappingRegistrarTest {
 
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
-
 
     private AnnotationConfigWebApplicationContext context;
 

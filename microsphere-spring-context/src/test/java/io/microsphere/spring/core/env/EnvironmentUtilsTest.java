@@ -54,7 +54,6 @@ public class EnvironmentUtilsTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-
     private ConfigurableEnvironment environment;
 
     @Before
