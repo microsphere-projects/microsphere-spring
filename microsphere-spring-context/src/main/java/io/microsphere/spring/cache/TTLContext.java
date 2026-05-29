@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static io.microsphere.util.ObjectUtils.defaultIfNull;
+
 /**
  * A context class that manages Time-To-Live (TTL) values using a thread-local variable.
  * This class provides utility methods to execute operations with a specified TTL,
@@ -104,7 +106,7 @@ public class TTLContext {
 
     private static Duration getEffectiveTTL(Duration defaultTTL) {
         Duration ttl = getTTL();
-        return ttl == null ? defaultTTL : ttl;
+        return defaultIfNull(ttl, defaultTTL);
     }
 
     /**
