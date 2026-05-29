@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
+import static io.microsphere.collection.MapUtils.newTreeMap;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,13 +30,13 @@ class ImmutableMapPropertySourceTest {
 
     @Test
     void testNewFromSortedMap() {
-        ImmutableMapPropertySource propertySource = createPropertySource(new TreeMap<>());
+        ImmutableMapPropertySource propertySource = createPropertySource(newTreeMap());
         assertPropertySource(propertySource);
     }
 
     @Test
     void testNewFromLinkedHashMap() {
-        ImmutableMapPropertySource propertySource = createPropertySource(new LinkedHashMap<>());
+        ImmutableMapPropertySource propertySource = createPropertySource(newLinkedHashMap());
         assertPropertySource(propertySource);
     }
 

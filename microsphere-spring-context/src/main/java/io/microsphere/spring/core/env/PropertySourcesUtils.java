@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.collection.MapUtils.newHashMap;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.length;
@@ -227,7 +228,7 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     public static Map<String, Object> getSubProperties(PropertySources propertySources, PropertyResolver propertyResolver, String prefix) {
 
-        Map<String, Object> subProperties = new LinkedHashMap<String, Object>();
+        Map<String, Object> subProperties = newLinkedHashMap();
 
         String normalizedPrefix = normalizePrefix(prefix);
 
