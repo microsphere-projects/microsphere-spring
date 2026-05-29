@@ -87,7 +87,7 @@ public abstract class ResourceLoaderUtils implements Utils {
     public static ResourcePatternResolver getResourcePatternResolver(@Nullable ResourceLoader resourceLoader) {
         ClassLoader classLoader = nullSafeClassLoader(resourceLoader);
         return (ResourcePatternResolver) resourceLoadersCache.computeIfAbsent(classLoader, cl -> {
-            ResourcePatternResolver resourcePatternResolver = null;
+            final ResourcePatternResolver resourcePatternResolver;
             if (resourceLoader instanceof ResourcePatternResolver resolver) {
                 resourcePatternResolver = resolver;
             } else {
