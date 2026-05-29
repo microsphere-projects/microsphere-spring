@@ -27,6 +27,7 @@ import reactor.core.publisher.Mono;
 import java.util.LinkedList;
 import java.util.List;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -49,7 +50,7 @@ public class CompositeWebFilter implements WebFilter {
     }
 
     public CompositeWebFilter(List<WebFilter> webFilters) {
-        this.webFilters = new LinkedList<>(webFilters);
+        this.webFilters = newLinkedList(webFilters);
     }
 
     /**

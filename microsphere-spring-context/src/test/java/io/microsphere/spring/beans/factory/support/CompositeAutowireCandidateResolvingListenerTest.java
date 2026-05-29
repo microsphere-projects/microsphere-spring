@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.reflect.FieldUtils.findField;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,7 +49,7 @@ class CompositeAutowireCandidateResolvingListenerTest {
 
     @Test
     void testConstructorWithNullElementThrowsException() {
-        List<AutowireCandidateResolvingListener> listeners = new ArrayList<>();
+        List<AutowireCandidateResolvingListener> listeners = newLinkedList();
         listeners.add(null);
         assertThrows(IllegalArgumentException.class,
                 () -> new CompositeAutowireCandidateResolvingListener(listeners));

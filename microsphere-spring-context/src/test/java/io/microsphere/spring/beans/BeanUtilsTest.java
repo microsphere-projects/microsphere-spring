@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.spring.beans.BeanUtils.doInvokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.generateBeanName;
 import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
@@ -328,14 +329,14 @@ class BeanUtilsTest {
     void testSort() {
         int times = 9;
 
-        Map<String, OrderedBean> orderedBeansMap = new LinkedHashMap<>(times);
+        Map<String, OrderedBean> orderedBeansMap = newLinkedHashMap(times);
 
         for (int i = times; i > 0; i--) {
             OrderedBean orderedBean = new OrderedBean(i);
             orderedBeansMap.put(orderedBean.toString(), orderedBean);
         }
 
-        Map<String, OrderedBean> expectedBeansMap = new LinkedHashMap<>(times);
+        Map<String, OrderedBean> expectedBeansMap = newLinkedHashMap(times);
 
         for (int i = 1; i <= times; i++) {
             OrderedBean orderedBean = new OrderedBean(i);

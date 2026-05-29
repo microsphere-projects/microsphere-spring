@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import static io.microsphere.collection.CollectionUtils.size;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Sets.ofSet;
 import static java.lang.Boolean.TRUE;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -83,7 +84,7 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
     @Override
     protected void onApplicationContextEvent(ContextRefreshedEvent event) {
         ApplicationContext context = event.getApplicationContext();
-        List<HandlerInterceptor> allInterceptors = new LinkedList<>();
+        List<HandlerInterceptor> allInterceptors = newLinkedList();
         for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {
             Collection<? extends HandlerInterceptor> interceptors = context.getBeansOfType(interceptorClass).values();
             for (HandlerInterceptor interceptor : interceptors) {
