@@ -31,11 +31,11 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.convert.ConversionService;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingRegistrar.ENABLE_CONFIGURATION_BINDING_CLASS;
@@ -158,7 +158,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     }
 
     public void setConfigurationBeanCustomizers(Collection<ConfigurationBeanCustomizer> configurationBeanCustomizers) {
-        List<ConfigurationBeanCustomizer> customizers = new ArrayList<ConfigurationBeanCustomizer>(configurationBeanCustomizers);
+        List<ConfigurationBeanCustomizer> customizers = newArrayList(configurationBeanCustomizers);
         sort(customizers);
         this.configurationBeanCustomizers = unmodifiableList(customizers);
     }

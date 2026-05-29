@@ -31,11 +31,11 @@ import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertyResolver;
 
 import java.lang.invoke.MethodHandle;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
@@ -123,7 +123,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     private List<ProfileListener> loadProfileListeners(ConfigurableApplicationContext applicationContext,
                                                        List<EnvironmentListener> environmentListeners) {
         // Add all EnvironmentListener instances
-        List<ProfileListener> profileListeners = new LinkedList<>(environmentListeners);
+        List<ProfileListener> profileListeners = newLinkedList(environmentListeners);
         // Load Spring Factories with extension
         profileListeners.addAll(loadFactories(applicationContext, ProfileListener.class));
         // Sort
@@ -134,7 +134,7 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
     private List<PropertyResolverListener> loadPropertyResolverListeners(ConfigurableApplicationContext applicationContext,
                                                                          List<EnvironmentListener> environmentListeners) {
         // Add all EnvironmentListener instances
-        List<PropertyResolverListener> propertyResolverListeners = new LinkedList<>(environmentListeners);
+        List<PropertyResolverListener> propertyResolverListeners = (List) newLinkedList(environmentListeners);
         // Load Spring Factories with extension
         propertyResolverListeners.addAll(loadFactories(applicationContext, PropertyResolverListener.class));
         // Sort

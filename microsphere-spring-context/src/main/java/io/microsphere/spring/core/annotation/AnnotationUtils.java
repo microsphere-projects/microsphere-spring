@@ -14,11 +14,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.spring.core.env.PropertyResolverUtils.resolvePlaceholders;
 import static io.microsphere.util.AnnotationUtils.isAnnotationPresent;
@@ -89,7 +89,7 @@ public abstract class AnnotationUtils {
 
         for (ElementType elementType : elementTypes) {
 
-            List<A> annotationsList = new LinkedList<A>();
+            List<A> annotationsList = newLinkedList();
 
             switch (elementType) {
                 case PARAMETER:

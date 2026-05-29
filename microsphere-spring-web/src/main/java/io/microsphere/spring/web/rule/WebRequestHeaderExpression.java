@@ -18,10 +18,10 @@ package io.microsphere.spring.web.rule;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newHashSet;
 import static io.microsphere.util.ArrayUtils.size;
 import static java.util.Collections.emptyList;
@@ -71,7 +71,7 @@ public class WebRequestHeaderExpression extends AbstractNameValueExpression<Stri
         List<WebRequestHeaderExpression> expressions = emptyList();
         int size = size(headers);
         if (size > 0) {
-            expressions = new ArrayList<>(size);
+            expressions = newArrayList(size);
             for (int i = 0; i < size; i++) {
                 String header = headers[i];
                 WebRequestHeaderExpression expression = new WebRequestHeaderExpression(header);

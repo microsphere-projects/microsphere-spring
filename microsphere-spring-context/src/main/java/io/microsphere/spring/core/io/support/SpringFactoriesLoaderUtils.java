@@ -26,9 +26,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.List;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
@@ -91,7 +91,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
             return emptyList();
         }
 
-        List<T> factories = new ArrayList<>(factorySize);
+        List<T> factories = newArrayList(factorySize);
 
         for (String factoryClassName : factoryClassNames) {
             Class<?> factoryImplClass = resolveClassName(factoryClassName, classLoader);
