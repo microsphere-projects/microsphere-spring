@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
 import static io.microsphere.spring.core.env.EnvironmentUtils.resolveCommaDelimitedValueToList;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
@@ -152,8 +153,8 @@ class PropertySourcesUtilsTest {
 
         MutablePropertySources propertySources = environment.getPropertySources();
 
-        Map<String, Object> source = new HashMap<String, Object>();
-        Map<String, Object> source2 = new HashMap<String, Object>();
+        Map<String, Object> source = newHashMap();
+        Map<String, Object> source2 = newHashMap();
 
         MapPropertySource propertySource = new MapPropertySource("propertySource", source);
         MapPropertySource propertySource2 = new MapPropertySource("propertySource2", source2);
@@ -172,7 +173,7 @@ class PropertySourcesUtilsTest {
         source2.put("user.name", "mercyblitz");
         source2.put("user.age", "32");
 
-        Map<String, Object> expected = new HashMap<String, Object>();
+        Map<String, Object> expected = newHashMap();
         expected.put("name", "Mercy");
         expected.put("age", "31");
 
