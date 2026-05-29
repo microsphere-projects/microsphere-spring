@@ -140,7 +140,6 @@ class EventPublishingBeanAfterProcessor implements InstantiationAwareBeanPostPro
         return DISPOSABLE_BEAN_ADAPTER_CLASS.equals(bean.getClass()) && bean instanceof DisposableBean;
     }
 
-
     /**
      * {@link EventPublishingBeanBeforeProcessor} Initializer that
      * is not a general propose Spring Bean initializes {@link EventPublishingBeanBeforeProcessor}

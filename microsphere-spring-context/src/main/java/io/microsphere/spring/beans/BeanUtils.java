@@ -1034,7 +1034,6 @@ public abstract class BeanUtils implements Utils {
             this.bean = bean;
         }
 
-
         /**
          * Compares this {@link NamingBean} with another based on their ordering.
          *

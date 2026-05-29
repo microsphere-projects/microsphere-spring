@@ -31,7 +31,6 @@ import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 /**
  * {@link OnceApplicationContextEventListener} Test
  *
@@ -91,7 +90,6 @@ class OnceApplicationContextEventListenerTest {
         public MyContextEventListener(ApplicationContext applicationContext) {
             super(applicationContext);
         }
-
 
         private final Map<EventObject, AtomicInteger> eventsHandledCount = newLinkedHashMap();
 

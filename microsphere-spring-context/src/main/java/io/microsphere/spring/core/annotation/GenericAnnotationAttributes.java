@@ -141,7 +141,6 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
         return stringBuilder.toString();
     }
 
-
     /**
      * Create an instance of {@link GenericAnnotationAttributes} from the specified {@link Annotation annotation}
      *

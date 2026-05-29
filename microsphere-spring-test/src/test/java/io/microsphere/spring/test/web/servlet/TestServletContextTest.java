@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.test.web.servlet;
 
-
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.Servlet;
@@ -88,7 +87,6 @@ class TestServletContextTest {
     void testCreateServlet() throws ServletException {
         assertNotNull(servletContext.createServlet(testServletClass));
     }
-
 
     @Test
     void testGetServletRegistration() {

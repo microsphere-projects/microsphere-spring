@@ -89,7 +89,6 @@ class AnnotatedBeanDefinitionRegistryUtilsTest {
         assertEquals(0, count);
     }
 
-
     @Test
     void testResolveAnnotatedBeanNameGenerator() {
         testInSpringContainer(context -> {

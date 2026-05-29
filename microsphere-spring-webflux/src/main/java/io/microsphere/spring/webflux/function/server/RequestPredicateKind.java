@@ -259,7 +259,6 @@ public enum RequestPredicateKind {
 
         private final String implementationClassName = getTypeName(method(OPTIONS));
 
-
         @Override
         void accept(RequestPredicate predicate, RequestPredicateVisitorAdapter visitor) {
             String method = expression(predicate);

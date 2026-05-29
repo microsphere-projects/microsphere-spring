@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.context.event;
 
-
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;

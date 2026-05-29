@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.util;
 
-
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;

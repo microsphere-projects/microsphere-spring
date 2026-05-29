@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.webmvc.interceptor;
 
-
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**

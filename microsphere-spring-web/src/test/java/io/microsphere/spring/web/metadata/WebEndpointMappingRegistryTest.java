@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.metadata;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +42,6 @@ class WebEndpointMappingRegistryTest {
     private static final WebEndpointMapping mapping = servlet().endpoint(Object.class).patterns("/*").method(GET).build();
 
     private static final WebEndpointMapping non_mapping = servlet().endpoint(Object.class).patterns("!/*").method(GET).build();
-
 
     static class WebEndpointMappingRegistryImpl implements WebEndpointMappingRegistry {
 

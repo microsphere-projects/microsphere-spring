@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.test.jdbc.embedded;
 
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanCreationException;
 

@@ -1,6 +1,5 @@
 package io.microsphere.spring.beans.factory.support;
 
-
 import io.microsphere.spring.beans.test.TestBean;
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
