@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import static io.microsphere.collection.CollectionUtils.size;
 import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static java.util.Collections.emptyList;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -54,7 +55,7 @@ public class SmartWebEndpointMappingFactory extends AbstractWebEndpointMappingFa
 
         int size = size(factories) + size(factoryBeans);
 
-        Map<Class<?>, List<WebEndpointMappingFactory>> delegates = new HashMap<>(size);
+        Map<Class<?>, List<WebEndpointMappingFactory>> delegates = newHashMap(size);
 
         initDelegates(factories, delegates);
         initDelegates(factoryBeans, delegates);

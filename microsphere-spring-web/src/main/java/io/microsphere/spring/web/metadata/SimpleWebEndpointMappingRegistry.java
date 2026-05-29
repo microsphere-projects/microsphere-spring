@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
+
 /**
  * Simple {@link WebEndpointMappingRegistry} supports to filter {@link WebEndpointMapping}
  *
@@ -29,7 +31,7 @@ import java.util.Map;
  */
 public class SimpleWebEndpointMappingRegistry extends FilteringWebEndpointMappingRegistry {
 
-    private final Map<Integer, WebEndpointMapping> repository = new HashMap<>(256);
+    private final Map<Integer, WebEndpointMapping> repository = newHashMap(256);
 
     @Override
     public boolean register(WebEndpointMapping webEndpointMapping) {

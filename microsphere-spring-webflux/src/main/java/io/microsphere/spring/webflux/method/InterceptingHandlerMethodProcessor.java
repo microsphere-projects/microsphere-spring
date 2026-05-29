@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
@@ -87,9 +88,9 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private static final RequestContextWebFilter delegateWebFilter = new RequestContextWebFilter();
 
-    private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = new HashMap<>(256);
+    private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = newHashMap(256);
 
-    private final Map<MethodParameter, ReturnTypeContext> returnTypeContextsCache = new HashMap<>(256);
+    private final Map<MethodParameter, ReturnTypeContext> returnTypeContextsCache = newHashMap(256);
 
     private List<HandlerMethodAdvice> handlerMethodAdvices = emptyList();
 

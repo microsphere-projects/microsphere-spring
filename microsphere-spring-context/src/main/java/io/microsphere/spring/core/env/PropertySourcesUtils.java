@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
@@ -109,7 +110,7 @@ public abstract class PropertySourcesUtils implements Utils {
 
     public static MapPropertySource getMapPropertySource(ConfigurableEnvironment environment, String propertySourceName, boolean created) {
         Supplier<MapPropertySource> propertySourceSupplierIfAbsent =
-                created ? () -> new MapPropertySource(propertySourceName, new HashMap<>()) : null;
+                created ? () -> new MapPropertySource(propertySourceName, newHashMap()) : null;
         return getPropertySource(environment, propertySourceName, MapPropertySource.class, propertySourceSupplierIfAbsent);
     }
 
@@ -361,7 +362,7 @@ public abstract class PropertySourcesUtils implements Utils {
             if (logger.isWarnEnabled()) {
                 logger.warn("The 'defaultProperties' property will create an MapPropertySource[name:{}] by default", name);
             }
-            defaultPropertiesPropertySource = new MapPropertySource(name, new HashMap<>());
+            defaultPropertiesPropertySource = new MapPropertySource(name, newHashMap());
             propertySources.addLast(defaultPropertiesPropertySource);
         } else if (propertySource instanceof MapPropertySource mapPropertySource) {
             if (logger.isTraceEnabled()) {
