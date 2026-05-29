@@ -29,7 +29,7 @@ public interface WebEndpointMappingVisitor {
     /**
      * Receive notification of an HTTP method.
      *
-     * @param methods the HTTP methods 
+     * @param methods the HTTP methods
      */
     void method(String[] methods);
 
