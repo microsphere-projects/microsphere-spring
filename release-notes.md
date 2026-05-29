@@ -202,4 +202,43 @@ For a complete list of changes, refer to the full [changelog](#).
 
 **[Full Changelog](https://github.com/mercyblitz/microsphere-spring/compare/0.1.17...0.1.18)**
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.17...0.1.18
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.17...0.1.18## v0.1.19
+
+```markdown
+# Release Notes - Version 0.1.19
+
+## New Features
+- Added `nullSafeBeanClassLoader` utility with corresponding tests. (#2903fec0, #2473fc39)
+- Introduced `BeanSource` enum with unit test. (#ada02e16)
+- Added logging rules to embedded Tomcat tests. (#ab0e3803)
+- Enhanced class loader handling in `ResourceLoader`. (#d6795806)
+
+## Bug Fixes
+- Fixed potential `NullPointerException` by using `ObjectUtils.defaultIfNull` in `AnnotationUtils` and `TTLContext#getEffectiveTTL`. (#079b827c, #9e724041)
+- Cast `newLinkedList` output to resolve generic type mismatch. (#2d5fc9a0)
+
+## Documentation
+- Updated README with latest versions: `0.2.19`/`0.1.19`. (#32e78e3d)
+- Updated documentation for `nullSafeBeanClassLoader`. (#2903fec0)
+
+## Dependency Updates
+- Bumped `microsphere-logging` to `0.1.13`. (#e6bc40e8)
+- Upgraded `microsphere-java` to `0.3.5`. (#d65b8a7e)
+- Upgraded `microsphere-build` parent to `0.3.0`. (#f40c6220)
+
+## Test Improvements
+- Added unit tests for `classloader` utilities. (#ca731877)
+- Ensured tests in `testFilter` run only for TRACE level. (#cb181e3d)
+- Migrated to JUnit4 for `BeanSourceTest`. (#15f20af5)
+
+## Build and Workflow Enhancements
+- Merged `release-1.x` into `dev-1.x` to keep branches in sync. (#f23d9d09)
+- Bumped version to `0.1.19` post-release of `0.1.18`. (#aa8f7852)
+
+## Other Changes
+- Cleaned up source code: removed duplicated blank lines, unused imports, trailing whitespace, and improved formatting. (#e78d1e3d, #78568f87, #d6ee6bf8)
+- Replaced direct collection constructions with `ListUtils`, `SetUtils`, and `MapUtils` factories for cleaner code. (#ff8c9447, #7b85b665, #31ccab97, #e9cf08a3)
+- Imported `SpringLoggingTest` into `CompositeWebFilterTest` for improved test clarity. (#7f8791ba)
+```
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.18...0.1.19
