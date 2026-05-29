@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.servlet;
@@ -81,7 +82,7 @@ public class ReversedProxyHandlerMappingTest extends AbstractWebMvcTest {
 
     private void initWebEndpointMappingsMap() {
         Collection<WebEndpointMapping> webEndpointMappings = this.webEndpointMappingRegistry.getWebEndpointMappings();
-        this.webEndpointMappingsMap = new HashMap<>(webEndpointMappings.size());
+        this.webEndpointMappingsMap = newHashMap(webEndpointMappings.size());
         for (WebEndpointMapping webEndpointMapping : webEndpointMappings) {
             this.webEndpointMappingsMap.put(webEndpointMapping.getPatterns()[0], webEndpointMapping);
         }

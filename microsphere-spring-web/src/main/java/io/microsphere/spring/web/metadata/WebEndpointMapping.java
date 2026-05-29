@@ -34,6 +34,7 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
@@ -1491,7 +1492,7 @@ public class WebEndpointMapping<E> {
     public <V> WebEndpointMapping<E> setAttribute(String name, @Nullable V value) {
         if (value != null) {
             if (attributes == null) {
-                attributes = new HashMap<>();
+                attributes = newHashMap();
             }
             attributes.put(name, value);
         }

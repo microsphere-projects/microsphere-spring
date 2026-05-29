@@ -38,7 +38,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -52,6 +51,7 @@ import java.util.function.Supplier;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.TypeUtils.isParameterizedType;
 import static io.microsphere.reflect.TypeUtils.resolveActualTypeArgumentClasses;
@@ -93,7 +93,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         List<BeanDefinitionHolder> beanDefinitionHolders = getNonLazyInitSingletonMergedBeanDefinitionHolders(bf);
         int beansCount = beanDefinitionHolders.size();
-        Map<String, Set<String>> dependentBeanNamesMap = new HashMap<>(beansCount);
+        Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
         for (int i = 0; i < beansCount; i++) {
             BeanDefinitionHolder beanDefinitionHolder = beanDefinitionHolders.get(i);
             Set<String> dependentBeanNames = resolveDependentBeanNames(beanDefinitionHolder,
