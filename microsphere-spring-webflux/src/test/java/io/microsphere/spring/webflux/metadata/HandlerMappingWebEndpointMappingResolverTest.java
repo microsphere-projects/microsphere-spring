@@ -44,8 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = {
         SimpleUrlHandlerMappingTestConfig.class,
         HandlerMappingWebEndpointMappingResolver.class,
-        HandlerMappingWebEndpointMappingResolverTest.class,
-
+        HandlerMappingWebEndpointMappingResolverTest.class
 })
 class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebFluxTest {
 
