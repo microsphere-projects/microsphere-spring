@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
 import static io.microsphere.util.ArrayUtils.length;
 import static java.util.Collections.emptyList;
@@ -75,6 +76,6 @@ public class ConsumeMediaTypeExpression extends GenericMediaTypeExpression {
             result.add(new ConsumeMediaTypeExpression(consume));
         }
 
-        return result.isEmpty() ? emptyList() : new ArrayList<>(result);
+        return result.isEmpty() ? emptyList() : newArrayList(result);
     }
 }

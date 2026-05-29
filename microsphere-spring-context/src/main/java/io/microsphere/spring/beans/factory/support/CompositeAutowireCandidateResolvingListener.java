@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static io.microsphere.collection.ListUtils.forEach;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -56,7 +57,7 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
  */
 public class CompositeAutowireCandidateResolvingListener implements AutowireCandidateResolvingListener {
 
-    private final List<AutowireCandidateResolvingListener> listeners = new LinkedList<>();
+    private final List<AutowireCandidateResolvingListener> listeners = newLinkedList();
 
     public CompositeAutowireCandidateResolvingListener(List<AutowireCandidateResolvingListener> listeners) {
         assertNotEmpty(listeners, () -> "The argument 'listeners' must not be empty!");

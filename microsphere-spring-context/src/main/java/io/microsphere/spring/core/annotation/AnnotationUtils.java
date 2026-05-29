@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static io.microsphere.collection.ListUtils.newLinkedList;
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.spring.core.env.PropertyResolverUtils.resolvePlaceholders;
 import static io.microsphere.util.AnnotationUtils.isAnnotationPresent;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
@@ -80,7 +82,7 @@ public abstract class AnnotationUtils {
             return emptyMap();
         }
 
-        Map<ElementType, List<A>> annotationsMap = new LinkedHashMap<>();
+        Map<ElementType, List<A>> annotationsMap = newLinkedHashMap();
 
         Target target = annotationClass.getAnnotation(Target.class);
 
@@ -89,7 +91,7 @@ public abstract class AnnotationUtils {
 
         for (ElementType elementType : elementTypes) {
 
-            List<A> annotationsList = new LinkedList<A>();
+            List<A> annotationsList = newLinkedList();
 
             switch (elementType) {
                 case PARAMETER:

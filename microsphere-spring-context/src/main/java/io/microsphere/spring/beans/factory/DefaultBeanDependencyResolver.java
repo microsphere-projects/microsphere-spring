@@ -53,9 +53,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.MapUtils.ofEntry;
+import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -309,14 +311,14 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                 continue;
             }
             String beanName = entry.getKey();
-            Set<String> flattenDependentBeanNames = new LinkedHashSet<>(dependentBeanNames.size() * 2);
+            Set<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
             // flat
             flatDependentBeanNames(beanName, dependentBeanNamesMap, flattenDependentBeanNames);
             // Replace flattenDependentBeanNames to dependentBeanNames
             entry.setValue(flattenDependentBeanNames);
         }
 
-        Set<String> nonRootBeanNames = new LinkedHashSet<>();
+        Set<String> nonRootBeanNames = newLinkedHashSet();
         for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             String beanName = entry.getKey();
             Set<String> dependentBeanNames = entry.getValue();
@@ -378,7 +380,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private Set<String> resolveDependentBeanNames(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory) {
 
-        Set<String> dependentBeanNames = new LinkedHashSet<>();
+        Set<String> dependentBeanNames = newLinkedHashSet();
         // Resolve the dependent bean names from BeanDefinition
         resolveBeanDefinitionDependentBeanNames(beanDefinition, dependentBeanNames);
         // Resolve the dependent bean names from constructors' parameters
@@ -603,7 +605,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory instanceof DefaultListableBeanFactory dbf) {
-            List<SmartInstantiationAwareBeanPostProcessor> processors = new LinkedList<>();
+            List<SmartInstantiationAwareBeanPostProcessor> processors = newLinkedList();
             List<BeanPostProcessor> beanPostProcessors = dbf.getBeanPostProcessors();
             for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
                 if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor siaBeanProcessor) {

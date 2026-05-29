@@ -27,6 +27,7 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.unmodifiableMap;
@@ -87,7 +88,7 @@ public class ResourceYamlProcessor extends YamlProcessor {
      * @return non-null read-only
      */
     public Map<String, Object> process() {
-        Map<String, Object> storage = new LinkedHashMap<>();
+        Map<String, Object> storage = newLinkedHashMap();
         super.process(((properties, map) -> storage.putAll((Map) properties)));
         return unmodifiableMap(storage);
     }

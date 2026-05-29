@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.web.rule.ProduceMediaTypeExpression.parseExpressions;
 import static io.microsphere.util.ArrayUtils.ofArray;
@@ -141,7 +142,7 @@ class ProduceMediaTypeExpressionTest {
 
     void assertProduceMediaTypeExpressions(List<ProduceMediaTypeExpression> expressions) {
         assertEquals(2, expressions.size());
-        List<MediaType> types = new ArrayList<>();
+        List<MediaType> types = newArrayList();
         for (ProduceMediaTypeExpression expr : expressions) {
             types.add(expr.getMediaType());
         }
