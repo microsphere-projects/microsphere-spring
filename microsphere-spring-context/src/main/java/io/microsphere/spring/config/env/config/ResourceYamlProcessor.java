@@ -24,7 +24,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;

@@ -20,7 +20,6 @@ package io.microsphere.spring.web.rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static io.microsphere.collection.ListUtils.newArrayList;

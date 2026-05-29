@@ -19,7 +19,6 @@ package io.microsphere.spring.web.rule;
 import io.microsphere.annotation.Nullable;
 import org.springframework.http.MediaType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
