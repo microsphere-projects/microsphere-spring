@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.web.annotation;
 
-
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
@@ -36,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.0.0
  */
 class WebExtensionBeanDefinitionRegistrarTest {
-
 
     @EnableWebExtension
     static class DefaultConfig {
