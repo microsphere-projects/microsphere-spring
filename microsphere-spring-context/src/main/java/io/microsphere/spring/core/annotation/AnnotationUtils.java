@@ -25,6 +25,7 @@ import static io.microsphere.util.AnnotationUtils.isAnnotationPresent;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.contains;
 import static io.microsphere.util.ArrayUtils.isEmpty;
+import static io.microsphere.util.ObjectUtils.defaultIfNull;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
@@ -264,7 +265,7 @@ public abstract class AnnotationUtils {
     @Nullable
     public static <T> T getAttribute(Map<String, Object> attributes, String attributeName, T defaultValue) {
         T value = (T) attributes.get(attributeName);
-        return value == null ? defaultValue : value;
+        return defaultIfNull(value, defaultValue);
     }
 
     /**
