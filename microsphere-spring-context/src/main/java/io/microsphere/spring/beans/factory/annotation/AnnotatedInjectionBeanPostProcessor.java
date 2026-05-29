@@ -64,6 +64,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import static io.microsphere.annotation.ConfigurationProperty.SYSTEM_PROPERTIES_SOURCE;
+import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newConcurrentHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -291,7 +292,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                                 "Resolution of declared constructors on bean Class [" + beanClass.getName() +
                                         "] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
                     }
-                    List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
+                    List<Constructor<?>> candidates = newArrayList(rawCandidates.length);
                     Constructor<?> requiredConstructor = null;
                     Constructor<?> defaultConstructor = null;
                     Constructor<?> primaryConstructor = findPrimaryConstructor(beanClass);
@@ -465,7 +466,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
      */
     protected List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedMethodElement> elements = new LinkedList<>();
+        final List<AnnotatedMethodElement> elements = newArrayList();
 
         doWithMethods(beanClass, method -> {
             Method bridgedMethod = findBridgedMethod(method);
