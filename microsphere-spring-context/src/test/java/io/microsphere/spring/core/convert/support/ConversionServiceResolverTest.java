@@ -32,9 +32,8 @@ import static org.springframework.util.ClassUtils.isAssignable;
 /**
  * {@link ConversionServiceResolver} Test
  *
- * @since 1.0.0
- *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
  */
 @SpringLoggingTest
 class ConversionServiceResolverTest {

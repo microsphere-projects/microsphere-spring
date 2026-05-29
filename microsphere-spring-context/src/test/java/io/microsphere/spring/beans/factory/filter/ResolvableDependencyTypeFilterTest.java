@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.beans.factory.filter;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;

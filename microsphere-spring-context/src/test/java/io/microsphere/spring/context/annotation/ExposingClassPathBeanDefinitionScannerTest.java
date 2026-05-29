@@ -17,7 +17,6 @@
 
 package io.microsphere.spring.context.annotation;
 
-
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

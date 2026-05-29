@@ -33,12 +33,11 @@ import static org.springframework.context.ConfigurableApplicationContext.ENVIRON
  * The class to resolve a singleton instance of {@link ConversionService} that may be retrieved from Spring
  * {@link ConfigurableApplicationContext#CONVERSION_SERVICE_BEAN_NAME built-in bean} or create a new one.
  *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ConversionService
  * @see ConfigurableApplicationContext#CONVERSION_SERVICE_BEAN_NAME
  * @see SingletonBeanRegistry#registerSingleton(String, Object)
  * @since 1.0.0
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 public class ConversionServiceResolver {
 

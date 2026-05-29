@@ -25,9 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * {@link EnableConfigurationBeanBindings} Test cases
  *
- * @since 1.0.0
- *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @since 1.0.0
  */
 @EnableConfigurationBeanBindings(
         @EnableConfigurationBeanBinding(prefix = "usr", type = User.class)

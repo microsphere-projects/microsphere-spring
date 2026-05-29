@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 class DependencyTreeWalkerTest {
 
-
     @Test
     void testWalk() {
         DependencyTreeWalker walker = new DependencyTreeWalker();
