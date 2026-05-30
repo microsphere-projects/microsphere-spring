@@ -235,4 +235,26 @@ Thank you for using our library! 🚀
 
 **Full Changelog**: View the [GitHub Changelog](https://github.com/microsphere-projects/microsphere/compare/0.2.18...0.2.19) for more details. 
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.18...0.2.19
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.18...0.2.19## v0.2.20
+
+# Release Notes - Version 0.2.20
+
+## Dependency Updates
+- **microsphere-logging**: Bumped to version `0.1.14`. ([0275c6e](#))
+- **microsphere-java**: Bumped to version `0.3.6`. ([8ef7276](#))
+
+## Documentation
+- Updated README with the latest listed versions. ([e412710](#))
+
+## Code Style Improvements
+- Normalized code formatting and Javadocs for consistency. ([bb243df](#))
+- Removed end-of-file newlines from all Java source files for uniformity. ([ca11232](#))
+
+## Other Changes
+- Merged `main` into `release` multiple times to sync changes. ([7659799](#), [46f8038](#), [3e113f6](#), [2ba4613](#))
+- Removed duplicate line separators in source files. ([80b9d49](#))
+- Bumped version post-release to prepare for further development. ([62e065b](#))
+
+--- 
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.19...0.2.20
