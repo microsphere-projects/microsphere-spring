@@ -29,7 +29,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.SetUtils.ofSet;
@@ -108,7 +107,7 @@ public abstract class EnvironmentUtils implements Utils {
      */
     @Nonnull
     public static Map<String, String> getProperties(Environment environment, Set<String> propertyNames) {
-        HashMap<String, String> properties = new HashMap<>(propertyNames.size());
+        Map<String, String> properties = newHashMap(propertyNames.size());
         propertyNames.stream().filter(StringUtils::hasText).forEach(name -> {
             properties.put(name, environment.getProperty(name));
         });

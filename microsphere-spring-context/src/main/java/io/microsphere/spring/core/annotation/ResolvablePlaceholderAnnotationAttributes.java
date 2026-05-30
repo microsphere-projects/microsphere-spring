@@ -25,7 +25,6 @@ import org.springframework.core.env.PropertyResolver;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
-import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
@@ -124,7 +123,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
             return emptySet();
         }
 
-        LinkedHashSet<AnnotationAttributes> annotationAttributesSet = new LinkedHashSet<>();
+        Set<AnnotationAttributes> annotationAttributesSet = newLinkedHashSet();
         for (int i = 0; i < length; i++) {
             AnnotationAttributes annotationAttributes = attributesArray[i];
             annotationAttributesSet.add(of(annotationAttributes, propertyResolver));

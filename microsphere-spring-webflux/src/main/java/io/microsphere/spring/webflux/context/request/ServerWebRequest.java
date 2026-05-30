@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.HashSet;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.collection.SetUtils.newHashSet;
@@ -163,7 +162,7 @@ public class ServerWebRequest implements NativeWebRequest {
     @Nonnull
     public Iterator<String> getHeaderNames() {
         HttpHeaders httpHeaders = getRequestHeaders();
-        HashSet<String> keys = new HashSet<>(httpHeaders.size());
+        Set<String> keys = newHashSet(httpHeaders.size());
         httpHeaders.forEach((key, values) -> keys.add(key));
         return keys.iterator();
     }

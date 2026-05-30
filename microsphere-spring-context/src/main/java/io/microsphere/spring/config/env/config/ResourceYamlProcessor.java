@@ -25,7 +25,6 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.util.ArrayUtils.ofArray;
@@ -88,7 +87,7 @@ public class ResourceYamlProcessor extends YamlProcessor {
      * @return non-null read-only
      */
     public Map<String, Object> process() {
-        LinkedHashMap<String, Object> storage = new LinkedHashMap<>();
+        Map<String, Object> storage = newLinkedHashMap();
         super.process(((properties, map) -> storage.putAll((Map) properties)));
         return unmodifiableMap(storage);
     }

@@ -35,7 +35,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.collection.Sets.ofSet;
@@ -213,7 +212,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
 
-        LinkedHashSet<String> beanNames = new LinkedHashSet<>();
+        Set<String> beanNames = newLinkedHashSet();
 
         for (String propertyName : properties.keySet()) {
 

@@ -24,7 +24,6 @@ import org.springframework.core.convert.support.ConfigurableConversionService;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.convert.Converter.convertIfPossible;
@@ -55,7 +54,7 @@ public class SpringConverterAdapter implements ConditionalGenericConverter {
     private static Map<ConvertiblePair, Converter> loadConvertersMap() {
         List<Converter> converters = loadServicesList(Converter.class);
         int size = converters.size();
-        HashMap<ConvertiblePair, Converter> convertersMap = new HashMap<>(size);
+        Map<ConvertiblePair, Converter> convertersMap = newHashMap(size);
         for (int i = 0; i < size; i++) {
             Converter converter = converters.get(i);
             ConvertiblePair convertiblePair = buildConvertiblePair(converter);

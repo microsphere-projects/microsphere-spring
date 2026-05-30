@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.Lists.ofList;
@@ -142,7 +141,7 @@ class ProduceMediaTypeExpressionTest {
 
     void assertProduceMediaTypeExpressions(List<ProduceMediaTypeExpression> expressions) {
         assertEquals(2, expressions.size());
-        ArrayList<MediaType> types = new ArrayList<>();
+        List<MediaType> types = newArrayList();
         for (ProduceMediaTypeExpression expr : expressions) {
             types.add(expr.getMediaType());
         }

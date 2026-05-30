@@ -44,8 +44,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -111,7 +109,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
                 continue;
             }
             String beanName = entry.getKey();
-            LinkedHashSet<String> flattenDependentBeanNames = new LinkedHashSet<>(dependentBeanNames.size() * 2);
+            Set<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
             // flat
             flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
             // Replace flattenDependentBeanNames to dependentBeanNames
@@ -174,7 +172,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         String beanName = beanDefinitionHolder.getBeanName();
         RootBeanDefinition beanDefinition = (RootBeanDefinition) beanDefinitionHolder.getBeanDefinition();
 
-        LinkedHashSet<String> dependentBeanNames = new LinkedHashSet<>();
+        Set<String> dependentBeanNames = newLinkedHashSet();
         List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);
         List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolders, beanFactory);
         List<String> injectedBeanNames = resolveInjectionDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolder, beanFactory);
@@ -227,7 +225,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             return emptyList();
         }
 
-        ArrayList<String> dependentBeanNames = new ArrayList<>(size);
+        List<String> dependentBeanNames = newArrayList(size);
         dependentBeanNames.addAll(dependsOnBeanNames);
         dependentBeanNames.addAll(refBeanNames);
         return dependentBeanNames;
@@ -271,7 +269,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             return emptyList();
         }
 
-        ArrayList<String> dependentBeanNames = new ArrayList<>(parametersLength);
+        List<String> dependentBeanNames = newArrayList(parametersLength);
 
         for (int i = 0; i < parametersLength; i++) {
             Parameter parameter = parameters[i];
@@ -349,7 +347,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     private List<BeanDefinitionHolder> getNonLazyInitSingletonMergedBeanDefinitionHolders(ConfigurableListableBeanFactory beanFactory) {
         String[] beanNames = beanFactory.getBeanDefinitionNames();
         int beansCount = beanNames.length;
-        ArrayList<BeanDefinitionHolder> beanDefinitionHolders = new ArrayList<>(beansCount);
+        List<BeanDefinitionHolder> beanDefinitionHolders = newArrayList(beansCount);
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {

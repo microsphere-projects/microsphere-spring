@@ -30,7 +30,6 @@ import org.springframework.core.ResolvableType;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.lang.function.Predicates.and;
@@ -313,7 +312,7 @@ public abstract class BeanDefinitionUtils implements Utils {
             return emptySet();
         }
         Predicate<? super BeanDefinition> predicate = and(predicates);
-        LinkedHashSet<String> matchedBeanNames = new LinkedHashSet<>();
+        Set<String> matchedBeanNames = newLinkedHashSet();
         String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);

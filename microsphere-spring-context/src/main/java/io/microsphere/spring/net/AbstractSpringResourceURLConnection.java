@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.first;
 import static io.microsphere.collection.ListUtils.newArrayList;
@@ -93,7 +92,7 @@ public class AbstractSpringResourceURLConnection extends URLConnection {
     @Override
     public void setRequestProperty(String key, String value) {
         MultiValueMap<String, String> requestProperties = doGetRequestProperties();
-        ArrayList<String> values = new ArrayList<>(1);
+        List<String> values = newArrayList(1);
         values.add(value);
         requestProperties.put(key, values);
     }

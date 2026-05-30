@@ -26,7 +26,6 @@ import org.springframework.context.event.ApplicationContextEvent;
 import java.util.EventObject;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.LinkedHashMap;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,7 +91,7 @@ class OnceApplicationContextEventListenerTest {
             super(applicationContext);
         }
 
-        private final LinkedHashMap<EventObject, AtomicInteger> eventsHandledCount = new LinkedHashMap<>();
+        private final Map<EventObject, AtomicInteger> eventsHandledCount = newLinkedHashMap();
 
         @Override
         protected void onApplicationContextEvent(ApplicationContextEvent event) {

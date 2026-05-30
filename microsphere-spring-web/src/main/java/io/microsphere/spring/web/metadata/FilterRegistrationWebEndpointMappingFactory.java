@@ -23,7 +23,6 @@ import jakarta.servlet.ServletRegistration;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -48,7 +47,7 @@ public class FilterRegistrationWebEndpointMappingFactory extends RegistrationWeb
 
     @Override
     protected Collection<String> getMethods(FilterRegistration registration) {
-        LinkedHashSet<String> allMethods = new LinkedHashSet<>();
+        Set<String> allMethods = newLinkedHashSet();
 
         // Add all HTTP methods when the url patterns are mapped.
         Collection<String> urlPatternMappings = registration.getUrlPatternMappings();

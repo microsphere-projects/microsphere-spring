@@ -20,7 +20,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newHashSet;
@@ -74,7 +73,7 @@ public class WebRequestParamExpression extends AbstractNameValueExpression<Strin
             return emptyList();
         }
         int length = params.length;
-        ArrayList<WebRequestParamExpression> expressions = new ArrayList<>(length);
+        List<WebRequestParamExpression> expressions = newArrayList(length);
         for (int i = 0; i < length; i++) {
             String param = params[i];
             expressions.add(new WebRequestParamExpression(param));

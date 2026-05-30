@@ -34,7 +34,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
@@ -152,7 +151,7 @@ class EventPublishingBeanBeforeProcessor implements InstantiationAwareBeanPostPr
     private void prepareBeanDefinitions(BeanDefinitionRegistry registry) {
         String[] beanNames = registry.getBeanDefinitionNames();
         int length = beanNames.length;
-        ArrayList<BeanDefinitionHolder> beanDefinitionHolders = new ArrayList<>(length);
+        List<BeanDefinitionHolder> beanDefinitionHolders = newArrayList(length);
         for (int i = 0; i < length; i++) {
             String beanName = beanNames[i];
             // add current bean definition with name into holders that will be registered again

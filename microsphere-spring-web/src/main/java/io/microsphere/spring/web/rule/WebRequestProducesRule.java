@@ -26,7 +26,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newArrayList;
@@ -117,7 +116,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
     }
 
     private List<ProduceMediaTypeExpression> getMatchingExpressions(List<MediaType> acceptedMediaTypes) {
-        ArrayList<ProduceMediaTypeExpression> result = new ArrayList<>(this.expressions.size());
+        List<ProduceMediaTypeExpression> result = newArrayList(this.expressions.size());
         for (ProduceMediaTypeExpression expression : this.expressions) {
             if (expression.match(acceptedMediaTypes)) {
                 result.add(expression);

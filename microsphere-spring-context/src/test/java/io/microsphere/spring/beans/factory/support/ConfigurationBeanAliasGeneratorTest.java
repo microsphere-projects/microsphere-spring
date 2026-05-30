@@ -3,7 +3,6 @@ package io.microsphere.spring.beans.factory.support;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-import java.util.HashMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +34,7 @@ class ConfigurationBeanAliasGeneratorTest {
     @Test
     void testPrefixAndBeanNameConnectUseLine() {
         JoinAliasGenerator generator = new HyphenAliasGenerator();
-        HashMap<String, String> table = new HashMap<>();
+        Map<String, String> table = newHashMap();
         table.put("users", "users-bean");
         table.put("spring.users", "springUsers-bean");
         table.put("spring.users.zhangsan", "springUsersZhangsan-bean");
@@ -51,7 +50,7 @@ class ConfigurationBeanAliasGeneratorTest {
     void testPrefixAndBeanNameConnectUseUnderscore() {
         JoinAliasGenerator generator = new UnderScoreJoinAliasGenerator();
 
-        HashMap<String, String> table = new HashMap<>();
+        Map<String, String> table = newHashMap();
         table.put("users", "users_bean");
         table.put("spring.users", "springUsers_bean");
         table.put("spring.users.zhangsan", "springUsersZhangsan_bean");

@@ -44,7 +44,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -249,7 +248,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
         List<ResourcePropertySource> resourcePropertySources = getResourcePropertySources(compositePropertySource);
 
-        ArrayList<ResourcePropertySource> newResourcePropertySources = new ArrayList<>(propertySourceResourcesSize);
+        List<ResourcePropertySource> newResourcePropertySources = newArrayList(propertySourceResourcesSize);
 
         for (int i = 0; i < propertySourceResourcesSize; i++) {
             PropertySourceResource propertySourceResource = propertySourceResources.get(i);
@@ -348,7 +347,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
     private List<ResourcePropertySource> getResourcePropertySources(CompositePropertySource compositePropertySource) {
         Collection<PropertySource<?>> propertySources = compositePropertySource.getPropertySources();
-        ArrayList<ResourcePropertySource> resourcePropertySources = new ArrayList<>(propertySources.size());
+        List<ResourcePropertySource> resourcePropertySources = newArrayList(propertySources.size());
         propertySources.stream()
                 .map(ResourcePropertySource.class::cast)
                 .forEach(resourcePropertySources::add);
@@ -414,7 +413,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         // iterate
         int length = resources.length;
 
-        ArrayList<PropertySourceResource> propertySourceResources = new ArrayList<>(length);
+        List<PropertySourceResource> propertySourceResources = newArrayList(length);
 
         for (int i = 0; i < length; i++) {
             Resource resource = resources[i];

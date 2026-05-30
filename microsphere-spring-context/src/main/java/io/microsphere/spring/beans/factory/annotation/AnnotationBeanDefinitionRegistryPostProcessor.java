@@ -42,7 +42,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Map;
 import java.util.Set;
-import java.util.LinkedHashMap;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -207,7 +206,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
         // Log the main BeanDefinitions
         logBeanDefinitions(mainBeanDefinitionHolders, basePackages);
 
-        LinkedHashMap<String, AnnotatedBeanDefinition> mainBeanDefinitions = new LinkedHashMap<>();
+        Map<String, AnnotatedBeanDefinition> mainBeanDefinitions = newLinkedHashMap();
 
         for (BeanDefinitionHolder beanDefinitionHolder : mainBeanDefinitionHolders) {
             putBeanDefinitions(mainBeanDefinitions, beanDefinitionHolder);

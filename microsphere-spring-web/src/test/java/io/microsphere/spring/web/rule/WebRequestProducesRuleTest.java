@@ -27,7 +27,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createPreFightRequest;
@@ -147,7 +146,7 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     void testMatchingExpressionsReturnFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE, TEXT_PLAIN_VALUE);
 
-        HashMap<String, String> headers = new HashMap<>();
+        Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Matches first expression
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
@@ -159,7 +158,7 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     void testWildcardMediaTypeReturnsFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
-        HashMap<String, String> headers = new HashMap<>();
+        Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, "*/*"); // Wildcard media type
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
@@ -174,7 +173,7 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     void testSuccessfulMatchReturnsTrue() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
-        HashMap<String, String> headers = new HashMap<>();
+        Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Doesn't match rule expressions
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);

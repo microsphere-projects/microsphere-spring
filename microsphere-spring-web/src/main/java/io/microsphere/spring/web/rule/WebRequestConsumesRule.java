@@ -22,7 +22,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newArrayList;
@@ -85,7 +84,7 @@ public class WebRequestConsumesRule extends AbstractWebRequestRule<ConsumeMediaT
     }
 
     List<ConsumeMediaTypeExpression> getMatchingExpressions(MediaType contentType) {
-        ArrayList<ConsumeMediaTypeExpression> result = new ArrayList<>(this.expressions.size());
+        List<ConsumeMediaTypeExpression> result = newArrayList(this.expressions.size());
         for (ConsumeMediaTypeExpression expression : this.expressions) {
             if (expression.match(contentType)) {
                 result.add(expression);

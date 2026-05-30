@@ -22,7 +22,6 @@ import io.microsphere.util.Utils;
 import org.springframework.core.env.PropertyResolver;
 
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.util.ArrayUtils.length;
@@ -49,7 +48,7 @@ public abstract class PropertyResolverUtils implements Utils {
         if (isEmpty(source) || propertyResolver == null) {
             return source;
         }
-        LinkedHashMap<String, Object> copy = new LinkedHashMap<>(source);
+        Map<String, Object> copy = newLinkedHashMap(source);
         for (Map.Entry<String, Object> entry : source.entrySet()) {
             String key = entry.getKey();
             Object value = resolvePlaceholders(entry.getValue(), propertyResolver);

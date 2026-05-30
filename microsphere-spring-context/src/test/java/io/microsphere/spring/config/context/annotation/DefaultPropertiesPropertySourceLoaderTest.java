@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-import java.util.HashMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,7 +45,7 @@ class DefaultPropertiesPropertySourceLoaderTest {
 
     @Test
     void testLoadPropertySource() {
-        HashMap<String, Object> defaultProperties = new HashMap<>();
+        Map<String, Object> defaultProperties = newHashMap();
         loader.loadPropertySource(null, defaultProperties);
         assertTrue(defaultProperties.isEmpty());
     }
