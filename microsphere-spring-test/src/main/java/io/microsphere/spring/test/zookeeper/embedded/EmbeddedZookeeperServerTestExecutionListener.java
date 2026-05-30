@@ -29,6 +29,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
+import java.util.HashMap;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static org.springframework.util.ResourceUtils.getURL;
@@ -76,7 +77,7 @@ class EmbeddedZookeeperServerTestExecutionListener extends AbstractTestExecution
     private File resolveDataDirectory(EmbeddedZookeeperServer embeddedZookeeperServer, int port) throws Exception {
         StandardEnvironment environment = new StandardEnvironment();
         MutablePropertySources propertySources = environment.getPropertySources();
-        Map<String, Object> properties = newHashMap();
+        HashMap<String, Object> properties = new HashMap<>();
         properties.put("port", port);
         MapPropertySource localPropertySource = new MapPropertySource("_", properties);
         propertySources.addLast(localPropertySource);

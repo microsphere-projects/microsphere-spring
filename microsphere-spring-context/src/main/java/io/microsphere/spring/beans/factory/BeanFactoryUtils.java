@@ -34,6 +34,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.first;
 import static io.microsphere.collection.ListUtils.newArrayList;
@@ -132,7 +133,7 @@ public abstract class BeanFactoryUtils implements Utils {
         }
 
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType, true, false);
-        List<T> beans = newArrayList(size);
+        ArrayList<T> beans = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             String beanName = beanNames[i];
             if (containsElement(allBeanNames, beanName)) {

@@ -49,6 +49,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.CollectionUtils.isNotEmpty;
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -308,14 +310,14 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
                 continue;
             }
             String beanName = entry.getKey();
-            Set<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
+            LinkedHashSet<String> flattenDependentBeanNames = new LinkedHashSet<>(dependentBeanNames.size() * 2);
             // flat
             flatDependentBeanNames(beanName, dependentBeanNamesMap, flattenDependentBeanNames);
             // Replace flattenDependentBeanNames to dependentBeanNames
             entry.setValue(flattenDependentBeanNames);
         }
 
-        Set<String> nonRootBeanNames = newLinkedHashSet();
+        LinkedHashSet<String> nonRootBeanNames = new LinkedHashSet<>();
         for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             String beanName = entry.getKey();
             Set<String> dependentBeanNames = entry.getValue();
@@ -377,7 +379,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
     private Set<String> resolveDependentBeanNames(String beanName, RootBeanDefinition beanDefinition, DefaultListableBeanFactory beanFactory) {
 
-        Set<String> dependentBeanNames = newLinkedHashSet();
+        LinkedHashSet<String> dependentBeanNames = new LinkedHashSet<>();
         // Resolve the dependent bean names from BeanDefinition
         resolveBeanDefinitionDependentBeanNames(beanDefinition, dependentBeanNames);
         // Resolve the dependent bean names from constructors' parameters
@@ -624,7 +626,7 @@ public class DefaultBeanDependencyResolver implements BeanDependencyResolver {
 
         String[] beanNames = beanFactory.getBeanDefinitionNames();
         int beansCount = beanNames.length;
-        Map<String, RootBeanDefinition> eligibleBeanDefinitionsMap = newHashMap(beansCount);
+        HashMap<String, RootBeanDefinition> eligibleBeanDefinitionsMap = new HashMap<>(beansCount);
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (isBeanReady(beanName, beanFactory)) {

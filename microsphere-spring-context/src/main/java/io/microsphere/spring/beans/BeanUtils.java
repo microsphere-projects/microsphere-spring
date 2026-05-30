@@ -35,6 +35,8 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
@@ -592,7 +594,7 @@ public abstract class BeanUtils implements Utils {
     @Nonnull
     public static <T> List<T> getSortedBeans(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<T> type) {
         Map<String, T> beansOfType = beansOfTypeIncludingAncestors(beanFactory, type);
-        List<T> beansList = newArrayList(beansOfType.values());
+        ArrayList<T> beansList = new ArrayList<>(beansOfType.values());
         AnnotationAwareOrderComparator.sort(beansList);
         return unmodifiableList(beansList);
     }
@@ -1013,7 +1015,7 @@ public abstract class BeanUtils implements Utils {
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 
-        Map<String, T> sortedBeansMap = newLinkedHashMap(beansMap.size());
+        LinkedHashMap<String, T> sortedBeansMap = new LinkedHashMap<>(beansMap.size());
 
         for (NamingBean<T> namingBean : namingBeans) {
             sortedBeansMap.put(namingBean.name, namingBean.bean);

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.LinkedHashMap;
 
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
@@ -93,7 +94,7 @@ public abstract class WebUtils {
 
         ClassLoader classLoader = servletContext.getClassLoader();
 
-        Map<String, R> foundRegistrationsMap = newLinkedHashMap();
+        LinkedHashMap<String, R> foundRegistrationsMap = new LinkedHashMap<>();
 
         for (Entry<String, R> entry : registrationsMap.entrySet()) {
             R registration = entry.getValue();

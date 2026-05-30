@@ -48,6 +48,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.MapUtils.newHashMap;
@@ -228,12 +229,12 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
             }
         }
 
-        List<HandlerMethodArgumentResolver> newResolvers = newArrayList(resolvers.size() + 1);
+        ArrayList<HandlerMethodArgumentResolver> newResolvers = new ArrayList<>(resolvers.size() + 1);
         // Current instance is the first element, others as the fallback if first can't resolve
         newResolvers.add(this);
         newResolvers.addAll(resolvers);
 
-        List<HandlerMethodReturnValueHandler> newHandlers = newArrayList(handlers.size() + 1);
+        ArrayList<HandlerMethodReturnValueHandler> newHandlers = new ArrayList<>(handlers.size() + 1);
         // Current instance is the first element, others as the fallback if first can't handle
         newHandlers.add(this);
         newHandlers.addAll(handlers);

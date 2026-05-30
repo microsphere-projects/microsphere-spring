@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -70,7 +71,7 @@ class BeanListeners implements BeanListener {
     }
 
     static Set<String> getReadyBeanNames(ConfigurableListableBeanFactory beanFactory) {
-        Set<String> readyBeanNames = newLinkedHashSet();
+        LinkedHashSet<String> readyBeanNames = new LinkedHashSet<>();
         String[] singletonNames = beanFactory.getSingletonNames();
         readyBeanNames.addAll(asList(singletonNames));
         return readyBeanNames;

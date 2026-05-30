@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.HashMap;
 
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.MapUtils.newHashMap;
@@ -56,7 +57,7 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
     public Collection<WebEndpointMapping> resolve(ApplicationContext context) {
         List<WebEndpointMapping> webEndpointMappings = newLinkedList();
         Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(context, HandlerMapping.class);
-        Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = newHashMap();
+        HashMap<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = new HashMap<>();
 
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             resolveFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);

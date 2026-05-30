@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.LinkedHashSet;
 
 import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.ListUtils.newArrayList;
@@ -269,7 +270,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
 
             String beanName = dependentEntry.getKey();
             Set<String> dependentBeanNames = dependentEntry.getValue();
-            Set<String> allBeanNames = newLinkedHashSet(1 + dependentBeanNames.size());
+            LinkedHashSet<String> allBeanNames = new LinkedHashSet<>(1 + dependentBeanNames.size());
             allBeanNames.add(beanName);
             allBeanNames.addAll(dependentBeanNames);
         }

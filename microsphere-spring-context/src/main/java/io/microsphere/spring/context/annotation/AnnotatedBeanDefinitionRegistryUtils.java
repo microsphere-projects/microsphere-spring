@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
@@ -197,7 +199,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
             ClassPathBeanDefinitionScanner classPathBeanDefinitionScanner = new ClassPathBeanDefinitionScanner(registry);
             count = classPathBeanDefinitionScanner.scan(basePackages);
 
-            List<String> scannedBeanNames = newArrayList(count);
+            ArrayList<String> scannedBeanNames = new ArrayList<>(count);
             scannedBeanNames.addAll(asList(registry.getBeanDefinitionNames()));
             scannedBeanNames.removeAll(registeredBeanNames);
 
@@ -316,7 +318,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
                                                                       BeanNameGenerator beanNameGenerator) {
         BeanDefinitionRegistry registry = scanner.getRegistry();
         Set<BeanDefinition> beanDefinitions = scanner.findCandidateComponents(packageToScan);
-        Set<BeanDefinitionHolder> beanDefinitionHolders = newLinkedHashSet(beanDefinitions.size());
+        LinkedHashSet<BeanDefinitionHolder> beanDefinitionHolders = new LinkedHashSet<>(beanDefinitions.size());
         for (BeanDefinition beanDefinition : beanDefinitions) {
             String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
             BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);

@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
@@ -687,7 +688,7 @@ public enum RequestPredicateKind {
         if (size == 0) {
             return buildRequestPredicate(expression);
         } else {
-            List<RequestPredicate> requestPredicates = newArrayList(size);
+            ArrayList<RequestPredicate> requestPredicates = new ArrayList<>(size);
             // set the requestPredicates
             requestPredicateThreadLocal.set(requestPredicates);
             try {

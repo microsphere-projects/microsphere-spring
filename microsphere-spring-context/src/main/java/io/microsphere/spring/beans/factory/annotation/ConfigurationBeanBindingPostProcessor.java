@@ -34,6 +34,7 @@ import org.springframework.core.convert.ConversionService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
@@ -158,7 +159,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     }
 
     public void setConfigurationBeanCustomizers(Collection<ConfigurationBeanCustomizer> configurationBeanCustomizers) {
-        List<ConfigurationBeanCustomizer> customizers = newArrayList(configurationBeanCustomizers);
+        ArrayList<ConfigurationBeanCustomizer> customizers = new ArrayList<>(configurationBeanCustomizers);
         sort(customizers);
         this.configurationBeanCustomizers = unmodifiableList(customizers);
     }

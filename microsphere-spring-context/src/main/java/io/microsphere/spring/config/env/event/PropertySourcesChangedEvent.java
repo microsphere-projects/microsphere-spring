@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.LinkedHashMap;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newLinkedHashMap;
@@ -176,7 +177,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
 
         Predicate<PropertySourceChangedEvent.Kind> predicate = findAny(kinds);
 
-        Map<String, Object> properties = newLinkedHashMap();
+        LinkedHashMap<String, Object> properties = new LinkedHashMap<>();
 
         for (int i = 0; i < size; i++) {
             PropertySourceChangedEvent event = subEvents.get(i);

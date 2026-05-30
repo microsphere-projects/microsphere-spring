@@ -21,6 +21,7 @@ import io.microsphere.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import static io.microsphere.collection.CollectionUtils.size;
 import static io.microsphere.collection.ListUtils.newArrayList;
@@ -340,7 +341,7 @@ public class Dependency {
         if (length < 1) {
             return emptyList();
         }
-        List<Dependency> dependencies = newArrayList(length);
+        ArrayList<Dependency> dependencies = new ArrayList<>(length);
 
         Iterator<String> iterator = beanNames.iterator();
         while (iterator.hasNext()) {

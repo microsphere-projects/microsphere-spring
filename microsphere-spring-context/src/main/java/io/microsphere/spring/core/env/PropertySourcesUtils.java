@@ -19,6 +19,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.MapUtils.newFixedLinkedHashMap;
 import static io.microsphere.collection.MapUtils.newHashMap;
@@ -144,7 +146,7 @@ public abstract class PropertySourcesUtils implements Utils {
     }
 
     public static Set<String> findPropertyNames(ConfigurableEnvironment environment, Predicate<String> propertyNameFilter) {
-        Set<String> propertyNames = newLinkedHashSet();
+        LinkedHashSet<String> propertyNames = new LinkedHashSet<>();
         for (PropertySource propertySource : environment.getPropertySources()) {
             if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
                 for (String propertyName : enumerablePropertySource.getPropertyNames()) {
@@ -224,7 +226,7 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     public static Map<String, Object> getSubProperties(PropertySources propertySources, PropertyResolver propertyResolver, String prefix) {
 
-        Map<String, Object> subProperties = newLinkedHashMap();
+        LinkedHashMap<String, Object> subProperties = new LinkedHashMap<>();
 
         String normalizedPrefix = normalizePrefix(prefix);
 

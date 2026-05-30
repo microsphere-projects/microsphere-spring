@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.LinkedHashSet;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,7 +88,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
     @Test
     void testResolveFieldWithoutResource() {
         Field field = findField(TypedConfig.class, "noResourceField");
-        Set<String> names = newLinkedHashSet();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         resolver.resolve(field, beanFactory, names);
         assertTrue(names.isEmpty());
     }
@@ -98,7 +99,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
     @Test
     void testResolveFieldWithExplicitName() {
         Field field = findField(TypedConfig.class, "namedField");
-        Set<String> names = newLinkedHashSet();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         resolver.resolve(field, beanFactory, names);
         assertEquals(1, names.size());
         assertTrue(names.contains("resourceInjectionPointDependencyResolverTest"));
@@ -110,7 +111,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
     @Test
     void testResolveFieldWithExplicitType() {
         Field field = findField(TypedConfig.class, "typedField");
-        Set<String> names = newLinkedHashSet();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         resolver.resolve(field, beanFactory, names);
         assertFalse(names.isEmpty());
     }
@@ -121,7 +122,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
     @Test
     void testResolveParameterOnNonSetterMethod() {
         Method method = findMethod(TypedConfig.class, "doSomething", ResourceInjectionPointDependencyResolverTest.class);
-        Set<String> names = newLinkedHashSet();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         resolver.resolve(method.getParameters()[0], beanFactory, names);
         // Method name "doSomething" doesn't start with "set", name from resource.name() is "", so "" is added
         assertEquals(1, names.size());
@@ -134,7 +135,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
     void testResolveParameterOnSetterMethod() {
         Method method = findMethod(Config.class, "setResourceInjectionPointDependencyResolverTest",
                 ResourceInjectionPointDependencyResolverTest.class);
-        Set<String> names = newLinkedHashSet();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         resolver.resolve(method.getParameters()[0], beanFactory, names);
         assertEquals(1, names.size());
         assertTrue(names.contains("resourceInjectionPointDependencyResolverTest"));
@@ -146,7 +147,7 @@ class ResourceInjectionPointDependencyResolverTest extends AbstractInjectionPoin
     @Test
     void testResolveParameterWithExplicitName() {
         Method method = findMethod(TypedConfig.class, "setNamedParam", ResourceInjectionPointDependencyResolverTest.class);
-        Set<String> names = newLinkedHashSet();
+        LinkedHashSet<String> names = new LinkedHashSet<>();
         resolver.resolve(method.getParameters()[0], beanFactory, names);
         assertEquals(1, names.size());
         assertTrue(names.contains("resourceInjectionPointDependencyResolverTest"));
