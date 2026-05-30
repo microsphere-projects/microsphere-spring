@@ -199,4 +199,40 @@ Thank you for using our library! 🚀
 
 --- 
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.17...0.2.18
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.17...0.2.18## v0.2.19
+
+# Release Notes for Version 0.2.19
+
+## New Features
+- **Utility Methods**: Added `nullSafeBeanClassLoader` and `nullSafeClassLoader` utilities with documentation and tests.  
+- **Enhancements**: Introduced `BeanSource` enum with corresponding unit tests.  
+
+## Bug Fixes
+- Removed excessive and trailing blank lines across various Java files.  
+- Fixed formatting for `@ContextConfiguration` classes.  
+- Resolved duplicate JavaDoc tags and improved consistency.  
+
+## Documentation
+- Enhanced JavaDoc descriptions for `@Referenced` annotation.  
+- Added missing `@author` and `@since` JavaDoc tags to all Java files.  
+
+## Dependency Updates
+- Upgraded `microsphere-java` to version **0.3.5**.  
+- Upgraded `microsphere-logging` to version **0.1.13**.  
+- Updated project parent version to **0.3.0**.  
+
+## Test Improvements
+- Replaced repetitive list/set/map instantiations with utility methods (`ListUtils`, `SetUtils`, `MapUtils`).  
+- Added tests for new `ClassLoader` utility methods.  
+- Improved test cleanliness and formatting (normalized JavaDocs, removed unnecessary lines).  
+
+## Build and Workflow Enhancements
+- Updated README to reflect new version (**0.2.19** and **0.1.19**).  
+- Regular merges from `main` branch into `release` to maintain consistency.  
+
+## Other Changes
+- General code cleanup: Removed unused imports, optimized code formatting, and applied Apache headers to test files.  
+
+**Full Changelog**: View the [GitHub Changelog](https://github.com/microsphere-projects/microsphere/compare/0.2.18...0.2.19) for more details. 
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.18...0.2.19
