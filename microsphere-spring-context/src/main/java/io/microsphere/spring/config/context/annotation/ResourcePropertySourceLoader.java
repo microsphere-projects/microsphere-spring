@@ -141,10 +141,10 @@ public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<
      *   // .properties files, so that property sources are refreshed when files change on disk.
      * }</pre>
      *
-     * @param extensionAttributes    the extension attributes of the {@link ResourcePropertySource} annotation
+     * @param extensionAttributes     the extension attributes of the {@link ResourcePropertySource} annotation
      * @param propertySourceResources the list of property source resources to watch
-     * @param propertySource         the composite property source that aggregates the individual sources
-     * @param refresher              the refresher to invoke when file changes are detected
+     * @param propertySource          the composite property source that aggregates the individual sources
+     * @param refresher               the refresher to invoke when file changes are detected
      * @throws Throwable if configuring the file watch service fails
      */
     @Override
