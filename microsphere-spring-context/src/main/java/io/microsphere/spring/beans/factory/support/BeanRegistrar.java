@@ -477,7 +477,7 @@ public abstract class BeanRegistrar {
     public static Map<Class, String> registerSpringFactoriesBeans(BeanDefinitionRegistry registry, Class<?>... factoryClasses) {
         // Convert the array of factory classes into a Set for efficient lookup and to avoid duplicates
         Set<Class<?>> factoryClassesSet = ofSet(factoryClasses);
-        Map<Class, String> registeredBeanClassesAndNames = newHashMap(factoryClassesSet.size() * 2);
+        java.util.HashMap<Class, String> registeredBeanClassesAndNames = newHashMap(factoryClassesSet.size() * 2);
         for (Class<?> factoryClass : factoryClassesSet) {
             ClassLoader classLoader = factoryClass.getClassLoader();
             List<String> factoryImplClassNames = loadFactoryNames(factoryClass, classLoader);

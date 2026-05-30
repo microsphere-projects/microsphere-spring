@@ -312,7 +312,7 @@ public abstract class BeanDefinitionUtils implements Utils {
             return emptySet();
         }
         Predicate<? super BeanDefinition> predicate = and(predicates);
-        Set<String> matchedBeanNames = newLinkedHashSet();
+        java.util.LinkedHashSet<String> matchedBeanNames = newLinkedHashSet();
         String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
         for (String beanDefinitionName : beanDefinitionNames) {
             BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);

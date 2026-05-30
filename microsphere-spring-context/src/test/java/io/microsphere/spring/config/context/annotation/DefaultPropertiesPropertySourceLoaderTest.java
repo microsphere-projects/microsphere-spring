@@ -45,7 +45,7 @@ class DefaultPropertiesPropertySourceLoaderTest {
 
     @Test
     void testLoadPropertySource() {
-        Map<String, Object> defaultProperties = newHashMap();
+        java.util.HashMap<String, Object> defaultProperties = newHashMap();
         loader.loadPropertySource(null, defaultProperties);
         assertTrue(defaultProperties.isEmpty());
     }

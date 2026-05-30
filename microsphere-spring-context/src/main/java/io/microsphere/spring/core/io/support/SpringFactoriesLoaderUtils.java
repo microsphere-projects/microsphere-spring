@@ -91,7 +91,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
             return emptyList();
         }
 
-        List<T> factories = newArrayList(factorySize);
+        java.util.ArrayList<T> factories = newArrayList(factorySize);
 
         for (String factoryClassName : factoryClassNames) {
             Class<?> factoryImplClass = resolveClassName(factoryClassName, classLoader);

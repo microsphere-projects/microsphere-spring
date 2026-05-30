@@ -146,7 +146,7 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     void testMatchingExpressionsReturnFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE, TEXT_PLAIN_VALUE);
 
-        Map<String, String> headers = newHashMap();
+        java.util.HashMap<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Matches first expression
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
@@ -158,7 +158,7 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     void testWildcardMediaTypeReturnsFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
-        Map<String, String> headers = newHashMap();
+        java.util.HashMap<String, String> headers = newHashMap();
         headers.put(ACCEPT, "*/*"); // Wildcard media type
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
@@ -173,7 +173,7 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     void testSuccessfulMatchReturnsTrue() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
-        Map<String, String> headers = newHashMap();
+        java.util.HashMap<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Doesn't match rule expressions
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);

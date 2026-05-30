@@ -73,7 +73,7 @@ public class WebRequestParamExpression extends AbstractNameValueExpression<Strin
             return emptyList();
         }
         int length = params.length;
-        List<WebRequestParamExpression> expressions = newArrayList(length);
+        java.util.ArrayList<WebRequestParamExpression> expressions = newArrayList(length);
         for (int i = 0; i < length; i++) {
             String param = params[i];
             expressions.add(new WebRequestParamExpression(param));

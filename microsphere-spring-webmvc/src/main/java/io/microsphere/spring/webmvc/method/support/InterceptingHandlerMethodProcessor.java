@@ -228,12 +228,12 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
             }
         }
 
-        List<HandlerMethodArgumentResolver> newResolvers = newArrayList(resolvers.size() + 1);
+        java.util.ArrayList<HandlerMethodArgumentResolver> newResolvers = newArrayList(resolvers.size() + 1);
         // Current instance is the first element, others as the fallback if first can't resolve
         newResolvers.add(this);
         newResolvers.addAll(resolvers);
 
-        List<HandlerMethodReturnValueHandler> newHandlers = newArrayList(handlers.size() + 1);
+        java.util.ArrayList<HandlerMethodReturnValueHandler> newHandlers = newArrayList(handlers.size() + 1);
         // Current instance is the first element, others as the fallback if first can't handle
         newHandlers.add(this);
         newHandlers.addAll(handlers);

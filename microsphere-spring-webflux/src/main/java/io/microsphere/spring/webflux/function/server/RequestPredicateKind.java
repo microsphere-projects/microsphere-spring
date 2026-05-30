@@ -687,7 +687,7 @@ public enum RequestPredicateKind {
         if (size == 0) {
             return buildRequestPredicate(expression);
         } else {
-            List<RequestPredicate> requestPredicates = newArrayList(size);
+            java.util.ArrayList<RequestPredicate> requestPredicates = newArrayList(size);
             // set the requestPredicates
             requestPredicateThreadLocal.set(requestPredicates);
             try {
@@ -770,7 +770,7 @@ public enum RequestPredicateKind {
     }
 
     static List<String> getComposeExpressions(StringBuilder expression) {
-        List<String> composeExpressions = newLinkedList();
+        java.util.LinkedList<String> composeExpressions = newLinkedList();
         MutableInteger index = new MutableInteger(0);
         String composeExpression;
         do {

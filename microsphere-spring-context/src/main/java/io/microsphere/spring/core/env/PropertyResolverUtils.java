@@ -48,7 +48,7 @@ public abstract class PropertyResolverUtils implements Utils {
         if (isEmpty(source) || propertyResolver == null) {
             return source;
         }
-        Map<String, Object> copy = newLinkedHashMap(source);
+        java.util.LinkedHashMap<String, Object> copy = newLinkedHashMap(source);
         for (Map.Entry<String, Object> entry : source.entrySet()) {
             String key = entry.getKey();
             Object value = resolvePlaceholders(entry.getValue(), propertyResolver);

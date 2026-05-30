@@ -162,7 +162,7 @@ public class ServerWebRequest implements NativeWebRequest {
     @Nonnull
     public Iterator<String> getHeaderNames() {
         HttpHeaders httpHeaders = getRequestHeaders();
-        Set<String> keys = newHashSet(httpHeaders.size());
+        java.util.HashSet<String> keys = newHashSet(httpHeaders.size());
         httpHeaders.forEach((key, values) -> keys.add(key));
         return keys.iterator();
     }

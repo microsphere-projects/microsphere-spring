@@ -151,7 +151,7 @@ class EventPublishingBeanBeforeProcessor implements InstantiationAwareBeanPostPr
     private void prepareBeanDefinitions(BeanDefinitionRegistry registry) {
         String[] beanNames = registry.getBeanDefinitionNames();
         int length = beanNames.length;
-        List<BeanDefinitionHolder> beanDefinitionHolders = newArrayList(length);
+        java.util.ArrayList<BeanDefinitionHolder> beanDefinitionHolders = newArrayList(length);
         for (int i = 0; i < length; i++) {
             String beanName = beanNames[i];
             // add current bean definition with name into holders that will be registered again

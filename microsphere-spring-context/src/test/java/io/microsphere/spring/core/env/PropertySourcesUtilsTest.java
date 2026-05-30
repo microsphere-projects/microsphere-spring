@@ -152,8 +152,8 @@ class PropertySourcesUtilsTest {
 
         MutablePropertySources propertySources = environment.getPropertySources();
 
-        Map<String, Object> source = newHashMap();
-        Map<String, Object> source2 = newHashMap();
+        java.util.HashMap<String, Object> source = newHashMap();
+        java.util.HashMap<String, Object> source2 = newHashMap();
 
         MapPropertySource propertySource = new MapPropertySource("propertySource", source);
         MapPropertySource propertySource2 = new MapPropertySource("propertySource2", source2);
@@ -172,7 +172,7 @@ class PropertySourcesUtilsTest {
         source2.put("user.name", "mercyblitz");
         source2.put("user.age", "32");
 
-        Map<String, Object> expected = newHashMap();
+        java.util.HashMap<String, Object> expected = newHashMap();
         expected.put("name", "Mercy");
         expected.put("age", "31");
 

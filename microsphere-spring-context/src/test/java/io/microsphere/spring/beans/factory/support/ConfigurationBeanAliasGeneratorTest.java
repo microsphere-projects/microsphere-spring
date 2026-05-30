@@ -34,7 +34,7 @@ class ConfigurationBeanAliasGeneratorTest {
     @Test
     void testPrefixAndBeanNameConnectUseLine() {
         JoinAliasGenerator generator = new HyphenAliasGenerator();
-        Map<String, String> table = newHashMap();
+        java.util.HashMap<String, String> table = newHashMap();
         table.put("users", "users-bean");
         table.put("spring.users", "springUsers-bean");
         table.put("spring.users.zhangsan", "springUsersZhangsan-bean");
@@ -50,7 +50,7 @@ class ConfigurationBeanAliasGeneratorTest {
     void testPrefixAndBeanNameConnectUseUnderscore() {
         JoinAliasGenerator generator = new UnderScoreJoinAliasGenerator();
 
-        Map<String, String> table = newHashMap();
+        java.util.HashMap<String, String> table = newHashMap();
         table.put("users", "users_bean");
         table.put("spring.users", "springUsers_bean");
         table.put("spring.users.zhangsan", "springUsersZhangsan_bean");

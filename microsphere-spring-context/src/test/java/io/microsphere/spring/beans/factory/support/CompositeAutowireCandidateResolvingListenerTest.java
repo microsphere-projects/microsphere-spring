@@ -47,7 +47,7 @@ class CompositeAutowireCandidateResolvingListenerTest {
 
     @Test
     void testConstructorWithNullElementThrowsException() {
-        List<AutowireCandidateResolvingListener> listeners = newLinkedList();
+        java.util.LinkedList<AutowireCandidateResolvingListener> listeners = newLinkedList();
         listeners.add(null);
         assertThrows(IllegalArgumentException.class,
                 () -> new CompositeAutowireCandidateResolvingListener(listeners));

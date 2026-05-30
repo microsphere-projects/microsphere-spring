@@ -80,7 +80,7 @@ public abstract class AnnotationUtils {
             return emptyMap();
         }
 
-        Map<ElementType, List<A>> annotationsMap = newLinkedHashMap();
+        java.util.LinkedHashMap<ElementType, List<A>> annotationsMap = newLinkedHashMap();
 
         Target target = annotationClass.getAnnotation(Target.class);
 
@@ -88,7 +88,7 @@ public abstract class AnnotationUtils {
 
         for (ElementType elementType : elementTypes) {
 
-            List<A> annotationsList = newLinkedList();
+            java.util.LinkedList<A> annotationsList = newLinkedList();
 
             switch (elementType) {
                 case PARAMETER:

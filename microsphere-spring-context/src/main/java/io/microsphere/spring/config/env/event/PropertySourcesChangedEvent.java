@@ -176,7 +176,7 @@ public class PropertySourcesChangedEvent extends ApplicationContextEvent {
 
         Predicate<PropertySourceChangedEvent.Kind> predicate = findAny(kinds);
 
-        Map<String, Object> properties = newLinkedHashMap();
+        java.util.LinkedHashMap<String, Object> properties = newLinkedHashMap();
 
         for (int i = 0; i < size; i++) {
             PropertySourceChangedEvent event = subEvents.get(i);

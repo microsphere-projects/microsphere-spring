@@ -56,9 +56,9 @@ public class HandlerMappingWebEndpointMappingResolver implements WebEndpointMapp
 
     @Override
     public Collection<WebEndpointMapping> resolve(ApplicationContext context) {
-        List<WebEndpointMapping> webEndpointMappings = newLinkedList();
+        java.util.LinkedList<WebEndpointMapping> webEndpointMappings = newLinkedList();
         Map<String, HandlerMapping> handlerMappingsMap = beansOfTypeIncludingAncestors(context, HandlerMapping.class);
-        Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = newHashMap();
+        java.util.HashMap<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethods = newHashMap();
 
         for (HandlerMapping handlerMapping : handlerMappingsMap.values()) {
             resolveFromAbstractUrlHandlerMapping(handlerMapping, webEndpointMappings);

@@ -138,7 +138,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
             return;
         }
 
-        Set<Class<?>> classesToRegister = newLinkedHashSet(annotatedClasses);
+        java.util.LinkedHashSet<Class<?>> classesToRegister = newLinkedHashSet(annotatedClasses);
 
         // Remove all annotated-classes that have been registered
         Iterator<Class<?>> iterator = classesToRegister.iterator();
@@ -197,7 +197,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
             ClassPathBeanDefinitionScanner classPathBeanDefinitionScanner = new ClassPathBeanDefinitionScanner(registry);
             count = classPathBeanDefinitionScanner.scan(basePackages);
 
-            List<String> scannedBeanNames = newArrayList(count);
+            java.util.ArrayList<String> scannedBeanNames = newArrayList(count);
             scannedBeanNames.addAll(asList(registry.getBeanDefinitionNames()));
             scannedBeanNames.removeAll(registeredBeanNames);
 
@@ -316,7 +316,7 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils implements Utils {
                                                                       BeanNameGenerator beanNameGenerator) {
         BeanDefinitionRegistry registry = scanner.getRegistry();
         Set<BeanDefinition> beanDefinitions = scanner.findCandidateComponents(packageToScan);
-        Set<BeanDefinitionHolder> beanDefinitionHolders = newLinkedHashSet(beanDefinitions.size());
+        java.util.LinkedHashSet<BeanDefinitionHolder> beanDefinitionHolders = newLinkedHashSet(beanDefinitions.size());
         for (BeanDefinition beanDefinition : beanDefinitions) {
             String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
             BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);

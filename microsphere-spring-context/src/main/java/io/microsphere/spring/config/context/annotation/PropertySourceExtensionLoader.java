@@ -213,7 +213,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
                     return;
                 }
 
-                List<PropertySourceChangedEvent> subEvents = newLinkedList();
+                java.util.LinkedList<PropertySourceChangedEvent> subEvents = newLinkedList();
 
                 if (resource == null) { // No Resource specified
                     refreshPropertySources(extensionAttributes, propertySourceName, factory, resourceComparator, resourceValue, compositePropertySource, subEvents);
@@ -248,7 +248,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
         List<ResourcePropertySource> resourcePropertySources = getResourcePropertySources(compositePropertySource);
 
-        List<ResourcePropertySource> newResourcePropertySources = newArrayList(propertySourceResourcesSize);
+        java.util.ArrayList<ResourcePropertySource> newResourcePropertySources = newArrayList(propertySourceResourcesSize);
 
         for (int i = 0; i < propertySourceResourcesSize; i++) {
             PropertySourceResource propertySourceResource = propertySourceResources.get(i);
@@ -347,7 +347,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
 
     private List<ResourcePropertySource> getResourcePropertySources(CompositePropertySource compositePropertySource) {
         Collection<PropertySource<?>> propertySources = compositePropertySource.getPropertySources();
-        List<ResourcePropertySource> resourcePropertySources = newArrayList(propertySources.size());
+        java.util.ArrayList<ResourcePropertySource> resourcePropertySources = newArrayList(propertySources.size());
         propertySources.stream()
                 .map(ResourcePropertySource.class::cast)
                 .forEach(resourcePropertySources::add);
@@ -380,7 +380,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
             throw new IllegalArgumentException("The 'value' attribute must be present at the annotation : @" + getAnnotationType().getName());
         }
 
-        List<PropertySourceResource> propertySourceResources = newLinkedList();
+        java.util.LinkedList<PropertySourceResource> propertySourceResources = newLinkedList();
 
         for (String resourceValue : resourceValues) {
             propertySourceResources.addAll(resolvePropertySourceResources(extensionAttributes, propertySourceName, resourceValue, resourceComparator));
@@ -413,7 +413,7 @@ public abstract class PropertySourceExtensionLoader<A extends Annotation, EA ext
         // iterate
         int length = resources.length;
 
-        List<PropertySourceResource> propertySourceResources = newArrayList(length);
+        java.util.ArrayList<PropertySourceResource> propertySourceResources = newArrayList(length);
 
         for (int i = 0; i < length; i++) {
             Resource resource = resources[i];

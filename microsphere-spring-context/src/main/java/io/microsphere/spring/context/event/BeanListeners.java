@@ -70,7 +70,7 @@ class BeanListeners implements BeanListener {
     }
 
     static Set<String> getReadyBeanNames(ConfigurableListableBeanFactory beanFactory) {
-        Set<String> readyBeanNames = newLinkedHashSet();
+        java.util.LinkedHashSet<String> readyBeanNames = newLinkedHashSet();
         String[] singletonNames = beanFactory.getSingletonNames();
         readyBeanNames.addAll(asList(singletonNames));
         return readyBeanNames;
@@ -84,7 +84,7 @@ class BeanListeners implements BeanListener {
     private List<NamedBeanHolder<BeanListener>> getBeanListeners(ConfigurableListableBeanFactory beanFactory) {
         registerSpringFactoriesBeans(beanFactory, BeanListener.class);
         Map<String, BeanListener> beanEventListenersMap = beanFactory.getBeansOfType(BeanListener.class);
-        List<NamedBeanHolder<BeanListener>> namedListeners = newArrayList(beanEventListenersMap.size());
+        java.util.ArrayList<NamedBeanHolder<BeanListener>> namedListeners = newArrayList(beanEventListenersMap.size());
         for (Entry<String, BeanListener> entry : beanEventListenersMap.entrySet()) {
             NamedBeanHolder<BeanListener> namedListener = new NamedBeanHolder<>(entry.getKey(), entry.getValue());
             namedListeners.add(namedListener);

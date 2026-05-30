@@ -76,7 +76,7 @@ class EmbeddedZookeeperServerTestExecutionListener extends AbstractTestExecution
     private File resolveDataDirectory(EmbeddedZookeeperServer embeddedZookeeperServer, int port) throws Exception {
         StandardEnvironment environment = new StandardEnvironment();
         MutablePropertySources propertySources = environment.getPropertySources();
-        Map<String, Object> properties = newHashMap();
+        java.util.HashMap<String, Object> properties = newHashMap();
         properties.put("port", port);
         MapPropertySource localPropertySource = new MapPropertySource("_", properties);
         propertySources.addLast(localPropertySource);

@@ -206,7 +206,7 @@ public abstract class AnnotationBeanDefinitionRegistryPostProcessor implements B
         // Log the main BeanDefinitions
         logBeanDefinitions(mainBeanDefinitionHolders, basePackages);
 
-        Map<String, AnnotatedBeanDefinition> mainBeanDefinitions = newLinkedHashMap();
+        java.util.LinkedHashMap<String, AnnotatedBeanDefinition> mainBeanDefinitions = newLinkedHashMap();
 
         for (BeanDefinitionHolder beanDefinitionHolder : mainBeanDefinitionHolders) {
             putBeanDefinitions(mainBeanDefinitions, beanDefinitionHolder);

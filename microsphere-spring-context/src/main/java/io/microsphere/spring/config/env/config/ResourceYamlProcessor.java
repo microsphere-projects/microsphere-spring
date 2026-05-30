@@ -87,7 +87,7 @@ public class ResourceYamlProcessor extends YamlProcessor {
      * @return non-null read-only
      */
     public Map<String, Object> process() {
-        Map<String, Object> storage = newLinkedHashMap();
+        java.util.LinkedHashMap<String, Object> storage = newLinkedHashMap();
         super.process(((properties, map) -> storage.putAll((Map) properties)));
         return unmodifiableMap(storage);
     }

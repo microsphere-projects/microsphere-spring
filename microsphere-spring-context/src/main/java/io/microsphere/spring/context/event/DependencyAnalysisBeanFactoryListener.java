@@ -91,7 +91,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         // Not Ready & Non-Lazy-Init Merged BeanDefinitions
         List<BeanDefinitionHolder> beanDefinitionHolders = getNonLazyInitSingletonMergedBeanDefinitionHolders(bf);
         int beansCount = beanDefinitionHolders.size();
-        Map<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
+        java.util.HashMap<String, Set<String>> dependentBeanNamesMap = newHashMap(beansCount);
         for (int i = 0; i < beansCount; i++) {
             BeanDefinitionHolder beanDefinitionHolder = beanDefinitionHolders.get(i);
             Set<String> dependentBeanNames = resolveDependentBeanNames(beanDefinitionHolder,
@@ -102,14 +102,14 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     }
 
     private void flattenDependentBeanNamesMap(Map<String, Set<String>> dependentBeanNamesMap) {
-        Map<String, Set<String>> dependenciesMap = newLinkedHashMap(dependentBeanNamesMap.size());
+        java.util.LinkedHashMap<String, Set<String>> dependenciesMap = newLinkedHashMap(dependentBeanNamesMap.size());
         for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
             Set<String> dependentBeanNames = entry.getValue();
             if (dependentBeanNames.isEmpty()) { // No Dependent bean name
                 continue;
             }
             String beanName = entry.getKey();
-            Set<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
+            java.util.LinkedHashSet<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
             // flat
             flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
             // Replace flattenDependentBeanNames to dependentBeanNames
@@ -172,7 +172,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
         String beanName = beanDefinitionHolder.getBeanName();
         RootBeanDefinition beanDefinition = (RootBeanDefinition) beanDefinitionHolder.getBeanDefinition();
 
-        Set<String> dependentBeanNames = newLinkedHashSet();
+        java.util.LinkedHashSet<String> dependentBeanNames = newLinkedHashSet();
         List<String> beanDefinitionDependentBeanNames = resolveBeanDefinitionDependentBeanNames(beanDefinition);
         List<String> parameterDependentBeanNames = resolveParameterDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolders, beanFactory);
         List<String> injectedBeanNames = resolveInjectionDependentBeanNames(beanName, beanDefinition, resolvableDependencyTypeFilter, beanDefinitionHolder, beanFactory);
@@ -193,7 +193,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
                                                             Filter<Class<?>> resolvableDependencyTypeFilter,
                                                             BeanDefinitionHolder beanDefinitionHolder,
                                                             DefaultListableBeanFactory beanFactory) {
-        List<String> injectedBeanNames = newLinkedList();
+        java.util.LinkedList<String> injectedBeanNames = newLinkedList();
         // TODO
         return injectedBeanNames;
     }
@@ -225,7 +225,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             return emptyList();
         }
 
-        List<String> dependentBeanNames = newArrayList(size);
+        java.util.ArrayList<String> dependentBeanNames = newArrayList(size);
         dependentBeanNames.addAll(dependsOnBeanNames);
         dependentBeanNames.addAll(refBeanNames);
         return dependentBeanNames;
@@ -244,7 +244,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             return emptyList();
         }
 
-        List<String> dependentBeanNames = newLinkedList();
+        java.util.LinkedList<String> dependentBeanNames = newLinkedList();
 
         for (int i = 0; i < propertyValuesLength; i++) {
             PropertyValue propertyValue = propertyValues[i];
@@ -269,7 +269,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             return emptyList();
         }
 
-        List<String> dependentBeanNames = newArrayList(parametersLength);
+        java.util.ArrayList<String> dependentBeanNames = newArrayList(parametersLength);
 
         for (int i = 0; i < parametersLength; i++) {
             Parameter parameter = parameters[i];
@@ -347,7 +347,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
     private List<BeanDefinitionHolder> getNonLazyInitSingletonMergedBeanDefinitionHolders(ConfigurableListableBeanFactory beanFactory) {
         String[] beanNames = beanFactory.getBeanDefinitionNames();
         int beansCount = beanNames.length;
-        List<BeanDefinitionHolder> beanDefinitionHolders = newArrayList(beansCount);
+        java.util.ArrayList<BeanDefinitionHolder> beanDefinitionHolders = newArrayList(beansCount);
         for (int i = 0; i < beansCount; i++) {
             String beanName = beanNames[i];
             if (beanFactory.containsSingleton(beanName)) {
@@ -384,7 +384,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private List<SmartInstantiationAwareBeanPostProcessor> getSmartInstantiationAwareBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory instanceof DefaultListableBeanFactory dbf) {
-            List<SmartInstantiationAwareBeanPostProcessor> processors = newLinkedList();
+            java.util.LinkedList<SmartInstantiationAwareBeanPostProcessor> processors = newLinkedList();
             List<BeanPostProcessor> beanPostProcessors = dbf.getBeanPostProcessors();
             for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
                 if (beanPostProcessor instanceof SmartInstantiationAwareBeanPostProcessor siaBeanProcessor) {

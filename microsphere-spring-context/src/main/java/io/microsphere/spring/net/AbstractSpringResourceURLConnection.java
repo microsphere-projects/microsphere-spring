@@ -92,7 +92,7 @@ public class AbstractSpringResourceURLConnection extends URLConnection {
     @Override
     public void setRequestProperty(String key, String value) {
         MultiValueMap<String, String> requestProperties = doGetRequestProperties();
-        List<String> values = newArrayList(1);
+        java.util.ArrayList<String> values = newArrayList(1);
         values.add(value);
         requestProperties.put(key, values);
     }

@@ -123,7 +123,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
             return emptySet();
         }
 
-        Set<AnnotationAttributes> annotationAttributesSet = newLinkedHashSet();
+        java.util.LinkedHashSet<AnnotationAttributes> annotationAttributesSet = newLinkedHashSet();
         for (int i = 0; i < length; i++) {
             AnnotationAttributes annotationAttributes = attributesArray[i];
             annotationAttributesSet.add(of(annotationAttributes, propertyResolver));

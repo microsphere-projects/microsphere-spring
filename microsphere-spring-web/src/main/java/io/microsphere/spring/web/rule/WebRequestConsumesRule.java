@@ -84,7 +84,7 @@ public class WebRequestConsumesRule extends AbstractWebRequestRule<ConsumeMediaT
     }
 
     List<ConsumeMediaTypeExpression> getMatchingExpressions(MediaType contentType) {
-        List<ConsumeMediaTypeExpression> result = newArrayList(this.expressions.size());
+        java.util.ArrayList<ConsumeMediaTypeExpression> result = newArrayList(this.expressions.size());
         for (ConsumeMediaTypeExpression expression : this.expressions) {
             if (expression.match(contentType)) {
                 result.add(expression);

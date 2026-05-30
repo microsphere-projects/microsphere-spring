@@ -220,7 +220,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
 
     private List<Set<String>> resolveBeanNamesInDependencyPaths(Map<String, Set<String>> dependentBeanNamesMap) {
         List<Set<String>> beanNamesList = buildBeanNamesList(dependentBeanNamesMap);
-        List<Set<String>> dependencyPaths = newLinkedList();
+        java.util.LinkedList<Set<String>> dependencyPaths = newLinkedList();
         int size = beanNamesList.size();
         for (int i = 0; i < size; i++) {
             Set<String> beanNames = beanNamesList.get(i);
@@ -247,7 +247,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
     }
 
     private List<Set<String>> buildBeanNamesList(Map<String, Set<String>> dependentBeanNamesMap) {
-        List<Set<String>> beanNamesList = newArrayList(dependentBeanNamesMap.size());
+        java.util.ArrayList<Set<String>> beanNamesList = newArrayList(dependentBeanNamesMap.size());
         for (Entry<String, Set<String>> dependentEntry : dependentBeanNamesMap.entrySet()) {
             String beanName = dependentEntry.getKey();
             Set<String> dependentBeanNames = dependentEntry.getValue();
@@ -269,7 +269,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
 
             String beanName = dependentEntry.getKey();
             Set<String> dependentBeanNames = dependentEntry.getValue();
-            Set<String> allBeanNames = newLinkedHashSet(1 + dependentBeanNames.size());
+            java.util.LinkedHashSet<String> allBeanNames = newLinkedHashSet(1 + dependentBeanNames.size());
             allBeanNames.add(beanName);
             allBeanNames.addAll(dependentBeanNames);
         }

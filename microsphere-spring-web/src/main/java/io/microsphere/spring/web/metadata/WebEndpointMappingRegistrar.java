@@ -91,7 +91,7 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
      */
     @Nonnull
     protected Collection<WebEndpointMapping> resolveWebEndpointMappings() {
-        List<WebEndpointMapping> webEndpointMappings = newLinkedList();
+        java.util.LinkedList<WebEndpointMapping> webEndpointMappings = newLinkedList();
         List<WebEndpointMappingResolver> resolvers = getWebEndpointMappingResolvers();
         ApplicationContext context = this.context;
         for (WebEndpointMappingResolver resolver : resolvers) {
@@ -110,7 +110,7 @@ public class WebEndpointMappingRegistrar extends AbstractSmartLifecycle {
      */
     @Nonnull
     protected List<WebEndpointMappingResolver> getWebEndpointMappingResolvers() {
-        List<WebEndpointMappingResolver> resolvers = newLinkedList();
+        java.util.LinkedList<WebEndpointMappingResolver> resolvers = newLinkedList();
         ApplicationContext context = this.context;
         Class<WebEndpointMappingResolver> beanType = WebEndpointMappingResolver.class;
         resolvers.addAll(getSortedBeans(context, beanType));

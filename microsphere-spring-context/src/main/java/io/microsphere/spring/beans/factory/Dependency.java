@@ -340,7 +340,7 @@ public class Dependency {
         if (length < 1) {
             return emptyList();
         }
-        List<Dependency> dependencies = newArrayList(length);
+        java.util.ArrayList<Dependency> dependencies = newArrayList(length);
 
         Iterator<String> iterator = beanNames.iterator();
         while (iterator.hasNext()) {

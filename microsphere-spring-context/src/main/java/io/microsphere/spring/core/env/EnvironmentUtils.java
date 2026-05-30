@@ -107,7 +107,7 @@ public abstract class EnvironmentUtils implements Utils {
      */
     @Nonnull
     public static Map<String, String> getProperties(Environment environment, Set<String> propertyNames) {
-        Map<String, String> properties = newHashMap(propertyNames.size());
+        java.util.HashMap<String, String> properties = newHashMap(propertyNames.size());
         propertyNames.stream().filter(StringUtils::hasText).forEach(name -> {
             properties.put(name, environment.getProperty(name));
         });

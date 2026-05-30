@@ -290,7 +290,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                                 "Resolution of declared constructors on bean Class [" + beanClass.getName() +
                                         "] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
                     }
-                    List<Constructor<?>> candidates = newArrayList(rawCandidates.length);
+                    java.util.ArrayList<Constructor<?>> candidates = newArrayList(rawCandidates.length);
                     Constructor<?> requiredConstructor = null;
                     Constructor<?> defaultConstructor = null;
                     Constructor<?> primaryConstructor = findPrimaryConstructor(beanClass);
@@ -425,7 +425,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
      */
     protected List<AnnotatedFieldElement> findFieldAnnotationMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedFieldElement> elements = newLinkedList();
+        final java.util.LinkedList<AnnotatedFieldElement> elements = newLinkedList();
 
         doWithFields(beanClass, field -> {
             for (Class<? extends Annotation> annotationType : getAnnotationTypes()) {
@@ -464,7 +464,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
      */
     protected List<AnnotatedMethodElement> findAnnotatedMethodMetadata(final Class<?> beanClass) {
 
-        final List<AnnotatedMethodElement> elements = newArrayList();
+        final java.util.ArrayList<AnnotatedMethodElement> elements = newArrayList();
 
         doWithMethods(beanClass, method -> {
             Method bridgedMethod = findBridgedMethod(method);
@@ -519,7 +519,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
     private InjectionMetadata buildAnnotatedMetadata(final Class<?> beanClass) {
         Collection<AnnotatedFieldElement> fieldElements = findFieldAnnotationMetadata(beanClass);
         Collection<AnnotatedMethodElement> methodElements = findAnnotatedMethodMetadata(beanClass);
-        List<InjectedElement> elements = newArrayList(fieldElements.size() + methodElements.size());
+        java.util.ArrayList<InjectedElement> elements = newArrayList(fieldElements.size() + methodElements.size());
         elements.addAll(fieldElements);
         elements.addAll(methodElements);
         return new InjectionMetadata(beanClass, elements);
@@ -798,7 +798,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 boolean required = isRequired();
                 DependencyDescriptor desc = new DependencyDescriptor(field, required);
                 desc.setContainingClass(bean.getClass());
-                Set<String> injectedBeanNames = newLinkedHashSet(1);
+                java.util.LinkedHashSet<String> injectedBeanNames = newLinkedHashSet(1);
                 value = resolveDependency(desc, beanName, injectedBeanNames);
                 cacheFieldValue(field, desc, beanName, injectedBeanNames, value, required);
             }
@@ -884,7 +884,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 int argumentCount = method.getParameterCount();
                 arguments = new Object[argumentCount];
                 DependencyDescriptor[] descriptors = new DependencyDescriptor[argumentCount];
-                Set<String> injectedBeanNames = newLinkedHashSet(argumentCount);
+                java.util.LinkedHashSet<String> injectedBeanNames = newLinkedHashSet(argumentCount);
                 for (int i = 0; i < arguments.length; i++) {
                     MethodParameter methodParam = new MethodParameter(method, i);
                     DependencyDescriptor currDesc = new DependencyDescriptor(methodParam, required);

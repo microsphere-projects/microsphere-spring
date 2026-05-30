@@ -328,14 +328,14 @@ class BeanUtilsTest {
     void testSort() {
         int times = 9;
 
-        Map<String, OrderedBean> orderedBeansMap = newLinkedHashMap(times);
+        java.util.LinkedHashMap<String, OrderedBean> orderedBeansMap = newLinkedHashMap(times);
 
         for (int i = times; i > 0; i--) {
             OrderedBean orderedBean = new OrderedBean(i);
             orderedBeansMap.put(orderedBean.toString(), orderedBean);
         }
 
-        Map<String, OrderedBean> expectedBeansMap = newLinkedHashMap(times);
+        java.util.LinkedHashMap<String, OrderedBean> expectedBeansMap = newLinkedHashMap(times);
 
         for (int i = 1; i <= times; i++) {
             OrderedBean orderedBean = new OrderedBean(i);

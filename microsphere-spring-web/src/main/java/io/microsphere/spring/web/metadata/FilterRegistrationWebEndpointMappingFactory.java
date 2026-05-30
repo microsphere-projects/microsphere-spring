@@ -47,7 +47,7 @@ public class FilterRegistrationWebEndpointMappingFactory extends RegistrationWeb
 
     @Override
     protected Collection<String> getMethods(FilterRegistration registration) {
-        Set<String> allMethods = newLinkedHashSet();
+        java.util.LinkedHashSet<String> allMethods = newLinkedHashSet();
 
         // Add all HTTP methods when the url patterns are mapped.
         Collection<String> urlPatternMappings = registration.getUrlPatternMappings();

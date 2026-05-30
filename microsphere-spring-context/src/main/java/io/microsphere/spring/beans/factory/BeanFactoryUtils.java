@@ -132,7 +132,7 @@ public abstract class BeanFactoryUtils implements Utils {
         }
 
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType, true, false);
-        List<T> beans = newArrayList(size);
+        java.util.ArrayList<T> beans = newArrayList(size);
         for (int i = 0; i < size; i++) {
             String beanName = beanNames[i];
             if (containsElement(allBeanNames, beanName)) {

@@ -212,7 +212,7 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
 
-        Set<String> beanNames = newLinkedHashSet();
+        java.util.LinkedHashSet<String> beanNames = newLinkedHashSet();
 
         for (String propertyName : properties.keySet()) {
 

@@ -116,7 +116,7 @@ public class WebRequestProducesRule extends AbstractWebRequestRule<ProduceMediaT
     }
 
     private List<ProduceMediaTypeExpression> getMatchingExpressions(List<MediaType> acceptedMediaTypes) {
-        List<ProduceMediaTypeExpression> result = newArrayList(this.expressions.size());
+        java.util.ArrayList<ProduceMediaTypeExpression> result = newArrayList(this.expressions.size());
         for (ProduceMediaTypeExpression expression : this.expressions) {
             if (expression.match(acceptedMediaTypes)) {
                 result.add(expression);

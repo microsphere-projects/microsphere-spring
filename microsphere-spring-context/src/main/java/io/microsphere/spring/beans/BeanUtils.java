@@ -592,7 +592,7 @@ public abstract class BeanUtils implements Utils {
     @Nonnull
     public static <T> List<T> getSortedBeans(@Nonnull ListableBeanFactory beanFactory, @Nonnull Class<T> type) {
         Map<String, T> beansOfType = beansOfTypeIncludingAncestors(beanFactory, type);
-        List<T> beansList = newArrayList(beansOfType.values());
+        java.util.ArrayList<T> beansList = newArrayList(beansOfType.values());
         AnnotationAwareOrderComparator.sort(beansList);
         return unmodifiableList(beansList);
     }
@@ -1002,7 +1002,7 @@ public abstract class BeanUtils implements Utils {
 
         Map<String, T> unmodifiableBeansMap = unmodifiableMap(beansMap);
 
-        List<NamingBean<T>> namingBeans = newArrayList(unmodifiableBeansMap.size());
+        java.util.ArrayList<NamingBean<T>> namingBeans = newArrayList(unmodifiableBeansMap.size());
 
         for (Entry<String, T> entry : unmodifiableBeansMap.entrySet()) {
             String beanName = entry.getKey();
@@ -1013,7 +1013,7 @@ public abstract class BeanUtils implements Utils {
 
         AnnotationAwareOrderComparator.sort(namingBeans);
 
-        Map<String, T> sortedBeansMap = newLinkedHashMap(beansMap.size());
+        java.util.LinkedHashMap<String, T> sortedBeansMap = newLinkedHashMap(beansMap.size());
 
         for (NamingBean<T> namingBean : namingBeans) {
             sortedBeansMap.put(namingBean.name, namingBean.bean);

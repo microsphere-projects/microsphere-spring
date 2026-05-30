@@ -141,7 +141,7 @@ class ProduceMediaTypeExpressionTest {
 
     void assertProduceMediaTypeExpressions(List<ProduceMediaTypeExpression> expressions) {
         assertEquals(2, expressions.size());
-        List<MediaType> types = newArrayList();
+        java.util.ArrayList<MediaType> types = newArrayList();
         for (ProduceMediaTypeExpression expr : expressions) {
             types.add(expr.getMediaType());
         }

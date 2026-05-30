@@ -75,7 +75,7 @@ public interface AutowireCandidateResolvingListener {
      * @see SpringFactoriesLoaderUtils#loadFactories(BeanFactory, Class)
      */
     static List<AutowireCandidateResolvingListener> loadListeners(@Nullable BeanFactory beanFactory) {
-        List<AutowireCandidateResolvingListener> listeners = newLinkedList();
+        java.util.LinkedList<AutowireCandidateResolvingListener> listeners = newLinkedList();
         // Add all Spring SPI with extension
         listeners.addAll(loadFactories(beanFactory, AutowireCandidateResolvingListener.class));
         // Add all Spring Beans if BeanFactory is available

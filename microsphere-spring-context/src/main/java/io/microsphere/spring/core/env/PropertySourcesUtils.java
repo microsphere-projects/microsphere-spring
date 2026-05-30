@@ -144,7 +144,7 @@ public abstract class PropertySourcesUtils implements Utils {
     }
 
     public static Set<String> findPropertyNames(ConfigurableEnvironment environment, Predicate<String> propertyNameFilter) {
-        Set<String> propertyNames = newLinkedHashSet();
+        java.util.LinkedHashSet<String> propertyNames = newLinkedHashSet();
         for (PropertySource propertySource : environment.getPropertySources()) {
             if (propertySource instanceof EnumerablePropertySource enumerablePropertySource) {
                 for (String propertyName : enumerablePropertySource.getPropertyNames()) {
@@ -224,7 +224,7 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     public static Map<String, Object> getSubProperties(PropertySources propertySources, PropertyResolver propertyResolver, String prefix) {
 
-        Map<String, Object> subProperties = newLinkedHashMap();
+        java.util.LinkedHashMap<String, Object> subProperties = newLinkedHashMap();
 
         String normalizedPrefix = normalizePrefix(prefix);
 

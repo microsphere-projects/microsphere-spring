@@ -52,7 +52,7 @@ public class ServletWebEndpointMappingResolver implements WebEndpointMappingReso
         if (servletContext == null || servletContext.getMajorVersion() < 3) {
             return emptyList();
         }
-        List<WebEndpointMapping> webEndpointMappings = newLinkedList();
+        java.util.LinkedList<WebEndpointMapping> webEndpointMappings = newLinkedList();
         resolve(servletContext, webEndpointMappings);
         return webEndpointMappings;
     }

@@ -158,7 +158,7 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     }
 
     public void setConfigurationBeanCustomizers(Collection<ConfigurationBeanCustomizer> configurationBeanCustomizers) {
-        List<ConfigurationBeanCustomizer> customizers = newArrayList(configurationBeanCustomizers);
+        java.util.ArrayList<ConfigurationBeanCustomizer> customizers = newArrayList(configurationBeanCustomizers);
         sort(customizers);
         this.configurationBeanCustomizers = unmodifiableList(customizers);
     }

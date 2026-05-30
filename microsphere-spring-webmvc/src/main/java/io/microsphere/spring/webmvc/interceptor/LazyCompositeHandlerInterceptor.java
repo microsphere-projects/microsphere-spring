@@ -83,7 +83,7 @@ public class LazyCompositeHandlerInterceptor extends OnceApplicationContextEvent
     @Override
     protected void onApplicationContextEvent(ContextRefreshedEvent event) {
         ApplicationContext context = event.getApplicationContext();
-        List<HandlerInterceptor> allInterceptors = newLinkedList();
+        java.util.LinkedList<HandlerInterceptor> allInterceptors = newLinkedList();
         for (Class<? extends HandlerInterceptor> interceptorClass : interceptorClasses) {
             Collection<? extends HandlerInterceptor> interceptors = context.getBeansOfType(interceptorClass).values();
             for (HandlerInterceptor interceptor : interceptors) {

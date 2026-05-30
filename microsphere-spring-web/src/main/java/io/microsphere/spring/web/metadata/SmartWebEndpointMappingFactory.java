@@ -54,7 +54,7 @@ public class SmartWebEndpointMappingFactory extends AbstractWebEndpointMappingFa
 
         int size = size(factories) + size(factoryBeans);
 
-        Map<Class<?>, List<WebEndpointMappingFactory>> delegates = newHashMap(size);
+        java.util.HashMap<Class<?>, List<WebEndpointMappingFactory>> delegates = newHashMap(size);
 
         initDelegates(factories, delegates);
         initDelegates(factoryBeans, delegates);
