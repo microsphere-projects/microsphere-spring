@@ -90,6 +90,7 @@ class ParallelPreInstantiationSingletonsBeanFactoryListenerTest extends Abstract
 
     @Import(User.class)
     static class Config {
-        public Config(User user) {}
+        public Config(User user) {
+        }
     }
 }

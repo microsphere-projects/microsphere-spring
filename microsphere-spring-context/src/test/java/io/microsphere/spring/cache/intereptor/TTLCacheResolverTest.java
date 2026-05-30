@@ -56,7 +56,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringLoggingTest
 class TTLCacheResolverTest {
 
-    /** Verifies that the well-known bean name constant has the expected value. */
+    /**
+     * Verifies that the well-known bean name constant has the expected value.
+     */
     @Test
     void testBeanName() {
         assertEquals("ttlCacheResolver", BEAN_NAME);
@@ -77,7 +79,9 @@ class TTLCacheResolverTest {
 
     // ---- Test-data beans ----
 
-    /** Provides a cacheable method exercised by testResolveCachesHappyPath. */
+    /**
+     * Provides a cacheable method exercised by testResolveCachesHappyPath.
+     */
     static class TestData {
 
         @TTLCacheable(cacheNames = "test", timeUnit = MINUTES, expire = 1)
@@ -97,7 +101,9 @@ class TTLCacheResolverTest {
     @Autowired
     private TTLCacheResolver ttlCacheResolver;
 
-    /** The resolver bean must be present in the context. */
+    /**
+     * The resolver bean must be present in the context.
+     */
     @Test
     void testResolverBeanPresent() {
         assertNotNull(ttlCacheResolver);
