@@ -28,13 +28,13 @@ import java.util.Set;
 /**
  * Adapts a given {@link Map} to the {@link MultiValueMap} contract.
  *
- * @author Arjen Poutsma
- * @author Juergen Hoeller
- * @since 5.3
  * @param <K> the key type
  * @param <V> the value element type
+ * @author Arjen Poutsma
+ * @author Juergen Hoeller
  * @see CollectionUtils#toMultiValueMap
  * @see LinkedMultiValueMap
+ * @since 5.3
  */
 @SuppressWarnings("serial")
 public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializable {
@@ -43,6 +43,7 @@ public class MultiValueMapAdapter<K, V> implements MultiValueMap<K, V>, Serializ
 
     /**
      * Wrap the given target {@link Map} as a {@link MultiValueMap} adapter.
+     *
      * @param targetMap the plain target {@code Map}
      */
     public MultiValueMapAdapter(Map<K, List<V>> targetMap) {

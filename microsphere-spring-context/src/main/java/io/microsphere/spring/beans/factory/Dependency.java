@@ -225,11 +225,11 @@ public class Dependency {
      *   Dependency d = a.child("D", false);    // returns null (not found)
      * }</pre>
      *
-     * @param childBeanName  the bean name of the child to look up
-     * @param addedIfAbsent  if {@code true} and no child is found, a new independent {@link Dependency} is created
-     *                       and returned (it is <em>not</em> added to this dependency's children and has no parent set)
+     * @param childBeanName the bean name of the child to look up
+     * @param addedIfAbsent if {@code true} and no child is found, a new independent {@link Dependency} is created
+     *                      and returned (it is <em>not</em> added to this dependency's children and has no parent set)
      * @return the child dependency, a newly created dependency if {@code addedIfAbsent} is {@code true} and the child
-     *         was not found, or {@code null} if the child was not found and {@code addedIfAbsent} is {@code false}
+     * was not found, or {@code null} if the child was not found and {@code addedIfAbsent} is {@code false}
      */
     public Dependency child(String childBeanName, boolean addedIfAbsent) {
         Dependency child = findChild(childBeanName);

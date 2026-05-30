@@ -60,7 +60,9 @@ public class TTLCacheResolverTest {
     @ClassRule
     public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
-    /** Verifies that the well-known bean name constant has the expected value. */
+    /**
+     * Verifies that the well-known bean name constant has the expected value.
+     */
     @Test
     public void testBeanName() {
         assertEquals("ttlCacheResolver", BEAN_NAME);
@@ -81,7 +83,9 @@ public class TTLCacheResolverTest {
 
     // ---- Test-data beans ----
 
-    /** Provides a cacheable method exercised by testResolveCachesHappyPath. */
+    /**
+     * Provides a cacheable method exercised by testResolveCachesHappyPath.
+     */
     static class TestData {
 
         @TTLCacheable(cacheNames = "test", timeUnit = MINUTES, expire = 1)
@@ -101,7 +105,9 @@ public class TTLCacheResolverTest {
     @Autowired
     private TTLCacheResolver ttlCacheResolver;
 
-    /** The resolver bean must be present in the context. */
+    /**
+     * The resolver bean must be present in the context.
+     */
     @Test
     public void testResolverBeanPresent() {
         assertNotNull(ttlCacheResolver);
