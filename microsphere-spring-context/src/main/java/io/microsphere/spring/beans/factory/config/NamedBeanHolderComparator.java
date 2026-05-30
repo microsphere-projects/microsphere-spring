@@ -60,7 +60,7 @@ public class NamedBeanHolderComparator<T> implements Comparator<NamedBeanHolder<
      * @param o1 the first {@link NamedBeanHolder} to compare
      * @param o2 the second {@link NamedBeanHolder} to compare
      * @return a negative integer, zero, or a positive integer as the first
-     *         holder's bean instance is less than, equal to, or greater than the second
+     * holder's bean instance is less than, equal to, or greater than the second
      */
     @Override
     public int compare(NamedBeanHolder<T> o1, NamedBeanHolder<T> o2) {

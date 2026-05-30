@@ -50,7 +50,7 @@ public class AutowiredInjectionPointDependencyResolver extends AnnotatedInjectio
      *
      * @param parameter the parameter to inspect for the {@link Autowired} annotation
      * @return the {@link Autowired} annotation, or {@code null} if not found on the parameter
-     *         or its declaring executable
+     * or its declaring executable
      */
     @Override
     public Autowired getAnnotation(Parameter parameter) {

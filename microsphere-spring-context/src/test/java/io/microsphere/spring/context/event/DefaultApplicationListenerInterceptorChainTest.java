@@ -33,11 +33,10 @@ import static org.junit.Assert.assertSame;
  * {@link DefaultApplicationListenerInterceptorChain} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see DefaultApplicationListenerInterceptorChain
  * @see ApplicationListenerInterceptorChain
  * @since 1.0.0
- *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  */
 public class DefaultApplicationListenerInterceptorChainTest {
 

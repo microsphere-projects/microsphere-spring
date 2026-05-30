@@ -140,9 +140,9 @@ final class ProfilesParser {
         return profiles -> profiles.matches(activeProfiles);
     }
 
-    private enum Operator { AND, OR }
+    private enum Operator {AND, OR}
 
-    private enum Context { NONE, NEGATE, PARENTHESIS }
+    private enum Context {NONE, NEGATE, PARENTHESIS}
 
     private static class ParsedProfiles implements Profiles {
 

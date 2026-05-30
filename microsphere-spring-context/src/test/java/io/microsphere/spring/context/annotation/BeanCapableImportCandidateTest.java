@@ -91,7 +91,7 @@ public class BeanCapableImportCandidateTest {
         assertSame(EMPTY_STRING_ARRAY, NO_CLASS_TO_IMPORT);
 
         assertNotNull(candidate.logger);
-        assertEquals(getTypeName(candidate),candidate.logger.getName());
+        assertEquals(getTypeName(candidate), candidate.logger.getName());
 
         assertSame(candidate.beanFactory, this.beanFactory);
         assertSame(candidate.getBeanFactory(), this.beanFactory);

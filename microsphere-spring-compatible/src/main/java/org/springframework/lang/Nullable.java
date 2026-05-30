@@ -40,10 +40,10 @@ import java.lang.annotation.Target;
  *
  * @author Sebastien Deleuze
  * @author Juergen Hoeller
- * @since 5.0
  * @see NonNullApi
  * @see NonNullFields
  * @see NonNull
+ * @since 5.0
  */
 @Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

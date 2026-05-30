@@ -1102,7 +1102,7 @@ public abstract class BeanUtils implements Utils {
          *
          * @param o the other {@link NamingBean} to compare against
          * @return a negative integer, zero, or a positive integer as this object
-         *         is less than, equal to, or greater than the specified object
+         * is less than, equal to, or greater than the specified object
          */
         @Override
         public int compareTo(NamingBean o) {
