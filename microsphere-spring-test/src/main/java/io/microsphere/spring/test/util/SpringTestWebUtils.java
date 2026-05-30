@@ -271,9 +271,9 @@ public abstract class SpringTestWebUtils {
      * }</pre>
      *
      * @param request the {@link NativeWebRequest} from which to clear attributes
-     * @param scope the scope from which to clear attributes.
-     *              Use {@link org.springframework.web.context.request.RequestAttributes#SCOPE_REQUEST SCOPE_REQUEST}
-     *              or {@link org.springframework.web.context.request.RequestAttributes#SCOPE_SESSION SCOPE_SESSION}
+     * @param scope   the scope from which to clear attributes.
+     *                Use {@link org.springframework.web.context.request.RequestAttributes#SCOPE_REQUEST SCOPE_REQUEST}
+     *                or {@link org.springframework.web.context.request.RequestAttributes#SCOPE_SESSION SCOPE_SESSION}
      * @see #clearAttributes(NativeWebRequest)
      * @see org.springframework.web.context.request.RequestAttributes#SCOPE_REQUEST
      * @see org.springframework.web.context.request.RequestAttributes#SCOPE_SESSION
