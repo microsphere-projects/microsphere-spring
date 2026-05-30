@@ -241,4 +241,24 @@ For a complete list of changes, refer to the full [changelog](#).
 - Imported `SpringLoggingTest` into `CompositeWebFilterTest` for improved test clarity. (#7f8791ba)
 ```
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.18...0.1.19
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.18...0.1.19## v0.1.20
+
+# Release Notes for v0.1.20
+
+## Dependency Updates
+- Bumped `microsphere-logging` to version `0.1.14`.  
+- Updated `microsphere-java` to version `0.3.6`.
+
+## Documentation
+- Updated README to reflect `0.2.20` and `0.1.20` versions.
+
+## Code Style Improvements
+- Removed trailing newlines from 602 Java source files for consistency.  
+- Reformatted and tidied Spring-compatible utilities for better readability.  
+- General whitespace and formatting cleanup.
+
+## Other Changes
+- Merged release and development branches to maintain alignment.  
+- Incremented version to `0.1.20`.  
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.19...0.1.20
