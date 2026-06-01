@@ -33,6 +33,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import java.util.List;
 
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryClasses;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryNames;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.util.Collections.emptyList;
@@ -60,29 +62,43 @@ class SpringFactoriesLoaderUtilsTest {
 
     @BeforeEach
     void setUp() {
-        context = new GenericApplicationContext();
-        beanFactory = context.getDefaultListableBeanFactory();
-        context.refresh();
+        this.context = new GenericApplicationContext();
+        this.beanFactory = this.context.getDefaultListableBeanFactory();
+        this.context.refresh();
     }
 
     @AfterEach
     void tearDown() {
-        context.close();
+        this.context.close();
+    }
+
+    @Test
+    void testLoadFactoryClasses() {
+        List<Class<Object>> factoryClasses = loadFactoryClasses(User.class, this.context.getClassLoader());
+        assertEquals(1, factoryClasses.size());
+        assertEquals(factoryClasses, loadFactoryClasses(User.class));
+    }
+
+    @Test
+    void testLoadFactoryNames() {
+        List<String> factoryNames = loadFactoryNames(User.class, this.context.getClassLoader());
+        assertEquals(1, factoryNames.size());
+        assertEquals(factoryNames, loadFactoryNames(User.class));
     }
 
     @Test
     void testLoadFactories() {
-        testLoadFactoriesFromContext(beanFactory, context);
-        testLoadFactoriesFromBeanFactory(beanFactory);
+        testLoadFactoriesFromContext(this.beanFactory, this.context);
+        testLoadFactoriesFromBeanFactory(this.beanFactory);
         testLoadFactoriesFromBeanFactory(this.context);
     }
 
     @Test
     void testLoadFactoriesWithArguments() {
-        List<User> users = loadFactories(context, User.class, EMPTY_OBJECT_ARRAY);
+        List<User> users = loadFactories(this.context, User.class, EMPTY_OBJECT_ARRAY);
         assertUser(users);
 
-        users = loadFactories(context, User.class, ARGS);
+        users = loadFactories(this.context, User.class, ARGS);
         assertUser(users, ARGS);
 
         users = loadFactories(null, User.class, ARGS);
@@ -91,12 +107,12 @@ class SpringFactoriesLoaderUtilsTest {
 
     @Test
     void testLoadFactoriesWithArgumentsOnConstructorNotFound() {
-        assertThrows(IllegalArgumentException.class, () -> loadFactories(context, User.class, 18, "Mercy"));
+        assertThrows(IllegalArgumentException.class, () -> loadFactories(this.context, User.class, 18, "Mercy"));
     }
 
     @Test
     void testLoadFactoriesOnNotFound() {
-        assertSame(emptyList(), loadFactories(context, UserFactory.class, ARGS));
+        assertSame(emptyList(), loadFactories(this.context, UserFactory.class, ARGS));
         assertSame(emptyList(), loadFactories(null, UserFactory.class, ARGS));
     }
 
@@ -121,10 +137,10 @@ class SpringFactoriesLoaderUtilsTest {
     }
 
     private void testLoadFactoriesFromBeanFactory(BeanFactory beanFactory) {
-        List<Bean> beans = loadFactories(beanFactory, Bean.class);
+        List<Bean> beans = loadFactories(this.beanFactory, Bean.class);
         assertEquals(2, beans.size());
         TestBean testBean = (TestBean) beans.get(0);
-        assertTestBean(testBean, beanFactory);
+        assertTestBean(testBean, this.beanFactory);
     }
 
     private void testLoadFactoriesFromContext(ConfigurableBeanFactory beanFactory, ConfigurableApplicationContext context) {
