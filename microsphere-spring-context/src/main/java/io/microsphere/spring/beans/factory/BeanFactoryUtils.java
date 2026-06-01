@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.annotation.Immutable;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.util.Utils;
@@ -37,6 +38,7 @@ import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.first;
 import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.SetUtils.newFixedHashSet;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ArrayUtils.size;
@@ -44,6 +46,7 @@ import static io.microsphere.util.ClassLoaderUtils.nullSafeClassLoader;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.factory.BeanFactoryUtils.beanNamesForTypeIncludingAncestors;
 import static org.springframework.util.Assert.isInstanceOf;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -593,6 +596,89 @@ public abstract class BeanFactoryUtils implements Utils {
     public static ClassLoader nullSafeBeanClassLoader(@Nullable BeanFactory beanFactory) {
         ClassLoader classLoader = getBeanClassLoader(beanFactory);
         return nullSafeClassLoader(classLoader);
+    }
+
+    /**
+     * Retrieves the set of bean types that match the specified type from the given {@link ListableBeanFactory}.
+     *
+     * <p>
+     * This method scans the bean factory for beans of the specified type and returns their actual runtime classes.
+     * By default, it includes non-singleton beans and allows eager initialization of FactoryBeans during the search.
+     * The returned set is unmodifiable and immutable.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * ListableBeanFactory beanFactory = ...; // Obtain or inject the bean factory
+     * Class<MyService> serviceType = MyService.class;
+     *
+     * Set<Class<MyService>> serviceTypes = BeanFactoryUtils.getBeanTypes(beanFactory, serviceType);
+     *
+     * if (!serviceTypes.isEmpty()) {
+     *     for (Class<MyService> type : serviceTypes) {
+     *         System.out.println("Found bean type: " + type.getName());
+     *     }
+     * } else {
+     *     System.out.println("No beans of type MyService found.");
+     * }
+     * }</pre>
+     *
+     * @param <T>         The type of the beans to retrieve.
+     * @param beanFactory The target bean factory to search. Must not be {@code null}.
+     * @param beanType    The type to match against. Must not be {@code null}.
+     * @return A non-null, unmodifiable set of actual bean classes matching the specified type. Returns an empty set if no matches are found.
+     */
+    @Nonnull
+    @Immutable
+    public static <T> Set<Class<T>> getBeanTypes(ListableBeanFactory beanFactory, Class<T> beanType) {
+        return getBeanTypes(beanFactory, beanType, true, true);
+    }
+
+    /**
+     * Retrieves the set of bean types that match the specified type from the given {@link ListableBeanFactory}.
+     *
+     * <p>
+     * This method scans the bean factory for beans of the specified type and returns their actual runtime classes.
+     * It allows control over whether to include non-singleton beans and whether to allow eager initialization
+     * of FactoryBeans during the search. The returned set is unmodifiable and immutable.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * ListableBeanFactory beanFactory = ...; // Obtain or inject the bean factory
+     * Class<MyService> serviceType = MyService.class;
+     *
+     * Set<Class<MyService>> serviceTypes = BeanFactoryUtils.getBeanTypes(beanFactory, serviceType, true, false);
+     *
+     * if (!serviceTypes.isEmpty()) {
+     *     for (Class<MyService> type : serviceTypes) {
+     *         System.out.println("Found bean type: " + type.getName());
+     *     }
+     * } else {
+     *     System.out.println("No beans of type MyService found.");
+     * }
+     * }</pre>
+     *
+     * @param <T>                  The type of the beans to retrieve.
+     * @param beanFactory          The target bean factory to search. Must not be {@code null}.
+     * @param beanType             The type to match against. Must not be {@code null}.
+     * @param includeNonSingletons Whether to include prototype-scoped (non-singleton) beans in the search.
+     * @param allowEagerInit       Whether to allow eager initialization of FactoryBeans during the search.
+     * @return A non-null, unmodifiable set of actual bean classes matching the specified type. Returns an empty set if no matches are found.
+     */
+    @Nonnull
+    @Immutable
+    public static <T> Set<Class<T>> getBeanTypes(ListableBeanFactory beanFactory, Class<T> beanType,
+                                                 boolean includeNonSingletons, boolean allowEagerInit) {
+        String[] beanNames = beanFactory.getBeanNamesForType(beanType, includeNonSingletons, allowEagerInit);
+        int beansCount = beanNames.length;
+        Set<Class<T>> beanTypes = newFixedHashSet(beansCount);
+        for (int i = 0; i < beansCount; i++) {
+            String beanName = beanNames[i];
+            Class<?> actualBeanType = beanFactory.getType(beanName);
+            beanTypes.add((Class<T>) actualBeanType);
+        }
+        return unmodifiableSet(beanTypes);
     }
 
     private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
