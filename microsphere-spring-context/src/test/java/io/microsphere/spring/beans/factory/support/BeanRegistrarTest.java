@@ -30,6 +30,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -38,10 +39,13 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerFactoryBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerGenericBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerGenericBeans;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSingleton;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerSpringFactoriesBeans;
 import static java.beans.Introspector.decapitalize;
+import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -119,6 +123,12 @@ class BeanRegistrarTest {
     }
 
     @Test
+    void testRegisterBeanDefinitionWithBuilder() {
+        String beanName = "io.microsphere.spring.test.domain.User#0";
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, User.class, builder -> builder.setRole(ROLE_INFRASTRUCTURE)), true, ROLE_INFRASTRUCTURE, beanName);
+    }
+
+    @Test
     void testRegisterSingleton() {
         registerUserAsSingleton();
     }
@@ -141,7 +151,7 @@ class BeanRegistrarTest {
         Map<Class, String> classStringMap = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
         assertEquals(2, classStringMap.size());
         classStringMap = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
-        assertEquals(0, classStringMap.size());
+        assertEquals(2, classStringMap.size());
 
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean.class.getSimpleName())));
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean2.class.getSimpleName())));
@@ -155,6 +165,32 @@ class BeanRegistrarTest {
     @Test
     void testRegisterBean() {
         testRegisterBean((beanName, bean) -> registerBean(this.beanFactory, beanName, bean));
+    }
+
+    @Test
+    void testRegisterGenericBeans() {
+        String beanName = "user";
+        Map<Class<?>, String> beanTypesAndNames = registerGenericBeans(this.beanFactory, User.class);
+        assertEquals(1, beanTypesAndNames.size());
+        assertTrue(beanTypesAndNames.containsKey(User.class));
+        assertEquals(beanName, beanTypesAndNames.get(User.class));
+    }
+
+    @Test
+    void testRegisterGenericBeansOnEmptyBeanClasses() {
+        assertEquals(emptyMap(), registerGenericBeans(this.beanFactory));
+    }
+
+    @Test
+    void testRegisterGenericBean() {
+        String beanName = "user";
+        Entry<String, Boolean> beanNameAndRegistered = registerGenericBean(this.beanFactory, User.class);
+        assertEquals(beanName, beanNameAndRegistered.getKey());
+        assertTrue(beanNameAndRegistered.getValue());
+
+        beanNameAndRegistered = registerGenericBean(this.beanFactory, User.class);
+        assertEquals(beanName, beanNameAndRegistered.getKey());
+        assertFalse(beanNameAndRegistered.getValue());
     }
 
     private void testRegisterBean(BiConsumer<String, Object> beanConsumer) {
