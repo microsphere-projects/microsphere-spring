@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory;
 
+import io.microsphere.collection.SetUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,8 +36,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
-import static io.microsphere.collection.SetUtils.ofSet;
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asAutowireCapableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
@@ -46,6 +48,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asHierarchica
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanPostProcessors;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanTypes;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getOptionalBean;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getResolvableDependencyTypes;
@@ -53,6 +56,7 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isBeanDefinit
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.isDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.nullSafeBeanClassLoader;
 import static io.microsphere.spring.context.ApplicationContextUtils.APPLICATION_CONTEXT_AWARE_PROCESSOR_CLASS_NAME;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
 import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
@@ -178,7 +182,7 @@ class BeanFactoryUtilsTest {
     @Test
     void testGetResolvableDependencyTypes() {
         this.applicationContext.refresh();
-        assertEquals(ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
+        assertEquals(SetUtils.ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
                 getResolvableDependencyTypes(this.beanFactory));
 
         assertSame(emptySet(), getResolvableDependencyTypes(new DefaultListableBeanFactory()));
@@ -274,6 +278,19 @@ class BeanFactoryUtilsTest {
     void testNullSafeBeanClassLoader() {
         assertSame(getDefaultClassLoader(), nullSafeBeanClassLoader(null));
         assertSame(this.beanFactory.getBeanClassLoader(), nullSafeBeanClassLoader(this.beanFactory));
+    }
+
+    @Test
+    void testGetBeanTypes() {
+        testInSpringContainer(context -> {
+            Set<Class<BaseTestBean>> beanTypes = getBeanTypes(context, BaseTestBean.class);
+            assertEquals(ofSet(BaseTestBean.class, BaseTestBean2.class), beanTypes);
+        }, BaseTestBean.class, BaseTestBean2.class);
+
+        testInSpringContainer(context -> {
+            Set<Class<BaseTestBean>> beanTypes = getBeanTypes(context, BaseTestBean.class);
+            assertEquals(ofSet(BaseTestBean.class), beanTypes);
+        }, BaseTestBean.class);
     }
 
     @Component("baseTestBean2")
