@@ -27,8 +27,10 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
+import java.util.Set;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.SetUtils.newFixedHashSet;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanInterfaces;
@@ -42,6 +44,7 @@ import static io.microsphere.util.ClassLoaderUtils.resolveClass;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 import static org.springframework.core.io.support.SpringFactoriesLoader.FACTORIES_RESOURCE_LOCATION;
 import static org.springframework.util.ClassUtils.resolveClassName;
@@ -67,7 +70,7 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
      * @param factoryType the interface or abstract class representing the factory
      * @throws IllegalArgumentException if an error occurs while loading factory names
      */
-    public static <T> List<Class<T>> loadFactoryClasses(Class<T> factoryType) {
+    public static <T> Set<Class<T>> loadFactoryClasses(Class<T> factoryType) {
         return loadFactoryClasses(factoryType, null);
     }
 
@@ -82,14 +85,14 @@ public abstract class SpringFactoriesLoaderUtils implements Utils {
      *                    {@code null} to use the default
      * @throws IllegalArgumentException if an error occurs while loading factory names
      */
-    public static <T> List<Class<T>> loadFactoryClasses(Class<?> factoryType, @Nullable ClassLoader classLoader) {
+    public static <T> Set<Class<T>> loadFactoryClasses(Class<?> factoryType, @Nullable ClassLoader classLoader) {
         List<String> factoryClassNames = loadFactoryNames(factoryType, classLoader);
-        List<Class<T>> factoryClasses = newArrayList(factoryClassNames.size());
+        Set<Class<T>> factoryClasses = newFixedHashSet(factoryClassNames.size());
         for (String factoryClassName : factoryClassNames) {
             Class<T> factoryClass = (Class<T>) resolveClass(factoryClassName, classLoader);
             factoryClasses.add(factoryClass);
         }
-        return unmodifiableList(factoryClasses);
+        return unmodifiableSet(factoryClasses);
     }
 
     /**

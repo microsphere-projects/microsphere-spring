@@ -31,6 +31,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.List;
+import java.util.Set;
 
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryClasses;
@@ -74,7 +75,7 @@ class SpringFactoriesLoaderUtilsTest {
 
     @Test
     void testLoadFactoryClasses() {
-        List<Class<Object>> factoryClasses = loadFactoryClasses(User.class, this.context.getClassLoader());
+        Set<Class<Object>> factoryClasses = loadFactoryClasses(User.class, this.context.getClassLoader());
         assertEquals(1, factoryClasses.size());
         assertEquals(factoryClasses, loadFactoryClasses(User.class));
     }
