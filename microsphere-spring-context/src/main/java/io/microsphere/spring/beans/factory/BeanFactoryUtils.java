@@ -24,6 +24,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -40,9 +41,11 @@ import static io.microsphere.collection.ListUtils.first;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.SetUtils.newFixedHashSet;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
+import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.resolveBeanType;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.ArrayUtils.size;
 import static io.microsphere.util.ClassLoaderUtils.nullSafeClassLoader;
+import static io.microsphere.util.ClassUtils.getType;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
@@ -679,6 +682,80 @@ public abstract class BeanFactoryUtils implements Utils {
             beanTypes.add((Class<T>) actualBeanType);
         }
         return unmodifiableSet(beanTypes);
+    }
+
+    /**
+     * Retrieves the actual {@link Class} of the bean with the specified name from the given {@link ConfigurableListableBeanFactory}.
+     *
+     * <p>
+     * This method first attempts to retrieve the {@link BeanDefinition} for the specified bean name. If a bean definition
+     * is found, it resolves the bean type from the definition. If no bean definition is available (e.g., for manually
+     * registered singletons), it retrieves the singleton instance and determines its class. If the singleton instance
+     * is also not found, this method returns {@code null}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * ConfigurableListableBeanFactory beanFactory = ...; // Obtain or inject the bean factory
+     * String beanName = "myBean";
+     *
+     * Class<?> beanClass = BeanFactoryUtils.getBeanClass(beanFactory, beanName);
+     *
+     * if (beanClass != null) {
+     *     System.out.println("Bean class: " + beanClass.getName());
+     * } else {
+     *     System.out.println("Could not determine bean class for: " + beanName);
+     * }
+     * }</pre>
+     *
+     * @param beanFactory The target bean factory to retrieve the bean class from. Must not be {@code null}.
+     * @param beanName    The name of the bean whose class is to be retrieved. Must not be {@code null} or empty.
+     * @return The actual {@link Class} of the bean if determinable; otherwise, {@code null}.
+     */
+    @Nullable
+    public static Class<?> getBeanClass(ConfigurableListableBeanFactory beanFactory, String beanName) {
+        BeanDefinition beanDefinition = getBeanDefinition(beanFactory, beanName);
+        if (beanDefinition == null) { // try to find the singleton bean if present
+            Object singleton = beanFactory.getSingleton(beanName);
+            return getType(singleton);
+        }
+        return resolveBeanType(beanDefinition);
+    }
+
+    /**
+     * Retrieves the {@link BeanDefinition} for the specified bean name from the given {@link ConfigurableListableBeanFactory}.
+     *
+     * <p>
+     * This method checks if the bean factory contains a bean definition for the provided name. If it does,
+     * the corresponding {@link BeanDefinition} is returned. Otherwise, this method returns {@code null}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * ConfigurableListableBeanFactory beanFactory = ...; // Obtain or inject the bean factory
+     * String beanName = "myBean";
+     *
+     * BeanDefinition beanDefinition = BeanFactoryUtils.getBeanDefinition(beanFactory, beanName);
+     *
+     * if (beanDefinition != null) {
+     *     // Inspect or modify the bean definition
+     *     System.out.println("Bean class: " + beanDefinition.getBeanClassName());
+     * } else {
+     *     // Handle case where bean definition is not found
+     *     System.out.println("No bean definition found for name: " + beanName);
+     * }
+     * }</pre>
+     *
+     * @param beanFactory The target bean factory to retrieve the bean definition from. Must not be {@code null}.
+     * @param beanName    The name of the bean whose definition is to be retrieved. Must not be {@code null} or empty.
+     * @return The {@link BeanDefinition} if present in the bean factory; otherwise, {@code null}.
+     */
+    @Nullable
+    public static BeanDefinition getBeanDefinition(ConfigurableListableBeanFactory beanFactory, String beanName) {
+        if (beanFactory.containsBeanDefinition(beanName)) {
+            return beanFactory.getBeanDefinition(beanName);
+        }
+        return null;
     }
 
     private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
