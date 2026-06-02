@@ -17,13 +17,24 @@
 
 package io.microsphere.spring.beans;
 
+import io.microsphere.spring.test.domain.User;
 import org.junit.Test;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
+import java.util.Map;
+import java.util.Set;
+
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;
 import static io.microsphere.spring.beans.BeanSource.JAVA_SERVICE_PROVIDER;
 import static io.microsphere.spring.beans.BeanSource.SPRING_FACTORIES;
+import static io.microsphere.spring.beans.BeanSource.registerBeans;
 import static io.microsphere.spring.beans.BeanSource.values;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
+import static io.microsphere.util.ArrayUtils.ofArray;
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
  * {@link BeanSource} Test
@@ -41,5 +52,66 @@ public class BeanSourceTest {
         assertEquals(BEAN_FACTORY, values[0]);
         assertEquals(SPRING_FACTORIES, values[1]);
         assertEquals(JAVA_SERVICE_PROVIDER, values[2]);
+    }
+
+    @Test
+    public void testGetBeanTypes() {
+        testInSpringContainer(context -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+            assertBeanTypes(beanFactory, BEAN_FACTORY);
+            assertBeanTypes(beanFactory, SPRING_FACTORIES);
+            assertBeanTypes(beanFactory, JAVA_SERVICE_PROVIDER);
+        }, User.class);
+    }
+
+    @Test
+    public void testRegisterBeans() {
+        assertRegisterBeans(BEAN_FACTORY);
+        assertRegisterBeans(SPRING_FACTORIES);
+        assertRegisterBeans(JAVA_SERVICE_PROVIDER);
+    }
+
+    @Test
+    public void testRegisterBeansOnStatic() {
+        testInSpringContainer(context -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+            Map<Class<?>, String> beanTypesAndNames = registerBeans(beanFactory, ofArray(BEAN_FACTORY), User.class);
+            assertBeans(beanTypesAndNames);
+
+            beanTypesAndNames = registerBeans(beanFactory, ofArray(BEAN_FACTORY, SPRING_FACTORIES), User.class);
+            assertBeans(beanTypesAndNames);
+
+            beanTypesAndNames = registerBeans(beanFactory, ofArray(BEAN_FACTORY, SPRING_FACTORIES, JAVA_SERVICE_PROVIDER), User.class);
+            assertBeans(beanTypesAndNames);
+
+            beanTypesAndNames = registerBeans(beanFactory, values());
+            assertSame(emptyMap(), beanTypesAndNames);
+        }, User.class);
+    }
+
+    void assertBeanTypes(ConfigurableListableBeanFactory beanFactory, BeanSource beanSource) {
+        Set<Class<User>> beanTypes = beanSource.getBeanTypes(beanFactory, User.class);
+        assertEquals(1, beanTypes.size());
+        assertEquals(ofSet(User.class), beanTypes);
+    }
+
+    void assertRegisterBeans(BeanSource beanSource) {
+        testInSpringContainer(context -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+            assertRegisterBeans(beanFactory, beanSource);
+        }, User.class);
+    }
+
+    void assertRegisterBeans(ConfigurableListableBeanFactory beanFactory, BeanSource beanSource) {
+        Map<Class<?>, String> beanTypesAndNames = beanSource.registerBeans(beanFactory, User.class);
+        assertBeans(beanTypesAndNames);
+
+        beanTypesAndNames = beanSource.registerBeans(beanFactory);
+        assertSame(emptyMap(), beanTypesAndNames);
+    }
+
+    void assertBeans(Map<Class<?>, String> beanTypesAndNames) {
+        assertEquals(1, beanTypesAndNames.size());
+        assertEquals("user", beanTypesAndNames.get(User.class));
     }
 }
