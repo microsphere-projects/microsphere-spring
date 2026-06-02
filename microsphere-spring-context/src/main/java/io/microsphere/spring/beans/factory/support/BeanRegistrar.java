@@ -18,7 +18,6 @@ package io.microsphere.spring.beans.factory.support;
 
 import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
-import io.microsphere.spring.beans.BeanUtils;
 import io.microsphere.spring.beans.factory.DelegatingFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -34,7 +33,6 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
