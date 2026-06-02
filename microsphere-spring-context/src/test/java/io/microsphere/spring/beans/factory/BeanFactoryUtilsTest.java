@@ -46,7 +46,9 @@ import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurabl
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asHierarchicalBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClass;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClassLoader;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanDefinition;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanPostProcessors;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanTypes;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeans;
@@ -290,6 +292,24 @@ class BeanFactoryUtilsTest {
         testInSpringContainer(context -> {
             Set<Class<BaseTestBean>> beanTypes = getBeanTypes(context, BaseTestBean.class);
             assertEquals(ofSet(BaseTestBean.class), beanTypes);
+        }, BaseTestBean.class);
+    }
+
+    @Test
+    void testGetBeanClass() {
+        testInSpringContainer(context -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+            assertSame(BaseTestBean.class, getBeanClass(beanFactory, "baseTestBean"));
+            assertNull(getBeanClass(beanFactory, "baseTestBean2"));
+        }, BaseTestBean.class);
+    }
+
+    @Test
+    void testGetBeanDefinition() {
+        testInSpringContainer(context -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+            assertNotNull(getBeanDefinition(beanFactory, "baseTestBean"));
+            assertNull(getBeanDefinition(beanFactory, "baseTestBean2"));
         }, BaseTestBean.class);
     }
 
