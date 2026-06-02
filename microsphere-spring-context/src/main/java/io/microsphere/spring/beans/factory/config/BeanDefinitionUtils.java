@@ -243,7 +243,7 @@ public abstract class BeanDefinitionUtils implements Utils {
     }
 
     /**
-     * Resolves the bean type from the given {@link RootBeanDefinition} using the default class loader.
+     * Resolves the bean type from the given {@link AbstractBeanDefinition} using the default class loader.
      *
      * <p>This method attempts to resolve the bean type via its {@link ResolvableType}. If that fails,
      * it falls back to resolving the bean class using the bean's class name and the default class loader.
@@ -254,7 +254,7 @@ public abstract class BeanDefinitionUtils implements Utils {
      * Class<?> beanType = resolveBeanType(beanDefinition);
      * }</pre>
      *
-     * @param beanDefinition the {@link RootBeanDefinition} to resolve the bean type from
+     * @param beanDefinition the {@link AbstractBeanDefinition} to resolve the bean type from
      * @return the resolved bean class, or {@code null} if it cannot be resolved
      */
     @Nullable
