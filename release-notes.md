@@ -261,4 +261,28 @@ For a complete list of changes, refer to the full [changelog](#).
 - Merged release and development branches to maintain alignment.  
 - Incremented version to `0.1.20`.  
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.19...0.1.20
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.19...0.1.20## v0.1.21
+
+# Release Notes: Version 0.1.21  
+
+## New Features  
+- Added static `registerBeans` for registering multiple `BeanSource`s.  
+- Introduced `bean registration` functionality to `BeanSource`.  
+- Implemented `getBeanClass`, `getBeanDefinition`, and `getBeanTypes` utilities.  
+- Added generic bean registration and factory loader support.  
+
+## Dependency Updates  
+- Updated Jackson library to version `2.22.0`.  
+
+## Documentation  
+- Updated README with versions `0.2.21` and `0.1.21`.  
+
+## Other Changes  
+- Removed unused imports in `BeanRegistrar`.  
+- Merged `release-1.x` into `dev-1.x`.  
+
+---
+
+Thank you for using this release! 🚀
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.20...0.1.21
