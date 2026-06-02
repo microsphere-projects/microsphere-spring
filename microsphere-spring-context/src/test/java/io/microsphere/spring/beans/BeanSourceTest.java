@@ -17,12 +17,18 @@
 
 package io.microsphere.spring.beans;
 
+import io.microsphere.spring.test.domain.User;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
+import java.util.Set;
+
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;
 import static io.microsphere.spring.beans.BeanSource.JAVA_SERVICE_PROVIDER;
 import static io.microsphere.spring.beans.BeanSource.SPRING_FACTORIES;
 import static io.microsphere.spring.beans.BeanSource.values;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -41,5 +47,15 @@ class BeanSourceTest {
         assertEquals(BEAN_FACTORY, values[0]);
         assertEquals(SPRING_FACTORIES, values[1]);
         assertEquals(JAVA_SERVICE_PROVIDER, values[2]);
+    }
+
+    @Test
+    void testGetBeanTypes() {
+        testInSpringContainer(context -> {
+            ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+            Set<Class<User>> beanTypes = BEAN_FACTORY.getBeanTypes(beanFactory, User.class);
+            assertEquals(1, beanTypes.size());
+            assertEquals(ofSet(User.class), beanTypes);
+        }, User.class);
     }
 }

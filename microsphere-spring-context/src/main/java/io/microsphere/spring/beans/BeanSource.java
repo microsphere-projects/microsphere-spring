@@ -17,11 +17,18 @@
 
 package io.microsphere.spring.beans;
 
+import io.microsphere.annotation.Immutable;
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.spring.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.ServiceLoader;
+import java.util.Set;
+
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryClasses;
+import static io.microsphere.util.ServiceLoaderUtils.getServiceClasses;
 
 /**
  * The enumeration of Bean Sources
@@ -40,7 +47,12 @@ public enum BeanSource {
      * @see BeanFactory
      * @see ConfigurableListableBeanFactory
      */
-    BEAN_FACTORY,
+    BEAN_FACTORY {
+        @Override
+        public <T> Set<Class<T>> getBeanTypes(ConfigurableListableBeanFactory beanFactory, Class<T> beanType) {
+            return BeanFactoryUtils.getBeanTypes(beanFactory, beanType, true, false);
+        }
+    },
 
     /**
      * Bean from {@link SpringFactoriesLoader Spring Factories},
@@ -48,7 +60,12 @@ public enum BeanSource {
      *
      * @see SpringFactoriesLoader
      */
-    SPRING_FACTORIES,
+    SPRING_FACTORIES {
+        @Override
+        public <T> Set<Class<T>> getBeanTypes(ConfigurableListableBeanFactory beanFactory, Class<T> beanType) {
+            return loadFactoryClasses(beanType, beanFactory.getBeanClassLoader());
+        }
+    },
 
     /**
      * Bean from {@link ServiceLoader Java Service Provider},
@@ -56,5 +73,22 @@ public enum BeanSource {
      *
      * @see ServiceLoader
      */
-    JAVA_SERVICE_PROVIDER
+    JAVA_SERVICE_PROVIDER {
+        @Override
+        public <T> Set<Class<T>> getBeanTypes(ConfigurableListableBeanFactory beanFactory, Class<T> beanType) {
+            return getServiceClasses(beanType, beanFactory.getBeanClassLoader());
+        }
+    };
+
+    /**
+     * Get the all bean types from the current {@link BeanSource} by given base bean type
+     *
+     * @param beanFactory the {@link ConfigurableListableBeanFactory}
+     * @param beanType    the bean type
+     * @return the all bean types from the current {@link BeanSource} by given base
+     */
+    @Nonnull
+    @Immutable
+    public abstract <T> Set<Class<T>> getBeanTypes(ConfigurableListableBeanFactory beanFactory, Class<T> beanType);
+
 }
