@@ -138,10 +138,10 @@ class SpringFactoriesLoaderUtilsTest {
     }
 
     private void testLoadFactoriesFromBeanFactory(BeanFactory beanFactory) {
-        List<Bean> beans = loadFactories(this.beanFactory, Bean.class);
+        List<Bean> beans = loadFactories(beanFactory, Bean.class);
         assertEquals(2, beans.size());
         TestBean testBean = (TestBean) beans.get(0);
-        assertTestBean(testBean, this.beanFactory);
+        assertTestBean(testBean, beanFactory);
     }
 
     private void testLoadFactoriesFromContext(ConfigurableBeanFactory beanFactory, ConfigurableApplicationContext context) {
