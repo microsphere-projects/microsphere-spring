@@ -258,7 +258,7 @@ public abstract class BeanDefinitionUtils implements Utils {
      * @return the resolved bean class, or {@code null} if it cannot be resolved
      */
     @Nullable
-    public static Class<?> resolveBeanType(RootBeanDefinition beanDefinition) {
+    public static Class<?> resolveBeanType(AbstractBeanDefinition beanDefinition) {
         return resolveBeanType(beanDefinition, getDefaultClassLoader());
     }
 
@@ -288,7 +288,7 @@ public abstract class BeanDefinitionUtils implements Utils {
      * @return the resolved bean class, or {@code null} if it cannot be resolved
      */
     @Nullable
-    public static Class<?> resolveBeanType(RootBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
+    public static Class<?> resolveBeanType(AbstractBeanDefinition beanDefinition, @Nullable ClassLoader classLoader) {
         ResolvableType resolvableType = getResolvableType(beanDefinition);
         Class<?> beanClass = resolvableType.resolve();
         if (beanClass == null) { // resolving the bean class as fallback

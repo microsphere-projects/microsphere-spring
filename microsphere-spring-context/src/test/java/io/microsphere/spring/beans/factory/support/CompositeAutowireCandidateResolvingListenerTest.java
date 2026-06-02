@@ -22,7 +22,7 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.reflect.FieldUtils.findField;
 import static java.util.Collections.emptyList;
@@ -42,14 +42,16 @@ public class CompositeAutowireCandidateResolvingListenerTest {
 
     @Test
     public void testConstructorWithEmptyListThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> new CompositeAutowireCandidateResolvingListener(emptyList()));
+        assertThrows(IllegalArgumentException.class,
+                () -> new CompositeAutowireCandidateResolvingListener(emptyList()));
     }
 
     @Test
     public void testConstructorWithNullElementThrowsException() {
-        List<AutowireCandidateResolvingListener> listeners = newArrayList();
+        List<AutowireCandidateResolvingListener> listeners = newLinkedList();
         listeners.add(null);
-        assertThrows(IllegalArgumentException.class, () -> new CompositeAutowireCandidateResolvingListener(listeners));
+        assertThrows(IllegalArgumentException.class,
+                () -> new CompositeAutowireCandidateResolvingListener(listeners));
     }
 
     @Test
@@ -118,7 +120,8 @@ public class CompositeAutowireCandidateResolvingListenerTest {
             }
         };
 
-        CompositeAutowireCandidateResolvingListener composite = new CompositeAutowireCandidateResolvingListener(ofList(l1));
+        CompositeAutowireCandidateResolvingListener composite =
+                new CompositeAutowireCandidateResolvingListener(ofList(l1));
 
         // Add additional listener
         composite.addListeners(ofList(l2));
