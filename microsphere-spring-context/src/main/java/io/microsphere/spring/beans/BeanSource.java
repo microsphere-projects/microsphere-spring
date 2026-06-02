@@ -164,4 +164,34 @@ public enum BeanSource {
                                         Set<Class<?>> beanClasses) {
         return registerGenericBeans(registry, beanClasses);
     }
+
+    /**
+     * Registers beans into the given {@link ConfigurableListableBeanFactory} from the specified {@link BeanSource}s.
+     * <p>
+     * This method iterates over the provided {@code beanSources}, retrieves the bean classes for each {@code beanType}
+     * from each source, and registers them as generic beans. If multiple sources provide beans for the same type,
+     * the behavior depends on the underlying {@link BeanDefinitionRegistry} implementation (typically, later registrations
+     * may override earlier ones if the bean name conflicts).
+     *
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} to register beans into
+     * @param beanSources the array of {@link BeanSource}s to use for discovering bean classes
+     * @param beanTypes   the target bean types to search for and register
+     * @return an unmodifiable {@link Map} where keys are the registered bean classes and values are their corresponding bean names
+     * @throws IllegalArgumentException if {@code beanSources} is {@code null} or empty
+     * @see #registerBeans(ConfigurableListableBeanFactory, Class...)
+     * @see BeanRegistrar#registerGenericBeans(BeanDefinitionRegistry, Collection)
+     */
+    @Nonnull
+    @Immutable
+    public static Map<Class<?>, String> registerBeans(ConfigurableListableBeanFactory beanFactory, BeanSource[] beanSources, Class<?>... beanTypes) {
+        int length = length(beanTypes);
+        if (length == 0) {
+            return emptyMap();
+        }
+        Map<Class<?>, String> beanTypesAndNames = newHashMap(length);
+        for (BeanSource beanSource : beanSources) {
+            beanTypesAndNames.putAll(beanSource.registerBeans(beanFactory, beanTypes));
+        }
+        return unmodifiableMap(beanTypesAndNames);
+    }
 }
