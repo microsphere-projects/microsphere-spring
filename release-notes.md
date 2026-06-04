@@ -288,4 +288,40 @@ Thank you for using our library! 🚀
 
 For a complete list of changes, see the full [changelog](https://github.com/your-repo/compare/0.2.20...0.2.21).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.20...0.2.21
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.20...0.2.21## v0.2.22
+
+# Release Notes - Version 0.2.22
+
+### New Features
+- **BeanSource Enhancements**:
+  - Added support for `BeanSource` sources and renamed registrar. [#e6c3f899](https://github.com/your-repo/commit/e6c3f899)
+  - Enabled `BeanSource` registration for web extensions. [#f0baceb5](https://github.com/your-repo/commit/f0baceb5)
+  - Enhanced `EnableWebFluxExtension` with `BeanSource` sources. [#24619e29](https://github.com/your-repo/commit/24619e29)
+- Introduced `CompositeWebEndpointMappingRegistry` for better endpoint mapping management. [#7c5682e6](https://github.com/your-repo/commit/7c5682e6)
+- Added support for registering beans with `BeanDefinitionRegistry`. [#f058ee27](https://github.com/your-repo/commit/f058ee27, #44f91109](https://github.com/your-repo/commit/44f91109)
+- Added helper methods like `getBeanDefinition(BeanDefinitionRegistry)` and `register event interceptors` from `BeanSource`. [#6f870363](https://github.com/your-repo/commit/6f870363), [#b9d60bdb](https://github.com/your-repo/commit/b9d60bdb)
+
+### Dependency Updates
+- Bumped **microsphere-logging** version to `0.1.15`. [#5208a54c](https://github.com/your-repo/commit/5208a54c)
+- Bumped **microsphere-java** version to `0.3.7`. [#5c19d817](https://github.com/your-repo/commit/5c19d817)
+- Updated parent POM version to `0.3.1`. [#371991b0](https://github.com/your-repo/commit/371991b0)
+
+### Documentation
+- Updated `README` with new release versions. [#5f22aaba](https://github.com/your-repo/commit/5f22aaba)
+
+### Test Improvements
+- Added tests for `CompositeWebEndpointMappingRegistry`. [#9a4dc47f](https://github.com/your-repo/commit/9a4dc47f)
+- Added tests for registering primary beans without names. [#c8ba8bbc](https://github.com/your-repo/commit/c8ba8bbc)
+- Imported `SimpleWebEndpointMappingRegistry` in tests for validation. [#d1aeb63f](https://github.com/your-repo/commit/d1aeb63f)
+- Introduced tests for `deny-filter` functionality. [#614da06a](https://github.com/your-repo/commit/614da06a)
+
+### Build and Workflow Enhancements
+- Merged updates from the main branch into release branch multiple times. [#1f7cea0a](https://github.com/your-repo/commit/1f7cea0a), [#787c6ce9](https://github.com/your-repo/commit/787c6ce9), [#f1a444e3](https://github.com/your-repo/commit/f1a444e3), [#c952c9ed](https://github.com/your-repo/commit/c952c9ed), [#460cdee0](https://github.com/your-repo/commit/460cdee0), and others.
+- Bumped repository version to prepare for the next release. [#31aa4e8a](https://github.com/your-repo/commit/31aa4e8a)
+
+### Other Changes
+- Minor refactoring and cleanup, including removing extra blank lines. [#e8555f1d](https://github.com/your-repo/commit/e8555f1d)
+
+For a complete list of changes, please refer to the [Full Changelog](#).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.21...0.2.22
