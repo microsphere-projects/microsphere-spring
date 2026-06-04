@@ -196,7 +196,6 @@ public abstract class BeanRegistrar {
         return registerBeanDefinition(registry, null, beanType);
     }
 
-
     /**
      * Register a {@link BeanDefinition} for the specified bean type with an optional name.
      * <p>
