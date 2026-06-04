@@ -19,7 +19,6 @@ package io.microsphere.spring.context.event;
 import io.microsphere.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -31,8 +30,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,8 +44,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
+@SpringJUnitConfig(classes = {
         EnableEventExtensionTest.class,
         EnableEventExtensionTest.Config.class,
         DefaultAdvisorAutoProxyCreator.class
