@@ -62,7 +62,7 @@ public class FilteringWebEndpointMappingRegistryTest {
         }
 
         @Override
-        public boolean register(WebEndpointMapping webEndpointMapping) {
+        protected boolean doRegister(WebEndpointMapping webEndpointMapping) {
             return result;
         }
 

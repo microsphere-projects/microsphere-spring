@@ -18,11 +18,14 @@ package io.microsphere.spring.web.metadata;
 
 import io.microsphere.filter.Filter;
 import io.microsphere.filter.FilterOperator;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 
 import java.util.List;
 
 import static io.microsphere.filter.FilterOperator.OR;
-import static io.microsphere.lang.function.Streams.filterList;
+import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.util.ArrayUtils.asArray;
 
 /**
@@ -33,32 +36,30 @@ import static io.microsphere.util.ArrayUtils.asArray;
  * @see WebEndpointMappingFilter
  * @since 1.0.0
  */
-public abstract class FilteringWebEndpointMappingRegistry implements WebEndpointMappingRegistry {
+public abstract class FilteringWebEndpointMappingRegistry implements WebEndpointMappingRegistry, BeanFactoryAware {
 
     protected static final Filter<WebEndpointMapping> DEFAULT_FILTER = e -> true;
 
     protected static final FilterOperator DEFAULT_FILTER_OPERATOR = OR;
 
-    private Filter<WebEndpointMapping> filter;
+    protected Filter<WebEndpointMapping> filter;
 
-    private FilterOperator filterOperator;
+    protected FilterOperator filterOperator;
+
+    protected BeanFactory beanFactory;
+
+    @Override
+    public final boolean register(WebEndpointMapping webEndpointMapping) {
+        Filter<WebEndpointMapping> filter = getFilter();
+        if (filter.accept(webEndpointMapping)) {
+            return doRegister(webEndpointMapping);
+        }
+        return false;
+    }
 
     @Override
     public final int register(Iterable<WebEndpointMapping> webEndpointMappings) {
-        List<WebEndpointMapping> filteredWebEndpointMappings = filterWebEndpointMappings(webEndpointMappings);
-        int size = filteredWebEndpointMappings.size();
-        int count = size;
-        for (int i = 0; i < size; i++) {
-            WebEndpointMapping filteredWebEndpointMapping = filteredWebEndpointMappings.get(i);
-            if (!register(filteredWebEndpointMapping)) {
-                count--;
-            }
-        }
-        return count;
-    }
-
-    protected List<WebEndpointMapping> filterWebEndpointMappings(Iterable<WebEndpointMapping> webEndpointMappings) {
-        return filterList(webEndpointMappings, getFilter()::accept);
+        return WebEndpointMappingRegistry.super.register(webEndpointMappings);
     }
 
     public void setFilterOperator(FilterOperator filterOperator) {
@@ -86,4 +87,21 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
         }
         return filterOperator;
     }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+        List<WebEndpointMappingFilter> filters = getSortedBeans(beanFactory, WebEndpointMappingFilter.class);
+        this.setWebEndpointMappingFilters(filters);
+    }
+
+    /**
+     * Registers the given {@link WebEndpointMapping} if it passes the filter.
+     * <p>
+     * Subclasses should implement this method to provide the actual registration logic.
+     *
+     * @param webEndpointMapping the {@link WebEndpointMapping} to register
+     * @return {@code true} if the mapping was registered successfully, {@code false} otherwise
+     */
+    protected abstract boolean doRegister(WebEndpointMapping webEndpointMapping);
 }
