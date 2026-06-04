@@ -196,7 +196,6 @@ public abstract class BeanRegistrar {
         return registerBeanDefinition(registry, null, beanType);
     }
 
-
     /**
      * Register a {@link BeanDefinition} for the specified bean type with an optional name.
      * <p>
@@ -381,6 +380,71 @@ public abstract class BeanRegistrar {
                                                  Class<?> beanType, Consumer<BeanDefinitionBuilder> builderConsumer) {
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanType, builderConsumer);
         return registerBeanDefinition(registry, beanName, beanDefinition);
+    }
+
+    /**
+     * Registers a {@link BeanDefinition} for the specified bean type with the primary flag.
+     * <p>
+     * This method creates a generic bean definition for the provided bean type and sets its primary status.
+     * A unique bean name will be generated automatically based on the bean type. The bean definition is then
+     * registered in the given registry. If the bean is successfully registered, it returns {@code true};
+     * otherwise, it returns {@code false}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * // Register as a primary bean
+     * boolean registered = registerBeanDefinition(registry, MyService.class, true);
+     *
+     * if (registered) {
+     *     System.out.println("Primary bean registered successfully.");
+     * } else {
+     *     System.out.println("Bean was already registered.");
+     * }
+     * }</pre>
+     *
+     * @param registry The {@link BeanDefinitionRegistry} where the bean will be registered.
+     * @param beanType The class type of the bean to be registered.
+     * @param primary  Whether this bean should be marked as the primary bean.
+     * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     */
+    public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType, boolean primary) {
+        return registerBeanDefinition(registry, null, beanType, primary);
+    }
+
+    /**
+     * Registers a {@link BeanDefinition} for the specified bean type with the primary flag and an optional name.
+     * <p>
+     * This method creates a generic bean definition for the provided bean type and sets its primary status.
+     * If a bean name is provided, it will be used; otherwise, a unique bean name will be generated automatically
+     * based on the bean type. The bean definition is then registered in the given registry. If the bean is
+     * successfully registered, it returns {@code true}; otherwise, it returns {@code false}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * // Register as a primary bean with auto-generated name
+     * boolean registered = registerBeanDefinition(registry, null, MyService.class, true);
+     *
+     * // Register as a non-primary bean with explicit name
+     * boolean registered = registerBeanDefinition(registry, "mySecondaryService", MyService.class, false);
+     *
+     * if (registered) {
+     *     System.out.println("Bean registered successfully with primary flag.");
+     * } else {
+     *     System.out.println("Bean was already registered.");
+     * }
+     * }</pre>
+     *
+     * @param registry The {@link BeanDefinitionRegistry} where the bean will be registered.
+     * @param beanName The name to assign to the bean in the registry, or {@code null} to generate a unique name.
+     * @param beanType The class type of the bean to be registered.
+     * @param primary  Whether this bean should be marked as the primary bean.
+     * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     */
+    public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
+                                                 Class<?> beanType, boolean primary) {
+        return registerBeanDefinition(registry, beanName, beanType, builder -> builder.setPrimary(primary));
     }
 
     /**
