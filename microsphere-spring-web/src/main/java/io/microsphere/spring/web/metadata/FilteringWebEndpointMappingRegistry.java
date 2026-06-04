@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.web.metadata;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.filter.Filter;
 import io.microsphere.filter.FilterOperator;
 import org.springframework.beans.BeansException;
@@ -74,6 +75,7 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
         filter = getFilterOperator().createFilter(filters);
     }
 
+    @Nonnull
     public Filter<WebEndpointMapping> getFilter() {
         if (filter == null) {
             return DEFAULT_FILTER;
@@ -81,6 +83,7 @@ public abstract class FilteringWebEndpointMappingRegistry implements WebEndpoint
         return filter;
     }
 
+    @Nonnull
     public FilterOperator getFilterOperator() {
         if (filterOperator == null) {
             return DEFAULT_FILTER_OPERATOR;
