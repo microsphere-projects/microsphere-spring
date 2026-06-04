@@ -257,4 +257,35 @@ Thank you for using our library! 🚀
 
 --- 
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.19...0.2.20
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.19...0.2.20## v0.2.21
+
+# Release Notes - Version 0.2.21
+
+## New Features
+- Added `getBeanTypes` API to `BeanSource` for retrieving bean types.  
+- Implemented generic bean registration and builder overloads.  
+- Introduced `GenericBeanNameGenerator` and supporting tests.  
+- Extended `BeanSource` with bean registration support and static `registerBeans` overload.  
+- Added utility methods for bean classes/definitions with tests.  
+- New `loadFactoryClasses` and `loadFactoryNames` methods for factory handling.  
+
+## Bug Fixes
+- Adjusted test methods to use the passed `beanFactory`.  
+- Updated `resolveBeanType` to use `BeanDefinition` type.  
+
+## Dependency Updates
+- Bumped Jackson to version 2.22.0.  
+- Downgraded Jackson to version 2.21.3.  
+
+## Documentation
+- Updated `README` to reference version 0.2.21.  
+
+## Build and Workflow Enhancements
+- Removed `spring-milestone` repository from parent POM.  
+- Multiple merges from `main` into `release` branches for alignment.  
+
+---
+
+For a complete list of changes, see the full [changelog](https://github.com/your-repo/compare/0.2.20...0.2.21).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.20...0.2.21
