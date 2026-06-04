@@ -62,7 +62,7 @@ public class FilteringWebEndpointMappingRegistryTest {
         }
 
         @Override
-        public boolean register(WebEndpointMapping webEndpointMapping) {
+        protected boolean doRegister(WebEndpointMapping webEndpointMapping) {
             return result;
         }
 
@@ -98,6 +98,13 @@ public class FilteringWebEndpointMappingRegistryTest {
     public void testSetWebEndpointMappingFilters() {
         this.registry.setWebEndpointMappingFilters(asList(e -> true));
         assertEquals(3, this.registry.register(this.webEndpointMappings));
+        assertNotNull(this.registry.getFilter());
+    }
+
+    @Test
+    public void testSetWebEndpointMappingFiltersOnDeny() {
+        this.registry.setWebEndpointMappingFilters(asList(e -> false));
+        assertEquals(0, this.registry.register(this.webEndpointMappings));
         assertNotNull(this.registry.getFilter());
     }
 

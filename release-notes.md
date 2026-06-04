@@ -285,4 +285,41 @@ For a complete list of changes, refer to the full [changelog](#).
 
 Thank you for using this release! 🚀
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.20...0.1.21
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.20...0.1.21## v0.1.22
+
+# Release Notes for Version 0.1.22
+
+## New Features
+- **Event Handling:** Added support to register event interceptors from configurable sources. (#fb341ea2)  
+- **Bean Management:**  
+  - Introduced `getBeanDefinition` method for the registry. (#f9bd6fcb)  
+  - Added overloads for `registerBeans` in `BeanDefinitionRegistry`. (#10e9bf4a)  
+  - Enabled bean source support with a new composite registry. (#bad51f05)  
+
+## Dependency Updates
+- Upgraded `microsphere-logging` to version 0.1.15. (#23c28487)  
+- Upgraded `microsphere-java` to version 0.3.7. (#6ef40eab)  
+- Updated parent POM version to 0.3.1. (#ea412d8b)  
+
+## Test Improvements
+- Added test to ensure primary beans are registered without names. (#6da92d8d)  
+- Imported `SimpleWebEndpointMappingRegistry` for testing. (#ccc591e5)  
+- Introduced null-check tests with annotated getters. (#534935a3)  
+
+## Documentation
+- Updated README to reflect the latest listed versions. (#37b131c7)  
+
+## Build and Workflow Enhancements
+- Replaced `jakarta.servlet` imports with `javax.servlet` for broader compatibility. (#b66395be)  
+- Merged `release-1.x` into `dev-1.x`. (#96eddf01)  
+- Version bumped to next patch after publishing 0.1.21. (#32d98002)  
+
+## Other Changes
+- Removed registrations for `WebEndpointMappingFactory`. (#c644dfa2)  
+- Directly built bean definitions in the registrar. (#2d16db7e)  
+
+---
+
+Thank you to everyone who contributed to this release!
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.21...0.1.22

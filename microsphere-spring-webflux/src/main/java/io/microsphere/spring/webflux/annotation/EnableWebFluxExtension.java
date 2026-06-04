@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webflux.annotation;
 
+import io.microsphere.spring.beans.BeanSource;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -25,6 +26,7 @@ import io.microsphere.spring.web.metadata.WebEndpointMappingFactory;
 import io.microsphere.spring.web.metadata.WebEndpointMappingFilter;
 import io.microsphere.spring.web.metadata.WebEndpointMappingRegistry;
 import io.microsphere.spring.web.metadata.WebEndpointMappingResolver;
+import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import io.microsphere.spring.web.util.RequestAttributesUtils;
@@ -49,6 +51,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;
+import static io.microsphere.spring.beans.BeanSource.JAVA_SERVICE_PROVIDER;
+import static io.microsphere.spring.beans.BeanSource.SPRING_FACTORIES;
 import static io.microsphere.spring.web.util.RequestContextStrategy.DEFAULT;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -113,6 +118,27 @@ public @interface EnableWebFluxExtension {
      */
     @AliasFor(annotation = EnableWebExtension.class)
     boolean publishEvents() default true;
+
+    /**
+     * Indicate the sources of beans from which the Spring Web extension components are collected, such as:
+     * <ul>
+     *  <li>{@link WebEndpointMappingResolver}</li>
+     *  <li>{@link WebEndpointMappingRegistry}</li>
+     *  <li>{@link WebEndpointMappingFactory}</li>
+     *  <li>{@link WebEndpointMappingFilter}</li>
+     *  <li>{@link HandlerMethodAdvice}</li>
+     *  <li>{@link HandlerMethodArgumentInterceptor}</li>
+     *  <li>{@link HandlerMethodInterceptor}</li>
+     * </ul>
+     *
+     * @return the default value is the array of
+     * {@link BeanSource#BEAN_FACTORY}, {@link BeanSource#SPRING_FACTORIES} and {@link BeanSource#JAVA_SERVICE_PROVIDER}
+     * @see BeanSource#BEAN_FACTORY
+     * @see BeanSource#SPRING_FACTORIES
+     * @see BeanSource#JAVA_SERVICE_PROVIDER
+     */
+    @AliasFor(annotation = EnableWebExtension.class)
+    BeanSource[] sources() default {BEAN_FACTORY, SPRING_FACTORIES, JAVA_SERVICE_PROVIDER};
 
     /**
      * Indicate where the {@link RequestAttributes} stores.
