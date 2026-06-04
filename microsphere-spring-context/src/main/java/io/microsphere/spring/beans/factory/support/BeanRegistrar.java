@@ -445,7 +445,9 @@ public abstract class BeanRegistrar {
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
                                                  Class<?> beanType, boolean primary) {
-        return registerBeanDefinition(registry, beanName, beanType, builder -> builder.setPrimary(primary));
+        AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanType);
+        beanDefinition.setPrimary(primary);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
     /**
@@ -908,7 +910,7 @@ public abstract class BeanRegistrar {
      * the bean was successfully registered, or {@code false} if it was already present and overriding is disabled.
      */
     public static Entry<String, Boolean> registerGenericBean(BeanDefinitionRegistry registry, Class<?> beanClass,
-                                                                 BeanNameGenerator beanNameGenerator) {
+                                                             BeanNameGenerator beanNameGenerator) {
         BeanDefinition beanDefinition = genericBeanDefinition(beanClass);
         String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
         boolean registered = registerBeanDefinition(registry, beanName, beanDefinition);
