@@ -136,6 +136,12 @@ public class BeanRegistrarTest {
     }
 
     @Test
+    public void testRegisterBeanDefinitionWithPrimaryAndNoBeanName() {
+        String beanName = "io.microsphere.spring.test.domain.User#0";
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, User.class, true), true, ROLE_APPLICATION, true, beanName);
+    }
+
+    @Test
     public void testRegisterBeanDefinitionWithBuilder() {
         String beanName = "io.microsphere.spring.test.domain.User#0";
         assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, User.class, builder -> builder.setRole(ROLE_INFRASTRUCTURE)), true, ROLE_INFRASTRUCTURE, false, beanName);
