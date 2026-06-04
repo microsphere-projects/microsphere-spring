@@ -19,6 +19,7 @@ package io.microsphere.spring.context.event;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
+import io.microsphere.spring.beans.BeanSource;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.type.AnnotationMetadata;
@@ -59,5 +60,10 @@ class EventExtensionAttributes extends ResolvablePlaceholderAnnotationAttributes
     @Nonnull
     public String getExecutorForListener() {
         return getString(EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME);
+    }
+
+    @Nonnull
+    public BeanSource[] getSources() {
+        return (BeanSource[]) get("sources");
     }
 }

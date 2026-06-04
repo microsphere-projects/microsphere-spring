@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.spring.beans.BeanSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -27,6 +28,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.concurrent.Executor;
 
+import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;
+import static io.microsphere.spring.beans.BeanSource.JAVA_SERVICE_PROVIDER;
+import static io.microsphere.spring.beans.BeanSource.SPRING_FACTORIES;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -80,4 +84,18 @@ public @interface EnableEventExtension {
      */
     String executorForListener() default NO_EXECUTOR;
 
+    /**
+     * Indicate the sources of beans from which the Spring extension components are collected, such as:
+     * <ul>
+     *  <li>{@link ApplicationEventInterceptor}</li>
+     *  <li>{@link ApplicationListenerInterceptor}</li>
+     * </ul>
+     *
+     * @return the default value is the array of
+     * {@link BeanSource#BEAN_FACTORY}, {@link BeanSource#SPRING_FACTORIES} and {@link BeanSource#JAVA_SERVICE_PROVIDER}
+     * @see BeanSource#BEAN_FACTORY
+     * @see BeanSource#SPRING_FACTORIES
+     * @see BeanSource#JAVA_SERVICE_PROVIDER
+     */
+    BeanSource[] sources() default {BEAN_FACTORY, SPRING_FACTORIES, JAVA_SERVICE_PROVIDER};
 }

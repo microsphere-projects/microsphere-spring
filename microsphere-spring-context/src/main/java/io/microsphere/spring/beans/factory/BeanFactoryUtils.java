@@ -758,6 +758,42 @@ public abstract class BeanFactoryUtils implements Utils {
         return null;
     }
 
+    /**
+     * Retrieves the {@link BeanDefinition} for the specified bean name from the given {@link BeanDefinitionRegistry}.
+     *
+     * <p>
+     * This method checks if the registry contains a bean definition for the provided name. If it does,
+     * the corresponding {@link BeanDefinition} is returned. Otherwise, this method returns {@code null}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * BeanDefinitionRegistry registry = ...; // Obtain or inject the bean definition registry
+     * String beanName = "myBean";
+     *
+     * BeanDefinition beanDefinition = BeanFactoryUtils.getBeanDefinition(registry, beanName);
+     *
+     * if (beanDefinition != null) {
+     *     // Inspect or modify the bean definition
+     *     System.out.println("Bean class: " + beanDefinition.getBeanClassName());
+     * } else {
+     *     // Handle case where bean definition is not found
+     *     System.out.println("No bean definition found for name: " + beanName);
+     * }
+     * }</pre>
+     *
+     * @param registry  The target bean definition registry to retrieve the bean definition from. Must not be {@code null}.
+     * @param beanName  The name of the bean whose definition is to be retrieved. Must not be {@code null} or empty.
+     * @return The {@link BeanDefinition} if present in the registry; otherwise, {@code null}.
+     */
+    @Nullable
+    public static BeanDefinition getBeanDefinition(BeanDefinitionRegistry registry, String beanName) {
+        if (registry.containsBeanDefinition(beanName)) {
+            return registry.getBeanDefinition(beanName);
+        }
+        return null;
+    }
+
     private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
         if (beanFactory == null) {
             return null;
