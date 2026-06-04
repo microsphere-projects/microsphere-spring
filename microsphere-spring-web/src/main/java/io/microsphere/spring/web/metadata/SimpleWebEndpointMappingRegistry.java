@@ -33,7 +33,7 @@ public class SimpleWebEndpointMappingRegistry extends FilteringWebEndpointMappin
     private final Map<Integer, WebEndpointMapping> repository = newHashMap(256);
 
     @Override
-    public boolean register(WebEndpointMapping webEndpointMapping) {
+    protected boolean doRegister(WebEndpointMapping webEndpointMapping) {
         return repository.put(webEndpointMapping.getId(), webEndpointMapping) == null;
     }
 

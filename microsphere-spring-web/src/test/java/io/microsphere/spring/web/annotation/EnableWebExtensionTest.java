@@ -20,15 +20,15 @@ package io.microsphere.spring.web.annotation;
 import io.microsphere.spring.test.web.controller.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import static io.microsphere.spring.beans.BeanSource.BEAN_FACTORY;
+import static io.microsphere.spring.beans.BeanSource.SPRING_FACTORIES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -40,14 +40,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @see EnableWebExtension
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {
+@SpringJUnitConfig(classes = {
         TestController.class,
         EnableWebExtensionTest.class
 })
+@WebAppConfiguration
 @EnableWebMvc
-@EnableWebExtension
+@EnableWebExtension(sources = {BEAN_FACTORY, SPRING_FACTORIES})
 class EnableWebExtensionTest {
 
     @Autowired
