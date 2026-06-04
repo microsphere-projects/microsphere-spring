@@ -34,7 +34,6 @@ import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webmvc.advice.StoringRequestBodyArgumentAdvice;
 import io.microsphere.spring.webmvc.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webmvc.util.WebMvcUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.core.MethodParameter;
@@ -52,6 +51,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
