@@ -102,6 +102,13 @@ class FilteringWebEndpointMappingRegistryTest {
     }
 
     @Test
+    void testSetWebEndpointMappingFiltersOnDeny() {
+        this.registry.setWebEndpointMappingFilters(asList(e -> false));
+        assertEquals(0, this.registry.register(this.webEndpointMappings));
+        assertNotNull(this.registry.getFilter());
+    }
+
+    @Test
     void testGetFilter() {
         Filter<WebEndpointMapping> filter = this.registry.getFilter();
         assertNotNull(filter);
