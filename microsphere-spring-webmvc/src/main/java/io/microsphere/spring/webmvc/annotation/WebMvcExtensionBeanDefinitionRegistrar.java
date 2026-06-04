@@ -66,7 +66,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
 
         AnnotationAttributes attributes = getAttributes(metadata);
 
-        registerWebEndpointMappingRegistrar(attributes, registry);
+        registerWebEndpointMappingResolvers(attributes, registry);
 
         registerInterceptingHandlerMethodProcessor(attributes, registry);
 
@@ -79,7 +79,7 @@ public class WebMvcExtensionBeanDefinitionRegistrar implements ImportBeanDefinit
         registerReversedProxyHandlerMapping(attributes, registry);
     }
 
-    private void registerWebEndpointMappingRegistrar(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+    private void registerWebEndpointMappingResolvers(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
         boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
             registerBeanDefinition(registry, ServletWebEndpointMappingResolver.class);
