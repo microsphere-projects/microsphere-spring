@@ -26,6 +26,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
@@ -310,6 +311,9 @@ class BeanFactoryUtilsTest {
             ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             assertNotNull(getBeanDefinition(beanFactory, "baseTestBean"));
             assertNull(getBeanDefinition(beanFactory, "baseTestBean2"));
+            BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
+            assertNotNull(getBeanDefinition(registry, "baseTestBean"));
+            assertNull(getBeanDefinition(registry, "baseTestBean2"));
         }, BaseTestBean.class);
     }
 
