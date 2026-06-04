@@ -24,17 +24,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.PayloadApplicationEvent;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
-import java.util.function.Consumer;
-
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
-import static io.microsphere.util.ArrayUtils.ofArray;
+import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
+import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
+import static io.microsphere.util.ArrayUtils.combine;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -131,22 +129,18 @@ public class EventExtensionRegistrarTest {
     }
 
     void test(int expected, Class<?>... configClasses) {
+        configClasses = combine(ExecutorConfig.class, configClasses);
+        configClasses = combine(InterceptorConfig.class, configClasses);
+
         MutableInteger i = new MutableInteger(0);
-        testInContext(context -> {
+        testInSpringContainer(context -> {
             context.addApplicationListener(new MutableIntegerApplicationListener());
             context.publishEvent(i);
+            boolean intercepted = i.get() > 1;
+            assertEquals(intercepted, isBeanPresent(context, LoggingApplicationEventInterceptor.class));
+            assertEquals(intercepted, isBeanPresent(context, LoggingApplicationListenerInterceptor.class));
         }, configClasses);
 
         assertEquals(expected, i.get());
-    }
-
-    void testInContext(Consumer<ConfigurableApplicationContext> contextConsumer, Class<?>... configClasses) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        Class<?>[] requiredConfigClasses = ofArray(InterceptorConfig.class, ExecutorConfig.class);
-        context.register(requiredConfigClasses);
-        context.register(configClasses);
-        context.refresh();
-        contextConsumer.accept(context);
-        context.close();
     }
 }
