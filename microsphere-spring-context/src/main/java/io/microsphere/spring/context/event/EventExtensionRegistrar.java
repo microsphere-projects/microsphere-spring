@@ -17,6 +17,7 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.beans.BeanSource;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -34,6 +35,8 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.BeanSource.registerBeans;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanDefinition;
 import static io.microsphere.spring.context.event.EnableEventExtension.NO_EXECUTOR;
 import static io.microsphere.spring.context.event.EventExtensionAttributes.EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME;
 import static io.microsphere.spring.context.event.EventExtensionAttributes.INTERCEPTED_ATTRIBUTE_NAME;
@@ -89,7 +92,7 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
             return;
         }
 
-        final BeanDefinition existedBeanDefinition = getApplicationEventMulticasterBeanDefinition(beanName, registry);
+        final BeanDefinition existedBeanDefinition = getBeanDefinition(registry, beanName);
 
         final BeanDefinition targetBeanDefinition;
 
@@ -107,6 +110,12 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
             targetBeanDefinition = rebuildApplicationEventMulticasterBeanDefinition(intercepted, existedBeanDefinition, beanName, registry);
         }
 
+        if (intercepted) {
+            BeanSource[] sources = attributes.getSources();
+            registerApplicationEventInterceptors(registry, sources);
+            registerApplicationListenerInterceptors(registry, sources);
+        }
+
         associateExecutorBeanIfRequired(targetBeanDefinition, associatedExecutorBean, executorForListener);
         registry.registerBeanDefinition(beanName, targetBeanDefinition);
     }
@@ -119,10 +128,6 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
             return false;
         }
         return true;
-    }
-
-    BeanDefinition getApplicationEventMulticasterBeanDefinition(String beanName, BeanDefinitionRegistry registry) {
-        return registry.containsBeanDefinition(beanName) ? registry.getBeanDefinition(beanName) : null;
     }
 
     private AbstractBeanDefinition rebuildApplicationEventMulticasterBeanDefinition(boolean intercepted,
@@ -153,6 +158,14 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
         beanDefinition.setAttribute(EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME, executorForListener);
         beanDefinition.setAttribute(CLASS_NAME_ATTRIBUTE_NAME, metadata.getClassName());
         return beanDefinition;
+    }
+
+    private void registerApplicationEventInterceptors(BeanDefinitionRegistry registry, BeanSource[] sources) {
+        registerBeans(registry, sources, ApplicationEventInterceptor.class);
+    }
+
+    private void registerApplicationListenerInterceptors(BeanDefinitionRegistry registry, BeanSource[] sources) {
+        registerBeans(registry, sources, ApplicationListenerInterceptor.class);
     }
 
     private void associateExecutorBeanIfRequired(BeanDefinition beanDefinition,

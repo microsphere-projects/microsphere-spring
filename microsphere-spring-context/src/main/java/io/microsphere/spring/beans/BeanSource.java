@@ -33,6 +33,7 @@ import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanClass;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerGenericBeans;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryClasses;
@@ -121,25 +122,119 @@ public enum BeanSource {
     public abstract <T> Set<Class<T>> getBeanTypes(ConfigurableListableBeanFactory beanFactory, Class<T> beanType);
 
     /**
-     * Registers beans into the given {@link ConfigurableListableBeanFactory} based on the specified {@code beanTypes}.
+     * Registers beans into the given {@link BeanDefinitionRegistry} from this source.
      * <p>
-     * For each provided {@code beanType}, this method retrieves the corresponding bean classes from this source
-     * (e.g., Bean Factory, Spring Factories, or Java Service Provider) and registers them as generic beans.
+     * This method discovers bean classes for the specified {@code beanTypes} using this {@link BeanSource},
+     * and registers them as generic beans. The underlying {@link ConfigurableListableBeanFactory} is derived
+     * from the provided registry for type resolution if necessary.
      *
-     * @param beanFactory the {@link ConfigurableListableBeanFactory} to register beans into
+     * <h3>Example Usage:</h3>
+     * <pre>{@code
+     * // Register beans from Spring Factories source
+     * BeanDefinitionRegistry registry = ...;
+     *
+     * Map<Class<?>, String> registeredBeans = BeanSource.SPRING_FACTORIES.registerBeans(
+     *     registry,
+     *     MyService.class,
+     *     AnotherService.class
+     * );
+     *
+     * // The map contains the registered bean classes as keys and their bean names as values
+     * registeredBeans.forEach((beanClass, beanName) -> {
+     *     System.out.println("Registered: " + beanClass.getName() + " with name: " + beanName);
+     * });
+     * }</pre>
+     *
+     * @param registry  the {@link BeanDefinitionRegistry} to register beans into
+     * @param beanTypes the target bean types to search for and register
+     * @return an unmodifiable {@link Map} where keys are the registered bean classes and values are their corresponding bean names
+     * @see #registerBeans(ConfigurableListableBeanFactory, BeanDefinitionRegistry, Class...)
+     * @see BeanRegistrar#registerGenericBeans(BeanDefinitionRegistry, Collection)
+     */
+    @Nonnull
+    @Immutable
+    public Map<Class<?>, String> registerBeans(BeanDefinitionRegistry registry, Class<?>... beanTypes) {
+        return registerBeans(asConfigurableListableBeanFactory(registry), registry, beanTypes);
+    }
+
+    /**
+     * Registers beans into the {@link BeanDefinitionRegistry} derived from the given {@link ConfigurableListableBeanFactory}
+     * from this source.
+     * <p>
+     * This method discovers bean classes for the specified {@code beanTypes} using this {@link BeanSource},
+     * and registers them as generic beans. The underlying {@link BeanDefinitionRegistry} is derived
+     * from the provided {@link ConfigurableListableBeanFactory}.
+     *
+     * <h3>Example Usage:</h3>
+     * <pre>{@code
+     * // Register beans from Spring Factories source
+     * ConfigurableListableBeanFactory beanFactory = ...;
+     *
+     * Map<Class<?>, String> registeredBeans = BeanSource.SPRING_FACTORIES.registerBeans(
+     *     beanFactory,
+     *     MyService.class,
+     *     AnotherService.class
+     * );
+     *
+     * // The map contains the registered bean classes as keys and their bean names as values
+     * registeredBeans.forEach((beanClass, beanName) -> {
+     *     System.out.println("Registered: " + beanClass.getName() + " with name: " + beanName);
+     * });
+     * }</pre>
+     *
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} to use for resolution and to derive the registry
      * @param beanTypes   the target bean types to search for and register
      * @return an unmodifiable {@link Map} where keys are the registered bean classes and values are their corresponding bean names
-     * @see #getBeanTypes(ConfigurableListableBeanFactory, Class)
+     * @see #registerBeans(ConfigurableListableBeanFactory, BeanDefinitionRegistry, Class...)
      * @see BeanRegistrar#registerGenericBeans(BeanDefinitionRegistry, Collection)
      */
     @Nonnull
     @Immutable
     public Map<Class<?>, String> registerBeans(ConfigurableListableBeanFactory beanFactory, Class<?>... beanTypes) {
+        return registerBeans(beanFactory, asBeanDefinitionRegistry(beanFactory), beanTypes);
+    }
+
+    /**
+     * Registers beans into the given {@link BeanDefinitionRegistry} from this source.
+     * <p>
+     * This method discovers bean classes for the specified {@code beanTypes} using this {@link BeanSource},
+     * and registers them as generic beans.
+     *
+     * <h3>Example Usage:</h3>
+     * <pre>{@code
+     * // Register beans from Spring Factories source
+     * ConfigurableListableBeanFactory beanFactory = ...;
+     * BeanDefinitionRegistry registry = ...;
+     *
+     * Map<Class<?>, String> registeredBeans = BeanSource.SPRING_FACTORIES.registerBeans(
+     *     beanFactory,
+     *     registry,
+     *     MyService.class,
+     *     AnotherService.class
+     * );
+     *
+     * // The map contains the registered bean classes as keys and their bean names as values
+     * registeredBeans.forEach((beanClass, beanName) -> {
+     *     System.out.println("Registered: " + beanClass.getName() + " with name: " + beanName);
+     * });
+     * }</pre>
+     *
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} to use for resolution
+     * @param registry    the {@link BeanDefinitionRegistry} to register beans into
+     * @param beanTypes   the target bean types to search for and register
+     * @return an unmodifiable {@link Map} where keys are the registered bean classes and values are their corresponding bean names
+     * @see #registerBeans(ConfigurableListableBeanFactory, Class...)
+     * @see #registerBeans(BeanDefinitionRegistry, Class...)
+     * @see BeanRegistrar#registerGenericBeans(BeanDefinitionRegistry, Collection)
+     */
+    @Nonnull
+    @Immutable
+    public Map<Class<?>, String> registerBeans(ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry,
+                                               Class<?>... beanTypes) {
         int length = length(beanTypes);
         if (length == 0) {
             return emptyMap();
         }
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
         Map<Class<?>, String> beanTypesAndNames = registerBeans(beanFactory, registry, beanTypes, length);
         return unmodifiableMap(beanTypesAndNames);
     }
@@ -166,31 +261,133 @@ public enum BeanSource {
     }
 
     /**
-     * Registers beans into the given {@link ConfigurableListableBeanFactory} from the specified {@link BeanSource}s.
+     * Registers beans into the {@link BeanDefinitionRegistry} derived from the given {@link ConfigurableListableBeanFactory}
+     * using the specified {@link BeanSource}s.
      * <p>
      * This method iterates over the provided {@code beanSources}, retrieves the bean classes for each {@code beanType}
      * from each source, and registers them as generic beans. If multiple sources provide beans for the same type,
      * the behavior depends on the underlying {@link BeanDefinitionRegistry} implementation (typically, later registrations
      * may override earlier ones if the bean name conflicts).
      *
-     * @param beanFactory the {@link ConfigurableListableBeanFactory} to register beans into
+     * <h3>Example Usage:</h3>
+     * <pre>{@code
+     * // Register beans from Spring Factories and Java Service Provider sources
+     * ConfigurableListableBeanFactory beanFactory = ...;
+     *
+     * Map<Class<?>, String> registeredBeans = BeanSource.registerBeans(
+     *     beanFactory,
+     *     new BeanSource[]{BeanSource.SPRING_FACTORIES, BeanSource.JAVA_SERVICE_PROVIDER},
+     *     MyService.class,
+     *     AnotherService.class
+     * );
+     *
+     * // The map contains the registered bean classes as keys and their bean names as values
+     * registeredBeans.forEach((beanClass, beanName) -> {
+     *     System.out.println("Registered: " + beanClass.getName() + " with name: " + beanName);
+     * });
+     * }</pre>
+     *
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} to use for resolution and to derive the registry
      * @param beanSources the array of {@link BeanSource}s to use for discovering bean classes
      * @param beanTypes   the target bean types to search for and register
      * @return an unmodifiable {@link Map} where keys are the registered bean classes and values are their corresponding bean names
      * @throws IllegalArgumentException if {@code beanSources} is {@code null} or empty
-     * @see #registerBeans(ConfigurableListableBeanFactory, Class...)
+     * @see #registerBeans(BeanDefinitionRegistry, BeanSource[], Class...)
+     * @see #registerBeans(ConfigurableListableBeanFactory, BeanDefinitionRegistry, BeanSource[], Class...)
      * @see BeanRegistrar#registerGenericBeans(BeanDefinitionRegistry, Collection)
      */
     @Nonnull
     @Immutable
     public static Map<Class<?>, String> registerBeans(ConfigurableListableBeanFactory beanFactory, BeanSource[] beanSources, Class<?>... beanTypes) {
+        return registerBeans(beanFactory, asBeanDefinitionRegistry(beanFactory), beanSources, beanTypes);
+    }
+
+    /**
+     * Registers beans into the given {@link BeanDefinitionRegistry} from the specified {@link BeanSource}s.
+     * <p>
+     * This method iterates over the provided {@code beanSources}, retrieves the bean classes for each {@code beanType}
+     * from each source, and registers them as generic beans. If multiple sources provide beans for the same type,
+     * the behavior depends on the underlying {@link BeanDefinitionRegistry} implementation (typically, later registrations
+     * may override earlier ones if the bean name conflicts).
+     *
+     * <h3>Example Usage:</h3>
+     * <pre>{@code
+     * // Register beans from Spring Factories and Java Service Provider sources
+     * BeanDefinitionRegistry registry = ...;
+     *
+     * Map<Class<?>, String> registeredBeans = BeanSource.registerBeans(
+     *     registry,
+     *     new BeanSource[]{BeanSource.SPRING_FACTORIES, BeanSource.JAVA_SERVICE_PROVIDER},
+     *     MyService.class,
+     *     AnotherService.class
+     * );
+     *
+     * // The map contains the registered bean classes as keys and their bean names as values
+     * registeredBeans.forEach((beanClass, beanName) -> {
+     *     System.out.println("Registered: " + beanClass.getName() + " with name: " + beanName);
+     * });
+     * }</pre>
+     *
+     * @param registry    the {@link BeanDefinitionRegistry} to register beans into
+     * @param beanSources the array of {@link BeanSource}s to use for discovering bean classes
+     * @param beanTypes   the target bean types to search for and register
+     * @return an unmodifiable {@link Map} where keys are the registered bean classes and values are their corresponding bean names
+     * @throws IllegalArgumentException if {@code beanSources} is {@code null} or empty
+     * @see #registerBeans(ConfigurableListableBeanFactory, BeanSource[], Class...)
+     * @see BeanRegistrar#registerGenericBeans(BeanDefinitionRegistry, Collection)
+     */
+    @Nonnull
+    @Immutable
+    public static Map<Class<?>, String> registerBeans(BeanDefinitionRegistry registry, BeanSource[] beanSources, Class<?>... beanTypes) {
+        return registerBeans(asConfigurableListableBeanFactory(registry), registry, beanSources, beanTypes);
+    }
+
+    /**
+     * Registers beans into the given {@link BeanDefinitionRegistry} from the specified {@link BeanSource}s.
+     * <p>
+     * This method iterates over the provided {@code beanSources}, retrieves the bean classes for each {@code beanType}
+     * from each source, and registers them as generic beans. If multiple sources provide beans for the same type,
+     * the behavior depends on the underlying {@link BeanDefinitionRegistry} implementation (typically, later registrations
+     * may override earlier ones if the bean name conflicts).
+     *
+     * <h3>Example Usage:</h3>
+     * <pre>{@code
+     * // Register beans from Spring Factories and Java Service Provider sources
+     * ConfigurableListableBeanFactory beanFactory = ...;
+     * BeanDefinitionRegistry registry = ...;
+     *
+     * Map<Class<?>, String> registeredBeans = BeanSource.registerBeans(
+     *     beanFactory,
+     *     registry,
+     *     new BeanSource[]{BeanSource.SPRING_FACTORIES, BeanSource.JAVA_SERVICE_PROVIDER},
+     *     MyService.class,
+     *     AnotherService.class
+     * );
+     *
+     * // The map contains the registered bean classes as keys and their bean names as values
+     * registeredBeans.forEach((beanClass, beanName) -> {
+     *     System.out.println("Registered: " + beanClass.getName() + " with name: " + beanName);
+     * });
+     * }</pre>
+     *
+     * @param beanFactory the {@link ConfigurableListableBeanFactory} to use for resolution and bean class detection
+     * @param registry    the {@link BeanDefinitionRegistry} to register beans into
+     * @param beanSources the array of {@link BeanSource}s to use for discovering bean classes
+     * @param beanTypes   the target bean types to search for and register
+     * @return an unmodifiable {@link Map} where keys are the registered bean classes and values are their corresponding bean names
+     * @throws IllegalArgumentException if {@code beanSources} is {@code null} or empty
+     * @see #registerBeans(ConfigurableListableBeanFactory, BeanSource[], Class...)
+     * @see BeanRegistrar#registerGenericBeans(BeanDefinitionRegistry, Collection)
+     */
+    public static Map<Class<?>, String> registerBeans(ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry,
+                                                      BeanSource[] beanSources, Class<?>... beanTypes) {
         int length = length(beanTypes);
         if (length == 0) {
             return emptyMap();
         }
         Map<Class<?>, String> beanTypesAndNames = newHashMap(length);
         for (BeanSource beanSource : beanSources) {
-            beanTypesAndNames.putAll(beanSource.registerBeans(beanFactory, beanTypes));
+            beanTypesAndNames.putAll(beanSource.registerBeans(beanFactory, registry, beanTypes));
         }
         return unmodifiableMap(beanTypesAndNames);
     }

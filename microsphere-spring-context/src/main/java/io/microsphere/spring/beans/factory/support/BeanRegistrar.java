@@ -33,6 +33,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -195,7 +196,6 @@ public abstract class BeanRegistrar {
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType) {
         return registerBeanDefinition(registry, null, beanType);
     }
-
 
     /**
      * Register a {@link BeanDefinition} for the specified bean type with an optional name.
@@ -380,6 +380,73 @@ public abstract class BeanRegistrar {
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
                                                  Class<?> beanType, Consumer<BeanDefinitionBuilder> builderConsumer) {
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanType, builderConsumer);
+        return registerBeanDefinition(registry, beanName, beanDefinition);
+    }
+
+    /**
+     * Registers a {@link BeanDefinition} for the specified bean type with the primary flag.
+     * <p>
+     * This method creates a generic bean definition for the provided bean type and sets its primary status.
+     * A unique bean name will be generated automatically based on the bean type. The bean definition is then
+     * registered in the given registry. If the bean is successfully registered, it returns {@code true};
+     * otherwise, it returns {@code false}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * // Register as a primary bean
+     * boolean registered = registerBeanDefinition(registry, MyService.class, true);
+     *
+     * if (registered) {
+     *     System.out.println("Primary bean registered successfully.");
+     * } else {
+     *     System.out.println("Bean was already registered.");
+     * }
+     * }</pre>
+     *
+     * @param registry The {@link BeanDefinitionRegistry} where the bean will be registered.
+     * @param beanType The class type of the bean to be registered.
+     * @param primary  Whether this bean should be marked as the primary bean.
+     * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     */
+    public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType, boolean primary) {
+        return registerBeanDefinition(registry, null, beanType, primary);
+    }
+
+    /**
+     * Registers a {@link BeanDefinition} for the specified bean type with the primary flag and an optional name.
+     * <p>
+     * This method creates a generic bean definition for the provided bean type and sets its primary status.
+     * If a bean name is provided, it will be used; otherwise, a unique bean name will be generated automatically
+     * based on the bean type. The bean definition is then registered in the given registry. If the bean is
+     * successfully registered, it returns {@code true}; otherwise, it returns {@code false}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * // Register as a primary bean with auto-generated name
+     * boolean registered = registerBeanDefinition(registry, null, MyService.class, true);
+     *
+     * // Register as a non-primary bean with explicit name
+     * boolean registered = registerBeanDefinition(registry, "mySecondaryService", MyService.class, false);
+     *
+     * if (registered) {
+     *     System.out.println("Bean registered successfully with primary flag.");
+     * } else {
+     *     System.out.println("Bean was already registered.");
+     * }
+     * }</pre>
+     *
+     * @param registry The {@link BeanDefinitionRegistry} where the bean will be registered.
+     * @param beanName The name to assign to the bean in the registry, or {@code null} to generate a unique name.
+     * @param beanType The class type of the bean to be registered.
+     * @param primary  Whether this bean should be marked as the primary bean.
+     * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     */
+    public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
+                                                 Class<?> beanType, boolean primary) {
+        AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanType);
+        beanDefinition.setPrimary(primary);
         return registerBeanDefinition(registry, beanName, beanDefinition);
     }
 
@@ -777,7 +844,7 @@ public abstract class BeanRegistrar {
         Map<Class<?>, String> beanTypesAndNames = newFixedHashMap(length);
         for (int i = 0; i < length; i++) {
             Class<?> beanClass = beanClasses[i];
-            Map.Entry<String, Boolean> result = registerGenericBean(registry, beanClass);
+            Entry<String, Boolean> result = registerGenericBean(registry, beanClass);
             String beanName = result.getKey();
             beanTypesAndNames.put(beanClass, beanName);
         }
@@ -808,10 +875,10 @@ public abstract class BeanRegistrar {
      *
      * @param registry  The {@link BeanDefinitionRegistry} where the bean will be registered.
      * @param beanClass The class type of the bean to be registered.
-     * @return An immutable {@link Map.Entry} where the key is the generated bean name and the value is {@code true} if
+     * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
      * the bean was successfully registered, or {@code false} if it was already present and overriding is disabled.
      */
-    public static Map.Entry<String, Boolean> registerGenericBean(BeanDefinitionRegistry registry, Class<?> beanClass) {
+    public static Entry<String, Boolean> registerGenericBean(BeanDefinitionRegistry registry, Class<?> beanClass) {
         return registerGenericBean(registry, beanClass, INSTANCE);
     }
 
@@ -839,11 +906,11 @@ public abstract class BeanRegistrar {
      * @param registry          The {@link BeanDefinitionRegistry} where the bean will be registered.
      * @param beanClass         The class type of the bean to be registered.
      * @param beanNameGenerator The {@link BeanNameGenerator} to use for generating the bean name.
-     * @return An immutable {@link Map.Entry} where the key is the generated bean name and the value is {@code true} if
+     * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
      * the bean was successfully registered, or {@code false} if it was already present and overriding is disabled.
      */
-    public static Map.Entry<String, Boolean> registerGenericBean(BeanDefinitionRegistry registry, Class<?> beanClass,
-                                                                 BeanNameGenerator beanNameGenerator) {
+    public static Entry<String, Boolean> registerGenericBean(BeanDefinitionRegistry registry, Class<?> beanClass,
+                                                             BeanNameGenerator beanNameGenerator) {
         BeanDefinition beanDefinition = genericBeanDefinition(beanClass);
         String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
         boolean registered = registerBeanDefinition(registry, beanName, beanDefinition);

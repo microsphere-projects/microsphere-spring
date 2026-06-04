@@ -14,31 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.microsphere.spring.web.metadata;
 
-import java.util.Collection;
-import java.util.Map;
+package io.microsphere.spring.context.event;
 
-import static io.microsphere.collection.MapUtils.newHashMap;
+import io.microsphere.logging.Logger;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.core.ResolvableType;
+
+import static io.microsphere.logging.LoggerFactory.getLogger;
 
 /**
- * Simple {@link WebEndpointMappingRegistry} supports to filter {@link WebEndpointMapping}
+ * {@link ApplicationEventInterceptor} for logging
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see FilteringWebEndpointMappingRegistry
+ * @see ApplicationEventInterceptor
  * @since 1.0.0
  */
-public class SimpleWebEndpointMappingRegistry extends FilteringWebEndpointMappingRegistry {
+public class LoggingApplicationEventInterceptor implements ApplicationEventInterceptor {
 
-    private final Map<Integer, WebEndpointMapping> repository = newHashMap(256);
-
-    @Override
-    protected boolean doRegister(WebEndpointMapping webEndpointMapping) {
-        return repository.put(webEndpointMapping.getId(), webEndpointMapping) == null;
-    }
+    private static final Logger logger = getLogger(LoggingApplicationEventInterceptor.class);
 
     @Override
-    public Collection<WebEndpointMapping> getWebEndpointMappings() {
-        return repository.values();
+    public void intercept(ApplicationEvent event, ResolvableType eventType, ApplicationEventInterceptorChain chain) {
+        logger.info("Before intercept event : {} , type : {}", event, eventType);
+        chain.intercept(event, eventType);
+        logger.info("After intercept event : {} , type : {}", event, eventType);
     }
 }
