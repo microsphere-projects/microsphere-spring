@@ -21,6 +21,7 @@ import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.SimpleWebEndpointMappingRegistry;
 import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Import;
 
 import static io.microsphere.spring.beans.BeanUtils.isBeanPresent;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
@@ -49,6 +50,7 @@ class WebExtensionBeanDefinitionRegistrarTest {
     }
 
     @EnableWebExtension(publishEvents = false)
+    @Import(SimpleWebEndpointMappingRegistry.class)
     static class DisablePublishEventConfig {
     }
 
