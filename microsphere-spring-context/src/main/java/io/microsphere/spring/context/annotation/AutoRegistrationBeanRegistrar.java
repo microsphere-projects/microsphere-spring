@@ -20,7 +20,6 @@ package io.microsphere.spring.context.annotation;
 import io.microsphere.spring.context.config.AutoRegistrationBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -32,8 +31,8 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
 import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 import static io.microsphere.spring.context.config.AutoRegistrationBean.getAutoRegisteredPropertyName;
-import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
+import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactories;
 
 /**
  * {@link ImportSelector} class for {@link EnableAutoRegistrationBean}
@@ -57,8 +56,7 @@ class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<
             return;
         }
 
-        ConfigurableApplicationContext context = getApplicationContext();
-        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(context, AutoRegistrationBean.class);
+        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class,super.classLoader);
         registerAutoRegisteredBeans(autoRegistrationBeans, registry);
     }
 
