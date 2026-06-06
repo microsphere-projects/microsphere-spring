@@ -322,4 +322,25 @@ Thank you for using this release! 🚀
 
 Thank you to everyone who contributed to this release!
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.21...0.1.22
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.21...0.1.22## v0.1.23
+
+# Release Notes for Version 0.1.23
+
+## New Features
+- **AutoRegistrationBean:** Replaced with `SpringFactoriesLoader` for improved bean auto-registration logic. ([e57439fa](https://example.com/commit/e57439fa))
+
+## Documentation
+- Enhanced `README.md` for better clarity. ([0b97c96a](https://example.com/commit/0b97c96a))
+
+## Dependency Updates
+- Bumped `microsphere-logging` dependency to version `0.1.16`. ([a0574895](https://example.com/commit/a0574895))
+
+## Build and Workflow Enhancements
+- Merged `release-1.x` branch into `dev-1.x` to sync changes. ([abcac6fb](https://example.com/commit/abcac6fb))
+- Updated `pom.xml` with relevant tweaks. ([237b0d79](https://example.com/commit/237b0d79))
+- Bumped version for post-0.1.22 development. ([cd3f01d4](https://example.com/commit/cd3f01d4))
+
+## Other Changes
+- General improvements via merged branch `dev-1.x`. ([d7eda57d](https://example.com/commit/d7eda57d))
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.22...0.1.23
