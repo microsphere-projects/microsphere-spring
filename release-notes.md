@@ -324,4 +324,18 @@ For a complete list of changes, see the full [changelog](https://github.com/your
 
 For a complete list of changes, please refer to the [Full Changelog](#).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.21...0.2.22
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.21...0.2.22## v0.2.23
+
+# Release Notes - Version 0.2.23
+
+## Build and Workflow Enhancements
+- Merged main into release and updated workflow metadata. [skip ci]
+- Bumped version placeholders to 0.2.23 in README.
+- Incremented version for the next development cycle after 0.2.22.
+
+## Other Changes
+- Used `SpringFactoriesLoader.loadFactories` with the classloader for improved compatibility.
+
+---
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.22...0.2.23
