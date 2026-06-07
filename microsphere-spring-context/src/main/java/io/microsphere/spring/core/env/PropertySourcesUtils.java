@@ -1,6 +1,8 @@
 package io.microsphere.spring.core.env;
 
+import io.microsphere.annotation.Immutable;
 import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import io.microsphere.logging.Logger;
 import io.microsphere.util.Utils;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -65,11 +67,13 @@ public abstract class PropertySourcesUtils implements Utils {
      */
     public static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrap";
 
+    @Nullable
     public static <T extends PropertySource<?>> T getPropertySource(ConfigurableEnvironment environment, String propertySourceName,
                                                                     Class<T> propertySourceType) {
         return getPropertySource(environment, propertySourceName, propertySourceType, null);
     }
 
+    @Nullable
     public static <T extends PropertySource<?>> T getPropertySource(ConfigurableEnvironment environment, String propertySourceName,
                                                                     Class<T> propertySourceType, Supplier<T> propertySourceSupplierIfAbsent) {
         MutablePropertySources propertySources = environment.getPropertySources();
@@ -102,9 +106,11 @@ public abstract class PropertySourcesUtils implements Utils {
         return targetPropertySource;
     }
 
+    @Nullable
     public static MapPropertySource getMapPropertySource(ConfigurableEnvironment environment, String propertySourceName) {
         return getMapPropertySource(environment, propertySourceName, false);
     }
+
 
     public static MapPropertySource getMapPropertySource(ConfigurableEnvironment environment, String propertySourceName, boolean created) {
         Supplier<MapPropertySource> propertySourceSupplierIfAbsent =
@@ -112,10 +118,12 @@ public abstract class PropertySourcesUtils implements Utils {
         return getPropertySource(environment, propertySourceName, MapPropertySource.class, propertySourceSupplierIfAbsent);
     }
 
+    @Nullable
     public static PropertySource findConfiguredPropertySource(ConfigurableEnvironment environment, String propertyName) {
         return findConfiguredPropertySource(environment.getPropertySources(), propertyName);
     }
 
+    @Nullable
     public static PropertySource findConfiguredPropertySource(Iterable<PropertySource<?>> propertySources, String propertyName) {
         PropertySource configuredPropertySource = null;
         for (PropertySource propertySource : propertySources) {
@@ -130,19 +138,25 @@ public abstract class PropertySourcesUtils implements Utils {
         return configuredPropertySource;
     }
 
+    @Nullable
     public static String findConfiguredPropertySourceName(ConfigurableEnvironment environment, String propertyName) {
         return findConfiguredPropertySourceName(environment.getPropertySources(), propertyName);
     }
 
+    @Nullable
     public static String findConfiguredPropertySourceName(Iterable<PropertySource<?>> propertySources, String propertyName) {
         PropertySource configuredPropertySource = findConfiguredPropertySource(propertySources, propertyName);
         return configuredPropertySource == null ? null : configuredPropertySource.getName();
     }
 
+    @Nonnull
+    @Immutable
     public static Set<String> findPropertyNamesByPrefix(ConfigurableEnvironment environment, String propertyNamePrefix) {
         return findPropertyNames(environment, propertyName -> propertyName.startsWith(propertyNamePrefix));
     }
 
+    @Nonnull
+    @Immutable
     public static Set<String> findPropertyNames(ConfigurableEnvironment environment, Predicate<String> propertyNameFilter) {
         Set<String> propertyNames = newLinkedHashSet();
         for (PropertySource propertySource : environment.getPropertySources()) {
@@ -165,6 +179,8 @@ public abstract class PropertySourcesUtils implements Utils {
      * @return Map
      * @see Properties
      */
+    @Nonnull
+    @Immutable
     public static Map<String, Object> getSubProperties(Iterable<PropertySource<?>> propertySources, String prefix) {
 
         MutablePropertySources mutablePropertySources = new MutablePropertySources();
@@ -185,6 +201,8 @@ public abstract class PropertySourcesUtils implements Utils {
      * @return Map
      * @see Properties
      */
+    @Nonnull
+    @Immutable
     public static Map<String, Object> getSubProperties(ConfigurableEnvironment environment, String prefix) {
         return getSubProperties(environment.getPropertySources(), environment, prefix);
     }
@@ -206,8 +224,9 @@ public abstract class PropertySourcesUtils implements Utils {
      * @param prefix          the prefix of property name
      * @return Map
      * @see Properties
-     * @since 1.0.0
      */
+    @Nonnull
+    @Immutable
     public static Map<String, Object> getSubProperties(PropertySources propertySources, String prefix) {
         return getSubProperties(propertySources, new PropertySourcesPropertyResolver(propertySources), prefix);
     }
@@ -220,8 +239,9 @@ public abstract class PropertySourcesUtils implements Utils {
      * @param prefix           the prefix of property name
      * @return Map
      * @see Properties
-     * @since 1.0.0
      */
+    @Nonnull
+    @Immutable
     public static Map<String, Object> getSubProperties(PropertySources propertySources, PropertyResolver propertyResolver, String prefix) {
 
         Map<String, Object> subProperties = newLinkedHashMap();
@@ -255,7 +275,6 @@ public abstract class PropertySourcesUtils implements Utils {
      *
      * @param propertySource {@link PropertySource} instance
      * @return non-null
-     * @since 1.0.0
      */
     @Nonnull
     public static String[] getPropertyNames(PropertySource propertySource) {
@@ -306,6 +325,7 @@ public abstract class PropertySourcesUtils implements Utils {
      * @see #DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME
      * @see #getDefaultProperties(ConfigurableEnvironment, boolean)
      */
+    @Nonnull
     public static Map<String, Object> getDefaultProperties(ConfigurableEnvironment environment) {
         return getDefaultProperties(environment, true);
     }
@@ -320,6 +340,7 @@ public abstract class PropertySourcesUtils implements Utils {
      * @see #DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME
      * @see #getDefaultProperties(ConfigurableEnvironment, boolean)
      */
+    @Nonnull
     public static Map<String, Object> getDefaultProperties(ConfigurableEnvironment environment, boolean createIfAbsent) {
         Map<String, Object> defaultProperties = null;
         MapPropertySource defaultPropertiesPropertySource = getDefaultPropertiesPropertySource(environment, createIfAbsent);
