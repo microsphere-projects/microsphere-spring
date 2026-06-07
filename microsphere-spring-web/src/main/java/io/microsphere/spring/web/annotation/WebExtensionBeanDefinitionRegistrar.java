@@ -49,7 +49,8 @@ import static io.microsphere.spring.web.method.support.DelegatingHandlerMethodAd
  * @see EnableWebExtension
  * @since 1.0.0
  */
-public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebExtension> implements ImportBeanDefinitionRegistrar {
+public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebExtension>
+        implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
