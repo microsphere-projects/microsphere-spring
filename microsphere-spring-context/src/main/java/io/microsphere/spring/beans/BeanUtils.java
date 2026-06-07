@@ -598,6 +598,37 @@ public abstract class BeanUtils implements Utils {
     }
 
     /**
+     * Initialize the given bean instance by invoking its standard Spring lifecycle interfaces.
+     *
+     * <p>This method triggers the invocation of various {@link Aware} interfaces and the
+     * {@link InitializingBean#afterPropertiesSet()} method if the bean implements them.
+     * It effectively simulates the initialization phase of a Spring bean within the provided
+     * {@link ApplicationContext}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * MyBean myBean = new MyBean();
+     * ApplicationContext context = ...; // Obtain or create an ApplicationContext
+     * BeanUtils.initializeBean(myBean, context);
+     * }</pre>
+     *
+     * <h3>Behavior</h3>
+     * <ul>
+     *     <li>If the bean is {@code null}, no action is taken.</li>
+     *     <li>If the context is {@code null}, only basic factory-aware interfaces might be invoked depending on implementation details, but typically context-aware interfaces are skipped.</li>
+     *     <li>The method delegates to {@link #invokeBeanInterfaces(Object, ApplicationContext)} to perform the actual interface invocations.</li>
+     * </ul>
+     *
+     * @param bean    the bean instance to initialize, may be {@code null}
+     * @param context the {@link ApplicationContext} to use for initialization, may be {@code null}
+     * @see #invokeBeanInterfaces(Object, ApplicationContext)
+     */
+    public static void initializeBean(@Nullable Object bean, @Nullable ApplicationContext context) {
+        invokeBeanInterfaces(bean, context);
+    }
+
+    /**
      * Invokes the standard Spring bean lifecycle interfaces in a specific order for the given bean and application context.
      *
      * <p>This method delegates to {@link #invokeBeanInterfaces(Object, ConfigurableApplicationContext)} after converting
@@ -929,7 +960,7 @@ public abstract class BeanUtils implements Utils {
      * @see org.springframework.context.support.ApplicationContextAwareProcessor#invokeAwareInterfaces(Object)
      * @see AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)
      */
-    static void invokeAwareInterfaces(@Nullable Object bean, @Nullable ApplicationContext context) {
+    public static void invokeAwareInterfaces(@Nullable Object bean, @Nullable ApplicationContext context) {
         invokeAwareInterfaces(bean, context, asConfigurableApplicationContext(context));
     }
 
