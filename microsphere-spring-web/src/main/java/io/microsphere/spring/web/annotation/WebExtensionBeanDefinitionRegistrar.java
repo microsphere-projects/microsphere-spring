@@ -17,6 +17,7 @@
 package io.microsphere.spring.web.annotation;
 
 import io.microsphere.spring.beans.BeanSource;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
 import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.web.event.WebEventPublisher;
@@ -40,6 +41,7 @@ import java.util.Map;
 
 import static io.microsphere.spring.beans.BeanSource.registerBeans;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice.BEAN_NAME;
 
 /**
@@ -49,12 +51,12 @@ import static io.microsphere.spring.web.method.support.DelegatingHandlerMethodAd
  * @see EnableWebExtension
  * @since 1.0.0
  */
-public class WebExtensionBeanDefinitionRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebExtension> implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
 
-        ResolvablePlaceholderAnnotationAttributes<EnableWebExtension> attributes = getAnnotationAttributes(metadata, EnableWebExtension.class);
+        ResolvablePlaceholderAnnotationAttributes<EnableWebExtension> attributes = getAnnotationAttributes(metadata);
 
         BeanSource[] sources = (BeanSource[]) attributes.get("sources");
 
