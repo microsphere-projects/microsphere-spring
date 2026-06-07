@@ -73,7 +73,6 @@ class BeanUtilsTest {
         throw new Exception("For testing");
     };
 
-
     @Configuration
     public static class Config {
 
