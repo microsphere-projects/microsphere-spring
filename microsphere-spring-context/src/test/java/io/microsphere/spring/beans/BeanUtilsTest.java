@@ -30,6 +30,7 @@ import static io.microsphere.spring.beans.BeanUtils.getBeanIfAvailable;
 import static io.microsphere.spring.beans.BeanUtils.getBeanNames;
 import static io.microsphere.spring.beans.BeanUtils.getOptionalBean;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
+import static io.microsphere.spring.beans.BeanUtils.initializeBean;
 import static io.microsphere.spring.beans.BeanUtils.invokeAwareInterfaces;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanClassLoaderAware;
 import static io.microsphere.spring.beans.BeanUtils.invokeBeanFactoryAware;
@@ -64,6 +65,13 @@ import static org.springframework.util.ClassUtils.isAssignable;
 @SuppressWarnings("unchecked")
 @SpringLoggingTest
 class BeanUtilsTest {
+
+    static final InitializingBean vaildBean = () -> {
+    };
+
+    static final InitializingBean failedBean = () -> {
+        throw new Exception("For testing");
+    };
 
     @Configuration
     public static class Config {
@@ -303,14 +311,22 @@ class BeanUtilsTest {
     }
 
     @Test
+    void testInitializeBean() {
+        testInSpringContainer(context -> {
+            TestBean bean = context.getBean(TestBean.class);
+            initializeBean(bean, (ApplicationContext) context);
+            initializeBean(bean, context);
+            initializeBean(null, context);
+            initializeBean(bean, null);
+            initializeBean(vaildBean, (ApplicationContext) context);
+            initializeBean(vaildBean, null);
+            assertThrows(RuntimeException.class, () -> initializeBean(failedBean, (ApplicationContext) context));
+            assertThrows(RuntimeException.class, () -> initializeBean(failedBean, context));
+        }, Config.class, TestBean.class, TestBean2.class);
+    }
+
+    @Test
     void testInvokeBeanInterfaces() {
-
-        InitializingBean vaildBean = () -> {
-        };
-        InitializingBean failedBean = () -> {
-            throw new Exception("For testing");
-        };
-
         testInSpringContainer(context -> {
             TestBean bean = context.getBean(TestBean.class);
             invokeBeanInterfaces(bean, (ApplicationContext) context);
