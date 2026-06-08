@@ -44,13 +44,12 @@ public interface OverrideAnnotationAttributesStrategy {
     /**
      * Override annotation attributes
      *
-     * @param annotationType     the annotation type
      * @param originalAttributes the original annotation attributes
+     * @param annotationType     the annotation type
      * @param annotationMetadata the annotation metadata
      * @return <code>null</code> if not override, or the overridden annotation attributes
      */
     @Nullable
-    AnnotationAttributes override(@Nonnull Class<? extends Annotation> annotationType,
-                                  @Nonnull AnnotationAttributes originalAttributes,
+    AnnotationAttributes override(@Nonnull AnnotationAttributes originalAttributes, @Nonnull Class<? extends Annotation> annotationType,
                                   @Nonnull AnnotationMetadata annotationMetadata);
 }
