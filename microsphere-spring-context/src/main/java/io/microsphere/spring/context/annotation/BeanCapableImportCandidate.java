@@ -38,6 +38,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ImportSelector;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
@@ -47,14 +48,17 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.BeanUtils.initializeBean;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.ofAnnotationAttributes;
 import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.lang.Integer.toHexString;
+import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
  * The {@link Import @Import} candidate is an instance of {@link org.springframework.context.annotation.ImportSelector} or {@link ImportBeanDefinitionRegistrar}
@@ -271,7 +275,51 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     protected <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> getAnnotationAttributes(AnnotationMetadata metadata, Class<A> annotationType) {
         String annotationClassName = annotationType.getName();
         Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationClassName);
-        return of(annotationAttributes, annotationType, getEnvironment());
+        AnnotationAttributes overriddenAnnotationAttributes = getOverriddenAnnotationAttributes(annotationAttributes, annotationType, metadata);
+        return of(overriddenAnnotationAttributes, annotationType, getEnvironment());
+    }
+
+    /**
+     * Gets the overridden {@link AnnotationAttributes} for the specified annotation type.
+     * <p>
+     * If the annotation is meta-annotated with {@link OverrideAnnotationAttributes}, this method
+     * instantiates the configured {@link OverrideAnnotationAttributesStrategy}, initializes it as a Spring bean,
+     * and executes the strategy to override the original attributes. Otherwise, it returns the original attributes.
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * // Define a custom annotation with an override strategy
+     * @OverrideAnnotationAttributes(strategy = MyCustomStrategy.class)
+     * @Import(MyImportRegistrar.class)
+     * public @interface MyCustomImport {
+     *     String value() default "";
+     * }
+     *
+     * // In your ImportSelector or ImportBeanDefinitionRegistrar implementation:
+     * public class MyImportRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+     *     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+     *          // ...
+     *     }
+     * }
+     * }</pre>
+     *
+     * @param annotationAttributes the original annotation attributes map, may be null
+     * @param annotationType       the annotation type class
+     * @param metadata             the annotation metadata of the importing class
+     * @return the overridden {@link AnnotationAttributes}, or the original attributes if no override strategy is defined
+     */
+    protected AnnotationAttributes getOverriddenAnnotationAttributes(Map<String, Object> annotationAttributes,
+                                                                     Class<? extends Annotation> annotationType,
+                                                                     AnnotationMetadata metadata) {
+        OverrideAnnotationAttributes overrideAnnotationAttributes = annotationType.getAnnotation(OverrideAnnotationAttributes.class);
+        AnnotationAttributes originalAttributes = ofAnnotationAttributes(annotationAttributes);
+        if (overrideAnnotationAttributes == null) {
+            return originalAttributes;
+        }
+        Class<? extends OverrideAnnotationAttributesStrategy> strategyClass = overrideAnnotationAttributes.strategy();
+        OverrideAnnotationAttributesStrategy strategy = instantiateClass(strategyClass);
+        initializeBean(strategy, this.applicationContext);
+        return strategy.override(originalAttributes, annotationType, metadata);
     }
 
     private void assertImportCandidate() {
