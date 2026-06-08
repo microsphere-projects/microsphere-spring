@@ -782,8 +782,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * }
      * }</pre>
      *
-     * @param registry  The target bean definition registry to retrieve the bean definition from. Must not be {@code null}.
-     * @param beanName  The name of the bean whose definition is to be retrieved. Must not be {@code null} or empty.
+     * @param registry The target bean definition registry to retrieve the bean definition from. Must not be {@code null}.
+     * @param beanName The name of the bean whose definition is to be retrieved. Must not be {@code null} or empty.
      * @return The {@link BeanDefinition} if present in the registry; otherwise, {@code null}.
      */
     @Nullable

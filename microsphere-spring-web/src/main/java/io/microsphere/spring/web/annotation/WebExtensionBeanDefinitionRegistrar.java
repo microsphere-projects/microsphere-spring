@@ -18,7 +18,6 @@ package io.microsphere.spring.web.annotation;
 
 import io.microsphere.spring.beans.BeanSource;
 import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
-import io.microsphere.spring.context.annotation.BeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.CompositeWebEndpointMappingRegistry;
@@ -41,7 +40,6 @@ import java.util.Map;
 
 import static io.microsphere.spring.beans.BeanSource.registerBeans;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
-import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice.BEAN_NAME;
 
 /**
