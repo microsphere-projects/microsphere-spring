@@ -17,6 +17,7 @@
 package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.spring.beans.BeanSource;
+import io.microsphere.spring.context.annotation.OverrideAnnotationAttributes;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -77,11 +78,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(TYPE)
 @Documented
+@EnableWebExtension
+@OverrideAnnotationAttributes
 @Import(value = {
         WebMvcExtensionBeanDefinitionRegistrar.class,
         WebMvcExtensionConfiguration.class
 })
-@EnableWebExtension
 public @interface EnableWebMvcExtension {
 
     /**
