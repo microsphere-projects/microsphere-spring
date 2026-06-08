@@ -81,8 +81,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @EnableWebExtension
 @OverrideAnnotationAttributes
 @Import(value = {
-        WebMvcExtensionBeanDefinitionRegistrar.class,
-        WebMvcExtensionConfiguration.class
+        WebMvcExtensionConfiguration.class,
+        WebMvcExtensionBeanDefinitionRegistrar.class
 })
 public @interface EnableWebMvcExtension {
 
