@@ -138,6 +138,9 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
      */
     @Nonnull
     public static <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> of(@Nonnull GenericAnnotationAttributes<A> attributes) {
+        if (attributes instanceof ResolvablePlaceholderAnnotationAttributes) {
+            return (ResolvablePlaceholderAnnotationAttributes) attributes;
+        }
         return new ResolvablePlaceholderAnnotationAttributes<>(attributes);
     }
 
