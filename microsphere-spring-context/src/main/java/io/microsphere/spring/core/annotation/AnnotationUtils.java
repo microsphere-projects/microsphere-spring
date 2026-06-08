@@ -610,6 +610,28 @@ public abstract class AnnotationUtils {
     }
 
     /**
+     * Converts the specified {@link Map} of annotation attributes into an {@link AnnotationAttributes} instance.
+     * <p>
+     * If the input map is already an instance of {@link AnnotationAttributes}, it will be returned directly.
+     * Otherwise, a new {@link AnnotationAttributes} instance will be created from the provided map.
+     * If the input is {@code null}, an empty {@link AnnotationAttributes} instance is returned.
+     *
+     * @param annotationAttributes the map of annotation attributes, may be {@code null}
+     * @return an {@link AnnotationAttributes} instance, never {@code null}
+     * @see AnnotationAttributes
+     * @see AnnotationAttributes#AnnotationAttributes()
+     * @see AnnotationAttributes#AnnotationAttributes(Map)
+     */
+    @Nonnull
+    public static AnnotationAttributes ofAnnotationAttributes(@Nullable Map<String, Object> annotationAttributes) {
+        if (annotationAttributes == null) {
+            return new AnnotationAttributes();
+        }
+        return annotationAttributes instanceof AnnotationAttributes ? (AnnotationAttributes) annotationAttributes :
+                new AnnotationAttributes(annotationAttributes);
+    }
+
+    /**
      * filter the {@link AnnotationAttributes}
      *
      * @param annotationAttributes the attributes of specified {@link Annotation}
@@ -618,7 +640,8 @@ public abstract class AnnotationUtils {
      * @param ignoreAttributeNames the attribute names of annotation should be ignored
      * @return non-null
      */
-    static AnnotationAttributes filterAnnotationAttributes(Annotation annotation, PropertyResolver propertyResolver,
+    static AnnotationAttributes filterAnnotationAttributes(Annotation annotation, PropertyResolver
+                                                                   propertyResolver,
                                                            AnnotationAttributes annotationAttributes,
                                                            boolean ignoreDefaultValue,
                                                            String... ignoreAttributeNames) {
