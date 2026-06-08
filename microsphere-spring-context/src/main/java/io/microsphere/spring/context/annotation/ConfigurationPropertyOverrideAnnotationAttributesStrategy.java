@@ -129,7 +129,7 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategy implement
         Map<String, Object> configurationProperties = getConfigurationProperties(annotationType);
         if (configurationProperties.isEmpty()) {
             String propertyNamePrefix = getPropertyNamePrefix(annotationType);
-            logger.warn("No configuration properties found for annotation : {}", annotationType);
+            logger.warn("No configuration properties[prefix : '{}'] found for annotation : {}", propertyNamePrefix, annotationType);
             return originalAttributes;
         }
         ConversionService conversionService = getConversionService(this.environment);
