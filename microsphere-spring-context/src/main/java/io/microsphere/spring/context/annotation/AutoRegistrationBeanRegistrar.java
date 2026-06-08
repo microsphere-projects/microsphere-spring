@@ -56,7 +56,7 @@ class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<
             return;
         }
 
-        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class,super.classLoader);
+        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class, super.classLoader);
         registerAutoRegisteredBeans(autoRegistrationBeans, registry);
     }
 
