@@ -338,4 +338,41 @@ For a complete list of changes, please refer to the [Full Changelog](#).
 
 ---
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.22...0.2.23
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.22...0.2.23## v0.2.24
+
+# Release Notes for Version 0.2.24
+
+## New Features
+- **Embedded Database Support**: Added H2 embedded database support. ([1c55d038](https://github.com/your-repo/commit/1c55d038))
+- Introduced `@OverrideAnnotationAttributes` for overriding annotation attributes via a strategy. ([85aeb2da](https://github.com/your-repo/commit/85aeb2da))
+- Added utility methods like `ofAnnotationAttributes` for easier handling of attributes. ([65c01cf9](https://github.com/your-repo/commit/65c01cf9))
+- Introduced `initializeBean` and `invokeAwareInterfaces` methods. ([352d53ee](https://github.com/your-repo/commit/352d53ee))
+
+## Bug Fixes
+- Fixed incorrect behavior in `equals` and added immutability and nullability enhancements. ([946c119a](https://github.com/your-repo/commit/946c119a))
+- Included missing property prefix in configuration warnings. ([6ca3c137](https://github.com/your-repo/commit/6ca3c137))
+
+## Documentation
+- Enhanced Javadocs for various methods and enums, including `OverrideAnnotationAttributes` and `EmbeddedDatabaseType`. ([a388972b](https://github.com/your-repo/commit/a388972b), [21aa75bd](https://github.com/your-repo/commit/21aa75bd))
+- Updated README with the latest version updates. ([d3cfb2e4](https://github.com/your-repo/commit/d3cfb2e4))
+
+## Dependency Updates
+- Added H2 dependency to `microsphere-spring-test`. ([9aa3e612](https://github.com/your-repo/commit/9aa3e612))
+
+## Test Improvements
+- Added `ImportOptionalTest` for annotation attribute overrides. ([38cdbdc5](https://github.com/your-repo/commit/38cdbdc5))
+- Improved tests for `loadProperties` to utilize `PropertyResolver` and `PropertySource`. ([e6a5febd](https://github.com/your-repo/commit/e6a5febd), [502277a1](https://github.com/your-repo/commit/502277a1))
+
+## Build and Workflow Enhancements
+- Refactored multiple tasks, including reordering imports and normalizing code spacing. ([c5afc256](https://github.com/your-repo/commit/c5afc256), [c7df5b86](https://github.com/your-repo/commit/c7df5b86), [c96b0d50](https://github.com/your-repo/commit/c96b0d50))
+- Improved class and method signatures for better readability. ([9a13a7c6](https://github.com/your-repo/commit/9a13a7c6), [2ea4db28](https://github.com/your-repo/commit/2ea4db28))
+
+## Other Changes
+- Refactored WebMvc configuration and event annotation attributes for cleaner logic and extendability. ([a6035467](https://github.com/your-repo/commit/a6035467), [cb49cdf7](https://github.com/your-repo/commit/cb49cdf7))
+- Removed unused imports and improved error handling for properties loading. ([2ecbbf07](https://github.com/your-repo/commit/2ecbbf07), [8de97acb](https://github.com/your-repo/commit/8de97acb))
+
+---
+
+For the full changelog, visit the [repository](https://github.com/your-repo/commits/main).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.23...0.2.24
