@@ -93,6 +93,7 @@ import static org.springframework.beans.BeanUtils.instantiateClass;
  * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @see OverrideAnnotationAttributes
  * @see AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper)
  * @see AutowireCapableBeanFactory#initializeBean(Object, String)
  * @see ConfigurableBeanFactory#destroyBean(String, Object)
