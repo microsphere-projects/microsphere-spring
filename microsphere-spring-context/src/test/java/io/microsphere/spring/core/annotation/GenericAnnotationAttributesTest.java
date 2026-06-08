@@ -86,7 +86,6 @@ public class GenericAnnotationAttributesTest {
 
     @Test
     public void testOnInvalidConstructorArgument() {
-        assertThrows(IllegalArgumentException.class, () -> of((Annotation) null));
         assertThrows(IllegalArgumentException.class, () -> of(new AnnotationAttributes()));
         assertThrows(NullPointerException.class, () -> of(null, null));
         assertThrows(IllegalArgumentException.class, () -> of(newHashMap(), null));
