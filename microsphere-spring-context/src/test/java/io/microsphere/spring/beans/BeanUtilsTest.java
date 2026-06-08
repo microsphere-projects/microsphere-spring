@@ -335,6 +335,7 @@ public class BeanUtilsTest {
             assertThrows(RuntimeException.class, () -> initializeBean(failedBean, context));
         }, Config.class, TestBean.class, TestBean2.class);
     }
+
     @Test
     public void testInvokeBeanInterfaces() {
         testInSpringContainer(context -> {
