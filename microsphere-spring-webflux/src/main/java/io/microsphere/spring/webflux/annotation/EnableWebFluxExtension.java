@@ -17,6 +17,7 @@
 package io.microsphere.spring.webflux.annotation;
 
 import io.microsphere.spring.beans.BeanSource;
+import io.microsphere.spring.context.annotation.OverrideAnnotationAttributes;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.event.HandlerMethodArgumentsResolvedEvent;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -70,8 +71,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(TYPE)
 @Documented
-@Import(WebFluxExtensionBeanDefinitionRegistrar.class)
 @EnableWebExtension
+@OverrideAnnotationAttributes
+@Import(WebFluxExtensionBeanDefinitionRegistrar.class)
 public @interface EnableWebFluxExtension {
 
     /**
