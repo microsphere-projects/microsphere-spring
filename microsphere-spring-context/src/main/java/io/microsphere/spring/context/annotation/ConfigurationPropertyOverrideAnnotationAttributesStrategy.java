@@ -54,7 +54,7 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategy implement
     private ConfigurableEnvironment environment;
 
     @Override
-    public AnnotationAttributes override(Class<? extends Annotation> annotationType, AnnotationAttributes originalAttributes,
+    public AnnotationAttributes override(AnnotationAttributes originalAttributes, Class<? extends Annotation> annotationType,
                                          AnnotationMetadata annotationMetadata) {
         Map<String, Object> configurationProperties = getConfigurationProperties(annotationType);
         if (configurationProperties.isEmpty()) {
