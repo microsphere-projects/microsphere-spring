@@ -56,14 +56,34 @@ class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
+    void testOfWithGenericAnnotationAttributes() {
+        Map<String, Object> map = ofMap("value", ofArray("1", "2"));
+        GenericAnnotationAttributes attributes = new GenericAnnotationAttributes(map, ConstructorProperties.class);
+        ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(attributes);
+        assertResolvablePlaceholderAnnotationAttributes(annotationAttributes);
+
+        annotationAttributes = of(annotationAttributes);
+        assertResolvablePlaceholderAnnotationAttributes(annotationAttributes);
+    }
+
+    @Test
+    void testOfWithGenericAnnotationAttributesAndPropertyResolver() {
+        Map<String, Object> map = ofMap("value", ofArray("${a}", "${b}"));
+        GenericAnnotationAttributes attributes = new GenericAnnotationAttributes(map, ConstructorProperties.class);
+        ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(attributes, this.environment);
+        assertResolvablePlaceholderAnnotationAttributes(annotationAttributes);
+
+        annotationAttributes = of(annotationAttributes, this.environment);
+        assertResolvablePlaceholderAnnotationAttributes(annotationAttributes);
+    }
+
+    @Test
     void testOfWithAnnotation() {
         ConstructorProperties constructorProperties = findConstructor(getClass()).getAnnotation(ConstructorProperties.class);
         ResolvablePlaceholderAnnotationAttributes annotationAttributes = of(constructorProperties, environment);
         assertEquals(ConstructorProperties.class, annotationAttributes.annotationType());
         assertEquals(constructorProperties.annotationType(), annotationAttributes.annotationType());
-        String[] values = annotationAttributes.getStringArray("value");
-        assertEquals("1", values[0]);
-        assertEquals("2", values[1]);
+        assertResolvablePlaceholderAnnotationAttributes(annotationAttributes);
     }
 
     @Test
@@ -106,6 +126,12 @@ class ResolvablePlaceholderAnnotationAttributesTest {
         assertEquals(2, attributes.size());
         assertEquals("1", attributes.getString("a"));
         assertEquals("2", attributes.getString("b"));
+    }
+
+    private void assertResolvablePlaceholderAnnotationAttributes(ResolvablePlaceholderAnnotationAttributes attributes) {
+        String[] values = attributes.getStringArray("value");
+        assertEquals("1", values[0]);
+        assertEquals("2", values[1]);
     }
 
 }
