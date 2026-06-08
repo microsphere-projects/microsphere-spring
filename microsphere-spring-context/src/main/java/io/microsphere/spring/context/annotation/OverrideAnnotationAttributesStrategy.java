@@ -50,6 +50,7 @@ public interface OverrideAnnotationAttributesStrategy {
      * @return <code>null</code> if not override, or the overridden annotation attributes
      */
     @Nullable
-    AnnotationAttributes override(@Nonnull AnnotationAttributes originalAttributes, @Nonnull Class<? extends Annotation> annotationType,
+    AnnotationAttributes override(@Nonnull AnnotationAttributes originalAttributes,
+                                  @Nonnull Class<? extends Annotation> annotationType,
                                   @Nonnull AnnotationMetadata annotationMetadata);
 }
