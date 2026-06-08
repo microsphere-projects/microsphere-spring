@@ -25,5 +25,13 @@ package io.microsphere.spring.test.jdbc.embedded;
  */
 public enum EmbeddedDatabaseType {
 
-    SQLITE
+    /**
+     * SQLite
+     */
+    SQLITE,
+
+    /**
+     * H2
+     */
+    H2
 }
