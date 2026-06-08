@@ -79,7 +79,7 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
         String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
         environment.setProperty(propertyNamePrefix + VALUE_ATTRIBUTE_NAME, VALUE_1 + "," + VALUE_2);
 
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, ATTRIBUTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ATTRIBUTES, ANNOTATION_CLASS, null);
         assertArrayEquals(ofArray(VALUE_1, VALUE_2), overriddenAttributtes.getStringArray(VALUE_ATTRIBUTE_NAME));
     }
 
@@ -88,7 +88,7 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
         String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
         environment.setProperty(propertyNamePrefix + VALUE_ATTRIBUTE_NAME, VALUE_1);
 
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, ATTRIBUTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ATTRIBUTES, ANNOTATION_CLASS, null);
         assertArrayEquals(ATTRIBUTES.getStringArray(VALUE_ATTRIBUTE_NAME), overriddenAttributtes.getStringArray(VALUE_ATTRIBUTE_NAME));
     }
 
@@ -97,13 +97,13 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
         String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
         environment.setProperty(propertyNamePrefix + "a", VALUE_1);
 
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, ATTRIBUTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ATTRIBUTES, ANNOTATION_CLASS, null);
         assertArrayEquals(ATTRIBUTES.getStringArray(VALUE_ATTRIBUTE_NAME), overriddenAttributtes.getStringArray(VALUE_ATTRIBUTE_NAME));
     }
 
     @Test
     public void testOverrieOnNoConfigurationProperties() {
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, ATTRIBUTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ATTRIBUTES, ANNOTATION_CLASS, null);
         assertSame(ATTRIBUTES, overriddenAttributtes);
     }
 
@@ -112,7 +112,7 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
         String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
         environment.setProperty(propertyNamePrefix + FACTORY_ATTRIBUTE_NAME, EMPTY_STRING);
 
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, ATTRIBUTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ATTRIBUTES, ANNOTATION_CLASS, null);
         assertEquals(ATTRIBUTES.getClass(FACTORY_ATTRIBUTE_NAME), overriddenAttributtes.getClass(FACTORY_ATTRIBUTE_NAME));
     }
 
