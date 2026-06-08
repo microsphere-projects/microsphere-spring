@@ -78,8 +78,8 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategy implement
             if (conversionService.canConvert(configurationPropertyValue.getClass(), attributeType)) {
                 Object newPropertyValue = conversionService.convert(configurationPropertyValue, attributeType);
                 newAttributes.put(attributeName, newPropertyValue);
-                logger.info("The configuration property[name : '{}' , value : '{}'] is converted to the attribute type : {}",
-                        propertyName, configurationPropertyValue, attributeType);
+                logger.info("The configuration property[name : '{}' , value : '{}'] is converted to the attribute[value : {} , type : '{}']",
+                        propertyName, configurationPropertyValue, newPropertyValue, attributeType);
             } else {
                 newAttributes.put(attributeName, originalAttributeValue);
                 logger.warn("The configuration property[name : '{}' , value : '{}'] cannot be converted to the attribute type : {}",
