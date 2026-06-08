@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.core.annotation;
 
+import io.microsphere.collection.SetUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,10 +24,20 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.lang.annotation.Annotation;
+import java.util.Set;
+
+import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.of;
+import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.ofSet;
+import static io.microsphere.util.ClassLoaderUtils.getDefaultClassLoader;
+import static java.util.Collections.emptyMap;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.core.annotation.AnnotationUtils.getAnnotationAttributes;
 
 /**
@@ -58,10 +69,41 @@ class GenericAnnotationAttributesTest {
     void testOfWithAnnotationAttributes() {
         GenericAnnotationAttributes attributes = of(this.attributes);
         assertAttributes(attributes, contextConfiguration);
+
+        AnnotationAttributes annotationAttributes = newAnnotationAttributes();
+        attributes = of(annotationAttributes);
+        assertAttributes(attributes, contextConfiguration);
+    }
+
+    @Test
+    void testOfWithMapAndAnnotationType() {
+        GenericAnnotationAttributes attributes = of(getAnnotationAttributes(this.contextConfiguration), ContextConfiguration.class);
+        assertAttributes(attributes, contextConfiguration);
+
+        attributes = of(this.attributes, ContextConfiguration.class);
+        assertAttributes(attributes, contextConfiguration);
+    }
+
+    @Test
+    void testOnInvalidConstructorArgument() {
+        assertThrows(IllegalArgumentException.class, () -> of((Annotation) null));
+        assertThrows(IllegalArgumentException.class, () -> of(new AnnotationAttributes()));
+        assertThrows(NullPointerException.class, () -> of(null, null));
+        assertThrows(IllegalArgumentException.class, () -> of(newHashMap(), null));
+    }
+
+    @Test
+    void testOfSet() {
+        Set<AnnotationAttributes> annotationAttributesSet = ofSet();
+        assertTrue(annotationAttributesSet.isEmpty());
+
+        annotationAttributesSet = ofSet(this.attributes);
+        assertEquals(SetUtils.of(this.attributes), annotationAttributesSet);
     }
 
     @Test
     void testHashCode() {
+        this.attributes.put("a", null);
         assertEquals(this.attributes.hashCode(), of(this.attributes).hashCode());
     }
 
@@ -69,6 +111,34 @@ class GenericAnnotationAttributesTest {
     void testEquals() {
         AnnotationAttributes annotationAttributes = (AnnotationAttributes) getAnnotationAttributes(this.contextConfiguration);
         assertEquals(this.attributes, annotationAttributes);
+    }
+
+    @Test
+    void testEqualsOnNotAnnotationAttributes() {
+        assertNotEquals(this.attributes, emptyMap());
+    }
+
+    @Test
+    void testEqualsOnDifferentAnnotationType() {
+        assertNotEquals(this.attributes, new AnnotationAttributes());
+    }
+
+    @Test
+    void testEqualsOnDifferentSize() {
+        AnnotationAttributes annotationAttributes = newAnnotationAttributes();
+        GenericAnnotationAttributes attributes = of(annotationAttributes);
+        attributes.put("a", "1");
+
+        assertNotEquals(this.attributes, attributes);
+    }
+
+    @Test
+    void testEqualsOnDifferentEntry() {
+        AnnotationAttributes annotationAttributes = newAnnotationAttributes();
+        GenericAnnotationAttributes attributes = of(annotationAttributes);
+        attributes.put("name", "test");
+
+        assertNotEquals(this.attributes, attributes);
     }
 
     @Test
@@ -87,5 +157,11 @@ class GenericAnnotationAttributesTest {
         assertEquals(contextConfiguration.inheritInitializers(), attributes.getBoolean("inheritInitializers"));
         assertEquals(contextConfiguration.inheritLocations(), attributes.getBoolean("inheritLocations"));
         assertArrayEquals(contextConfiguration.value(), attributes.getStringArray("value"));
+    }
+
+    AnnotationAttributes newAnnotationAttributes() {
+        AnnotationAttributes annotationAttributes = new AnnotationAttributes(this.attributes.annotationType().getName(), getDefaultClassLoader());
+        annotationAttributes.putAll(this.attributes);
+        return annotationAttributes;
     }
 }
