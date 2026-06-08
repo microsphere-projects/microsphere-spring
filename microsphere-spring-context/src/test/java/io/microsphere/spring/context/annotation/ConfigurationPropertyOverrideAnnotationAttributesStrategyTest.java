@@ -30,7 +30,9 @@ import static io.microsphere.spring.context.annotation.ConfigurationPropertyOver
 import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategy.getPrefixPropertyName;
 import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategyTest.VALUE_1;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -109,7 +111,7 @@ class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
     @Test
     void testOverrideOnInvalidConfigurationProperties() {
         String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
-        environment.setProperty(propertyNamePrefix + FACTORY_ATTRIBUTE_NAME, "");
+        environment.setProperty(propertyNamePrefix + FACTORY_ATTRIBUTE_NAME, EMPTY_STRING);
 
         AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
         assertEquals(IMPORT_OPTIONAL_ATTRIBUTTES.getClass(FACTORY_ATTRIBUTE_NAME), overriddenAttributtes.getClass(FACTORY_ATTRIBUTE_NAME));
