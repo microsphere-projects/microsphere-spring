@@ -16,25 +16,23 @@
  */
 package io.microsphere.spring.context.event;
 
-import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.BeanSource;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
-import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
-import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanSource.registerBeans;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.getBeanDefinition;
 import static io.microsphere.spring.context.event.EnableEventExtension.NO_EXECUTOR;
@@ -54,16 +52,12 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @see TaskExecutor
  * @since 1.0.0
  */
-class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
-
-    private static final Logger logger = getLogger(EventExtensionRegistrar.class);
+class EventExtensionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableEventExtension> implements ImportBeanDefinitionRegistrar {
 
     /**
      * The attribute name of the name of {@link EnableEventExtension} annotated on the class
      */
     static final String CLASS_NAME_ATTRIBUTE_NAME = "@className";
-
-    private Environment environment;
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -71,8 +65,9 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
     }
 
     void registerApplicationEventMulticaster(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+        ResolvablePlaceholderAnnotationAttributes<EnableEventExtension> annotationAttributes = getAnnotationAttributes(metadata);
 
-        EventExtensionAttributes attributes = new EventExtensionAttributes(metadata, this.environment);
+        EventExtensionAttributes attributes = new EventExtensionAttributes(annotationAttributes);
 
         boolean intercepted = attributes.isIntercepted();
         String executorForListener = attributes.getExecutorForListener();
@@ -139,7 +134,7 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
         if (intercepted) {
             // Remove the original BeanDefinition of ApplicationEventMulticaster
             registry.removeBeanDefinition(beanName);
-            String resetBeanName = getResetBeanName(this.environment);
+            String resetBeanName = getResetBeanName(super.environment);
             // Reset bean name and re-register the original BeanDefinition of ApplicationEventMulticaster
             registry.registerBeanDefinition(resetBeanName, existedBeanDefinition);
             // Build BeanDefinition InterceptingApplicationEventMulticasterProxy with bean name
@@ -176,10 +171,5 @@ class EventExtensionRegistrar implements ImportBeanDefinitionRegistrar, Environm
             // The bean class must have setTaskExecutor(Executor) method
             propertyValues.addPropertyValue("taskExecutor", new RuntimeBeanReference(executorBeanName));
         }
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 }

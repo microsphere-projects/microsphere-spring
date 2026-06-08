@@ -143,7 +143,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
         }
         return new ResolvablePlaceholderAnnotationAttributes<>(attributes);
     }
-    
+
     /**
      * Creates a {@link ResolvablePlaceholderAnnotationAttributes} instance from the given {@link GenericAnnotationAttributes}
      * and resolves placeholders using the provided {@link PropertyResolver}.
@@ -174,7 +174,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
         }
         return new ResolvablePlaceholderAnnotationAttributes(attributes, propertyResolver);
     }
-    
+
     /**
      * Creates a {@link ResolvablePlaceholderAnnotationAttributes} instance from the given {@link Annotation}
      * and resolves placeholders using the provided {@link PropertyResolver}.
@@ -202,7 +202,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
                                                                                          @Nullable PropertyResolver propertyResolver) {
         return new ResolvablePlaceholderAnnotationAttributes(annotation, propertyResolver);
     }
-    
+
     /**
      * Creates a {@link ResolvablePlaceholderAnnotationAttributes} instance from the given map of attributes,
      * annotation type, and resolves placeholders using the provided {@link PropertyResolver}.
@@ -234,7 +234,7 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
                                                                                          @Nullable PropertyResolver propertyResolver) {
         return new ResolvablePlaceholderAnnotationAttributes(attributes, annotationType, propertyResolver);
     }
-    
+
     /**
      * Creates a {@link Set} of {@link AnnotationAttributes} from the given array of {@link GenericAnnotationAttributes},
      * resolving placeholders using the provided {@link PropertyResolver}.

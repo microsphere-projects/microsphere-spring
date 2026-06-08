@@ -18,11 +18,9 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.annotation.Nonnull;
-import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.beans.BeanSource;
+import io.microsphere.spring.core.annotation.GenericAnnotationAttributes;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
-import org.springframework.core.env.PropertyResolver;
-import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * The {@link ResolvablePlaceholderAnnotationAttributes} for {@link EnableEventExtension @EnableEventExtension}
@@ -48,8 +46,8 @@ class EventExtensionAttributes extends ResolvablePlaceholderAnnotationAttributes
      */
     static final String EXECUTOR_FOR_LISTENER_ATTRIBUTE_NAME = "executorForListener";
 
-    EventExtensionAttributes(AnnotationMetadata metadata, @Nullable PropertyResolver propertyResolver) {
-        super(metadata.getAnnotationAttributes(ANNOTATION_CLASS_NAME), EnableEventExtension.class, propertyResolver);
+    EventExtensionAttributes(GenericAnnotationAttributes<EnableEventExtension> annotationAttributes) {
+        super(annotationAttributes);
     }
 
     @Nonnull
