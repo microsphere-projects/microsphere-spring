@@ -343,4 +343,56 @@ Thank you to everyone who contributed to this release!
 ## Other Changes
 - General improvements via merged branch `dev-1.x`. ([d7eda57d](https://example.com/commit/d7eda57d))
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.22...0.1.23
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.22...0.1.23## v0.1.24
+
+# Release Notes for Version 0.1.24
+
+## New Features
+- **Annotation Override Strategy:**
+  - Introduced `@OverrideAnnotationAttributes` for customizable annotation attribute overrides. [#5b3da2bd, #eb593575, #80fa644e]
+  - Added strategy-based override and placeholder-resolving APIs for annotation attributes. [#b42ce03b, #4cd80649]
+  - Added `ofAnnotationAttributes` helper to `AnnotationUtils`. [#f9f8f787]
+
+- **Configuration Enhancements:**
+  - Added support for resolving placeholders in properties when loading configuration. [#60f801a7, #dd348cf8]
+  - Introduced `PREFIX_PROPERTY_NAME_PREFIX` constant for clearer configuration. [#187ab67a]
+
+- **Database Support:**
+  - Added H2 embedded database support and related test dependency. [#2cdfa221, #013c8887]
+
+- **Utility Improvements:**
+  - Added `initializeBean` helper method for better bean initialization. [#08b09b83]
+
+## Bug Fixes
+- Fixed behavior of `equals` for annotation attributes and added factory overloads. [#38f9320d]
+- Corrected prefix inclusion in missing configuration property logs for better debugging. [#8c9b5699]
+
+## Documentation
+- Updated `README.md` with version changes. [#3d3fed12]
+- Enhanced Javadoc and documentation for `@OverrideAnnotationAttributes` and import requirements. [#cbdb39d2, #c11fe11c]
+
+## Dependency Updates
+- Added H2 database dependency in the test module. [#013c8887]
+
+## Test Improvements
+- Improved unit tests:
+  - Added `ImportOptionalTest`. [#9c176dff]
+  - Refactored and enhanced hash code test cases. [#c5fa6a64]
+  - Adjusted null annotation test assertions. [#235c3e84]
+
+## Other Changes
+- **Refactoring:**
+  - Updated `WebMvc` and `WebFlux` registration to extend base classes for consistency. [#890a597d, #75623817]
+  - Simplified property loading with environment-aware methods. [#249aae75]
+  - Removed unnecessary `throws IOException` declarations. [#b501fd20]
+  - Cleaned up code style, formatting, and test variable naming. [#2ed4f8d0, #dae1f462, #eb593575]
+  
+- **Build/Workflow:**
+  - Merged release branch `release-1.x` into development branch `dev-1.x`. [#ad872dc3]
+  - Bumped to version `0.1.24` post `0.1.23` publishing. [#c6524958]
+
+---
+
+**Full Changelog:** Omitted from this document.
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.23...0.1.24

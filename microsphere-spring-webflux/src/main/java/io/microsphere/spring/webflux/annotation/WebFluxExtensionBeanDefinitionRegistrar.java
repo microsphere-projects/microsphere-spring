@@ -17,7 +17,8 @@
 
 package io.microsphere.spring.webflux.annotation;
 
-import io.microsphere.logging.Logger;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.OverrideAnnotationAttributes;
 import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
@@ -33,10 +34,8 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
-import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
-import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static org.springframework.util.StringUtils.uncapitalize;
 
 /**
@@ -44,20 +43,17 @@ import static org.springframework.util.StringUtils.uncapitalize;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableWebFluxExtension
+ * @see OverrideAnnotationAttributes
+ * @see AnnotatedBeanCapableImportCandidate
  * @see ImportBeanDefinitionRegistrar
  * @since 1.0.0
  */
-class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
-
-    private static final Logger logger = getLogger(WebFluxExtensionBeanDefinitionRegistrar.class);
-
-    public static final Class<EnableWebFluxExtension> ANNOTATION_CLASS = EnableWebFluxExtension.class;
-
-    public static final String ANNOTATION_CLASS_NAME = ANNOTATION_CLASS.getName();
+class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebFluxExtension>
+        implements ImportBeanDefinitionRegistrar {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes attributes = getAttributes(metadata);
+        AnnotationAttributes attributes = getAnnotationAttributes(metadata);
 
         registerWebEndpointMappingResolver(attributes, registry);
 
@@ -146,10 +142,6 @@ class WebFluxExtensionBeanDefinitionRegistrar implements ImportBeanDefinitionReg
             registerBeanDefinition(registry, ReversedProxyHandlerMapping.class);
         }
         log("@EnableWebFluxExtension.reversedProxyHandlerMapping() = {}", reversedProxyHandlerMapping);
-    }
-
-    private AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
-        return getAnnotationAttributes(metadata, ANNOTATION_CLASS_NAME);
     }
 
     private void log(String messagePattern, Object... args) {

@@ -33,6 +33,11 @@ public interface PropertyConstants {
     String MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX = MICROSPHERE_PROPERTY_NAME_PREFIX + "spring.";
 
     /**
+     * The property name prefix of the configuration property prefix : "microsphere.spring.prefix."
+     */
+    String PREFIX_PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "prefix.";
+
+    /**
      * The property name prefix of beans : "microsphere.spring.beans."
      */
     String BEANS_PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "beans.";

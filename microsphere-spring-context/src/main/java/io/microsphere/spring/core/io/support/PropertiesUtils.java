@@ -17,13 +17,15 @@
 
 package io.microsphere.spring.core.io.support;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.util.Utils;
+import org.springframework.core.env.PropertyResolver;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
+import static io.microsphere.lang.function.ThrowableAction.execute;
 import static org.springframework.util.StringUtils.arrayToDelimitedString;
 
 /**
@@ -41,12 +43,28 @@ public abstract class PropertiesUtils implements Utils {
      *
      * @param propertiesValue the specified {@code propertiesValue}
      * @return non-null
-     * @throws IOException if an I/O error occurs
      */
-    public static Properties loadProperties(String... propertiesValue) throws IOException {
+    public static Properties loadProperties(String... propertiesValue) {
+        return loadProperties(propertiesValue, null);
+    }
+
+    /**
+     * Load {@link Properties} from the specified {@code propertiesValue}
+     *
+     * @param propertiesValue  the specified {@code propertiesValue}
+     * @param propertyResolver {@link PropertyResolver}
+     * @return non-null
+     */
+    public static Properties loadProperties(String[] propertiesValue, @Nullable PropertyResolver propertyResolver) {
         Properties properties = new Properties();
         String content = arrayToDelimitedString(propertiesValue, LINE_SEPARATOR);
-        properties.load(new StringReader(content));
+        final String resolvedText;
+        if (propertyResolver != null) {
+            resolvedText = propertyResolver.resolvePlaceholders(content);
+        } else {
+            resolvedText = content;
+        }
+        execute(() -> properties.load(new StringReader(resolvedText)));
         return properties;
     }
 
