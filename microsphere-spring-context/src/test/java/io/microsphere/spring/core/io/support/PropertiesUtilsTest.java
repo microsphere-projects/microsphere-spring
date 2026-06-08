@@ -20,7 +20,6 @@ package io.microsphere.spring.core.io.support;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import static io.microsphere.spring.core.io.support.PropertiesUtils.loadProperties;
@@ -43,19 +42,19 @@ class PropertiesUtilsTest {
             """;
 
     @Test
-    void testLoadProperties() throws IOException {
+    void testLoadProperties() {
         Properties properties = loadProperties("a=1", "b : 2", "c 3");
         assertProperties(properties);
     }
 
     @Test
-    void testLoadPropertiesOnTextBlock() throws IOException {
+    void testLoadPropertiesOnTextBlock() {
         Properties properties = loadProperties(PROPERTIES);
         assertProperties(properties);
     }
 
     @Test
-    void testLoadPropertiesWithPropertyResolver() throws IOException {
+    void testLoadPropertiesWithPropertyResolver() {
         MockEnvironment environment = new MockEnvironment();
         environment.setProperty("a", "1");
         environment.setProperty("b", "2");
