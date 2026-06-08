@@ -17,6 +17,7 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.spring.beans.BeanSource;
+import io.microsphere.spring.context.annotation.OverrideAnnotationAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -56,6 +57,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({TYPE, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @Documented
+@OverrideAnnotationAttributes
 @Import(EventExtensionRegistrar.class)
 public @interface EnableEventExtension {
 
