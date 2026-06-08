@@ -101,7 +101,7 @@ class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportCa
             }
             return;
         }
-        Properties properties = loadProperties(propertiesValue);
+        Properties properties = loadProperties(propertiesValue, super.environment);
         for (String propertyName : properties.stringPropertyNames()) {
             String propertyValue = properties.getProperty(propertyName);
             Object oldPropertyValue = defaultProperties.put(propertyName, propertyValue);
