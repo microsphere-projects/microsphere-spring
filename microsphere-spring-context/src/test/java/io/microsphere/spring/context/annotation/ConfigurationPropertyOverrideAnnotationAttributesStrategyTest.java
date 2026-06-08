@@ -20,6 +20,7 @@ package io.microsphere.spring.context.annotation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.mock.env.MockEnvironment;
 
@@ -27,7 +28,7 @@ import java.util.Map;
 
 import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategy.getDefaultPropertyNamePrefix;
 import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategy.getPrefixPropertyName;
-import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategyTest.CLASS_NAME_1;
+import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategyTest.VALUE_1;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -42,19 +43,21 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @see ConfigurationPropertyOverrideAnnotationAttributesStrategy
  * @since 1.0.0
  */
-@ImportOptional(value = CLASS_NAME_1)
+@PropertySource(value = VALUE_1)
 class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
 
-    static final String CLASS_NAME_1 = "io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategy";
+    static final String VALUE_1 = "classpath:/com/myco/app.properties";
 
-    static final String CLASS_NAME_2 = "io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategyTest";
+    static final String VALUE_2 = "file:/path/to/file.xml";
 
-    private static final Class<ImportOptional> IMPORT_OPTIONAL_CLASS = ImportOptional.class;
+    private static final Class<PropertySource> ANNOTATION_CLASS = PropertySource.class;
 
     private static final AnnotationAttributes IMPORT_OPTIONAL_ATTRIBUTTES = getAnnotationAttributes(ConfigurationPropertyOverrideAnnotationAttributesStrategyTest.class,
-            IMPORT_OPTIONAL_CLASS, null, false);
+            ANNOTATION_CLASS, null, false);
 
     private static final String VALUE_ATTRIBUTE_NAME = "value";
+
+    private static final String FACTORY_ATTRIBUTE_NAME = "factory";
 
 
     private MockEnvironment environment;
@@ -67,51 +70,60 @@ class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
         this.strategy = new ConfigurationPropertyOverrideAnnotationAttributesStrategy();
         this.strategy.setEnvironment(environment);
 
-        assertArrayEquals(ofArray(CLASS_NAME_1), IMPORT_OPTIONAL_ATTRIBUTTES.getStringArray(VALUE_ATTRIBUTE_NAME));
+        assertArrayEquals(ofArray(VALUE_1), IMPORT_OPTIONAL_ATTRIBUTTES.getStringArray(VALUE_ATTRIBUTE_NAME));
     }
 
     @Test
     void testOverride() {
-        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(IMPORT_OPTIONAL_CLASS);
-        environment.setProperty(propertyNamePrefix + VALUE_ATTRIBUTE_NAME, CLASS_NAME_1 + "," + CLASS_NAME_2);
+        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
+        environment.setProperty(propertyNamePrefix + VALUE_ATTRIBUTE_NAME, VALUE_1 + "," + VALUE_2);
 
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(IMPORT_OPTIONAL_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
-        assertArrayEquals(ofArray(CLASS_NAME_1, CLASS_NAME_2), overriddenAttributtes.getStringArray(VALUE_ATTRIBUTE_NAME));
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
+        assertArrayEquals(ofArray(VALUE_1, VALUE_2), overriddenAttributtes.getStringArray(VALUE_ATTRIBUTE_NAME));
     }
 
     @Test
     void testOverrideOnSameConfigurationProperties() {
-        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(IMPORT_OPTIONAL_CLASS);
-        environment.setProperty(propertyNamePrefix + VALUE_ATTRIBUTE_NAME, CLASS_NAME_1);
+        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
+        environment.setProperty(propertyNamePrefix + VALUE_ATTRIBUTE_NAME, VALUE_1);
 
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(IMPORT_OPTIONAL_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
         assertArrayEquals(IMPORT_OPTIONAL_ATTRIBUTTES.getStringArray(VALUE_ATTRIBUTE_NAME), overriddenAttributtes.getStringArray(VALUE_ATTRIBUTE_NAME));
     }
 
     @Test
     void testOverrideOnDifferentConfigurationProperties() {
-        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(IMPORT_OPTIONAL_CLASS);
-        environment.setProperty(propertyNamePrefix + "a", CLASS_NAME_1);
+        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
+        environment.setProperty(propertyNamePrefix + "a", VALUE_1);
 
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(IMPORT_OPTIONAL_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
         assertArrayEquals(IMPORT_OPTIONAL_ATTRIBUTTES.getStringArray(VALUE_ATTRIBUTE_NAME), overriddenAttributtes.getStringArray(VALUE_ATTRIBUTE_NAME));
     }
 
     @Test
     void testOverrieOnNoConfigurationProperties() {
-        AnnotationAttributes overriddenAttributtes = this.strategy.override(IMPORT_OPTIONAL_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
         assertSame(IMPORT_OPTIONAL_ATTRIBUTTES, overriddenAttributtes);
     }
 
     @Test
+    void testOverrideOnInvalidConfigurationProperties() {
+        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
+        environment.setProperty(propertyNamePrefix + FACTORY_ATTRIBUTE_NAME, new Integer(0));
+
+        AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
+        assertEquals(IMPORT_OPTIONAL_ATTRIBUTTES.getClass(FACTORY_ATTRIBUTE_NAME), overriddenAttributtes.getClass(FACTORY_ATTRIBUTE_NAME));
+    }
+
+    @Test
     void testGetConfigurationProperties() {
-        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(IMPORT_OPTIONAL_CLASS);
+        String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
 
         environment.setProperty(propertyNamePrefix + "a", "1");
         environment.setProperty(propertyNamePrefix + "b", "2");
         environment.setProperty(propertyNamePrefix + "c", "3");
 
-        Map<String, Object> configurationProperties = this.strategy.getConfigurationProperties(IMPORT_OPTIONAL_CLASS);
+        Map<String, Object> configurationProperties = this.strategy.getConfigurationProperties(ANNOTATION_CLASS);
         assertEquals(3, configurationProperties.size());
         assertEquals("1", configurationProperties.get("a"));
         assertEquals("2", configurationProperties.get("b"));
@@ -121,20 +133,20 @@ class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
 
     @Test
     void testGetPropertyNamePrefix() {
-        String prefixPropertyName = getPrefixPropertyName(IMPORT_OPTIONAL_CLASS);
+        String prefixPropertyName = getPrefixPropertyName(ANNOTATION_CLASS);
         this.environment.setProperty(prefixPropertyName, "ms");
-        assertEquals("ms.", this.strategy.getPropertyNamePrefix(IMPORT_OPTIONAL_CLASS));
+        assertEquals("ms.", this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS));
     }
 
     @Test
     void testGetPrefixPropertyName() {
-        String prefixPropertyName = getPrefixPropertyName(IMPORT_OPTIONAL_CLASS);
-        assertEquals("microsphere.spring.prefix." + IMPORT_OPTIONAL_CLASS.getName(), prefixPropertyName);
+        String prefixPropertyName = getPrefixPropertyName(ANNOTATION_CLASS);
+        assertEquals("microsphere.spring.prefix." + ANNOTATION_CLASS.getName(), prefixPropertyName);
     }
 
     @Test
     void testGetDefaultPropertyNamePrefix() {
-        String defaultPropertyNamePrefix = getDefaultPropertyNamePrefix(IMPORT_OPTIONAL_CLASS);
-        assertEquals("microsphere.spring.prefix.ImportOptional.", defaultPropertyNamePrefix);
+        String defaultPropertyNamePrefix = getDefaultPropertyNamePrefix(ANNOTATION_CLASS);
+        assertEquals("microsphere.spring.prefix.PropertySource.", defaultPropertyNamePrefix);
     }
 }
