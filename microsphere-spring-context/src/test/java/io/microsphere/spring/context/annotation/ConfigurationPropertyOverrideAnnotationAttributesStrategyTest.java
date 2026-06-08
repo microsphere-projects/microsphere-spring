@@ -109,7 +109,7 @@ class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
     @Test
     void testOverrideOnInvalidConfigurationProperties() {
         String propertyNamePrefix = this.strategy.getPropertyNamePrefix(ANNOTATION_CLASS);
-        environment.setProperty(propertyNamePrefix + FACTORY_ATTRIBUTE_NAME, new Integer(0));
+        environment.setProperty(propertyNamePrefix + FACTORY_ATTRIBUTE_NAME, "");
 
         AnnotationAttributes overriddenAttributtes = this.strategy.override(ANNOTATION_CLASS, IMPORT_OPTIONAL_ATTRIBUTTES, null);
         assertEquals(IMPORT_OPTIONAL_ATTRIBUTTES.getClass(FACTORY_ATTRIBUTE_NAME), overriddenAttributtes.getClass(FACTORY_ATTRIBUTE_NAME));
