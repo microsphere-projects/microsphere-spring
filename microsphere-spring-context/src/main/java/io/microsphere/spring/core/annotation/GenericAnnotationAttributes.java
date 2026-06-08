@@ -29,10 +29,12 @@ import java.util.Set;
 import static io.microsphere.collection.SetUtils.newFixedLinkedHashSet;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
+import static io.microsphere.util.ArrayUtils.length;
 import static io.microsphere.util.Assert.assertNotNull;
 import static java.util.Arrays.deepHashCode;
 import static java.util.Arrays.deepToString;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.deepEquals;
 
 /**
@@ -86,16 +88,19 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             return false;
         }
 
-        if (this.size() == that.size()) {
-            for (Entry<String, Object> entry : this.entrySet()) {
-                String attributeName = entry.getKey();
-                Object attributeValue = entry.getValue();
-                Object thatAttributeValue = that.get(attributeName);
-                if (!deepEquals(attributeValue, thatAttributeValue)) {
-                    return false;
-                }
+        if (this.size() != that.size()) {
+            return false;
+        }
+
+        for (Entry<String, Object> entry : this.entrySet()) {
+            String attributeName = entry.getKey();
+            Object attributeValue = entry.getValue();
+            Object thatAttributeValue = that.get(attributeName);
+            if (!deepEquals(attributeValue, thatAttributeValue)) {
+                return false;
             }
         }
+
         return true;
     }
 
@@ -171,6 +176,26 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
     }
 
     /**
+     * Create an instance of {@link GenericAnnotationAttributes} from the specified {@link Map map} of attributes
+     * and the {@link Class class} of {@link Annotation annotation}.
+     *
+     * @param attributes     the map of annotation attributes, must not be null
+     * @param annotationType the {@link Class class} of {@link Annotation annotation}, must not be null
+     * @param <A>            the {@link Class class} of {@link Annotation annotation}
+     * @return a new instance of {@link GenericAnnotationAttributes}
+     * @throws IllegalArgumentException if {@code annotationType} is null
+     * @see #GenericAnnotationAttributes(Map, Class)
+     */
+    @Nonnull
+    public static <A extends Annotation> GenericAnnotationAttributes<A> of(@Nonnull Map<String, Object> attributes,
+                                                                           @Nonnull Class<A> annotationType) {
+        if (attributes instanceof GenericAnnotationAttributes) {
+            return (GenericAnnotationAttributes) attributes;
+        }
+        return new GenericAnnotationAttributes<>(attributes, annotationType);
+    }
+
+    /**
      * Create a {@link Set set} of {@link GenericAnnotationAttributes}
      *
      * @param attributesArray
@@ -179,7 +204,7 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
     @Nonnull
     @Immutable
     public static Set<AnnotationAttributes> ofSet(@Nullable AnnotationAttributes... attributesArray) {
-        int length = attributesArray == null ? 0 : attributesArray.length;
+        int length = length(attributesArray);
 
         if (length < 1) {
             return emptySet();
@@ -191,6 +216,6 @@ public class GenericAnnotationAttributes<A extends Annotation> extends Annotatio
             annotationAttributesSet.add(of(annotationAttributes));
         }
 
-        return annotationAttributesSet;
+        return unmodifiableSet(annotationAttributesSet);
     }
 }

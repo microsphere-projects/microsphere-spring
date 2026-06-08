@@ -18,11 +18,12 @@
 package io.microsphere.spring.core.io.support;
 
 import org.junit.Test;
+import org.springframework.mock.env.MockEnvironment;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import static io.microsphere.spring.core.io.support.PropertiesUtils.loadProperties;
+import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -39,14 +40,24 @@ public class PropertiesUtilsTest {
             "            c 3";
 
     @Test
-    public void testLoadProperties() throws IOException {
+    public void testLoadProperties() {
         Properties properties = loadProperties("a=1", "b : 2", "c 3");
         assertProperties(properties);
     }
 
     @Test
-    public void testLoadPropertiesOnTextBlock() throws IOException {
+    public void testLoadPropertiesOnTextBlock() {
         Properties properties = loadProperties(PROPERTIES);
+        assertProperties(properties);
+    }
+
+    @Test
+    public void testLoadPropertiesWithPropertyResolver() {
+        MockEnvironment environment = new MockEnvironment();
+        environment.setProperty("a", "1");
+        environment.setProperty("b", "2");
+        environment.setProperty("c", "3");
+        Properties properties = loadProperties(ofArray("a=${a}", "b=${b}", "c ${c}"), environment);
         assertProperties(properties);
     }
 

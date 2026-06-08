@@ -33,6 +33,7 @@ import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REG
 import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 import static io.microsphere.spring.context.config.AutoRegistrationBean.getAutoRegisteredPropertyName;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactories;
+
 /**
  * {@link ImportSelector} class for {@link EnableAutoRegistrationBean}
  *
@@ -55,7 +56,7 @@ class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<
             return;
         }
 
-        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class,super.classLoader);
+        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class, super.classLoader);
         registerAutoRegisteredBeans(autoRegistrationBeans, registry);
     }
 

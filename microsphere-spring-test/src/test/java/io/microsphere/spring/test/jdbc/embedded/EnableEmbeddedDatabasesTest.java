@@ -29,6 +29,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static io.microsphere.spring.test.jdbc.embedded.EmbeddedDatabaseType.H2;
+
 /**
  * {@link EnableEmbeddedDatabases} Test
  *
@@ -38,7 +40,7 @@ import java.sql.Statement;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = EnableEmbeddedDatabasesTest.class)
 @EnableEmbeddedDatabase(dataSource = "primary", primary = true)
-@EnableEmbeddedDatabase(dataSource = "secondary")
+@EnableEmbeddedDatabase(dataSource = "secondary", type = H2)
 public class EnableEmbeddedDatabasesTest {
 
     @Autowired
