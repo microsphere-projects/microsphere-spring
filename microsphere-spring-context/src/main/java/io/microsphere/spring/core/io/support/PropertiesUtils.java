@@ -17,7 +17,9 @@
 
 package io.microsphere.spring.core.io.support;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.util.Utils;
+import org.springframework.core.env.PropertyResolver;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -44,8 +46,23 @@ public abstract class PropertiesUtils implements Utils {
      * @throws IOException if an I/O error occurs
      */
     public static Properties loadProperties(String... propertiesValue) throws IOException {
+        return loadProperties(propertiesValue, null);
+    }
+
+    /**
+     * Load {@link Properties} from the specified {@code propertiesValue}
+     *
+     * @param propertiesValue  the specified {@code propertiesValue}
+     * @param propertyResolver {@link PropertyResolver}
+     * @return non-null
+     * @throws IOException if an I/O error occurs
+     */
+    public static Properties loadProperties(String[] propertiesValue, @Nullable PropertyResolver propertyResolver) throws IOException {
         Properties properties = new Properties();
         String content = arrayToDelimitedString(propertiesValue, LINE_SEPARATOR);
+        if (propertyResolver != null) {
+            content = propertyResolver.resolvePlaceholders(content);
+        }
         properties.load(new StringReader(content));
         return properties;
     }
