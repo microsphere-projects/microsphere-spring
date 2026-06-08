@@ -30,7 +30,6 @@ import static io.microsphere.spring.context.annotation.ConfigurationPropertyOver
 import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategy.getPrefixPropertyName;
 import static io.microsphere.spring.context.annotation.ConfigurationPropertyOverrideAnnotationAttributesStrategyTest.VALUE_1;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
