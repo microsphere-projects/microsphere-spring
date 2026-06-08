@@ -19,6 +19,8 @@ package io.microsphere.spring.context.annotation;
 
 import io.microsphere.annotation.Nonnull;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.context.annotation.ImportSelector;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
@@ -30,10 +32,44 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * The meta-annotation that indicates the attributes of the annotation should be overridden.
+ * <p>
+ * The annotation must {@link Import @Import} an {@link ImportBeanDefinitionRegistrar} or {@link ImportSelector}
+ * implementation that must extend the abstract class {@link BeanCapableImportCandidate} or it subtype.
+ * <p>
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * // Define a custom annotation with an override strategy
+ * @OverrideAnnotationAttributes(strategy = MyCustomStrategy.class)
+ * @Import(MyImportRegistrar.class)
+ * public @interface MyCustomImport {
+ *     String value() default "";
+ * }
+ *
+ * // In your ImportSelector or ImportBeanDefinitionRegistrar implementation:
+ * public class MyImportRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+ *     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+ *          // ...
+ *     }
+ * }
+ *
+ * // Define an override strategy
+ * public class MyCustomStrategy implements OverrideAnnotationAttributesStrategy {
+ *     @Override
+ *     public AnnotationAttributes override(AnnotationAttributes originalAttributes, Class<? extends Annotation> annotationType, AnnotationMetadata metadata) {
+ *         // Custom logic to modify attributes
+ *         return originalAttributes;
+ *     }
+ * }
+ *
+ * @MyCustomImport
+ * public class AppConfig { }
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see OverrideAnnotationAttributesStrategy
+ * @see ConfigurationPropertyOverrideAnnotationAttributesStrategy
+ * @see BeanCapableImportCandidate#getOverriddenAnnotationAttributes
  * @see Import
- * @see BeanCapableImportCandidate
  * @since 1.0.0
  */
 @Target(ANNOTATION_TYPE)
