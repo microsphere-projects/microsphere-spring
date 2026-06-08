@@ -103,6 +103,7 @@ public class GenericAnnotationAttributesTest {
 
     @Test
     public void testHashCode() {
+        this.attributes.put("a", null);
         assertEquals(this.attributes.hashCode(), of(this.attributes).hashCode());
     }
 
