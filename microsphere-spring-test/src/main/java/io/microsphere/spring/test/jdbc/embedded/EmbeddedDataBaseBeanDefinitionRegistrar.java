@@ -61,6 +61,9 @@ class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionReg
             case SQLITE:
                 processSQLite(attributes, registry);
                 break;
+            case H2:
+                processH2(attributes, registry);
+                break;
         }
     }
 
@@ -75,9 +78,18 @@ class EmbeddedDataBaseBeanDefinitionRegistrar implements ImportBeanDefinitionReg
         registerSQLiteDataSourceBeanDefinition(attributes, registry);
     }
 
+    private void processH2(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
+        registerH2DataSourceBeanDefinition(attributes, registry);
+    }
+
     private void registerSQLiteDataSourceBeanDefinition(AnnotationAttributes attributes,
                                                         BeanDefinitionRegistry registry) {
         registerDataSourceBeanDefinition("jdbc:sqlite::memory:", attributes, registry);
+    }
+
+    private void registerH2DataSourceBeanDefinition(AnnotationAttributes attributes,
+                                                    BeanDefinitionRegistry registry) {
+        registerDataSourceBeanDefinition("jdbc:h2:mem:", attributes, registry);
     }
 
     private void registerDataSourceBeanDefinition(String jdbcURL,
