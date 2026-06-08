@@ -26,6 +26,7 @@ import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttributes;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getRequiredAttribute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.isPresent;
+import static io.microsphere.spring.core.annotation.AnnotationUtils.ofAnnotationAttributes;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotation;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.tryGetMergedAnnotationAttributes;
 import static io.microsphere.spring.util.SpringVersionUtils.SPRING_CONTEXT_VERSION;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.beans.factory.annotation.Autowire.NO;
@@ -393,6 +395,24 @@ class AnnotationUtilsTest {
     @Test
     void testFindAnnotationTypeWithNull() {
         assertNull(findAnnotationType(null));
+    }
+
+    @Test
+    void testOfAnnotationAttributes() {
+        AnnotationAttributes annotationAttributes = ofAnnotationAttributes(defaultAttributeValuesOfBean);
+        assertEquals(annotationAttributes, defaultAttributeValuesOfBean);
+    }
+
+    @Test
+    void testOfAnnotationAttributesOnNull() {
+        AnnotationAttributes annotationAttributes = ofAnnotationAttributes(null);
+        assertTrue(annotationAttributes.isEmpty());
+    }
+
+    @Test
+    void testOfAnnotationAttributesOnAnnotationAttributes() {
+        AnnotationAttributes annotationAttributes = ofAnnotationAttributes(defaultAttributeValuesOfBean);
+        assertSame(annotationAttributes, ofAnnotationAttributes(annotationAttributes));
     }
 
     private <A extends Annotation> A getAnnotation(String methodName, Class<A> annotationClass) {
