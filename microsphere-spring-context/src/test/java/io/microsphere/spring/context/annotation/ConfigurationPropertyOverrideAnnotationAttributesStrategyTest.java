@@ -148,6 +148,6 @@ class ConfigurationPropertyOverrideAnnotationAttributesStrategyTest {
     @Test
     void testGetDefaultPropertyNamePrefix() {
         String defaultPropertyNamePrefix = getDefaultPropertyNamePrefix(ANNOTATION_CLASS);
-        assertEquals("microsphere.spring.prefix.PropertySource.", defaultPropertyNamePrefix);
+        assertEquals("microsphere.spring.@PropertySource.", defaultPropertyNamePrefix);
     }
 }
