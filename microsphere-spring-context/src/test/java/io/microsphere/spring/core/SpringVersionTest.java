@@ -49,8 +49,8 @@ class SpringVersionTest {
         testVersionRange(SPRING_6_1, 0, 21);
         // Spring Framework 6.2 -> [6.2.0, 6.2.18]
         testVersionRange(SPRING_6_2, 0, 18);
-        // Spring Framework 7.0 -> [7.0.0, 7.0.7]
-        testVersionRange(SPRING_7_0, 0, 7);
+        // Spring Framework 7.0 -> [7.0.0, 7.0.8]
+        testVersionRange(SPRING_7_0, 0, 8);
     }
 
     private void testVersionRange(SpringVersion baseVersion, int start, int end) {
