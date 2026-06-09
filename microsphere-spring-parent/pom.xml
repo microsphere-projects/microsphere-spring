@@ -166,8 +166,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring-framework.version>7.0.7</spring-framework.version>
-                <reactor.version>2025.0.5</reactor.version>
+                <spring-framework.version>7.0.8</spring-framework.version>
+                <reactor.version>2025.0.6</reactor.version>
             </properties>
         </profile>
     </profiles>
