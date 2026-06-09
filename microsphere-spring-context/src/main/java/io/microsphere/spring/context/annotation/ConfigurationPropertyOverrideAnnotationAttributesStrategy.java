@@ -31,9 +31,11 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static io.microsphere.constants.SymbolConstants.AT_CHAR;
 import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.MethodUtils.findMethod;
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.constants.PropertyConstants.PREFIX_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.spring.core.env.EnvironmentUtils.getConversionService;
@@ -55,7 +57,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefi
  *                 {@code microsphere.spring.prefix.<AnnotationClassName>} (e.g., {@code microsphere.spring.prefix.org.springframework.context.annotation.PropertySource})
  *             </li>
  *             <li>Falling back to the default prefix:
- *                 {@code microsphere.spring.prefix.<AnnotationSimpleName>.} (e.g., {@code microsphere.spring.prefix.PropertySource.})
+ *                 {@code microsphere.spring.@<AnnotationSimpleName>.} (e.g., {@code microsphere.spring.@PropertySource.})
  *             </li>
  *         </ul>
  *     </li>
@@ -73,9 +75,9 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefi
  * <h4>1. Default Prefix Behavior</h4>
  * Given an annotation {@code @PropertySource(name = "default", ignoreResourceNotFound = false)}:
  * <pre>{@code
- * // application.properties
- * microsphere.spring.prefix.PropertySource.name=my-custom-source
- * microsphere.spring.prefix.PropertySource.ignoreResourceNotFound=true
+ * // config.properties
+ * microsphere.spring.@PropertySource.name=my-custom-source
+ * microsphere.spring.@PropertySource.ignoreResourceNotFound=true
  *
  * // Resulting AnnotationAttributes:
  * // name = "my-custom-source"
@@ -85,7 +87,7 @@ import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefi
  * <h4>2. Custom Prefix Behavior</h4>
  * You can define a custom prefix for a specific annotation type:
  * <pre>{@code
- * // application.properties
+ * // config.properties
  * # Define a custom prefix for PropertySource annotation
  * microsphere.spring.prefix.org.springframework.context.annotation.PropertySource=app.prop.source.
  *
@@ -270,13 +272,13 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategy implement
     /**
      * Gets the default property name prefix for the given annotation type.
      * <p>
-     * The default prefix is constructed by concatenating the {@link io.microsphere.spring.constants.PropertyConstants#PREFIX_PROPERTY_NAME_PREFIX}
+     * The default prefix is constructed by concatenating the {@link io.microsphere.spring.constants.PropertyConstants#MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX}
      * with the simple name of the annotation class and a dot character.
      * <p>
      * <h3>Example Usage</h3>
      * <pre>{@code
      *  String defaultPropertyNamePrefix = getDefaultPropertyNamePrefix(PropertySource.class);
-     *  // defaultPropertyNamePrefix == "microsphere.spring.prefix.PropertySource."
+     *  // defaultPropertyNamePrefix == "microsphere.spring.@PropertySource."
      * }
      * </pre>
      *
@@ -285,7 +287,7 @@ public class ConfigurationPropertyOverrideAnnotationAttributesStrategy implement
      */
     @Nonnull
     public static String getDefaultPropertyNamePrefix(Class<? extends Annotation> annotationType) {
-        return PREFIX_PROPERTY_NAME_PREFIX + annotationType.getSimpleName() + DOT_CHAR;
+        return MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + AT_CHAR + annotationType.getSimpleName() + DOT_CHAR;
     }
 
     @Override

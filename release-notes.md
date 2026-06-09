@@ -395,4 +395,24 @@ Thank you to everyone who contributed to this release!
 
 **Full Changelog:** Omitted from this document.
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.23...0.1.24
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.23...0.1.24## v0.1.25
+
+# Release Notes for Version 0.1.25
+
+## Dependency Updates
+- Bumped `microsphere-logging` to `0.1.16` for improved logging capabilities. (6b4e6af5)
+- Upgraded `microsphere-java` to `0.3.8` for enhanced Java support. (b37617b8)
+- Updated `microsphere-build` parent to `0.3.3`. (85b526fb)
+
+## Documentation
+- Updated README with the latest versions: `0.2.25` and `0.1.25`. (053b5d20)
+
+## Other Changes
+- Removed redundant `loadProperties` overload and corresponding tests for streamlined codebase. (bfe977ef)
+- Updated default property prefix in `microsphere` to use `@` for better clarity. (78774b10)
+
+---
+
+Full Changelog: [0.1.24...0.1.25](link-to-changelog)
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.24...0.1.25

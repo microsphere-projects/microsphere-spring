@@ -83,6 +83,7 @@ public @interface OverrideAnnotationAttributes {
      *
      * @return {@link ConfigurationPropertyOverrideAnnotationAttributesStrategy} as default, the implementation class
      * must be a concrete class and have a default constructor.
+     * @see ConfigurationPropertyOverrideAnnotationAttributesStrategy
      */
     @Nonnull
     Class<? extends OverrideAnnotationAttributesStrategy> strategy() default ConfigurationPropertyOverrideAnnotationAttributesStrategy.class;
