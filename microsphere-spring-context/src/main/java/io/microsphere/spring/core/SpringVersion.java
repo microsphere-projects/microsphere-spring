@@ -188,6 +188,8 @@ public enum SpringVersion {
 
     SPRING_7_0_7,
 
+    SPRING_7_0_8,
+
     CURRENT(of(org.springframework.core.SpringVersion.getVersion()));
 
     private final Version version;
