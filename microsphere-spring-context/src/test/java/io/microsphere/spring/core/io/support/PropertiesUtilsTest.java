@@ -35,24 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class PropertiesUtilsTest {
 
-    static final String PROPERTIES = """
-            a = 1
-            b : 2
-            c 3
-            """;
-
-    @Test
-    void testLoadProperties() {
-        Properties properties = loadProperties("a=1", "b : 2", "c 3");
-        assertProperties(properties);
-    }
-
-    @Test
-    void testLoadPropertiesOnTextBlock() {
-        Properties properties = loadProperties(PROPERTIES);
-        assertProperties(properties);
-    }
-
     @Test
     void testLoadPropertiesWithPropertyResolver() {
         MockEnvironment environment = new MockEnvironment();

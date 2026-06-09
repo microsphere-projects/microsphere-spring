@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         ImportOptionalTest.class
 })
 @TestPropertySource(properties = {
-        "microsphere.spring.prefix.ImportOptional.value=io.microsphere.spring.test.domain.User"
+        "microsphere.spring.@ImportOptional.value=io.microsphere.spring.test.domain.User"
 })
 @ImportOptional(value = {
         "overridden.here",

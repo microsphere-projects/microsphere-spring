@@ -41,16 +41,6 @@ public abstract class PropertiesUtils implements Utils {
     /**
      * Load {@link Properties} from the specified {@code propertiesValue}
      *
-     * @param propertiesValue the specified {@code propertiesValue}
-     * @return non-null
-     */
-    public static Properties loadProperties(String... propertiesValue) {
-        return loadProperties(propertiesValue, null);
-    }
-
-    /**
-     * Load {@link Properties} from the specified {@code propertiesValue}
-     *
      * @param propertiesValue  the specified {@code propertiesValue}
      * @param propertyResolver {@link PropertyResolver}
      * @return non-null
