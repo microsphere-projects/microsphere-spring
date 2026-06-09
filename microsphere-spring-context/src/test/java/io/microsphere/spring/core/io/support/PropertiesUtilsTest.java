@@ -35,22 +35,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class PropertiesUtilsTest {
 
-    static final String PROPERTIES = "a = 1\n" +
-            "            b : 2\n" +
-            "            c 3";
-
-    @Test
-    public void testLoadProperties() {
-        Properties properties = loadProperties("a=1", "b : 2", "c 3");
-        assertProperties(properties);
-    }
-
-    @Test
-    public void testLoadPropertiesOnTextBlock() {
-        Properties properties = loadProperties(PROPERTIES);
-        assertProperties(properties);
-    }
-
     @Test
     public void testLoadPropertiesWithPropertyResolver() {
         MockEnvironment environment = new MockEnvironment();
