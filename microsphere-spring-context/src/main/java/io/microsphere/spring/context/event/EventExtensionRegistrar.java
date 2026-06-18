@@ -61,7 +61,8 @@ class EventExtensionRegistrar extends AnnotatedBeanCapableImportCandidate<Enable
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
-                                           BeanNameGenerator importBeanNameGenerator, ResolvablePlaceholderAnnotationAttributes<EnableEventExtension> annotationAttributes) {
+                                           BeanNameGenerator importBeanNameGenerator,
+                                           ResolvablePlaceholderAnnotationAttributes<EnableEventExtension> annotationAttributes) {
         registerApplicationEventMulticaster(metadata, registry, annotationAttributes);
     }
 
