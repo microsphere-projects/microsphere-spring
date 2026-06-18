@@ -68,7 +68,8 @@ public abstract class AnnotatedBeanCapableImportBeanDefinitionRegistrar<A extend
 
     public static final AnnotationBeanNameGenerator INSTANCE = new AnnotationBeanNameGenerator();
 
-    @Override
+    // @Override // This method is declared in ImportBeanDefinitionRegistrar since Spring 5.2,
+    // thus the @Override was commented for compatibility with older versions.
     public final void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
                                               BeanNameGenerator importBeanNameGenerator) {
         if (isEnabled(metadata)) {
