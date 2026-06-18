@@ -215,6 +215,7 @@ public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> 
      * @Override
      * protected void registerBeanDefinitions(AnnotationMetadata metadata,
      *                                        BeanDefinitionRegistry registry,
+     *                                        BeanNameGenerator importBeanNameGenerator,
      *                                        ResolvablePlaceholderAnnotationAttributes<EnableService> attributes) {
      *     String prefix = attributes.getString("prefix");
      *     if (StringUtils.hasText(prefix)) {
