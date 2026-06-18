@@ -19,39 +19,38 @@ package io.microsphere.spring.jdbc.p6spy.annotation;
 import com.p6spy.engine.spy.P6Factory;
 import com.p6spy.engine.spy.P6ModuleManager;
 import com.p6spy.engine.spy.option.P6OptionChangedListener;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.CompoundJdbcEventListenerFactory;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.config.P6DataSourceBeanPostProcessor;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
 
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 
 /**
- * The {@link ImportBeanDefinitionRegistrar} class to register {@link BeanDefinition BeanDefinitions}
+ * The {@link EnableP6DataSource @EnableP6DataSource} {@link ImportBeanDefinitionRegistrar} class to
+ * register {@link BeanDefinition BeanDefinitions}.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see EnableP6DataSource
  * @since 1.0.0
  */
-class P6DataSourceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
+class P6DataSourceBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableP6DataSource> {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                           BeanNameGenerator importBeanNameGenerator,
+                                           ResolvablePlaceholderAnnotationAttributes<EnableP6DataSource> annotationAttributes) {
+        initP6ModuleManager(getBeanFactory());
         registerBeanDefinition(registry, P6DataSourceBeanPostProcessor.class);
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        initP6ModuleManager(asConfigurableListableBeanFactory(beanFactory));
     }
 
     private void initP6ModuleManager(ConfigurableListableBeanFactory beanFactory) {

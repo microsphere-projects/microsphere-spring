@@ -32,6 +32,7 @@ import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -49,25 +50,24 @@ import static io.microsphere.spring.web.method.support.DelegatingHandlerMethodAd
  * @see EnableWebExtension
  * @since 1.0.0
  */
-public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebExtension>
-        implements ImportBeanDefinitionRegistrar {
+public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebExtension> {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+    protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                           BeanNameGenerator importBeanNameGenerator,
+                                           ResolvablePlaceholderAnnotationAttributes<EnableWebExtension> annotationAttributes) {
 
-        ResolvablePlaceholderAnnotationAttributes<EnableWebExtension> attributes = getAnnotationAttributes(metadata);
+        BeanSource[] sources = (BeanSource[]) annotationAttributes.get("sources");
 
-        BeanSource[] sources = (BeanSource[]) attributes.get("sources");
+        registerWebEndpointMappings(annotationAttributes, registry, sources);
 
-        registerWebEndpointMappings(attributes, registry, sources);
+        registerInterceptHandlers(annotationAttributes, registry, sources);
 
-        registerInterceptHandlers(attributes, registry, sources);
-
-        registerEventPublishingProcessor(attributes, registry);
+        registerEventPublishingProcessor(annotationAttributes, registry);
     }
 
-    private void registerWebEndpointMappings(AnnotationAttributes attributes, BeanDefinitionRegistry registry, BeanSource[] sources) {
-        boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
+    private void registerWebEndpointMappings(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry, BeanSource[] sources) {
+        boolean registerWebEndpointMappings = annotationAttributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
             registerWebEndpointMappingResolvers(registry, sources);
             registerWebEndpointMappingRegistries(registry, sources);
@@ -103,8 +103,8 @@ public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImp
         registerBeanDefinition(registry, WebEndpointMappingRegistrar.class);
     }
 
-    private void registerInterceptHandlers(AnnotationAttributes attributes, BeanDefinitionRegistry registry, BeanSource[] sources) {
-        boolean interceptHandlerMethods = attributes.getBoolean("interceptHandlerMethods");
+    private void registerInterceptHandlers(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry, BeanSource[] sources) {
+        boolean interceptHandlerMethods = annotationAttributes.getBoolean("interceptHandlerMethods");
         if (interceptHandlerMethods) {
             registerHandlerMethodAdvices(registry, sources);
             registerHandlerMethodArgumentInterceptors(registry, sources);
@@ -129,8 +129,8 @@ public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImp
         registerBeans(registry, sources, HandlerMethodInterceptor.class);
     }
 
-    private void registerEventPublishingProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean publishEvents = attributes.getBoolean("publishEvents");
+    private void registerEventPublishingProcessor(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean publishEvents = annotationAttributes.getBoolean("publishEvents");
         if (publishEvents) {
             registerBeanDefinition(registry, WebEventPublisher.class);
         }

@@ -451,6 +451,35 @@ public abstract class BeanRegistrar {
     }
 
     /**
+     * Registers a {@link BeanDefinition} into the given registry.
+     * <p>
+     * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, BeanDefinition)}
+     * with a {@code null} bean name, causing a unique bean name to be generated automatically based on the
+     * provided bean definition. The registration process respects the default bean overriding settings of the registry.
+     * If the bean is successfully registered, it returns {@code true}; otherwise, it returns {@code false}.
+     * </p>
+     *
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * BeanDefinition beanDefinition = genericBeanDefinition(MyService.class);
+     * boolean registered = registerBeanDefinition(registry, beanDefinition);
+     *
+     * if (registered) {
+     *     System.out.println("Bean registered successfully with auto-generated name.");
+     * } else {
+     *     System.out.println("Bean was already registered.");
+     * }
+     * }</pre>
+     *
+     * @param registry       The {@link BeanDefinitionRegistry} where the bean will be registered.
+     * @param beanDefinition The bean definition to register.
+     * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     */
+    public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, BeanDefinition beanDefinition) {
+        return registerBeanDefinition(registry, null, beanDefinition);
+    }
+
+    /**
      * Registers a {@link BeanDefinition} with an optional name into the given registry.
      * <p>
      * This method attempts to register the provided bean definition. If a bean name is provided,

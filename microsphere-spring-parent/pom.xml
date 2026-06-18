@@ -19,8 +19,8 @@
     <description>Microsphere Spring Parent</description>
 
     <properties>
-        <microsphere-java.version>0.3.8</microsphere-java.version>
-        <microsphere-logging.version>0.1.16</microsphere-logging.version>
+        <microsphere-java.version>0.3.9</microsphere-java.version>
+        <microsphere-logging.version>0.1.17</microsphere-logging.version>
         <jackson.version>2.21.3</jackson.version>
         <snakeyaml.version>2.6</snakeyaml.version>
         <p6spy.version>3.9.1</p6spy.version>
