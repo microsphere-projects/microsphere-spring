@@ -22,7 +22,6 @@ import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandid
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
@@ -34,7 +33,7 @@ import java.util.Set;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * Abstract base class for {@link ImportSelector} implementations that load a {@link PropertySource}
+ * Abstract base class implementations that load a {@link PropertySource}
  * when a {@link Configuration} class is annotated with a specific annotation.
  *
  * <p>This class provides a foundation for conditionally adding property sources to the Spring environment
@@ -63,7 +62,6 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ResourcePropertySourceLoader
  * @see PropertySourceExtensionLoader
- * @see ImportSelector
  * @since 1.0.0
  */
 public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends AnnotatedBeanCapableImportCandidate<A> {
