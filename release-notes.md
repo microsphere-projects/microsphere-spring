@@ -453,4 +453,26 @@ Full Changelog: [0.1.24...0.1.25](link-to-changelog)
 
 **Full Changelog**: [v0.1.25...v0.1.26](#)
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.25...0.1.26
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.25...0.1.26## v0.1.27
+
+# Release Notes for Version 0.1.27
+
+## New Features
+- **Improved Component Registration**: Updated to use `genericBeanDefinitionBuilder` in registrar for enhanced flexibility. (#76d0365ac)
+- **Streamlined Bean Naming**: Adopted `AnnotationBeanNameGenerator.INSTANCE` for consistent annotation-based bean naming. (#0823b6bb8)
+
+## Bug Fixes
+- **Spring Compatibility**: Commented out `@Override` annotation to resolve compatibility issues with specific Spring versions. (#31890531a)
+
+## Dependency Updates
+- **Microsphere Logging**: Downgraded `microsphere-logging` dependency to version `0.1.17` for stability improvements. (#460b1112c)
+
+## Other Changes
+- Split `AnnotatedBeanCapableImportCandidate` into two distinct implementations for better modularity. (#c74176d31)
+- Bumped README module versions to `0.2.27/0.1.27`. (#636beeb02)
+
+---
+
+**Full Changelog:** Available [here](#).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.26...0.1.27

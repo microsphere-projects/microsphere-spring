@@ -19,7 +19,7 @@ package io.microsphere.spring.jdbc.p6spy.annotation;
 import com.p6spy.engine.spy.P6Factory;
 import com.p6spy.engine.spy.P6ModuleManager;
 import com.p6spy.engine.spy.option.P6OptionChangedListener;
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrar;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.CompoundJdbcEventListenerFactory;
 import io.microsphere.spring.jdbc.p6spy.beans.factory.config.P6DataSourceBeanPostProcessor;
@@ -43,7 +43,7 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
  * @see EnableP6DataSource
  * @since 1.0.0
  */
-class P6DataSourceBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableP6DataSource> {
+class P6DataSourceBeanDefinitionRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableP6DataSource> {
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
