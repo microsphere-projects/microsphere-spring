@@ -18,7 +18,6 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
