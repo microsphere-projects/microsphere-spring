@@ -17,7 +17,7 @@
 package io.microsphere.spring.beans.factory.annotation;
 
 import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrar;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -91,7 +91,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ConfigurationBeanBindingPostProcessor
  * @since 1.0.0
  */
-class ConfigurationBeanBindingRegistrar extends AnnotatedBeanCapableImportCandidate<EnableConfigurationBeanBinding> {
+class ConfigurationBeanBindingRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableConfigurationBeanBinding> {
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,

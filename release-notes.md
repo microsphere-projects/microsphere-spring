@@ -404,4 +404,37 @@ For the full changelog, visit the [repository](https://github.com/your-repo/comm
 
 Thank you for using Microsphere!
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.24...0.2.25
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.24...0.2.25## v0.2.26
+
+# Release Notes for Version 0.2.26  
+
+## New Features  
+- **BeanNameGenerator Support**: Added `BeanNameGenerator` support with updated examples in Javadoc. ([#515e4cf](https://github.com/.../commit/515e4cf))  
+- Added `registerBeanDefinition` overload with corresponding tests for enhanced flexibility. ([#de7685bf](https://github.com/.../commit/de7685bf))  
+
+## Dependency Updates  
+- Bumped `microsphere-logging` to version 0.1.17. ([#34435ce](https://github.com/.../commit/34435ce))  
+- Bumped `microsphere-java` to version 0.3.9. ([#ec7c4f5](https://github.com/.../commit/ec7c4f5))  
+- Updated `microsphere-build` parent to version 0.3.4. ([#5a66372](https://github.com/.../commit/5a66372))  
+
+## Refactors  
+- Refactored `EnableSpringConverterAdapter` registrar and related APIs for better clarity and structure. ([#75fcdd4](https://github.com/.../commit/75fcdd4))  
+- Improved annotated import candidate API usability. ([#d5c74a1](https://github.com/.../commit/d5c74a1), [#a3ea1ba](https://github.com/.../commit/a3ea1ba))  
+
+## Documentation  
+- Updated `README.md` with the latest versions for improved clarity. ([#b85ee77](https://github.com/.../commit/b85ee77))  
+- Updated Javadocs for `BeanNameGenerator` and other API changes.  
+
+## Code Cleanup  
+- Removed unused imports and updated Javadoc references related to `ImportSelector` and `ImportBeanDefinitionRegistrar`. ([#1ae9c38](https://github.com/.../commit/1ae9c38), [#d8fd63d](https://github.com/.../commit/d8fd63d), [#884b63c](https://github.com/.../commit/884b63c))  
+- Refactored and reformatted method parameters for better readability. ([#f641e20](https://github.com/.../commit/f641e20), [#e9a33a5](https://github.com/.../commit/e9a33a5), [#ecfaa36](https://github.com/.../commit/ecfaa36))  
+
+## Test Improvements  
+- Added tests for `BeanNameGenerator` and `registerBeanDefinition` API changes.  
+
+## Build and Workflow Enhancements  
+- Regular merges from `main` into release branch were performed to maintain up-to-date changes ([Multiple commits with `[skip ci]`](https://github.com/...)).  
+
+---
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.25...0.2.26
