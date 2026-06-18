@@ -37,8 +37,7 @@ import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.
  * @see AnnotatedPropertySourceLoader
  * @since 1.0.0
  */
-class DefaultPropertiesPropertySourcesLoader extends AnnotatedBeanCapableImportCandidate<DefaultPropertiesPropertySources>
-        implements ImportBeanDefinitionRegistrar {
+class DefaultPropertiesPropertySourcesLoader extends AnnotatedBeanCapableImportCandidate<DefaultPropertiesPropertySources> {
 
     @Override
     protected void selectImports(AnnotationMetadata metadata,

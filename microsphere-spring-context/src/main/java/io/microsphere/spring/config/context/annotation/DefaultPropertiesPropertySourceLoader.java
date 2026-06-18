@@ -44,8 +44,7 @@ import static io.microsphere.util.ArrayUtils.isEmpty;
  * @see ResourcePropertySourceLoader
  * @since 1.0.0
  */
-class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportCandidate<DefaultPropertiesPropertySource>
-        implements ImportBeanDefinitionRegistrar {
+class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportCandidate<DefaultPropertiesPropertySource> {
 
     @Override
     protected void selectImports(AnnotationMetadata metadata,
