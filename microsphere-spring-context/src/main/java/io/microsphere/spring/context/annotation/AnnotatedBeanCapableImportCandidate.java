@@ -205,7 +205,8 @@ public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> 
      * @param annotationAttributes the resolved annotation attributes with placeholders resolved
      * @param imports              the set of class names to import; add desired classes to this set
      */
-    protected void selectImports(AnnotationMetadata metadata, ResolvablePlaceholderAnnotationAttributes<A> annotationAttributes,
+    protected void selectImports(AnnotationMetadata metadata,
+                                 ResolvablePlaceholderAnnotationAttributes<A> annotationAttributes,
                                  Set<String> imports) {
     }
 
