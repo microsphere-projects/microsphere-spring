@@ -437,4 +437,19 @@ Thank you for using Microsphere!
 
 ---
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.25...0.2.26
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.25...0.2.26## v0.2.27
+
+# Release Notes - Version 0.2.27
+
+## New Features
+- Split `AnnotatedBeanCapableImportCandidate` for better modularity. ([3d258b28d](https://example.com))
+
+## Build and Workflow Enhancements
+- Merged `main` branch into `release`. ([22079bf4f](https://example.com), [697a5422d](https://example.com))
+- Merged `release` branch into `main` after publish. ([18b6fde4e](https://example.com))
+- Bumped version to next patch after publishing `0.2.26`. ([508d72811](https://example.com))
+
+## Other Changes
+- Bumped dependencies, cleaned imports, and removed `Maintainers`. ([5030701c9](https://example.com))  
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.26...0.2.27
