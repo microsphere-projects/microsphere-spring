@@ -19,6 +19,7 @@ package io.microsphere.spring.webflux.annotation;
 
 import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
 import io.microsphere.spring.context.annotation.OverrideAnnotationAttributes;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.web.util.RequestContextStrategy;
 import io.microsphere.spring.webflux.handler.ReversedProxyHandlerMapping;
 import io.microsphere.spring.webflux.metadata.HandlerMappingWebEndpointMappingResolver;
@@ -30,6 +31,7 @@ import io.microsphere.spring.webflux.server.filter.RequestHandledEventPublishing
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -48,38 +50,37 @@ import static org.springframework.util.StringUtils.uncapitalize;
  * @see ImportBeanDefinitionRegistrar
  * @since 1.0.0
  */
-class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebFluxExtension>
-        implements ImportBeanDefinitionRegistrar {
+class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebFluxExtension> {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata);
+    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                        BeanNameGenerator importBeanNameGenerator, ResolvablePlaceholderAnnotationAttributes<EnableWebFluxExtension> annotationAttributes) {
 
-        registerWebEndpointMappingResolver(attributes, registry);
+        registerWebEndpointMappingResolver(annotationAttributes, registry);
 
-        registerInterceptingHandlerMethodProcessor(attributes, registry);
+        registerInterceptingHandlerMethodProcessor(annotationAttributes, registry);
 
-        registerEventPublishingProcessor(attributes, registry);
+        registerEventPublishingProcessor(annotationAttributes, registry);
 
-        registerRequestContextWebFilter(attributes, registry);
+        registerRequestContextWebFilter(annotationAttributes, registry);
 
-        registerStoringRequestBodyArgumentInterceptor(attributes, registry);
+        registerStoringRequestBodyArgumentInterceptor(annotationAttributes, registry);
 
-        registerStoringResponseBodyReturnValueInterceptor(attributes, registry);
+        registerStoringResponseBodyReturnValueInterceptor(annotationAttributes, registry);
 
-        registerReversedProxyHandlerMapping(attributes, registry);
+        registerReversedProxyHandlerMapping(annotationAttributes, registry);
     }
 
-    private void registerWebEndpointMappingResolver(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
+    private void registerWebEndpointMappingResolver(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean registerWebEndpointMappings = annotationAttributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
             registerBeanDefinition(registry, HandlerMappingWebEndpointMappingResolver.class);
         }
         log("@EnableWebFluxExtension.registerWebEndpointMappings = {}", registerWebEndpointMappings);
     }
 
-    private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean interceptHandlerMethods = attributes.getBoolean("interceptHandlerMethods");
+    private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean interceptHandlerMethods = annotationAttributes.getBoolean("interceptHandlerMethods");
         if (interceptHandlerMethods) {
             String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
             registerBeanDefinition(registry, beanName, InterceptingHandlerMethodProcessor.class);
@@ -87,16 +88,16 @@ class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImport
         log("@EnableWebFluxExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
     }
 
-    private void registerEventPublishingProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean publishEvents = attributes.getBoolean("publishEvents");
+    private void registerEventPublishingProcessor(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean publishEvents = annotationAttributes.getBoolean("publishEvents");
         if (publishEvents) {
             registerBeanDefinition(registry, RequestHandledEventPublishingWebFilter.class);
         }
         log("@EnableWebFluxExtension.publishEvents() = {}", publishEvents);
     }
 
-    private void registerRequestContextWebFilter(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        RequestContextStrategy requestContextStrategy = attributes.getEnum("requestContextStrategy");
+    private void registerRequestContextWebFilter(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        RequestContextStrategy requestContextStrategy = annotationAttributes.getEnum("requestContextStrategy");
         Boolean threadContextInheritable;
         switch (requestContextStrategy) {
             case THREAD_LOCAL:
@@ -120,24 +121,24 @@ class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImport
         log("@EnableWebFluxExtension.requestContextStrategy() = {}", requestContextStrategy);
     }
 
-    private void registerStoringRequestBodyArgumentInterceptor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean storeRequestBodyArgument = attributes.getBoolean("storeRequestBodyArgument");
+    private void registerStoringRequestBodyArgumentInterceptor(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean storeRequestBodyArgument = annotationAttributes.getBoolean("storeRequestBodyArgument");
         if (storeRequestBodyArgument) {
             registerBeanDefinition(registry, StoringRequestBodyArgumentInterceptor.class);
         }
         log("@EnableWebFluxExtension.storeRequestBodyArgument() = {}", storeRequestBodyArgument);
     }
 
-    private void registerStoringResponseBodyReturnValueInterceptor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean storeResponseBodyReturnValue = attributes.getBoolean("storeResponseBodyReturnValue");
+    private void registerStoringResponseBodyReturnValueInterceptor(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean storeResponseBodyReturnValue = annotationAttributes.getBoolean("storeResponseBodyReturnValue");
         if (storeResponseBodyReturnValue) {
             registerBeanDefinition(registry, StoringResponseBodyReturnValueInterceptor.class);
         }
         log("@EnableWebFluxExtension.storeResponseBodyReturnValue() = {}", storeResponseBodyReturnValue);
     }
 
-    private void registerReversedProxyHandlerMapping(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean reversedProxyHandlerMapping = attributes.getBoolean("reversedProxyHandlerMapping");
+    private void registerReversedProxyHandlerMapping(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean reversedProxyHandlerMapping = annotationAttributes.getBoolean("reversedProxyHandlerMapping");
         if (reversedProxyHandlerMapping) {
             registerBeanDefinition(registry, ReversedProxyHandlerMapping.class);
         }

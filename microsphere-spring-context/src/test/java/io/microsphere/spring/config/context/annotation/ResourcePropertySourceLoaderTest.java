@@ -23,6 +23,7 @@ import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -132,7 +133,7 @@ class ResourcePropertySourceLoaderTest {
 
     @Test
     void testOnNotFoundConfig() {
-        assertThrows(BeanDefinitionStoreException.class,
+        assertThrows(BeanCreationException.class,
                 () -> testInSpringContainer((context, environment) -> {
                 }, NotFoundConfig.class));
     }

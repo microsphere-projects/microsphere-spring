@@ -47,6 +47,14 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * @see EnableWebMvcExtension
  * @see EnableWebExtension
  * @see WebExtensionBeanDefinitionRegistrar
+ * @see WebMvcExtensionConfiguration
+ * @see ServletWebEndpointMappingResolver
+ * @see HandlerMappingWebEndpointMappingResolver
+ * @see InterceptingHandlerMethodProcessor
+ * @see HandlerInterceptor
+ * @see StoringRequestBodyArgumentAdvice
+ * @see StoringResponseBodyReturnValueAdvice
+ * @see ReversedProxyHandlerMapping
  * @since 1.0.0
  */
 class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebMvcExtension>
@@ -59,6 +67,8 @@ class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportC
 
         AnnotationAttributes attributes = getAnnotationAttributes(metadata);
 
+        registerWebMvcExtensionConfiguration(registry);
+
         registerWebEndpointMappingResolvers(attributes, registry);
 
         registerInterceptingHandlerMethodProcessor(attributes, registry);
@@ -70,6 +80,10 @@ class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportC
         registerStoringResponseBodyReturnValueAdvice(attributes, registry);
 
         registerReversedProxyHandlerMapping(attributes, registry);
+    }
+
+    private void registerWebMvcExtensionConfiguration(BeanDefinitionRegistry registry) {
+        registerBeanDefinition(registry, WebMvcExtensionConfiguration.class);
     }
 
     private void registerWebEndpointMappingResolvers(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {

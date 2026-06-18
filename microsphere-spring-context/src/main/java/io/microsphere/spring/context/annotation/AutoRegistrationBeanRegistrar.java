@@ -18,8 +18,10 @@
 package io.microsphere.spring.context.annotation;
 
 import io.microsphere.spring.context.config.AutoRegistrationBean;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -47,17 +49,22 @@ class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<
         implements ImportBeanDefinitionRegistrar {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+    protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                           BeanNameGenerator importBeanNameGenerator, ResolvablePlaceholderAnnotationAttributes<EnableAutoRegistrationBean> annotationAttributes) {
+        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class, super.classLoader);
+        registerAutoRegisteredBeans(autoRegistrationBeans, registry);
+    }
+
+    @Override
+    protected boolean isEnabled(AnnotationMetadata metadata) {
         if (!isEnabled()) {
             if (logger.isTraceEnabled()) {
                 logger.trace("The @EnableAutoRegistrationBean was disabled by property[{} = false]",
                         BEANS_AUTO_REGISTERED_PROEPRTY_NAME);
             }
-            return;
+            return false;
         }
-
-        List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class, super.classLoader);
-        registerAutoRegisteredBeans(autoRegistrationBeans, registry);
+        return super.isEnabled(metadata);
     }
 
     private boolean isEnabled() {

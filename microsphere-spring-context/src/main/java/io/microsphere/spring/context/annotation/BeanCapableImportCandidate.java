@@ -25,7 +25,6 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -47,6 +46,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
+import static io.microsphere.constants.SymbolConstants.AT_CHAR;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.initializeBean;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
@@ -61,17 +61,19 @@ import static java.lang.Integer.toHexString;
 import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
- * The {@link Import @Import} candidate is an instance of {@link org.springframework.context.annotation.ImportSelector} or {@link ImportBeanDefinitionRegistrar}
- * and not a regular Spring bean, which only invokes {@link BeanClassLoaderAware}, {@link BeanFactoryAware},
- * {@link EnvironmentAware}, and {@link ResourceLoaderAware} contracts in order if they are implemented, thus it will
- * not be {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper) populated} and
- * {@link AutowireCapableBeanFactory#initializeBean(Object, String) initialized} .
+ * An abstract base class for {@link Import @Import} candidates that supports the full Spring bean lifecycle,
+ * including population, initialization, and destruction.
  * <p>
- * The current abstract implementation is a template class supports the Spring bean lifecycles :
- * {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper) population},
- * {@link AutowireCapableBeanFactory#initializeBean(Object, String) initialization}, and
- * {@link ConfigurableBeanFactory#destroyBean(String, Object) destroy}, the sub-class must implement
- * the interface {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar}, and can't override those methods:
+ * Unlike standard {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar} implementations, which are
+ * typically instantiated and invoked without full bean lifecycle management, this class ensures that the
+ * candidate instance is treated as a Spring-managed bean. It achieves this by implementing key awareness
+ * interfaces ({@link BeanClassLoaderAware}, {@link BeanFactoryAware}, {@link EnvironmentAware},
+ * {@link ApplicationContextAware}, and {@link ResourceLoaderAware}) and triggering self-registration
+ * and initialization upon setting the {@link ResourceLoader}.
+ * <p>
+ * Subclasses must implement either {@link ImportSelector} or {@link ImportBeanDefinitionRegistrar} to define
+ * their import logic. They can then leverage injected dependencies and lifecycle callbacks provided by the
+ * Spring container, and can't override those methods:
  * <ul>
  *     <li>{@link #setBeanClassLoader(ClassLoader)}</li>
  *     <li>{@link #setBeanFactory(BeanFactory)}</li>
@@ -80,24 +82,59 @@ import static org.springframework.beans.BeanUtils.instantiateClass;
  *     <li>{@link #setApplicationContext(ApplicationContext)}</li>
  * </ul>
  *
+ * <h3>Key Features</h3>
+ * <ul>
+ *     <li>Supports dependency injection via {@link AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper)}.</li>
+ *     <li>Supports initialization callbacks via {@link AutowireCapableBeanFactory#initializeBean}.</li>
+ *     <li>Provides access to {@link ConfigurableListableBeanFactory}, {@link ConfigurableEnvironment},
+ *         {@link ConfigurableApplicationContext}, and {@link ResourceLoader}.</li>
+ *     <li>Ensures the candidate is registered as a singleton bean in the context.</li>
+ * </ul>
+ *
  * <h3>Example Usage</h3>
  *
  * <pre>{@code
- * public class MyImportRegistrar extends BeanCapableImportCandidate implements ImportBeanDefinitionRegistrar {
+ * // 1. Define a custom ImportSelector extending BeanCapableImportCandidate
+ * public class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector {
  *
- *     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
- *         logger.info("Registering beans from custom registrar");
- *         registry.registerBeanDefinition("myBean", new RootBeanDefinition(MyBean.class));
+ *     // You can inject dependencies here if needed, though typically done via getter methods
+ *     // provided by the base class after initialization.
+ *
+ *     @Override
+ *     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+ *         // Access the environment to resolve placeholders or make decisions
+ *         String profile = getEnvironment().getActiveProfiles().length > 0 ?
+ *             getEnvironment().getActiveProfiles()[0] : "default";
+ *
+ *         logger.info("Selecting imports for profile: {}", profile);
+ *
+ *         // Return classes to import based on logic
+ *         if ("prod".equals(profile)) {
+ *             return new String[]{ProdConfig.class.getName()};
+ *         } else {
+ *             return new String[]{DevConfig.class.getName()};
+ *         }
  *     }
+ * }
+ *
+ * // 2. Use the selector in a configuration class
+ * @Import(MyImportSelector.class)
+ * @Configuration
+ * public class AppConfig {
+ *     // ...
  * }
  * }</pre>
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
- * @see OverrideAnnotationAttributes
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see ImportSelector
+ * @see ImportBeanDefinitionRegistrar
+ * @see BeanClassLoaderAware
+ * @see BeanFactoryAware
+ * @see EnvironmentAware
+ * @see ApplicationContextAware
+ * @see ResourceLoaderAware
  * @see AbstractAutowireCapableBeanFactory#populateBean(String, RootBeanDefinition, BeanWrapper)
- * @see AutowireCapableBeanFactory#initializeBean(Object, String)
- * @see ConfigurableBeanFactory#destroyBean(String, Object)
- * @see org.springframework.context.support.ApplicationContextAwareProcessor
+ * @see AutowireCapableBeanFactory#initializeBean
  * @since 1.0.0
  */
 public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware,
@@ -265,12 +302,40 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     }
 
     /**
-     * Get the {@link ResolvablePlaceholderAnnotationAttributes} of the specified {@link Annotation}
+     * Retrieves the {@link ResolvablePlaceholderAnnotationAttributes} for the specified annotation type from the given metadata.
+     * <p>
+     * This method resolves placeholders in the annotation attributes using the current {@link Environment}.
+     * It also checks for any {@link OverrideAnnotationAttributes} meta-annotation on the target annotation type
+     * and applies the configured {@link OverrideAnnotationAttributesStrategy} if present.
      *
-     * @param metadata       {@link AnnotationMetadata}
-     * @param annotationType the annotation type
-     * @param <A>            the annotation type
-     * @return non-null
+     * <h3>Example Usage</h3>
+     * <pre>{@code
+     * // Assume @MyConfig is a custom annotation with placeholder support
+     * @MyConfig(value = "${my.config.value}")
+     * @Import(MyImportSelector.class)
+     * public class AppConfig { }
+     *
+     * public class MyImportSelector extends BeanCapableImportCandidate implements ImportSelector {
+     *
+     *     @Override
+     *     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+     *         // Retrieve resolved annotation attributes
+     *         ResolvablePlaceholderAnnotationAttributes<MyConfig> attributes =
+     *             getAnnotationAttributes(importingClassMetadata, MyConfig.class);
+     *
+     *         // Access the resolved value (placeholders replaced by environment properties)
+     *         String value = attributes.getString("value");
+     *         logger.info("Resolved config value: {}", value);
+     *
+     *         return new String[0];
+     *     }
+     * }
+     * }</pre>
+     *
+     * @param metadata       the {@link AnnotationMetadata} of the importing class
+     * @param annotationType the {@link Class} of the annotation to retrieve attributes for
+     * @param <A>            the type of the annotation
+     * @return the {@link ResolvablePlaceholderAnnotationAttributes} containing the resolved annotation attributes
      */
     @Nonnull
     protected <A extends Annotation> ResolvablePlaceholderAnnotationAttributes<A> getAnnotationAttributes(AnnotationMetadata metadata, Class<A> annotationType) {
@@ -334,7 +399,7 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     }
 
     private void initializeSelfAsBean() {
-        String beanName = getClass().getName() + "@" + toHexString(hashCode());
+        String beanName = getClass().getName() + AT_CHAR + toHexString(hashCode());
         BeanDefinitionRegistry registry = asBeanDefinitionRegistry(this.beanFactory);
         // register the current instance as a Spring BeanDefinition
         registerBean(registry, beanName, this);
