@@ -27,11 +27,11 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
 
+import static io.microsphere.spring.beans.factory.support.BeanDefinitionBuilderUtils.genericBeanDefinitionBuilder;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
 import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 import static io.microsphere.spring.context.config.AutoRegistrationBean.getAutoRegisteredPropertyName;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactories;
 
 /**
@@ -94,7 +94,7 @@ class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<
 
         Class<AutoRegistrationBean> beanType = (Class<AutoRegistrationBean>) autoRegistrationBean.getBeanType();
         String scope = autoRegistrationBean.getScope();
-        BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinition(beanType, () -> autoRegistrationBean)
+        BeanDefinitionBuilder beanDefinitionBuilder = genericBeanDefinitionBuilder(beanType, () -> autoRegistrationBean)
                 .setScope(scope);
 
         autoRegistrationBean.customize(beanDefinitionBuilder);
