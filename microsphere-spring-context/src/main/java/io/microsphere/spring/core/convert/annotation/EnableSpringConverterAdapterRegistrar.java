@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.core.convert.annotation;
 
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportSelector;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.core.convert.SpringConverterAdapter;
 import io.microsphere.spring.core.convert.support.ConversionServiceResolver;
@@ -38,7 +38,7 @@ import static io.microsphere.spring.core.convert.SpringConverterAdapter.INSTANCE
  * @see SpringConverterAdapter
  * @since 1.0.0
  */
-class EnableSpringConverterAdapterRegistrar extends AnnotatedBeanCapableImportCandidate<EnableSpringConverterAdapter> {
+class EnableSpringConverterAdapterRegistrar extends AnnotatedBeanCapableImportSelector<EnableSpringConverterAdapter> {
 
     @Override
     protected void selectImports(AnnotationMetadata metadata,

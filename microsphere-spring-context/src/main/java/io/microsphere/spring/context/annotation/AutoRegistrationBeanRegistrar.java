@@ -43,7 +43,7 @@ import static org.springframework.core.io.support.SpringFactoriesLoader.loadFact
  * @see SpringFactoriesLoader
  * @since 1.0.0
  */
-class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<EnableAutoRegistrationBean> {
+class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableAutoRegistrationBean> {
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,

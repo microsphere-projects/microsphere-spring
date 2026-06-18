@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportSelector;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.core.env.PropertySourcesUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -43,7 +43,7 @@ import static io.microsphere.util.ArrayUtils.isEmpty;
  * @see ResourcePropertySourceLoader
  * @since 1.0.0
  */
-class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportCandidate<DefaultPropertiesPropertySource> {
+class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportSelector<DefaultPropertiesPropertySource> {
 
     @Override
     protected void selectImports(AnnotationMetadata metadata,

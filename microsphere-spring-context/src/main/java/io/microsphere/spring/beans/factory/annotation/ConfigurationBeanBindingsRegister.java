@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrar;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
@@ -30,7 +30,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-class ConfigurationBeanBindingsRegister extends AnnotatedBeanCapableImportCandidate<EnableConfigurationBeanBindings> {
+class ConfigurationBeanBindingsRegister extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableConfigurationBeanBindings> {
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
