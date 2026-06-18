@@ -18,7 +18,7 @@ package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportSelector;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Configuration;
@@ -64,7 +64,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @see PropertySourceExtensionLoader
  * @since 1.0.0
  */
-public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends AnnotatedBeanCapableImportCandidate<A> {
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends AnnotatedBeanCapableImportSelector<A> {
 
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 

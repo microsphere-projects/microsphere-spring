@@ -17,7 +17,7 @@
 package io.microsphere.spring.context.event;
 
 import io.microsphere.spring.beans.BeanSource;
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrar;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -52,7 +52,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @see TaskExecutor
  * @since 1.0.0
  */
-class EventExtensionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableEventExtension> {
+class EventExtensionRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableEventExtension> {
 
     /**
      * The attribute name of the name of {@link EnableEventExtension} annotated on the class

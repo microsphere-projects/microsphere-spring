@@ -36,7 +36,7 @@ import static io.microsphere.util.ClassLoaderUtils.resolveClass;
  * @see ImportSelector
  * @since 1.0.0
  */
-class ImportOptionalSelector extends AnnotatedBeanCapableImportCandidate<ImportOptional> {
+class ImportOptionalSelector extends AnnotatedBeanCapableImportSelector<ImportOptional> {
 
     @Override
     protected void selectImports(AnnotationMetadata metadata, ResolvablePlaceholderAnnotationAttributes<ImportOptional> annotationAttributes,
