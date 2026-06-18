@@ -375,4 +375,33 @@ For a complete list of changes, please refer to the [Full Changelog](#).
 
 For the full changelog, visit the [repository](https://github.com/your-repo/commits/main).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.23...0.2.24
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.23...0.2.24## v0.2.25
+
+# Release Notes - Version 0.2.25
+
+## New Features
+- Added support for `SPRING_7_0_8` in tests. ([93b3bd11](https://github.com/microsphere-projects/microsphere-spring/commit/93b3bd11))
+- Use `@` prefix for annotation property names. ([8b834507](https://github.com/microsphere-projects/microsphere-spring/commit/8b834507))
+
+## Dependency Updates
+- Bumped `org.springframework:spring-framework-bom` from `7.0.7` to `7.0.8`. ([8773b656](https://github.com/microsphere-projects/microsphere-spring/commit/8773b656))
+- Bumped `io.projectreactor:reactor-bom` from `2025.0.5` to `2025.0.6`. ([5768a8b7](https://github.com/microsphere-projects/microsphere-spring/commit/5768a8b7))
+- Bumped `microsphere-logging` to `0.1.16`. ([6e6416c8](https://github.com/microsphere-projects/microsphere-spring/commit/6e6416c8))
+- Bumped `microsphere-java` to `0.3.8`. ([0dde252e](https://github.com/microsphere-projects/microsphere-spring/commit/0dde252e))
+- Bumped parent POM version to `0.3.3`. ([aaaea24a](https://github.com/microsphere-projects/microsphere-spring/commit/aaaea24a))
+
+## Test Improvements
+- Updated tests to align with `SPRING_7_0_8`. ([93b3bd11](https://github.com/microsphere-projects/microsphere-spring/commit/93b3bd11))
+
+## Documentation
+- Updated README versions to reflect `0.2.25`/`0.1.25`. ([3b68df22](https://github.com/microsphere-projects/microsphere-spring/commit/3b68df22))
+
+## Other Changes
+- Removed redundant `loadProperties` overload and associated tests. ([34b6b18c](https://github.com/microsphere-projects/microsphere-spring/commit/34b6b18c))
+- Various merge and chore updates to sync branches and increment versions. ([multiple merge and chore commits](https://github.com/microsphere-projects/microsphere-spring/compare/0.2.24...0.2.25))
+
+---
+
+Thank you for using Microsphere!
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.24...0.2.25
