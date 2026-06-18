@@ -17,7 +17,7 @@
 package io.microsphere.spring.web.annotation;
 
 import io.microsphere.spring.beans.BeanSource;
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrar;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.web.event.WebEventPublisher;
 import io.microsphere.spring.web.metadata.CompositeWebEndpointMappingRegistry;
@@ -50,7 +50,7 @@ import static io.microsphere.spring.web.method.support.DelegatingHandlerMethodAd
  * @see EnableWebExtension
  * @since 1.0.0
  */
-public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebExtension> {
+public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableWebExtension> {
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,

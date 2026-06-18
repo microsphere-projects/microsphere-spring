@@ -28,16 +28,16 @@ import org.springframework.core.type.StandardAnnotationMetadata;
 import static io.microsphere.spring.beans.BeanUtils.initializeBean;
 
 /**
- * {@link AnnotatedBeanCapableImportCandidate} Test
+ * {@link AnnotatedBeanCapableImportBeanDefinitionRegistrar} Test
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @see AnnotatedBeanCapableImportCandidate
+ * @see AnnotatedBeanCapableImportBeanDefinitionRegistrar
  * @since 1.0.0
  */
 @ImportOptional(value = {
-        "io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidateTest",
+        "io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrarTest",
 })
-class AnnotatedBeanCapableImportCandidateTest {
+class AnnotatedBeanCapableImportBeanDefinitionRegistrarTest {
 
     private DefaultListableBeanFactory beanFactory;
 
@@ -45,20 +45,20 @@ class AnnotatedBeanCapableImportCandidateTest {
 
     private StandardAnnotationMetadata metadata;
 
-    private ImportOptionalSelector selector;
+    private AutoRegistrationBeanRegistrar registrar;
 
     @BeforeEach
     void setUp() {
         this.beanFactory = new DefaultListableBeanFactory();
         this.context = new AnnotationConfigApplicationContext(beanFactory);
         this.context.refresh();
-        this.metadata = new StandardAnnotationMetadata(AnnotatedBeanCapableImportCandidateTest.class);
-        this.selector = new ImportOptionalSelector();
-        initializeBean(this.selector, this.context);
+        this.metadata = new StandardAnnotationMetadata(AnnotatedBeanCapableImportBeanDefinitionRegistrarTest.class);
+        this.registrar = new AutoRegistrationBeanRegistrar();
+        initializeBean(this.registrar, this.context);
     }
 
     @Test
     void testRegisterBeanDefinitions() {
-        this.selector.registerBeanDefinitions(this.metadata, this.beanFactory);
+        this.registrar.registerBeanDefinitions(this.metadata, this.beanFactory);
     }
 }
