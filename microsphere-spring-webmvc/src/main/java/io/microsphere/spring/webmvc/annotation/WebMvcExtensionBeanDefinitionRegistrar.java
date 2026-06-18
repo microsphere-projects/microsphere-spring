@@ -17,6 +17,7 @@
 package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
 import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
@@ -28,6 +29,7 @@ import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingRes
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -47,17 +49,27 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * @see EnableWebMvcExtension
  * @see EnableWebExtension
  * @see WebExtensionBeanDefinitionRegistrar
+ * @see WebMvcExtensionConfiguration
+ * @see ServletWebEndpointMappingResolver
+ * @see HandlerMappingWebEndpointMappingResolver
+ * @see InterceptingHandlerMethodProcessor
+ * @see HandlerInterceptor
+ * @see StoringRequestBodyArgumentAdvice
+ * @see StoringResponseBodyReturnValueAdvice
+ * @see ReversedProxyHandlerMapping
  * @since 1.0.0
  */
-public class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebMvcExtension>
+class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebMvcExtension>
         implements ImportBeanDefinitionRegistrar {
 
     private static final Class<? extends HandlerInterceptor>[] ALL_HANDLER_INTERCEPTOR_CLASSES = ofArray(HandlerInterceptor.class);
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                        BeanNameGenerator importBeanNameGenerator,
+                                        ResolvablePlaceholderAnnotationAttributes<EnableWebMvcExtension> attributes) {
 
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata);
+        registerWebMvcExtensionConfiguration(registry);
 
         registerWebEndpointMappingResolvers(attributes, registry);
 
@@ -70,6 +82,10 @@ public class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapable
         registerStoringResponseBodyReturnValueAdvice(attributes, registry);
 
         registerReversedProxyHandlerMapping(attributes, registry);
+    }
+
+    private void registerWebMvcExtensionConfiguration(BeanDefinitionRegistry registry) {
+        registerBeanDefinition(registry, WebMvcExtensionConfiguration.class);
     }
 
     private void registerWebEndpointMappingResolvers(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {

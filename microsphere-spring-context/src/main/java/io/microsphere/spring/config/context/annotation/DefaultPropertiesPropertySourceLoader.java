@@ -17,8 +17,8 @@
 package io.microsphere.spring.config.context.annotation;
 
 import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.core.env.PropertySourcesUtils;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -28,6 +28,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import static io.microsphere.lang.function.ThrowableAction.execute;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.DEFAULT_PROPERTIES_PROPERTY_SOURCE_NAME;
@@ -47,8 +48,9 @@ class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportCa
         implements ImportBeanDefinitionRegistrar {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes annotationAttributes = getAnnotationAttributes(metadata);
+    protected void selectImports(AnnotationMetadata metadata,
+                                 ResolvablePlaceholderAnnotationAttributes<DefaultPropertiesPropertySource> annotationAttributes,
+                                 Set<String> imports) {
         loadPropertySource(annotationAttributes);
     }
 
@@ -86,7 +88,7 @@ class DefaultPropertiesPropertySourceLoader extends AnnotatedBeanCapableImportCa
 
     void loadPropertySource(PropertySource<?> propertySource, Map<String, Object> defaultProperties) {
         if (propertySource instanceof EnumerablePropertySource) {
-            EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
+            EnumerablePropertySource<?> enumerablePropertySource = (EnumerablePropertySource<?>) propertySource;
             for (String propertyName : enumerablePropertySource.getPropertyNames()) {
                 Object propertyValue = propertySource.getProperty(propertyName);
                 defaultProperties.put(propertyName, propertyValue);

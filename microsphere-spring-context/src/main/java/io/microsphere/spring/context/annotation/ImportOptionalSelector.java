@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static io.microsphere.util.ClassLoaderUtils.resolveClass;
@@ -35,16 +36,17 @@ import static io.microsphere.util.ClassLoaderUtils.resolveClass;
  * @see ImportSelector
  * @since 1.0.0
  */
-class ImportOptionalSelector extends AnnotatedBeanCapableImportCandidate<ImportOptional> implements ImportSelector {
+class ImportOptionalSelector extends AnnotatedBeanCapableImportCandidate<ImportOptional> {
 
     @Override
-    public String[] selectImports(AnnotationMetadata metadata) {
-        ResolvablePlaceholderAnnotationAttributes attributes = getAnnotationAttributes(metadata);
-        String[] classNames = attributes.getStringArray("value");
-        return Stream.of(classNames)
+    protected void selectImports(AnnotationMetadata metadata, ResolvablePlaceholderAnnotationAttributes<ImportOptional> annotationAttributes,
+                                 Set<String> imports) {
+        String[] classNames = annotationAttributes.getStringArray("value");
+        Stream.of(classNames)
                 .map(className -> resolveClass(className, getClassLoader()))
                 .filter(Objects::nonNull)
                 .map(Class::getName)
-                .toArray(String[]::new);
+                .forEach(imports::add);
+
     }
 }

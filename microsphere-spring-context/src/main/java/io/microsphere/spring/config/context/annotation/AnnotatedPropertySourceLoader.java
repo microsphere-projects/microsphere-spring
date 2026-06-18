@@ -29,6 +29,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.lang.annotation.Annotation;
+import java.util.Set;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -65,21 +66,20 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ImportSelector
  * @since 1.0.0
  */
-public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends AnnotatedBeanCapableImportCandidate<A>
-        implements ImportSelector {
+public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extends AnnotatedBeanCapableImportCandidate<A> {
 
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 
     private String propertySourceName;
 
     @Override
-    public final String[] selectImports(AnnotationMetadata metadata) {
-        ResolvablePlaceholderAnnotationAttributes attributes = getAnnotationAttributes(metadata);
-        String propertySourceName = resolvePropertySourceName(attributes, metadata);
+    public final void selectImports(AnnotationMetadata metadata, ResolvablePlaceholderAnnotationAttributes<A> annotationAttributes,
+                                    Set<String> imports) {
+        String propertySourceName = resolvePropertySourceName(annotationAttributes, metadata);
         this.propertySourceName = propertySourceName;
         MutablePropertySources propertySources = getEnvironment().getPropertySources();
         try {
-            loadPropertySource(attributes, metadata, propertySourceName, propertySources);
+            loadPropertySource(annotationAttributes, metadata, propertySourceName, propertySources);
         } catch (Throwable e) {
             String errorMessage = "The Configuration bean[class : '" + metadata.getClassName() + "', annotated : @" + annotationType.getName() + "] can't load the PropertySource[name : '" + propertySourceName + "']";
             if (logger.isErrorEnabled()) {
@@ -87,7 +87,6 @@ public abstract class AnnotatedPropertySourceLoader<A extends Annotation> extend
             }
             throw new BeanCreationException(errorMessage, e);
         }
-        return NO_CLASS_TO_IMPORT;
     }
 
     /**
