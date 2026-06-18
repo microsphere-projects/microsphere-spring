@@ -415,4 +415,42 @@ Thank you to everyone who contributed to this release!
 
 Full Changelog: [0.1.24...0.1.25](link-to-changelog)
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.24...0.1.25
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.24...0.1.25## v0.1.26
+
+# Release Notes for Version 0.1.26
+
+## New Features
+- Added `registerBeanDefinition` overload supporting `BeanDefinition`. ([6ab6bd8](#))
+- Introduced `genericBeanDefinitionBuilder` helper for improved bean definition handling. ([7cdfbc6](#), [d89f0b6](#))
+
+## Improvements
+- Refactored multiple registrars to use `Annotated` base classes for consistency and clarity. ([d213fe7](#), [a4e5720](#))
+- Enhanced `EnableSpringConverterAdapterRegistrar` for better modularity. ([d8f70ba](#))
+- Refactored `P6DataSource` and `EventExtensionRegistrar` for cleaner implementation. ([3cc1a28](#), [64a9e40](#))
+- Simplified annotation attribute resolution for registrars. ([34894ec](#))
+- Improved handling of import candidates using `Annotated` loaders. ([31987fa](#))
+
+## Dependency Updates
+- Upgraded `microsphere-logging` to version `0.1.17`. ([9e64b2d](#))
+- Updated `microsphere-java` to version `0.3.9`. ([04ddce3](#))
+- Bumped `microsphere-build` parent to version `0.3.4`. ([c3b44b5](#))
+
+## Documentation
+- Updated README to reflect new branch versions `0.2.26/0.1.26`. ([8621288](#))
+
+## Build and Workflow Enhancements
+- Merged branch `release-1.x` into `dev-1.x`. ([68b44bc](#))
+- Updated project version to prepare for the next patch release. ([bc752c3](#))
+
+## Other Changes
+- Replaced `ImportSelector` with generic bean definition approach for simplicity. ([1d84ca0](#), [c2d659a](#), [f483558](#))
+- Used `AnnotationBeanNameGenerator` and `FullyQualifiedAnnotationBeanNameGenerator` for better bean naming. ([488ed86](#), [ec69981](#))
+- Minor signature reformatting for methods like `selectImports`. ([95a9d45](#))
+- Commented out `@Override` annotations for compatibility purposes. ([3a8b306](#))
+- Leveraged custom `WebMvcConfigurerAdapter` from `microsphere`. ([c9d1c16](#))
+
+---
+
+**Full Changelog**: [v0.1.25...v0.1.26](#)
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.25...0.1.26
