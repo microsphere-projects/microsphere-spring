@@ -22,7 +22,6 @@ import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttr
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -45,8 +44,7 @@ import static org.springframework.core.io.support.SpringFactoriesLoader.loadFact
  * @see SpringFactoriesLoader
  * @since 1.0.0
  */
-class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<EnableAutoRegistrationBean>
-        implements ImportBeanDefinitionRegistrar {
+class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<EnableAutoRegistrationBean> {
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
