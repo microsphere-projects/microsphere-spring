@@ -22,6 +22,7 @@ import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttr
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
@@ -37,7 +38,6 @@ import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
-import static org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator.INSTANCE;
 import static org.springframework.core.ResolvableType.forType;
 
 /**
@@ -129,6 +129,8 @@ import static org.springframework.core.ResolvableType.forType;
  */
 public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> extends BeanCapableImportCandidate
         implements ImportBeanDefinitionRegistrar {
+
+    static final AnnotationBeanNameGenerator INSTANCE = new AnnotationBeanNameGenerator();
 
     protected final Class<A> annotationType;
 
