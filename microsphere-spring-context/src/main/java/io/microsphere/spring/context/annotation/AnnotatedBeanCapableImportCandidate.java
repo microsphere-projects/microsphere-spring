@@ -23,7 +23,6 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
@@ -42,8 +41,8 @@ import static org.springframework.context.annotation.FullyQualifiedAnnotationBea
 import static org.springframework.core.ResolvableType.forType;
 
 /**
- * An abstract base class for {@link ImportSelector} and {@link ImportBeanDefinitionRegistrar} implementations
- * that are driven by a specific annotation type {@code A}.
+ * An abstract base class for {@link ImportBeanDefinitionRegistrar} implementations that are driven by a specific
+ * annotation type {@code A}.
  * <p>
  * This class extends {@link BeanCapableImportCandidate} to provide common bean import capabilities,
  * while adding support for processing annotation attributes with placeholder resolution.
@@ -52,7 +51,6 @@ import static org.springframework.core.ResolvableType.forType;
  * <h3>Key Features</h3>
  * <ul>
  *     <li>Automatically resolves the generic annotation type {@code A} at runtime.</li>
- *     <li>Integrates with Spring's {@link ImportSelector} and {@link ImportBeanDefinitionRegistrar} interfaces.</li>
  *     <li>Supports enabling/disabling imports via environment properties (see {@link #isEnabled(Environment, String, Class)}).</li>
  *     <li>Provides resolved annotation attributes via {@link ResolvablePlaceholderAnnotationAttributes}.</li>
  * </ul>
@@ -125,7 +123,6 @@ import static org.springframework.core.ResolvableType.forType;
  * @param <A> the type of the annotation that drives this import candidate
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see BeanCapableImportCandidate
- * @see ImportSelector
  * @see ImportBeanDefinitionRegistrar
  * @see ResolvablePlaceholderAnnotationAttributes
  * @since 1.0.0
