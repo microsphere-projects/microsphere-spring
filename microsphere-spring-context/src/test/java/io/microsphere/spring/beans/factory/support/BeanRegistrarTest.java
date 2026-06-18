@@ -92,6 +92,11 @@ class BeanRegistrarTest {
     }
 
     @Test
+    void testRegisterBeanDefinitionWithoutName() {
+        BeanDefinition beanDefinition = genericBeanDefinition(User.class);
+    }
+
+    @Test
     void testRegisterBeanDefinitionWithConstructorArguments() {
         String beanName = "user";
         assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, User.class, "Mercy", 18), true, ROLE_APPLICATION, false, beanName);
@@ -138,6 +143,14 @@ class BeanRegistrarTest {
     void testRegisterBeanDefinitionWithBuilder() {
         String beanName = "io.microsphere.spring.test.domain.User#0";
         assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, User.class, builder -> builder.setRole(ROLE_INFRASTRUCTURE)), true, ROLE_INFRASTRUCTURE, false, beanName);
+    }
+
+    @Test
+    void testRegisterBeanDefinitionWithBeanDefinition() {
+        BeanDefinition beanDefinition = genericBeanDefinition(User.class);
+        assertTrue(registerBeanDefinition(this.beanFactory, beanDefinition));
+
+        assertTrue(registerBeanDefinition(this.beanFactory, beanDefinition));
     }
 
     @Test
