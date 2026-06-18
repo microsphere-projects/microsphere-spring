@@ -54,7 +54,8 @@ public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImp
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
-                                           BeanNameGenerator importBeanNameGenerator, ResolvablePlaceholderAnnotationAttributes<EnableWebExtension> annotationAttributes) {
+                                           BeanNameGenerator importBeanNameGenerator,
+                                           ResolvablePlaceholderAnnotationAttributes<EnableWebExtension> annotationAttributes) {
 
         BeanSource[] sources = (BeanSource[]) annotationAttributes.get("sources");
 

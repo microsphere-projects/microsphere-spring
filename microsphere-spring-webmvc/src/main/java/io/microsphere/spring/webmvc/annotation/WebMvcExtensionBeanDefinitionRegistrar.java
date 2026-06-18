@@ -67,29 +67,29 @@ class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportC
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
                                         BeanNameGenerator importBeanNameGenerator,
-                                        ResolvablePlaceholderAnnotationAttributes<EnableWebMvcExtension> attributes) {
+                                        ResolvablePlaceholderAnnotationAttributes<EnableWebMvcExtension> annotationAttributes) {
 
         registerWebMvcExtensionConfiguration(registry);
 
-        registerWebEndpointMappingResolvers(attributes, registry);
+        registerWebEndpointMappingResolvers(annotationAttributes, registry);
 
-        registerInterceptingHandlerMethodProcessor(attributes, registry);
+        registerInterceptingHandlerMethodProcessor(annotationAttributes, registry);
 
-        registerHandlerInterceptors(attributes, registry);
+        registerHandlerInterceptors(annotationAttributes, registry);
 
-        registerStoringRequestBodyArgumentAdvice(attributes, registry);
+        registerStoringRequestBodyArgumentAdvice(annotationAttributes, registry);
 
-        registerStoringResponseBodyReturnValueAdvice(attributes, registry);
+        registerStoringResponseBodyReturnValueAdvice(annotationAttributes, registry);
 
-        registerReversedProxyHandlerMapping(attributes, registry);
+        registerReversedProxyHandlerMapping(annotationAttributes, registry);
     }
 
     private void registerWebMvcExtensionConfiguration(BeanDefinitionRegistry registry) {
         registerBeanDefinition(registry, WebMvcExtensionConfiguration.class);
     }
 
-    private void registerWebEndpointMappingResolvers(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean registerWebEndpointMappings = attributes.getBoolean("registerWebEndpointMappings");
+    private void registerWebEndpointMappingResolvers(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean registerWebEndpointMappings = annotationAttributes.getBoolean("registerWebEndpointMappings");
         if (registerWebEndpointMappings) {
             registerBeanDefinition(registry, ServletWebEndpointMappingResolver.class);
             registerBeanDefinition(registry, HandlerMappingWebEndpointMappingResolver.class);
@@ -97,8 +97,8 @@ class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportC
         log("@EnableWebMvcExtension.registerWebEndpointMappings = {}", registerWebEndpointMappings);
     }
 
-    private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean interceptHandlerMethods = attributes.getBoolean("interceptHandlerMethods");
+    private void registerInterceptingHandlerMethodProcessor(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean interceptHandlerMethods = annotationAttributes.getBoolean("interceptHandlerMethods");
         if (interceptHandlerMethods) {
             String beanName = InterceptingHandlerMethodProcessor.BEAN_NAME;
             registerBeanDefinition(registry, beanName, InterceptingHandlerMethodProcessor.class);
@@ -106,18 +106,18 @@ class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportC
         log("@EnableWebMvcExtension.interceptHandlerMethods() = {}", interceptHandlerMethods);
     }
 
-    private void registerHandlerInterceptors(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        Class<? extends HandlerInterceptor>[] interceptorClasses = resolveHandlerInterceptorClasses(attributes);
+    private void registerHandlerInterceptors(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        Class<? extends HandlerInterceptor>[] interceptorClasses = resolveHandlerInterceptorClasses(annotationAttributes);
         if (isNotEmpty(interceptorClasses)) {
             registerLazyCompositeHandlerInterceptor(registry, interceptorClasses);
             registerInterceptors(registry, interceptorClasses);
         }
     }
 
-    private Class<? extends HandlerInterceptor>[] resolveHandlerInterceptorClasses(AnnotationAttributes attributes) {
-        boolean registerHandlerInterceptors = attributes.getBoolean("registerHandlerInterceptors");
+    private Class<? extends HandlerInterceptor>[] resolveHandlerInterceptorClasses(AnnotationAttributes annotationAttributes) {
+        boolean registerHandlerInterceptors = annotationAttributes.getBoolean("registerHandlerInterceptors");
         Class<? extends HandlerInterceptor>[] handlerInterceptors =
-                (Class<? extends HandlerInterceptor>[]) attributes.getClassArray("handlerInterceptors");
+                (Class<? extends HandlerInterceptor>[]) annotationAttributes.getClassArray("handlerInterceptors");
         Class<? extends HandlerInterceptor>[] handlerInterceptorClasses = registerHandlerInterceptors ?
                 ALL_HANDLER_INTERCEPTOR_CLASSES : handlerInterceptors;
         log("@EnableWebMvcExtension.registerHandlerInterceptors() = {} , handlerInterceptors() = {} , handlerInterceptorClasses = {}",
@@ -145,24 +145,24 @@ class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportC
         registerBeanDefinition(registry, interceptorClass);
     }
 
-    private void registerStoringRequestBodyArgumentAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean storeRequestBodyArgument = attributes.getBoolean("storeRequestBodyArgument");
+    private void registerStoringRequestBodyArgumentAdvice(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean storeRequestBodyArgument = annotationAttributes.getBoolean("storeRequestBodyArgument");
         if (storeRequestBodyArgument) {
             registerBeanDefinition(registry, StoringRequestBodyArgumentAdvice.class);
         }
         log("@EnableWebMvcExtension.storeRequestBodyArgument() = {}", storeRequestBodyArgument);
     }
 
-    private void registerStoringResponseBodyReturnValueAdvice(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean storeResponseBodyReturnValue = attributes.getBoolean("storeResponseBodyReturnValue");
+    private void registerStoringResponseBodyReturnValueAdvice(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean storeResponseBodyReturnValue = annotationAttributes.getBoolean("storeResponseBodyReturnValue");
         if (storeResponseBodyReturnValue) {
             registerBeanDefinition(registry, StoringResponseBodyReturnValueAdvice.class);
         }
         log("@EnableWebMvcExtension.storeResponseBodyReturnValue() = {}", storeResponseBodyReturnValue);
     }
 
-    private void registerReversedProxyHandlerMapping(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
-        boolean reversedProxyHandlerMapping = attributes.getBoolean("reversedProxyHandlerMapping");
+    private void registerReversedProxyHandlerMapping(AnnotationAttributes annotationAttributes, BeanDefinitionRegistry registry) {
+        boolean reversedProxyHandlerMapping = annotationAttributes.getBoolean("reversedProxyHandlerMapping");
         if (reversedProxyHandlerMapping) {
             registerBeanDefinition(registry, ReversedProxyHandlerMapping.class);
         }
