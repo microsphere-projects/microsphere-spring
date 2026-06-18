@@ -22,9 +22,7 @@ import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttr
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
-import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
@@ -39,11 +37,12 @@ import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
+import static org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator.INSTANCE;
 import static org.springframework.core.ResolvableType.forType;
 
 /**
- * An abstract base class for {@link ImportSelector} and {@link ImportBeanDefinitionRegistrar} implementations
- * that are driven by a specific annotation type {@code A}.
+ * An abstract base class for {@link ImportBeanDefinitionRegistrar} implementations that are driven by a specific
+ * annotation type {@code A}.
  * <p>
  * This class extends {@link BeanCapableImportCandidate} to provide common bean import capabilities,
  * while adding support for processing annotation attributes with placeholder resolution.
@@ -52,7 +51,6 @@ import static org.springframework.core.ResolvableType.forType;
  * <h3>Key Features</h3>
  * <ul>
  *     <li>Automatically resolves the generic annotation type {@code A} at runtime.</li>
- *     <li>Integrates with Spring's {@link ImportSelector} and {@link ImportBeanDefinitionRegistrar} interfaces.</li>
  *     <li>Supports enabling/disabling imports via environment properties (see {@link #isEnabled(Environment, String, Class)}).</li>
  *     <li>Provides resolved annotation attributes via {@link ResolvablePlaceholderAnnotationAttributes}.</li>
  * </ul>
@@ -125,7 +123,6 @@ import static org.springframework.core.ResolvableType.forType;
  * @param <A> the type of the annotation that drives this import candidate
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see BeanCapableImportCandidate
- * @see ImportSelector
  * @see ImportBeanDefinitionRegistrar
  * @see ResolvablePlaceholderAnnotationAttributes
  * @since 1.0.0
@@ -133,16 +130,13 @@ import static org.springframework.core.ResolvableType.forType;
 public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> extends BeanCapableImportCandidate
         implements ImportBeanDefinitionRegistrar {
 
-    static final AnnotationBeanNameGenerator INSTANCE = new AnnotationBeanNameGenerator();
-
     protected final Class<A> annotationType;
 
     public AnnotatedBeanCapableImportCandidate() {
         this.annotationType = resolveAnnotationType();
     }
 
-    // @Override // This method is declared in ImportBeanDefinitionRegistrar since Spring 5.2,
-    // thus the @Override was commented for compatibility with older versions.
+    @Override
     public final void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
                                               BeanNameGenerator importBeanNameGenerator) {
         if (isEnabled(metadata)) {
