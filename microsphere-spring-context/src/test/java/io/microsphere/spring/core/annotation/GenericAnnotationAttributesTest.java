@@ -24,7 +24,6 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import static io.microsphere.collection.MapUtils.newHashMap;

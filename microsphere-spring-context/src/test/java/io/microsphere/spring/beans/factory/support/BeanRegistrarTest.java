@@ -148,6 +148,14 @@ public class BeanRegistrarTest {
     }
 
     @Test
+    public void testRegisterBeanDefinitionWithBeanDefinition() {
+        BeanDefinition beanDefinition = genericBeanDefinition(User.class);
+        assertTrue(registerBeanDefinition(this.beanFactory, beanDefinition));
+
+        assertTrue(registerBeanDefinition(this.beanFactory, beanDefinition));
+    }
+
+    @Test
     public void testRegisterSingleton() {
         registerUserAsSingleton();
     }

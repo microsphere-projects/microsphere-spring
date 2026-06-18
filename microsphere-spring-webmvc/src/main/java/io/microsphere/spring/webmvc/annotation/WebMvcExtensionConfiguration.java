@@ -17,11 +17,11 @@
 package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.webmvc.config.WebMvcConfigurerAdapter;
 import io.microsphere.spring.webmvc.interceptor.LazyCompositeHandlerInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.util.ArrayUtils.length;
@@ -34,7 +34,7 @@ import static io.microsphere.util.ArrayUtils.length;
  * @see EnableWebMvcExtension
  * @since 1.0.0
  */
-public class WebMvcExtensionConfiguration extends WebMvcConfigurerAdapter {
+public class WebMvcExtensionConfiguration implements WebMvcConfigurerAdapter {
 
     private static final Logger logger = getLogger(WebMvcExtensionConfiguration.class);
 

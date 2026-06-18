@@ -22,7 +22,6 @@ import io.microsphere.spring.config.env.event.PropertySourceChangedEvent;
 import io.microsphere.spring.config.env.event.PropertySourcesChangedEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -60,7 +59,7 @@ import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * Abstract {@link ImportSelector} class to load the {@link PropertySource PropertySource}
+ * Abstract class to load the {@link PropertySource PropertySource}
  * when the {@link Configuration configuration} annotated the Enable annotation that meta-annotates {@link PropertySourceExtension @PropertySourceExtension}
  *
  * @param <A>  The type of {@link Annotation} must meta-annotate {@link PropertySourceExtension}
@@ -68,7 +67,6 @@ import static org.springframework.util.StringUtils.hasText;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see PropertySourceExtension
  * @see PropertySourceExtensionAttributes
- * @see ImportSelector
  * @since 1.0.0
  */
 public abstract class PropertySourceExtensionLoader<A extends Annotation, EA extends PropertySourceExtensionAttributes<A>>
