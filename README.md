@@ -91,8 +91,8 @@ Choose the version that matches your Spring Framework line:
 
 | Branch | Spring Framework compatibility | Latest version |
 |--------|--------------------------------|----------------|
-| `main` | 6.0.x – 7.0.x                  | 0.2.26         |
-| `1.x`  | 4.3.x – 5.3.x                  | 0.1.26         |
+| `main` | 6.0.x – 7.0.x                  | 0.2.27         |
+| `1.x`  | 4.3.x – 5.3.x                  | 0.1.27         |
 
 ### 2. Add individual modules
 
@@ -281,12 +281,6 @@ Contributions are welcome! Please:
 2. Fork the repository and create a feature branch from `main`
 3. Write or update tests for any changed behavior
 4. Submit a pull request — the CI build (Maven + JUnit) must pass
-
-## Maintainers
-
-| Name                                      | Role                       | Contact              |
-|-------------------------------------------|----------------------------|----------------------|
-| [Mercy Ma](https://github.com/mercyblitz) | Lead architect & developer | mercyblitz@gmail.com |
 
 The project is developed under the [Microsphere Projects](https://github.com/microsphere-projects) organisation.
 
