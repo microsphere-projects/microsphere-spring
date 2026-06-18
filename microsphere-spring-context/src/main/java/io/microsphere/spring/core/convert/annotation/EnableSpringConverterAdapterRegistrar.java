@@ -16,21 +16,19 @@
  */
 package io.microsphere.spring.core.convert.annotation;
 
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.core.convert.SpringConverterAdapter;
 import io.microsphere.spring.core.convert.support.ConversionServiceResolver;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.type.AnnotationMetadata;
 
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableBeanFactory;
+import java.util.Set;
+
 import static io.microsphere.spring.core.convert.SpringConverterAdapter.INSTANCE;
-import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 
 /**
  * {@link EnableSpringConverterAdapter} {@link Configuration} class
@@ -40,17 +38,13 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
  * @see SpringConverterAdapter
  * @since 1.0.0
  */
-class EnableSpringConverterAdapterRegistrar implements ImportSelector, BeanFactoryAware {
+class EnableSpringConverterAdapterRegistrar extends AnnotatedBeanCapableImportCandidate<EnableSpringConverterAdapter> {
 
     @Override
-    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        return EMPTY_STRING_ARRAY;
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        ConfigurableBeanFactory configurableBeanFactory = asConfigurableBeanFactory(beanFactory);
-        addSpringConverterAdapter(configurableBeanFactory);
+    protected void selectImports(AnnotationMetadata metadata,
+                                 ResolvablePlaceholderAnnotationAttributes<EnableSpringConverterAdapter> annotationAttributes,
+                                 Set<String> imports) {
+        addSpringConverterAdapter(getBeanFactory());
     }
 
     private void addSpringConverterAdapter(ConfigurableBeanFactory beanFactory) {
