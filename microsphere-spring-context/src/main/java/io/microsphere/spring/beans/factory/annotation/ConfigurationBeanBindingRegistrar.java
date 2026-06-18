@@ -16,18 +16,13 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
-import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
@@ -39,7 +34,6 @@ import java.util.Set;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
-import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.BEAN_NAME;
 import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingPostProcessor.initBeanMetadataAttributes;
 import static io.microsphere.spring.beans.factory.annotation.EnableConfigurationBeanBinding.DEFAULT_IGNORE_INVALID_FIELDS;
@@ -49,7 +43,6 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAttribute;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getRequiredAttribute;
-import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.getSubProperties;
 import static io.microsphere.spring.core.env.PropertySourcesUtils.normalizePrefix;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
@@ -98,25 +91,13 @@ import static org.springframework.util.StringUtils.hasText;
  * @see ConfigurationBeanBindingPostProcessor
  * @since 1.0.0
  */
-public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware,
-        BeanFactoryAware {
-
-    final static Class ENABLE_CONFIGURATION_BINDING_CLASS = EnableConfigurationBeanBinding.class;
-
-    private final static String ENABLE_CONFIGURATION_BINDING_CLASS_NAME = ENABLE_CONFIGURATION_BINDING_CLASS.getName();
-
-    private final Logger logger = getLogger(getClass());
-
-    private ConfigurableEnvironment environment;
-
-    private BeanFactory beanFactory;
+class ConfigurationBeanBindingRegistrar extends AnnotatedBeanCapableImportCandidate<EnableConfigurationBeanBinding> {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-
-        Map<String, Object> attributes = metadata.getAnnotationAttributes(ENABLE_CONFIGURATION_BINDING_CLASS_NAME);
-
-        registerConfigurationBeanDefinitions(attributes, registry);
+    protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                           BeanNameGenerator importBeanNameGenerator,
+                                           ResolvablePlaceholderAnnotationAttributes<EnableConfigurationBeanBinding> annotationAttributes) {
+        registerConfigurationBeanDefinitions(annotationAttributes, registry);
     }
 
     public void registerConfigurationBeanDefinitions(Map<String, Object> attributes, BeanDefinitionRegistry registry) {
@@ -198,16 +179,11 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
     }
 
     private void setSource(AbstractBeanDefinition beanDefinition) {
-        beanDefinition.setSource(ENABLE_CONFIGURATION_BINDING_CLASS);
+        beanDefinition.setSource(getAnnotationType());
     }
 
     private void registerConfigurationBindingBeanPostProcessor(BeanDefinitionRegistry registry) {
         registerInfrastructureBean(registry, BEAN_NAME, ConfigurationBeanBindingPostProcessor.class);
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = asConfigurableEnvironment(environment);
     }
 
     private Set<String> resolveMultipleBeanNames(Map<String, Object> properties) {
@@ -243,10 +219,5 @@ public class ConfigurationBeanBindingRegistrar implements ImportBeanDefinitionRe
 
         return beanName;
 
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
     }
 }

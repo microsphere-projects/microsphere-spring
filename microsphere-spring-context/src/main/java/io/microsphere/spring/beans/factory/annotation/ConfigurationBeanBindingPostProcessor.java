@@ -38,7 +38,6 @@ import java.util.Map;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
-import static io.microsphere.spring.beans.factory.annotation.ConfigurationBeanBindingRegistrar.ENABLE_CONFIGURATION_BINDING_CLASS;
 import static java.util.Collections.unmodifiableList;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
@@ -168,7 +167,8 @@ public class ConfigurationBeanBindingPostProcessor implements BeanPostProcessor,
     }
 
     private boolean isConfigurationBean(Object bean, BeanDefinition beanDefinition) {
-        return beanDefinition != null && ENABLE_CONFIGURATION_BINDING_CLASS.equals(beanDefinition.getSource()) && nullSafeEquals(getBeanClassName(bean), beanDefinition.getBeanClassName());
+        return beanDefinition != null && EnableConfigurationBeanBinding.class.equals(beanDefinition.getSource())
+                && nullSafeEquals(getBeanClassName(bean), beanDefinition.getBeanClassName());
     }
 
     private String getBeanClassName(Object bean) {

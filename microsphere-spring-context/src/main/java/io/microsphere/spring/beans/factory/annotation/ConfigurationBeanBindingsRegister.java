@@ -16,16 +16,13 @@
  */
 package io.microsphere.spring.beans.factory.annotation;
 
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
-
-import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 
 /**
  * The {@link ImportBeanDefinitionRegistrar Registrar class} for {@link EnableConfigurationBeanBindings}
@@ -33,28 +30,19 @@ import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvi
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ConfigurationBeanBindingsRegister implements ImportBeanDefinitionRegistrar, EnvironmentAware {
-
-    private ConfigurableEnvironment environment;
+class ConfigurationBeanBindingsRegister extends AnnotatedBeanCapableImportCandidate<EnableConfigurationBeanBindings> {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata, EnableConfigurationBeanBindings.class);
-
-        AnnotationAttributes[] annotationAttributes = attributes.getAnnotationArray("value");
+    protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                           BeanNameGenerator importBeanNameGenerator,
+                                           ResolvablePlaceholderAnnotationAttributes<EnableConfigurationBeanBindings> annotationAttributes) {
 
         ConfigurationBeanBindingRegistrar registrar = new ConfigurationBeanBindingRegistrar();
 
-        registrar.setEnvironment(environment);
+        registrar.setEnvironment(getEnvironment());
 
-        for (AnnotationAttributes element : annotationAttributes) {
-            registrar.registerConfigurationBeanDefinitions(element, registry);
+        for (AnnotationAttributes attributes : annotationAttributes.getAnnotationArray("value")) {
+            registrar.registerConfigurationBeanDefinitions(attributes, registry);
         }
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = asConfigurableEnvironment(environment);
     }
 }
