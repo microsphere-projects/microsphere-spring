@@ -38,6 +38,7 @@ import static io.microsphere.constants.SymbolConstants.DOT_CHAR;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
+import static org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator.INSTANCE;
 import static org.springframework.core.ResolvableType.forType;
 
 /**
@@ -148,6 +149,12 @@ public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> 
             registerImportClassNames(imports, registry, importBeanNameGenerator);
             registerBeanDefinitions(metadata, registry, importBeanNameGenerator, annotationAttributes);
         }
+    }
+
+    @Override
+    public final void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
+        // This method should not be invoked since Spring 5.2, but it prevents the subclasses to implement.
+        registerBeanDefinitions(metadata, registry, INSTANCE);
     }
 
     protected Class<A> resolveAnnotationType() {
