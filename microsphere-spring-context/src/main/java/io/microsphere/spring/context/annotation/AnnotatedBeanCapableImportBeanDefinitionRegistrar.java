@@ -20,6 +20,7 @@ package io.microsphere.spring.context.annotation;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
@@ -27,7 +28,6 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
-import static org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator.INSTANCE;
 
 /**
  * An abstract base class for {@link ImportBeanDefinitionRegistrar} implementations that are driven by a specific
@@ -65,6 +65,8 @@ import static org.springframework.context.annotation.FullyQualifiedAnnotationBea
  */
 public abstract class AnnotatedBeanCapableImportBeanDefinitionRegistrar<A extends Annotation> extends
         AnnotatedBeanCapableImportCandidate<A> implements ImportBeanDefinitionRegistrar {
+
+    public static final AnnotationBeanNameGenerator INSTANCE = new AnnotationBeanNameGenerator();
 
     @Override
     public final void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
