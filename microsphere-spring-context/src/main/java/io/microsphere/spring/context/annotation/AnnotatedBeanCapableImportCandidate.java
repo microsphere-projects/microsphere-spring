@@ -138,7 +138,8 @@ public abstract class AnnotatedBeanCapableImportCandidate<A extends Annotation> 
         this.annotationType = resolveAnnotationType();
     }
 
-    @Override
+    // @Override // This method is declared in ImportBeanDefinitionRegistrar since Spring 5.2,
+    // thus the @Override was commented for compatibility with older versions.
     public final void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
                                               BeanNameGenerator importBeanNameGenerator) {
         if (isEnabled(metadata)) {
