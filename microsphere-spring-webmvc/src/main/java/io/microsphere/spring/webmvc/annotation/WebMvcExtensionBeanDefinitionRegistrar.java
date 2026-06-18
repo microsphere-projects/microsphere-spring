@@ -59,8 +59,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * @see ReversedProxyHandlerMapping
  * @since 1.0.0
  */
-class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebMvcExtension>
-        implements ImportBeanDefinitionRegistrar {
+class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebMvcExtension> {
 
     private static final Class<? extends HandlerInterceptor>[] ALL_HANDLER_INTERCEPTOR_CLASSES = ofArray(HandlerInterceptor.class);
 
