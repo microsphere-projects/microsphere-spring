@@ -16,7 +16,7 @@
  */
 package io.microsphere.spring.webmvc.annotation;
 
-import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrar;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
@@ -59,7 +59,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  * @see ReversedProxyHandlerMapping
  * @since 1.0.0
  */
-class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebMvcExtension> {
+class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableWebMvcExtension> {
 
     private static final Class<? extends HandlerInterceptor>[] ALL_HANDLER_INTERCEPTOR_CLASSES = ofArray(HandlerInterceptor.class);
 

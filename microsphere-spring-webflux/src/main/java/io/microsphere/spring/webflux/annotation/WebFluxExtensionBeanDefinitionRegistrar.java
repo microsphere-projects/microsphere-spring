@@ -17,6 +17,7 @@
 
 package io.microsphere.spring.webflux.annotation;
 
+import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportBeanDefinitionRegistrar;
 import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
 import io.microsphere.spring.context.annotation.OverrideAnnotationAttributes;
 import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
@@ -50,7 +51,7 @@ import static org.springframework.util.StringUtils.uncapitalize;
  * @see ImportBeanDefinitionRegistrar
  * @since 1.0.0
  */
-class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableWebFluxExtension> {
+class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableWebFluxExtension> {
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,

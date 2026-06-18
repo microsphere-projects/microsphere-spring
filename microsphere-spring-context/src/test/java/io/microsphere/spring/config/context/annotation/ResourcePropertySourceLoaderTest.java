@@ -24,7 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.CompositePropertySource;
@@ -136,7 +136,7 @@ public class ResourcePropertySourceLoaderTest {
 
     @Test
     public void testOnNotFoundConfig() {
-        assertThrows(BeanCreationException.class,
+        assertThrows(BeanDefinitionStoreException.class,
                 () -> testInSpringContainer((context, environment) -> {
                 }, NotFoundConfig.class));
     }
