@@ -19,10 +19,8 @@ package io.microsphere.spring.config.context.annotation;
 import io.microsphere.io.StandardFileWatchService;
 import io.microsphere.io.event.FileChangedEvent;
 import io.microsphere.io.event.FileChangedListener;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -51,8 +49,7 @@ import static io.microsphere.spring.core.io.ResourceUtils.isFileBasedResource;
  * @since 1.0.0
  */
 public class ResourcePropertySourceLoader extends PropertySourceExtensionLoader<ResourcePropertySource,
-        PropertySourceExtensionAttributes<ResourcePropertySource>> implements InitializingBean, ResourceLoaderAware,
-        BeanClassLoaderAware, DisposableBean {
+        PropertySourceExtensionAttributes<ResourcePropertySource>> implements InitializingBean, DisposableBean {
 
     private ResourcePatternResolver resourcePatternResolver;
 

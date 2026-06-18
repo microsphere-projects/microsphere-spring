@@ -24,8 +24,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
@@ -52,7 +52,7 @@ import static org.springframework.context.support.AbstractApplicationContext.APP
  * @see TaskExecutor
  * @since 1.0.0
  */
-class EventExtensionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableEventExtension> implements ImportBeanDefinitionRegistrar {
+class EventExtensionRegistrar extends AnnotatedBeanCapableImportCandidate<EnableEventExtension> {
 
     /**
      * The attribute name of the name of {@link EnableEventExtension} annotated on the class
@@ -60,12 +60,13 @@ class EventExtensionRegistrar extends AnnotatedBeanCapableImportCandidate<Enable
     static final String CLASS_NAME_ATTRIBUTE_NAME = "@className";
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        registerApplicationEventMulticaster(metadata, registry);
+    protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                           BeanNameGenerator importBeanNameGenerator, ResolvablePlaceholderAnnotationAttributes<EnableEventExtension> annotationAttributes) {
+        registerApplicationEventMulticaster(metadata, registry, annotationAttributes);
     }
 
-    void registerApplicationEventMulticaster(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        ResolvablePlaceholderAnnotationAttributes<EnableEventExtension> annotationAttributes = getAnnotationAttributes(metadata);
+    void registerApplicationEventMulticaster(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                             ResolvablePlaceholderAnnotationAttributes<EnableEventExtension> annotationAttributes) {
 
         EventExtensionAttributes attributes = new EventExtensionAttributes(annotationAttributes);
 

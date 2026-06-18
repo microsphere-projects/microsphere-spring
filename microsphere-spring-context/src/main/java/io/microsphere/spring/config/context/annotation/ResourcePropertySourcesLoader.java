@@ -16,8 +16,6 @@
  */
 package io.microsphere.spring.config.context.annotation;
 
-import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
@@ -37,8 +35,7 @@ import static io.microsphere.spring.core.annotation.GenericAnnotationAttributes.
  * @see AnnotatedPropertySourceLoader
  * @since 1.0.0
  */
-class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<ResourcePropertySources> implements
-        ResourceLoaderAware, BeanClassLoaderAware {
+class ResourcePropertySourcesLoader extends AnnotatedPropertySourceLoader<ResourcePropertySources> {
 
     /**
      * Loads property sources from each {@link ResourcePropertySource} annotation declared
