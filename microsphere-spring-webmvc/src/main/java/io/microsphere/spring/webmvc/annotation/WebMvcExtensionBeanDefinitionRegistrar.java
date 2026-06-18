@@ -17,6 +17,7 @@
 package io.microsphere.spring.webmvc.annotation;
 
 import io.microsphere.spring.context.annotation.AnnotatedBeanCapableImportCandidate;
+import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes;
 import io.microsphere.spring.web.annotation.EnableWebExtension;
 import io.microsphere.spring.web.annotation.WebExtensionBeanDefinitionRegistrar;
 import io.microsphere.spring.web.metadata.ServletWebEndpointMappingResolver;
@@ -28,6 +29,7 @@ import io.microsphere.spring.webmvc.metadata.HandlerMappingWebEndpointMappingRes
 import io.microsphere.spring.webmvc.method.support.InterceptingHandlerMethodProcessor;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -63,9 +65,9 @@ class WebMvcExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImportC
     private static final Class<? extends HandlerInterceptor>[] ALL_HANDLER_INTERCEPTOR_CLASSES = ofArray(HandlerInterceptor.class);
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata);
+    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
+                                        BeanNameGenerator importBeanNameGenerator,
+                                        ResolvablePlaceholderAnnotationAttributes<EnableWebMvcExtension> attributes) {
 
         registerWebMvcExtensionConfiguration(registry);
 

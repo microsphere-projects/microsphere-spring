@@ -54,7 +54,8 @@ class WebFluxExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImport
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
-                                        BeanNameGenerator importBeanNameGenerator, ResolvablePlaceholderAnnotationAttributes<EnableWebFluxExtension> annotationAttributes) {
+                                        BeanNameGenerator importBeanNameGenerator,
+                                        ResolvablePlaceholderAnnotationAttributes<EnableWebFluxExtension> annotationAttributes) {
 
         registerWebEndpointMappingResolver(annotationAttributes, registry);
 
