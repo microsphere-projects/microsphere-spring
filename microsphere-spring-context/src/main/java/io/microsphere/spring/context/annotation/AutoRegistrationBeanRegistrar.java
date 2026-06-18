@@ -22,8 +22,6 @@ import io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttr
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
@@ -37,7 +35,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ge
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactories;
 
 /**
- * {@link ImportSelector} class for {@link EnableAutoRegistrationBean}
+ * {@link AnnotatedBeanCapableImportCandidate} class for {@link EnableAutoRegistrationBean}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EnableAutoRegistrationBean
@@ -49,7 +47,8 @@ class AutoRegistrationBeanRegistrar extends AnnotatedBeanCapableImportCandidate<
 
     @Override
     protected void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
-                                           BeanNameGenerator importBeanNameGenerator, ResolvablePlaceholderAnnotationAttributes<EnableAutoRegistrationBean> annotationAttributes) {
+                                           BeanNameGenerator importBeanNameGenerator,
+                                           ResolvablePlaceholderAnnotationAttributes<EnableAutoRegistrationBean> annotationAttributes) {
         List<AutoRegistrationBean> autoRegistrationBeans = loadFactories(AutoRegistrationBean.class, super.classLoader);
         registerAutoRegisteredBeans(autoRegistrationBeans, registry);
     }
