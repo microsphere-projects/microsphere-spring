@@ -16,10 +16,18 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
+import io.microsphere.annotation.ConfigurationProperty;
+import io.microsphere.constants.PropertyConstants;
+import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
+import io.microsphere.spring.core.env.ListenableConfigurableEnvironment;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 
+import static io.microsphere.constants.PropertyConstants.ENABLED_PROPERTY_NAME;
 import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver.register;
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
+import static java.lang.Boolean.parseBoolean;
 
 /**
  * An {@link ApplicationContextInitializer} implementation that registers a
@@ -41,10 +49,42 @@ import static io.microsphere.spring.beans.factory.support.ListenableAutowireCand
  * @see ApplicationContextInitializer
  * @since 1.0.0
  */
-public class ListenableAutowireCandidateResolverInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class ListenableAutowireCandidateResolverInitializer extends ConfigurableApplicationContextInitializer {
+
+    /**
+     * The prefix of the property name of {@link ListenableConfigurableEnvironment} : "microsphere.spring.listenable-autowire-candidate-resolver."
+     */
+    public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-autowire-candidate-resolver.";
+
+    private static final String DEFAULT_ENABLED = "false";
+
+    /**
+     * The property name of {@link ListenableAutowireCandidateResolver} to be 'enabled' : "microsphere.spring.listenable-autowire-candidate-resolver.enabled"
+     */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_ENABLED,
+            description = "Whether to enable the ListenableAutowireCandidateResolver"
+    )
+    public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
+
+    /**
+     * The default property value of {@link ListenableAutowireCandidateResolver} to be 'enabled'
+     */
+    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
 
     @Override
-    public void initialize(ConfigurableApplicationContext applicationContext) {
-        register(applicationContext);
+    protected void initialize(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
+        register(context);
+    }
+
+    @Override
+    protected String getEnabledPropertyName() {
+        return ENABLED_PROPERTY_NAME;
+    }
+
+    @Override
+    protected boolean getDefaultEnabled() {
+        return DEFAULT_ENABLED_PROPERTY_VALUE;
     }
 }
