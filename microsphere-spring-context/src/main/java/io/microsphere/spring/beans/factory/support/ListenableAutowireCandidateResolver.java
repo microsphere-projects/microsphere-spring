@@ -51,22 +51,10 @@ import static org.springframework.beans.BeanUtils.instantiateClass;
  * <h3>Key Features</h3>
  * <ul>
  *     <li>Wraps the existing {@link AutowireCandidateResolver} in a Spring bean factory</li>
- *     <li>Supports dynamic registration of resolving listeners</li>
+ *     <li>Supports dynamic registration of resolving listeners based on Spring Beans or Spring Factories</li>
  *     <li>Provides lifecycle integration through {@link BeanFactoryPostProcessor}</li>
- *     <li>Configurable via environment properties (e.g., enable/disable)</li>
  * </ul>
  *
- * <h3>Example Usage</h3>
- * <pre>{@code
- * // Register as infrastructure bean
- * ListenableAutowireCandidateResolver.register(applicationContext);
- *
- * // Add custom listener
- * ListenableAutowireCandidateResolver resolver = beanFactory.getBean(ListenableAutowireCandidateResolver.class);
- * resolver.addListener((descriptor, candidates) -> {
- *     System.out.println("Resolved candidates for " + descriptor.getDependencyType());
- * });
- * }</pre>
  *
  * <h3>Configuration</h3>
  * Enable the resolver using property configuration:
@@ -79,6 +67,7 @@ import static org.springframework.beans.BeanUtils.instantiateClass;
  * @see AutowireCandidateResolvingListener
  * @see CompositeAutowireCandidateResolvingListener
  * @see DefaultListableBeanFactory#setAutowireCandidateResolver(AutowireCandidateResolver)
+ * @see BeanFactoryPostProcessor
  * @since 1.0.0
  */
 public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor,
