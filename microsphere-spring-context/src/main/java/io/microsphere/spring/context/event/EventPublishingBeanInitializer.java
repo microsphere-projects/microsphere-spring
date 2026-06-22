@@ -29,7 +29,31 @@ import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRI
 import static java.lang.Boolean.parseBoolean;
 
 /**
- * {@link ApplicationContextInitializer} for Publishing Bean Event with the highest priority
+ * An {@link ApplicationContextInitializer} that registers processors to publish Spring bean lifecycle events
+ * during context initialization.
+ * <p>
+ * This initializer executes with the highest priority to guarantee that bean event publishing capabilities
+ * are established before other components are processed. It automatically registers an
+ * {@link EventPublishingBeanBeforeProcessor} as a {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor}.
+ * <p>
+ * <h3>Configuration</h3>
+ * The initializer is disabled by default. Enable it via the application configuration:
+ * <pre>
+ * # application.properties
+ * microsphere.spring.event-publishing-bean.enabled=true
+ * </pre>
+ * <p>
+ * <h3>Example</h3>
+ * After enabling, you can listen to bean events by implementing a {@link BeanListener}:
+ * <pre>
+ * &#64;Component
+ * public class MyBeanListener implements BeanListener {
+ *     &#64;Override
+ *     public void onBeanBeforeInitialization(String beanName, Class&lt;?&gt; beanType) {
+ *         // Custom logic before bean initialization
+ *     }
+ * }
+ * </pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanBeforeProcessor
