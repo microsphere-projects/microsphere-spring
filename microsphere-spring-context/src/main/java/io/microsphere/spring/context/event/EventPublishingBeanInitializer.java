@@ -16,9 +16,17 @@
  */
 package io.microsphere.spring.context.event;
 
+import io.microsphere.annotation.ConfigurationProperty;
+import io.microsphere.constants.PropertyConstants;
+import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.core.env.ConfigurableEnvironment;
+
+import static io.microsphere.constants.SymbolConstants.DOT;
+import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
+import static java.lang.Boolean.parseBoolean;
 
 /**
  * {@link ApplicationContextInitializer} for Publishing Bean Event with the highest priority
@@ -36,10 +44,32 @@ import org.springframework.core.PriorityOrdered;
  * @see PriorityOrdered
  * @since 1.0.0
  */
-public class EventPublishingBeanInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>, PriorityOrdered {
+public class EventPublishingBeanInitializer extends ConfigurableApplicationContextInitializer implements PriorityOrdered {
+
+    /**
+     * The prefix of the property name of EventPublishingBean : "microsphere.spring.event-publishing-bean."
+     */
+    public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "event-publishing-bean" + DOT;
+
+    private static final String DEFAULT_ENABLED = "false";
+
+    /**
+     * The property name of {@link EventPublishingBeanInitializer} to be 'enabled' : "microsphere.spring.event-publishing-bean.enabled"
+     */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_ENABLED,
+            description = "Whether to enable the EventPublishingBean"
+    )
+    public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
+
+    /**
+     * The default property value of {@link EventPublishingBeanInitializer} to be 'enabled'
+     */
+    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
 
     @Override
-    public void initialize(ConfigurableApplicationContext context) {
+    protected void initialize(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
         addBeanBeforeEventPublishingProcessor(context);
     }
 
@@ -50,5 +80,15 @@ public class EventPublishingBeanInitializer implements ApplicationContextInitial
     @Override
     public int getOrder() {
         return HIGHEST_PRECEDENCE;
+    }
+
+    @Override
+    protected String getEnabledPropertyName() {
+        return ENABLED_PROPERTY_NAME;
+    }
+
+    @Override
+    protected boolean getDefaultEnabled() {
+        return DEFAULT_ENABLED_PROPERTY_VALUE;
     }
 }
