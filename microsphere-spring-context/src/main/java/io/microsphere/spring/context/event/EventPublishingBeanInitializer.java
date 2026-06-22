@@ -19,6 +19,7 @@ package io.microsphere.spring.context.event;
 import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
+import io.microsphere.spring.core.env.ListenableConfigurableEnvironment;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.PriorityOrdered;
@@ -35,25 +36,33 @@ import static java.lang.Boolean.parseBoolean;
  * This initializer executes with the highest priority to guarantee that bean event publishing capabilities
  * are established before other components are processed. It automatically registers an
  * {@link EventPublishingBeanBeforeProcessor} as a {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor}.
- * <p>
- * <h3>Configuration</h3>
- * The initializer is disabled by default. Enable it via the application configuration:
+ *
+ * <h3>Configuration Properties</h3>
+ * <ul>
+ *     <li>{@code microsphere.spring.event-publishing-bean.enabled} -
+ *         Whether to enable the EventPublishingBean* (default: {@code false}).</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <h4>1. Configuration</h4>
+ * <p><strong> application.properties (Spring Boot):</strong></p>
  * <pre>
- * # application.properties
  * microsphere.spring.event-publishing-bean.enabled=true
  * </pre>
- * <p>
- * <h3>Example</h3>
- * After enabling, you can listen to bean events by implementing a {@link BeanListener}:
- * <pre>
- * &#64;Component
- * public class MyBeanListener implements BeanListener {
- *     &#64;Override
- *     public void onBeanBeforeInitialization(String beanName, Class&lt;?&gt; beanType) {
- *         // Custom logic before bean initialization
- *     }
- * }
- * </pre>
+ *
+ * <p><strong> spring.factories (Spring Boot):</strong></p>
+ * <pre>{@code
+ * org.springframework.context.ApplicationContextInitializer=\
+ * io.microsphere.spring.context.event.EventPublishingBeanInitializer
+ * }</pre>
+ *
+ * <h4>2. Programmatic</h4>
+ * <pre>{@code
+ * new SpringApplicationBuilder(MyApplication.class)
+ *  .initializers(new EventPublishingBeanInitializer())
+ *  .properties("microsphere.spring.event-publishing-bean.enabled=true")
+ *  .run(args);
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanBeforeProcessor
@@ -71,24 +80,24 @@ import static java.lang.Boolean.parseBoolean;
 public class EventPublishingBeanInitializer extends ConfigurableApplicationContextInitializer implements PriorityOrdered {
 
     /**
-     * The prefix of the property name of EventPublishingBean : "microsphere.spring.event-publishing-bean."
+     * The prefix of the property name of EventPublishingBean* : "microsphere.spring.event-publishing-bean."
      */
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "event-publishing-bean" + DOT;
 
     private static final String DEFAULT_ENABLED = "false";
 
     /**
-     * The property name of {@link EventPublishingBeanInitializer} to be 'enabled' : "microsphere.spring.event-publishing-bean.enabled"
+     * The property name of EventPublishingBean* to be 'enabled' : "microsphere.spring.event-publishing-bean.enabled"
      */
     @ConfigurationProperty(
             type = boolean.class,
             defaultValue = DEFAULT_ENABLED,
-            description = "Whether to enable the EventPublishingBean"
+            description = "Whether to enable the EventPublishingBean*"
     )
     public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
 
     /**
-     * The default property value of {@link EventPublishingBeanInitializer} to be 'enabled'
+     * The default property value of EventPublishingBean* to be 'enabled'
      */
     public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
 

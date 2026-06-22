@@ -47,22 +47,24 @@ import static java.lang.Boolean.parseBoolean;
  * </ul>
  *
  * <h3>Example Usage</h3>
- * <p><strong>1. Configuration (application.properties):</strong></p>
+ * <h4>1. Configuration</h4>
+ * <p><strong> application.properties (Spring Boot):</strong></p>
  * <pre>
  * microsphere.spring.listenable-autowire-candidate-resolver.enabled=true
  * </pre>
  *
- * <p><strong>2. Registration (Spring Boot 2.x - spring.factories):</strong></p>
+ * <p><strong> spring.factories (Spring Boot):</strong></p>
  * <pre>{@code
  * org.springframework.context.ApplicationContextInitializer=\
  * io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer
  * }</pre>
  *
- * <p><strong>3. Programmatic Registration:</strong></p>
+ * <h4>2. Programmatic</h4>
  * <pre>{@code
- * SpringApplication application = new SpringApplication(MyApplication.class);
- * application.addInitializers(new ListenableAutowireCandidateResolverInitializer());
- * application.run(args);
+ * new SpringApplicationBuilder(MyApplication.class)
+ *  .initializers(new ListenableAutowireCandidateResolverInitializer())
+ *  .properties("microsphere.spring.listenable-autowire-candidate-resolver.enabled=true")
+ *  .run(args);
  * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -73,7 +75,7 @@ import static java.lang.Boolean.parseBoolean;
 public class ListenableAutowireCandidateResolverInitializer extends ConfigurableApplicationContextInitializer {
 
     /**
-     * The prefix of the property name of {@link ListenableConfigurableEnvironment} : "microsphere.spring.listenable-autowire-candidate-resolver."
+     * The prefix of the property name of {@link ListenableAutowireCandidateResolver} : "microsphere.spring.listenable-autowire-candidate-resolver."
      */
     public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-autowire-candidate-resolver.";
 
