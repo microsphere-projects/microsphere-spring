@@ -28,6 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.EventListener;
@@ -52,6 +53,11 @@ import static org.springframework.core.ResolvableType.forClass;
         initializers = {
                 EventPublishingBeanInitializer.class
         })
+@TestPropertySource(
+        properties = {
+                "microsphere.spring.event-publishing-bean.enabled=true"
+        }
+)
 public abstract class AbstractEventListenerTest<L extends EventListener> {
 
     @ClassRule

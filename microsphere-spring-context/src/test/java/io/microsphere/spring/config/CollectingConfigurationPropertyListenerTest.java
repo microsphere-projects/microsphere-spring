@@ -33,7 +33,8 @@ import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_SUFFIX;
 )
 @TestPropertySource(
         properties = {
-                "test-name=test-value"
+                "test-name=test-value",
+                "microsphere.spring.listenable-environment.enabled=true"
         }
 )
 public class CollectingConfigurationPropertyListenerTest {

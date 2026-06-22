@@ -21,9 +21,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link ListenableConfigurableEnvironmentInitializer} Test
@@ -36,6 +38,11 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration(initializers = {
         ListenableConfigurableEnvironmentInitializer.class
 })
+@TestPropertySource(
+        properties = {
+                "microsphere.spring.listenable-environment.enabled=true"
+        }
+)
 public class ListenableConfigurableEnvironmentInitializerTest {
 
     @Autowired
@@ -43,7 +50,8 @@ public class ListenableConfigurableEnvironmentInitializerTest {
 
     @Test
     public void test() {
-        assertNotNull(environment.getProperty("user.home"));
+        assertNotNull(this.environment.getProperty("user.home"));
+        assertTrue(this.environment instanceof ListenableConfigurableEnvironment);
     }
 
 }

@@ -16,6 +16,9 @@
  */
 package io.microsphere.spring.constants;
 
+import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
+import org.springframework.context.ApplicationContextInitializer;
+
 import static io.microsphere.constants.PropertyConstants.MICROSPHERE_PROPERTY_NAME_PREFIX;
 import static java.lang.Boolean.parseBoolean;
 
@@ -41,6 +44,14 @@ public interface PropertyConstants {
      * The property name prefix of beans : "microsphere.spring.beans."
      */
     String BEANS_PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "beans.";
+
+    /**
+     * The property name prefix of {@link ConfigurableApplicationContextInitializer} : "microsphere.spring.context-initializer."
+     *
+     * @see ConfigurableApplicationContextInitializer
+     * @see ApplicationContextInitializer
+     */
+    String APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "context-initializer.";
 
     /**
      * The property name suffix of auto registered : "auto-registered"

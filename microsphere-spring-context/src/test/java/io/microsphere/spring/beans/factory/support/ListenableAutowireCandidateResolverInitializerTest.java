@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.microsphere.util.Assert.assertNotNull;
@@ -36,6 +37,11 @@ import static io.microsphere.util.Assert.assertNotNull;
 @ContextConfiguration(
         classes = ListenableAutowireCandidateResolverInitializerTest.class,
         initializers = ListenableAutowireCandidateResolverInitializer.class
+)
+@TestPropertySource(
+        properties = {
+                "microsphere.spring.listenable-autowire-candidate-resolver.enabled=true"
+        }
 )
 public class ListenableAutowireCandidateResolverInitializerTest {
 
