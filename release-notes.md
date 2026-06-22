@@ -475,4 +475,30 @@ Full Changelog: [0.1.24...0.1.25](link-to-changelog)
 
 **Full Changelog:** Available [here](#).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.26...0.1.27
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.26...0.1.27## v0.1.28
+
+# Release Notes for Version 0.1.28
+
+### New Features
+- Added `spring.factories` mapping for WebFlux helper. (9c6c2fe6)
+
+### Improvements
+- Simplified `@Import` annotation usage. (79e42bddb)
+- Added `BeanDefinitionRegistry` storage and bean registration. (de78e6541)
+- Unset primary on beans for composite registry. (5c0264d85)
+
+### Dependency Updates
+- Upgraded `microsphere-logging` to version 0.1.18. (e9eea35bc)
+- Upgraded `microsphere-java` to version 0.3.10. (ee99f2e71)
+
+### Documentation
+- Updated README to reflect latest versions (0.2.28 and 0.1.28). (f446f0d27)
+
+### Other Changes
+- Removed unused `spring-api.json` resource. (bab0dab21)
+- Chore: Merged `release-1.x` into `dev-1.x`. [skip ci] (304774df1)
+- Updated versioning post-0.1.27 release. (f86728c82)
+
+---
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.27...0.1.28
