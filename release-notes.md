@@ -501,4 +501,33 @@ Full Changelog: [0.1.24...0.1.25](link-to-changelog)
 
 ---
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.27...0.1.28
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.27...0.1.28## v0.1.29
+
+# Release Notes for Version 0.1.29
+
+## New Features
+- Introduced `ConfigurableApplicationContextInitializer`, enabling a more flexible initialization process. (#21e6a0594, #21af07638)
+- Made `EventPublishingBeanInitializer` configurable for enhanced customization. (#7b86115b3)
+- Added support for `ApplicationContextInitializers` via `spring.factories`. (#331476951)
+- Enabled a configurable property in the initializer for better control over application setup. (#2554b6688)
+
+## Bug Fixes
+- Refactored environment setup to improve reliability in configuration. (#31a242811)
+- Addressed logging inconsistency by logging disabled initializer settings at INFO level. (#65780b0be)
+
+## Test Improvements
+- Enabled listenable environment in test scenarios for enhanced testability. (#10c9a3447)
+
+## Documentation
+- Updated the README with the latest version details. (#64396508c)
+
+## Dependency Updates
+- Replaced traditional instantiation logic with `MethodUtils` for enhanced compatibility and maintainability. (#ec48c2db4)
+
+## Other Changes
+- Merged `release-1.x` into `dev-1.x` for aligning branches. (#21af07638)
+- Incremented version to `0.1.29` post-release of `0.1.28`. (#26ad9f4ef)
+
+---
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.28...0.1.29
