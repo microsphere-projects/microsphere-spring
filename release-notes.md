@@ -502,4 +502,24 @@ Looking forward to hearing your feedback on this release! 🚀
 
 **[See Full Changelog](https://github.com/microsphere-projects/microsphere-spring/compare/0.2.28...0.2.29)**
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.28...0.2.29
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.28...0.2.29## v0.2.30
+
+# Release Notes - Version 0.2.30
+
+## Documentation
+- Improved Javadoc for multiple components, including:
+  - `EventPublishingBeanInitializer`
+  - `ListenableAutowireCandidateResolver`
+- Updated Javadoc examples to enhance clarity and consistency.
+- Removed unused imports in documentation examples.
+- Updated the README with the latest branch versions.
+
+## Other Changes
+- Moved resolver registration logic to the initializer for better organization.
+- Removed the unused `enable` property from `ListenableAutowireCandidateResolver`.
+
+---
+
+For a detailed list of changes, see the [Full Changelog](#).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.29...0.2.30
