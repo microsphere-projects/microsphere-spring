@@ -407,30 +407,6 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
         return value;
     }
 
-    /**
-     * Set the {@link ListenableConfigurableEnvironment} into {@link ConfigurableApplicationContext} if
-     * {@link #isEnabled(Environment) enabled}
-     *
-     * @param applicationContext {@link ConfigurableApplicationContext}
-     */
-    public static void setEnvironmentIfEnabled(ConfigurableApplicationContext applicationContext) {
-        ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        if (!isEnabled(environment) && environment instanceof ListenableConfigurableEnvironment) {
-            return;
-        }
-        applicationContext.setEnvironment(new ListenableConfigurableEnvironment(applicationContext));
-    }
-
-    /**
-     * Determine whether the {@link ListenableConfigurableEnvironment} is enabled
-     *
-     * @param environment {@link Environment the underlying Environment}
-     * @return <code>true</code> if enabled, <code>false</code> otherwise
-     */
-    public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, DEFAULT_ENABLED_PROPERTY_VALUE);
-    }
-
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {
         forEachListener(this.environmentListeners, listenerConsumer);
     }
