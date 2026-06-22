@@ -452,4 +452,30 @@ Thank you for using Microsphere!
 ## Other Changes
 - Bumped dependencies, cleaned imports, and removed `Maintainers`. ([5030701c9](https://example.com))  
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.26...0.2.27
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.26...0.2.27## v0.2.28
+
+# Release Notes for v0.2.28
+
+## 🚀 New Features
+- **Spring WebFlux Support:** Registered `SpringWebFluxHelper` in `spring.factories`. (#2c8275507)
+
+## 🛠 Bug Fixes
+- Unset primary on existing beans when adding composite beans to avoid conflicts. (#08cb589fc)
+
+## 🏗️ Build and Workflow Enhancements
+- **Merge Updates:** Regularly merged `main` into `release` to keep branches in sync. [skip ci]
+
+## ⚙️ Dependency Updates
+- Bumped `microsphere-logging` to `0.1.18`. (#23efe8555)
+- Updated `microsphere-java` version to `0.3.10`. (#2a7aa757c)
+
+## 🔄 Other Changes
+- Simplified `@Import` usage in `EnableWebMvcExtension`. (#6e4da135f)
+- Replaced custom bean factory usage with `DefaultListableBeanFactory` for better standardization. (#a3325bbfc)
+- Removed unused `spring-api.json` resource file. (#b747980a5)
+
+---
+
+Looking forward to hearing your feedback on this release! 🚀
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.27...0.2.28
