@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.FieldUtils.findField;
-import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver.ENABLED_PROPERTY_NAME;
+import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer.ENABLED_PROPERTY_NAME;
 import static io.microsphere.spring.core.SpringVersion.CURRENT;
 import static io.microsphere.spring.core.SpringVersion.SPRING_5_1;
 import static org.junit.Assert.assertEquals;

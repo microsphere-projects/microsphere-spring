@@ -29,7 +29,39 @@ import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRI
 import static java.lang.Boolean.parseBoolean;
 
 /**
- * {@link ApplicationContextInitializer} for Publishing Bean Event with the highest priority
+ * An {@link ApplicationContextInitializer} that registers processors to publish Spring bean lifecycle events
+ * during context initialization.
+ * <p>
+ * This initializer executes with the highest priority to guarantee that bean event publishing capabilities
+ * are established before other components are processed. It automatically registers an
+ * {@link EventPublishingBeanBeforeProcessor} as a {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor}.
+ *
+ * <h3>Configuration Properties</h3>
+ * <ul>
+ *     <li>{@code microsphere.spring.event-publishing-bean.enabled} -
+ *         Whether to enable the EventPublishingBean* (default: {@code false}).</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <h4>1. Configuration</h4>
+ * <p><strong> application.properties (Spring Boot):</strong></p>
+ * <pre>
+ * microsphere.spring.event-publishing-bean.enabled=true
+ * </pre>
+ *
+ * <p><strong> spring.factories (Spring Boot):</strong></p>
+ * <pre>{@code
+ * org.springframework.context.ApplicationContextInitializer=\
+ * io.microsphere.spring.context.event.EventPublishingBeanInitializer
+ * }</pre>
+ *
+ * <h4>2. Programmatic</h4>
+ * <pre>{@code
+ * new SpringApplicationBuilder(MyApplication.class)
+ *  .initializers(new EventPublishingBeanInitializer())
+ *  .properties("microsphere.spring.event-publishing-bean.enabled=true")
+ *  .run(args);
+ * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see EventPublishingBeanBeforeProcessor

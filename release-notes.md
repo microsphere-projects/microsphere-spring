@@ -530,4 +530,23 @@ Full Changelog: [0.1.24...0.1.25](link-to-changelog)
 
 ---
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.28...0.1.29
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.28...0.1.29## v0.1.30
+
+# Release Notes for Version 0.1.30
+
+## Documentation
+- Improved Javadocs and usage examples for Initializer. ([#260](https://github.com/mercyblitz/dev-1.x))  
+- Enhanced Javadoc for `EventPublishingBeanInitializer`.  
+- Updated documentation for `ListenableAutowireCandidateResolver`.  
+- Bumped README versions to reflect 0.2.30/0.1.30.
+
+## Other Changes
+- Simplified initialization logic for `ListenableAutowireCandidateResolver`.  
+- Merged `release-1.x` into `dev-1.x`.  
+- Preparation for the next patch post-0.1.29 release.  
+
+---
+
+Full Changelog: See [GitHub Commits](https://github.com/mercyblitz/dev-1.x/compare/0.1.29...0.1.30) for more details.
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.29...0.1.30
