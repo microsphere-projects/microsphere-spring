@@ -17,12 +17,12 @@
 package io.microsphere.spring.core.env;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -32,10 +32,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @see ListenableConfigurableEnvironmentInitializer
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(initializers = {
-        ListenableConfigurableEnvironmentInitializer.class
-})
+@SpringJUnitConfig(
+        initializers = ListenableConfigurableEnvironmentInitializer.class
+)
+@TestPropertySource(
+        properties = {
+                "microsphere.spring.listenable-environment.enabled=true"
+        }
+)
 class ListenableConfigurableEnvironmentInitializerTest {
 
     @Autowired
@@ -43,7 +47,8 @@ class ListenableConfigurableEnvironmentInitializerTest {
 
     @Test
     void test() {
-        assertNotNull(environment.getProperty("user.home"));
+        assertNotNull(this.environment.getProperty("user.home"));
+        assertInstanceOf(ListenableConfigurableEnvironment.class, this.environment);
     }
 
 }

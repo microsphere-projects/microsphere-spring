@@ -16,16 +16,13 @@
  */
 package io.microsphere.spring.core.env;
 
-import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.ConfigurablePropertyResolver;
-import org.springframework.core.env.Environment;
 import org.springframework.core.env.MissingRequiredPropertiesException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.Profiles;
@@ -39,9 +36,7 @@ import java.util.function.Consumer;
 import static io.microsphere.collection.ListUtils.newLinkedList;
 import static io.microsphere.invoke.MethodHandleUtils.findVirtual;
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactories;
-import static java.lang.Boolean.parseBoolean;
 import static org.springframework.core.annotation.AnnotationAwareOrderComparator.sort;
 
 /**
@@ -58,28 +53,6 @@ import static org.springframework.core.annotation.AnnotationAwareOrderComparator
 public class ListenableConfigurableEnvironment implements ConfigurableEnvironment {
 
     private final static Logger logger = getLogger(ListenableConfigurableEnvironment.class);
-
-    /**
-     * The prefix of the property name of {@link ListenableConfigurableEnvironment}
-     */
-    public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-environment.";
-
-    private static final String DEFAULT_ENABLED = "false";
-
-    /**
-     * The property name of {@link ListenableConfigurableEnvironment} to be 'enabled'
-     */
-    @ConfigurationProperty(
-            type = boolean.class,
-            defaultValue = DEFAULT_ENABLED,
-            description = "Whether to enable the ListenableConfigurableEnvironment"
-    )
-    public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
-
-    /**
-     * The default property value of {@link ListenableConfigurableEnvironment} to be 'enabled'
-     */
-    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
 
     /**
      * The {@link MethodHandle} of {@linkplain PropertyResolver#getPropertyAsClass(String, Class)} was removed from Spring Framework 5.0
@@ -380,30 +353,6 @@ public class ListenableConfigurableEnvironment implements ConfigurableEnvironmen
 
     public <T> Class<T> getPropertyAsClass(String key, Class<T> targetType) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Set the {@link ListenableConfigurableEnvironment} into {@link ConfigurableApplicationContext} if
-     * {@link #isEnabled(Environment) enabled}
-     *
-     * @param applicationContext {@link ConfigurableApplicationContext}
-     */
-    public static void setEnvironmentIfEnabled(ConfigurableApplicationContext applicationContext) {
-        ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        if (!isEnabled(environment) && environment instanceof ListenableConfigurableEnvironment) {
-            return;
-        }
-        applicationContext.setEnvironment(new ListenableConfigurableEnvironment(applicationContext));
-    }
-
-    /**
-     * Determine whether the {@link ListenableConfigurableEnvironment} is enabled
-     *
-     * @param environment {@link Environment the underlying Environment}
-     * @return <code>true</code> if enabled, <code>false</code> otherwise
-     */
-    public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, DEFAULT_ENABLED_PROPERTY_VALUE);
     }
 
     private void forEachEnvironmentListener(Consumer<EnvironmentListener> listenerConsumer) {

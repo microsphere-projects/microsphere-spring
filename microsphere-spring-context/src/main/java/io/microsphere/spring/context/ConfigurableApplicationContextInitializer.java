@@ -68,7 +68,7 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      */
     protected boolean isEnabled(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
         String propertyName = getEnabledPropertyName();
-        return environment.getProperty(propertyName, Boolean.class, true);
+        return environment.getProperty(propertyName, Boolean.class, getDefaultEnabled());
     }
 
     /**
@@ -79,5 +79,15 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
     protected String getEnabledPropertyName() {
         String simpleClassName = getClass().getSimpleName();
         return APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX + simpleClassName + DOT + ENABLED_PROPERTY_NAME;
+    }
+
+    /**
+     * Get the default value of enabled
+     *
+     * @return the default value of enabled
+     * @see #getEnabledPropertyName()
+     */
+    protected boolean getDefaultEnabled() {
+        return true;
     }
 }
