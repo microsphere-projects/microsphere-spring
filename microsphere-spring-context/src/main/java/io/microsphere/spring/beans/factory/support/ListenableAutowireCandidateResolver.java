@@ -16,9 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.support;
 
-import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.annotation.Nullable;
-import io.microsphere.constants.PropertyConstants;
 import io.microsphere.logging.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -36,16 +34,13 @@ import org.springframework.core.env.Environment;
 
 import java.util.List;
 
-import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
-import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.util.ArrayUtils.combine;
-import static java.lang.Boolean.parseBoolean;
 
 /**
  * A decorator implementation of {@link AutowireCandidateResolver} that allows listening to the autowire candidate
@@ -93,29 +88,6 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         EnvironmentAware, BeanNameAware {
 
     private static final Logger logger = getLogger(ListenableAutowireCandidateResolver.class);
-
-    /**
-     * The prefix of the property name of {@link ListenableAutowireCandidateResolver}
-     */
-    public static final String PROPERTY_NAME_PREFIX = MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX + "listenable-autowire-candidate-resolver.";
-
-    private static final String DEFAULT_ENABLED = "false";
-
-    /**
-     * The property name of {@link ListenableAutowireCandidateResolver} to be 'enabled'
-     */
-    @ConfigurationProperty(
-            type = boolean.class,
-            defaultValue = DEFAULT_ENABLED,
-            description = "The property name of ListenableAutowireCandidateResolver to be enabled or not",
-            source = APPLICATION_SOURCE
-    )
-    public static final String ENABLED_PROPERTY_NAME = PROPERTY_NAME_PREFIX + PropertyConstants.ENABLED_PROPERTY_NAME;
-
-    /**
-     * The default property value of {@link ListenableAutowireCandidateResolver} to be 'enabled'
-     */
-    public static final boolean DEFAULT_ENABLED_PROPERTY_VALUE = parseBoolean(DEFAULT_ENABLED);
 
     private AutowireCandidateResolver delegate;
 
@@ -311,8 +283,6 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
 
     /**
      * {@inheritDoc}
-     * <p>Stores the {@link Environment} for later use in determining whether this resolver is
-     * {@link #isEnabled(Environment) enabled} and for resolving configuration properties.
      *
      * <h3>Example Usage</h3>
      * <pre>{@code
@@ -353,16 +323,6 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
      * @param beanFactory {@link DefaultListableBeanFactory}
      */
     public void wrap(BeanFactory beanFactory) {
-        if (!isEnabled(this.environment)) {
-            if (logger.isInfoEnabled()) {
-                logger.info("The ListenableAutowireCandidateResolver bean[name : '{}'] is disabled.", this.beanName);
-                logger.info("Setting the configuration property '{} = true' to enable it if requires.", ENABLED_PROPERTY_NAME);
-            }
-            return;
-        }
-        if (logger.isTraceEnabled()) {
-            logger.trace("The ListenableAutowireCandidateResolver bean[name : '{}'] is enabled.", this.beanName);
-        }
         DefaultListableBeanFactory dbf = asDefaultListableBeanFactory(beanFactory);
         AutowireCandidateResolver autowireCandidateResolver = dbf.getAutowireCandidateResolver();
         if (autowireCandidateResolver != this) {
@@ -372,16 +332,6 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
             this.compositeListener = compositeListener;
             dbf.setAutowireCandidateResolver(this);
         }
-    }
-
-    /**
-     * Determine whether the {@link ListenableAutowireCandidateResolver} is enabled or not
-     *
-     * @param environment {@link Environment}
-     * @return <code>true</code> if enabled, otherwise <code>false</code>
-     */
-    public static boolean isEnabled(Environment environment) {
-        return environment.getProperty(ENABLED_PROPERTY_NAME, boolean.class, DEFAULT_ENABLED_PROPERTY_VALUE);
     }
 
     /**

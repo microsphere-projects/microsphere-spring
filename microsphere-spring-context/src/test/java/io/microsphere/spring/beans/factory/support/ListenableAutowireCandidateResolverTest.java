@@ -24,7 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.lang.reflect.Field;
 
 import static io.microsphere.reflect.FieldUtils.findField;
-import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver.ENABLED_PROPERTY_NAME;
+import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer.ENABLED_PROPERTY_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
