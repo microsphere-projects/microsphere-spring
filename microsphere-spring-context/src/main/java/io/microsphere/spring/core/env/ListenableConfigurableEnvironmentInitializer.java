@@ -27,9 +27,37 @@ import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRI
 import static java.lang.Boolean.parseBoolean;
 
 /**
- * The Initializer of {@link ListenableConfigurableEnvironment} based on {@link ApplicationContextInitializer}
+ * An {@link ApplicationContextInitializer} implementation that initializes {@link ConfigurableEnvironment}
+ * with {@link ListenableConfigurableEnvironment} to enable listening for environment changes.
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * <h3>Configuration Properties</h3>
+ * <ul>
+ *     <li>{@code microsphere.spring.listenable-environment.enabled} -
+ *         Whether to enable the {@link ListenableConfigurableEnvironment} (default: {@code false}).</li>
+ * </ul>
+ *
+ * <h3>Example Usage</h3>
+ * <h4>1. Configuration</h4>
+ * <p><strong> application.properties (Spring Boot):</strong></p>
+ * <pre>
+ * microsphere.spring.listenable-environment.enabled=true
+ * </pre>
+ *
+ * <p><strong> spring.factories (Spring Boot):</strong></p>
+ * <pre>{@code
+ * org.springframework.context.ApplicationContextInitializer=\
+ * io.microsphere.spring.beans.factory.support.ListenableConfigurableEnvironmentInitializer
+ * }</pre>
+ *
+ * <h4>2. Programmatic</h4>
+ * <pre>{@code
+ * new SpringApplicationBuilder(MyApplication.class)
+ *  .initializers(new ListenableConfigurableEnvironmentInitializer())
+ *  .properties("microsphere.spring.listenable-environment.enabled=true")
+ *  .run(args);
+ * }</pre>
+ *
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ListenableConfigurableEnvironment
  * @see EnvironmentListener
  * @see ProfileListener
