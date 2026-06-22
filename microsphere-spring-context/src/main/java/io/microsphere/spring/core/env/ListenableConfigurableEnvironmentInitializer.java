@@ -18,7 +18,6 @@ package io.microsphere.spring.core.env;
 
 import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.constants.PropertyConstants;
-import io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver;
 import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,22 +37,24 @@ import static java.lang.Boolean.parseBoolean;
  * </ul>
  *
  * <h3>Example Usage</h3>
- * <p><strong>1. Configuration (application.properties):</strong></p>
+ * <h4>1. Configuration</h4>
+ * <p><strong> application.properties (Spring Boot):</strong></p>
  * <pre>
  * microsphere.spring.listenable-environment.enabled=true
  * </pre>
  *
- * <p><strong>2. Registration (Spring Boot 2.x - spring.factories):</strong></p>
+ * <p><strong> spring.factories (Spring Boot):</strong></p>
  * <pre>{@code
  * org.springframework.context.ApplicationContextInitializer=\
- * io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer
+ * io.microsphere.spring.beans.factory.support.ListenableConfigurableEnvironmentInitializer
  * }</pre>
  *
- * <p><strong>3. Programmatic Registration:</strong></p>
+ * <h4>2. Programmatic</h4>
  * <pre>{@code
- * SpringApplication application = new SpringApplication(MyApplication.class);
- * application.addInitializers(new ListenableConfigurableEnvironmentInitializer());
- * application.run(args);
+ * new SpringApplicationBuilder(MyApplication.class)
+ *  .initializers(new ListenableConfigurableEnvironmentInitializer())
+ *  .properties("microsphere.spring.listenable-environment.enabled=true")
+ *  .run(args);
  * }</pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
