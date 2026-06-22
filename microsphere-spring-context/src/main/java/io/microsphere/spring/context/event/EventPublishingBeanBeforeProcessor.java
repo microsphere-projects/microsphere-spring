@@ -36,6 +36,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
+import static io.microsphere.reflect.MethodUtils.findMethod;
+import static io.microsphere.reflect.MethodUtils.invokeMethod;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static org.springframework.beans.factory.support.BeanDefinitionReaderUtils.registerBeanDefinition;
 
@@ -55,6 +57,8 @@ import static org.springframework.beans.factory.support.BeanDefinitionReaderUtil
  */
 class EventPublishingBeanBeforeProcessor implements InstantiationAwareBeanPostProcessor, BeanDefinitionRegistryPostProcessor,
         DestructionAwareBeanPostProcessor, InstantiationStrategy {
+
+    private static final Method getInstantiationStrategyMethod = findMethod(AbstractAutowireCapableBeanFactory.class, "getInstantiationStrategy");
 
     private BeanDefinitionRegistry registry;
 
@@ -202,14 +206,6 @@ class EventPublishingBeanBeforeProcessor implements InstantiationAwareBeanPostPr
     }
 
     private InstantiationStrategy getInstantiationStrategyDelegate(ConfigurableListableBeanFactory beanFactory) {
-        InstantiationStrategy instantiationStrategy = null;
-        try {
-            Method method = AbstractAutowireCapableBeanFactory.class.getDeclaredMethod("getInstantiationStrategy");
-            method.setAccessible(true);
-            instantiationStrategy = (InstantiationStrategy) method.invoke(beanFactory);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return instantiationStrategy;
+        return invokeMethod(beanFactory, getInstantiationStrategyMethod);
     }
 }
