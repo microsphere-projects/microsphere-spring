@@ -48,7 +48,8 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
             initialize(context, environment);
             return;
         }
-        logger.info("The {} was disabled, if it needs to be enabled, please set the property '{}' to 'true' .", getClass(), getEnabledPropertyName());
+        logger.info("The {} was disabled, if it needs to be enabled, please set the property '{}' to 'true' .",
+                getClass(), getEnabledPropertyName());
     }
 
     /**
