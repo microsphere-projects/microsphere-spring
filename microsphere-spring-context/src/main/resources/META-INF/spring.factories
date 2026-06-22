@@ -1,5 +1,11 @@
+# InjectionPointDependencyResolver
 io.microsphere.spring.beans.factory.InjectionPointDependencyResolver=\
 io.microsphere.spring.beans.factory.ConstructionInjectionPointDependencyResolver,\
 io.microsphere.spring.beans.factory.annotation.AutowiredInjectionPointDependencyResolver,\
 io.microsphere.spring.beans.factory.annotation.ResourceInjectionPointDependencyResolver
 
+# ApplicationContextInitializer
+org.springframework.context.ApplicationContextInitializer=\
+io.microsphere.spring.context.event.EventPublishingBeanInitializer,\
+io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer,\
+io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer
