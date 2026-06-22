@@ -19,15 +19,14 @@ package io.microsphere.spring.context.event;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.EventListener;
 import java.util.List;
@@ -45,11 +44,16 @@ import static org.springframework.core.ResolvableType.forClass;
  * @see EventPublishingBeanInitializer
  * @since 1.0.0
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(
+@SpringJUnitConfig(
         initializers = {
                 EventPublishingBeanInitializer.class
-        })
+        }
+)
+@TestPropertySource(
+        properties = {
+                "microsphere.spring.event-publishing-bean.enabled=true"
+        }
+)
 @SpringLoggingTest
 public abstract class AbstractEventListenerTest<L extends EventListener> {
 
