@@ -31,6 +31,7 @@ import io.microsphere.spring.web.method.support.DelegatingHandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodAdvice;
 import io.microsphere.spring.web.method.support.HandlerMethodArgumentInterceptor;
 import io.microsphere.spring.web.method.support.HandlerMethodInterceptor;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -38,6 +39,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.microsphere.spring.beans.BeanSource.registerBeans;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
@@ -87,6 +89,11 @@ public class WebExtensionBeanDefinitionRegistrar extends AnnotatedBeanCapableImp
             // If No WebEndpointMappingRegistry bean is registered, register the default SimpleWebEndpointMappingRegistry
             registerBeanDefinition(registry, SimpleWebEndpointMappingRegistry.class, true);
         } else {
+            for (Entry<Class<?>, String> entry : beanTypesAndNames.entrySet()) {
+                String beanName = entry.getValue();
+                BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
+                beanDefinition.setPrimary(false);
+            }
             registerBeanDefinition(registry, CompositeWebEndpointMappingRegistry.class, true);
         }
     }
