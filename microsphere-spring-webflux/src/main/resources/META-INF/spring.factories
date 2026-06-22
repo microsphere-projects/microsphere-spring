@@ -1,0 +1,3 @@
+# SpringWebHelper
+io.microsphere.spring.web.util.SpringWebHelper=\
+io.microsphere.spring.webflux.util.SpringWebFluxHelper
