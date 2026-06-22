@@ -35,20 +35,39 @@ import static java.lang.Boolean.parseBoolean;
  * An {@link ApplicationContextInitializer} implementation that registers a
  * {@link ListenableAutowireCandidateResolver} to provide extensible autowiring
  * capabilities within the Spring application context.
+ * <p>
+ * It allows developers to customize the autowire candidate resolution strategy
+ * based on specific requirements, such as conditional bean matching or external configuration.
+ * The functionality is disabled by default and can be enabled via configuration properties.
+ *
+ * <h3>Configuration Properties</h3>
+ * <ul>
+ *     <li>{@code microsphere.spring.listenable-autowire-candidate-resolver.enabled} -
+ *         Whether to enable the {@link ListenableAutowireCandidateResolver} (default: {@code false}).</li>
+ * </ul>
  *
  * <h3>Example Usage</h3>
+ * <p><strong>1. Configuration (application.properties):</strong></p>
+ * <pre>
+ * microsphere.spring.listenable-autowire-candidate-resolver.enabled=true
+ * </pre>
+ *
+ * <p><strong>2. Registration (Spring Boot 2.x - spring.factories):</strong></p>
  * <pre>{@code
- * public class MyConfig implements WebMvcConfigurer {
- *     // Configuration code...
- * }
+ * org.springframework.context.ApplicationContextInitializer=\
+ * io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer
  * }</pre>
  *
- * <p>This initializer should be registered with a {@link org.springframework.context.ApplicationContext}
- * to enable custom autowiring logic during the application context initialization phase.
+ * <p><strong>3. Programmatic Registration:</strong></p>
+ * <pre>{@code
+ * SpringApplication application = new SpringApplication(MyApplication.class);
+ * application.addInitializers(new ListenableAutowireCandidateResolverInitializer());
+ * application.run(args);
+ * }</pre>
  *
- * @author <a href="mailto:mercyblitz@gmail.com">Mercy<a/>
+ * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ListenableAutowireCandidateResolver
- * @see ApplicationContextInitializer
+ * @see ConfigurableApplicationContextInitializer
  * @since 1.0.0
  */
 public class ListenableAutowireCandidateResolverInitializer extends ConfigurableApplicationContextInitializer {
