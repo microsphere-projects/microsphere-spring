@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -45,20 +46,19 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.microsphere.constants.SymbolConstants.AT_CHAR;
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.beans.BeanUtils.initializeBean;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asConfigurableListableBeanFactory;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerGenericBean;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.ofAnnotationAttributes;
 import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.of;
 import static io.microsphere.spring.core.env.EnvironmentUtils.asConfigurableEnvironment;
 import static io.microsphere.text.FormatUtils.format;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static java.lang.Integer.toHexString;
-import static org.springframework.beans.BeanUtils.instantiateClass;
 
 /**
  * An abstract base class for {@link Import @Import} candidates that supports the full Spring bean lifecycle,
@@ -151,6 +151,8 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
 
     protected ConfigurableListableBeanFactory beanFactory;
 
+    protected BeanDefinitionRegistry registry;
+
     protected ConfigurableApplicationContext applicationContext;
 
     protected ConfigurableEnvironment environment;
@@ -197,7 +199,9 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     @Override
     public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         if (this.beanFactory == null) {
-            this.beanFactory = asConfigurableListableBeanFactory(beanFactory);
+            DefaultListableBeanFactory defaultListableBeanFactory = asDefaultListableBeanFactory(beanFactory);
+            this.beanFactory = defaultListableBeanFactory;
+            this.registry = defaultListableBeanFactory;
         }
     }
 
@@ -269,6 +273,16 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
     @Nonnull
     public final ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
+    }
+
+    /**
+     * The {@link BeanDefinitionRegistry} instance
+     *
+     * @return non-null
+     */
+    @Nonnull
+    public final BeanDefinitionRegistry getBeanDefinitionRegistry() {
+        return registry;
     }
 
     /**
@@ -383,8 +397,9 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
             return originalAttributes;
         }
         Class<? extends OverrideAnnotationAttributesStrategy> strategyClass = overrideAnnotationAttributes.strategy();
-        OverrideAnnotationAttributesStrategy strategy = instantiateClass(strategyClass);
-        initializeBean(strategy, this.applicationContext);
+        Entry<String, Boolean> nameAndRegistered = registerGenericBean(this.getBeanDefinitionRegistry(), strategyClass);
+        String beanName = nameAndRegistered.getKey();
+        OverrideAnnotationAttributesStrategy strategy = this.getBeanFactory().getBean(beanName, strategyClass);
         return strategy.override(originalAttributes, annotationType, metadata);
     }
 
@@ -400,10 +415,11 @@ public abstract class BeanCapableImportCandidate implements BeanClassLoaderAware
 
     private void initializeSelfAsBean() {
         String beanName = getClass().getName() + AT_CHAR + toHexString(hashCode());
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(this.beanFactory);
+        BeanDefinitionRegistry registry = this.getBeanDefinitionRegistry();
         // register the current instance as a Spring BeanDefinition
         registerBean(registry, beanName, this);
         // initialize bean from the BeanDefinition before registration
-        this.beanFactory.getBean(beanName);
+        BeanFactory beanFactory = this.getBeanFactory();
+        beanFactory.getBean(beanName);
     }
 }
