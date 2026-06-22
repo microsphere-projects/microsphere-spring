@@ -26,20 +26,14 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
 import java.util.List;
 
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.logging.LoggerFactory.getLogger;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.beans.factory.support.AutowireCandidateResolvingListener.loadListeners;
-import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
 import static io.microsphere.util.ArrayUtils.combine;
 
 /**
@@ -85,15 +79,13 @@ import static io.microsphere.util.ArrayUtils.combine;
  * @since 1.0.0
  */
 public class ListenableAutowireCandidateResolver implements AutowireCandidateResolver, BeanFactoryPostProcessor,
-        EnvironmentAware, BeanNameAware {
+        BeanNameAware {
 
     private static final Logger logger = getLogger(ListenableAutowireCandidateResolver.class);
 
     private AutowireCandidateResolver delegate;
 
     private CompositeAutowireCandidateResolvingListener compositeListener;
-
-    private Environment environment;
 
     private String beanName;
 
@@ -281,36 +273,6 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
         wrap(beanFactory);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <h3>Example Usage</h3>
-     * <pre>{@code
-     *   // Typically called automatically by Spring's EnvironmentAware callback.
-     *   // The environment can be configured with the enabling property:
-     *   //   microsphere.spring.listenable-autowire-candidate-resolver.enabled=true
-     * }</pre>
-     *
-     * @param environment the {@link Environment} to set
-     */
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>Stores the bean name assigned to this resolver instance for logging and diagnostics.
-     *
-     * <h3>Example Usage</h3>
-     * <pre>{@code
-     *   // Typically called automatically by Spring's BeanNameAware callback.
-     *   // The bean is registered as an infrastructure bean:
-     *   ListenableAutowireCandidateResolver.register(applicationContext);
-     * }</pre>
-     *
-     * @param name the name of this bean in the Spring container
-     */
     @Override
     public void setBeanName(String name) {
         this.beanName = name;
@@ -331,18 +293,7 @@ public class ListenableAutowireCandidateResolver implements AutowireCandidateRes
             this.delegate = autowireCandidateResolver;
             this.compositeListener = compositeListener;
             dbf.setAutowireCandidateResolver(this);
+            logger.info("The ListenableAutowireCandidateResolver has been wrapped and registered to BeanFactory[{}]", dbf);
         }
     }
-
-    /**
-     * Register the {@link ListenableAutowireCandidateResolver} as the infrastructure bean
-     *
-     * @param applicationContext {@link ConfigurableApplicationContext}
-     */
-    public static void register(ConfigurableApplicationContext applicationContext) {
-        ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-        BeanDefinitionRegistry beanDefinitionRegistry = asBeanDefinitionRegistry(beanFactory);
-        registerInfrastructureBean(beanDefinitionRegistry, ListenableAutowireCandidateResolver.class);
-    }
-
 }

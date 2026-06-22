@@ -20,11 +20,14 @@ import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
 import io.microsphere.spring.core.env.ListenableConfigurableEnvironment;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import static io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolver.register;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static java.lang.Boolean.parseBoolean;
 
@@ -74,7 +77,9 @@ public class ListenableAutowireCandidateResolverInitializer extends Configurable
 
     @Override
     protected void initialize(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
-        register(context);
+        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+        BeanDefinitionRegistry beanDefinitionRegistry = asBeanDefinitionRegistry(beanFactory);
+        registerBeanDefinition(beanDefinitionRegistry, ListenableAutowireCandidateResolver.class);
     }
 
     @Override
