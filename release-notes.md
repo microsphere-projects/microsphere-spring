@@ -478,4 +478,28 @@ Thank you for using Microsphere!
 
 Looking forward to hearing your feedback on this release! 🚀
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.27...0.2.28
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.27...0.2.28## v0.2.29
+
+# Release Notes for Version 0.2.29
+
+## 🚀 New Features
+- **Configurable Application Context**: Introduced `ConfigurableApplicationContextInitializer`, enabling better application context customization.  
+  ([#a9bae0ec1](https://github.com/microsphere-projects/microsphere-spring/commit/a9bae0ec1))  
+- **Enhanced Initialization Strategies**: Updated to use `MethodUtils` for consistent instantiation strategy handling.  
+  ([#f1eca5cbf](https://github.com/microsphere-projects/microsphere-spring/commit/f1eca5cbf))  
+- **ApplicationContext Improvements**: Made `ApplicationContextInitializers` configurable and added support for `@SpringJUnitConfig` with a listenable environment.  
+  ([#21b48d705](https://github.com/microsphere-projects/microsphere-spring/commit/21b48d705),  
+   [#cb0718b93](https://github.com/microsphere-projects/microsphere-spring/commit/cb0718b93))  
+
+## 🛠️ Other Changes
+- Improved logging readability by restructuring `logger.info` calls and removing unused imports.  
+  ([#82aaf6252](https://github.com/microsphere-projects/microsphere-spring/commit/82aaf6252),  
+   [#caaedeb44](https://github.com/microsphere-projects/microsphere-spring/commit/caaedeb44))  
+- Updated README to reflect the latest release (v0.2.29).  
+  ([#a2d286e57](https://github.com/microsphere-projects/microsphere-spring/commit/a2d286e57))  
+
+---
+
+**[See Full Changelog](https://github.com/microsphere-projects/microsphere-spring/compare/0.2.28...0.2.29)**
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.28...0.2.29
