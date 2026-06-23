@@ -25,7 +25,6 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.env.ConfigurablePropertyResolver;
 
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static org.springframework.util.SystemPropertyUtils.PLACEHOLDER_PREFIX;
@@ -221,9 +220,8 @@ public class CollectingConfigurationPropertyListener implements PropertyResolver
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
-        registerBeanDefinition(registry, ConfigurationPropertyRepository.BEAN_NAME, ConfigurationPropertyRepository.class);
-        registerBean(registry, BEAN_NAME, this);
+        registerBeanDefinition(beanFactory, ConfigurationPropertyRepository.BEAN_NAME, ConfigurationPropertyRepository.class);
+        registerBean(beanFactory, BEAN_NAME, this);
     }
 
     /**

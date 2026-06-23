@@ -6,6 +6,7 @@ io.microsphere.spring.beans.factory.annotation.ResourceInjectionPointDependencyR
 
 # ApplicationContextInitializer
 org.springframework.context.ApplicationContextInitializer=\
+io.microsphere.spring.context.annotation.AutoRegistrationBeanInitializer,\
 io.microsphere.spring.context.event.EventPublishingBeanInitializer,\
 io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer,\
 io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer
