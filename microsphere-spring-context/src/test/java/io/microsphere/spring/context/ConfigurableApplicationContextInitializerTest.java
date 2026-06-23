@@ -18,13 +18,21 @@
 package io.microsphere.spring.context;
 
 
+import io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer;
+import io.microsphere.spring.context.annotation.AutoRegistrationBeanInitializer;
+import io.microsphere.spring.context.event.EventPublishingBeanInitializer;
+import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
 
+import java.util.Set;
+
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryClasses;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -78,6 +86,18 @@ class ConfigurableApplicationContextInitializerTest extends ConfigurableApplicat
     void testGetEnabledPropertyName() {
         assertEquals("microsphere.spring.context-initializer.configurableApplicationContextInitializerTest.enabled",
                 getEnabledPropertyName());
+    }
+
+    @Test
+    void testSpringFactories() {
+        Set<Class<ApplicationContextInitializer>> factoryClasses = loadFactoryClasses(ApplicationContextInitializer.class);
+        assertEquals(4, factoryClasses.size());
+        factoryClasses.forEach(factoryClass ->
+                assertTrue(ConfigurableApplicationContextInitializer.class.isAssignableFrom(factoryClass)));
+        assertTrue(factoryClasses.contains(AutoRegistrationBeanInitializer.class));
+        assertTrue(factoryClasses.contains(EventPublishingBeanInitializer.class));
+        assertTrue(factoryClasses.contains(ListenableAutowireCandidateResolverInitializer.class));
+        assertTrue(factoryClasses.contains(ListenableConfigurableEnvironmentInitializer.class));
     }
 
     @Override
