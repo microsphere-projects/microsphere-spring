@@ -50,4 +50,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Inherited
 @Import(AutoRegistrationBeanRegistrar.class)
 public @interface EnableAutoRegistrationBean {
+
+    /**
+     * Environment property that can be used to override when auto-registration of Spring Beans is enabled.
+     */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_AUTO_REGISTERED_PROPERTY_VALUE,
+            source = APPLICATION_SOURCE
+    )
+    String BEANS_AUTO_REGISTERED_PROEPRTY_NAME = BEANS_PROPERTY_NAME_PREFIX + AUTO_REGISTERED_PROPERTY_NAME_SUFFIX;
 }
