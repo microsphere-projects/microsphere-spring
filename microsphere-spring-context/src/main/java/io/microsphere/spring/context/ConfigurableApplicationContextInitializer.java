@@ -34,8 +34,25 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
 import static io.microsphere.spring.constants.PropertyConstants.APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX;
 
 /**
- * Abstract class of {@link ApplicationContextInitializer}  for {@link ConfigurableApplicationContext}, which can be
- * enabled or disabled by configuration properties.
+ * An abstract base class for {@link ApplicationContextInitializer} implementations targeting {@link ConfigurableApplicationContext}.
+ * It provides built-in support for enabling or disabling the initializer via configuration properties,
+ * as well as automatic self-registration into the Spring context.
+ *
+ * <h3>Example Usage</h3>
+ * <pre>{@code
+ * public class MyCustomInitializer extends ConfigurableApplicationContextInitializer {
+ *
+ *     @Override
+ *     protected void initialize(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
+ *         // Perform custom initialization logic here
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>By default, this initializer is enabled. To disable it, set the corresponding property to {@code false}:
+ * <pre>
+ * microsphere.spring.context-initializer.myCustomInitializer.enabled=false
+ * </pre>
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see ApplicationContextInitializer
@@ -123,6 +140,12 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
         return beanName;
     }
 
+    /**
+     * Is registered or not
+     *
+     * @param context the {@link ConfigurableApplicationContext}
+     * @return if registered, return <code>true</code>, or <code>false</code>
+     */
     protected boolean isRegistered(ConfigurableApplicationContext context) {
         return context.containsBean(getBeanName());
     }
