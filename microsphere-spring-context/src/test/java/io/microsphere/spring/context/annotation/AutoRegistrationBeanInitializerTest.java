@@ -26,7 +26,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
-import static io.microsphere.spring.context.annotation.AutoRegistrationBeanInitializer.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
