@@ -17,15 +17,19 @@
 
 package io.microsphere.spring.context.annotation;
 
+import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
 import io.microsphere.spring.context.config.AutoRegistrationBean;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
+import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
+import static io.microsphere.spring.constants.PropertyConstants.AUTO_REGISTERED_PROPERTY_NAME_SUFFIX;
+import static io.microsphere.spring.constants.PropertyConstants.BEANS_PROPERTY_NAME_PREFIX;
+import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_PROPERTY_VALUE;
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
-import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 
 /**
  * {@link ApplicationContextInitializer} class for {@link AutoRegistrationBean}
@@ -36,6 +40,16 @@ import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBea
  * @since 1.0.0
  */
 public class AutoRegistrationBeanInitializer extends ConfigurableApplicationContextInitializer {
+
+    /**
+     * Environment property that can be used to override when auto-registration of Spring Beans is enabled.
+     */
+    @ConfigurationProperty(
+            type = boolean.class,
+            defaultValue = DEFAULT_AUTO_REGISTERED_PROPERTY_VALUE,
+            source = APPLICATION_SOURCE
+    )
+    public static final String BEANS_AUTO_REGISTERED_PROEPRTY_NAME = BEANS_PROPERTY_NAME_PREFIX + AUTO_REGISTERED_PROPERTY_NAME_SUFFIX;
 
     @Override
     protected void initialize(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
