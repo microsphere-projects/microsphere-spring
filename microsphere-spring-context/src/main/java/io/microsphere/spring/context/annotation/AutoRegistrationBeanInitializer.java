@@ -47,12 +47,12 @@ public class AutoRegistrationBeanInitializer extends ConfigurableApplicationCont
     }
 
     @Override
-    protected String getEnabledPropertyName() {
+    public String getEnabledPropertyName() {
         return BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
     }
 
     @Override
-    protected boolean getDefaultEnabled() {
+    public boolean getDefaultEnabled() {
         return DEFAULT_AUTO_REGISTERED_VALUE;
     }
 }
