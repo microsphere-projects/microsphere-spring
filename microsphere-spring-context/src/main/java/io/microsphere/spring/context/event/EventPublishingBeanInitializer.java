@@ -19,7 +19,6 @@ package io.microsphere.spring.context.event;
 import io.microsphere.annotation.ConfigurationProperty;
 import io.microsphere.constants.PropertyConstants;
 import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
-import io.microsphere.spring.core.env.ListenableConfigurableEnvironment;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.PriorityOrdered;
