@@ -25,9 +25,6 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.lang.annotation.Annotation;
-import java.util.Set;
-
-import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 
 /**
  * An abstract base class for {@link ImportBeanDefinitionRegistrar} implementations that are driven by a specific
@@ -73,7 +70,6 @@ public abstract class AnnotatedBeanCapableImportBeanDefinitionRegistrar<A extend
     public final void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
                                               BeanNameGenerator importBeanNameGenerator) {
         if (isEnabled(metadata)) {
-            Set<String> imports = newLinkedHashSet();
             ResolvablePlaceholderAnnotationAttributes<A> annotationAttributes = getAnnotationAttributes(metadata);
             registerBeanDefinitions(metadata, registry, importBeanNameGenerator, annotationAttributes);
         }

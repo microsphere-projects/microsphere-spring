@@ -18,13 +18,21 @@
 package io.microsphere.spring.context;
 
 
+import io.microsphere.spring.beans.factory.support.ListenableAutowireCandidateResolverInitializer;
+import io.microsphere.spring.context.annotation.AutoRegistrationBeanInitializer;
+import io.microsphere.spring.context.event.EventPublishingBeanInitializer;
+import io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
 
+import java.util.Set;
+
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryClasses;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
@@ -78,6 +86,18 @@ public class ConfigurableApplicationContextInitializerTest extends ConfigurableA
     public void testGetEnabledPropertyName() {
         assertEquals("microsphere.spring.context-initializer.configurableApplicationContextInitializerTest.enabled",
                 getEnabledPropertyName());
+    }
+
+    @Test
+    public void testSpringFactories() {
+        Set<Class<ApplicationContextInitializer>> factoryClasses = loadFactoryClasses(ApplicationContextInitializer.class);
+        assertEquals(4, factoryClasses.size());
+        factoryClasses.forEach(factoryClass ->
+                assertTrue(ConfigurableApplicationContextInitializer.class.isAssignableFrom(factoryClass)));
+        assertTrue(factoryClasses.contains(AutoRegistrationBeanInitializer.class));
+        assertTrue(factoryClasses.contains(EventPublishingBeanInitializer.class));
+        assertTrue(factoryClasses.contains(ListenableAutowireCandidateResolverInitializer.class));
+        assertTrue(factoryClasses.contains(ListenableConfigurableEnvironmentInitializer.class));
     }
 
     @Override

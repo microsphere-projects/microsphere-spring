@@ -19,6 +19,7 @@ package io.microsphere.spring.context;
 
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.BeanUtils;
+import io.microsphere.spring.config.env.EnvironmentEnabled;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -58,7 +59,8 @@ import static io.microsphere.spring.constants.PropertyConstants.APPLICATION_CONT
  * @see ConfigurableEnvironment
  * @since 1.0.0
  */
-public abstract class ConfigurableApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public abstract class ConfigurableApplicationContextInitializer implements
+        ApplicationContextInitializer<ConfigurableApplicationContext>, EnvironmentEnabled {
 
     protected final Logger logger = getLogger(getClass());
 
@@ -68,8 +70,6 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
     public final void initialize(ConfigurableApplicationContext context) {
         ConfigurableEnvironment environment = context.getEnvironment();
         if (!isEnabled(context, environment)) {
-            logger.info("The {} was disabled, if it needs to be enabled, please set the property '{}' to 'true' .",
-                    getClass(), getEnabledPropertyName());
             return;
         }
         if (isRegistered(context)) {
@@ -99,8 +99,7 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      * @see #getDefaultEnabled()
      */
     protected boolean isEnabled(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
-        String propertyName = getEnabledPropertyName();
-        return environment.getProperty(propertyName, Boolean.class, getDefaultEnabled());
+        return isEnabled(environment);
     }
 
     /**
@@ -109,7 +108,7 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      * @return the property name of the enabled
      * @see #getBeanName()
      */
-    protected String getEnabledPropertyName() {
+    public String getEnabledPropertyName() {
         return APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX + getBeanName() + DOT + ENABLED_PROPERTY_NAME;
     }
 
@@ -119,7 +118,7 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      * @return the default value of enabled
      * @see #getEnabledPropertyName()
      */
-    protected boolean getDefaultEnabled() {
+    public boolean getDefaultEnabled() {
         return true;
     }
 
