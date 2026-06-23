@@ -18,10 +18,13 @@
 package io.microsphere.spring.config.env;
 
 
+import io.microsphere.logging.test.junit4.LoggingLevelsRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.mock.env.MockEnvironment;
 
+import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +37,9 @@ import static org.junit.Assert.assertTrue;
  * @since 1.0.0
  */
 public class EnvironmentEnabledTest {
+
+    @ClassRule
+    public static final LoggingLevelsRule LOGGING_LEVELS_RULE = levels("TRACE", "INFO", "ERROR");
 
     private MockEnvironment mockEnvironment;
 
