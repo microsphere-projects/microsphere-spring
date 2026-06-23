@@ -46,7 +46,7 @@ class LazyCompositeHandlerInterceptorTest extends AbstractHandlerInterceptorTest
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.register(LoggingMethodHandlerInterceptor.class);
         context.register(LazyCompositeHandlerInterceptorTest.class);
-        registerBeanDefinition(context, BEAN_NAME, LazyCompositeHandlerInterceptor.class, HandlerInterceptor.class);
+        registerBeanDefinition(context.getBeanFactory(), BEAN_NAME, LazyCompositeHandlerInterceptor.class, HandlerInterceptor.class);
         context.refresh();
         LazyCompositeHandlerInterceptor interceptor = context.getBean(LazyCompositeHandlerInterceptor.class);
         return interceptor;

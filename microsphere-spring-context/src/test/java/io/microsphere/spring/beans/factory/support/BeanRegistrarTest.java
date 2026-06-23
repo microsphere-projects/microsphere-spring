@@ -26,15 +26,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.config.BeanDefinitionUtils.genericBeanDefinition;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
@@ -66,42 +67,60 @@ import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRA
 @SpringLoggingTest
 class BeanRegistrarTest {
 
-    private DefaultListableBeanFactory beanFactory;
+    private DefaultListableBeanFactory defaultListableBeanFactory;
+
+    private BeanFactory beanFactory;
 
     @BeforeEach
     void setUp() {
-        this.beanFactory = new DefaultListableBeanFactory();
+        this.defaultListableBeanFactory = new DefaultListableBeanFactory();
+        this.beanFactory = defaultListableBeanFactory;
     }
 
     @AfterEach
     void tearDown() {
-        this.beanFactory.destroySingletons();
+        this.defaultListableBeanFactory.destroySingletons();
     }
 
     @Test
     void testRegisterInfrastructureBean() {
-        assertBeanDefinitions(() -> registerInfrastructureBean(asBeanDefinitionRegistry(this.beanFactory), User.class), true, ROLE_INFRASTRUCTURE, false, "io.microsphere.spring.test.domain.User#0");
+        assertBeanDefinitions(() -> registerInfrastructureBean(this.beanFactory, User.class), true, ROLE_INFRASTRUCTURE, false, "io.microsphere.spring.test.domain.User#0");
         assertBeanDefinitions(() -> registerInfrastructureBean(asBeanDefinitionRegistry(this.beanFactory), User.class), true, ROLE_INFRASTRUCTURE, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
     }
 
     @Test
-    void testRegisterBeanDefinition() {
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0");
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
-
-        String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1", beanName);
+    void testRegisterInfrastructureBeanWithBeanName() {
+        String userName = "user";
+        assertBeanDefinitions(() -> registerInfrastructureBean(this.beanFactory, userName, User.class), true, ROLE_INFRASTRUCTURE, false, userName);
     }
 
     @Test
-    void testRegisterBeanDefinitionWithoutName() {
+    void testRegisterBeanDefinition() {
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0");
+        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
+
+        String beanName = "user";
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1", beanName);
+    }
+
+    @Test
+    void testRegisterBeanDefinitionWithConsumer() {
+        String beanName = "user";
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, User.class, builder -> builder.setRole(ROLE_INFRASTRUCTURE)), true, ROLE_INFRASTRUCTURE, false, beanName);
+    }
+
+    @Test
+    void testRegisterBeanDefinitionWithName() {
+        String beanName = "user";
         BeanDefinition beanDefinition = genericBeanDefinition(User.class);
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, beanDefinition), true, ROLE_APPLICATION, false, beanName);
+
     }
 
     @Test
     void testRegisterBeanDefinitionWithConstructorArguments() {
         String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, User.class, "Mercy", 18), true, ROLE_APPLICATION, false, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, User.class, "Mercy", 18), true, ROLE_APPLICATION, false, beanName);
         assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, User.class, "Mercy", 18), false, ROLE_APPLICATION, false, beanName);
         User user = this.beanFactory.getBean(beanName, User.class);
         assertEquals("Mercy", user.getName());
@@ -110,48 +129,49 @@ class BeanRegistrarTest {
 
     @Test
     void testRegisterBeanDefinitionOnOverriding() {
-        this.beanFactory.setAllowBeanDefinitionOverriding(true);
+        this.defaultListableBeanFactory.setAllowBeanDefinitionOverriding(true);
         String beanName = "user";
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(User.class, builder -> {
             builder.setRole(ROLE_APPLICATION);
         });
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, beanDefinition, true), true, ROLE_APPLICATION, false, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, beanDefinition, true), true, ROLE_APPLICATION, false, beanName);
 
         assertTrue(registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, beanDefinition, true));
 
-        this.beanFactory.setAllowBeanDefinitionOverriding(false);
-        assertFalse(registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, beanDefinition, true));
+        this.defaultListableBeanFactory.setAllowBeanDefinitionOverriding(false);
+        assertFalse(registerBeanDefinition(this.beanFactory, beanName, beanDefinition, true));
     }
 
     @Test
     void testRegisterBeanDefinitionWithRole() {
         String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, User.class, ROLE_INFRASTRUCTURE), true, ROLE_INFRASTRUCTURE, false, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, User.class, ROLE_INFRASTRUCTURE), true, ROLE_INFRASTRUCTURE, false, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, User.class, ROLE_INFRASTRUCTURE), false, ROLE_INFRASTRUCTURE, false, beanName);
     }
 
     @Test
     void testRegisterBeanDefinitionWithPrimary() {
         String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, User.class, true), true, ROLE_APPLICATION, true, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, beanName, User.class, true), true, ROLE_APPLICATION, true, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanName, User.class, true), false, ROLE_APPLICATION, true, beanName);
     }
 
     @Test
     void testRegisterBeanDefinitionWithPrimaryAndNoBeanName() {
         String beanName = "io.microsphere.spring.test.domain.User#0";
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), User.class, true), true, ROLE_APPLICATION, true, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, User.class, true), true, ROLE_APPLICATION, true, beanName);
     }
 
     @Test
     void testRegisterBeanDefinitionWithBuilder() {
         String beanName = "io.microsphere.spring.test.domain.User#0";
-        assertBeanDefinitions(() -> registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), User.class, builder -> builder.setRole(ROLE_INFRASTRUCTURE)), true, ROLE_INFRASTRUCTURE, false, beanName);
+        assertBeanDefinitions(() -> registerBeanDefinition(this.beanFactory, User.class, builder -> builder.setRole(ROLE_INFRASTRUCTURE)), true, ROLE_INFRASTRUCTURE, false, beanName);
     }
 
     @Test
     void testRegisterBeanDefinitionWithBeanDefinition() {
         BeanDefinition beanDefinition = genericBeanDefinition(User.class);
-        assertTrue(registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanDefinition));
-
+        assertTrue(registerBeanDefinition(this.beanFactory, beanDefinition));
         assertTrue(registerBeanDefinition(asBeanDefinitionRegistry(this.beanFactory), beanDefinition));
     }
 
@@ -162,22 +182,22 @@ class BeanRegistrarTest {
 
     @Test
     void testHasAlias() {
-        assertFalse(hasAlias(this.beanFactory, null, null));
+        assertFalse(hasAlias(this.defaultListableBeanFactory, null, null));
         String beanName = registerUserAsSingleton();
         String alias = "test-user";
-        assertFalse(hasAlias(this.beanFactory, beanName, null));
-        assertFalse(hasAlias(this.beanFactory, null, alias));
-        assertFalse(hasAlias(this.beanFactory, beanName, alias));
+        assertFalse(hasAlias(this.defaultListableBeanFactory, beanName, null));
+        assertFalse(hasAlias(this.defaultListableBeanFactory, null, alias));
+        assertFalse(hasAlias(this.defaultListableBeanFactory, beanName, alias));
 
-        this.beanFactory.registerAlias(beanName, alias);
-        assertTrue(hasAlias(beanFactory, beanName, alias));
+        this.defaultListableBeanFactory.registerAlias(beanName, alias);
+        assertTrue(hasAlias(defaultListableBeanFactory, beanName, alias));
     }
 
     @Test
     void testRegisterSpringFactoriesBeans() {
-        Map<Class, String> classStringMap = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
+        Map<Class, String> classStringMap = registerSpringFactoriesBeans(this.beanFactory, Bean.class);
         assertEquals(2, classStringMap.size());
-        classStringMap = registerSpringFactoriesBeans((BeanFactory) this.beanFactory, Bean.class);
+        classStringMap = registerSpringFactoriesBeans(this.beanFactory, Bean.class);
         assertEquals(2, classStringMap.size());
 
         assertTrue(this.beanFactory.containsBean(decapitalize(TestBean.class.getSimpleName())));
@@ -186,18 +206,37 @@ class BeanRegistrarTest {
 
     @Test
     void testRegisterFactoryBean() {
-        testRegisterBean((beanName, bean) -> registerFactoryBean(asBeanDefinitionRegistry(this.beanFactory), beanName, bean));
+        testRegisterBean((beanName, bean) -> registerFactoryBean(this.beanFactory, beanName, bean));
+    }
+
+    @Test
+    void testRegisterFactoryBeanWithPrimary() {
+        testRegisterBean((beanName, bean) -> registerFactoryBean(this.beanFactory, beanName, bean, true));
     }
 
     @Test
     void testRegisterBean() {
-        testRegisterBean((beanName, bean) -> registerBean(asBeanDefinitionRegistry(this.beanFactory), beanName, bean));
+        testRegisterBean((beanName, bean) -> registerBean(this.beanFactory, beanName, bean));
+    }
+
+    @Test
+    void testRegisterBeanWithPrimary() {
+        testRegisterBean((beanName, bean) -> registerBean(this.beanFactory, beanName, bean, true));
     }
 
     @Test
     void testRegisterGenericBeans() {
         String beanName = "user";
-        Map<Class<?>, String> beanTypesAndNames = registerGenericBeans(asBeanDefinitionRegistry(this.beanFactory), User.class);
+        Map<Class<?>, String> beanTypesAndNames = registerGenericBeans(this.beanFactory, User.class);
+        assertEquals(1, beanTypesAndNames.size());
+        assertTrue(beanTypesAndNames.containsKey(User.class));
+        assertEquals(beanName, beanTypesAndNames.get(User.class));
+    }
+
+    @Test
+    void testRegisterGenericBeansWithCollection() {
+        String beanName = "user";
+        Map<Class<?>, String> beanTypesAndNames = registerGenericBeans(this.beanFactory, ofList(User.class));
         assertEquals(1, beanTypesAndNames.size());
         assertTrue(beanTypesAndNames.containsKey(User.class));
         assertEquals(beanName, beanTypesAndNames.get(User.class));
@@ -205,17 +244,31 @@ class BeanRegistrarTest {
 
     @Test
     void testRegisterGenericBeansOnEmptyBeanClasses() {
-        assertEquals(emptyMap(), registerGenericBeans(asBeanDefinitionRegistry(this.beanFactory)));
+        assertEquals(emptyMap(), registerGenericBeans(this.beanFactory));
     }
 
     @Test
     void testRegisterGenericBean() {
         String beanName = "user";
-        Entry<String, Boolean> beanNameAndRegistered = registerGenericBean(asBeanDefinitionRegistry(this.beanFactory), User.class);
+        Entry<String, Boolean> beanNameAndRegistered = registerGenericBean(this.beanFactory, User.class);
         assertEquals(beanName, beanNameAndRegistered.getKey());
         assertTrue(beanNameAndRegistered.getValue());
 
         beanNameAndRegistered = registerGenericBean(asBeanDefinitionRegistry(this.beanFactory), User.class);
+        assertEquals(beanName, beanNameAndRegistered.getKey());
+        assertFalse(beanNameAndRegistered.getValue());
+    }
+
+    @Test
+    void testRegisterGenericBeanWithBeanNameGenerator() {
+        AnnotationBeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
+
+        String beanName = beanNameGenerator.generateBeanName(genericBeanDefinition(User.class), asBeanDefinitionRegistry(this.beanFactory));
+        Entry<String, Boolean> beanNameAndRegistered = registerGenericBean(this.beanFactory, User.class, beanNameGenerator);
+        assertEquals(beanName, beanNameAndRegistered.getKey());
+        assertTrue(beanNameAndRegistered.getValue());
+
+        beanNameAndRegistered = registerGenericBean(asBeanDefinitionRegistry(this.beanFactory), User.class, beanNameGenerator);
         assertEquals(beanName, beanNameAndRegistered.getKey());
         assertFalse(beanNameAndRegistered.getValue());
     }
@@ -229,96 +282,6 @@ class BeanRegistrarTest {
         assertEquals(beanName, bean.getBeanName());
         assertEquals(bean.getBeanName(), testBean.getBeanName());
         assertEquals(testBean, bean);
-    }
-
-    // ============= Tests for BeanFactory-based overload methods =============
-
-    @Test
-    void testRegisterInfrastructureBeanWithBeanFactory() {
-        assertBeanDefinitions(() -> registerInfrastructureBean((BeanFactory)this.beanFactory, User.class), true, ROLE_INFRASTRUCTURE, false, "io.microsphere.spring.test.domain.User#0");
-        assertBeanDefinitions(() -> registerInfrastructureBean((BeanFactory)this.beanFactory, User.class), true, ROLE_INFRASTRUCTURE, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
-    }
-
-    @Test
-    void testRegisterInfrastructureBeanWithBeanFactoryAndName() {
-        String beanName = "infrastructureUser";
-        assertBeanDefinitions(() -> registerInfrastructureBean((BeanFactory)this.beanFactory, beanName, User.class), true, ROLE_INFRASTRUCTURE, false, beanName);
-    }
-
-    @Test
-    void testRegisterBeanDefinitionWithBeanFactory() {
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0");
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
-        
-        String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, beanName, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1", beanName);
-    }
-
-    @Test
-    void testRegisterBeanDefinitionWithBeanFactoryAndConstructorArguments() {
-        String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, beanName, User.class, "Mercy", 18), true, ROLE_APPLICATION, false, beanName);
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, beanName, User.class, "Mercy", 18), false, ROLE_APPLICATION, false, beanName);
-        User user = this.beanFactory.getBean(beanName, User.class);
-        assertEquals("Mercy", user.getName());
-        assertEquals(18, user.getAge());
-    }
-
-    @Test
-    void testRegisterBeanDefinitionWithBeanFactoryAndRole() {
-        String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, beanName, User.class, ROLE_INFRASTRUCTURE), true, ROLE_INFRASTRUCTURE, false, beanName);
-    }
-
-    @Test
-    void testRegisterBeanDefinitionWithBeanFactoryAndPrimary() {
-        String beanName = "user";
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, beanName, User.class, true), true, ROLE_APPLICATION, true, beanName);
-    }
-
-    @Test
-    void testRegisterBeanDefinitionWithBeanFactoryAndBuilder() {
-        String beanName = "io.microsphere.spring.test.domain.User#0";
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, User.class, builder -> builder.setRole(ROLE_INFRASTRUCTURE)), true, ROLE_INFRASTRUCTURE, false, beanName);
-    }
-
-    @Test
-    void testRegisterSingletonWithBeanFactory() {
-        String beanName = "user";
-        User user = new User();
-        registerSingleton((SingletonBeanRegistry)this.beanFactory, beanName, user);
-        assertEquals(user, this.beanFactory.getBean(beanName));
-    }
-
-    @Test
-    void testRegisterFactoryBeanWithBeanFactory() {
-        testRegisterBeanWithBeanFactoryHelper((beanName, bean) -> registerFactoryBean((BeanFactory)this.beanFactory, beanName, bean));
-    }
-
-    @Test
-    void testRegisterBeanWithBeanFactory() {
-        testRegisterBeanWithBeanFactoryHelper((beanName, bean) -> registerBean((BeanFactory)this.beanFactory, beanName, bean));
-    }
-
-    @Test
-    void testRegisterGenericBeansWithBeanFactory() {
-        String beanName = "user";
-        Map<Class<?>, String> beanTypesAndNames = registerGenericBeans((BeanFactory)this.beanFactory, User.class);
-        assertEquals(1, beanTypesAndNames.size());
-        assertTrue(beanTypesAndNames.containsKey(User.class));
-        assertEquals(beanName, beanTypesAndNames.get(User.class));
-    }
-
-    @Test
-    void testRegisterGenericBeanWithBeanFactory() {
-        String beanName = "user";
-        Entry<String, Boolean> beanNameAndRegistered = registerGenericBean((BeanFactory)this.beanFactory, User.class);
-        assertEquals(beanName, beanNameAndRegistered.getKey());
-        assertTrue(beanNameAndRegistered.getValue());
-
-        beanNameAndRegistered = registerGenericBean((BeanFactory)this.beanFactory, User.class);
-        assertEquals(beanName, beanNameAndRegistered.getKey());
-        assertFalse(beanNameAndRegistered.getValue());
     }
 
     private void testRegisterBeanWithBeanFactoryHelper(BiConsumer<String, Object> beanConsumer) {
@@ -335,7 +298,8 @@ class BeanRegistrarTest {
     private String registerUserAsSingleton() {
         String beanName = "user";
         User user = new User();
-        registerSingleton((SingletonBeanRegistry)this.beanFactory, beanName, user);
+        registerSingleton(this.beanFactory, beanName, user);
+        registerSingleton((BeanFactory) null, beanName, user);
         assertEquals(user, this.beanFactory.getBean(beanName));
         return beanName;
     }
@@ -344,12 +308,12 @@ class BeanRegistrarTest {
                                        boolean primary, String... expectedBeanNames) {
         boolean registered = booleanSupplier.get();
 
-        String[] beanNames = this.beanFactory.getBeanNamesForType(User.class);
+        String[] beanNames = this.defaultListableBeanFactory.getBeanNamesForType(User.class);
 
         assertEquals(expectedRegistered, registered);
         assertArrayEquals(expectedBeanNames, beanNames);
         for (String beanName : beanNames) {
-            BeanDefinition beanDefinition = this.beanFactory.getBeanDefinition(beanName);
+            BeanDefinition beanDefinition = this.defaultListableBeanFactory.getBeanDefinition(beanName);
             assertEquals(role, beanDefinition.getRole());
             assertEquals(primary, beanDefinition.isPrimary());
         }
