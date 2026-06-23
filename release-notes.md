@@ -548,4 +548,29 @@ For a detailed list of changes, see the [Full Changelog](#).
 
 **Full Changelog:** Available in the project repository.
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.30...0.2.31
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.30...0.2.31## v0.2.32
+
+# Release Notes - Version 0.2.32
+
+## New Features
+- **Environment Configuration**: Added `EnvironmentEnabled` interface to manage enabled property access with public accessors. ([#a31ce0024](https://example.com/commit/a31ce0024))
+- **Spring Factories**: Added a test for Spring factories initializers. ([#a12a87620](https://example.com/commit/a12a87620))
+
+## Bug Fixes
+- Addressed inconsistencies in WebFlux testing by using `loadFactoryClasses`. ([#9dfd1daa0](https://example.com/commit/9dfd1daa0))
+
+## Test Improvements
+- Added new tests for `WebFluxExtensionInitializer` and `EnvironmentEnabled` functionality. ([#a12a87620](https://example.com/commit/a12a87620), [#5ba4edbcd](https://example.com/commit/5ba4edbcd))
+
+## Other Changes
+- Improved logging granularity for the `isEnabled` method with trace and info levels. ([#e60c94f04](https://example.com/commit/e60c94f04))
+- Removed unused imports and simplified codebase. ([#15ecc12dc](https://example.com/commit/15ecc12dc), [#2c8c7ad43](https://example.com/commit/2c8c7ad43))
+- Reverted changes to `auto-register` property behavior in initializer methods. ([#8c8672940](https://example.com/commit/8c8672940))
+- Updated `README.md` to reflect the latest version `0.2.32` in examples. ([#2e518788b](https://example.com/commit/2e518788b))
+- Various chore and merge commits. ([#1452f5342](https://example.com/commit/1452f5342), [#de4d38b78](https://example.com/commit/de4d38b78))  
+
+---
+
+For the full list of changes, refer to the [changelog](https://example.com/changelog).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.31...0.2.32
