@@ -522,4 +522,30 @@ Looking forward to hearing your feedback on this release! 🚀
 
 For a detailed list of changes, see the [Full Changelog](#).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.29...0.2.30
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.29...0.2.30## v0.2.31
+
+# Release Notes - Version 0.2.31  
+
+## New Features  
+- Added `BeanFactory` overload methods to `BeanRegistrar` for enhanced flexibility.  
+- Enabled and tested `AutoRegistrationBeanInitializer` for improved auto-registration capabilities.  
+- Registered `EnableAutoRegistrationBean` via configuration.  
+
+## Bug Fixes  
+- Resolved testing inconsistencies by fixing and consolidating test methods for `BeanFactory` overloads.  
+
+## Documentation  
+- Improved initializer documentation and added details for `isRegistered`.  
+
+## Test Improvements  
+- Refactored `BeanRegistrar` tests to directly utilize `BeanFactory`.  
+- Added comprehensive test coverage for `BeanFactory` overload methods in `BeanRegistrar`.  
+
+## Other Changes  
+- Removed outdated test file `BeanInitializerTest.java`.  
+
+**Note:** This release introduces multiple improvements and refactors to enhance modularity, testability, and functionality related to the `BeanFactory`.  
+
+**Full Changelog:** Available in the project repository.
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.30...0.2.31
