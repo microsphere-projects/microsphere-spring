@@ -549,4 +549,26 @@ Full Changelog: [0.1.24...0.1.25](link-to-changelog)
 
 Full Changelog: See [GitHub Commits](https://github.com/mercyblitz/dev-1.x/compare/0.1.29...0.1.30) for more details.
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.29...0.1.30
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.29...0.1.30## v0.1.31
+
+# Release Notes for v0.1.31
+
+## New Features
+- **BeanFactory Enhancements**: Introduced direct registration methods using `BeanFactory`, including initializers and resolvers.  
+  - Added `AutoRegistrationBeanInitializer` to streamline component registration.  
+  - Enabled `EnableAutoRegistrationBean` registration via configuration beans.  
+
+## Documentation
+- Updated README to reflect the latest version numbers.  
+
+## Test Improvements
+- Replaced `registry` usage with `beanFactory` in tests for consistency and accuracy.  
+
+## Other Changes
+- Internal merge: synced `release-1.x` into `dev-1.x`.  
+
+---
+
+**Note:** This release focuses on improving the registration process using `BeanFactory` for better configurability and lifecycle management.
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.30...0.1.31
