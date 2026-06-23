@@ -100,12 +100,12 @@ public class ListenableAutowireCandidateResolverInitializer extends Configurable
     }
 
     @Override
-    protected String getEnabledPropertyName() {
+    public String getEnabledPropertyName() {
         return ENABLED_PROPERTY_NAME;
     }
 
     @Override
-    protected boolean getDefaultEnabled() {
+    public boolean getDefaultEnabled() {
         return DEFAULT_ENABLED_PROPERTY_VALUE;
     }
 }
