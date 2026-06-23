@@ -571,4 +571,30 @@ Full Changelog: See [GitHub Commits](https://github.com/mercyblitz/dev-1.x/compa
 
 **Note:** This release focuses on improving the registration process using `BeanFactory` for better configurability and lifecycle management.
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.30...0.1.31
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.30...0.1.31## v0.1.32
+
+# Release Notes for Version 0.1.32
+
+## New Features
+- Added `WebFluxExtensionInitializer` with corresponding tests. ([b5f9071e](https://github.com/mercyblitz/dev/commit/b5f9071ed))
+- Implemented `EnvironmentEnabled` interface with public getters and logging enhancements. ([9fa17df9](https://github.com/mercyblitz/dev/commit/9fa17df92), [963411c6](https://github.com/mercyblitz/dev/commit/963411c6))
+  
+## Test Improvements
+- Added tests for Spring factories and `EnvironmentEnabled`. ([03900e6a](https://github.com/mercyblitz/dev/commit/03900e6aa), [064fad31](https://github.com/mercyblitz/dev/commit/064fad313))
+- Improved tests by switching to `loadFactoryClasses` and `Set`. ([48fa2d87](https://github.com/mercyblitz/dev/commit/48fa2d87a))
+
+## Bug Fixes
+- Removed unused imports and variables. ([941dcd2b](https://github.com/mercyblitz/dev/commit/941dcd2b5))
+
+## Documentations
+- Updated README with the latest version information. ([23d8a485](https://github.com/mercyblitz/dev/commit/23d8a485e))
+
+## Build and Workflow Enhancements
+- Merged changes from `release-1.x` into `dev-1.x`. ([becf8474](https://github.com/mercyblitz/dev/commit/becf8474f))
+- Bumped version to `0.1.32`. ([db61398a](https://github.com/mercyblitz/dev/commit/db61398ae))
+
+---
+
+For a complete list of changes, please refer to the [Full Changelog](https://github.com/mercyblitz/dev/releases/tag/v0.1.32).
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.31...0.1.32
