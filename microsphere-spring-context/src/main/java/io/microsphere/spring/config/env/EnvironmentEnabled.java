@@ -69,14 +69,13 @@ public interface EnvironmentEnabled {
         boolean enabled = environment.getProperty(enabledPropertyName, boolean.class, getDefaultEnabled());
         Class<?> currentClass = getClass();
         Logger logger = getLogger(currentClass);
-        boolean infoEnabled = logger.isInfoEnabled();
         if (enabled) {
-            if (infoEnabled) {
-                logger.info("The {} is enabled, if it needs to be disabled[defalt : '{}'], please set the property '{}' to 'false' .",
+            if (logger.isTraceEnabled()) {
+                logger.trace("The {} is enabled, if it needs to be disabled[defalt : '{}'], please set the property '{}' to 'false' .",
                         currentClass, getDefaultEnabled(), getEnabledPropertyName());
             }
         } else {
-            if (infoEnabled) {
+            if (logger.isInfoEnabled()) {
                 logger.info("The {} is disabled, if it needs to be enabled[defalt : '{}'], please set the property '{}' to 'true' .",
                         currentClass, getDefaultEnabled(), getEnabledPropertyName());
             }
