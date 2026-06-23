@@ -1,3 +1,7 @@
 # SpringWebHelper
 io.microsphere.spring.web.util.SpringWebHelper=\
 io.microsphere.spring.webflux.util.SpringWebFluxHelper
+
+# ApplicationContextInitializer
+org.springframework.context.ApplicationContextInitializer=\
+io.microsphere.spring.webflux.annotation.WebFluxExtensionInitializer
