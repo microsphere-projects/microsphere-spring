@@ -29,7 +29,7 @@ import java.util.List;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
-import static io.microsphere.spring.context.annotation.AutoRegistrationBeanInitializer.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
+import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 import static io.microsphere.spring.context.config.AutoRegistrationBean.getAutoRegisteredPropertyName;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 import static org.springframework.core.io.support.SpringFactoriesLoader.loadFactories;
