@@ -92,17 +92,16 @@ public class BeanSourceTest {
 
         testInSpringContainer(context -> {
             ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-            BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
-            Map<Class<?>, String> beanTypesAndNames = registerBeans(registry, ofArray(BEAN_FACTORY), User.class);
+            Map<Class<?>, String> beanTypesAndNames = registerBeans(beanFactory, ofArray(BEAN_FACTORY), User.class);
             assertBeans(beanTypesAndNames);
 
-            beanTypesAndNames = registerBeans(registry, ofArray(BEAN_FACTORY, SPRING_FACTORIES), User.class);
+            beanTypesAndNames = registerBeans(beanFactory, ofArray(BEAN_FACTORY, SPRING_FACTORIES), User.class);
             assertBeans(beanTypesAndNames);
 
-            beanTypesAndNames = registerBeans(registry, ofArray(BEAN_FACTORY, SPRING_FACTORIES, JAVA_SERVICE_PROVIDER), User.class);
+            beanTypesAndNames = registerBeans(beanFactory, ofArray(BEAN_FACTORY, SPRING_FACTORIES, JAVA_SERVICE_PROVIDER), User.class);
             assertBeans(beanTypesAndNames);
 
-            beanTypesAndNames = registerBeans(registry, values());
+            beanTypesAndNames = registerBeans(beanFactory, values());
             assertSame(emptyMap(), beanTypesAndNames);
         }, User.class);
     }
