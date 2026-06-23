@@ -940,6 +940,370 @@ public abstract class BeanRegistrar {
         return immutableEntry(beanName, registered);
     }
 
+    // ============= BeanFactory-based overload methods =============
+
+    /**
+    * Registers an infrastructure bean with the specified type into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerInfrastructureBean(BeanDefinitionRegistry, Class)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanType    The class type of the bean to be registered.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerInfrastructureBean(BeanFactory beanFactory, Class<?> beanType) {
+       return registerInfrastructureBean(asBeanDefinitionRegistry(beanFactory), beanType);
+    }
+
+    /**
+    * Registers an infrastructure bean with the specified type and optional name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerInfrastructureBean(BeanDefinitionRegistry, String, Class)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanName    The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanType    The class type of the bean to be registered.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerInfrastructureBean(BeanFactory beanFactory, @Nullable String beanName, Class<?> beanType) {
+       return registerInfrastructureBean(asBeanDefinitionRegistry(beanFactory), beanName, beanType);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, Class)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanType    The class type of the bean to be registered.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, Class<?> beanType) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanType);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type with an optional name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, Class)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanName    The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanType    The class type of the bean to be registered.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName, Class<?> beanType) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanType);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type with constructor arguments into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, Class, Object...)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory          The {@link BeanFactory} where the bean will be registered.
+    * @param beanName             The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanType             The class type of the bean to be registered.
+    * @param constructorArguments The arguments to pass to the bean's constructor.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
+                                                Class<?> beanType, Object... constructorArguments) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanType, constructorArguments);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type with a specific role into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, Class, int)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanName    The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanType    The class type of the bean to be registered.
+    * @param role        The role of the bean definition.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
+                                                Class<?> beanType, int role) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanType, role);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type with custom configuration into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, Class, Consumer)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory    The {@link BeanFactory} where the bean will be registered.
+    * @param beanType       The class type of the bean to be registered.
+    * @param builderConsumer A {@link Consumer} that configures the {@link BeanDefinitionBuilder}.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, Class<?> beanType,
+                                                Consumer<BeanDefinitionBuilder> builderConsumer) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanType, builderConsumer);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type with custom configuration and optional name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, Class, Consumer)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory    The {@link BeanFactory} where the bean will be registered.
+    * @param beanName       The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanType       The class type of the bean to be registered.
+    * @param builderConsumer A {@link Consumer} that configures the {@link BeanDefinitionBuilder}.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
+                                                Class<?> beanType, Consumer<BeanDefinitionBuilder> builderConsumer) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanType, builderConsumer);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type with the primary flag into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, Class, boolean)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanType    The class type of the bean to be registered.
+    * @param primary     Whether this bean should be marked as the primary bean.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, Class<?> beanType, boolean primary) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanType, primary);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} for the specified bean type with the primary flag and optional name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, Class, boolean)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanName    The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanType    The class type of the bean to be registered.
+    * @param primary     Whether this bean should be marked as the primary bean.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
+                                                Class<?> beanType, boolean primary) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanType, primary);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, BeanDefinition)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory    The {@link BeanFactory} where the bean will be registered.
+    * @param beanDefinition The bean definition to register.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, BeanDefinition beanDefinition) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanDefinition);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} with an optional name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, BeanDefinition)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory    The {@link BeanFactory} where the bean will be registered.
+    * @param beanName       The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanDefinition The bean definition to register.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
+                                                BeanDefinition beanDefinition) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanDefinition);
+    }
+
+    /**
+    * Registers a {@link BeanDefinition} with an optional name and overriding control into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBeanDefinition(BeanDefinitionRegistry, String, BeanDefinition, boolean)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory                   The {@link BeanFactory} where the bean will be registered.
+    * @param beanName                      The name to assign to the bean in the factory, or {@code null} to generate a unique name.
+    * @param beanDefinition                The bean definition to register.
+    * @param allowBeanDefinitionOverriding Whether to allow overriding of an existing bean definition.
+    * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+    */
+    public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
+                                                BeanDefinition beanDefinition, boolean allowBeanDefinitionOverriding) {
+       return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanDefinition, allowBeanDefinitionOverriding);
+    }
+
+    /**
+    * Registers a singleton bean with the specified name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerSingleton(SingletonBeanRegistry, String, Object)}
+    * after converting the {@link BeanFactory} to a {@link SingletonBeanRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the singleton bean will be registered.
+    * @param beanName    The name to assign to the singleton bean in the factory.
+    * @param bean        The singleton instance to register.
+    */
+    public static void registerSingleton(BeanFactory beanFactory, String beanName, Object bean) {
+       if (beanFactory instanceof SingletonBeanRegistry) {
+           registerSingleton((SingletonBeanRegistry) beanFactory, beanName, bean);
+       } else if (logger.isWarnEnabled()) {
+           logger.warn("BeanFactory [{}] is not an instance of SingletonBeanRegistry, cannot register singleton bean [name : '{}'].", beanFactory.getClass().getName(), beanName);
+       }
+    }
+
+    /**
+    * Registers a {@link org.springframework.beans.factory.FactoryBean} with the specified name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerFactoryBean(BeanDefinitionRegistry, String, Object)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the FactoryBean will be registered.
+    * @param beanName    The name to assign to the FactoryBean in the factory.
+    * @param bean        The bean instance that will be wrapped by the FactoryBean.
+    */
+    public static void registerFactoryBean(BeanFactory beanFactory, String beanName, Object bean) {
+       registerFactoryBean(asBeanDefinitionRegistry(beanFactory), beanName, bean);
+    }
+
+    /**
+    * Registers a {@link org.springframework.beans.factory.FactoryBean} with the specified name and primary status into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerFactoryBean(BeanDefinitionRegistry, String, Object, boolean)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the FactoryBean will be registered.
+    * @param beanName    The name to assign to the FactoryBean in the factory.
+    * @param bean        The bean instance that will be wrapped by the FactoryBean.
+    * @param primary     Whether this bean should be marked as the primary bean.
+    */
+    public static void registerFactoryBean(BeanFactory beanFactory, String beanName, Object bean, boolean primary) {
+       registerFactoryBean(asBeanDefinitionRegistry(beanFactory), beanName, bean, primary);
+    }
+
+    /**
+    * Registers a bean instance with the specified name into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBean(BeanDefinitionRegistry, String, Object)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanName    The name to assign to the bean in the factory.
+    * @param bean        The bean instance to register.
+    */
+    public static void registerBean(BeanFactory beanFactory, String beanName, Object bean) {
+       registerBean(asBeanDefinitionRegistry(beanFactory), beanName, bean);
+    }
+
+    /**
+    * Registers a bean instance with the specified name and primary status into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerBean(BeanDefinitionRegistry, String, Object, boolean)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanName    The name to assign to the bean in the factory.
+    * @param bean        The bean instance to register.
+    * @param primary     Whether this bean should be marked as the primary bean.
+    */
+    public static void registerBean(BeanFactory beanFactory, String beanName, Object bean, boolean primary) {
+       registerBean(asBeanDefinitionRegistry(beanFactory), beanName, bean, primary);
+    }
+
+    /**
+    * Registers generic bean definitions for the specified collection of bean classes into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerGenericBeans(BeanDefinitionRegistry, Collection)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the beans will be registered.
+    * @param beanClasses A collection of class types of the beans to be registered.
+    * @return An unmodifiable map of registered bean classes to their assigned bean names.
+    */
+    public static Map<Class<?>, String> registerGenericBeans(BeanFactory beanFactory, Collection<Class<?>> beanClasses) {
+       return registerGenericBeans(asBeanDefinitionRegistry(beanFactory), beanClasses);
+    }
+
+    /**
+    * Registers generic bean definitions for the specified bean classes into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerGenericBeans(BeanDefinitionRegistry, Class...)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the beans will be registered.
+    * @param beanClasses An array of class types of the beans to be registered.
+    * @return An unmodifiable map of registered bean classes to their assigned bean names.
+    */
+    public static Map<Class<?>, String> registerGenericBeans(BeanFactory beanFactory, Class<?>... beanClasses) {
+       return registerGenericBeans(asBeanDefinitionRegistry(beanFactory), beanClasses);
+    }
+
+    /**
+    * Registers a generic bean definition for the specified bean class into the given bean factory.
+    * <p>
+    * This method delegates to {@link #registerGenericBean(BeanDefinitionRegistry, Class)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory The {@link BeanFactory} where the bean will be registered.
+    * @param beanClass   The class type of the bean to be registered.
+    * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
+    * the bean was successfully registered, or {@code false} if it was already present.
+    */
+    public static Entry<String, Boolean> registerGenericBean(BeanFactory beanFactory, Class<?> beanClass) {
+       return registerGenericBean(asBeanDefinitionRegistry(beanFactory), beanClass);
+    }
+
+    /**
+    * Registers a generic bean definition for the specified bean class into the given bean factory using a custom bean name generator.
+    * <p>
+    * This method delegates to {@link #registerGenericBean(BeanDefinitionRegistry, Class, BeanNameGenerator)}
+    * after converting the {@link BeanFactory} to a {@link BeanDefinitionRegistry}.
+    * </p>
+    *
+    * @param beanFactory       The {@link BeanFactory} where the bean will be registered.
+    * @param beanClass        The class type of the bean to be registered.
+    * @param beanNameGenerator The {@link BeanNameGenerator} to use for generating the bean name.
+    * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
+    * the bean was successfully registered, or {@code false} if it was already present.
+    */
+    public static Entry<String, Boolean> registerGenericBean(BeanFactory beanFactory, Class<?> beanClass,
+                                                            BeanNameGenerator beanNameGenerator) {
+       return registerGenericBean(asBeanDefinitionRegistry(beanFactory), beanClass, beanNameGenerator);
+    }
+
     private BeanRegistrar() {
     }
 }
