@@ -20,7 +20,6 @@ package io.microsphere.spring.context;
 import io.microsphere.logging.Logger;
 import io.microsphere.spring.beans.BeanUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -29,7 +28,6 @@ import static io.microsphere.constants.PropertyConstants.ENABLED_PROPERTY_NAME;
 import static io.microsphere.constants.SymbolConstants.DOT;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.generateBeanName;
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
 import static io.microsphere.spring.constants.PropertyConstants.APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX;
 
@@ -157,7 +155,6 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      */
     protected void registerSelf(ConfigurableApplicationContext context) {
         ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
-        registerBean(registry, getBeanName(), this);
+        registerBean(beanFactory, getBeanName(), this);
     }
 }
