@@ -249,12 +249,6 @@ class BeanRegistrarTest {
     void testRegisterBeanDefinitionWithBeanFactory() {
         assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0");
         assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
-    }
-
-    @Test
-    void testRegisterBeanDefinitionWithBeanFactoryAndName() {
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0");
-        assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1");
         
         String beanName = "user";
         assertBeanDefinitions(() -> registerBeanDefinition((BeanFactory)this.beanFactory, beanName, User.class), true, ROLE_APPLICATION, false, "io.microsphere.spring.test.domain.User#0", "io.microsphere.spring.test.domain.User#1", beanName);

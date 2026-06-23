@@ -1163,7 +1163,8 @@ public abstract class BeanRegistrar {
     * Registers a singleton bean with the specified name into the given bean factory.
     * <p>
     * This method delegates to {@link #registerSingleton(SingletonBeanRegistry, String, Object)}
-    * after converting the {@link BeanFactory} to a {@link SingletonBeanRegistry}.
+    * if the {@link BeanFactory} is an instance of {@link SingletonBeanRegistry}.
+    * If not, a warning is logged as singleton registration is not supported.
     * </p>
     *
     * @param beanFactory The {@link BeanFactory} where the singleton bean will be registered.
