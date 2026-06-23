@@ -23,6 +23,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
 import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
 import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 
@@ -34,11 +35,15 @@ import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBea
  * @see AutoRegistrationBean
  * @since 1.0.0
  */
-@EnableAutoRegistrationBean
 public class AutoRegistrationBeanInitializer extends ConfigurableApplicationContextInitializer {
 
     @Override
     protected void initialize(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
+        registerBeanDefinition(context.getBeanFactory(), Config.class);
+    }
+
+    @EnableAutoRegistrationBean
+    static class Config {
     }
 
     @Override
