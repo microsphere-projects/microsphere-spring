@@ -25,9 +25,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
-import java.util.List;
+import java.util.Set;
 
-import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryNames;
+import static io.microsphere.spring.core.io.support.SpringFactoriesLoaderUtils.loadFactoryClasses;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -60,8 +60,11 @@ class WebFluxExtensionInitializerTest {
         webFluxExtensionInitializer.initialize(context);
         assertEquals("microsphere.spring.webflux.enabled", webFluxExtensionInitializer.getEnabledPropertyName());
         assertTrue(webFluxExtensionInitializer.getDefaultEnabled());
+    }
 
-        List<String> factoryClassNames = loadFactoryNames(ApplicationContextInitializer.class);
-        assertTrue(factoryClassNames.contains(WebFluxExtensionInitializer.class.getName()));
+    @Test
+    void testSpringFactories() {
+        Set<Class<ApplicationContextInitializer>> factoryClasses = loadFactoryClasses(ApplicationContextInitializer.class);
+        assertTrue(factoryClasses.contains(WebFluxExtensionInitializer.class));
     }
 }
