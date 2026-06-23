@@ -18,6 +18,7 @@
 package io.microsphere.spring.config.env;
 
 
+import io.microsphere.spring.test.junit.jupiter.SpringLoggingTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @see EnvironmentEnabled
  * @since 1.0.0
  */
+@SpringLoggingTest
 class EnvironmentEnabledTest {
 
     private MockEnvironment mockEnvironment;

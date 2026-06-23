@@ -18,10 +18,12 @@
 package io.microsphere.spring.config.env;
 
 import io.microsphere.annotation.Nonnull;
+import io.microsphere.logging.Logger;
 import org.springframework.core.env.Environment;
 
 import static io.microsphere.constants.PropertyConstants.ENABLED_PROPERTY_NAME;
 import static io.microsphere.constants.SymbolConstants.DOT;
+import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
 import static io.microsphere.util.ClassUtils.getTypeName;
 
@@ -64,7 +66,22 @@ public interface EnvironmentEnabled {
      */
     default boolean isEnabled(@Nonnull Environment environment) {
         String enabledPropertyName = getEnabledPropertyName();
-        return environment.getProperty(enabledPropertyName, boolean.class, getDefaultEnabled());
+        boolean enabled = environment.getProperty(enabledPropertyName, boolean.class, getDefaultEnabled());
+        Class<?> currentClass = getClass();
+        Logger logger = getLogger(currentClass);
+        boolean infoEnabled = logger.isInfoEnabled();
+        if (enabled) {
+            if (infoEnabled) {
+                logger.info("The {} is enabled, if it needs to be disabled[defalt : '{}'], please set the property '{}' to 'false' .",
+                        currentClass, getDefaultEnabled(), getEnabledPropertyName());
+            }
+        } else {
+            if (infoEnabled) {
+                logger.info("The {} is disabled, if it needs to be enabled[defalt : '{}'], please set the property '{}' to 'true' .",
+                        currentClass, getDefaultEnabled(), getEnabledPropertyName());
+            }
+        }
+        return enabled;
     }
 
     /**
