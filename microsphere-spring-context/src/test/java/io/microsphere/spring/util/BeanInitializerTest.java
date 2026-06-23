@@ -17,14 +17,17 @@
 package io.microsphere.spring.util;
 
 import io.microsphere.spring.beans.factory.support.BeanRegistrar;
+import io.microsphere.spring.beans.factory.BeanFactoryUtils;
 import io.microsphere.spring.beans.test.TestBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.hasAlias;
 import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerInfrastructureBean;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,14 +53,14 @@ class BeanInitializerTest {
     @Test
     void testRegisterInfrastructureBean() {
 
-        assertTrue(registerInfrastructureBean(registry, BEAN_NAME, TestBean.class));
+        assertTrue(registerInfrastructureBean((BeanDefinitionRegistry) registry, BEAN_NAME, TestBean.class));
 
         BeanDefinition beanDefinition = registry.getBeanDefinition(BEAN_NAME);
 
         assertEquals(ROLE_INFRASTRUCTURE, beanDefinition.getRole());
 
         for (int i = 0; i < 9; i++) {
-            assertFalse(registerInfrastructureBean(registry, BEAN_NAME, TestBean.class));
+            assertFalse(registerInfrastructureBean((BeanDefinitionRegistry) registry, BEAN_NAME, TestBean.class));
         }
     }
 
