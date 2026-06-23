@@ -58,6 +58,9 @@ class ConfigurableApplicationContextInitializerTest extends ConfigurableApplicat
         assertSame(this.testContext, this.context);
         assertSame(this.testEnvironment, this.environment);
 
+        // reinitialize
+        this.initialize(this.testContext);
+
         this.testEnvironment.setProperty(getEnabledPropertyName(), "false");
         this.initialize(this.testContext);
     }
@@ -73,7 +76,7 @@ class ConfigurableApplicationContextInitializerTest extends ConfigurableApplicat
 
     @Test
     void testGetEnabledPropertyName() {
-        assertEquals("microsphere.spring.context-initializer.ConfigurableApplicationContextInitializerTest.enabled",
+        assertEquals("microsphere.spring.context-initializer.configurableApplicationContextInitializerTest.enabled",
                 getEnabledPropertyName());
     }
 

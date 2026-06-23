@@ -18,6 +18,9 @@
 package io.microsphere.spring.context;
 
 import io.microsphere.logging.Logger;
+import io.microsphere.spring.beans.BeanUtils;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -25,6 +28,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import static io.microsphere.constants.PropertyConstants.ENABLED_PROPERTY_NAME;
 import static io.microsphere.constants.SymbolConstants.DOT;
 import static io.microsphere.logging.LoggerFactory.getLogger;
+import static io.microsphere.spring.beans.BeanUtils.generateBeanName;
+import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
+import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBean;
 import static io.microsphere.spring.constants.PropertyConstants.APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX;
 
 /**
@@ -41,15 +47,23 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
 
     protected final Logger logger = getLogger(getClass());
 
+    private String beanName;
+
     @Override
     public final void initialize(ConfigurableApplicationContext context) {
         ConfigurableEnvironment environment = context.getEnvironment();
-        if (isEnabled(context, environment)) {
-            initialize(context, environment);
+        if (!isEnabled(context, environment)) {
+            logger.info("The {} was disabled, if it needs to be enabled, please set the property '{}' to 'true' .",
+                    getClass(), getEnabledPropertyName());
             return;
         }
-        logger.info("The {} was disabled, if it needs to be enabled, please set the property '{}' to 'true' .",
-                getClass(), getEnabledPropertyName());
+        if (isRegistered(context)) {
+            logger.info("Current {} Bean[name : '{}'] is already registered to the Spring Context[id : '{}'] , so it will not be initialized.",
+                    getClass(), getBeanName(), context.getId());
+            return;
+        }
+        initialize(context, environment);
+        registerSelf(context);
     }
 
     /**
@@ -66,6 +80,8 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      * @param context     the {@link ConfigurableApplicationContext}
      * @param environment the {@link ConfigurableEnvironment}
      * @return if enabled, return <code>true</code>, or <code>false</code>
+     * @see #getEnabledPropertyName()
+     * @see #getDefaultEnabled()
      */
     protected boolean isEnabled(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
         String propertyName = getEnabledPropertyName();
@@ -76,10 +92,10 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      * Get the property name of the enabled
      *
      * @return the property name of the enabled
+     * @see #getBeanName()
      */
     protected String getEnabledPropertyName() {
-        String simpleClassName = getClass().getSimpleName();
-        return APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX + simpleClassName + DOT + ENABLED_PROPERTY_NAME;
+        return APPLICATION_CONTEXT_INITIALIZER_PROPERTY_NAME_PREFIX + getBeanName() + DOT + ENABLED_PROPERTY_NAME;
     }
 
     /**
@@ -90,5 +106,35 @@ public abstract class ConfigurableApplicationContextInitializer implements Appli
      */
     protected boolean getDefaultEnabled() {
         return true;
+    }
+
+    /**
+     * Get the bean name of this {@link ConfigurableApplicationContextInitializer}
+     *
+     * @return the bean name of this {@link ConfigurableApplicationContextInitializer}
+     * @see BeanUtils#generateBeanName(Class)
+     */
+    protected String getBeanName() {
+        String beanName = this.beanName;
+        if (beanName == null) {
+            beanName = generateBeanName(getClass());
+            this.beanName = beanName;
+        }
+        return beanName;
+    }
+
+    protected boolean isRegistered(ConfigurableApplicationContext context) {
+        return context.containsBean(getBeanName());
+    }
+
+    /**
+     * Register self to the {@link ConfigurableApplicationContext}
+     *
+     * @param context the {@link ConfigurableApplicationContext}
+     */
+    protected void registerSelf(ConfigurableApplicationContext context) {
+        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
+        registerBean(registry, getBeanName(), this);
     }
 }
