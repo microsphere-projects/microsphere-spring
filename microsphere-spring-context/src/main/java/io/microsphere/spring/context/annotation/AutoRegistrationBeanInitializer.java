@@ -19,14 +19,11 @@ package io.microsphere.spring.context.annotation;
 
 import io.microsphere.spring.context.ConfigurableApplicationContextInitializer;
 import io.microsphere.spring.context.config.AutoRegistrationBean;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asBeanDefinitionRegistry;
-import static io.microsphere.spring.beans.factory.support.BeanRegistrar.registerBeanDefinition;
+import static io.microsphere.spring.constants.PropertyConstants.DEFAULT_AUTO_REGISTERED_VALUE;
 import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBean.BEANS_AUTO_REGISTERED_PROEPRTY_NAME;
 
 /**
@@ -37,17 +34,11 @@ import static io.microsphere.spring.context.annotation.EnableAutoRegistrationBea
  * @see AutoRegistrationBean
  * @since 1.0.0
  */
+@EnableAutoRegistrationBean
 public class AutoRegistrationBeanInitializer extends ConfigurableApplicationContextInitializer {
 
     @Override
     protected void initialize(ConfigurableApplicationContext context, ConfigurableEnvironment environment) {
-        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-        BeanDefinitionRegistry registry = asBeanDefinitionRegistry(beanFactory);
-        registerBeanDefinition(registry, Config.class);
-    }
-
-    @EnableAutoRegistrationBean
-    static class Config {
     }
 
     @Override
@@ -57,6 +48,6 @@ public class AutoRegistrationBeanInitializer extends ConfigurableApplicationCont
 
     @Override
     protected boolean getDefaultEnabled() {
-        return super.getDefaultEnabled();
+        return DEFAULT_AUTO_REGISTERED_VALUE;
     }
 }
