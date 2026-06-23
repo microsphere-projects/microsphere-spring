@@ -24,9 +24,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.lang.annotation.Annotation;
-import java.util.Set;
 
-import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator.INSTANCE;
 
 /**
@@ -70,7 +68,6 @@ public abstract class AnnotatedBeanCapableImportBeanDefinitionRegistrar<A extend
     public final void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry,
                                               BeanNameGenerator importBeanNameGenerator) {
         if (isEnabled(metadata)) {
-            Set<String> imports = newLinkedHashSet();
             ResolvablePlaceholderAnnotationAttributes<A> annotationAttributes = getAnnotationAttributes(metadata);
             registerBeanDefinitions(metadata, registry, importBeanNameGenerator, annotationAttributes);
         }
