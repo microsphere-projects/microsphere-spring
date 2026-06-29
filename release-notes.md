@@ -597,4 +597,23 @@ Full Changelog: See [GitHub Commits](https://github.com/mercyblitz/dev-1.x/compa
 
 For a complete list of changes, please refer to the [Full Changelog](https://github.com/mercyblitz/dev/releases/tag/v0.1.32).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.31...0.1.32
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.31...0.1.32## v0.1.33
+
+# Release Notes - Version 0.1.33
+
+## Dependency Updates
+- Bumped **Tomcat** to `9.0.119`. ([ce4cff31d](#))
+- Bumped **microsphere-logging** to `0.1.19`. ([37519114e](#))
+- Bumped **microsphere-java** to `0.3.11`. ([babc8df8d](#))
+- Bumped **microsphere-build** to `0.3.5`. ([debff7c7e](#))
+
+## Documentation
+- Updated `README` with latest release versions. ([690dbaca4](#))
+
+## Other Changes
+- Merged `release-1.x` branch into `dev-1.x`. ([891301f3e](#))
+- Bumped version to next patch after publishing `0.1.32`. ([208b8630d](#))
+
+---
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.32...0.1.33
