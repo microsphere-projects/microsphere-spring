@@ -91,8 +91,8 @@ Choose the version that matches your Spring Framework line:
 
 | Branch | Spring Framework compatibility | Latest version |
 |--------|--------------------------------|----------------|
-| `main` | 6.0.x – 7.0.x                  | `0.2.32`       |
-| `1.x`  | 4.3.x – 5.3.x                  | `0.1.32`       |
+| `main` | 6.0.x – 7.0.x                  | `0.2.33`       |
+| `1.x`  | 4.3.x – 5.3.x                  | `0.1.33`       |
 
 ### 2. Add individual modules
 
