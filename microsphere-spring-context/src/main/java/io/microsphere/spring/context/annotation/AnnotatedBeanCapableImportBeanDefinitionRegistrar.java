@@ -34,7 +34,7 @@ import static org.springframework.context.annotation.FullyQualifiedAnnotationBea
  * This class extends {@link AnnotatedBeanCapableImportCandidate} to provide annotation-driven import capabilities
  * and implements {@link ImportBeanDefinitionRegistrar} to handle bean definition registration.
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  * <pre>{@code
  * public class MyFeatureRegistrar extends AnnotatedBeanCapableImportBeanDefinitionRegistrar<EnableMyFeature> {
  *

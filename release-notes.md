@@ -573,4 +573,20 @@ For a detailed list of changes, see the [Full Changelog](#).
 
 For the full list of changes, refer to the [changelog](https://example.com/changelog).
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.31...0.2.32
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.31...0.2.32## v0.2.33
+
+# Release Notes - Version 0.2.33  
+
+## Dependency Updates  
+- **Microsphere Java**: Bumped to `0.3.11`.  
+- **Microsphere Logging**: Bumped to latest version.  
+- **Microsphere Build**: Bumped to `0.3.5`.  
+
+## Documentation  
+- Updated `README` branch version numbers.  
+
+## Other Changes  
+- Maintenance: Merged `main` into `release`.  
+- Maintenance: Bumped version to next patch post `0.2.32`.  
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.32...0.2.33
