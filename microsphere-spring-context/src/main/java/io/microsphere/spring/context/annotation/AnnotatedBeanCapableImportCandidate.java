@@ -46,7 +46,7 @@ import static org.springframework.core.ResolvableType.forType;
  *     <li>Provides resolved annotation attributes via {@link ResolvablePlaceholderAnnotationAttributes}.</li>
  * </ul>
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  * <pre>{@code
  * // 1. Define your custom annotation
  * @Target(ElementType.TYPE)

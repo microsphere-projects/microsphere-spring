@@ -48,7 +48,7 @@ import static org.springframework.aop.support.AopUtils.getTargetClass;
  *       {@link BeanNameAware}, delegating calls to the target object if applicable.</li>
  * </ul>
  *
- * <h3>Usage Example:</h3>
+ * <h3>Example Usage</h3>
  *
  * <pre>{@code
  * MyService myService = new MyServiceImpl();
