@@ -649,4 +649,20 @@ For a complete list of changes, please refer to the [Full Changelog](https://git
 
 ---
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.33...0.1.34
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.33...0.1.34## v0.1.35
+
+# Release Notes - Version 0.1.35
+
+## Dependency Updates
+- Bumped `microsphere-logging` to `0.1.22` for improved logging capabilities. ([2aed112](commit))
+- Bumped `microsphere-java` to `0.3.15` to include the latest enhancements. ([4349419](commit))
+- Bumped `microsphere-build` parent to `0.3.8` for updated build configurations. ([f97b02d](commit))
+
+## Documentation
+- Updated `README` with the latest module versions for clarity. ([1ae3593](commit))
+
+## Other Changes
+- Merged `release-1.x` changes into `dev-1.x` to maintain branch consistency. ([7967b11](commit))
+- Incremented version to `0.1.35` following the release of `0.1.34`. ([0973d02](commit)) 
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.34...0.1.35
