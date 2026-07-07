@@ -17,7 +17,6 @@
 package io.microsphere.spring.webmvc.method.support;
 
 import io.microsphere.annotation.Nullable;
-import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -51,7 +50,6 @@ import java.util.Map;
 
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.MapUtils.newHashMap;
-import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
@@ -75,8 +73,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler, HandlerInterceptor, WebMvcConfigurerAdapter {
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
-
-    private static final Logger logger = getLogger(InterceptingHandlerMethodProcessor.class);
 
     private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = newHashMap(256);
 
