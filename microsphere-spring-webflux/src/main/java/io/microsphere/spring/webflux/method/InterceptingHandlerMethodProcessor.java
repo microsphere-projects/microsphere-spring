@@ -17,7 +17,6 @@
 package io.microsphere.spring.webflux.method;
 
 import io.microsphere.annotation.Nullable;
-import io.microsphere.logging.Logger;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
 import io.microsphere.spring.web.metadata.WebEndpointMapping;
@@ -51,7 +50,6 @@ import java.util.Map;
 
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.lang.function.ThrowableAction.execute;
-import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
@@ -82,9 +80,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         Ordered {
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
-
-    private static final Logger logger = getLogger(InterceptingHandlerMethodProcessor.class);
-
+    
     private static final RequestContextWebFilter delegateWebFilter = new RequestContextWebFilter();
 
     private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = newHashMap(256);
