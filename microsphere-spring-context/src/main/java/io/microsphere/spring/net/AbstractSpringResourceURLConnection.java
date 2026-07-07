@@ -161,7 +161,7 @@ public class AbstractSpringResourceURLConnection extends URLConnection {
         Set<Entry<String, List<String>>> entries = headers.entrySet();
         Iterator<Entry<String, List<String>>> iterator = entries.iterator();
         Entry<String, List<String>> entry = null;
-        for (int i = 0; i <= n & iterator.hasNext(); i++) {
+        for (int i = 0; i <= n && iterator.hasNext(); i++) {
             entry = iterator.next();
         }
         return entry;
