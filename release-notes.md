@@ -589,4 +589,24 @@ For the full list of changes, refer to the [changelog](https://example.com/chang
 - Maintenance: Merged `main` into `release`.  
 - Maintenance: Bumped version to next patch post `0.2.32`.  
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.32...0.2.33
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.32...0.2.33## v0.2.34
+
+# Release Notes - Version 0.2.34
+
+## Bug Fixes
+- Fixed loop condition in header entry lookup for improved accuracy. ([2ebb47f](#))
+
+## Documentations
+- Updated README branch version table with latest entries. ([cc5eb4b](#))
+- Standardized Javadoc example headings for better consistency. ([7e2512b](#))
+
+## Dependency Updates
+- Bumped `microsphere-logging` to version 0.1.20 → 0.1.21. ([36bf141](#))
+- Bumped `microsphere-java` to version 0.3.13 → 0.3.14. ([9a415ef](#))
+- Upgraded parent POM to `microsphere-build` version 0.3.6 → 0.3.7. ([3ba8081](#))
+
+## Other Changes
+- Removed unused loggers from multiple classes to improve code clarity. ([97c93a2](#), [550afb9](#), [f3e5b79](#), [d08520c](#))
+- Tidied up trailing whitespaces in advice class. ([26f4e95](#))
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.33...0.2.34
