@@ -616,4 +616,37 @@ For a complete list of changes, please refer to the [Full Changelog](https://git
 
 ---
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.32...0.1.33
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.32...0.1.33## v0.1.34
+
+# Release Notes - Version 0.1.34
+
+## Dependency Updates
+- **microsphere-logging**: Bumped to `0.1.21`.  
+- **microsphere-java**: Bumped to `0.3.14`.  
+- **microsphere-build**: Bumped parent version to `0.3.7`.  
+
+## Bug Fixes
+- Fixed header iteration loop condition in `65b32124b`.
+
+## Code Quality Improvements
+- Removed unused loggers across multiple components:
+  - `Handler Processor`
+  - `WebFlux Processor`
+  - `Advice` class
+  - `TTLCacheResolver`  
+- Trimmed unnecessary whitespace in multiple files, including:
+  - Parent POM
+  - Handler Processor
+  - Advice class  
+
+## Documentation
+- Updated README with the latest module versions.  
+- Standardized Javadoc example headings for consistency.  
+
+## Other Changes
+- Merged `release-1.x` into `dev-1.x`.  
+- Initial version bump post-release (`0.1.33`).  
+
+---
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.33...0.1.34

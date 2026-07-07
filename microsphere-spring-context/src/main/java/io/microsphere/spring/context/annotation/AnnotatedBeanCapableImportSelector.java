@@ -35,7 +35,7 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
  * for handling annotated bean capabilities and implements {@link ImportSelector} to integrate
  * with Spring's import mechanism.
  *
- * <h3>Usage Example</h3>
+ * <h3>Example Usage</h3>
  * Suppose you want to create an import selector for an annotation {@code @EnableMyFeature}:
  *
  * <pre>{@code
