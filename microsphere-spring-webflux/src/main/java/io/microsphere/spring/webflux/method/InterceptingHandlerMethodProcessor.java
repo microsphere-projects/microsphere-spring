@@ -80,7 +80,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         Ordered {
 
     public static final String BEAN_NAME = "interceptingHandlerMethodProcessor";
-    
+
     private static final RequestContextWebFilter delegateWebFilter = new RequestContextWebFilter();
 
     private final Map<MethodParameter, MethodParameterContext> parameterContextsCache = newHashMap(256);
