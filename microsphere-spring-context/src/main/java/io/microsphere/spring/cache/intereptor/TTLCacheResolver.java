@@ -56,7 +56,7 @@ import static java.util.Collections.emptyList;
  * @since 1.0.0
  */
 public class TTLCacheResolver extends OnceApplicationContextEventListener<ContextRefreshedEvent> implements CacheResolver {
-    
+
     public static final String BEAN_NAME = "ttlCacheResolver";
 
     private static final Map<Class<? extends CacheOperation>, Class<? extends Annotation>> ttlAnnotationTypes = ofMap(
