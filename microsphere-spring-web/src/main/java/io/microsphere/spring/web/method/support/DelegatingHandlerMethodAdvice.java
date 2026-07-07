@@ -41,7 +41,7 @@ public class DelegatingHandlerMethodAdvice extends OnceApplicationContextEventLi
         implements HandlerMethodAdvice {
 
     public static final String BEAN_NAME = "delegatingHandlerMethodAdvice";
-    
+
     private List<HandlerMethodArgumentInterceptor> argumentInterceptors = emptyList();
 
     private List<HandlerMethodInterceptor> methodInterceptors = emptyList();
