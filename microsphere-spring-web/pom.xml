@@ -20,10 +20,10 @@
 
     <dependencies>
 
-        <!-- JSR 305 -->
+        <!-- Microsphere Annotation Processor -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-annotation-processor</artifactId>
             <optional>true</optional>
         </dependency>
 
@@ -34,6 +34,13 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- JSR 305 -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Servlet API -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -41,7 +48,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Spring context -->
+        <!-- Spring Context -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -69,6 +76,11 @@
         </dependency>
 
         <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Microsphere Spring Test -->
         <dependency>
@@ -78,12 +90,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Test -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-
+        
         <!-- Mockito Core -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -95,13 +108,6 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Spring Test -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 
