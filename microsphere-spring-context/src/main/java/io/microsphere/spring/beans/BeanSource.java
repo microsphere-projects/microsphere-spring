@@ -128,7 +128,7 @@ public enum BeanSource {
      * and registers them as generic beans. The underlying {@link ConfigurableListableBeanFactory} is derived
      * from the provided registry for type resolution if necessary.
      *
-     * <h3>Example Usage:</h3>
+     * <h3>Example Usage</h3>
      * <pre>{@code
      * // Register beans from Spring Factories source
      * BeanDefinitionRegistry registry = ...;
@@ -165,7 +165,7 @@ public enum BeanSource {
      * and registers them as generic beans. The underlying {@link BeanDefinitionRegistry} is derived
      * from the provided {@link ConfigurableListableBeanFactory}.
      *
-     * <h3>Example Usage:</h3>
+     * <h3>Example Usage</h3>
      * <pre>{@code
      * // Register beans from Spring Factories source
      * ConfigurableListableBeanFactory beanFactory = ...;
@@ -200,7 +200,7 @@ public enum BeanSource {
      * This method discovers bean classes for the specified {@code beanTypes} using this {@link BeanSource},
      * and registers them as generic beans.
      *
-     * <h3>Example Usage:</h3>
+     * <h3>Example Usage</h3>
      * <pre>{@code
      * // Register beans from Spring Factories source
      * ConfigurableListableBeanFactory beanFactory = ...;
@@ -269,7 +269,7 @@ public enum BeanSource {
      * the behavior depends on the underlying {@link BeanDefinitionRegistry} implementation (typically, later registrations
      * may override earlier ones if the bean name conflicts).
      *
-     * <h3>Example Usage:</h3>
+     * <h3>Example Usage</h3>
      * <pre>{@code
      * // Register beans from Spring Factories and Java Service Provider sources
      * ConfigurableListableBeanFactory beanFactory = ...;
@@ -310,7 +310,7 @@ public enum BeanSource {
      * the behavior depends on the underlying {@link BeanDefinitionRegistry} implementation (typically, later registrations
      * may override earlier ones if the bean name conflicts).
      *
-     * <h3>Example Usage:</h3>
+     * <h3>Example Usage</h3>
      * <pre>{@code
      * // Register beans from Spring Factories and Java Service Provider sources
      * BeanDefinitionRegistry registry = ...;
@@ -350,7 +350,7 @@ public enum BeanSource {
      * the behavior depends on the underlying {@link BeanDefinitionRegistry} implementation (typically, later registrations
      * may override earlier ones if the bean name conflicts).
      *
-     * <h3>Example Usage:</h3>
+     * <h3>Example Usage</h3>
      * <pre>{@code
      * // Register beans from Spring Factories and Java Service Provider sources
      * ConfigurableListableBeanFactory beanFactory = ...;
