@@ -20,6 +20,13 @@
 
     <dependencies>
 
+        <!-- Microsphere Annotation Processor -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-annotation-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Microsphere Java Test -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
@@ -32,6 +39,7 @@
             <artifactId>microsphere-logging-test</artifactId>
         </dependency>
 
+        <!-- Microsphere Logback -->
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-logback</artifactId>
@@ -192,7 +200,7 @@
 
         <!-- Testing -->
 
-        <!-- Logging -->
+        <!-- Logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
