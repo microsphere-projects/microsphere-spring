@@ -20,6 +20,20 @@
 
     <dependencies>
 
+        <!-- Microsphere Annotation Processor -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-annotation-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Microsphere Spring Context -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-spring-context</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -33,13 +47,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Microsphere Spring Context -->
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-context</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
         <!-- JDBC -->
         <dependency>
             <groupId>p6spy</groupId>
@@ -47,32 +54,25 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- SLF4j API -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- Testing -->
-
-        <!-- Microsphere Spring Test -->
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-test</artifactId>
-            <version>${revision}</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Test -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Microsphere Spring Test -->
+        <dependency>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-spring-test</artifactId>
+            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
 
@@ -83,6 +83,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

@@ -20,10 +20,10 @@
 
     <dependencies>
 
-        <!-- Java Common Annotations -->
+        <!-- Microsphere Annotation Processor -->
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>io.github.microsphere-projects</groupId>
+            <artifactId>microsphere-annotation-processor</artifactId>
             <optional>true</optional>
         </dependency>
 
@@ -58,10 +58,10 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- SLF4j API -->
+        <!-- Java Common Annotations -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
             <optional>true</optional>
         </dependency>
 
@@ -82,13 +82,6 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Microsphere Annotation Processor -->
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-annotation-processor</artifactId>
             <optional>true</optional>
         </dependency>
 
