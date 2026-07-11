@@ -35,7 +35,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * allowing the configuration of multiple property sources with default properties in a Spring application context.
  * </p>
  *
- * <h3>Examples Usage</h3>
+ * <h3>Example Usage</h3>
  * <h4>Basic Usage</h4>
  * <pre>{@code
  * @DefaultPropertiesPropertySources(value = {
