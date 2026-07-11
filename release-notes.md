@@ -665,4 +665,25 @@ For a complete list of changes, please refer to the [Full Changelog](https://git
 - Merged `release-1.x` changes into `dev-1.x` to maintain branch consistency. ([7967b11](commit))
 - Incremented version to `0.1.35` following the release of `0.1.34`. ([0973d02](commit)) 
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.34...0.1.35
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.34...0.1.35## v0.1.36
+
+# Release Notes - Version 0.1.36
+
+## Documentation
+- Normalize Javadoc example headings for improved clarity. (#7728807ae)
+- Update README with latest release version information. (#dd594ca7e)
+
+## Dependency Updates
+- Align POM dependencies and add annotation processor for consistency. (#022c50bd4)
+- Downgrade `microsphere-logging` to version 0.1.22. (#c88a7dbf6)
+- Upgrade logging library and streamline SLF4J dependencies. (#a380df206)
+
+## Build and Workflow Enhancements
+- Bump version to 0.1.36 after publishing 0.1.35. (#32e68b4a3)
+- Merge `release-1.x` into `dev-1.x` for branch alignment. (#20e86eb0c)
+
+---
+
+**Full Changelog:** Refer to [v0.1.35...v0.1.36](#)
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.35...0.1.36
