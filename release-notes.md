@@ -609,4 +609,23 @@ For the full list of changes, refer to the [changelog](https://example.com/chang
 - Removed unused loggers from multiple classes to improve code clarity. ([97c93a2](#), [550afb9](#), [f3e5b79](#), [d08520c](#))
 - Tidied up trailing whitespaces in advice class. ([26f4e95](#))
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.33...0.2.34
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.33...0.2.34## v0.2.35
+
+# Release Notes for v0.2.35
+
+## Dependency Updates
+- Upgraded `microsphere-logging` to v0.1.22. ([0b06522c4](#))
+- Updated `microsphere-build` parent to v0.3.8. ([47a4ef7e5](#))
+
+## Documentation
+- Updated `README` with the latest branch versions. ([f133adc2b](#))
+
+## Build and Workflow Enhancements
+- Merged `main` into `release` for synchronization. ([f51a86eb3](#), [c3556bb2e](#), [77968cbfb](#), [c4b62b091](#))
+- Bumped version for post-publishing maintenance. ([3c712e14d](#))
+
+---
+
+No new features or bug fixes were introduced in this release.
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.34...0.2.35
