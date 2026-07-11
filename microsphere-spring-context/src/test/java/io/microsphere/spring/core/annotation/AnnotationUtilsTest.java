@@ -35,6 +35,7 @@ import static io.microsphere.util.ArrayUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.ArrayUtils.of;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.CLASS;
@@ -148,7 +149,7 @@ class AnnotationUtilsTest {
 
         assertEquals("parameter2", runtimeAnnotation.value());
 
-        annotationsList = annotationsMap.get(ElementType.PACKAGE);
+        annotationsList = annotationsMap.get(PACKAGE);
 
         assertNull(annotationsList);
 

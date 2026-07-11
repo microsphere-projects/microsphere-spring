@@ -35,7 +35,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * to a single class. It supports the same attributes as the individual annotations and
  * serves as a way to group them logically.</p>
  *
- * <h3>Examples Usage</h3>
+ * <h3>Example Usage</h3>
  * <h4>Basic Usage</h4>
  * <pre>{@code
  * @ResourcePropertySources(value = {

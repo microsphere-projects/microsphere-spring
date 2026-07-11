@@ -54,7 +54,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *     <li>Ability to specify default encoding for property resources</li>
  * </ul>
  *
- * <h3>Examples Usage</h3>
+ * <h3>Example Usage</h3>
  *
  * <h4>Basic Usage</h4>
  * To load a simple properties file from the classpath:
