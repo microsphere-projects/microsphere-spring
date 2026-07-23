@@ -628,4 +628,31 @@ For the full list of changes, refer to the [changelog](https://example.com/chang
 
 No new features or bug fixes were introduced in this release.
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.34...0.2.35
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.34...0.2.35## v0.2.36
+
+# Release Notes for Version 0.2.36
+
+## New Features
+- Added annotation processor to the following modules:
+  - Test
+  - JDBC
+  - Guice
+
+## Dependency Updates
+- Updated dependency declarations in the `web` module.
+- Reordered test dependencies in `webmvc` and `webflux` POMs.
+- Reordered annotation dependencies in the `context` POM.
+- Removed redundant SLF4J API dependencies.
+
+## Documentation
+- Polished annotation documentation and test imports.
+- Updated README with latest branch version details.
+- Cleaned up Javadoc example usage headings.
+
+## Test Improvements
+- Adjusted test dependencies across multiple modules.
+
+## Other Changes
+- Maintenance commits to merge branches and bump version numbers.
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.35...0.2.36
