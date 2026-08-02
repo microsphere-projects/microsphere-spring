@@ -788,7 +788,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
             } else {
                 value = resolveFieldValue(field, bean, beanName, pvs);
             }
-            setFieldValue(bean, field, value);
+            setFieldValue(true, bean, field, value);
         }
 
         @Nullable
