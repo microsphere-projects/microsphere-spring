@@ -241,7 +241,7 @@ public interface RequestPredicateVisitorAdapter extends InvocationHandler {
     default void visit(RequestPredicate predicate) {
         if (isVisitorSupported()) {
             Object visitor = getProxy();
-            invokeMethod(predicate, ACCEPT_METHOD, visitor);
+            invokeMethod(true, predicate, ACCEPT_METHOD, visitor);
         } else {
             acceptVisitor(predicate, this);
         }
