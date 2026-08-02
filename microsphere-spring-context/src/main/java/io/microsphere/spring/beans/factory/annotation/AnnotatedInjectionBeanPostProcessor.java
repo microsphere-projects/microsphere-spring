@@ -788,7 +788,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
             } else {
                 value = resolveFieldValue(field, bean, beanName, pvs);
             }
-            setFieldValue(bean, field, value);
+            setFieldValue(true, bean, field, value);
         }
 
         @Nullable
@@ -859,7 +859,7 @@ public class AnnotatedInjectionBeanPostProcessor implements SmartInstantiationAw
                 arguments = resolveMethodArguments(method, bean, beanName, pvs);
             }
             if (arguments != null) {
-                invokeMethod(bean, method, arguments);
+                invokeMethod(true, bean, method, arguments);
             }
         }
 
