@@ -141,11 +141,11 @@ public enum RequestPredicateKind {
         }
 
         RequestPredicate left(RequestPredicate predicate) {
-            return getFieldValue(predicate, "left");
+            return getFieldValue(true, predicate, "left");
         }
 
         RequestPredicate right(RequestPredicate predicate) {
-            return getFieldValue(predicate, "right");
+            return getFieldValue(true, predicate, "right");
         }
     },
 
