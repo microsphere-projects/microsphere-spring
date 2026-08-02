@@ -199,11 +199,11 @@ public enum RequestPredicateKind {
         }
 
         RequestPredicate left(RequestPredicate predicate) {
-            return getFieldValue(predicate, "left");
+            return getFieldValue(true, predicate, "left");
         }
 
         RequestPredicate right(RequestPredicate predicate) {
-            return getFieldValue(predicate, "right");
+            return getFieldValue(true, predicate, "right");
         }
     },
 
@@ -246,8 +246,8 @@ public enum RequestPredicateKind {
         }
 
         RequestPredicate getDelegate(RequestPredicate requestPredicate) {
-            RequestPredicate delegate = getFieldValue(requestPredicate, "arg$1");
-            return delegate == null ? getFieldValue(requestPredicate, "delegate") : delegate;
+            RequestPredicate delegate = getFieldValue(true, requestPredicate, "arg$1");
+            return delegate == null ? getFieldValue(true, requestPredicate, "delegate") : delegate;
         }
     },
 
