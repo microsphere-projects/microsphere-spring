@@ -244,12 +244,12 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private List<HandlerResultHandler> getHandlerResultHandlers(ApplicationContext context) {
         DispatcherHandler dispatcherHandler = context.getBean(DispatcherHandler.class);
-        return getFieldValue(dispatcherHandler, "resultHandlers");
+        return getFieldValue(true, dispatcherHandler, "resultHandlers");
     }
 
     private List<HandlerMethodArgumentResolver> getHandlerMethodArgumentResolvers(RequestMappingHandlerAdapter adapter) {
-        Object methodResolver = getFieldValue(adapter, "methodResolver");
-        return getFieldValue(methodResolver, "requestMappingResolvers");
+        Object methodResolver = getFieldValue(true, adapter, "methodResolver");
+        return getFieldValue(true, methodResolver, "requestMappingResolvers");
     }
 
     private void initMethodParameterContextsCache(MethodParameter methodParameter, HandlerMethod handlerMethod,

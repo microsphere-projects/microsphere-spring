@@ -265,7 +265,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
     void testIfModifiedSince(URLConnection urlConnection) throws IOException {
         long ifModifiedSince = urlConnection.getIfModifiedSince();
         String connectedFieldName = "connected";
-        boolean connected = getFieldValue(urlConnection, connectedFieldName, boolean.class);
+        boolean connected = getFieldValue(true, urlConnection, connectedFieldName, boolean.class);
         try {
             assertEquals(0, ifModifiedSince);
             long currentTimeMillis = currentTimeMillis();
@@ -277,7 +277,7 @@ public abstract class AbstractSpringResourceURLConnectionTest {
         } catch (IllegalStateException e) {
             assertNotNull(e);
         } finally {
-            setFieldValue(urlConnection, connectedFieldName, connected);
+            setFieldValue(true, urlConnection, connectedFieldName, connected);
             urlConnection.setIfModifiedSince(ifModifiedSince);
         }
     }
@@ -305,11 +305,11 @@ public abstract class AbstractSpringResourceURLConnectionTest {
 
     void testConnect(URLConnection urlConnection) throws IOException {
         String connectedFieldName = "connected";
-        boolean connected = getFieldValue(urlConnection, connectedFieldName, boolean.class);
+        boolean connected = getFieldValue(true, urlConnection, connectedFieldName, boolean.class);
         try {
             assertFalse(connected);
             urlConnection.connect();
-            assertTrue(getFieldValue(urlConnection, connectedFieldName, boolean.class));
+            assertTrue(getFieldValue(true, urlConnection, connectedFieldName, boolean.class));
         } finally {
             setFieldValue(urlConnection, connectedFieldName, connected);
         }
