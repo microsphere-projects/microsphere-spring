@@ -704,4 +704,18 @@ d4e498262 Bump parent POM to microsphere-build 0.3.11
 d15226425 chore: bump version to next patch after publishing 0.1.36
 ```
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.36...0.1.37
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.36...0.1.37## v0.1.38
+
+_Release notes generation failed. Raw commits since 0.1.37:_
+
+```
+ec28357b6 Update README.md
+080bf0cd2 Merge pull request #272 from microsphere-projects/dev-1.x
+533f64b47 Merge pull request #271 from mercyblitz/dev-1.x
+6e0ddd178 Bump microsphere-logging to 0.2.0
+f88c7803f Bump microsphere-java to 0.3.17
+d5b428477 chore: merge release-1.x into dev-1.x [skip ci]
+f85eb0889 chore: bump version to next patch after publishing 0.1.37
+```
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.37...0.1.38
