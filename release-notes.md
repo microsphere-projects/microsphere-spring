@@ -655,4 +655,25 @@ No new features or bug fixes were introduced in this release.
 ## Other Changes
 - Maintenance commits to merge branches and bump version numbers.
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.35...0.2.36
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.35...0.2.36## v0.2.37
+
+_Release notes generation failed. Raw commits since 0.2.36:_
+
+```
+914e656a6 chore: merge main into release [skip ci]
+6ec1b9aed Merge pull request #268 from microsphere-projects/dependabot/maven/com.fasterxml.jackson-jackson-bom-2.22.1
+94e6169a8 chore: merge main into release [skip ci]
+8c9abad27 Force reflective access for internal lookups
+f9e0c2322 Force reflective access to internal fields
+a00924ace chore: merge main into release [skip ci]
+33c6fa65d Bump microsphere-logging to 0.1.23
+53deb1779 Bump microsphere-java to 0.3.16
+7b73c340a Bump parent microsphere-build to 0.3.11
+bd15daaee chore: merge main into release [skip ci]
+54ccda1fb Bump microsphere-build parent to 0.3.10
+f9cfe6bdd chore: merge release into main [skip ci]
+912eb7bbf chore: bump version to next patch after publishing 0.2.36
+1b86e64a1 Bump com.fasterxml.jackson:jackson-bom from 2.21.3 to 2.22.1
+```
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.36...0.2.37
