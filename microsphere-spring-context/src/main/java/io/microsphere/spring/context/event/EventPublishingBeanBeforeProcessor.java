@@ -207,6 +207,6 @@ class EventPublishingBeanBeforeProcessor extends InstantiationAwareBeanPostProce
     }
 
     private InstantiationStrategy getInstantiationStrategyDelegate(ConfigurableListableBeanFactory beanFactory) {
-        return invokeMethod(beanFactory, getInstantiationStrategyMethod);
+        return invokeMethod(true, beanFactory, getInstantiationStrategyMethod);
     }
 }
