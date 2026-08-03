@@ -492,7 +492,7 @@ public abstract class BeanFactoryUtils implements Utils {
      */
     @Nonnull
     public static Set<Class<?>> getResolvableDependencyTypes(DefaultListableBeanFactory beanFactory) {
-        Map<Class<?>, Object> resolvableDependencies = getFieldValue(beanFactory, "resolvableDependencies", Map.class);
+        Map<Class<?>, Object> resolvableDependencies = getFieldValue(true, beanFactory, "resolvableDependencies", Map.class);
         return ofSet(resolvableDependencies);
     }
 
