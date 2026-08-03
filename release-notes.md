@@ -686,4 +686,22 @@ For a complete list of changes, please refer to the [Full Changelog](https://git
 
 **Full Changelog:** Refer to [v0.1.35...v0.1.36](#)
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.35...0.1.36
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.35...0.1.36## v0.1.37
+
+_Release notes generation failed. Raw commits since 0.1.36:_
+
+```
+acbd6f37d Merge pull request #270 from mercyblitz/dev-1.x
+18e254a25 Fix RequestPredicate delegate lookup
+a9eda4a71 Fix AND predicate left/right field access
+49c566f58 Force reflective access in bean processors
+3754d9638 Force reflective access to Spring internals
+32ecb4ac7 Bump microsphere-logging to 0.1.23
+5e4a6ddc5 Bump microsphere-java to 0.3.16
+d4e498262 Bump parent POM to microsphere-build 0.3.11
+746b080ce Bump microsphere-build parent to 0.3.10
+384ebde9a chore: merge release-1.x into dev-1.x [skip ci]
+d15226425 chore: bump version to next patch after publishing 0.1.36
+```
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.36...0.1.37
