@@ -676,4 +676,19 @@ f9cfe6bdd chore: merge release into main [skip ci]
 1b86e64a1 Bump com.fasterxml.jackson:jackson-bom from 2.21.3 to 2.22.1
 ```
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.36...0.2.37
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.36...0.2.37## v0.2.38
+
+_Release notes generation failed. Raw commits since 0.2.37:_
+
+```
+76d079660 chore: merge main into release [skip ci]
+f9a3a68c8 Update version numbers in README.md
+a66820d2f chore: merge main into release [skip ci]
+a428440fe Bump microsphere-logging to 0.2.0
+8d51109b8 chore: merge main into release [skip ci]
+1a7ac92c7 Bump microsphere-java to 0.3.17
+4189d98fd chore: merge release into main [skip ci]
+f234f0a81 chore: bump version to next patch after publishing 0.2.37
+```
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.37...0.2.38
