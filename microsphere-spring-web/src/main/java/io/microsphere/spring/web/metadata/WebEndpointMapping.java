@@ -28,6 +28,7 @@ import org.springframework.web.method.HandlerMethod;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Function;
@@ -35,6 +36,7 @@ import java.util.function.Function;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
+import static io.microsphere.collection.SetUtils.ofSet;
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.EQUAL;
@@ -60,6 +62,7 @@ import static io.microsphere.util.Assert.assertNotEmpty;
 import static io.microsphere.util.Assert.assertNotNull;
 import static io.microsphere.util.Assert.assertTrue;
 import static io.microsphere.util.IterableUtils.iterate;
+import static io.microsphere.util.ObjectUtils.defaultIfNull;
 import static io.microsphere.util.StringUtils.EMPTY_STRING;
 import static io.microsphere.util.StringUtils.EMPTY_STRING_ARRAY;
 import static io.microsphere.util.StringUtils.split;
@@ -134,6 +137,11 @@ public class WebEndpointMapping<E> {
      * The source is unknown
      */
     public static final Object UNKNOWN_SOURCE = new Object();
+
+    /**
+     * The set of all HTTP methods: GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+     */
+    public static final Set<String> ALL_METHODS = ofSet(toStrings(values(), HttpMethod::name));
 
     @Nonnull
     private final Kind kind;
@@ -290,7 +298,6 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public Builder<E> pattern(@Nonnull String pattern) throws IllegalArgumentException {
-            assertNotNull(pattern, () -> "The 'pattern' must not be null");
             assertNotBlank(pattern, () -> "The 'pattern' must not be blank");
             if (this.patterns == null) {
                 this.patterns = newSet();
@@ -419,7 +426,7 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public Builder<E> method(@Nonnull String method) throws IllegalArgumentException {
-            assertNotNull(method, () -> "The 'method' must not be null");
+            assertNotBlank(method, () -> "The 'method' must not be blank");
             if (this.methods == null) {
                 this.methods = newSet();
             }
@@ -517,7 +524,6 @@ public class WebEndpointMapping<E> {
          * @throws IllegalArgumentException if the methods collection is empty or contains null elements
          */
         public Builder<E> methods(@Nonnull Collection<String> methods) throws IllegalArgumentException {
-            assertNotEmpty(methods, () -> "The 'methods' must not be empty");
             assertNoNullElements(methods, () -> "The 'methods' must not contain null element");
             this.methods = newLinkedHashSet(methods);
             return this;
@@ -677,7 +683,7 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public Builder<E> header(@Nonnull String nameAndValue) throws IllegalArgumentException {
-            assertNotNull(nameAndValue, () -> "The 'nameAndValue' must not be null");
+            assertNotBlank(nameAndValue, () -> "The 'nameAndValue' must not be null");
             if (this.headers == null) {
                 this.headers = newSet();
             }
@@ -1234,10 +1240,8 @@ public class WebEndpointMapping<E> {
             assertNoNullElements(this.patterns, () -> "Any element of 'patterns' must not be null");
 
             if (isEmpty(this.methods)) {
-                methods(values());
+                this.methods = ALL_METHODS;
             }
-
-            assertNoNullElements(this.methods, () -> "Any element of 'methods' must not be null");
 
             return new WebEndpointMapping(
                     this.kind,
@@ -1268,9 +1272,9 @@ public class WebEndpointMapping<E> {
         this.kind = kind;
         this.endpoint = endpoint;
         // id is a hash code of the endpoint
-        this.id = endpoint == null ? 0 : endpoint.hashCode();
+        this.id = Objects.hashCode(endpoint);
         this.negated = negated;
-        this.source = source == null ? UNKNOWN_SOURCE : source;
+        this.source = defaultIfNull(source, UNKNOWN_SOURCE);
         this.patterns = patterns;
         this.methods = methods;
         this.params = params;
