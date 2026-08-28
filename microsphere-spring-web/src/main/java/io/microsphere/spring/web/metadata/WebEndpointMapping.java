@@ -683,7 +683,7 @@ public class WebEndpointMapping<E> {
          */
         @Nonnull
         public Builder<E> header(@Nonnull String nameAndValue) throws IllegalArgumentException {
-            assertNotBlank(nameAndValue, () -> "The 'nameAndValue' must not be null");
+            assertNotBlank(nameAndValue, () -> "The 'nameAndValue' must not be blank");
             if (this.headers == null) {
                 this.headers = newSet();
             }
