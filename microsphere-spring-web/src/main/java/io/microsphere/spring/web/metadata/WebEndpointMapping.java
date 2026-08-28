@@ -35,6 +35,7 @@ import java.util.function.Function;
 import static io.microsphere.collection.Lists.ofList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.collection.SetUtils.newLinkedHashSet;
+import static io.microsphere.collection.SetUtils.ofSet;
 import static io.microsphere.constants.SeparatorConstants.LINE_SEPARATOR;
 import static io.microsphere.constants.SymbolConstants.COMMA;
 import static io.microsphere.constants.SymbolConstants.EQUAL;
@@ -134,6 +135,11 @@ public class WebEndpointMapping<E> {
      * The source is unknown
      */
     public static final Object UNKNOWN_SOURCE = new Object();
+
+    /**
+     * The set of all HTTP methods: GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+     */
+    public static final Set<String> ALL_METHODS = ofSet(toStrings(values(), HttpMethod::name));
 
     @Nonnull
     private final Kind kind;
@@ -517,7 +523,6 @@ public class WebEndpointMapping<E> {
          * @throws IllegalArgumentException if the methods collection is empty or contains null elements
          */
         public Builder<E> methods(@Nonnull Collection<String> methods) throws IllegalArgumentException {
-            assertNotEmpty(methods, () -> "The 'methods' must not be empty");
             assertNoNullElements(methods, () -> "The 'methods' must not contain null element");
             this.methods = newLinkedHashSet(methods);
             return this;

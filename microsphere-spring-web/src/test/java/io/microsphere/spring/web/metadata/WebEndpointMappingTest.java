@@ -30,7 +30,10 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static io.microsphere.collection.Lists.ofList;
+import static io.microsphere.collection.Sets.ofSet;
 import static io.microsphere.io.IOUtils.copyToString;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.ALL_METHODS;
+import static io.microsphere.spring.web.metadata.WebEndpointMapping.ID_HEADER_NAME;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.CUSTOMIZED;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.FILTER;
 import static io.microsphere.spring.web.metadata.WebEndpointMapping.Kind.SERVLET;
@@ -89,6 +92,13 @@ public class WebEndpointMappingTest {
     public static final String[] TEST_URL_PATTERNS = ofArray("/test");
 
     public static final String[] TEST_METHODS = ofArray("OPTIONS");
+
+    @Test
+    public void testConstants() {
+        assertEquals("microsphere_wem_id", ID_HEADER_NAME);
+        assertNotNull(UNKNOWN_SOURCE);
+        assertEquals(ofSet("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE"), ALL_METHODS);
+    }
 
     @Test
     public void testServlet() {
@@ -217,8 +227,8 @@ public class WebEndpointMappingTest {
 
     @Test
     public void testMethodsWithoutMethods() {
-        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods((String[]) null));
-        assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods(new String[0]));
+        assertNotNull(minServletBuilder().methods((String[]) null));
+        assertNotNull(minServletBuilder().methods(new String[0]));
         assertThrows(IllegalArgumentException.class, () -> minServletBuilder().methods(new String[]{null}));
     }
 
