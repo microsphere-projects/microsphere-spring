@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webmvc.method.support;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -54,6 +55,8 @@ import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
 import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
+import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
+import static io.microsphere.util.ClassUtils.getTypeName;
 
 /**
  * The {@link HandlerMethod} processor that callbacks {@link HandlerMethodAdvice} based on
@@ -173,7 +176,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (isNoArgumentHandlerMethod(handler)) {
-            beforeExecute(new ServletWebRequest(request), (HandlerMethod) handler);
+            beforeExecute(new ServletWebRequest(request), (HandlerMethod) handler, EMPTY_OBJECT_ARRAY);
         }
         return true;
     }
@@ -307,7 +310,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     }
 
     private void beforeExecute(MethodParameter parameter, MethodParameterContext methodParameterContext,
-                               NativeWebRequest webRequest, Object argument) throws Exception {
+                               NativeWebRequest webRequest, @Nullable Object argument) throws Exception {
         Object[] arguments = resolveArguments(webRequest, parameter, argument);
         int parameterCount = methodParameterContext.parameterCount;
         int parameterIndex = parameter.getParameterIndex();
@@ -317,7 +320,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         }
     }
 
-    private void beforeExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object... arguments) throws Exception {
+    private void beforeExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments) throws Exception {
         for (int i = 0; i < handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
             advice.beforeExecuteMethod(handlerMethod, arguments, webRequest);
@@ -352,23 +355,21 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         }
     }
 
+    @Nonnull
     Object[] getArguments(NativeWebRequest webRequest, HandlerMethod handlerMethod) {
         return getHandlerMethodArguments(webRequest, handlerMethod);
     }
 
+    @Nonnull
     Object[] getArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
         return WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
     }
 
-    Object[] resolveArguments(NativeWebRequest webRequest, MethodParameter parameter, Object argument) {
+    @Nonnull
+    Object[] resolveArguments(NativeWebRequest webRequest, MethodParameter parameter, @Nullable Object argument) {
         int index = parameter.getParameterIndex();
-        Object[] arguments = null;
-        if (argument != null) {
-            arguments = getHandlerMethodArguments(webRequest, parameter);
-            if (index < arguments.length) {
-                arguments[index] = argument;
-            }
-        }
+        Object[] arguments = getHandlerMethodArguments(webRequest, parameter);
+        arguments[index] = argument;
         return arguments;
     }
 
@@ -384,7 +385,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                 } else {
                     if (logger.isWarnEnabled()) {
                         logger.warn("The HandlerMethodArgumentResolver[class : '{}'] also supports the MethodParameter[{}] , the mapped one : {}",
-                                getClassName(resolver), methodParameter, getClassName(targetResolver));
+                                getTypeName(resolver), methodParameter, getTypeName(targetResolver));
                     }
                 }
             }
@@ -405,15 +406,11 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
                 } else {
                     if (logger.isWarnEnabled()) {
                         logger.warn("The HandlerMethodReturnValueHandler[class : '{}'] also supports the return type[{}] , the mapped one : {}",
-                                getClassName(handler), handlerMethod, getClassName(targetHandler));
+                                getTypeName(handler), handlerMethod, getTypeName(targetHandler));
                     }
                 }
             }
         }
         return targetHandler;
-    }
-
-    private String getClassName(Object instance) {
-        return instance.getClass().getName();
     }
 }

@@ -39,6 +39,7 @@ import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.util.ClassUtils.getTypes;
 import static java.util.Collections.emptyList;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -127,7 +128,7 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Test
     void testResolveArguments() {
         NativeWebRequest webRequest = new ServerWebRequest(mockServerWebExchange());
-        assertNull(processor.resolveArguments(webRequest, greetingMethodParameter0, null));
+        assertArrayEquals(new Object[]{null}, this.processor.resolveArguments(webRequest, greetingMethodParameter0, null));
     }
 
     HandlerResult newHandlerResult(String handlerMethodName, Object... arguments) {
