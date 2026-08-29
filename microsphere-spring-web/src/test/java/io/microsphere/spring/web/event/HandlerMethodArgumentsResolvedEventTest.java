@@ -30,6 +30,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 
 /**
  * {@link HandlerMethodArgumentsResolvedEvent} Test
@@ -40,14 +41,27 @@ import static org.junit.Assert.assertSame;
  */
 public class HandlerMethodArgumentsResolvedEventTest {
 
+    private NativeWebRequest webRequest;
+
     private HandlerMethod handlerMethod;
+
+    private Object[] arguments;
 
     private HandlerMethodArgumentsResolvedEvent event;
 
     @Before
     public void setUp() throws Throwable {
+        this.webRequest = createWebRequest("/helloworld");
         this.handlerMethod = new HandlerMethod(new TestController(), "helloWorld");
-        event = new HandlerMethodArgumentsResolvedEvent(createWebRequest("/helloworld"), this.handlerMethod, ofArray("Hello", "World"));
+        this.arguments = ofArray("Hello", "World");
+        this.event = new HandlerMethodArgumentsResolvedEvent(webRequest, this.handlerMethod, this.arguments);
+    }
+
+    @Test
+    public void testConstructor() {
+        assertThrows(IllegalArgumentException.class, () -> new HandlerMethodArgumentsResolvedEvent(null, this.handlerMethod, this.arguments));
+        assertThrows(IllegalArgumentException.class, () -> new HandlerMethodArgumentsResolvedEvent(this.webRequest, null, null));
+        assertNotNull(new HandlerMethodArgumentsResolvedEvent(this.webRequest, this.handlerMethod, null));
     }
 
     @Test
