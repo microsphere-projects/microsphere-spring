@@ -61,7 +61,7 @@ public class HandlerMethodArgumentsResolvedEventTest {
     public void testConstructor() {
         assertThrows(IllegalArgumentException.class, () -> new HandlerMethodArgumentsResolvedEvent(null, this.handlerMethod, this.arguments));
         assertThrows(IllegalArgumentException.class, () -> new HandlerMethodArgumentsResolvedEvent(this.webRequest, null, null));
-        assertNotNull(new HandlerMethodArgumentsResolvedEvent(this.webRequest, this.handlerMethod, null));
+        assertThrows(IllegalArgumentException.class, () -> new HandlerMethodArgumentsResolvedEvent(this.webRequest, this.handlerMethod, null));
     }
 
     @Test

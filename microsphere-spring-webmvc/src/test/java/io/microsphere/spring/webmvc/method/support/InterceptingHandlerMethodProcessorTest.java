@@ -38,6 +38,7 @@ import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
@@ -151,7 +152,7 @@ public class InterceptingHandlerMethodProcessorTest extends AbstractWebMvcTest {
     @Test
     public void testResolveArguments() {
         NativeWebRequest webRequest = createWebRequest();
-        assertNull(this.processor.resolveArguments(webRequest, greetingMethodParameter0, null));
+        assertArrayEquals(new Object[]{null}, this.processor.resolveArguments(webRequest, greetingMethodParameter0, null));
     }
 
     @Test

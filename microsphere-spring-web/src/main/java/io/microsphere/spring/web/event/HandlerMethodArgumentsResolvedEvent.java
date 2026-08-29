@@ -28,9 +28,10 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
      * @param handlerMethod {@link HandlerMethod}
      * @param arguments     {@link Object the argument object that was resolved}
      */
-    public HandlerMethodArgumentsResolvedEvent(WebRequest webRequest, @Nonnull HandlerMethod handlerMethod, @Nullable Object... arguments) {
+    public HandlerMethodArgumentsResolvedEvent(WebRequest webRequest, @Nonnull HandlerMethod handlerMethod, @Nonnull Object... arguments) {
         super(webRequest);
         assertNotNull(handlerMethod, () -> "The 'handlerMethod' argument must not be null");
+        assertNotNull(arguments, () -> "The 'arguments' argument must not be null");
         this.handlerMethod = handlerMethod;
         this.arguments = arguments;
     }
@@ -54,6 +55,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
     /**
      * @return the resolved arguments of {@link HandlerMethod} being invoking
      */
+    @Nonnull
     public Object[] getArguments() {
         return arguments;
     }
