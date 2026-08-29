@@ -27,9 +27,11 @@ import org.springframework.web.method.HandlerMethod;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link HandlerMethodArgumentsResolvedEvent} Test
@@ -40,14 +42,27 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  */
 class HandlerMethodArgumentsResolvedEventTest {
 
+    private NativeWebRequest webRequest;
+
     private HandlerMethod handlerMethod;
+
+    private Object[] arguments;
 
     private HandlerMethodArgumentsResolvedEvent event;
 
     @BeforeEach
     void setUp() throws Throwable {
+        this.webRequest = createWebRequest("/helloworld");
         this.handlerMethod = new HandlerMethod(new TestController(), "helloWorld");
-        event = new HandlerMethodArgumentsResolvedEvent(createWebRequest("/helloworld"), this.handlerMethod, ofArray("Hello", "World"));
+        this.arguments = ofArray("Hello", "World");
+        this.event = new HandlerMethodArgumentsResolvedEvent(webRequest, this.handlerMethod, this.arguments);
+    }
+
+    @Test
+    void testConstructor() {
+        assertThrows(IllegalArgumentException.class, () -> new HandlerMethodArgumentsResolvedEvent(null, this.handlerMethod, this.arguments));
+        assertThrows(IllegalArgumentException.class, () -> new HandlerMethodArgumentsResolvedEvent(this.webRequest, null, null));
+        assertDoesNotThrow(() -> new HandlerMethodArgumentsResolvedEvent(this.webRequest, this.handlerMethod, null));
     }
 
     @Test
