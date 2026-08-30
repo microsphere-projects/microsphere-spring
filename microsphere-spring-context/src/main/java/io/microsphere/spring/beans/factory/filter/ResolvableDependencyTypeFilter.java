@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.beans.factory.filter;
 
+import io.microsphere.annotation.Nullable;
 import io.microsphere.filter.Filter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -105,11 +106,14 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
      * @param beanFactory the {@link BeanFactory} to look up or register the filter in
      * @return the existing or newly created {@link ResolvableDependencyTypeFilter} instance
      */
-    public static ResolvableDependencyTypeFilter get(BeanFactory beanFactory) {
+    public static ResolvableDependencyTypeFilter get(@Nullable BeanFactory beanFactory) {
         return get(asDefaultListableBeanFactory(beanFactory));
     }
 
-    static ResolvableDependencyTypeFilter get(DefaultListableBeanFactory beanFactory) {
+    static ResolvableDependencyTypeFilter get(@Nullable DefaultListableBeanFactory beanFactory) {
+        if (beanFactory == null) {
+            return null;
+        }
         ResolvableDependencyTypeFilter filter = (ResolvableDependencyTypeFilter) beanFactory.getSingleton(BEAN_NAME);
         return filter == null ? new ResolvableDependencyTypeFilter(beanFactory) : filter;
     }

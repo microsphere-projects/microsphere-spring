@@ -29,8 +29,10 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter.get;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,7 +68,9 @@ class ResolvableDependencyTypeFilterTest {
 
     @Test
     void testGet() {
-        assertSame(filter, ResolvableDependencyTypeFilter.get(context.getBeanFactory()));
+        assertSame(filter, get(context));
+        assertSame(filter, get(context.getBeanFactory()));
+        assertNull(get(null));
     }
 
     @Test
