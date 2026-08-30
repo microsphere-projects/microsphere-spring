@@ -317,6 +317,56 @@ class BeanFactoryUtilsTest {
         }, BaseTestBean.class);
     }
 
+    @Test
+    void testAsAutowireCapableBeanFactory() {
+        this.applicationContext.refresh();
+        assertSame(this.beanFactory, asAutowireCapableBeanFactory(this.applicationContext));
+        assertSame(this.beanFactory, asAutowireCapableBeanFactory(this.beanFactory));
+    }
+
+    @Test
+    void testAsBeanDefinitionRegistry() {
+        this.applicationContext.refresh();
+        assertSame(this.beanFactory, asBeanDefinitionRegistry(this.applicationContext));
+        assertSame(this.beanFactory, asBeanDefinitionRegistry(this.beanFactory));
+    }
+
+    @Test
+    void testAsConfigurableBeanFactory() {
+        this.applicationContext.refresh();
+        assertSame(this.beanFactory, asConfigurableBeanFactory(this.applicationContext));
+        assertSame(this.beanFactory, asConfigurableBeanFactory(this.beanFactory));
+    }
+
+    @Test
+    void testAsConfigurableListableBeanFactory() {
+        this.applicationContext.refresh();
+        assertSame(this.beanFactory, asConfigurableListableBeanFactory(this.applicationContext));
+        assertSame(this.beanFactory, asConfigurableListableBeanFactory(this.beanFactory));
+    }
+
+    @Test
+    void testAsDefaultListableBeanFactory() {
+        this.applicationContext.refresh();
+        assertSame(this.beanFactory, asDefaultListableBeanFactory(this.applicationContext));
+        assertSame(this.beanFactory, asDefaultListableBeanFactory(this.beanFactory));
+    }
+
+    @Test
+    void testAsHierarchicalBeanFactory() {
+        this.applicationContext.refresh();
+        assertSame(this.beanFactory, asHierarchicalBeanFactory(this.applicationContext));
+        assertSame(this.beanFactory, asHierarchicalBeanFactory(this.beanFactory));
+    }
+
+    @Test
+    void testAsListableBeanFactory() {
+        this.applicationContext.refresh();
+        assertSame(this.beanFactory, asListableBeanFactory(this.applicationContext));
+        assertSame(this.beanFactory, asListableBeanFactory(this.beanFactory));
+    }
+
+
     @Component("baseTestBean2")
     private static class BaseTestBean2 extends BaseTestBean {
 
