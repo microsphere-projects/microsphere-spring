@@ -228,8 +228,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * @throws IllegalArgumentException if the provided object is not an instance of {@link BeanDefinitionRegistry}
      *                                  and cannot be converted.
      */
-    @Nonnull
-    public static BeanDefinitionRegistry asBeanDefinitionRegistry(Object beanFactory) {
+    @Nullable
+    public static BeanDefinitionRegistry asBeanDefinitionRegistry(@Nullable Object beanFactory) {
         return cast(beanFactory, BeanDefinitionRegistry.class);
     }
 
@@ -262,8 +262,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * @throws IllegalArgumentException if the provided object is not an instance of {@link ListableBeanFactory}
      *                                  and cannot be converted.
      */
-    @Nonnull
-    public static ListableBeanFactory asListableBeanFactory(Object beanFactory) {
+    @Nullable
+    public static ListableBeanFactory asListableBeanFactory(@Nullable Object beanFactory) {
         return cast(beanFactory, ListableBeanFactory.class);
     }
 
@@ -295,8 +295,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * @throws IllegalArgumentException if the provided object is not an instance of {@link HierarchicalBeanFactory}
      *                                  and cannot be converted.
      */
-    @Nonnull
-    public static HierarchicalBeanFactory asHierarchicalBeanFactory(Object beanFactory) {
+    @Nullable
+    public static HierarchicalBeanFactory asHierarchicalBeanFactory(@Nullable Object beanFactory) {
         return cast(beanFactory, HierarchicalBeanFactory.class);
     }
 
@@ -327,8 +327,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * @throws IllegalArgumentException if the provided object is not an instance of {@link ConfigurableBeanFactory}
      *                                  and cannot be converted.
      */
-    @Nonnull
-    public static ConfigurableBeanFactory asConfigurableBeanFactory(Object beanFactory) {
+    @Nullable
+    public static ConfigurableBeanFactory asConfigurableBeanFactory(@Nullable Object beanFactory) {
         return cast(beanFactory, ConfigurableBeanFactory.class);
     }
 
@@ -360,8 +360,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * @throws IllegalArgumentException if the provided object is not an instance of {@link AutowireCapableBeanFactory}
      *                                  and cannot be converted.
      */
-    @Nonnull
-    public static AutowireCapableBeanFactory asAutowireCapableBeanFactory(Object beanFactory) {
+    @Nullable
+    public static AutowireCapableBeanFactory asAutowireCapableBeanFactory(@Nullable Object beanFactory) {
         return cast(beanFactory, AutowireCapableBeanFactory.class);
     }
 
@@ -393,8 +393,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * @throws IllegalArgumentException if the provided object is not an instance of {@link ConfigurableListableBeanFactory}
      *                                  and cannot be converted.
      */
-    @Nonnull
-    public static ConfigurableListableBeanFactory asConfigurableListableBeanFactory(Object beanFactory) {
+    @Nullable
+    public static ConfigurableListableBeanFactory asConfigurableListableBeanFactory(@Nullable Object beanFactory) {
         return cast(beanFactory, ConfigurableListableBeanFactory.class);
     }
 
@@ -426,8 +426,8 @@ public abstract class BeanFactoryUtils implements Utils {
      * @throws IllegalArgumentException if the provided object is not an instance of
      *                                  {@link DefaultListableBeanFactory} and cannot be converted.
      */
-    @Nonnull
-    public static DefaultListableBeanFactory asDefaultListableBeanFactory(Object beanFactory) {
+    @Nullable
+    public static DefaultListableBeanFactory asDefaultListableBeanFactory(@Nullable Object beanFactory) {
         return cast(beanFactory, DefaultListableBeanFactory.class);
     }
 
@@ -795,6 +795,9 @@ public abstract class BeanFactoryUtils implements Utils {
     }
 
     private static <T> T cast(@Nullable Object beanFactory, Class<T> extendedBeanFactoryType) {
+        if (beanFactory == null) {
+            return null;
+        }
         if (beanFactory instanceof ApplicationContext context) {
             beanFactory = context.getAutowireCapableBeanFactory();
         }
