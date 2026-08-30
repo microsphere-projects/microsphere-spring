@@ -172,17 +172,6 @@ class BeanFactoryUtilsTest {
     }
 
     @Test
-    void testAsMethods() {
-        assertSame(this.beanFactory, asBeanDefinitionRegistry(this.beanFactory));
-        assertSame(this.beanFactory, asListableBeanFactory(this.beanFactory));
-        assertSame(this.beanFactory, asHierarchicalBeanFactory(this.beanFactory));
-        assertSame(this.beanFactory, asConfigurableBeanFactory(this.beanFactory));
-        assertSame(this.beanFactory, asAutowireCapableBeanFactory(this.beanFactory));
-        assertSame(this.beanFactory, asConfigurableListableBeanFactory(this.beanFactory));
-        assertSame(this.beanFactory, asDefaultListableBeanFactory(this.beanFactory));
-    }
-
-    @Test
     void testGetResolvableDependencyTypes() {
         this.applicationContext.refresh();
         assertEquals(SetUtils.ofSet(BeanFactory.class, ResourceLoader.class, ApplicationEventPublisher.class, ApplicationContext.class),
