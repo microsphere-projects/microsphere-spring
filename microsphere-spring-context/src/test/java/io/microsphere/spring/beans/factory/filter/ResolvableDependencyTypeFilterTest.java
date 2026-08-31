@@ -29,8 +29,10 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static io.microsphere.spring.beans.factory.filter.ResolvableDependencyTypeFilter.get;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -66,7 +68,9 @@ public class ResolvableDependencyTypeFilterTest {
 
     @Test
     public void testGet() {
-        assertSame(filter, ResolvableDependencyTypeFilter.get(context.getBeanFactory()));
+        assertSame(filter, get(context));
+        assertSame(filter, get(context.getBeanFactory()));
+        assertNull(get(null));
     }
 
     @Test
