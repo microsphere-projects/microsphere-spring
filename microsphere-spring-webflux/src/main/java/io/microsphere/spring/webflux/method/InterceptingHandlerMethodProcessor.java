@@ -55,6 +55,7 @@ import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodArgument;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
 import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
@@ -155,7 +156,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
             Object argument = getValue(result);
 
-            Object[] arguments = resolveArguments(webRequest, parameter, argument);
+            Object[] arguments = setHandlerMethodArgument(webRequest, parameter, argument);
 
             afterResolveArgument(parameter, argument, webRequest, handlerMethod);
 
@@ -340,24 +341,11 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
     @Nonnull
     private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, @Nullable Object returnValue,
                               @Nullable Throwable error) throws Exception {
-        Object[] arguments = getArguments(webRequest, handlerMethod);
+        Object[] arguments = getHandlerMethodArguments(webRequest, handlerMethod);
         for (int i = 0; i < this.handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
             handlerMethodAdvice.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
         }
-    }
-
-    @Nonnull
-    private Object[] getArguments(NativeWebRequest webRequest, HandlerMethod handlerMethod) {
-        return getHandlerMethodArguments(webRequest, handlerMethod);
-    }
-
-    @Nonnull
-    Object[] resolveArguments(NativeWebRequest webRequest, MethodParameter parameter, @Nullable Object argument) {
-        int index = parameter.getParameterIndex();
-        Object[] arguments = getHandlerMethodArguments(webRequest, parameter);
-        arguments[index] = argument;
-        return arguments;
     }
 
     HandlerMethodArgumentResolver resolveArgumentResolver(MethodParameter methodParameter, List<HandlerMethodArgumentResolver> resolvers) {

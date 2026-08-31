@@ -16,7 +16,6 @@
  */
 package io.microsphere.spring.webmvc.method.support;
 
-import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -53,6 +52,7 @@ import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.MapUtils.newHashMap;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodArgument;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
 import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
 import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
@@ -311,7 +311,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private void beforeExecute(MethodParameter parameter, MethodParameterContext methodParameterContext,
                                NativeWebRequest webRequest, @Nullable Object argument) throws Exception {
-        Object[] arguments = resolveArguments(webRequest, parameter, argument);
+        Object[] arguments = setHandlerMethodArgument(webRequest, parameter, argument);
         int parameterCount = methodParameterContext.parameterCount;
         int parameterIndex = parameter.getParameterIndex();
         if (parameterIndex == parameterCount - 1) {
@@ -329,7 +329,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
     private void afterExecute(NativeWebRequest webRequest, @Nullable Object returnValue, ReturnTypeContext context) throws Exception {
         HandlerMethod handlerMethod = context.method;
-        Object[] arguments = getArguments(webRequest, handlerMethod);
+        Object[] arguments = getHandlerMethodArguments(webRequest, handlerMethod);
         afterExecute(webRequest, handlerMethod, arguments, returnValue);
     }
 
@@ -342,7 +342,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         HandlerMethod handlerMethod = resolveHandlerMethod(handler);
         if (handlerMethod != null) {
             ServletWebRequest webRequest = new ServletWebRequest(request);
-            Object[] arguments = getArguments(request, handlerMethod);
+            Object[] arguments = WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
             afterExecute(webRequest, handlerMethod, arguments, null, error);
         }
     }
@@ -353,24 +353,6 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
             HandlerMethodAdvice advice = handlerMethodAdvices.get(i);
             advice.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
         }
-    }
-
-    @Nonnull
-    Object[] getArguments(NativeWebRequest webRequest, HandlerMethod handlerMethod) {
-        return getHandlerMethodArguments(webRequest, handlerMethod);
-    }
-
-    @Nonnull
-    Object[] getArguments(HttpServletRequest request, HandlerMethod handlerMethod) {
-        return WebMvcUtils.getHandlerMethodArguments(request, handlerMethod);
-    }
-
-    @Nonnull
-    Object[] resolveArguments(NativeWebRequest webRequest, MethodParameter parameter, @Nullable Object argument) {
-        int index = parameter.getParameterIndex();
-        Object[] arguments = getHandlerMethodArguments(webRequest, parameter);
-        arguments[index] = argument;
-        return arguments;
     }
 
     HandlerMethodArgumentResolver resolveArgumentResolver(MethodParameter methodParameter, List<HandlerMethodArgumentResolver> resolvers) {

@@ -5,6 +5,7 @@ import io.microsphere.annotation.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.method.HandlerMethod;
@@ -212,6 +213,22 @@ public abstract class RequestAttributesUtils {
             arguments = new Object[method.getParameterCount()];
             setRequestAttribute(requestAttributes, attributeName, arguments);
         }
+        return arguments;
+    }
+
+    /**
+     * Set the {@link HandlerMethod} method parameter to the {@link RequestContextHolder#getRequestAttributes()}
+     *
+     * @param webRequest {@link NativeWebRequest}
+     * @param parameter  {@link MethodParameter}
+     * @param argument   Method parameter value
+     * @return non-null
+     */
+    @Nonnull
+    public static Object[] setHandlerMethodArgument(NativeWebRequest webRequest, MethodParameter parameter, @Nullable Object argument) {
+        int index = parameter.getParameterIndex();
+        Object[] arguments = getHandlerMethodArguments(webRequest, parameter);
+        arguments[index] = argument;
         return arguments;
     }
 

@@ -27,15 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
 
 import static io.microsphere.reflect.MethodUtils.findMethod;
-import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static java.util.Collections.emptyList;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -141,12 +138,6 @@ class InterceptingHandlerMethodProcessorTest extends AbstractWebMvcTest {
         Method helloWorldMethod = findMethod(TestController.class, "helloWorld");
         HandlerMethod handlerMethod = new HandlerMethod(testController, helloWorldMethod);
         assertNull(this.processor.resolveReturnValueHandler(handlerMethod, emptyList()));
-    }
-
-    @Test
-    void testResolveArguments() {
-        NativeWebRequest webRequest = createWebRequest();
-        assertArrayEquals(new Object[]{null}, this.processor.resolveArguments(webRequest, greetingMethodParameter0, null));
     }
 
     @Test
