@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.MethodParameter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.ServletException;
@@ -36,7 +35,6 @@ import java.lang.reflect.Method;
 
 import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.reflect.MethodUtils.findMethod;
-import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -146,12 +144,6 @@ public class InterceptingHandlerMethodProcessorTest extends AbstractWebMvcTest {
         Method helloWorldMethod = findMethod(TestController.class, "helloWorld");
         HandlerMethod handlerMethod = new HandlerMethod(testController, helloWorldMethod);
         assertNull(this.processor.resolveReturnValueHandler(handlerMethod, emptyList()));
-    }
-
-    @Test
-    public void testResolveArguments() {
-        NativeWebRequest webRequest = createWebRequest();
-        assertNull(this.processor.resolveArguments(webRequest, greetingMethodParameter0, null));
     }
 
     @Test

@@ -1,5 +1,7 @@
 package io.microsphere.spring.web.event;
 
+import io.microsphere.annotation.Nonnull;
+import io.microsphere.annotation.Nullable;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.HandlerMethod;
@@ -26,7 +28,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
      * @param handlerMethod {@link HandlerMethod}
      * @param arguments     {@link Object the argument object that was resolved}
      */
-    public HandlerMethodArgumentsResolvedEvent(WebRequest webRequest, HandlerMethod handlerMethod, Object... arguments) {
+    public HandlerMethodArgumentsResolvedEvent(WebRequest webRequest, @Nonnull HandlerMethod handlerMethod, @Nonnull Object... arguments) {
         super(webRequest);
         assertNotNull(handlerMethod, () -> "The 'handlerMethod' argument must not be null");
         assertNotNull(arguments, () -> "The 'arguments' argument must not be null");
@@ -37,6 +39,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
     /**
      * @return the {@link HandlerMethod} being invoking
      */
+    @Nonnull
     public HandlerMethod getHandlerMethod() {
         return handlerMethod;
     }
@@ -44,6 +47,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
     /**
      * @return the {@link Method} of {@link HandlerMethod} being invoking
      */
+    @Nonnull
     public Method getMethod() {
         return handlerMethod.getMethod();
     }
@@ -51,6 +55,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
     /**
      * @return the resolved arguments of {@link HandlerMethod} being invoking
      */
+    @Nonnull
     public Object[] getArguments() {
         return arguments;
     }
@@ -58,6 +63,7 @@ public class HandlerMethodArgumentsResolvedEvent extends ApplicationEvent {
     /**
      * @return {@link WebRequest The Web Request for HandlerMethod invocation}
      */
+    @Nonnull
     public WebRequest getWebRequest() {
         return (WebRequest) getSource();
     }

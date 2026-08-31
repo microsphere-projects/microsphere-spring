@@ -133,6 +133,7 @@ public abstract class BeanRegistrar {
      * @param registry The {@link BeanDefinitionRegistry} where the bean will be registered.
      * @param beanType The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerInfrastructureBean(BeanDefinitionRegistry registry, Class<?> beanType) {
         return registerInfrastructureBean(registry, null, beanType);
@@ -166,6 +167,7 @@ public abstract class BeanRegistrar {
      * @param beanName The name to assign to the bean in the registry, or {@code null} to generate a unique name.
      * @param beanType The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerInfrastructureBean(BeanDefinitionRegistry registry, @Nullable String beanName, Class<?> beanType) {
         return registerBeanDefinition(registry, beanName, beanType, ROLE_INFRASTRUCTURE);
@@ -192,6 +194,7 @@ public abstract class BeanRegistrar {
      * @param registry The {@link BeanDefinitionRegistry} where the bean will be registered.
      * @param beanType The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType) {
         return registerBeanDefinition(registry, null, beanType);
@@ -225,6 +228,7 @@ public abstract class BeanRegistrar {
      * @param beanName The name to assign to the bean in the registry, or {@code null} to generate a unique name.
      * @param beanType The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName, Class<?> beanType) {
         BeanDefinition beanDefinition = genericBeanDefinition(beanType);
@@ -261,9 +265,10 @@ public abstract class BeanRegistrar {
      * @param beanType             The class type of the bean to be registered.
      * @param constructorArguments The arguments to pass to the bean's constructor.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
-                                                 Class<?> beanType, Object... constructorArguments) {
+                                                 Class<?> beanType, @Nullable Object... constructorArguments) {
         BeanDefinition beanDefinition = genericBeanDefinition(beanType, constructorArguments);
         return registerBeanDefinition(registry, beanName, beanDefinition);
     }
@@ -298,6 +303,7 @@ public abstract class BeanRegistrar {
      * @param role     The role of the bean definition (e.g., {@link BeanDefinition#ROLE_APPLICATION},
      *                 {@link BeanDefinition#ROLE_SUPPORT}, or {@link BeanDefinition#ROLE_INFRASTRUCTURE}).
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
                                                  Class<?> beanType, int role) {
@@ -336,6 +342,7 @@ public abstract class BeanRegistrar {
      * @param beanType        The class type of the bean to be registered.
      * @param builderConsumer A {@link Consumer} that configures the {@link BeanDefinitionBuilder} before building the definition.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry}, {@code beanType}, or {@code builderConsumer} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType,
                                                  Consumer<BeanDefinitionBuilder> builderConsumer) {
@@ -376,6 +383,7 @@ public abstract class BeanRegistrar {
      * @param beanType        The class type of the bean to be registered.
      * @param builderConsumer A {@link Consumer} that configures the {@link BeanDefinitionBuilder} before building the definition.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry}, {@code beanType}, or {@code builderConsumer} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
                                                  Class<?> beanType, Consumer<BeanDefinitionBuilder> builderConsumer) {
@@ -408,6 +416,7 @@ public abstract class BeanRegistrar {
      * @param beanType The class type of the bean to be registered.
      * @param primary  Whether this bean should be marked as the primary bean.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, Class<?> beanType, boolean primary) {
         return registerBeanDefinition(registry, null, beanType, primary);
@@ -442,6 +451,7 @@ public abstract class BeanRegistrar {
      * @param beanType The class type of the bean to be registered.
      * @param primary  Whether this bean should be marked as the primary bean.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
                                                  Class<?> beanType, boolean primary) {
@@ -474,6 +484,7 @@ public abstract class BeanRegistrar {
      * @param registry       The {@link BeanDefinitionRegistry} where the bean will be registered.
      * @param beanDefinition The bean definition to register.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanDefinition} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, BeanDefinition beanDefinition) {
         return registerBeanDefinition(registry, null, beanDefinition);
@@ -509,6 +520,7 @@ public abstract class BeanRegistrar {
      * @param beanName       The name to assign to the bean in the registry, or {@code null} to generate a unique name.
      * @param beanDefinition The bean definition to register.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code registry} or {@code beanDefinition} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
                                                  BeanDefinition beanDefinition) {
@@ -548,6 +560,7 @@ public abstract class BeanRegistrar {
      * @param beanDefinition                The bean definition to register.
      * @param allowBeanDefinitionOverriding Whether to allow overriding of an existing bean definition with the same name.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered or registration failed.
+     * @throws NullPointerException if {@code registry} or {@code beanDefinition} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanDefinitionRegistry registry, @Nullable String beanName,
                                                  BeanDefinition beanDefinition, boolean allowBeanDefinitionOverriding) {
@@ -594,6 +607,7 @@ public abstract class BeanRegistrar {
      * @param registry The {@link SingletonBeanRegistry} where the singleton bean will be registered.
      * @param beanName The name to assign to the singleton bean in the registry.
      * @param bean     The singleton instance to register.
+     * @throws NullPointerException if {@code registry}, {@code beanName}, or {@code bean} is {@code null}.
      */
     public static void registerSingleton(SingletonBeanRegistry registry, String beanName, Object bean) {
         registry.registerSingleton(beanName, bean);
@@ -622,8 +636,9 @@ public abstract class BeanRegistrar {
      * @param beanName The name of the bean whose aliases are being checked.
      * @param alias    The alias to look for.
      * @return {@code true} if the alias exists for the given bean name; {@code false} otherwise.
+     * @throws NullPointerException if {@code registry} is {@code null}.
      */
-    public static boolean hasAlias(AliasRegistry registry, String beanName, String alias) {
+    public static boolean hasAlias(AliasRegistry registry, @Nullable String beanName, @Nullable String alias) {
         return hasText(beanName) && hasText(alias) && containsElement(registry.getAliases(beanName), alias);
     }
 
@@ -649,9 +664,10 @@ public abstract class BeanRegistrar {
      * @param beanFactory    The {@link BeanFactory} where beans will be registered.
      * @param factoryClasses An array of factory interface or abstract base classes used to locate implementations via spring.factories.
      * @return A map of successfully registered bean classes to their assigned bean names. The map is unmodifiable.
+     * @throws NullPointerException if {@code beanFactory} is {@code null}
      * @see #registerSpringFactoriesBeans(BeanDefinitionRegistry, Class...)
      */
-    public static Map<Class, String> registerSpringFactoriesBeans(BeanFactory beanFactory, Class<?>... factoryClasses) {
+    public static Map<Class, String> registerSpringFactoriesBeans(BeanFactory beanFactory, @Nullable Class<?>... factoryClasses) {
         return registerSpringFactoriesBeans(asBeanDefinitionRegistry(beanFactory), factoryClasses);
     }
 
@@ -690,8 +706,9 @@ public abstract class BeanRegistrar {
      * @param registry       The {@link BeanDefinitionRegistry} where beans will be registered.
      * @param factoryClasses An array of factory interface or abstract base classes used to locate implementations via spring.factories.
      * @return A map of successfully registered bean classes to their assigned bean names. The map is unmodifiable.
+     * @throws NullPointerException if {@code registry} is {@code null}
      */
-    public static Map<Class, String> registerSpringFactoriesBeans(BeanDefinitionRegistry registry, Class<?>... factoryClasses) {
+    public static Map<Class, String> registerSpringFactoriesBeans(BeanDefinitionRegistry registry, @Nullable Class<?>... factoryClasses) {
         // Convert the array of factory classes into a Set for efficient lookup and to avoid duplicates
         Set<Class<?>> factoryClassesSet = ofSet(factoryClasses);
         ConfigurableListableBeanFactory beanFactory = asConfigurableListableBeanFactory(registry);
@@ -720,8 +737,9 @@ public abstract class BeanRegistrar {
      * @param registry The {@link BeanDefinitionRegistry} where the FactoryBean will be registered.
      * @param beanName The name to assign to the FactoryBean in the registry.
      * @param bean     The bean instance that will be wrapped by the FactoryBean.
+     * @throws NullPointerException if {@code registry} or {@code bean} is {@code null}.
      */
-    public static void registerFactoryBean(BeanDefinitionRegistry registry, String beanName, Object bean) {
+    public static void registerFactoryBean(BeanDefinitionRegistry registry, @Nullable String beanName, Object bean) {
         registerFactoryBean(registry, beanName, bean, false);
     }
 
@@ -748,8 +766,10 @@ public abstract class BeanRegistrar {
      * @param beanName The name to assign to the FactoryBean in the registry.
      * @param bean     The bean instance that will be wrapped by the FactoryBean.
      * @param primary  Whether this bean should be marked as the primary bean.
+     * @throws NullPointerException if {@code registry} or {@code bean} is {@code null}.
      */
-    public static void registerFactoryBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
+    public static void registerFactoryBean(BeanDefinitionRegistry registry, @Nullable String beanName, Object bean,
+                                           boolean primary) {
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(DelegatingFactoryBean.class, bean);
         beanDefinition.setSource(bean);
         beanDefinition.setPrimary(primary);
@@ -773,8 +793,9 @@ public abstract class BeanRegistrar {
      * @param registry The {@link BeanDefinitionRegistry} where the bean will be registered.
      * @param beanName The name to assign to the bean in the registry.
      * @param bean     The bean instance to register.
+     * @throws NullPointerException if {@code registry} or {@code bean} is {@code null}.
      */
-    public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean) {
+    public static void registerBean(BeanDefinitionRegistry registry, @Nullable String beanName, Object bean) {
         registerBean(registry, beanName, bean, false);
     }
 
@@ -808,8 +829,9 @@ public abstract class BeanRegistrar {
      * @param beanName The name to assign to the bean in the registry.
      * @param bean     The bean instance to register.
      * @param primary  Whether this bean should be marked as the primary bean.
+     * @throws NullPointerException if {@code registry} or {@code bean} is {@code null}.
      */
-    public static void registerBean(BeanDefinitionRegistry registry, String beanName, Object bean, boolean primary) {
+    public static void registerBean(BeanDefinitionRegistry registry, @Nullable String beanName, Object bean, boolean primary) {
         Class beanClass = getTargetClass(bean);
         AbstractBeanDefinition beanDefinition = genericBeanDefinition(beanClass);
         if (setInstanceSupplier(beanDefinition, () -> bean)) {
@@ -840,6 +862,7 @@ public abstract class BeanRegistrar {
      * @param registry    The {@link BeanDefinitionRegistry} where the beans will be registered.
      * @param beanClasses A collection of class types of the beans to be registered.
      * @return An unmodifiable map of registered bean classes to their assigned bean names.
+     * @throws NullPointerException if {@code registry} or {@code beanClasses} is {@code null}.
      */
     public static Map<Class<?>, String> registerGenericBeans(BeanDefinitionRegistry registry, Collection<Class<?>> beanClasses) {
         return registerGenericBeans(registry, beanClasses.toArray(EMPTY_CLASS_ARRAY));
@@ -864,8 +887,9 @@ public abstract class BeanRegistrar {
      * @param registry    The {@link BeanDefinitionRegistry} where the beans will be registered.
      * @param beanClasses An array of class types of the beans to be registered.
      * @return An unmodifiable map of registered bean classes to their assigned bean names.
+     * @throws NullPointerException if {@code registry} is {@code null}.
      */
-    public static Map<Class<?>, String> registerGenericBeans(BeanDefinitionRegistry registry, Class<?>... beanClasses) {
+    public static Map<Class<?>, String> registerGenericBeans(BeanDefinitionRegistry registry, @Nullable Class<?>... beanClasses) {
         int length = length(beanClasses);
         if (length == 0) {
             return emptyMap();
@@ -879,7 +903,6 @@ public abstract class BeanRegistrar {
         }
         return unmodifiableMap(beanTypesAndNames);
     }
-
 
     /**
      * Registers a generic bean definition for the specified bean class into the given registry.
@@ -906,6 +929,7 @@ public abstract class BeanRegistrar {
      * @param beanClass The class type of the bean to be registered.
      * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
      * the bean was successfully registered, or {@code false} if it was already present and overriding is disabled.
+     * @throws NullPointerException if {@code registry} or {@code beanClass} is {@code null}.
      */
     public static Entry<String, Boolean> registerGenericBean(BeanDefinitionRegistry registry, Class<?> beanClass) {
         return registerGenericBean(registry, beanClass, INSTANCE);
@@ -937,6 +961,7 @@ public abstract class BeanRegistrar {
      * @param beanNameGenerator The {@link BeanNameGenerator} to use for generating the bean name.
      * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
      * the bean was successfully registered, or {@code false} if it was already present and overriding is disabled.
+     * @throws NullPointerException if {@code registry}, {@code beanClass}, or {@code beanNameGenerator} is {@code null}.
      */
     public static Entry<String, Boolean> registerGenericBean(BeanDefinitionRegistry registry, Class<?> beanClass,
                                                              BeanNameGenerator beanNameGenerator) {
@@ -956,6 +981,7 @@ public abstract class BeanRegistrar {
      * @param beanFactory The {@link BeanFactory} where the bean will be registered.
      * @param beanType    The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerInfrastructureBean(BeanFactory beanFactory, Class<?> beanType) {
         return registerInfrastructureBean(asBeanDefinitionRegistry(beanFactory), beanType);
@@ -972,6 +998,7 @@ public abstract class BeanRegistrar {
      * @param beanName    The name to assign to the bean in the factory, or {@code null} to generate a unique name.
      * @param beanType    The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerInfrastructureBean(BeanFactory beanFactory, @Nullable String beanName, Class<?> beanType) {
         return registerInfrastructureBean(asBeanDefinitionRegistry(beanFactory), beanName, beanType);
@@ -987,6 +1014,7 @@ public abstract class BeanRegistrar {
      * @param beanFactory The {@link BeanFactory} where the bean will be registered.
      * @param beanType    The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, Class<?> beanType) {
         return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanType);
@@ -1003,6 +1031,7 @@ public abstract class BeanRegistrar {
      * @param beanName    The name to assign to the bean in the factory, or {@code null} to generate a unique name.
      * @param beanType    The class type of the bean to be registered.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName, Class<?> beanType) {
         return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanName, beanType);
@@ -1020,6 +1049,7 @@ public abstract class BeanRegistrar {
      * @param beanType             The class type of the bean to be registered.
      * @param constructorArguments The arguments to pass to the bean's constructor.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
                                                  Class<?> beanType, Object... constructorArguments) {
@@ -1038,6 +1068,7 @@ public abstract class BeanRegistrar {
      * @param beanType    The class type of the bean to be registered.
      * @param role        The role of the bean definition.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
                                                  Class<?> beanType, int role) {
@@ -1055,6 +1086,7 @@ public abstract class BeanRegistrar {
      * @param beanType        The class type of the bean to be registered.
      * @param builderConsumer A {@link Consumer} that configures the {@link BeanDefinitionBuilder}.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory}, {@code beanType}, or {@code builderConsumer} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, Class<?> beanType,
                                                  Consumer<BeanDefinitionBuilder> builderConsumer) {
@@ -1073,6 +1105,7 @@ public abstract class BeanRegistrar {
      * @param beanType        The class type of the bean to be registered.
      * @param builderConsumer A {@link Consumer} that configures the {@link BeanDefinitionBuilder}.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory}, {@code beanType}, or {@code builderConsumer} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
                                                  Class<?> beanType, Consumer<BeanDefinitionBuilder> builderConsumer) {
@@ -1090,6 +1123,7 @@ public abstract class BeanRegistrar {
      * @param beanType    The class type of the bean to be registered.
      * @param primary     Whether this bean should be marked as the primary bean.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, Class<?> beanType, boolean primary) {
         return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanType, primary);
@@ -1107,6 +1141,7 @@ public abstract class BeanRegistrar {
      * @param beanType    The class type of the bean to be registered.
      * @param primary     Whether this bean should be marked as the primary bean.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanType} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
                                                  Class<?> beanType, boolean primary) {
@@ -1123,6 +1158,7 @@ public abstract class BeanRegistrar {
      * @param beanFactory    The {@link BeanFactory} where the bean will be registered.
      * @param beanDefinition The bean definition to register.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanDefinition} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, BeanDefinition beanDefinition) {
         return registerBeanDefinition(asBeanDefinitionRegistry(beanFactory), beanDefinition);
@@ -1139,6 +1175,7 @@ public abstract class BeanRegistrar {
      * @param beanName       The name to assign to the bean in the factory, or {@code null} to generate a unique name.
      * @param beanDefinition The bean definition to register.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanDefinition} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
                                                  BeanDefinition beanDefinition) {
@@ -1157,6 +1194,7 @@ public abstract class BeanRegistrar {
      * @param beanDefinition                The bean definition to register.
      * @param allowBeanDefinitionOverriding Whether to allow overriding of an existing bean definition.
      * @return Returns {@code true} if the bean is registered for the first time; returns {@code false} if it was already registered.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanDefinition} is {@code null}.
      */
     public static boolean registerBeanDefinition(BeanFactory beanFactory, @Nullable String beanName,
                                                  BeanDefinition beanDefinition, boolean allowBeanDefinitionOverriding) {
@@ -1174,6 +1212,7 @@ public abstract class BeanRegistrar {
      * @param beanFactory The {@link BeanFactory} where the singleton bean will be registered.
      * @param beanName    The name to assign to the singleton bean in the factory.
      * @param bean        The singleton instance to register.
+     * @throws NullPointerException if {@code beanFactory}, {@code beanName}, or {@code bean} is {@code null}.
      */
     public static void registerSingleton(BeanFactory beanFactory, String beanName, Object bean) {
         if (beanFactory instanceof SingletonBeanRegistry) {
@@ -1195,6 +1234,7 @@ public abstract class BeanRegistrar {
      * @param beanFactory The {@link BeanFactory} where the FactoryBean will be registered.
      * @param beanName    The name to assign to the FactoryBean in the factory.
      * @param bean        The bean instance that will be wrapped by the FactoryBean.
+     * @throws NullPointerException if {@code beanFactory}, {@code beanName}, or {@code bean} is {@code null}.
      */
     public static void registerFactoryBean(BeanFactory beanFactory, String beanName, Object bean) {
         registerFactoryBean(asBeanDefinitionRegistry(beanFactory), beanName, bean);
@@ -1211,8 +1251,9 @@ public abstract class BeanRegistrar {
      * @param beanName    The name to assign to the FactoryBean in the factory.
      * @param bean        The bean instance that will be wrapped by the FactoryBean.
      * @param primary     Whether this bean should be marked as the primary bean.
+     * @throws NullPointerException if {@code beanFactory}, or {@code bean} is {@code null}.
      */
-    public static void registerFactoryBean(BeanFactory beanFactory, String beanName, Object bean, boolean primary) {
+    public static void registerFactoryBean(BeanFactory beanFactory, @Nullable String beanName, Object bean, boolean primary) {
         registerFactoryBean(asBeanDefinitionRegistry(beanFactory), beanName, bean, primary);
     }
 
@@ -1226,8 +1267,9 @@ public abstract class BeanRegistrar {
      * @param beanFactory The {@link BeanFactory} where the bean will be registered.
      * @param beanName    The name to assign to the bean in the factory.
      * @param bean        The bean instance to register.
+     * @throws NullPointerException if {@code beanFactory}, or {@code bean} is {@code null}.
      */
-    public static void registerBean(BeanFactory beanFactory, String beanName, Object bean) {
+    public static void registerBean(BeanFactory beanFactory, @Nullable String beanName, Object bean) {
         registerBean(asBeanDefinitionRegistry(beanFactory), beanName, bean);
     }
 
@@ -1242,8 +1284,9 @@ public abstract class BeanRegistrar {
      * @param beanName    The name to assign to the bean in the factory.
      * @param bean        The bean instance to register.
      * @param primary     Whether this bean should be marked as the primary bean.
+     * @throws NullPointerException if {@code beanFactory}, or {@code bean} is {@code null}.
      */
-    public static void registerBean(BeanFactory beanFactory, String beanName, Object bean, boolean primary) {
+    public static void registerBean(BeanFactory beanFactory, @Nullable String beanName, Object bean, boolean primary) {
         registerBean(asBeanDefinitionRegistry(beanFactory), beanName, bean, primary);
     }
 
@@ -1257,6 +1300,7 @@ public abstract class BeanRegistrar {
      * @param beanFactory The {@link BeanFactory} where the beans will be registered.
      * @param beanClasses A collection of class types of the beans to be registered.
      * @return An unmodifiable map of registered bean classes to their assigned bean names.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanClasses} is {@code null}.
      */
     public static Map<Class<?>, String> registerGenericBeans(BeanFactory beanFactory, Collection<Class<?>> beanClasses) {
         return registerGenericBeans(asBeanDefinitionRegistry(beanFactory), beanClasses);
@@ -1272,8 +1316,9 @@ public abstract class BeanRegistrar {
      * @param beanFactory The {@link BeanFactory} where the beans will be registered.
      * @param beanClasses An array of class types of the beans to be registered.
      * @return An unmodifiable map of registered bean classes to their assigned bean names.
+     * @throws NullPointerException if {@code beanFactory} is {@code null}.
      */
-    public static Map<Class<?>, String> registerGenericBeans(BeanFactory beanFactory, Class<?>... beanClasses) {
+    public static Map<Class<?>, String> registerGenericBeans(BeanFactory beanFactory, @Nullable Class<?>... beanClasses) {
         return registerGenericBeans(asBeanDefinitionRegistry(beanFactory), beanClasses);
     }
 
@@ -1288,6 +1333,7 @@ public abstract class BeanRegistrar {
      * @param beanClass   The class type of the bean to be registered.
      * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
      * the bean was successfully registered, or {@code false} if it was already present.
+     * @throws NullPointerException if {@code beanFactory} or {@code beanClass} is {@code null}.
      */
     public static Entry<String, Boolean> registerGenericBean(BeanFactory beanFactory, Class<?> beanClass) {
         return registerGenericBean(asBeanDefinitionRegistry(beanFactory), beanClass);
@@ -1305,6 +1351,7 @@ public abstract class BeanRegistrar {
      * @param beanNameGenerator The {@link BeanNameGenerator} to use for generating the bean name.
      * @return An immutable {@link Entry} where the key is the generated bean name and the value is {@code true} if
      * the bean was successfully registered, or {@code false} if it was already present.
+     * @throws NullPointerException if {@code beanFactory}, {@code beanClass}, or {@code beanNameGenerator} is {@code null}.
      */
     public static Entry<String, Boolean> registerGenericBean(BeanFactory beanFactory, Class<?> beanClass,
                                                              BeanNameGenerator beanNameGenerator) {
