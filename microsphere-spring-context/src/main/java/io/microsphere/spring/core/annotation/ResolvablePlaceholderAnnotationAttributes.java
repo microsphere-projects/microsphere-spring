@@ -31,6 +31,7 @@ import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.findAnnotationType;
 import static io.microsphere.spring.core.annotation.AnnotationUtils.getAnnotationAttributes;
 import static io.microsphere.util.ArrayUtils.length;
+import static io.microsphere.util.Assert.assertNoNullElements;
 import static java.util.Collections.emptySet;
 
 /**
@@ -265,6 +266,8 @@ public class ResolvablePlaceholderAnnotationAttributes<A extends Annotation> ext
         if (length < 1) {
             return emptySet();
         }
+
+        assertNoNullElements(attributesArray, () -> "The 'attributesArray' must not contain null elements");
 
         Set<AnnotationAttributes> annotationAttributesSet = newLinkedHashSet();
         for (int i = 0; i < length; i++) {
