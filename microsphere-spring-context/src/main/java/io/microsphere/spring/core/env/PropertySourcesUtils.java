@@ -371,6 +371,7 @@ public abstract class PropertySourcesUtils implements Utils {
      * @param environment    {@link ConfigurableEnvironment}
      * @param createIfAbsent <code>true</code> indicates the "default" {@link PropertySource} will be created if absent
      * @return non-null {@link MapPropertySource}
+     * @throws NullPointerException if {@code environment} is <code>null</code>
      */
     public static MapPropertySource getDefaultPropertiesPropertySource(ConfigurableEnvironment environment, boolean createIfAbsent) {
         MutablePropertySources propertySources = environment.getPropertySources();
