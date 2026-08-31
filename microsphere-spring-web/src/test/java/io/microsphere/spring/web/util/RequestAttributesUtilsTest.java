@@ -34,9 +34,11 @@ import static io.microsphere.spring.core.MethodParameterUtils.forExecutable;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodReturnValue;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodArgument;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodRequestBodyArgument;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodReturnValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 import static org.springframework.web.context.request.RequestContextHolder.resetRequestAttributes;
 import static org.springframework.web.context.request.RequestContextHolder.setRequestAttributes;
@@ -52,7 +54,7 @@ public class RequestAttributesUtilsTest {
 
     private MockHttpServletRequest servletRequest;
 
-    private RequestAttributes requestAttributes;
+    private ServletWebRequest webRequest;
 
     private HandlerMethod handlerMethod;
 
@@ -65,8 +67,8 @@ public class RequestAttributesUtilsTest {
     @Before
     public void setUp() throws NoSuchMethodException {
         this.servletRequest = new MockHttpServletRequest();
-        this.requestAttributes = new ServletWebRequest(this.servletRequest);
-        setRequestAttributes(this.requestAttributes);
+        this.webRequest = new ServletWebRequest(this.servletRequest);
+        setRequestAttributes(this.webRequest);
         this.handlerMethod = new HandlerMethod(new TestController(), "user", User.class);
         this.method = this.handlerMethod.getMethod();
         this.methodParameter = forExecutable(this.method, 0);
@@ -78,6 +80,17 @@ public class RequestAttributesUtilsTest {
     @After
     public void tearDown() {
         resetRequestAttributes();
+    }
+
+    @Test
+    public void testSetHandlerMethodArgument() {
+        Object[] arguments = setHandlerMethodArgument(this.webRequest, this.methodParameter, null);
+        assertEquals(1, arguments.length);
+        assertNull(arguments[0]);
+
+        arguments = setHandlerMethodArgument(this.webRequest, this.methodParameter, this.user);
+        assertEquals(1, arguments.length);
+        assertEquals(this.user, arguments[0]);
     }
 
     @Test
