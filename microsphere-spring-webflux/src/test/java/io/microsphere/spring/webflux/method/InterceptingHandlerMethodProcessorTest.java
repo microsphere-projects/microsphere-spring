@@ -20,13 +20,11 @@ package io.microsphere.spring.webflux.method;
 import io.microsphere.spring.test.web.controller.TestController;
 import io.microsphere.spring.webflux.annotation.AbstractEnableWebFluxExtensionTest;
 import io.microsphere.spring.webflux.annotation.EnableWebFluxExtension;
-import io.microsphere.spring.webflux.context.request.ServerWebRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerResult;
 import reactor.core.publisher.Mono;
@@ -35,7 +33,6 @@ import java.lang.reflect.Method;
 
 import static io.microsphere.reflect.MethodUtils.findMethod;
 import static io.microsphere.reflect.MethodUtils.invokeMethod;
-import static io.microsphere.spring.test.web.WebTestUtils.mockServerWebExchange;
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.util.ClassUtils.getTypes;
 import static java.util.Collections.emptyList;
@@ -122,12 +119,6 @@ class InterceptingHandlerMethodProcessorTest extends AbstractEnableWebFluxExtens
     @Test
     void testResolveArgumentResolver() {
         assertNull(processor.resolveArgumentResolver(greetingMethodParameter0, emptyList()));
-    }
-
-    @Test
-    void testResolveArguments() {
-        NativeWebRequest webRequest = new ServerWebRequest(mockServerWebExchange());
-        assertNull(processor.resolveArguments(webRequest, greetingMethodParameter0, null));
     }
 
     HandlerResult newHandlerResult(String handlerMethodName, Object... arguments) {

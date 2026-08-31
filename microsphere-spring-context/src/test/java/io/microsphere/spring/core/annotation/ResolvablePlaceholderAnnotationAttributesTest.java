@@ -35,6 +35,7 @@ import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotat
 import static io.microsphere.spring.core.annotation.ResolvablePlaceholderAnnotationAttributes.ofSet;
 import static io.microsphere.util.ArrayUtils.ofArray;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 
 /**
@@ -117,9 +118,21 @@ public class ResolvablePlaceholderAnnotationAttributesTest {
     }
 
     @Test
+    public void testOfSetOnNullArray() {
+        Set<AnnotationAttributes> attributesSet = ofSet(null, this.environment);
+        assertEquals(0, attributesSet.size());
+    }
+
+    @Test
     public void testOfSetOnEmptyArray() {
         Set<AnnotationAttributes> attributesSet = ofSet(ofArray(), this.environment);
         assertEquals(0, attributesSet.size());
+    }
+
+    @Test
+    public void testOfSetOnNullElementArray() {
+        GenericAnnotationAttributes[] attributesArray = new GenericAnnotationAttributes[]{null};
+        assertThrows(IllegalArgumentException.class, () -> ofSet(attributesArray, this.environment));
     }
 
     private void assertAnnotationAttributes(AnnotationAttributes attributes) {

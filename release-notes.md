@@ -718,4 +718,34 @@ d5b428477 chore: merge release-1.x into dev-1.x [skip ci]
 f85eb0889 chore: bump version to next patch after publishing 0.1.37
 ```
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.37...0.1.38
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.37...0.1.38## v0.1.39
+
+_Release notes generation failed. Raw commits since 0.1.38:_
+
+```
+2ef4fd5ec Update version numbers in README.md
+c70a7fd73 Merge pull request #277 from mercyblitz/dev-1.x
+c016f7632 Bump microsphere-logging to 0.2.2
+7a1fd792c Bump microsphere-java to 0.3.19
+befa9c0f1 Refactor handler argument access in processor
+5aaf23a21 Refactor handler argument storage in WebFlux
+2ff60218d Add NativeWebRequest handler argument setter
+70454d183 Document NPE in default property source API
+6e0516357 Validate null elements in annotation array
+2d77df652 Clarify BeanRegistrar nullability contracts
+0f3e8f9c1 Handle null beanFactory in dependency filter
+687753168 Handle null method args consistently
+cd6a5f22b Allow null arguments in handler event
+952a5a09c Harden WebEndpointMapping builder defaults
+0177ae761 Default empty endpoint methods to all HTTP verbs
+d0721b825 Bump Jackson to 2.22.2
+b13eb88b4 Bump microsphere-logging to 0.2.1
+84802af1e Bump microsphere-java to 0.3.18
+f85471e52 Bump microsphere-build parent to 0.3.14
+3712288c0 Bump microsphere-build parent to 0.3.12
+7f894907a Add workflow to sync fork branches upstream
+ba8dc2eeb chore: merge release-1.x into dev-1.x [skip ci]
+e026e5846 chore: bump version to next patch after publishing 0.1.38
+```
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.1.38...0.1.39

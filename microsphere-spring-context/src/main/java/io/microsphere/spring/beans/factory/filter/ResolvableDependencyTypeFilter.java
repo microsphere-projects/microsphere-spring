@@ -110,6 +110,9 @@ public class ResolvableDependencyTypeFilter implements Filter<Class<?>> {
     }
 
     static ResolvableDependencyTypeFilter get(DefaultListableBeanFactory beanFactory) {
+        if (beanFactory == null) {
+            return null;
+        }
         ResolvableDependencyTypeFilter filter = (ResolvableDependencyTypeFilter) beanFactory.getSingleton(BEAN_NAME);
         return filter == null ? new ResolvableDependencyTypeFilter(beanFactory) : filter;
     }

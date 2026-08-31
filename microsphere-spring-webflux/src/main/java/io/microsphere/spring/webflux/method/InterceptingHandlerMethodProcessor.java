@@ -16,6 +16,7 @@
  */
 package io.microsphere.spring.webflux.method;
 
+import io.microsphere.annotation.Nonnull;
 import io.microsphere.annotation.Nullable;
 import io.microsphere.spring.context.event.OnceApplicationContextEventListener;
 import io.microsphere.spring.web.event.WebEndpointMappingsReadyEvent;
@@ -54,8 +55,10 @@ import static io.microsphere.reflect.FieldUtils.getFieldValue;
 import static io.microsphere.spring.beans.BeanUtils.getSortedBeans;
 import static io.microsphere.spring.web.util.MonoUtils.getValue;
 import static io.microsphere.spring.web.util.RequestAttributesUtils.getHandlerMethodArguments;
+import static io.microsphere.spring.web.util.RequestAttributesUtils.setHandlerMethodArgument;
 import static io.microsphere.spring.web.util.WebUtils.isNoArgumentHandlerMethod;
 import static io.microsphere.spring.web.util.WebUtils.resolveHandlerMethod;
+import static io.microsphere.util.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static java.util.Collections.emptyList;
 import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
@@ -101,7 +104,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         if (isNoArgumentHandlerMethod(handler)) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             ServerWebRequest webRequest = (ServerWebRequest) getRequestAttributes();
-            execute(() -> beforeExecute(webRequest, handlerMethod));
+            execute(() -> beforeExecute(webRequest, handlerMethod, EMPTY_OBJECT_ARRAY));
         }
         return false;
     }
@@ -153,7 +156,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
 
             Object argument = getValue(result);
 
-            Object[] arguments = resolveArguments(webRequest, parameter, argument);
+            Object[] arguments = setHandlerMethodArgument(webRequest, parameter, argument);
 
             afterResolveArgument(parameter, argument, webRequest, handlerMethod);
 
@@ -319,7 +322,7 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         }
     }
 
-    private void beforeExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object... arguments)
+    private void beforeExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, Object[] arguments)
             throws Exception {
         for (int i = 0; i < handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
@@ -335,29 +338,14 @@ public class InterceptingHandlerMethodProcessor extends OnceApplicationContextEv
         afterExecute(webRequest, handlerMethod, null, error);
     }
 
+    @Nonnull
     private void afterExecute(NativeWebRequest webRequest, HandlerMethod handlerMethod, @Nullable Object returnValue,
                               @Nullable Throwable error) throws Exception {
-        Object[] arguments = getArguments(webRequest, handlerMethod);
+        Object[] arguments = getHandlerMethodArguments(webRequest, handlerMethod);
         for (int i = 0; i < this.handlerMethodAdvices.size(); i++) {
             HandlerMethodAdvice handlerMethodAdvice = this.handlerMethodAdvices.get(i);
             handlerMethodAdvice.afterExecuteMethod(handlerMethod, arguments, returnValue, error, webRequest);
         }
-    }
-
-    private Object[] getArguments(NativeWebRequest webRequest, HandlerMethod handlerMethod) {
-        return getHandlerMethodArguments(webRequest, handlerMethod);
-    }
-
-    Object[] resolveArguments(NativeWebRequest webRequest, MethodParameter parameter, Object argument) {
-        int index = parameter.getParameterIndex();
-        Object[] arguments = null;
-        if (argument != null) {
-            arguments = getHandlerMethodArguments(webRequest, parameter);
-            if (index < arguments.length) {
-                arguments[index] = argument;
-            }
-        }
-        return arguments;
     }
 
     HandlerMethodArgumentResolver resolveArgumentResolver(MethodParameter methodParameter, List<HandlerMethodArgumentResolver> resolvers) {
