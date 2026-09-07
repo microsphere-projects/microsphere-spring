@@ -691,4 +691,63 @@ a428440fe Bump microsphere-logging to 0.2.0
 f234f0a81 chore: bump version to next patch after publishing 0.2.37
 ```
 
-**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.37...0.2.38
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.37...0.2.38## v0.2.39
+
+_Release notes generation failed. Raw commits since 0.2.38:_
+
+```
+cc22736b1 Update version numbers in README.md
+8afe21adb chore: merge main into release [skip ci]
+0accf3052 Bump microsphere-logging to 0.2.2
+833b9ad40 chore: merge main into release [skip ci]
+efb4fe5da Bump microsphere-java to 0.3.19
+f833bb579 chore: merge main into release [skip ci]
+089890359 Add test for setHandlerMethodArgument behavior
+9399c91b9 Share handler argument update helper
+f04a83dcd chore: merge main into release [skip ci]
+89282d55e Document null-check behavior for default source
+d3215e976 chore: merge main into release [skip ci]
+696a49807 Guard null elements in attributes arrays
+01e7baad1 chore: merge main into release [skip ci]
+31bc863fb Clarify BeanRegistrar nullability contracts
+c6c67b243 chore: merge main into release [skip ci]
+371c85296 Handle null bean factory in type filter
+db3449c53 chore: merge main into release [skip ci]
+d89fd25d6 Allow null-safe bean factory type casting
+5a77cb933 chore: merge main into release [skip ci]
+22b097c52 Add bean factory adapter utility tests
+49d9d602b Tighten BeanFactory nullability contracts
+d9772a60e chore: merge main into release [skip ci]
+c8cfaedf5 Enforce non-null resolved handler arguments
+9a565b56f Normalize interceptor argument resolution
+67c4280ba chore: merge main into release [skip ci]
+a447d0bfe Allow null resolved arguments in web event
+f38263117 chore: merge main into release [skip ci]
+b0ddc4413 Fix blank header validation message
+d370efff5 chore: merge main into release [skip ci]
+24a4718d9 Default mappings to all HTTP methods
+6713ff5c0 chore: merge main into release [skip ci]
+a2df9c775 Merge pull request #275 from microsphere-projects/dependabot/maven/io.projectreactor-reactor-bom-2025.0.7
+55634782c chore: merge main into release [skip ci]
+745fbbfc1 Merge pull request #274 from microsphere-projects/dependabot/maven/com.fasterxml.jackson-jackson-bom-2.22.2
+8ba3cf6ea Merge branch 'main' into dependabot/maven/io.projectreactor-reactor-bom-2025.0.7
+ef46f5a2e chore: merge main into release [skip ci]
+314ef1d0d Merge pull request #276 from microsphere-projects/dependabot/maven/org.springframework-spring-framework-bom-7.0.9
+916337a0f chore: merge main into release [skip ci]
+728e4579b Merge pull request #273 from microsphere-projects/dependabot/maven/org.apache.maven-apache-maven-3.9.16
+c0e0611a7 chore: merge main into release [skip ci]
+e255f31e1 Bump microsphere-logging version
+406d37d7d Bump microsphere-java to 0.3.18
+721fe3def chore: merge main into release [skip ci]
+9bde286fb Bump microsphere-build to 0.3.14
+1f7a5e356 Bump org.springframework:spring-framework-bom from 7.0.8 to 7.0.9
+25a435fb8 Bump io.projectreactor:reactor-bom from 2025.0.6 to 2025.0.7
+f1a22d0ed Bump com.fasterxml.jackson:jackson-bom from 2.22.1 to 2.22.2
+ad91207bb Bump org.apache.maven:apache-maven from 3.9.15 to 3.9.16
+a75bd1467 chore: merge main into release [skip ci]
+7d18a15a6 Bump microsphere-build parent
+b4203bd90 chore: merge release into main [skip ci]
+29a482473 chore: bump version to next patch after publishing 0.2.38
+```
+
+**Full Changelog**: https://github.com/microsphere-projects/microsphere-spring/compare/0.2.38...0.2.39
