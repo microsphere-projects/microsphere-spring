@@ -23,7 +23,7 @@
         <microsphere-logging.version>0.2.2</microsphere-logging.version>
         <jakartaee.version>11.0.0</jakartaee.version>
         <jackson.version>2.22.2</jackson.version>
-        <snakeyaml.version>2.6</snakeyaml.version>
+        <snakeyaml.version>2.7</snakeyaml.version>
         <p6spy.version>3.9.1</p6spy.version>
         <zookeeper.version>3.9.5</zookeeper.version>
         <curator.version>5.9.0</curator.version>
