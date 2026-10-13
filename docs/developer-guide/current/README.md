@@ -17,7 +17,7 @@ branch; the 0.1.x maintenance line is documented separately in [`../1.x/`](../1.
 | Spring Framework verified | 6.0.23 / 6.1.21 / 6.2.18 / 7.0.9 (`spring-framework-6.0 … 7.0` profiles; **7.0 is `activeByDefault`**) |
 | Reactor BOM | 2022.0.22 / 2023.0.19 / 2024.0.17 / 2025.0.7, paired with the Spring profile |
 | Build parent | `io.github.microsphere-projects:microsphere-build` (`0.3.16` on `release`, `0.3.17` in the working `main` tree) |
-| Managed third parties | Jackson 2.22.3, SnakeYAML 2.7, P6Spy 3.9.1, ZooKeeper 3.9.6, Curator 5.9.0, Guice 7.0.0 |
+| Managed third parties | Jackson 2.22.3, SnakeYAML 2.7, P6Spy 3.9.1, ZooKeeper 3.9.6, Curator 5.9.0 (Guice 7.0.0 is **not** parent-managed — it is pinned in `microsphere-spring-guice/pom.xml:22`) |
 
 The published artifacts on Maven Central are `0.2.30` … `0.2.39`; see
 [release-notes.md](../../../release-notes.md) for per-version changes.
