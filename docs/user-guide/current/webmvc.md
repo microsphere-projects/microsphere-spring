@@ -29,16 +29,18 @@
 |---|---|---|---|
 | `registerWebEndpointMappings` | `boolean` | `true` | Aliased to `@EnableWebExtension` |
 | `interceptHandlerMethods` | `boolean` | `true` | Aliased |
-| `publishEvents` | `boolean` | `true` | Aliased |
+| `publishEvents` | `boolean` | `true` | Aliased. ⚠ The MVC registrar never reads it; `HandlerMethodArgumentsResolvedEvent` is published by the kernel's `WebEventPublisher` acting as a `HandlerMethodInterceptor`, so it only fires while handler-method interception is active |
 | `sources` | `BeanSource[]` | `{BEAN_FACTORY, SPRING_FACTORIES, JAVA_SERVICE_PROVIDER}` | Aliased |
-| `requestContextStrategy` | `RequestContextStrategy` | `DEFAULT` | Aliased |
+| `requestContextStrategy` | `RequestContextStrategy` | `DEFAULT` | Aliased. ⚠ On MVC it is honoured only by `EnableWebMvcExtensionListener`, a `ServletContainerInitializer`, which registers a `RequestContextFilter` for `THREAD_LOCAL`/`INHERITABLE_THREAD_LOCAL` — an embedded (Spring Boot) deployment never runs it, so this attribute has no effect in MVC unless you deploy a WAR ([developer guide, section 4](../../developer-guide/current/webmvc.md)) |
 | `registerHandlerInterceptors` | `boolean` | `false` | **MVC-only**: auto-registers every Spring `HandlerInterceptor` bean found in the context into the `InterceptorRegistry`; once enabled, `handlerInterceptors()` becomes ineffective |
 | `handlerInterceptors` | `Class<? extends HandlerInterceptor>[]` | `{}` | **MVC-only**: the interceptor classes to register as beans explicitly and add to the MVC interceptor chain |
 | `storeRequestBodyArgument` | `boolean` | `false` | Registers `StoringRequestBodyArgumentAdvice`, which stores the request body so it can be read repeatedly |
 | `storeResponseBodyReturnValue` | `boolean` | `false` | Registers `StoringResponseBodyReturnValueAdvice`, which stores the response body |
 | `reversedProxyHandlerMapping` | `boolean` | `false` | Registers `ReversedProxyHandlerMapping` (see section 4) |
 
-Besides the flagged attributes, the registrar `WebMvcExtensionBeanDefinitionRegistrar` **unconditionally** installs `WebMvcExtensionConfiguration` (a `WebMvcConfigurer` that wires `LazyCompositeHandlerInterceptor[]` into `addInterceptors`), `HandlerMappingWebEndpointMappingResolver` (together with `ServletWebEndpointMappingResolver` from the web module), and `InterceptingHandlerMethodProcessor` under the bean name `interceptingHandlerMethodProcessor`.
+`WebMvcExtensionBeanDefinitionRegistrar` installs **only one** bean unconditionally: `WebMvcExtensionConfiguration`, a `WebMvcConfigurer` that wires `LazyCompositeHandlerInterceptor[]` into `addInterceptors` (`WebMvcExtensionBeanDefinitionRegistrar.java:86-88`). Everything else is attribute-gated (`:71-79`): `registerWebEndpointMappings` registers `ServletWebEndpointMappingResolver` **and** `HandlerMappingWebEndpointMappingResolver` together (`:90-98`); `interceptHandlerMethods` registers `InterceptingHandlerMethodProcessor` under the bean name `interceptingHandlerMethodProcessor` (`:99-106`); `handlerInterceptors`/`registerHandlerInterceptors` build the interceptor beans and the lazy composite (`:108-113`); the two store-* flags and `reversedProxyHandlerMapping` each guard their own bean.
+
+Because the defaults are `true`, the practical effect with a bare `@EnableWebMvcExtension` is that both the resolvers and the processor *are* registered — but switching either attribute off really does remove them.
 
 ```java
 @Configuration

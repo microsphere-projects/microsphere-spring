@@ -39,9 +39,18 @@ Required-ness rule (`determineRequiredStatus` maps Guice's `optional` attribute 
 |---|---|
 | `@Inject` (no `optional` key) | `required = false` (the default branch of `determineRequiredStatus`, treated as not required) |
 | `@Inject(optional = true)` | `required = false`, stays `null` when the bean is absent, no failure |
-| `@Inject(optional = false)` | `required = true`, injection fails when no candidate is available |
+| `@Inject(optional = false)` | ⚠ also `required = false` — see the note below |
 
 A bare `@Inject` is therefore treated as **not required**: a missing candidate yields `null` rather than an exception.
+
+⚠ **`optional = false` does not make the injection required, and no spelling of Guice's `@Inject` does.** The processor is
+constructed with `setIgnoreDefaultValue(true)` (`AnnotatedInjectionBeanPostProcessor.java:249`), which drops every attribute
+whose value equals its default; Guice declares `boolean optional() default false` (`com.google.inject.Inject`), so
+`optional = false` is filtered out before `determineRequiredStatus` ever sees it (`GuiceInjectAnnotationBeanPostProcessor.java:42-47`
+then takes the `!containsKey` branch and returns `false`). `optional = true` also returns `false`, because the override
+returns `Boolean.FALSE.equals(value)`. Net effect: **every** Guice `@Inject` site is optional, and the attribute cannot opt
+back into fail-fast behaviour. If you need a missing bean to be an error, use Spring's `@Autowired` (required by default)
+instead.
 
 What is **not** provided: no `Injector`, no `Module` consumption, no `Provider`/`Key`/`Scope` bridge, and no attribute on `@EnableGuice` to pass modules. The module suits Guice→Spring migration where legacy classes keep their `@Inject` annotations; it does not substitute a real Guice container (`Module`, `Key`, `Provider`, `Scope`) — keep one if you need Guice's own object-graph semantics.
 

@@ -111,9 +111,9 @@ public class LibDefaultsConfig {
 
 ## 4. TTL 缓存
 
-`@EnableTTLCaching`（`io.microsphere.spring.cache.annotation`）= `@EnableCaching` + 注册名为 `ttlCacheResolver` 的 `TTLCacheResolver`。`@TTLCacheable` / `@TTLCachePut` 是 `@Cacheable` / `@CachePut` 的派生注解（`cacheResolver` 已固定）；切面执行时把注解上的 `expire`/`timeUnit` 写入 `TTLContext`（ThreadLocal），供 Cache 写入时取用，从而实现**每次调用独立过期**。
+`@EnableTTLCaching`（`io.microsphere.spring.cache.annotation`）= `@EnableCaching` + 注册名为 `ttlCacheResolver` 的 `TTLCacheResolver`。`@TTLCacheable` / `@TTLCachePut` 是 `@Cacheable` / `@CachePut` 的派生注解（`cacheResolver` 已固定）；切面执行时把注解上的 `expire`/`timeUnit` 写入 `TTLContext`（ThreadLocal），期待由支持 TTL 的缓存实现去读取，从而实现**每次调用独立过期**。
 
-> ⚠️ 当前 0.2.x 源码中 **Redis TTL 支持不可用**：`io.microsphere.spring.cache.redis.TTLRedisCacheWriterWrapper` 与 `TTLRedisConfiguration` 整体处于注释状态。且属性名是 `expire`（不是 README 里的 `ttl`）。
+> ⚠️ 0.2.x 中 **本库自身从不消费这个 TTL**：唯一读取 `TTLContext` 的 `io.microsphere.spring.cache.redis.TTLRedisCacheWriterWrapper` 与 `TTLRedisConfiguration` 在源码中整体处于注释状态，因此 `TTLCacheResolver` 只写不读（`TTLCacheResolver.java:121`）。配合 Spring 原生 CacheManager 使用时，`@TTLCacheable` 的表现与 `@Cacheable` 完全一致，`expire` 会被静默忽略。要让它真正生效，必须自行接入一个在写入时调用 `TTLContext.getTTL()`（或 `doWithTTL`）的 `Cache`/`CacheWriter`。另注意属性名是 `expire`，不是 README 里的 `ttl`。
 
 `@EnableTTLCaching` 属性（均 `@AliasFor` 到 `@EnableCaching`）：`proxyTargetClass`（`boolean`，`false`）、`mode`（`AdviceMode`，`PROXY`）、`order`（`int`，`LOWEST_PRECEDENCE`）。
 
@@ -158,7 +158,16 @@ public class ProductService {
 
 ## 5. `@EnableConfigurationBeanBinding`：宽松绑定
 
-`@Import(ConfigurationBeanBindingRegistrar.class)` 注册 `configurationBeanBindingPostProcessor`，把 `prefix` 下的属性绑定到目标类型并注册为 Bean；别名策略由 `ConfigurationBeanAliasGenerator` 经 spring.factories 提供 `Default`/`Hyphen`/`UnderScoreJoin`，因此 `user-name`、`userName`、`user_name` 等价。可用 `ConfigurationBeanCustomizer` 定制绑定的 Bean。`@Repeatable`（容器注解 `@EnableConfigurationBeanBindings`）。
+`@Import(ConfigurationBeanBindingRegistrar.class)` 注册 `configurationBeanBindingPostProcessor`，把 `prefix` 下的属性绑定到目标类型并注册为 Bean；别名策略通过 `SpringFactoriesLoader` 加载（`ConfigurationBeanBindingRegistrar.java:140`），`DefaultConfigurationBeanAliasGenerator`、`HyphenAliasGenerator`、`UnderScoreJoinAliasGenerator` 三个实现都在 `src/main/java` 中，启用后 `user-name`、`userName`、`user_name` 等价。可用 `ConfigurationBeanCustomizer` 定制绑定的 Bean。`@Repeatable`（容器注解 `@EnableConfigurationBeanBindings`）。
+
+> ⚠️ 本模块 **没有在 `src/main/resources/META-INF/spring.factories` 中注册任何 `ConfigurationBeanAliasGenerator`**，三个实现只在 `src/test` 的 spring.factories 里声明。因此默认没有任何别名生成器生效，只有属性名完全一致时才能绑定。要获得中划线/下划线的宽松匹配，需要应用方在自己的 `META-INF/spring.factories` 中补上：
+>
+> ```properties
+> io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
+> io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\
+> io.microsphere.spring.beans.factory.support.HyphenAliasGenerator,\
+> io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator
+> ```
 
 | 属性 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
@@ -211,6 +220,11 @@ public interface PropertyResolverListener {
 ```properties
 microsphere.spring.listenable-environment.enabled=true      # 默认 false
 ```
+
+⚠ 如果你不走 `spring.factories` 而是自己注册这个 initializer，请使用真实类名
+`io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer`。该类自身的 Javadoc 示例里写的是
+`io.microsphere.spring.beans.factory.support.ListenableConfigurableEnvironmentInitializer`，reactor 中并不存在这个类——
+照抄会在启动时抛 `ClassNotFoundException`。
 
 ```java
 @Component
@@ -299,7 +313,7 @@ public class EventAuditInterceptor implements ApplicationEventInterceptor {
 | `spring:` URL | `SpringProtocolURLStreamHandler` 支持 `spring:env:property-sources://...`，P6Spy 模块借此读配置 |
 | `EventPublishingBean*` | Bean 生命周期事件发布，开关 `microsphere.spring.event-publishing-bean.enabled`（默认 `false`） |
 | 工具类 | `BeanFactoryUtils`、`BeanDefinitionUtils`、`AnnotatedBeanDefinitionRegistryUtils`、`ApplicationContextUtils`、`EnvironmentUtils`、`PropertySourcesUtils`、`PropertyResolverUtils`、`ResourceLoaderUtils`、`ResourceUtils`、`PropertiesUtils`、`AnnotationUtils`、`ConversionServiceUtils`、`BeanRegistrar`、`DependencyTreeWalker`、`SpringVersion`/`SpringVersionUtils` |
-| `FilterMode` | 扩展组件过滤模式，属性 `microsphere.spring.filter-mode`（默认 `SEQUENTIAL`） |
+| `FilterMode` | 扩展组件过滤模式，属性 `microsphere.spring.filter-mode`（默认 `SEQUENTIAL`）。⚠ 0.2.x 中该开关是**空转的**：没有任何生产代码读取它，设置与否都不改变行为 |
 
 ---
 

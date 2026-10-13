@@ -1,6 +1,6 @@
 # Microsphere Spring — 文档总索引
 
-[English](./README.md) · **简体中文**
+[English](../README.md) · **简体中文**
 
 本目录收录
 [`microsphere-spring`](https://github.com/microsphere-projects/microsphere-spring)（Microsphere
@@ -8,8 +8,8 @@
 
 | 文档集 | 用途 | 位置 |
 |---|---|---|
-| [用户文档（User Guide）](./user-guide/zh/README.md) | 各模块能力、公开 API、代码示例、版本信息与兼容范围 | [`docs/user-guide/`](./user-guide/zh/README.md) |
-| [开发者文档（Developer Guide）](./developer-guide/zh/README.md) | 架构设计、源码分析、设计模式、复杂流程图 | [`docs/developer-guide/`](./developer-guide/zh/README.md) |
+| [用户文档（User Guide）](../user-guide/zh/README.md) | 各模块能力、公开 API、代码示例、版本信息与兼容范围 | [`docs/user-guide/`](../user-guide/zh/README.md) |
+| [开发者文档（Developer Guide）](../developer-guide/zh/README.md) | 架构设计、源码分析、设计模式、复杂流程图 | [`docs/developer-guide/`](../developer-guide/zh/README.md) |
 
 ## 目录结构
 
@@ -56,21 +56,21 @@ docs/
 | `microsphere-spring-webmvc` | Servlet / Spring MVC 适配层 |
 | `microsphere-spring-webflux` | 响应式 / WebFlux 适配层 |
 | `microsphere-spring-jdbc` | 基于 Spring 属性驱动的 P6Spy `DataSource` 包装 |
-| `microsphere-spring-guice` | Guice `Injector` 与 Spring 注入的集成 |
+| `microsphere-spring-guice` | 单向桥接：Spring Bean 上的 Guice `@Inject` 注入点由 Spring 容器满足 |
 | `microsphere-spring-test` | 内嵌 Tomcat / ZooKeeper / 数据库的测试支撑 |
 | `microsphere-spring-compatible` | **仅 1.x** —— 面向 Spring 4.3 的 `org.springframework.*` 兼容垫片 |
 
 模块之间的依赖关系以 Mermaid 流程图绘制，总图见
-[开发者文档总览](./developer-guide/zh/README.md#模块依赖关系图)，各模块视角的依赖图见每篇模块文档开头。
+[开发者文档总览](../developer-guide/zh/README.md#模块依赖关系图)，各模块视角的依赖图见每篇模块文档开头。
 
 ## 阅读建议
 
-- **评估或使用本库** → 从[用户文档 — current](./user-guide/current/zh/README.md)（0.2.x）或
-  [用户文档 — 1.x](./user-guide/1.x/zh/README.md)（0.1.x）开始。
-- **扩展、评审或维护本库** → 从[开发者文档 — current](./developer-guide/current/zh/README.md) 或
-  [开发者文档 — 1.x](./developer-guide/1.x/zh/README.md) 开始。
+- **评估或使用本库** → 从[用户文档 — current](../user-guide/current/zh/README.md)（0.2.x）或
+  [用户文档 — 1.x](../user-guide/1.x/zh/README.md)（0.1.x）开始。
+- **扩展、评审或维护本库** → 从[开发者文档 — current](../developer-guide/current/zh/README.md) 或
+  [开发者文档 — 1.x](../developer-guide/1.x/zh/README.md) 开始。
 - **判断应使用哪条版本线** → 先看上文分支表，再看
-  [用户文档 current/README.md](./user-guide/current/zh/README.md) 中的跨分支差异表。
+  [用户文档 current/README.md](../user-guide/current/zh/README.md) 中的跨分支差异表。
 
 ## 标记约定
 

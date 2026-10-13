@@ -128,6 +128,7 @@ microsphere-spring-test ：独立模块，第三方依赖全为 optional
 
 ## 8. 本版本线已知限制
 
-- TTL 缓存**没有可用的 Redis 集成**：`TTLRedisCacheWriterWrapper` 与 `TTLRedisConfiguration` 在源码中整体处于注释状态。
+- TTL 缓存**没有可用的落地实现**：`TTLRedisCacheWriterWrapper` 与 `TTLRedisConfiguration` 在源码中整体处于注释状态，此外没有任何代码读取 `TTLContext`。因此配合原生 CacheManager 使用时 `@TTLCacheable` 的 `expire` 会被忽略，必须自行接入支持 TTL 的 `Cache`/`CacheWriter`。
+- `@EnableConfigurationBeanBinding` 自身**未在 spring.factories 中注册任何 `ConfigurationBeanAliasGenerator`**，因此中划线/下划线的宽松绑定默认不生效，需应用方自行声明。
 - 0.2.x 源码中**不存在** `@Idempotent` 与 `RestControlMapping`，尽管旧版 README 曾提及。
 - 本分支**没有** `microsphere-spring-compatible` 模块（该模块仅存在于 0.1.x 线）。

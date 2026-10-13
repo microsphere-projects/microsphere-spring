@@ -39,7 +39,9 @@ Reactor 版本由父 POM 的 `reactor-bom` 随所选 Spring profile 一起切换
 
 **注意**：本注解**没有** `registerHandlerInterceptors` / `handlerInterceptors` 属性——WebFlux 模型中不存在 `HandlerInterceptor`，对应扩展点是 `WebFilter`。
 
-注册器无条件装配 `HandlerMappingWebEndpointMappingResolver`、`InterceptingHandlerMethodProcessor`、`RequestHandledEventPublishingWebFilter` 与 `RequestContextWebFilter`。
+七项注册各自都有独立的属性开关（`WebFluxExtensionBeanDefinitionRegistrar.java:61-73`）：`registerWebEndpointMappings` → `HandlerMappingWebEndpointMappingResolver`，`interceptHandlerMethods` → `InterceptingHandlerMethodProcessor`，`publishEvents` → `RequestHandledEventPublishingWebFilter`，`storeRequestBodyArgument` / `storeResponseBodyReturnValue` → 两个暂存拦截器，`reversedProxyHandlerMapping` → `ReversedProxyHandlerMapping`。
+
+⚠ `RequestContextWebFilter` 是最容易被误读的一项：它**只在** `requestContextStrategy = THREAD_LOCAL` 或 `INHERITABLE_THREAD_LOCAL` 时才注册（`:101-122`）。默认的 `DEFAULT` 下不会创建任何请求上下文过滤器 Bean——不显式开启就没有 ThreadLocal 请求上下文。
 
 ```java
 @Configuration
@@ -64,7 +66,7 @@ public class ReactiveAccessInterceptor implements HandlerMethodInterceptor {
 }
 ```
 
-`InterceptingHandlerMethodProcessor`（`io.microsphere.spring.webflux.method`，Bean 名 `interceptingHandlerMethodProcessor`）一个对象同时实现 `WebFilter`、`HandlerMapping`、`HandlerAdapter`、`HandlerResultHandler` 与 `ServerWebfluxMethodArgumentResolver`，并缓存 `MethodParameter` 的解析上下文；`RequestContextWebFilter` 的 `threadContextInheritable` 由 `requestContextStrategy` 推导，`ServerWebRequest` 负责把 `ServerWebExchange` 适配成 `NativeWebRequest`。正是这套组合，让为 MVC 编写的 `HandlerMethodInterceptor` / `HandlerMethodArgumentInterceptor` Bean 在响应式应用中无需修改即可直接使用。
+`InterceptingHandlerMethodProcessor`（`io.microsphere.spring.webflux.method`，Bean 名 `interceptingHandlerMethodProcessor`）继承 `OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>`，一个对象同时实现 `WebFilter`、`HandlerAdapter`、`HandlerMethodArgumentResolver`、`HandlerResultHandler`、`WebExceptionHandler` 与 `Ordered`（`InterceptingHandlerMethodProcessor.java:81-83`），并缓存 `MethodParameter` 的解析上下文；`RequestContextWebFilter` 的 `threadContextInheritable` 由 `requestContextStrategy` 推导，`ServerWebRequest` 负责把 `ServerWebExchange` 适配成 `NativeWebRequest`。正是这套组合，让为 MVC 编写的 `HandlerMethodInterceptor` / `HandlerMethodArgumentInterceptor` Bean 在响应式应用中无需修改即可直接使用。
 
 ---
 

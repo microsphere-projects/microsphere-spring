@@ -61,13 +61,13 @@ The module holds **15 source files** in total, all inside Spring's packages:
 | `org.springframework.core.env.Profiles` | `@FunctionalInterface` | Spring 5.1 | `boolean matches(Predicate<String> activeProfiles)`; static `of(String... profileExpressions)` |
 | `org.springframework.core.env.ProfilesParser` | package-private `final class` | Spring 5.1 | `static Profiles parse(String...)`, internally implements `and`/`or`/`!` expression parsing plus `assertWellFormed` validation |
 | `org.springframework.lang.NonNull` | annotation | popularized after Spring 4.3 | null-safety marker |
-| `org.springframework.lang.Nullable` | annotation | same as above | huge numbers of method signatures in this library's source depend on it |
+| `org.springframework.lang.Nullable` | annotation | same as above | ⚠ not imported by any library source file — this codebase uses `io.microsphere.annotation.Nullable` (74 files); the shim exists only because the forked classes reference it |
 | `org.springframework.util.Assert` | utility class | enhanced in 5.x | the assertion family |
 | `org.springframework.util.ClassUtils` | utility class | enhanced in 5.x | class loading / assignability checks |
 | `org.springframework.util.CollectionUtils` | utility class | enhanced in 5.x | collection emptiness checks / merging |
 | `org.springframework.util.ConcurrentReferenceHashMap` | container | enhanced in 5.x | soft/weak-reference map |
 | `org.springframework.util.MultiValueMap` | interface | enhanced in 5.x | multi-value map |
-| `org.springframework.util.MultiValueMapAdapter` | implementation | **Spring 5.x** (4.3 has no such class) | the default `MultiValueMap` implementation |
+| `org.springframework.util.MultiValueMapAdapter` | implementation | **Spring 5.3** (annotated `@since 5.3`; absent in 4.3) | the default `MultiValueMap` implementation |
 | `org.springframework.util.ObjectUtils` | utility class | enhanced in 5.x | null-safe comparison / hashing |
 | `org.springframework.util.ReflectionUtils` | utility class | enhanced in 5.x | reflection lookups |
 | `org.springframework.util.StreamUtils` | utility class | enhanced in 5.x | stream copying |

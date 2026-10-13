@@ -17,8 +17,8 @@ version line 0.1.x).
 
 Compile-scope dependencies between the reactor's own modules (every module also inherits
 `microsphere-spring-parent`, and `microsphere-spring-dependencies` is the BOM that pins them all;
-`microsphere-spring-test` is pulled in with **test** scope by all modules that have tests, which is
-why it is a leaf and is built late in the reactor order):
+`microsphere-spring-test` is pulled in with **test** scope by every module that has tests except
+`microsphere-spring-guice`, which is why it is a leaf and is built late in the reactor order):
 
 ### current — 0.2.x
 
@@ -54,7 +54,6 @@ flowchart TD
   T -.test scope.-> M
   T -.test scope.-> F
   T -.test scope.-> J
-  T -.test scope.-> G
 ```
 
 ### 1.x — 0.1.x
@@ -87,10 +86,10 @@ flowchart TD
   T -.test scope.-> M
   T -.test scope.-> F
   T -.test scope.-> J
-  T -.test scope.-> G
 ```
 
-Read the arrows as “depends on”. `webmvc` and `webflux` never depend on each other: both sit on the
+Read each arrow as "is required by": the tail is the dependency, the head is the module that declares
+it. `webmvc` and `webflux` never depend on each other: both sit on the
 transport-neutral `web` kernel, which in turn sits on `context`. That layering is what lets a Servlet
 application and a reactive application share the endpoint metadata model.
 

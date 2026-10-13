@@ -45,7 +45,6 @@ flowchart TD
   TEST -.test scope.-> MVC
   TEST -.test scope.-> FLX
   TEST -.test scope.-> JDBC
-  TEST -.test scope.-> GUICE
 ```
 
 The extra node is the whole point of the 1.x line: `microsphere-spring-compatible` supplies
@@ -77,10 +76,11 @@ Each module page carries a divergence table, and the recurring differences are:
 | Java / namespace | Java 8, `javax.*` | Java 17, `jakarta.*` |
 | Servlet boot integration | `META-INF/services/javax.servlet.ServletContainerInitializer` → `EnableWebMvcExtensionListener`, which sets `threadContextInheritable` and registers `RequestContextFilter` | re-expressed for `jakarta.servlet`, no `javax` service file |
 | Endpoint introspection | `WebEndpointMappingVisitor` exists (interface only — no in-library implementation and no call site) | removed |
-| WebFlux function support | `io.microsphere.spring.webflux.function.server` adapters over `RequestPredicate` / `RouterFunction` | absent |
-| `requestContextStrategy` | ignored by the MVC registrar | honoured, and the WebFlux registrar registers `requestContextWebFilter` |
-| Compatibility shims | `microsphere-spring-compatible` (15 `org.springframework.*` classes) | module deleted |
-| Build parent | `microsphere-build:0.3.14` | `microsphere-build:0.3.16` |
+| WebFlux function support | Same `io.microsphere.spring.webflux.function.server` package on both lines (4 classes); `RequestPredicateVisitorAdapter` is an `interface … extends InvocationHandler` that probes `RequestPredicates$Visitor` reflectively and falls back to `RequestPredicateKind.acceptVisitor` | Same four classes; the adapter becomes `interface … extends RequestPredicates.Visitor` with all callbacks direct `@Override`s, plus a `version(String)` arm for Spring 7 |
+| `requestContextStrategy` | Read by the WebFlux registrar (`WebFluxExtensionBeanDefinitionRegistrar.java:102`); on the Servlet side it is `EnableWebMvcExtensionListener.java:114,:116` that reads it, never the registrar | Unchanged — identical registrar and listener handling, so this is not a version-line divergence |
+| CI matrix | JDK `8, 11, 17, 21, 25` × 5 Spring profiles (`.github/workflows/maven-build.yml:25-29`) | JDK `17, 21, 25` × 4 Spring profiles (`main:.github/workflows/maven-build.yml:25-29`) |
+| Compatibility shims | `microsphere-spring-compatible` (15 source files: 14 `org.springframework.*` types + `package-info.java`; BOM-unmanaged, declared only by the `spring-framework-4.3` / `5.0` profiles) | module deleted |
+| Build parent | `microsphere-build:0.3.14` | `microsphere-build:0.3.17` (`pom.xml:8`) |
 
 ## Building and verifying
 

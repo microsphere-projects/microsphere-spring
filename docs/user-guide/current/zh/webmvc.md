@@ -29,16 +29,18 @@
 |---|---|---|---|
 | `registerWebEndpointMappings` | `boolean` | `true` | 别名到 `@EnableWebExtension` |
 | `interceptHandlerMethods` | `boolean` | `true` | 别名 |
-| `publishEvents` | `boolean` | `true` | 别名 |
+| `publishEvents` | `boolean` | `true` | 别名。⚠ MVC 注册器从不读取它；`HandlerMethodArgumentsResolvedEvent` 由内核的 `WebEventPublisher` 以 `HandlerMethodInterceptor` 身份发布，因此只有在控制器方法拦截生效时才会触发 |
 | `sources` | `BeanSource[]` | `{BEAN_FACTORY, SPRING_FACTORIES, JAVA_SERVICE_PROVIDER}` | 别名 |
-| `requestContextStrategy` | `RequestContextStrategy` | `DEFAULT` | 别名 |
+| `requestContextStrategy` | `RequestContextStrategy` | `DEFAULT` | 别名。⚠ MVC 侧只有 `EnableWebMvcExtensionListener`（一个 `ServletContainerInitializer`）会读取它，并为 `THREAD_LOCAL`/`INHERITABLE_THREAD_LOCAL` 注册 `RequestContextFilter`；内嵌（Spring Boot）启动不会执行 SCI，所以打成 WAR 部署之外这个属性不起作用（见[开发者文档第 4 节](../../../developer-guide/current/zh/webmvc.md)） |
 | `registerHandlerInterceptors` | `boolean` | `false` | **MVC 专属**：自动把容器中全部 Spring `HandlerInterceptor` Bean 注册进 `InterceptorRegistry`；开启后 `handlerInterceptors()` 失效 |
 | `handlerInterceptors` | `Class<? extends HandlerInterceptor>[]` | `{}` | **MVC 专属**：显式指定要注册为 Bean 并加入 MVC 拦截链的拦截器类 |
 | `storeRequestBodyArgument` | `boolean` | `false` | 注册 `StoringRequestBodyArgumentAdvice`，暂存请求体以便重复读取 |
 | `storeResponseBodyReturnValue` | `boolean` | `false` | 注册 `StoringResponseBodyReturnValueAdvice`，暂存响应体 |
 | `reversedProxyHandlerMapping` | `boolean` | `false` | 注册 `ReversedProxyHandlerMapping`（见第 4 节） |
 
-注册器 `WebMvcExtensionBeanDefinitionRegistrar` 除上述由属性开关的内容外，还**无条件**装配：`WebMvcExtensionConfiguration`（一个 `WebMvcConfigurer`，把 `LazyCompositeHandlerInterceptor[]` 挂入 `addInterceptors`）、`HandlerMappingWebEndpointMappingResolver`（连同 web 模块的 `ServletWebEndpointMappingResolver`）、以及 `InterceptingHandlerMethodProcessor`（Bean 名 `interceptingHandlerMethodProcessor`）。
+`WebMvcExtensionBeanDefinitionRegistrar` 真正**无条件**装配的只有一个 Bean：`WebMvcExtensionConfiguration`（一个 `WebMvcConfigurer`，把 `LazyCompositeHandlerInterceptor[]` 挂入 `addInterceptors`，`:86-88`）。其余全部由属性开关（`:71-79`）：`registerWebEndpointMappings` 一次性注册 `ServletWebEndpointMappingResolver` **与** `HandlerMappingWebEndpointMappingResolver`（`:90-98`）；`interceptHandlerMethods` 注册 `InterceptingHandlerMethodProcessor`（Bean 名 `interceptingHandlerMethodProcessor`，`:99-106`）；`registerHandlerInterceptors` / `handlerInterceptors` 决定拦截器 Bean 与懒合并拦截器的注册（`:108-113`）；两个 store-* 标志和 `reversedProxyHandlerMapping` 各管各的 Bean。
+
+因为这些开关的默认值都是 `true`，裸写 `@EnableWebMvcExtension` 时两个 resolver 和 processor 实际都会被注册；但把任一开关关掉，它们确实会消失。
 
 ```java
 @Configuration
