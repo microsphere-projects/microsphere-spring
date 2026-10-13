@@ -44,7 +44,7 @@ The values below are managed by the parent POM. Those published with `0.2.39` ar
 | Jackson BOM | `2.22.2` | `@JsonPropertySource`, endpoint metadata JSON (optional) |
 | SnakeYAML | `2.6` | `@YamlPropertySource` (optional) |
 | P6Spy | `3.9.1` | `@EnableP6DataSource` (optional) |
-| Google Guice | `7.0.0` | `@EnableGuice` (optional) |
+| Google Guice | `7.0.0` | `@EnableGuice` (optional; pinned in `microsphere-spring-guice/pom.xml`, not parent-managed) |
 | ZooKeeper / Curator | `3.9.5` / `5.9.0` | Embedded ZooKeeper test support (optional) |
 
 **Dependency posture (important).** Except for `microsphere-java-core` and the intra-library module edges, which are `compile`, Spring, Jakarta, Jackson, SnakeYAML, P6Spy and Guice are all declared `optional` (or `provided`). The library therefore **never transmits Spring into your build**: the host application must supply a matching Spring version itself, and you add a third-party dependency only when you actually use the feature that needs it (P6Spy, Guice, …).
