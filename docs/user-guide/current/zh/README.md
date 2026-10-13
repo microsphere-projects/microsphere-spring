@@ -44,7 +44,7 @@
 | Jackson BOM | `2.22.2` | `@JsonPropertySource`、端点元数据 JSON（optional） |
 | SnakeYAML | `2.6` | `@YamlPropertySource`（optional） |
 | P6Spy | `3.9.1` | `@EnableP6DataSource`（optional） |
-| Google Guice | `7.0.0` | `@EnableGuice`（optional） |
+| Google Guice | `7.0.0` | `@EnableGuice`（optional；版本写在 `microsphere-spring-guice/pom.xml` 中，非父 POM 统一管理） |
 | ZooKeeper / Curator | `3.9.5` / `5.9.0` | 内嵌 ZooKeeper 测试支持（optional） |
 
 **依赖约定（重要）**：除 `microsphere-java-core` 与库内模块互相依赖为 `compile` 外，Spring、Jakarta、Jackson、SnakeYAML、P6Spy、Guice 等一律声明为 `optional`（或 `provided`）。即本库**不会传递引入 Spring**，宿主应用必须自备匹配版本的 Spring；只有实际使用某特性时，才需显式添加对应第三方依赖（如 P6Spy、Guice）。
