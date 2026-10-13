@@ -39,9 +39,16 @@ Guice 7 面向 Java 11+ 且使用 `com.google.inject` 注解包，与本版本�
 |---|---|
 | `@Inject`（无 `optional` 键） | `required = false`（走 `determineRequiredStatus` 的缺省分支，视为非必需） |
 | `@Inject(optional = true)` | `required = false`，缺 Bean 时保持 `null` 且不报错 |
-| `@Inject(optional = false)` | `required = true`，缺 Bean 时注入失败 |
+| `@Inject(optional = false)` | ⚠ 同样是 `required = false`，见下方说明 |
 
 因此裸写的 `@Inject` 被视为**非必需**：找不到候选 Bean 时得到 `null`，而不是抛异常。
+
+⚠ **`optional = false` 并不会让注入变成必需，`@Inject` 的任意写法都做不到。** 该 BeanPostProcessor 在构造时调用了
+`setIgnoreDefaultValue(true)`（`AnnotatedInjectionBeanPostProcessor.java:249`），会丢弃所有「取值等于注解默认值」的属性；
+Guice 声明的是 `boolean optional() default false`，于是 `optional = false` 在进入 `determineRequiredStatus` 之前就被过滤掉
+（`GuiceInjectAnnotationBeanPostProcessor.java:42-47` 走 `!containsKey` 分支返回 `false`）。`optional = true` 同样返回
+`false`，因为覆写实现返回的是 `Boolean.FALSE.equals(value)`。结论：**所有** Guice `@Inject` 位点都是可选的，无法通过该属性
+恢复 fail-fast。若需要「缺失即报错」，请改用 Spring 的 `@Autowired`（默认必需）。
 
 本模块**不提供**：`Injector`、`Module` 消费、`Provider`/`Key`/`Scope` 桥接，`@EnableGuice` 上也没有传入模块的属性。它适合**从 Guice 迁移到 Spring** 的过渡场景（保留旧类的 `@Inject` 写法），不适合需要完整 Guice 容器语义（`Module`、`Key`、`Provider`、`Scope`）的场景——若需要 Guice 自身的对象图语义，请保留真正的 Guice 容器。
 

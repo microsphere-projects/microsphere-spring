@@ -68,9 +68,16 @@ Cross-reference table:
 |-------------|---------------------|--------------------------------|
 | `@Inject private Foo foo;` (no `optional` element) | `false` | **`null` is injected, no error** |
 | `@Inject(optional = true) private Foo foo;` | `false` | `null` is injected |
-| `@Inject(optional = false) private Foo foo;` | `true` | an injection-failure exception is thrown |
+| `@Inject(optional = false) private Foo foo;` | ⚠ `false` as well | `null` is injected — no exception |
 
-> Note the first row: the opposite of Spring's `@Autowired(required = true)` default — **a bare `@Inject` is optional here**. This is a direct mapping of Guice semantics (Guice itself defaults to required, but here the decision is made from whether the annotation attribute is present). If you need "missing means failure", write `optional = false` explicitly.
+> ⚠ **Guice's `@Inject` is always optional under this module, and you cannot turn that off.** The processor is built with
+> `setIgnoreDefaultValue(true)` (`microsphere-spring-context/.../AnnotatedInjectionBeanPostProcessor.java`, constructor),
+> which removes every attribute whose value equals its annotation default. Guice declares `boolean optional() default false`,
+> so `optional = false` is dropped before `GuiceInjectAnnotationBeanPostProcessor.determineRequiredStatus` runs and the
+> `!containsKey("optional")` branch returns `false`. `optional = true` also yields `false`, because the override returns
+> `Boolean.FALSE.equals(value)`. Note the first row in particular: the opposite of Spring's `@Autowired(required = true)`
+> default — **a bare `@Inject` is optional here**. If you need "missing means failure", use Spring's `@Autowired`
+> (required by default) or `@Resource` with your own validation, not `optional = false`.
 
 ## 3. Usage
 
@@ -91,7 +98,7 @@ public class OrderService {
     @Inject(optional = true)                  // null when absent
     private AuditClient auditClient;
 
-    @Inject(optional = false)                 // startup fails when absent
+    @Inject(optional = false)                 // ⚠ identical to the bare form above — still optional
     private PaymentGateway paymentGateway;
 }
 ```

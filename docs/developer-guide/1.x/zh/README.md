@@ -45,7 +45,6 @@ flowchart TD
   TEST -.test 作用域.-> MVC
   TEST -.test 作用域.-> FLX
   TEST -.test 作用域.-> JDBC
-  TEST -.test 作用域.-> GUICE
 ```
 
 多出来的那个节点正是 0.1.x 版本线存在的意义：`microsphere-spring-compatible` 提供 Spring 4.3 / 早期 5.x
@@ -76,10 +75,11 @@ flowchart TD
 | Java / 命名空间 | Java 8，`javax.*` | Java 17，`jakarta.*` |
 | Servlet 启动集成 | `META-INF/services/javax.servlet.ServletContainerInitializer` → `EnableWebMvcExtensionListener`，设置 `threadContextInheritable` 并注册 `RequestContextFilter` | 以 `jakarta.servlet` 重写，不再有 `javax` 服务文件 |
 | 端点自省 | 存在 `WebEndpointMappingVisitor`（仅接口 —— 无库内实现、无调用点） | 已移除 |
-| WebFlux 函数式支持 | `io.microsphere.spring.webflux.function.server` 中针对 `RequestPredicate` / `RouterFunction` 的适配 | 不存在 |
-| `requestContextStrategy` | MVC 注册器忽略该属性 | 生效，且 WebFlux 注册器会注册 `requestContextWebFilter` |
-| 兼容垫片 | `microsphere-spring-compatible`（15 个 `org.springframework.*` 类） | 模块已删除 |
-| 构建父 POM | `microsphere-build:0.3.14` | `microsphere-build:0.3.16` |
+| WebFlux 函数式支持 | `io.microsphere.spring.webflux.function.server` 在两条线上都存在（同样 4 个类）；`RequestPredicateVisitorAdapter` 是 `interface … extends InvocationHandler`，通过反射探测 `RequestPredicates$Visitor`，并回落到 `RequestPredicateKind.acceptVisitor` | 同样 4 个类；该 adapter 改为 `interface … extends RequestPredicates.Visitor`，所有回调直接 `@Override`，并为 Spring 7 新增 `version(String)` 分支 |
+| `requestContextStrategy` | 由 WebFlux 注册器读取（`WebFluxExtensionBeanDefinitionRegistrar.java:102`）；Servlet 侧则是 `EnableWebMvcExtensionListener.java:114,:116` 读取，注册器两条线都不读 | 未变 —— 注册器与监听器的处理完全相同，因此这并不构成版本线差异 |
+| CI 矩阵 | JDK `8, 11, 17, 21, 25` × 5 个 Spring profile（`.github/workflows/maven-build.yml:25-29`） | JDK `17, 21, 25` × 4 个 Spring profile（`main:.github/workflows/maven-build.yml:25-29`） |
+| 兼容垫片 | `microsphere-spring-compatible`（15 个源文件：14 个 `org.springframework.*` 类型 + `package-info.java`；不由 BOM 管理，仅 `spring-framework-4.3` / `5.0` profile 声明） | 模块已删除 |
+| 构建父 POM | `microsphere-build:0.3.14` | `microsphere-build:0.3.17`（`pom.xml:8`） |
 
 ## 构建与验证
 

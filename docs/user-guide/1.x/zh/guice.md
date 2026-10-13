@@ -68,9 +68,15 @@ protected boolean determineRequiredStatus(AnnotationAttributes attributes) {
 |------|---------------------|--------------------|
 | `@Inject private Foo foo;`（无 `optional` 元素） | `false` | **注入 `null`，不报错** |
 | `@Inject(optional = true) private Foo foo;` | `false` | 注入 `null` |
-| `@Inject(optional = false) private Foo foo;` | `true` | 抛出注入失败异常 |
+| `@Inject(optional = false) private Foo foo;` | ⚠ 同样是 `false` | 注入 `null`，不抛异常 |
 
-> 注意第一行：与 Spring `@Autowired(required = true)` 的默认相反，**裸 `@Inject` 在这里是可选的**。这是 Guice 语义的直接映射（Guice 默认 required，但此处按注解属性是否存在判定）。若你需要"缺失即失败"，请显式写 `optional = false`。
+> ⚠ **在本模块下 Guice 的 `@Inject` 永远是可选的，且无法关闭。** processor 构造时调用了 `setIgnoreDefaultValue(true)`
+> （`microsphere-spring-context/.../AnnotatedInjectionBeanPostProcessor.java`，构造函数），会移除所有取值等于注解默认值的属性。
+> Guice 声明 `boolean optional() default false`，所以 `optional = false` 在进入
+> `GuiceInjectAnnotationBeanPostProcessor.determineRequiredStatus` 前就被丢弃，走 `!containsKey("optional")` 分支返回 `false`；
+> `optional = true` 也因覆写实现返回 `Boolean.FALSE.equals(value)` 而得到 `false`。再看第一行：与 Spring
+> `@Autowired(required = true)` 的默认相反，**裸 `@Inject` 在这里是可选的**。若需要「缺失即失败」，请改用 Spring 的
+> `@Autowired`（默认必需）或自行校验，而不是写 `optional = false`。
 
 ## 3. 用法
 
@@ -91,7 +97,7 @@ public class OrderService {
     @Inject(optional = true)                  // 缺失则为 null
     private AuditClient auditClient;
 
-    @Inject(optional = false)                 // 缺失则启动失败
+    @Inject(optional = false)                 // ⚠ 与上面的裸写法完全等价，依旧是可选
     private PaymentGateway paymentGateway;
 }
 ```

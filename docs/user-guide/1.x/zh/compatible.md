@@ -58,13 +58,13 @@
 | `org.springframework.core.env.Profiles` | `@FunctionalInterface` | Spring 5.1 | `boolean matches(Predicate<String> activeProfiles)`；静态 `of(String... profileExpressions)` |
 | `org.springframework.core.env.ProfilesParser` | 包私有 `final class` | Spring 5.1 | `static Profiles parse(String...)`，内部实现 `and`/`or`/`!` 表达式解析与 `assertWellFormed` 校验 |
 | `org.springframework.lang.NonNull` | 注解 | Spring 4.3 之后普及 | 空安全标注 |
-| `org.springframework.lang.Nullable` | 注解 | 同上 | 本库源码里海量方法签名依赖它 |
+| `org.springframework.lang.Nullable` | 注解 | 同上 | ⚠ 本库源码没有任何文件导入它——代码统一使用 `io.microsphere.annotation.Nullable`（74 个文件）；该垫片只是为了让被 fork 的类能自洽存在 |
 | `org.springframework.util.Assert` | 工具类 | 5.x 版本增强方法 | 断言族 |
 | `org.springframework.util.ClassUtils` | 工具类 | 5.x 增强 | 类加载/可赋值判断 |
 | `org.springframework.util.CollectionUtils` | 工具类 | 5.x 增强 | 集合判空/合并 |
 | `org.springframework.util.ConcurrentReferenceHashMap` | 容器 | 5.x 增强 | 软/弱引用缓存映射 |
 | `org.springframework.util.MultiValueMap` | 接口 | 5.x 增强 | 多值映射 |
-| `org.springframework.util.MultiValueMapAdapter` | 实现 | **Spring 5.x**（4.3 无此类） | `MultiValueMap` 的默认实现 |
+| `org.springframework.util.MultiValueMapAdapter` | 实现 | **Spring 5.3**（源码标注 `@since 5.3`；4.3 无此类） | `MultiValueMap` 的默认实现 |
 | `org.springframework.util.ObjectUtils` | 工具类 | 5.x 增强 | 空安全比较/哈希 |
 | `org.springframework.util.ReflectionUtils` | 工具类 | 5.x 增强 | 反射查找 |
 | `org.springframework.util.StreamUtils` | 工具类 | 5.x 增强 | 流拷贝 |

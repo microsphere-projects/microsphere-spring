@@ -15,8 +15,8 @@
 ## 模块依赖关系图
 
 Reactor 内部模块之间的 compile 作用域依赖（所有模块都继承 `microsphere-spring-parent`，
-`microsphere-spring-dependencies` 则是统一锁定版本的 BOM；有测试的模块都以 **test** 作用域引入
-`microsphere-spring-test`，因此它是叶子节点，在 reactor 排序中较晚构建）：
+`microsphere-spring-dependencies` 则是统一锁定版本的 BOM；除 `microsphere-spring-guice` 之外，
+有测试的模块都以 **test** 作用域引入 `microsphere-spring-test`，因此它是叶子节点，在 reactor 排序中较晚构建）：
 
 ### current — 0.2.x
 
@@ -52,7 +52,6 @@ flowchart TD
   T -.test 作用域.-> M
   T -.test 作用域.-> F
   T -.test 作用域.-> J
-  T -.test 作用域.-> G
 ```
 
 ### 1.x — 0.1.x
@@ -85,10 +84,9 @@ flowchart TD
   T -.test 作用域.-> M
   T -.test 作用域.-> F
   T -.test 作用域.-> J
-  T -.test 作用域.-> G
 ```
 
-箭头方向表示“依赖”。`webmvc` 与 `webflux` 之间没有任何依赖：两者都建立在传输无关的 `web` 内核之上，
+箭头方向表示“被依赖”：箭头尾部是被依赖方，箭头头部是声明该依赖的模块。`webmvc` 与 `webflux` 之间没有任何依赖：两者都建立在传输无关的 `web` 内核之上，
 而 `web` 又建立在 `context` 之上。正是这种分层让 Servlet 应用与响应式应用能够共用同一套端点元数据模型。
 
 ## 模块文档

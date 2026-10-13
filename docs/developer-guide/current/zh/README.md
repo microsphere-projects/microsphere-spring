@@ -17,8 +17,8 @@
 | 命名空间 | `jakarta.*`（`jakarta.jakartaee-bom` 11.0.0） |
 | 已验证的 Spring Framework | 6.0.23 / 6.1.21 / 6.2.18 / 7.0.9（`spring-framework-6.0 … 7.0` Profile，其中 **7.0 为 `activeByDefault`**） |
 | Reactor BOM | 2022.0.22 / 2023.0.19 / 2024.0.17 / 2025.0.7，与 Spring Profile 成对 |
-| 构建父 POM | `io.github.microsphere-projects:microsphere-build`（`release` 分支为 `0.3.16`，工作区 `main` 为 `0.3.17`） |
-| 受管第三方版本 | Jackson 2.22.3、SnakeYAML 2.7、P6Spy 3.9.1、ZooKeeper 3.9.6、Curator 5.9.0、Guice 7.0.0 |
+| 构建父 POM | `io.github.microsphere-projects:microsphere-build` `0.3.17`（`origin/release:pom.xml:8` 与工作区 `main` 一致） |
+| 受管第三方版本 | Jackson 2.22.3、SnakeYAML 2.7、P6Spy 3.9.1、ZooKeeper 3.9.6、Curator 5.9.0（Guice 7.0.0 **不由 parent 管理**——它钉在 `microsphere-spring-guice/pom.xml:22` 里） |
 
 Maven Central 上的已发布构件为 `0.2.30` … `0.2.39`；各版本变更见
 [release-notes.md](../../../../release-notes.md)。
@@ -56,7 +56,6 @@ flowchart TD
   TEST -.test 作用域.-> MVC
   TEST -.test 作用域.-> FLUX
   TEST -.test 作用域.-> JDBC
-  TEST -.test 作用域.-> GUICE
 ```
 
 以上结构在模块 pom 中均可直接核对：
@@ -64,7 +63,7 @@ flowchart TD
 - **一个内核，两种传输。** `webmvc` 与 `webflux` 都依赖 `web`，彼此之间没有任何依赖，
   因此 Servlet 应用与响应式应用共用同一套端点元数据模型。
 - **`context` 是运行期依赖树的根。** `web`、`jdbc`、`guice` 都建立在它之上；没有任何模块依赖 `webmvc` 或 `webflux`。
-- **`test` 是叶子节点。** 它只以 test 作用域被使用，但每个模块都需要它，因此必须比其他模块更早可解析 ——
+- **`test` 是叶子节点。** 它只以 test 作用域被使用，但除 `guice` 之外的每个模块都需要它，因此必须比其他模块更早可解析 ——
   这正是它在 reactor 顺序中排在末尾的原因。
 - **唯一必需的外部依赖是 `microsphere-java-core`。** Spring、Jackson、SnakeYAML、P6Spy、Guice、Servlet API、
   Tomcat、ZooKeeper 都声明为 `optional` 或 `provided`，本库不会替使用者决定版本。
@@ -80,7 +79,7 @@ flowchart TD
 | webmvc | [webmvc.md](../webmvc.md) | [中文](./webmvc.md) | Servlet/MVC 适配、`ReversedProxyHandlerMapping`、响应体缓存 |
 | webflux | [webflux.md](../webflux.md) | [中文](./webflux.md) | 响应式适配、`WebFilter` + `HandlerResult` 路径 |
 | jdbc | [jdbc.md](../jdbc.md) | [中文](./jdbc.md) | `p6spy:` URL 间接层、DataSource 包装、监听器分发 |
-| guice | [guice.md](../guice.md) | [中文](./guice.md) | Spring ↔ Guice 注入桥接、必需/可选判定 |
+| guice | [guice.md](../guice.md) | [中文](./guice.md) | 单向桥接：Guice `@Inject` 由 Spring 满足（无 Injector/Module）；所有注入点均按非必需解析 |
 | test | [test.md](../test.md) | [中文](./test.md) | 内嵌 Tomcat / ZooKeeper / SQLite 生命周期、抽象测试基类 |
 
 链接缺失表示该模块文档尚未完成。
@@ -108,7 +107,7 @@ mvn -P spring-framework-6.0 clean test         # 最低支持的 Spring 版本�
 mvn -pl microsphere-spring-webmvc -am test     # 单模块 + 其依赖
 ```
 
-这些 Profile 定义在 [`microsphere-spring-parent/pom.xml`](../../../microsphere-spring-parent/pom.xml) 中，
+这些 Profile 定义在 [`microsphere-spring-parent/pom.xml`](../../../../microsphere-spring-parent/pom.xml) 中，
 只切换导入的 Spring 与 Reactor BOM；模块 pom 再补充该 Profile 所需的额外依赖。本分支要求 Java 17，
 根 POM 声明 `<java.version>17</java.version>`。
 

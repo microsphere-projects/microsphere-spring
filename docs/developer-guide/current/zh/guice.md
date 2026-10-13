@@ -1,6 +1,6 @@
 # microsphere-spring-guice — 开发者指南
 
-[← 开发者文档总览](./README.md) · [English](../guice.md) · [用户文档](../../../user-guide/current/zh/guice.md) · [1.x](../1.x/zh/guice.md)
+[← 开发者文档总览](./README.md) · [English](../guice.md) · [用户文档](../../../user-guide/current/zh/guice.md) · [1.x](../../1.x/zh/guice.md)
 
 ## 1. 模块标识、版本基线与依赖姿态
 
@@ -56,7 +56,7 @@ flowchart LR
 
 ## 3. 架构
 
-⚠ 本模块**没有 `ImportBeanDefinitionRegistrar`、没有 `ApplicationContextInitializer`、没有 `Injector`、没有 `Module`、也没有 `Provider`**。`docs/developer-guide/current/zh/README.md:83` 把本页概括为"Spring ↔ Guice 注入桥接"，`:88-101` 又描述了聚合统一的"注解 → 注册器 → 缝隙"形态；两者都不成立 —— 方向是单向的（*Spring* bean 上被 Guice 注解标注的成员由 *Spring* 满足），激活是两跳 `@Import`，中间不存在注册器。
+⚠ 本模块**没有 `ImportBeanDefinitionRegistrar`、没有 `ApplicationContextInitializer`、没有 `Injector`、没有 `Module`、也没有 `Provider`**：方向是单向的（*Spring* bean 上被 Guice 注解标注的成员由 *Spring* 满足），激活是两跳 `@Import`，中间不存在注册器。
 
 ```mermaid
 flowchart TD
@@ -111,7 +111,7 @@ class GuiceInjectAnnotationBeanPostProcessor extends AnnotatedInjectionBeanPostP
 | Guice 声明 | `optional` 取值 | 是否通过默认值过滤 | `determineRequiredStatus` | 运行时效果（有据可查） |
 |---|---|---|---|---|
 | `@Inject` | `false`（默认值） | 否 | `false`（`GuiceInjectAnnotationBeanPostProcessor.java:43-45`） | 找不到候选 → 字段被写入 `null`，不抛异常（`resolveFieldValue:795-806`） |
-| `@Inject(optional = false)` | `false`（默认值） | **否 —— 与上一行完全相同** | `false` | ⚠ `docs/user-guide/current/zh/guice.md:42` 与 `docs/user-guide/1.x/zh/guice.md:71` 记为 `required = true`，但源码无法到达该结果 |
+| `@Inject(optional = false)` | `false`（默认值） | **否 —— 与上一行完全相同** | `false` | ⚠ 该属性的任何写法都无法到达 `true`（见 §9 第 3 条） |
 | `@Inject(optional = true)` | `true` | 是 | `false`（`:46`） | 找不到候选 → `null`；由 `EnableGuiceTest.java:51-52,59` 断言 |
 
 `required` 只会作为 `DependencyDescriptor` 的第二个参数传给 Spring（字段 `:799`、方法参数 `:890`、构造器 `:323`）。它容忍"缺失"，但**不容忍"歧义"**：`resolveDependency` 捕获所有 `BeansException` 并重新抛出 `UnsatisfiedDependencyException`（`:671-680`），因此两个候选 bean 一样会让 `@Inject(optional = true)` 字段失败。唯一能恢复 Guice 语义的开关是 `setIgnoreDefaultValue(false)`（`:606-608`），但经由 `@EnableGuice` 无法触达：子类从未调用它，且子类本身是包级私有（`:31`），用户代码既不能继承也不能配置。
@@ -210,7 +210,7 @@ public class GuiceBackedInjectBeanPostProcessor extends AnnotatedInjectionBeanPo
 |---|---|
 | 构建并测试该模块 | `mvn -pl microsphere-spring-guice -am test --activate-profiles test,coverage,spring-framework-7.0` —— CI 另加 `-Drevision=0.0.1-SNAPSHOT`（`.github/workflows/maven-build.yml:43-49`） |
 | Spring 矩阵 / JDK 矩阵 | `spring-framework-6.0 / 6.1 / 6.2 / 7.0`，其中 `7.0` 为 `activeByDefault`（`microsphere-spring-parent/pom.xml:138-173`、`:163-172`）；JDK `17`、`21`、`25`（`.github/workflows/maven-build.yml:25`） |
-| 构建父 POM | `microsphere-build:0.3.17`（`pom.xml:5-9`）—— ⚠ `docs/developer-guide/current/zh/README.md:20` 记为 release 分支上的 `0.3.16` |
+| 构建父 POM | `microsphere-build:0.3.17`（`pom.xml:5-9`，`origin/release` 上同为 `0.3.17`） |
 | 测试清单 | `EnableGuiceTest` —— 测试类本身即被测 bean（`EnableGuiceTest.java:36-40`）；4 个注入点（`:42-52`）、4 个断言（`:54-60`） |
 | 测试**未**覆盖 | 构造器与 setter 形式的 `@Inject`、必需性失败路径，以及 `Injector`、`Module`、`Provider`、`Scope` 的任何使用 —— Guice 只以注解类型身份参与 |
 | optional 依赖的行为 | 模块自身的编译类路径能看到 Guice（optional 只压制传递性，不影响本地使用），这就是测试无需额外声明即可编译通过的原因；flatten 后的 POM 仍保留 `<optional>true</optional>`（`.flattened-pom.xml:66-72`），消费者侧的自备要求因此存续 |
@@ -220,8 +220,8 @@ public class GuiceBackedInjectBeanPostProcessor extends AnnotatedInjectionBeanPo
 | # | 观察结论 | 证据 |
 |---|---|---|
 | 1 | Guice 是 optional 且永不传递；消费者缺少 `com.google.inject:guice` 时失败发生在桥接类初始化那一刻，而不是消费者代码编译期。 | `microsphere-spring-guice/pom.xml:48-54`；`GuiceInjectAnnotationBeanPostProcessor.java:19,33` |
-| 2 | ⚠ 不存在 `Injector`/`Module`/`Provider`/`Scope` 集成，且方向只有"Guice 注解 → Spring"；`docs/developer-guide/current/zh/README.md:83` 的"Spring ↔ Guice 注入桥接"表述过强。 | `microsphere-spring-guice/src/main/java`（共 3 个类） |
-| 3 | ⚠ `@Inject(optional = false)` 并**不**必需 —— 默认值属性在进入 `determineRequiredStatus` 之前已被过滤 —— 因此裸写与显式 `false` 完全等价，且两者都是可选的，与 Guice 自身的 required 默认相反。`docs/user-guide/current/zh/guice.md:42` 与 `docs/user-guide/1.x/zh/guice.md:71` 声称其抛异常。 | `AnnotatedInjectionBeanPostProcessor.java:249`；`AnnotationUtils.java:657-659`；`GuiceInjectAnnotationBeanPostProcessor.java:43-45` |
+| 2 | ⚠ 不存在 `Injector`/`Module`/`Provider`/`Scope` 集成，且方向只有“Guice 注解 → Spring”；把本模块描述为双向的“Spring ↔ Guice 注入桥”会言过其实。 | `microsphere-spring-guice/src/main/java`（共 3 个类） |
+| 3 | ⚠ `@Inject(optional = false)` 并**不**必需 —— 默认值属性在进入 `determineRequiredStatus` 之前已被过滤 —— 因此裸写与显式 `false` 完全等价，且两者都是可选的，与 Guice 自身的 required 默认相反。 | `AnnotatedInjectionBeanPostProcessor.java:249`；`AnnotationUtils.java:657-659`；`GuiceInjectAnnotationBeanPostProcessor.java:43-45` |
 | 4 | `optional = true` 只容忍缺失，不容忍重复候选。 | `AnnotatedInjectionBeanPostProcessor.java:798-802,671-680` |
 | 5 | 字段写入是无条件的：字段本有初始值时，若无匹配 bean，`@Inject` 会用 `null` 抹掉它。 | `:778-792` |
 | 6 | 两个具体类型都是包级私有；用户代码只能继承 public 父类，或在另一个后处理器里用 `instanceof AnnotatedInjectionBeanPostProcessor` 介入。 | `GuiceInjectAnnotationBeanPostProcessor.java:31`；`AnnotatedInjectionBeanPostProcessor.java:160` |
@@ -232,4 +232,4 @@ public class GuiceBackedInjectBeanPostProcessor extends AnnotatedInjectionBeanPo
 | 11 | 桥接与 `@Autowired` 同在 `populateBean` 阶段执行且处于 `PriorityOrdered` 区间末端，因此同一字段混用两种注解会得到两次独立解析。 | `AnnotatedInjectionBeanPostProcessor.java:408,246,201-203` |
 | 12 | ⚠ 四个类型上的 `@since 1.0.0` 与被分析的 `0.2.40-SNAPSHOT` 不一致，不要用 `@since` 判断版本归属。 | `EnableGuice.java:33`、`pom.xml:55` |
 
-**相关页面** — [开发者文档总览](./README.md) · [English 版](../guice.md) · [用户文档（Guice）](../../../user-guide/current/zh/guice.md) · [1.x 开发者文档](../1.x/zh/guice.md) · [父 POM profile](./parent.md) · [依赖管理](./dependencies.md)
+**相关页面** — [开发者文档总览](./README.md) · [English 版](../guice.md) · [用户文档（Guice）](../../../user-guide/current/zh/guice.md) · [1.x 开发者文档](../../1.x/zh/guice.md) · [父 POM profile](./parent.md) · [依赖管理](./dependencies.md)

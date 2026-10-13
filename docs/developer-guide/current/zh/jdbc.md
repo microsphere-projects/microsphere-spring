@@ -1,6 +1,6 @@
 # microsphere-spring-jdbc — 开发者指南
 
-[← 开发者文档总览](./README.md) · [English](../jdbc.md) · [用户文档](../../user-guide/current/zh/jdbc.md) · [1.x](../1.x/zh/jdbc.md)
+[← 开发者文档总览](./README.md) · [English](../jdbc.md) · [用户文档](../../../user-guide/current/zh/jdbc.md) · [1.x](../../1.x/zh/jdbc.md)
 
 ## 1. 模块标识、版本基线与依赖姿态
 

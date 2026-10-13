@@ -111,9 +111,9 @@ public class LibDefaultsConfig {
 
 ## 4. TTL caching
 
-`@EnableTTLCaching` (`io.microsphere.spring.cache.annotation`) equals `@EnableCaching` plus a `TTLCacheResolver` bean named `ttlCacheResolver`. `@TTLCacheable` / `@TTLCachePut` derive from `@Cacheable` / `@CachePut` with that resolver pinned; at execution the aspect pushes the annotation's `expire`/`timeUnit` into the `TTLContext` thread-local so the cache write picks up a per-invocation time-to-live.
+`@EnableTTLCaching` (`io.microsphere.spring.cache.annotation`) equals `@EnableCaching` plus a `TTLCacheResolver` bean named `ttlCacheResolver`. `@TTLCacheable` / `@TTLCachePut` derive from `@Cacheable` / `@CachePut` with that resolver pinned; at execution the aspect pushes the annotation's `expire`/`timeUnit` into the `TTLContext` thread-local, where a TTL-aware cache implementation is expected to read it.
 
-> ⚠️ On 0.2.x **Redis-backed TTL is not available**: `io.microsphere.spring.cache.redis.TTLRedisCacheWriterWrapper` and `TTLRedisConfiguration` are entirely commented out in source. The attribute is named `expire`, not `ttl`.
+> ⚠️ On 0.2.x **the TTL is never consumed by the library itself**. The only code that reads `TTLContext` — `io.microsphere.spring.cache.redis.TTLRedisCacheWriterWrapper` and `TTLRedisConfiguration` — is entirely commented out in source, so `TTLCacheResolver` only writes the thread-local (`TTLCacheResolver.java:121`). With the stock Spring cache managers, `@TTLCacheable` therefore behaves exactly like `@Cacheable`: `expire` is silently ignored. To make it work you must plug in your own `Cache`/`CacheWriter` that calls `TTLContext.getTTL()` (or `doWithTTL`) while writing. The attribute is also named `expire`, not `ttl`.
 
 `@EnableTTLCaching` attributes (all `@AliasFor` to `@EnableCaching`): `proxyTargetClass` (`boolean`, `false`), `mode` (`AdviceMode`, `PROXY`), `order` (`int`, `LOWEST_PRECEDENCE`).
 
@@ -158,7 +158,16 @@ Programmatic control: `TTLContext.doWithTTL(duration -> cache.put(key, value), D
 
 ## 5. `@EnableConfigurationBeanBinding`: relaxed binding
 
-`@Import(ConfigurationBeanBindingRegistrar.class)` registers `configurationBeanBindingPostProcessor`, which binds all properties under `prefix` onto the target type and exposes it as a bean. Alias strategies come from `ConfigurationBeanAliasGenerator` implementations contributed through spring.factories (`Default` / `Hyphen` / `UnderScoreJoin`), so `user-name`, `userName` and `user_name` are equivalent. `ConfigurationBeanCustomizer` allows post-binding customization of the registered bean. Repeatable via `@EnableConfigurationBeanBindings`.
+`@Import(ConfigurationBeanBindingRegistrar.class)` registers `configurationBeanBindingPostProcessor`, which binds all properties under `prefix` onto the target type and exposes it as a bean. Alias strategies are loaded with `SpringFactoriesLoader` (`ConfigurationBeanBindingRegistrar.java:140`), and implementations exist for `Default` / `Hyphen` / `UnderScoreJoin`, making `user-name`, `userName` and `user_name` equivalent. `ConfigurationBeanCustomizer` allows post-binding customization of the registered bean. Repeatable via `@EnableConfigurationBeanBindings`.
+
+> ⚠️ This module ships **no** `META-INF/spring.factories` entry for `ConfigurationBeanAliasGenerator` in `src/main/resources` — the four generators are declared only under `src/test`. Out of the box, therefore, no alias generator is active and only exact property names bind. To get hyphen/underscore equivalence, declare the generators in your own `META-INF/spring.factories`:
+>
+> ```properties
+> io.microsphere.spring.beans.factory.support.ConfigurationBeanAliasGenerator=\
+> io.microsphere.spring.beans.factory.support.DefaultConfigurationBeanAliasGenerator,\
+> io.microsphere.spring.beans.factory.support.HyphenAliasGenerator,\
+> io.microsphere.spring.beans.factory.support.UnderScoreJoinAliasGenerator
+> ```
 
 | Attribute | Type | Default | Description |
 |---|---|---|---|
@@ -212,6 +221,11 @@ public interface PropertyResolverListener {
 ```properties
 microsphere.spring.listenable-environment.enabled=true      # default: false
 ```
+
+⚠ If you register the initializer yourself instead of relying on `spring.factories`, use the real class name
+`io.microsphere.spring.core.env.ListenableConfigurableEnvironmentInitializer`. The Javadoc example inside that class
+prints `io.microsphere.spring.beans.factory.support.ListenableConfigurableEnvironmentInitializer`, which does not exist
+in the reactor — copying it produces a `ClassNotFoundException` at startup.
 
 ```java
 @Component
@@ -300,7 +314,7 @@ public class EventAuditInterceptor implements ApplicationEventInterceptor {
 | `spring:` URL | `SpringProtocolURLStreamHandler` supports `spring:env:property-sources://...`, used by the JDBC module to read environment properties |
 | `EventPublishingBean*` | Bean lifecycle events; toggle `microsphere.spring.event-publishing-bean.enabled` (default `false`) |
 | Utilities | `BeanFactoryUtils`, `BeanDefinitionUtils`, `AnnotatedBeanDefinitionRegistryUtils`, `ApplicationContextUtils`, `EnvironmentUtils`, `PropertySourcesUtils`, `PropertyResolverUtils`, `ResourceLoaderUtils`, `ResourceUtils`, `PropertiesUtils`, `AnnotationUtils`, `ConversionServiceUtils`, `BeanRegistrar`, `DependencyTreeWalker`, `SpringVersion`/`SpringVersionUtils` |
-| `FilterMode` | Extension filtering mode; property `microsphere.spring.filter-mode` (default `SEQUENTIAL`) |
+| `FilterMode` | Extension filtering mode; property `microsphere.spring.filter-mode` (default `SEQUENTIAL`). ⚠ Inert in 0.2.x: no production code reads the property, so setting it changes nothing |
 
 ---
 

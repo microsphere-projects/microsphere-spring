@@ -39,7 +39,9 @@ The Reactor line follows the selected Spring profile through the parent POM's `r
 
 **Note**: this annotation deliberately exposes **no** `registerHandlerInterceptors` / `handlerInterceptors` attributes — WebFlux has no `HandlerInterceptor`; the analogous extension point is `WebFilter`.
 
-The registrar unconditionally installs `HandlerMappingWebEndpointMappingResolver`, `InterceptingHandlerMethodProcessor`, `RequestHandledEventPublishingWebFilter` and `RequestContextWebFilter`.
+Every one of the seven registrations is behind its own attribute guard (`WebFluxExtensionBeanDefinitionRegistrar.java:61-73`): `registerWebEndpointMappings` → `HandlerMappingWebEndpointMappingResolver`, `interceptHandlerMethods` → `InterceptingHandlerMethodProcessor`, `publishEvents` → `RequestHandledEventPublishingWebFilter`, `storeRequestBodyArgument` / `storeResponseBodyReturnValue` → the two storing interceptors, `reversedProxyHandlerMapping` → `ReversedProxyHandlerMapping`.
+
+⚠ `RequestContextWebFilter` is the exception that proves the rule: it is registered **only** for `requestContextStrategy = THREAD_LOCAL` or `INHERITABLE_THREAD_LOCAL` (`:101-122`). With the default `DEFAULT`, no request-context filter bean is created at all — the thread-local request context stays off unless you opt in.
 
 ```java
 @Configuration
@@ -64,7 +66,7 @@ public class ReactiveAccessInterceptor implements HandlerMethodInterceptor {
 }
 ```
 
-`InterceptingHandlerMethodProcessor` (`io.microsphere.spring.webflux.method`, bean name `interceptingHandlerMethodProcessor`) implements `WebFilter`, `HandlerMapping`, `HandlerAdapter`, `HandlerResultHandler` and `ServerWebfluxMethodArgumentResolver` with a single object, and it caches the resolution context of `MethodParameter`. `RequestContextWebFilter`'s `threadContextInheritable` is derived from `requestContextStrategy`, and `ServerWebRequest` adapts `ServerWebExchange` into a `NativeWebRequest` — that combination is what lets the same `HandlerMethodInterceptor` / `HandlerMethodArgumentInterceptor` beans written for MVC work unchanged in a reactive application.
+`InterceptingHandlerMethodProcessor` (`io.microsphere.spring.webflux.method`, bean name `interceptingHandlerMethodProcessor`) extends `OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>` and, with a single object, implements `WebFilter`, `HandlerAdapter`, `HandlerMethodArgumentResolver`, `HandlerResultHandler`, `WebExceptionHandler` and `Ordered` (`InterceptingHandlerMethodProcessor.java:81-83`). It caches the resolution context of `MethodParameter`. `RequestContextWebFilter`'s `threadContextInheritable` is derived from `requestContextStrategy`, and `ServerWebRequest` adapts `ServerWebExchange` into a `NativeWebRequest` — that combination is what lets the same `HandlerMethodInterceptor` / `HandlerMethodArgumentInterceptor` beans written for MVC work unchanged in a reactive application.
 
 ---
 

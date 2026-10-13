@@ -1,45 +1,82 @@
-# 依赖管理 `microsphere-spring-dependencies`
+# microsphere-spring-dependencies — 开发者文档（0.2.x / `release`）
 
 [← 开发者文档总览](./README.md) · [English](../dependencies.md) · [用户文档](../../../user-guide/current/zh/dependencies.md)
 
----
+**谁需要这份文档。** 应用团队需要：这个 POM 就是对外发布的 BOM（`scope=import`），让使用者依赖任意
+`microsphere-spring-*` 模块时无需写版本。库维护者也需要，出于一个更小但更硬的职责——保持受管清单与模块清单同步，
+因为没被加进这里的目标无法被无版本地消费。
 
-## 定位
+## 1. 版本信息
 
-`microsphere-spring-dependencies` 是 Microsphere Spring 的 **Bill Of Materials（BOM，物料清单）**。它是整个生态的版本注册中心：
+| 项目 | 值 |
+|------|-------|
+| 分支 | `release` |
+| 文档目录 | `docs/**/current/` |
+| 版本线 | **0.2.x** |
+| 开发版本（根 `<revision>`） | `0.2.40-SNAPSHOT` |
+| 最新发布版本 | `0.2.39` |
+| Parent | `io.github.microsphere-projects:microsphere-spring-parent:${revision}`（`../microsphere-spring-parent/pom.xml`） |
+| 构建基线 parent | `io.github.microsphere-projects:microsphere-build:0.3.17`（经 parent 链继承） |
+| Java 基线 | Java 17（在 reactor 根 POM 中设定） |
+| 坐标 / 打包方式 | `io.github.microsphere-projects:microsphere-spring-dependencies:${revision}`，`packaging=pom` |
 
-- 它自身**不**发布任何 jar。它只发布一个带有 `<dependencyManagement>` 的 `pom` 制品。
-- 它导入 **Spring Boot BOM** 作为基础层，使 Spring Boot、Spring Framework 和 Jackson 的版本与官方 Boot 矩阵保持一致。
-- 在此之上，它管理着 Boot **不**覆盖的依赖（Spring Statemachine、Guice、ASM、ShaleMigrations、微测、Pinyin4j，以及全部 Microsphere 自身制品）。
+## 2. 这个模块是什么
 
-面向的读者：*构建任何使用本生态的项目的开发者。*
+`microsphere-spring-dependencies` 是 reactor 对外的契约。它是一个纯构建模块——目录里只有
+`microsphere-spring-dependencies/pom.xml` 这一个文件，没有 `src/`——而它唯一的内容就是一个覆盖七个已发布库构件的
+`<dependencyManagement>` 块：
 
----
+```xml
+<parent>
+    <groupId>io.github.microsphere-projects</groupId>
+    <artifactId>microsphere-spring-parent</artifactId>
+    <version>${revision}</version>
+    <relativePath>../microsphere-spring-parent/pom.xml</relativePath>
+</parent>
 
-## BOM 分层
+<groupId>io.github.microsphere-projects</groupId>
+<artifactId>microsphere-spring-dependencies</artifactId>
+<version>${revision}</version>
+<packaging>pom</packaging>
 
-BOM 有意为之的**唯一一处版本覆盖**是 Jackson——本生态测试所用的 Jackson 2 系列与 Boot 默认的 Jackson 3 不同。如需完整清单，请查看已发布的 POM。
-
-```mermaid
-flowchart TD
-    A["spring-boot-dependencies<br/>Boot 3.5.6 — Boot 官方矩阵"]
-    B["microsphere-spring-dependencies<br/>v2.0.0 — 本 BOM"]
-    C["microsphere-spring-parent<br/>v2.0.0 — 构建侧"]
-    A -- "由本 BOM 导入（第一层）" --> B
-    B -- "artifact 管理（BOM 导入）<br/>覆盖 Jackson 为 2.19.4" --> C
-    C -- "plugin management<br/>deploy、Java 17、源码 jar" --> D["你的构建"]
-    B -. "仅版本；无插件管理" .-> D
+<name>Microsphere :: Spring :: Dependencies</name>
+<description>Microsphere Spring Dependencies</description>
 ```
 
-**规则**：依赖版本改在 `dependencies`，构建插件改在 `parent`。
+它继承自 `microsphere-spring-parent` 而不是 reactor 根，正是这一点把 Spring/Reactor 的 profile 机制和第三方 BOM 导入
+带进了这个 POM 的生效模型。
 
----
+## 3. `<dependencyManagement>` 的内容（逐条）
 
-## 导入 BOM
+BOM 声明了**七个**条目，全部属于 group `io.github.microsphere-projects`，全部使用版本 `${revision}`
+（无 `<type>`/`<scope>`，即普通 jar 坐标，无排除项）：
 
-**继承 parent（推荐）**——`microsphere-spring-parent` 已经导入本 BOM，因此继承 parent 即可获得所有受管版本。见[构建 Parent](./parent.md)。
+| # | groupId | artifactId | version |
+|---|---------|------------|---------|
+| 1 | `io.github.microsphere-projects` | `microsphere-spring-context` | `${revision}` |
+| 2 | `io.github.microsphere-projects` | `microsphere-spring-guice` | `${revision}` |
+| 3 | `io.github.microsphere-projects` | `microsphere-spring-jdbc` | `${revision}` |
+| 4 | `io.github.microsphere-projects` | `microsphere-spring-web` | `${revision}` |
+| 5 | `io.github.microsphere-projects` | `microsphere-spring-webmvc` | `${revision}` |
+| 6 | `io.github.microsphere-projects` | `microsphere-spring-webflux` | `${revision}` |
+| 7 | `io.github.microsphere-projects` | `microsphere-spring-test` | `${revision}` |
 
-**只导入 BOM，不继承 parent**——当你的项目必须继承别的 parent（例如 `spring-boot-starter-parent`）时，直接导入 BOM：
+BOM 里没有声明任何其他东西：没有 `<properties>`，没有 `<profiles>`，没有 `<build>`，没有 `<repositories>`，
+没有 `<pluginManagement>`，也没有它自己的依赖。
+
+由于 parent 被继承，使用者透过这个 BOM 看到的**生效** `dependencyManagement`，是上述七个条目与 parent 链所管理的
+一切的并集：
+
+| 来源 | 受管内容 |
+|--------|-----------------|
+| `microsphere-spring-parent`（导入的 BOM） | `com.fasterxml.jackson:jackson-bom:${jackson.version}`（`2.22.3`）、`jakarta.platform:jakarta.jakartaee-bom:${jakartaee.version}`（`11.0.0`）、`org.springframework:spring-framework-bom:${spring-framework.version}`、`io.projectreactor:reactor-bom:${reactor.version}`、`io.github.microsphere-projects:microsphere-java-dependencies:0.3.19`、`io.github.microsphere-projects:microsphere-logging-dependencies:0.2.2` |
+| `microsphere-spring-parent`（直接条目） | `org.yaml:snakeyaml:2.7`、`p6spy:p6spy:3.9.1`、`org.apache.zookeeper:zookeeper:3.9.6`、`org.apache.curator:curator-recipes:5.9.0` 与 `curator-test:5.9.0`（两者都排除 `org.apache.zookeeper:zookeeper`） |
+
+一个重要区别：导入一个 BOM 只会带入**那个 POM 自身的声明**。应用真正通过导入 `microsphere-spring-dependencies`
+继承到的就是那七个条目；parent 链上的那些 BOM **不会**被这次导入再导出。这就是为什么各模块自己的 compile 依赖
+（Spring、Jackson、Jakarta API）必须在每个模块 POM 里标成 `<optional>`。属性侧见 [./parent.md](./parent.md)。
+
+## 4. 使用者如何导入
 
 ```xml
 <dependencyManagement>
@@ -47,140 +84,82 @@ flowchart TD
         <dependency>
             <groupId>io.github.microsphere-projects</groupId>
             <artifactId>microsphere-spring-dependencies</artifactId>
-            <version>2.0.0</version>
+            <version>0.2.39</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
     </dependencies>
 </dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>io.github.microsphere-projects</groupId>
+        <artifactId>microsphere-spring-context</artifactId>
+    </dependency>
+</dependencies>
 ```
 
-**独立使用（无 parent）**——导入 BOM 以得到版本，按需再自行添加插件：
+由 BOM 的形状可以推出以下规则：
 
-```xml
-<project>
-    <groupId>com.acme</groupId>
-    <artifactId>app</artifactId>
-    <version>1.0.0</version>
+- 版本必须是已发布版本；`${revision}` 永远到不了使用者手里，因为 `flatten-maven-plugin`
+  （`flattenMode=resolveCiFriendliesOnly`、`updatePomFile=true`）部署的是一份受管版本已是字面量的 POM——
+  发布的 `0.2.39` BOM 里写的是 `microsphere-spring-context:0.2.39`，其余同理。
+- `spring-framework.version` 不属于 BOM 契约：它是在**本仓库**构建期由 `spring-framework-6.0` … `spring-framework-7.0`
+  profile 选定的，因此某个版本发布出来的构件是按一条版本线构建、可运行于 6.0.x–7.0.x。应用要用 `spring-framework-bom`
+  自行对齐 Spring。
+- 应用若想要不同于 BOM 的模块版本，显式写出版本即可——直接的 `<dependency><version>` 永远优先于导入的管理。
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.github.microsphere-projects</groupId>
-                <artifactId>microsphere-spring-dependencies</artifactId>
-                <version>2.0.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+## 5. Reactor 覆盖情况
 
-    <dependencies>
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.microsphere-projects</groupId>
-            <artifactId>microsphere-spring-jdbc</artifactId>
-        </dependency>
-    </dependencies>
-</project>
+| Reactor 模块 | 是否由本 BOM 管理 | 是否发布 |
+|----------------|---------------------|-----------|
+| `microsphere-spring-parent` | 否（它是内部 parent） | 是，作为可继承的 `pom` parent 发布 |
+| `microsphere-spring-dependencies` | 不适用（它就是 BOM） | 是 |
+| `microsphere-spring-context` | 是 | 是 |
+| `microsphere-spring-jdbc` | 是 | 是 |
+| `microsphere-spring-web` | 是 | 是 |
+| `microsphere-spring-webmvc` | 是 | 是 |
+| `microsphere-spring-webflux` | 是 | 是 |
+| `microsphere-spring-guice` | 是 | 是 |
+| `microsphere-spring-test` | 是 | 是 |
+
+在 `release` 上这份清单是完整的：根 `<modules>` 里每个 `jar` 模块都在此处受管，因此「受管集合 == 可发布集合」这条不变量成立。
+在 `release-1.x` 上则不成立——`microsphere-spring-compatible` 是一个既不受管也不部署的 reactor 模块；
+见 [../../1.x/zh/dependencies.md](../../1.x/zh/dependencies.md)。
+
+维护规则：加入第 10 个模块意味着在一次提交里改三个文件——根 `<modules>`、`microsphere-spring-<new>/pom.xml` 和本 BOM。
+核验方式：
+
+```bash
+mvn -P spring-framework-7.0 help:effective-pom -pl microsphere-spring-dependencies \
+    | grep -c "microsphere-spring-"
 ```
 
-> **关于版本的说明。** 上面各处写死的 `<version>2.0.0</version>` 是本手册撰写时的最新已发布版本；请替换成[最新已发布版本](https://search.maven.org/search?q=g:io.github.microsphere-projects%20a:microsphere-spring-dependencies)。属性 `${microsphere-spring-dependencies.version}` 在父 POM 自身内部可用，但下游用户引用 BOM 时用的是字面量版本。
+## 6. BOM 导入链
 
----
-
-## 受管版本
-
-下面是本 BOM 管理的版本属性——**节选**。Boot 自身矩阵管理的每个 Spring Boot 制品（`spring-boot-starter-*` 等）同样无需版本即可使用，这里未列出。完整清单请查看已发布的 POM。
-
-### 第三方库
-
-| 属性 | 版本 | 制品（示例） |
-|------|------|-------------|
-| `spring-boot.version` | 3.5.6 | *（仅属性；Boot BOM 是被导入的那个）* |
-| `spring-framework.version` | 6.2.11 | `spring-core`、`spring-aop`、`spring-beans`、`spring-context`、`spring-tx`、`spring-jdbc`、`spring-orm`、`spring-web`、`spring-webmvc`、`spring-webflux`、`spring-test` |
-| `spring-state-machine.version` | 4.0.1 | `spring-statemachine-core` |
-| `jackson.version` | 2.19.4 | `jackson-core`、`jackson-databind`、`jackson-annotations` |
-| `guice.version` | 7.0.0 | `guice` |
-| `ow2.asm.version` | 9.10.1 | `asm` |
-| `shale-migrations.version` | 1.1.2 | `shale-migrations` |
-| `weicai-test.version` | 1.4.5 | `weicai-test` |
-| `pinyin4j.version` | 2.5.1 | `pinyin4j` |
-| `slf4j-api.version` | 2.0.9 | `slf4j-api` |
-| `commons-lang3.version` | （Boot BOM） | `commons-lang3` |
-| `commons-logging.version` | （Boot BOM） | `commons-logging` |
-| `h2.version` | （Boot BOM） | `h2` |
-
-> **关于 Jackson。** Boot 矩阵自带的是 Jackson **3**，因此 `jackson-bom` 在 Boot BOM 之后被导入，以便 Jackson **2**（2.19.4）的坐标保持稳定。
-
-### Microsphere Spring 模块
-
-| 属性 | 制品 |
-|------|------|
-| `microsphere-spring-context.version` | `microsphere-spring-context` |
-| `microsphere-spring-web.version` | `microsphere-spring-web` |
-| `microsphere-spring-webmvc.version` | `microsphere-spring-webmvc` |
-| `microsphere-spring-webflux.version` | `microsphere-spring-webflux` |
-| `microsphere-spring-guice.version` | `microsphere-spring-guice` |
-| `microsphere-spring-jdbc.version` | `microsphere-spring-jdbc` |
-| `microsphere-spring-test.version` | `microsphere-spring-test` |
-
-Microsphere 制品的版本跟随生态版本线（目前均为 `2.0.0`）。
-
----
-
-## 添加一个新的受管版本
-
-1. **添加版本属性**：在 `<properties>` 中以 `x.y.z` 形式声明。
-2. **在 Boot 覆盖之下时加注释**：加一行 XML 注释，写明它覆盖或对齐了什么（Jackson 就是样例）。
-3. **把制品加入 `<dependencyManagement>`**：不带 `<scope>`（除非确有必要，例如 `provided`），版本引用该属性。
-
-```xml
-<!-- 版本属性 -->
-<properties>
-    <acme-lib.version>1.2.3</acme-lib.version>
-</properties>
-
-<!-- 制品条目 -->
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.acme</groupId>
-            <artifactId>acme-lib</artifactId>
-            <version>${acme-lib.version}</version>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+```mermaid
+flowchart TD
+    JAVA["microsphere-java-dependencies:0.3.19"] --> PARENT
+    LOGGING["microsphere-logging-dependencies:0.2.2"] --> PARENT
+    PARENT["microsphere-spring-parent:${revision}<br/>dependencyManagement 导入"] --> JACKSON
+    PARENT --> JAKARTA
+    PARENT --> SPRING
+    PARENT --> REACTOR
+    PARENT --> MICRO["microsphere-java-dependencies + microsphere-logging-dependencies 导入"]
+    JAVA --> MICRO
+    LOGGING --> MICRO
+    JACKSON["jackson-bom ${jackson.version} = 2.22.3"] --> RESOLVE
+    JAKARTA["jakarta.jakartaee-bom ${jakartaee.version} = 11.0.0"] --> RESOLVE
+    SPRING["spring-framework-bom ${spring-framework.version}<br/>由 profile 6.0 / 6.1 / 6.2 / 7.0 设定"] --> RESOLVE
+    REACTOR["reactor-bom ${reactor.version}<br/>2022.0.22 / 2023.0.19 / 2024.0.17 / 2025.0.7"] --> RESOLVE
+    RESOLVE["jar 模块 POM 中无版本坐标的解析结果"] --> MODULES
+    MODULES["context / jdbc / web / webmvc / webflux / guice / test"] --> BOM
+    PARENT --> DEPS["microsphere-spring-dependencies:${revision}<br/>packaging=pom，7 个受管 jar 构件，版本 ${revision}"]
+    DEPS --> FLATTEN["flatten-maven-plugin resolveCiFriendliesOnly<br/>${revision} 变为字面量版本<br/>部署 .flattened-pom.xml"]
+    FLATTEN --> CENTRAL["Maven Central<br/>microsphere-spring-dependencies:0.2.39"]
+    CENTRAL --> APP["应用 pom<br/>scope=import，type=pom"]
+    APP --> APPDEPS["应用依赖<br/>microsphere-spring-* 坐标不写版本"]
 ```
 
-4. **在 parent 中镜像**：如果模块也通过 parent 解析依赖，请确认 parent 的导入会拾取新条目。
-5. **验证**：把该制品加入测试模块（无需版本）并运行 `mvn dependency:tree`，确认解析到 `1.2.3`。
-
----
-
-## 升级 Boot BOM
-
-Boot BOM 是底座，所以升级它会带动 Spring Framework、Jackson 以及每一个 Boot 管理的依赖：
-
-1. **修改** `spring-boot.version` 属性，并**更新** Boot BOM 导入里 `<dependencyManagement>` 中对应的 `<version>` 值。
-2. **检查覆盖项**——Jackson 和 Spring Framework 是刻意钉住的，以免 Boot 的升级悄无声息地移动它们。若 Boot 的新版本已包含一个等于或高于我们钉住值的版本，就移除覆盖项。
-3. **检查模块编译**——所有模块必须构建通过；破坏性变更通常来自 Boot 的传递升级，而不是 Boot 本身。
-4. **检查受支持版本**——Boot 的版本范围必须仍然满足 `≥ 3.4`。
-5. **运行 `mvn clean verify -DskipTests`**，然后跑一次完整测试。
-6. **记录变更日志**——升级是面向用户的，因为 BOM 已被下游项目导入。
-
----
-
-## 消费方的解析顺序
-
-下游项目按下面的顺序解析版本：
-
-1. 项目自身的 `<dependencyManagement>`（优先级最高）。
-2. `microsphere-spring-parent`（若被继承）——它的导入会拾取 BOM 管理的条目。
-3. `microsphere-spring-dependencies`（若被导入，或由 parent 导入）。
-4. Boot BOM，以及本 BOM 导入的 Jackson BOM。
-
-**覆盖一个版本**：在你的项目里用你想要的版本声明该制品——你的 `<dependencyManagement>` 会胜出。这比改动 BOM 更可取，因为 BOM 是与每个使用它的项目共享的。
+相关文档：[./README.md](./README.md) · [./parent.md](./parent.md) · [./context.md](./context.md) ·
+[./web.md](./web.md) · [./test.md](./test.md) · [../../1.x/zh/dependencies.md](../../1.x/zh/dependencies.md)

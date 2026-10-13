@@ -108,7 +108,7 @@ public class WebConfig {
 |------|------|
 | `Kind kind` | `SERVLET` / `FILTER` / `WEB_MVC` / `WEB_FLUX` / `CUSTOMIZED` |
 | `E endpoint` | 端点对象本身（`transient`） |
-| `int id` | 由模式与条件计算出的稳定 ID，网关透传用 |
+| `int id` | ⚠ `Objects.hashCode(endpoint)`——该 ID 是**端点对象**的哈希码（`WebEndpointMapping.java:1275`），并非由模式或条件摘要计算而来；网关透传匹配使用的就是它 |
 | `String[] patterns / methods` | 路径模式与 HTTP 方法 |
 | `String[] params / headers / consumes / produces` | 条件（可为 `null`） |
 | `boolean negated` | 取反 |

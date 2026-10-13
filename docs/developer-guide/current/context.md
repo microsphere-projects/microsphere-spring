@@ -370,11 +370,11 @@ Ordering caveat: only `EventPublishingBeanInitializer` declares an order (`getOr
 | 10 | Auto-refresh watches **file-system resources only**; a `classpath:` resource inside a jar is never registered with the `StandardFileWatchService`, and `autoRefreshed = true` on such a resource degrades silently to a static source. | `ResourcePropertySourceLoader.java:157-165` |
 | 11 | `PropertySourceExtensionLoader.handleSourceName()` assumes the generated source name contains `@` and calls `substring(0, lastIndexOf("@"))`; a custom `PropertySourceFactory` that renames sources can drive `lastIndexOf` to `-1` and throw. | `PropertySourceExtensionLoader.java:341-344`, `:460-463` |
 | 12 | `first`, `after` and `before` are mutually exclusive by precedence, not by validation: `first` wins, then `after` wins over `before`. Setting both silently ignores one. | `PropertySourceExtensionLoader.java:133-152` |
+| 13 | `microsphere.spring.injection.metadata.cache.size` (used by this module's largest type, `AnnotatedInjectionBeanPostProcessor`) is read once at class-initialisation through `Integer.getInteger`, i.e. a **JVM system property** (`-D…`), never from the Spring `Environment` — putting it in `application.properties` has no effect, and `Environment`-based profiles silently cannot tune it. | `beans/factory/annotation/AnnotatedInjectionBeanPostProcessor.java:167,172,185,251` |
 
 ## 9. Cross-links
 
 * User-facing "how do I use it" for this module: [user-guide/current/context.md](../../user-guide/current/context.md) (简体中文: [user-guide/current/zh/context.md](../../user-guide/current/zh/context.md))
 * Reactor-wide dependency policy and version profiles: [dependencies.md](./dependencies.md) · parent POM: [parent.md](./parent.md)
 * Modules built on this one: [jdbc.md](./jdbc.md) (reuses `io.microsphere.spring.net`) · [guice.md](./guice.md) (reuses `AnnotatedInjectionBeanPostProcessor`) · [web.md](./web.md) · [test.md](./test.md)
-* 1.x / 0.1.x line of this module: [../1.x/context.md](../1.x/context.md)
-* Index: [Developer guide overview](./README.md) · [简体中文](./zh/context.md)
+* 1.x / 0.1.x line of this module: [../1.x/context.md](../1.x/context.md) — index: [Developer guide overview](./README.md)

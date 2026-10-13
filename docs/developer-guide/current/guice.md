@@ -18,7 +18,7 @@
 | Namespace root / types | `io.microsphere.spring.guice.annotation`; 3 main classes, 1 test class | `microsphere-spring-guice/src/**` |
 | `src/main/resources` | **absent** — no `spring.factories`, no `AutoConfiguration.imports`, no `module-info.java` | listing of `microsphere-spring-guice/src/main/` |
 
-Dependency posture, stated precisely because it is the module's most common breakage: **Guice is `optional`** (`microsphere-spring-guice/pom.xml:53`), so `com.google.inject:guice` is *not* transitive to a consumer; the published POM keeps the flag (`.flattened-pom.xml:66-72`) and the application must declare Guice itself. The single mandatory in-reactor edge is `microsphere-spring-context` (`:41-46`), which in turn contributes `microsphere-java-core` as mandatory (`microsphere-spring-context/pom.xml:30-34`). ⚠ Guice is *not* managed by the parent or the BOM — `microsphere-spring-parent/pom.xml:32-136` has no `com.google.inject` entry and `microsphere-spring-dependencies/pom.xml:30-34` manages only this module's artifact; `docs/developer-guide/current/README.md:20` wrongly lists Guice among "managed third parties", while [parent.md:140-141](./parent.md) is accurate.
+Dependency posture, stated precisely because it is the module's most common breakage: **Guice is `optional`** (`microsphere-spring-guice/pom.xml:53`), so `com.google.inject:guice` is *not* transitive to a consumer; the published POM keeps the flag (`.flattened-pom.xml:66-72`) and the application must declare Guice itself. The single mandatory in-reactor edge is `microsphere-spring-context` (`:41-46`), which in turn contributes `microsphere-java-core` as mandatory (`microsphere-spring-context/pom.xml:30-34`). ⚠ Guice is *not* managed by the parent or the BOM — `microsphere-spring-parent/pom.xml:32-136` has no `com.google.inject` entry and `microsphere-spring-dependencies/pom.xml:30-34` manages only this module's artifact; [parent.md:140-141](./parent.md) and [the overview's managed-third-parties row](./README.md) both record this exception.
 
 ```mermaid
 flowchart LR
@@ -56,7 +56,7 @@ No reactor module depends on `microsphere-spring-guice`; outside the module the 
 
 ## 3. Architecture
 
-⚠ This module has **no `ImportBeanDefinitionRegistrar`, no `ApplicationContextInitializer`, no `Injector`, no `Module` and no `Provider`**. `docs/developer-guide/current/README.md:84` calls the page a "Spring ↔ Guice injection bridge" and `:90-103` describes the reactor-wide shape "annotation → registrar → seam"; neither holds literally — the direction is one-way (Guice-annotated members of *Spring* beans are satisfied by *Spring*), and activation is a two-hop `@Import` with no registrar in between.
+⚠ This module has **no `ImportBeanDefinitionRegistrar`, no `ApplicationContextInitializer`, no `Injector`, no `Module` and no `Provider`**. It is therefore the exception to the reactor-wide "annotation → registrar → seam" shape described in [the overview](./README.md): the direction is one-way (Guice-annotated members of *Spring* beans are satisfied by *Spring*), and activation is a two-hop `@Import` with no registrar in between.
 
 ```mermaid
 flowchart TD
@@ -111,7 +111,7 @@ The consequence is arithmetic, not opinion: the only way `containsKey("optional"
 | Guice declaration | `optional` value | key survives the default filter? | `determineRequiredStatus` | runtime effect, evidenced |
 |---|---|---|---|---|
 | `@Inject` | `false` (default) | no | `false` (`GuiceInjectAnnotationBeanPostProcessor.java:43-45`) | missing candidate → field set to `null`, no exception (`resolveFieldValue:795-806`) |
-| `@Inject(optional = false)` | `false` (default) | **no — identical to the row above** | `false` | ⚠ documented as `required = true` in `docs/user-guide/current/guice.md:42` and `docs/user-guide/1.x/guice.md:71`; the source cannot reach `true` |
+| `@Inject(optional = false)` | `false` (default) | **no — identical to the row above** | `false` | ⚠ no spelling of this attribute can reach `true` (see gotcha 3) |
 | `@Inject(optional = true)` | `true` | yes | `false` (`:46`) | missing candidate → `null`; asserted by `EnableGuiceTest.java:51-52,59` |
 
 `required` reaches Spring only as the second argument of `DependencyDescriptor` (`:799` fields, `:890` method parameters, `:323` constructors). Absence is tolerated; **ambiguity is not** — `resolveDependency` catches every `BeansException` and rethrows `UnsatisfiedDependencyException` (`:671-680`), so two candidates fail an `@Inject(optional = true)` field exactly like a required one. The switch that would restore Guice semantics, `setIgnoreDefaultValue(false)` (`:606-608`), is unreachable through `@EnableGuice`: the subclass never calls it and is package-private (`:31`), so user code can neither subclass nor configure it.
@@ -210,7 +210,7 @@ Register it with a `@Bean` method (declare it `static` to avoid early-infrastruc
 |---|---|
 | Build and test this module | `mvn -pl microsphere-spring-guice -am test --activate-profiles test,coverage,spring-framework-7.0` — CI adds `-Drevision=0.0.1-SNAPSHOT` (`.github/workflows/maven-build.yml:43-49`) |
 | Spring matrix / JDK matrix | `spring-framework-6.0 / 6.1 / 6.2 / 7.0` with `7.0` `activeByDefault` (`microsphere-spring-parent/pom.xml:138-173`, `:163-172`); JDK `17`, `21`, `25` (`.github/workflows/maven-build.yml:25`) |
-| Build parent | `microsphere-build:0.3.17` (`pom.xml:5-9`) — ⚠ `docs/developer-guide/current/README.md:19` states `0.3.16` for `release` |
+| Build parent | `microsphere-build:0.3.17` (`pom.xml:5-9`, the same version on `origin/release`) |
 | Test inventory | `EnableGuiceTest` — the test class is also the bean under test (`EnableGuiceTest.java:36-40`); 4 injection sites (`:42-52`), 4 assertions (`:54-60`) |
 | What the tests do **not** cover | constructor or setter `@Inject`, any required-failure path, and every use of `Injector`, `Module`, `Provider` or `Scope` — Guice participates only as an annotation type |
 | Optional-dependency behaviour | the module's own compile classpath does see Guice (optional suppresses transitivity, not local use), which is why the test compiles without extra declarations; the flattened POM keeps `<optional>true</optional>` (`.flattened-pom.xml:66-72`) so consumers still must provide it |
@@ -220,8 +220,8 @@ Register it with a `@Bean` method (declare it `static` to avoid early-infrastruc
 | # | Observation | Evidence |
 |---|---|---|
 | 1 | Guice is optional and never transitive; a consumer without `com.google.inject:guice` fails when the bridge class is initialised, not when its own code compiles. | `microsphere-spring-guice/pom.xml:48-54`; `GuiceInjectAnnotationBeanPostProcessor.java:19,33` |
-| 2 | ⚠ There is no `Injector`/`Module`/`Provider`/`Scope` integration and the direction is Guice-annotations → Spring only; the "Spring ↔ Guice" wording of `docs/developer-guide/current/README.md:84` overstates it. | `microsphere-spring-guice/src/main/java` (3 classes) |
-| 3 | ⚠ `@Inject(optional = false)` is **not** required — the default-valued attribute is filtered before `determineRequiredStatus` sees it — so bare `@Inject` and explicit `false` are the same, and both are optional, unlike Guice's own required default. `docs/user-guide/current/guice.md:42` and `docs/user-guide/1.x/guice.md:71` claim it throws. | `AnnotatedInjectionBeanPostProcessor.java:249`; `AnnotationUtils.java:657-659`; `GuiceInjectAnnotationBeanPostProcessor.java:43-45` |
+| 2 | ⚠ There is no `Injector`/`Module`/`Provider`/`Scope` integration and the direction is Guice-annotations → Spring only; describing the module as a bidirectional "Spring ↔ Guice bridge" overstates it. | `microsphere-spring-guice/src/main/java` (3 classes) |
+| 3 | ⚠ `@Inject(optional = false)` is **not** required — the default-valued attribute is filtered before `determineRequiredStatus` sees it — so bare `@Inject` and explicit `false` are the same, and both are optional, unlike Guice's own required default. | `AnnotatedInjectionBeanPostProcessor.java:249`; `AnnotationUtils.java:657-659`; `GuiceInjectAnnotationBeanPostProcessor.java:43-45` |
 | 4 | `optional = true` tolerates absence but not duplicate candidates. | `AnnotatedInjectionBeanPostProcessor.java:798-802,671-680` |
 | 5 | The field write is unconditional, so `@Inject` on a field with an initialiser erases that initialiser with `null` when no bean matches. | `:778-792` |
 | 6 | Both concrete types are package-private; user code can only extend the public base class or intervene via `instanceof AnnotatedInjectionBeanPostProcessor` from another post-processor. | `GuiceInjectAnnotationBeanPostProcessor.java:31`; `AnnotatedInjectionBeanPostProcessor.java:160` |
