@@ -128,6 +128,7 @@ Chinese mirrors of every page live in [`./zh/`](./zh/).
 
 ## 8. Known limitations on this line
 
-- TTL caching ships **no usable Redis integration**: `TTLRedisCacheWriterWrapper` and `TTLRedisConfiguration` are entirely commented out in source.
+- TTL caching ships **no usable integration**: the Redis classes (`TTLRedisCacheWriterWrapper`, `TTLRedisConfiguration`) are entirely commented out, and nothing else reads `TTLContext`. With a stock cache manager `@TTLCacheable`'s `expire` is ignored — you must supply a TTL-aware `Cache`/`CacheWriter` yourself.
+- `@EnableConfigurationBeanBinding` registers **no** `ConfigurationBeanAliasGenerator` in its own `spring.factories`, so relaxed (hyphen/underscore) binding is inactive until you declare the generators.
 - `@Idempotent` and `RestControlMapping` are **not present** in the 0.2.x source, despite older README mentions.
 - `microsphere-spring-compatible` (present on the 0.1.x line) **does not exist** here.

@@ -59,7 +59,7 @@ One Markdown document per Maven module, in each guide set and each language:
 | `microsphere-spring-webmvc` | Servlet / Spring MVC adapters of the web kernel |
 | `microsphere-spring-webflux` | Reactive / WebFlux adapters of the web kernel |
 | `microsphere-spring-jdbc` | P6Spy-backed `DataSource` decoration driven by Spring properties |
-| `microsphere-spring-guice` | Guice `Injector` integration with Spring injection |
+| `microsphere-spring-guice` | One-way bridge: Guice `@Inject` sites on Spring beans are satisfied by the Spring container |
 | `microsphere-spring-test` | Embedded Tomcat / ZooKeeper / database test scaffolding |
 | `microsphere-spring-compatible` | **1.x only** — `org.springframework.*` compatibility shims for Spring 4.3 |
 

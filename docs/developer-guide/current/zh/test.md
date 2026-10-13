@@ -1,6 +1,6 @@
 # microsphere-spring-test — 开发者指南
 
-[← 开发者文档总览](./README.md) · [English](../test.md) · [用户文档](../../../user-guide/current/zh/test.md) · [1.x](../1.x/zh/test.md)
+[← 开发者文档总览](./README.md) · [English](../test.md) · [用户文档](../../../user-guide/current/zh/test.md) · [1.x](../../1.x/zh/test.md)
 
 下文路径均相对于 `microsphere-spring-test/`；`…/` 是 `src/main/java/io/microsphere/spring/test/` 的缩写。
 
@@ -380,4 +380,4 @@ class EmbeddedRedisServerTestExecutionListener extends AbstractTestExecutionList
 | 21 | 所有 `Feature`/`EmbeddedDatabaseType` 的 `switch` 都是穷尽式且**没有 `default`**：新增枚举常量会导致注册器/loader 编译失败而非运行期失败 —— 这是有意为之，但也意味着消费者无法扩展这些枚举。 | `EmbeddedDataBaseBeanDefinitionRegistrar.java:60-67`；`EmbeddedTomcatContextLoader.java:267-286` |
 | 22 | 每个类型上的 `@since 1.0.0` 与本文分析的聚合版本 `0.2.40-SNAPSHOT` 相冲突；`@since` 不可用于映射发布版本。 | `EnableEmbeddedDatabase.java:37`；`../pom.xml:55` |
 
-相关文档：[./README.md](./README.md) · [./dependencies.md](./dependencies.md) · [./parent.md](./parent.md) · [./context.md](./context.md) · [./jdbc.md](./jdbc.md) · [./web.md](./web.md) · [用户文档](../../../user-guide/current/zh/test.md) · [1.x](../1.x/zh/test.md)
+相关文档：[./README.md](./README.md) · [./dependencies.md](./dependencies.md) · [./parent.md](./parent.md) · [./context.md](./context.md) · [./jdbc.md](./jdbc.md) · [./web.md](./web.md) · [用户文档](../../../user-guide/current/zh/test.md) · [1.x](../../1.x/zh/test.md)

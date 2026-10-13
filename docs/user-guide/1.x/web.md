@@ -108,7 +108,7 @@ Key fields and constants:
 |------|------|
 | `Kind kind` | `SERVLET` / `FILTER` / `WEB_MVC` / `WEB_FLUX` / `CUSTOMIZED` |
 | `E endpoint` | The endpoint object itself (`transient`) |
-| `int id` | A stable ID computed from the pattern and the conditions, used for gateway pass-through |
+| `int id` | ⚠ `Objects.hashCode(endpoint)` — the ID is the **endpoint object's** hash code (`WebEndpointMapping.java:1275`), not a digest of the pattern or conditions; it is what gateway pass-through matching keys on |
 | `String[] patterns / methods` | The path patterns and HTTP methods |
 | `String[] params / headers / consumes / produces` | The conditions (may be `null`) |
 | `boolean negated` | Whether the match is negated |

@@ -1,6 +1,6 @@
 # microsphere-spring-webflux — 开发者文档
 
-[← 开发者文档总览](./README.md) · [English](../webflux.md) · [用户文档](../../../user-guide/current/zh/webflux.md) · [1.x](../1.x/zh/webflux.md)
+[← 开发者文档总览](./README.md) · [English](../webflux.md) · [用户文档](../../../user-guide/current/zh/webflux.md) · [1.x](../../1.x/zh/webflux.md)
 
 ## 1. 模块标识、版本基线与依赖姿态
 
@@ -92,9 +92,9 @@ flowchart LR
 | `storeResponseBodyReturnValue` | `false` | `StoringResponseBodyReturnValueInterceptor` | `:134-140` |
 | `reversedProxyHandlerMapping` | `false` | `ReversedProxyHandlerMapping` | `:142-148` |
 
-⚠ `docs/user-guide/current/zh/webflux.md:42`（以及其英文版 `docs/user-guide/current/webflux.md:42`）称"注册器会**无条件**安装 `HandlerMappingWebEndpointMappingResolver`、`InterceptingHandlerMethodProcessor`、`RequestHandledEventPublishingWebFilter` 与 `RequestContextWebFilter`"。其中三个受属性门控，第四个（`RequestContextWebFilter`）在默认 `requestContextStrategy = DEFAULT` 下**根本不会注册**（`:111-113`、`:115`）。对 `EnableWebFluxExtensionTest.java:57`（裸注解）的后果是：不存在线程绑定的请求上下文，除非有 `HandlerMethod` 正被拦截——因为此时 `InterceptingHandlerMethodProcessor` 委托的是它**自己持有的 `private static final RequestContextWebFilter`** 实例（`:87,98-100`），而不是一个 Bean。
+⚠ 这里没有任何一项是无条件安装的——七项注册各自受属性门控（`:61-73`）。`RequestContextWebFilter` 更是双重条件：仅当 `requestContextStrategy` 为 `THREAD_LOCAL` 或 `INHERITABLE_THREAD_LOCAL` 时才注册（`:101-122`），因此默认的 `DEFAULT` 下根本不存在请求上下文 Bean（`:111-113`、`:115`）。对 `EnableWebFluxExtensionTest.java:57`（裸注解）的后果是：不存在线程绑定的请求上下文，除非有 `HandlerMethod` 正被拦截——因为此时 `InterceptingHandlerMethodProcessor` 委托的是它**自己持有的 `private static final RequestContextWebFilter`** 实例（`:87,98-100`），而不是一个 Bean。
 
-⚠ `docs/user-guide/current/zh/webflux.md:67`（英文版同为 `docs/user-guide/current/webflux.md:67`）称该处理器"实现 `WebFilter`、`HandlerMapping`、`HandlerAdapter`、`HandlerResultHandler` 与 `ServerWebfluxMethodArgumentResolver`"。`InterceptingHandlerMethodProcessor.java:81-83` 的声明列出父类是 `OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>`，接口是 `WebFilter, HandlerAdapter, HandlerMethodArgumentResolver, HandlerResultHandler, WebExceptionHandler, Ordered`：**没有** `HandlerMapping`，反应堆内也不存在名为 `ServerWebfluxMethodArgumentResolver` 的类型，参数解析角色用的是 Spring 响应式的 `org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver`（`:39` 的导入）。
+⚠ 该处理器常被误述为一个 `HandlerMapping`。`InterceptingHandlerMethodProcessor.java:81-83` 的声明列出父类是 `OnceApplicationContextEventListener<WebEndpointMappingsReadyEvent>`，接口是 `WebFilter, HandlerAdapter, HandlerMethodArgumentResolver, HandlerResultHandler, WebExceptionHandler, Ordered`：**没有** `HandlerMapping` 角色，反应堆内也不存在名为 `ServerWebfluxMethodArgumentResolver` 的类型，参数解析角色用的是 Spring 响应式的 `org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver`（`:39` 的导入）。因此端点查找仍由 `RequestMappingHandlerMapping` 承担；这个 Bean 只贡献*执行*角色。
 
 `@OverrideAnnotationAttributes`（`EnableWebFluxExtension.java:75`）未显式指定 `strategy`，因此解析为 `ConfigurationPropertyOverrideAnnotationAttributesStrategy`（`OverrideAnnotationAttributes.java:89`），其默认前缀为 `microsphere.spring.` + `@` + 注解简单名 + `.` —— 也就是说 `microsphere.spring.@EnableWebFluxExtension.storeResponseBodyReturnValue=true` 会在注册器读取属性之前重写注解属性（`ConfigurationPropertyOverrideAnnotationAttributesStrategy.java:139-163,245-249,281`）。七个守卫全部以 TRACE 级别打印决策（`WebFluxExtensionBeanDefinitionRegistrar.java:150-154`），因此 `logging.level.io.microsphere=TRACE` 是观察装配结果的唯一手段。
 
@@ -126,7 +126,7 @@ flowchart LR
 
 ### 4.4 端点元数据采集
 
-`HandlerMappingWebEndpointMappingResolver.resolve` 遍历每个 `HandlerMapping` Bean（含祖先，`:60`），对每个 mapping 施加三种探测：`AbstractUrlHandlerMapping` → `HandlerMetadataWebEndpointMappingFactory`，以 `PathPattern.getPatternString()` 作键、方法集合取 `ALL_HTTP_METHODS`（`:71-79`、`HandlerMetadataWebEndpointMappingFactory.java:40-48`）；`RequestMappingInfoHandlerMapping` → `RequestMappingMetadataWebEndpointMappingFactory`，会调用 `createWithResolvedBean()` 并复制 methods/params/headers/consumes/produces（`:81-91`、`RequestMappingMetadataWebEndpointMappingFactory.java:57-89`）；`RouterFunctionMapping` → `ConsumingWebEndpointMappingAdapter`，作为 `WebEndpointMapping` 的接收端注入（`:93-101`）。`RequestPredicateKind` 是构建在 `RequestPredicates` 内部结构之上的解析/访问引擎 —— AND/OR/NEGATE 读取私有字段 `left`/`right`/`arg$1`/`delegate`（`:143-149,248-251`），同时把谓词往返为文本（`parseRequestPredicate`/`toExpression`，`:682-738`）。`ReversedProxyHandlerMapping`（`:76`）随后为转发请求提供短路：只缓存 `Kind.WEB_FLUX` 且 `source instanceof AbstractHandlerMapping` 的映射（`:117-132`），当 `microsphere_wem_id` 请求头命中时直接返回端点（`:88-106`）。该类在本模块中**确实存在**，与 `docs/developer-guide/current/README.md:82` 及 `README.md:59` 的说法一致 —— 并且 `webmvc` 在 `io.microsphere.spring.webmvc.handler` 下另有同名类；两者是不同实现，并非共享类型。
+`HandlerMappingWebEndpointMappingResolver.resolve` 遍历每个 `HandlerMapping` Bean（含祖先，`:60`），对每个 mapping 施加三种探测：`AbstractUrlHandlerMapping` → `HandlerMetadataWebEndpointMappingFactory`，以 `PathPattern.getPatternString()` 作键、方法集合取 `ALL_HTTP_METHODS`（`:71-79`、`HandlerMetadataWebEndpointMappingFactory.java:40-48`）；`RequestMappingInfoHandlerMapping` → `RequestMappingMetadataWebEndpointMappingFactory`，会调用 `createWithResolvedBean()` 并复制 methods/params/headers/consumes/produces（`:81-91`、`RequestMappingMetadataWebEndpointMappingFactory.java:57-89`）；`RouterFunctionMapping` → `ConsumingWebEndpointMappingAdapter`，作为 `WebEndpointMapping` 的接收端注入（`:93-101`）。`RequestPredicateKind` 是构建在 `RequestPredicates` 内部结构之上的解析/访问引擎 —— AND/OR/NEGATE 读取私有字段 `left`/`right`/`arg$1`/`delegate`（`:143-149,248-251`），同时把谓词往返为文本（`parseRequestPredicate`/`toExpression`，`:682-738`）。`ReversedProxyHandlerMapping`（`:76`）随后为转发请求提供短路：只缓存 `Kind.WEB_FLUX` 且 `source instanceof AbstractHandlerMapping` 的映射（`:117-132`），当 `microsphere_wem_id` 请求头命中时直接返回端点（`:88-106`）。该类在本模块中**确实存在**；`webmvc` 在 `io.microsphere.spring.webmvc.handler` 下另有同名类，两者是不同实现，并非共享类型。
 
 ## 5. 运行时与启动流程
 
@@ -250,4 +250,4 @@ public class ReactiveAuditAdvice implements HandlerMethodAdvice, Ordered {  // �
 
 ## 9. 交叉链接
 
-**相关页面** — [开发者文档总览](./README.md) · [English 版](../webflux.md) · [用户文档 — WebFlux](../../../user-guide/current/zh/webflux.md) · [1.x 开发者文档](../1.x/zh/webflux.md) · [web（共享内核）](./web.md) · [webmvc（同级传输方式）](./webmvc.md) · [test（`AbstractWebFluxTest`）](./test.md) · [父 POM profile](./parent.md) · [依赖管理](./dependencies.md)
+**相关页面** — [开发者文档总览](./README.md) · [English 版](../webflux.md) · [用户文档 — WebFlux](../../../user-guide/current/zh/webflux.md) · [1.x 开发者文档](../../1.x/zh/webflux.md) · [web（共享内核）](./web.md) · [webmvc（同级传输方式）](./webmvc.md) · [test（`AbstractWebFluxTest`）](./test.md) · [父 POM profile](./parent.md) · [依赖管理](./dependencies.md)

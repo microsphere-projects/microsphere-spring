@@ -16,7 +16,7 @@ branch; the 0.1.x maintenance line is documented separately in [`../1.x/`](../1.
 | Namespace | `jakarta.*` (`jakarta.jakartaee-bom` 11.0.0) |
 | Spring Framework verified | 6.0.23 / 6.1.21 / 6.2.18 / 7.0.9 (`spring-framework-6.0 … 7.0` profiles; **7.0 is `activeByDefault`**) |
 | Reactor BOM | 2022.0.22 / 2023.0.19 / 2024.0.17 / 2025.0.7, paired with the Spring profile |
-| Build parent | `io.github.microsphere-projects:microsphere-build` (`0.3.16` on `release`, `0.3.17` in the working `main` tree) |
+| Build parent | `io.github.microsphere-projects:microsphere-build` `0.3.17` (same on `origin/release:pom.xml:8` and in the working `main` tree) |
 | Managed third parties | Jackson 2.22.3, SnakeYAML 2.7, P6Spy 3.9.1, ZooKeeper 3.9.6, Curator 5.9.0 (Guice 7.0.0 is **not** parent-managed — it is pinned in `microsphere-spring-guice/pom.xml:22`) |
 
 The published artifacts on Maven Central are `0.2.30` … `0.2.39`; see
@@ -55,7 +55,6 @@ flowchart TD
   TEST -.test scope.-> MVC
   TEST -.test scope.-> FLUX
   TEST -.test scope.-> JDBC
-  TEST -.test scope.-> GUICE
 ```
 
 Key structural properties, all visible in the module poms:
@@ -64,8 +63,9 @@ Key structural properties, all visible in the module poms:
   so a Servlet application and a reactive application share one endpoint metadata model.
 - **`context` is the root of the runtime tree.** `web`, `jdbc` and `guice` all build on it; nothing
   builds on `webmvc` or `webflux`.
-- **`test` is a leaf.** It is consumed only with test scope, yet every module needs it, so it must be
-  resolvable before the others run their tests — that is why it sits at the end of the reactor order.
+- **`test` is a leaf.** It is consumed only with test scope, yet every module except `guice` needs it,
+  so it must be resolvable before the others run their tests — that is why it sits at the end of the
+  reactor order.
 - **Only `microsphere-java-core` is mandatory.** Spring, Jackson, SnakeYAML, P6Spy, Guice, the Servlet
   API, Tomcat and ZooKeeper are declared `optional` or `provided` so the library never dictates the
   consumer's versions.
@@ -81,7 +81,7 @@ Key structural properties, all visible in the module poms:
 | webmvc | [webmvc.md](./webmvc.md) | [中文](./zh/webmvc.md) | Servlet/MVC adapters, `ReversedProxyHandlerMapping`, body caching |
 | webflux | [webflux.md](./webflux.md) | [中文](./zh/webflux.md) | reactive adapters, `WebFilter` + `HandlerResult` path |
 | jdbc | [jdbc.md](./jdbc.md) | [中文](./zh/jdbc.md) | `p6spy:` URL indirection, DataSource decoration, listener fan-out |
-| guice | [guice.md](./guice.md) | [中文](./zh/guice.md) | Spring ↔ Guice injection bridge, required/optional resolution |
+| guice | [guice.md](./guice.md) | [中文](./zh/guice.md) | One-way bridge: Guice `@Inject` sites satisfied by Spring (no `Injector`/`Module`); every site resolves as non-required |
 | test | [test.md](./test.md) | [中文](./zh/test.md) | embedded Tomcat / ZooKeeper / SQLite lifecycles, abstract test bases |
 
 Pages are added as they are completed; a missing link means that module page is still in progress.
