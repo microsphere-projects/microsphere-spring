@@ -4,12 +4,13 @@
 
 本目录收录
 [`microsphere-spring`](https://github.com/microsphere-projects/microsphere-spring)（Microsphere
-系列项目的 Spring Framework 扩展库）的全部文档，按版本线与 Maven 模块组织，分为两套：
+系列项目的 Spring Framework 扩展库）的全部文档，按版本线与 Maven 模块组织，分为三套：
 
 | 文档集 | 用途 | 位置 |
 |---|---|---|
 | [用户文档（User Guide）](../user-guide/zh/README.md) | 各模块能力、公开 API、代码示例、版本信息与兼容范围 | [`docs/user-guide/`](../user-guide/zh/README.md) |
 | [开发者文档（Developer Guide）](../developer-guide/zh/README.md) | 架构设计、源码分析、设计模式、复杂流程图 | [`docs/developer-guide/`](../developer-guide/zh/README.md) |
+| [源码差异（Source Diff）](../diff/source/zh/main-diff-0.2.39-vs-0.1.39.md) | 最新两个已发布 tag 之间的逐模块实现差异，`src/main` 与 `src/test` 分文档记录 | [`docs/diff/source/`](../diff/source/zh/) |
 
 ## 目录结构
 
@@ -24,13 +25,20 @@ docs/
 │   │   └── zh/               # release 分支（0.2.x）中文
 │   └── 1.x/                  # release-1.x 分支（0.1.x）英文
 │       └── zh/               # release-1.x 分支（0.1.x）中文
-└── developer-guide/
-    ├── README.md             # Developer Guide index (English)
-    ├── zh/README.md          # 开发者文档索引（简体中文）
-    ├── current/              # release 分支（0.2.x）英文
-    │   └── zh/               # release 分支（0.2.x）中文
-    └── 1.x/                  # release-1.x 分支（0.1.x）英文
-        └── zh/               # release-1.x 分支（0.1.x）中文
+├── developer-guide/
+│   ├── README.md             # Developer Guide index (English)
+│   ├── zh/README.md          # 开发者文档索引（简体中文）
+│   ├── current/              # release 分支（0.2.x）英文
+│   │   └── zh/               # release 分支（0.2.x）中文
+│   └── 1.x/                  # release-1.x 分支（0.1.x）英文
+│       └── zh/               # release-1.x 分支（0.1.x）中文
+└── diff/
+    └── source/               # tag 间源码差异（英文）
+        ├── main-diff-0.2.39-vs-0.1.39.md
+        ├── test-diff-0.2.39-vs-0.1.39.md
+        └── zh/               # 简体中文
+            ├── main-diff-0.2.39-vs-0.1.39.md
+            └── test-diff-0.2.39-vs-0.1.39.md
 ```
 
 **语言约定**：英文为默认语言，存放在规范路径（无 `zh/` 前缀）；简体中文版本使用**完全相同的文件名**，
@@ -71,6 +79,9 @@ docs/
   [开发者文档 — 1.x](../developer-guide/1.x/zh/README.md) 开始。
 - **判断应使用哪条版本线** → 先看上文分支表，再看
   [用户文档 current/README.md](../user-guide/current/zh/README.md) 中的跨分支差异表。
+- **逐行对比两条版本线的实现** → 阅读
+  [`0.2.39` vs `0.1.39` 源码差异](../diff/source/zh/main-diff-0.2.39-vs-0.1.39.md)，
+  `src/main` 与 `src/test` 各一篇，均按 Maven 模块组织。
 
 ## 标记约定
 
