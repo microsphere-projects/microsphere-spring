@@ -6,12 +6,13 @@ This directory holds the full documentation set for
 [`microsphere-spring`](https://github.com/microsphere-projects/microsphere-spring), the Spring
 Framework extension library of the Microsphere projects.
 
-Two guide sets are provided, each organised by version line and by Maven module:
+Three guide sets are provided, each organised by version line and by Maven module:
 
 | Guide | Purpose | Location |
 |---|---|---|
 | [User Guide](./user-guide/README.md) | What each module offers, public APIs, code examples, version and compatibility information | [`docs/user-guide/`](./user-guide/README.md) |
 | [Developer Guide](./developer-guide/README.md) | Architecture design, source-code analysis, design patterns, flow charts of the complex flows | [`docs/developer-guide/`](./developer-guide/README.md) |
+| [Source Diff](./diff/source/main-diff-0.2.39-vs-0.1.39.md) | Module-by-module implementation diff between the two latest released tags, `src/main` and `src/test` in separate documents | [`docs/diff/source/`](./diff/source/) |
 
 ## Documentation layout
 
@@ -26,13 +27,20 @@ docs/
 │   │   └── zh/               # release branch (0.2.x) — 简体中文
 │   └── 1.x/                  # release-1.x branch (0.1.x) — English
 │       └── zh/               # release-1.x branch (0.1.x) — 简体中文
-└── developer-guide/
-    ├── README.md             # Developer Guide index (English)
-    ├── zh/README.md          # 开发者文档索引（简体中文）
-    ├── current/              # release branch (0.2.x) — English
-    │   └── zh/               # release branch (0.2.x) — 简体中文
-    └── 1.x/                  # release-1.x branch (0.1.x) — English
-        └── zh/               # release-1.x branch (0.1.x) — 简体中文
+├── developer-guide/
+│   ├── README.md             # Developer Guide index (English)
+│   ├── zh/README.md          # 开发者文档索引（简体中文）
+│   ├── current/              # release branch (0.2.x) — English
+│   │   └── zh/               # release branch (0.2.x) — 简体中文
+│   └── 1.x/                  # release-1.x branch (0.1.x) — English
+│       └── zh/               # release-1.x branch (0.1.x) — 简体中文
+└── diff/
+    └── source/               # tag-to-tag source diff (English)
+        ├── main-diff-0.2.39-vs-0.1.39.md
+        ├── test-diff-0.2.39-vs-0.1.39.md
+        └── zh/               # 简体中文
+            ├── main-diff-0.2.39-vs-0.1.39.md
+            └── test-diff-0.2.39-vs-0.1.39.md
 ```
 
 **Language convention.** English is the default language and lives at the canonical path. Every
@@ -78,6 +86,9 @@ granularity, at the top of each module document.
 - **Deciding which version line applies to you** → see the branch table above, then
   [User Guide — current/README.md](./user-guide/current/README.md) which keeps a cross-branch
   difference table.
+- **Comparing the two implementations line by line** → read the
+  [`0.2.39` vs `0.1.39` source diffs](./diff/source/main-diff-0.2.39-vs-0.1.39.md), one document for
+  `src/main` and one for `src/test`, each organised per Maven module.
 
 ## Conventions
 
