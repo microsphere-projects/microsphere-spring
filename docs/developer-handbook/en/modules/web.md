@@ -96,7 +96,7 @@ gray routing):
 
 - `WebRequestRule` — `boolean matches(NativeWebRequest)`; bases `AbstractWebRequestRule<T>` (`isEmpty()`,
   `getContent()`, `getToStringInfix()`), `CompositeWebRequestRule` (AND-composition).
-- Concrete rules: `WebRequestMethodsRule`, `WebRequestPattensRule` (sic — Ant-style path matching with
+- Concrete rules: `WebRequestMethodsRule`, `WebRequestPatternsRule` (sic — Ant-style path matching with
   suffix/trailing-slash options), `WebRequestParamsRule`, `WebRequestHeadersRule`, `WebRequestConsumesRule`,
   `WebRequestProducesRule` (supports a `ContentNegotiationManager`).
 - Expressions: `NameValueExpression<T>` + `AbstractNameValueExpression<T>` (parses `!name=value`),

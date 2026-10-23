@@ -82,7 +82,7 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         assertEquals(rule, rule);
         assertEquals(rule, new WebRequestProducesRule(APPLICATION_JSON_VALUE));
 
-        assertNotEquals(rule, new WebRequestPattensRule(APPLICATION_XML_VALUE));
+        assertNotEquals(rule, new WebRequestPatternsRule(APPLICATION_XML_VALUE));
         assertNotEquals(rule, this);
         assertNotEquals(rule, null);
     }

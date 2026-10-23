@@ -281,9 +281,9 @@ Event accessors (verified against the source):
 | `io.microsphere.spring.web.util.HttpUtils` | HTTP methods/status codes, header parsing |
 | `io.microsphere.spring.web.util.WebUtils` | Generic reads of request parameters, cookies and so on |
 | `io.microsphere.spring.web.util.SpringWebHelper` / `SpringWebType` / `WebType` / `WebSource` / `WebTarget` | Detects whether the current environment is MVC or WebFlux, normalizes the web type |
-| `io.microsphere.spring.web.rule.*` | Condition-expression implementations (`WebRequestPattensRule`, `WebRequestMethodsRule`, `WebRequestParamsRule`, `WebRequestHeadersRule`, `WebRequestConsumesRule`, `WebRequestProducesRule`, `CompositeWebRequestRule`, …) |
+| `io.microsphere.spring.web.rule.*` | Condition-expression implementations (`WebRequestPatternsRule`, `WebRequestMethodsRule`, `WebRequestParamsRule`, `WebRequestHeadersRule`, `WebRequestConsumesRule`, `WebRequestProducesRule`, `CompositeWebRequestRule`, …) |
 
-> The class name `WebRequestPattensRule` contains a spelling deviation (`Pattens`); refer to it by its actual name.
+> The class name `WebRequestPatternsRule` contains a spelling deviation (`Pattens`); refer to it by its actual name.
 
 `io.microsphere.spring.web.constants.PropertyConstants` provides the prefix constant:
 
