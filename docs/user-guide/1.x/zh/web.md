@@ -281,9 +281,9 @@ public void onMappingsReady(WebEndpointMappingsReadyEvent event) {
 | `io.microsphere.spring.web.util.HttpUtils` | HTTP 方法/状态、header 解析 |
 | `io.microsphere.spring.web.util.WebUtils` | 请求参数、cookie 等通用读取 |
 | `io.microsphere.spring.web.util.SpringWebHelper` / `SpringWebType` / `WebType` / `WebSource` / `WebTarget` | 判断当前是 MVC 还是 WebFlux、归一化 Web 类型 |
-| `io.microsphere.spring.web.rule.*` | 条件表达式实现（`WebRequestPattensRule`、`WebRequestMethodsRule`、`WebRequestParamsRule`、`WebRequestHeadersRule`、`WebRequestConsumesRule`、`WebRequestProducesRule`、`CompositeWebRequestRule` 等） |
+| `io.microsphere.spring.web.rule.*` | 条件表达式实现（`WebRequestPatternsRule`、`WebRequestMethodsRule`、`WebRequestParamsRule`、`WebRequestHeadersRule`、`WebRequestConsumesRule`、`WebRequestProducesRule`、`CompositeWebRequestRule` 等） |
 
-> `WebRequestPattensRule` 类名有拼写偏差（`Pattens`），使用时按实际类名引用。
+> `WebRequestPatternsRule` 类名有拼写偏差（`Pattens`），使用时按实际类名引用。
 
 `io.microsphere.spring.web.constants.PropertyConstants` 提供前缀常量：
 
