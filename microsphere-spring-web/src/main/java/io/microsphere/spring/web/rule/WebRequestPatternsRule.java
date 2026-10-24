@@ -55,7 +55,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @see org.springframework.web.reactive.result.condition.PatternsRequestCondition
  * @since 1.0.0
  */
-public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
+public class WebRequestPatternsRule extends AbstractWebRequestRule<String> {
 
     static final Set<String> EMPTY_PATH_PATTERN = ofSet(EMPTY_STRING);
 
@@ -77,48 +77,48 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
      * @param patterns 0 or more URL patterns; no patterns results in an empty
      *                 path {@code ""} mapping which matches all requests.
      */
-    public WebRequestPattensRule(String... patterns) {
+    public WebRequestPatternsRule(String... patterns) {
         this(patterns, true, null);
     }
 
     /**
-     * Variant of {@link #WebRequestPattensRule(String...)} with a
+     * Variant of {@link #WebRequestPatternsRule(String...)} with a
      * {@link PathMatcher} and flag for matching trailing slashes.
      */
-    public WebRequestPattensRule(String[] patterns, boolean useTrailingSlashMatch,
-                                 @Nullable PathMatcher pathMatcher) {
+    public WebRequestPatternsRule(String[] patterns, boolean useTrailingSlashMatch,
+                                  @Nullable PathMatcher pathMatcher) {
 
         this(patterns, pathMatcher, useTrailingSlashMatch);
     }
 
     /**
-     * Variant of {@link #WebRequestPattensRule(String...)} with a
+     * Variant of {@link #WebRequestPatternsRule(String...)} with a
      * {@link UrlPathHelper} and a {@link PathMatcher}, and whether to match
      * trailing slashes.
      * <p>As of 5.3 the path is obtained through the static method
      * {@link UrlPathHelper#getResolvedLookupPath} and a {@code UrlPathHelper}
      * does not need to be passed in.
-     * {@link #WebRequestPattensRule(String[], boolean, PathMatcher)}.
+     * {@link #WebRequestPatternsRule(String[], boolean, PathMatcher)}.
      */
     @Deprecated
-    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useTrailingSlashMatch) {
+    public WebRequestPatternsRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useTrailingSlashMatch) {
         this(patterns, pathMatcher, false, useTrailingSlashMatch);
     }
 
     /**
-     * Variant of {@link #WebRequestPattensRule(String...)} with a
+     * Variant of {@link #WebRequestPatternsRule(String...)} with a
      * {@link UrlPathHelper} and a {@link PathMatcher}, and flags for matching
      * with suffixes and trailing slashes.
      * <p>As of 5.3 the path is obtained through the static method
      * {@link UrlPathHelper#getResolvedLookupPath} and a {@code UrlPathHelper}
      * does not need to be passed in.
      */
-    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
+    public WebRequestPatternsRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
         this(patterns, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, null);
     }
 
     /**
-     * Variant of {@link #WebRequestPattensRule(String...)} with a
+     * Variant of {@link #WebRequestPatternsRule(String...)} with a
      * {@link UrlPathHelper} and a {@link PathMatcher}, and flags for matching
      * with suffixes and trailing slashes, along with specific extensions.
      *
@@ -128,8 +128,8 @@ public class WebRequestPattensRule extends AbstractWebRequestRule<String> {
      * @param useTrailingSlashMatch
      * @param fileExtensions
      */
-    public WebRequestPattensRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch,
-                                 boolean useTrailingSlashMatch, @Nullable List<String> fileExtensions) {
+    public WebRequestPatternsRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch,
+                                  boolean useTrailingSlashMatch, @Nullable List<String> fileExtensions) {
         this.patterns = initPatterns(patterns);
         this.pathMatcher = pathMatcher != null ? pathMatcher : new AntPathMatcher();
         this.useSuffixPatternMatch = useSuffixPatternMatch;
