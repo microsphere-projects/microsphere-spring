@@ -1,0 +1,191 @@
+name: Backport main to dev-1.x
+
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: [Sync Branches from Upstream]
+    types: [completed]
+    branches: [main]
+
+  # manual trigger
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Specific non-merge main commit; bypass automatic eligibility and retry blocked work
+        required: false
+        default: ''
+      baseline_sha:
+        description: Exclusive starting commit for automatic discovery
+        required: false
+        default: '05907b3f6ff5f0e7e095ba375b44b84e9bffcd8b'
+
+concurrency:
+  group: backport-to-dev-1.x
+  cancel-in-progress: false
+  queue: max
+
+permissions:
+  contents: read
+
+jobs:
+  coordinate:
+    if: >-
+      (github.event_name != 'workflow_run' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    outputs:
+      found: ${{ steps.select.outputs.found }}
+      base: ${{ steps.select.outputs.base }}
+      source: ${{ steps.select.outputs.source }}
+      baseline: ${{ steps.select.outputs.baseline }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Select one unprocessed commit
+        id: select
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          BASELINE_SHA: ${{ inputs.baseline_sha }}
+        run: >-
+          python .github/scripts/backport-commit.py select
+          --repo "$GITHUB_WORKSPACE" --state-dir "$RUNNER_TEMP/backport-state"
+          --source-sha "$SOURCE_SHA" --baseline-sha "$BASELINE_SHA"
+      - uses: actions/upload-artifact@v4
+        if: steps.select.outputs.found == 'true'
+        with:
+          name: backport-plan
+          path: ${{ runner.temp }}/backport-state/state.json
+          retention-days: 7
+
+  backport:
+    needs: coordinate
+    if: needs.coordinate.outputs.found == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    env:
+      STATE_DIR: ${{ github.workspace }}/backport-state
+    steps:
+      - name: Checkout pinned controller
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: controller
+          persist-credentials: false
+      - name: Checkout target in a separate directory
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ needs.coordinate.outputs.base }}
+          path: candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: backport-plan
+          path: ${{ env.STATE_DIR }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-java@v6.0.1
+        with:
+          distribution: temurin
+          java-version: '8'
+      - name: Apply source change and omit absent target documents
+        run: python controller/.github/scripts/backport-commit.py prepare --repo candidate --state-dir "$STATE_DIR"
+      - name: Validate mechanical backport (diagnose baseline only on Maven failure)
+        run: python controller/.github/scripts/backport-commit.py validate --repo candidate --state-dir "$STATE_DIR"
+      - name: DeepSeek repair 1 (only if needed)
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DEEPSEEK_MODEL: ${{ vars.DEEPSEEK_MODEL || 'deepseek-flash' }}
+        run: python controller/.github/scripts/backport-commit.py repair --repo candidate --state-dir "$STATE_DIR"
+      - name: Validate repair 1
+        run: python controller/.github/scripts/backport-commit.py validate --repo candidate --state-dir "$STATE_DIR"
+      - name: DeepSeek repair 2 (only if needed)
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DEEPSEEK_MODEL: ${{ vars.DEEPSEEK_MODEL || 'deepseek-flash' }}
+        run: python controller/.github/scripts/backport-commit.py repair --repo candidate --state-dir "$STATE_DIR"
+      - name: Validate repair 2
+        run: python controller/.github/scripts/backport-commit.py validate --repo candidate --state-dir "$STATE_DIR"
+      - name: DeepSeek repair 3 (only if needed)
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DEEPSEEK_MODEL: ${{ vars.DEEPSEEK_MODEL || 'deepseek-flash' }}
+        run: python controller/.github/scripts/backport-commit.py repair --repo candidate --state-dir "$STATE_DIR"
+      - name: Validate repair 3
+        run: python controller/.github/scripts/backport-commit.py validate --repo candidate --state-dir "$STATE_DIR"
+      - name: Package validated commits or blocker
+        run: python controller/.github/scripts/backport-commit.py finish --repo candidate --state-dir "$STATE_DIR"
+      - name: Save result for publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: backport-result
+          path: |
+            ${{ env.STATE_DIR }}/state.json
+            ${{ env.STATE_DIR }}/changes.bundle
+          retention-days: 7
+      - name: Save diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backport-validation-logs
+          path: ${{ env.STATE_DIR }}/*.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+  publish:
+    needs: [coordinate, backport]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+    steps:
+      - name: Checkout controller
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: controller
+          persist-credentials: false
+      - name: Checkout repository for publication
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: main
+          path: publication
+          fetch-depth: 0
+          token: ${{ secrets.WORKFLOW_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: backport-result
+          path: ${{ runner.temp }}/backport-result
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Open PR or record blocker; continue pending work
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN || secrets.GITHUB_TOKEN }}
+          EXPECTED_SOURCE_SHA: ${{ needs.coordinate.outputs.source }}
+          EXPECTED_TARGET_SHA: ${{ needs.coordinate.outputs.base }}
+          EXPECTED_BASELINE_SHA: ${{ needs.coordinate.outputs.baseline }}
+          EXPECTED_MANUAL: ${{ inputs.source_sha && 'true' || 'false' }}
+        run: >-
+          python controller/.github/scripts/backport-commit.py publish
+          --repo publication --state-dir "$RUNNER_TEMP/backport-result"
