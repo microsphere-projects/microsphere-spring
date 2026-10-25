@@ -64,7 +64,7 @@ jobs:
           python .github/scripts/backport-commit.py select
           --repo "$GITHUB_WORKSPACE" --state-dir "$RUNNER_TEMP/backport-state"
           --source-sha "$SOURCE_SHA" --baseline-sha "$BASELINE_SHA"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.2
         if: steps.select.outputs.found == 'true'
         with:
           name: backport-plan
@@ -94,7 +94,7 @@ jobs:
           path: candidate
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8.0.2
         with:
           name: backport-plan
           path: ${{ env.STATE_DIR }}
@@ -133,7 +133,7 @@ jobs:
       - name: Package validated commits or blocker
         run: python controller/.github/scripts/backport-commit.py finish --repo candidate --state-dir "$STATE_DIR"
       - name: Save result for publication
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: backport-result
           path: |
@@ -142,7 +142,7 @@ jobs:
           retention-days: 7
       - name: Save diagnostic logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: backport-validation-logs
           path: ${{ env.STATE_DIR }}/*.log
@@ -172,7 +172,7 @@ jobs:
           path: publication
           fetch-depth: 0
           token: ${{ secrets.WORKFLOW_TOKEN || secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8.0.2
         with:
           name: backport-result
           path: ${{ runner.temp }}/backport-result
