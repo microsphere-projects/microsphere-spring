@@ -46,7 +46,7 @@ import static org.springframework.util.StringUtils.hasText;
  * against a set of URL path patterns.
  *
  * <p>In contrast to PathPatternsRequestCondition which uses parsed
- * {@link org.springframework.web.util.pattern.PathPattern}s, this condition does String pattern matching via
+ * {@code PathPattern}s, this condition does String pattern matching via
  * {@link org.springframework.util.AntPathMatcher AntPathMatcher}.
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -97,6 +97,7 @@ public class WebRequestPatternsRule extends AbstractWebRequestRule<String> {
      * <p>As of 5.3 the path is obtained through the static method
      * {@link UrlPathHelper#getResolvedLookupPath} and a {@code UrlPathHelper}
      * does not need to be passed in.
+     * {@link PathMatcher}, and whether to match trailing slashes.
      * {@link #WebRequestPatternsRule(String[], boolean, PathMatcher)}.
      */
     @Deprecated
