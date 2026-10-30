@@ -20,6 +20,7 @@ import io.microsphere.annotation.Nullable;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.util.Collection;
 import java.util.List;
@@ -50,6 +51,7 @@ import static org.springframework.util.StringUtils.hasText;
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see org.springframework.web.servlet.mvc.condition.PatternsRequestCondition
+ * @see org.springframework.web.reactive.result.condition.PatternsRequestCondition
  * @since 1.0.0
  */
 public class WebRequestPatternsRule extends AbstractWebRequestRule<String> {
@@ -90,6 +92,11 @@ public class WebRequestPatternsRule extends AbstractWebRequestRule<String> {
 
     /**
      * Variant of {@link #WebRequestPatternsRule(String...)} with a
+     * {@link UrlPathHelper} and a {@link PathMatcher}, and whether to match
+     * trailing slashes.
+     * <p>As of 5.3 the path is obtained through the static method
+     * {@link UrlPathHelper#getResolvedLookupPath} and a {@code UrlPathHelper}
+     * does not need to be passed in.
      * {@link PathMatcher}, and whether to match trailing slashes.
      * {@link #WebRequestPatternsRule(String[], boolean, PathMatcher)}.
      */
@@ -100,7 +107,11 @@ public class WebRequestPatternsRule extends AbstractWebRequestRule<String> {
 
     /**
      * Variant of {@link #WebRequestPatternsRule(String...)} with a
-     * {@link PathMatcher}, and flags for matching with suffixes and trailing slashes.
+     * {@link UrlPathHelper} and a {@link PathMatcher}, and flags for matching
+     * with suffixes and trailing slashes.
+     * <p>As of 5.3 the path is obtained through the static method
+     * {@link UrlPathHelper#getResolvedLookupPath} and a {@code UrlPathHelper}
+     * does not need to be passed in.
      */
     public WebRequestPatternsRule(String[] patterns, @Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
         this(patterns, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, null);
@@ -108,8 +119,8 @@ public class WebRequestPatternsRule extends AbstractWebRequestRule<String> {
 
     /**
      * Variant of {@link #WebRequestPatternsRule(String...)} with a
-     * {@link PathMatcher}, and flags for matching with suffixes and trailing
-     * slashes, along with specific extensions.
+     * {@link UrlPathHelper} and a {@link PathMatcher}, and flags for matching
+     * with suffixes and trailing slashes, along with specific extensions.
      *
      * @param patterns
      * @param pathMatcher
