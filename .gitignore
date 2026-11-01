@@ -65,5 +65,8 @@ compiler/.gradle/*
 .extract
 .java-version
 
+# sonar
+.sonar/
+
 # others
 build.txt
