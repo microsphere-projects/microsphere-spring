@@ -40,13 +40,15 @@ import java.util.concurrent.TimeUnit;
 import static io.microsphere.annotation.ConfigurationProperty.APPLICATION_SOURCE;
 import static io.microsphere.collection.ListUtils.newArrayList;
 import static io.microsphere.collection.ListUtils.newLinkedList;
-import static io.microsphere.collection.SetUtils.newLinkedHashSet;
 import static io.microsphere.lang.function.ThrowableSupplier.execute;
 import static io.microsphere.logging.LoggerFactory.getLogger;
 import static io.microsphere.spring.beans.factory.BeanFactoryUtils.asDefaultListableBeanFactory;
 import static io.microsphere.spring.constants.PropertyConstants.MICROSPHERE_SPRING_PROPERTY_NAME_PREFIX;
+import static java.lang.Math.max;
+import static java.lang.Runtime.getRuntime;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.springframework.util.CollectionUtils.containsAny;
 
 /**
@@ -150,7 +152,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
         DefaultListableBeanFactory beanFactory = this.beanFactory;
         if (bf != beanFactory) {
             if (logger.isWarnEnabled()) {
-                logger.warn("Current BeanFactory[{}] is not a instance of DefaultListableBeanFactory", bf);
+                logger.warn("Current BeanFactory[{}] is not the DefaultListableBeanFactory that this listener was configured with", bf);
             }
             return;
         }
@@ -212,7 +214,7 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
             });
         }
 
-        while (execute(() -> executorService.awaitTermination(10, TimeUnit.MILLISECONDS))) {
+        while (execute(() -> executorService.awaitTermination(10, MILLISECONDS))) {
         }
 
         stopWatch.stop();
@@ -259,30 +261,14 @@ public class ParallelPreInstantiationSingletonsBeanFactoryListener implements Be
         return beanNamesList;
     }
 
-    private void mergeBeanNames(Entry<String, Set<String>> dependentEntry, List<Set<String>> allBeanNamesList,
-                                Map<String, Set<String>> dependentBeanNamesMap) {
-
-        for (Entry<String, Set<String>> entry : dependentBeanNamesMap.entrySet()) {
-            if (dependentEntry.equals(entry)) {
-                continue;
-            }
-
-            String beanName = dependentEntry.getKey();
-            Set<String> dependentBeanNames = dependentEntry.getValue();
-            Set<String> allBeanNames = newLinkedHashSet(1 + dependentBeanNames.size());
-            allBeanNames.add(beanName);
-            allBeanNames.addAll(dependentBeanNames);
-        }
-    }
-
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
     private int getDefaultThreads() {
-        int availableProcessors = Runtime.getRuntime().availableProcessors();
-        return Math.max(1, availableProcessors);
+        int availableProcessors = getRuntime().availableProcessors();
+        return max(1, availableProcessors);
     }
 
     @Override

@@ -112,7 +112,7 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
             String beanName = entry.getKey();
             Set<String> flattenDependentBeanNames = newLinkedHashSet(dependentBeanNames.size() * 2);
             // flat
-            flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+            flatDependentBeanNames(beanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames, newLinkedHashSet());
             // Replace flattenDependentBeanNames to dependentBeanNames
             entry.setValue(flattenDependentBeanNames);
         }
@@ -143,17 +143,19 @@ public class DependencyAnalysisBeanFactoryListener implements BeanFactoryListene
 
     private void flatDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap,
                                         Map<String, Set<String>> dependenciesMap,
-                                        Set<String> flattenDependentBeanNames) {
-        Set<String> dependentBeanNames = retrieveDependentBeanNames(beanName, dependentBeanNamesMap);
-        if (dependentBeanNames.isEmpty()) {
-            return;
+                                        Set<String> flattenDependentBeanNames,
+                                        Set<String> visitingBeanNames) {
+        if (!visitingBeanNames.add(beanName)) {
+            return; // circular dependency — the name is already on the current dependency path
         }
+        Set<String> dependentBeanNames = retrieveDependentBeanNames(beanName, dependentBeanNamesMap);
         for (String dependentBeanName : dependentBeanNames) {
             Set<String> dependencies = dependenciesMap.computeIfAbsent(dependentBeanName, k -> newLinkedHashSet());
             dependencies.add(beanName);
             flattenDependentBeanNames.add(dependentBeanName);
-            flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames);
+            flatDependentBeanNames(dependentBeanName, dependentBeanNamesMap, dependenciesMap, flattenDependentBeanNames, visitingBeanNames);
         }
+        visitingBeanNames.remove(beanName);
     }
 
     private Set<String> retrieveDependentBeanNames(String beanName, Map<String, Set<String>> dependentBeanNamesMap) {
