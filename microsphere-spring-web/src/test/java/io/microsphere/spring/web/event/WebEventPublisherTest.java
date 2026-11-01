@@ -29,6 +29,7 @@ import org.springframework.web.method.HandlerMethod;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -77,6 +78,12 @@ class WebEventPublisherTest {
 
     @Test
     void testDoStop() {
-        // test doStop in testDoStart()
+        testInSpringContainer(context -> {
+            WebEventPublisher webEventPublisher = context.getBean(WebEventPublisher.class);
+            webEventPublisher.start();
+            assertTrue(webEventPublisher.isRunning());
+            webEventPublisher.stop();
+            assertFalse(webEventPublisher.isRunning());
+        }, WebEventPublisher.class);
     }
 }
