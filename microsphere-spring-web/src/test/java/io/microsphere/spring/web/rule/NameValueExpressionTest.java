@@ -19,6 +19,11 @@ package io.microsphere.spring.web.rule;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 /**
  * {@link NameValueExpression} Test
  *
@@ -30,13 +35,25 @@ public class NameValueExpressionTest {
 
     @Test
     public void testGetName() {
+        NameValueExpression<String> expression = new WebRequestHeaderExpression("Content-Type=application/json");
+        assertEquals("Content-Type", expression.getName());
     }
 
     @Test
     public void testGetValue() {
+        NameValueExpression<String> expression = new WebRequestHeaderExpression("Content-Type=application/json");
+        assertEquals("application/json", expression.getValue());
+
+        NameValueExpression<String> nameOnly = new WebRequestHeaderExpression("Content-Type");
+        assertNull(nameOnly.getValue());
     }
 
     @Test
     public void testIsNegated() {
+        NameValueExpression<String> expression = new WebRequestHeaderExpression("Content-Type!=application/json");
+        assertTrue(expression.isNegated());
+
+        NameValueExpression<String> positive = new WebRequestHeaderExpression("Content-Type=application/json");
+        assertFalse(positive.isNegated());
     }
 }

@@ -46,14 +46,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class HandlerMappingWebEndpointMappingResolverTest extends AbstractWebMvcTest {
 
     @Test
-    public void testResolve() {
-    }
-
-    @Test
-    public void testResolveFromAbstractUrlHandlerMapping() {
-    }
-
-    @Test
-    public void testResolveFromRequestMappingInfoHandlerMapping() {
+    public void testResolve() throws Exception {
+        testWebEndpoints();
     }
 }
