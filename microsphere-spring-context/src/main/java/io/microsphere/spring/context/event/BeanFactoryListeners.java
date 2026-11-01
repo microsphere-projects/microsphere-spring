@@ -49,7 +49,7 @@ import static io.microsphere.spring.beans.factory.support.BeanRegistrar.register
  */
 class BeanFactoryListeners implements BeanFactoryListener {
 
-    private static final Logger logger = getLogger(BeanListeners.class);
+    private static final Logger logger = getLogger(BeanFactoryListeners.class);
 
     private static final String BEAN_NAME = "beanFactoryListeners";
 
