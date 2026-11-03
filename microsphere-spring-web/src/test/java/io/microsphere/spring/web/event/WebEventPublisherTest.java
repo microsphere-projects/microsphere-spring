@@ -33,6 +33,7 @@ import static io.microsphere.logging.test.junit4.LoggingLevelsRule.levels;
 import static io.microsphere.spring.test.util.SpringTestUtils.testInSpringContainer;
 import static io.microsphere.spring.test.util.SpringTestWebUtils.createWebRequest;
 import static io.microsphere.util.ArrayUtils.ofArray;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -84,6 +85,12 @@ public class WebEventPublisherTest {
 
     @Test
     public void testDoStop() {
-        // test doStop in testDoStart()
+        testInSpringContainer(context -> {
+            WebEventPublisher webEventPublisher = context.getBean(WebEventPublisher.class);
+            webEventPublisher.start();
+            assertTrue(webEventPublisher.isRunning());
+            webEventPublisher.stop();
+            assertFalse(webEventPublisher.isRunning());
+        }, WebEventPublisher.class);
     }
 }
