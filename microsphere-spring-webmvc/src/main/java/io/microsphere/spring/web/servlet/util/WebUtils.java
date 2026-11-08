@@ -45,7 +45,7 @@ public abstract class WebUtils {
      */
     @Nonnull
     public static ServletContext getServletContext(@Nonnull HttpServletRequest request) {
-        return request.getSession().getServletContext();
+        return request.getServletContext();
     }
 
     /**
