@@ -104,9 +104,10 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
     void testPreFlightRequestReturnsFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE);
 
-        // Create pre-flight request (OPTIONS method with Origin header)
+        // Create pre-flight request (OPTIONS method with Origin and Access-Control-Request-Method headers)
         MockHttpServletRequest request = new MockHttpServletRequest("OPTIONS", "/test");
         request.addHeader("Origin", "http://example.com");
+        request.addHeader("Access-Control-Request-Method", "GET");
         NativeWebRequest webRequest = new ServletWebRequest(request);
 
         assertFalse(rule.matches(webRequest));
@@ -141,43 +142,43 @@ class WebRequestProducesRuleTest extends BaseWebRequestRuleTest {
         assertFalse(rule.matches(request));
     }
 
-    // Test matching expressions return false
+    // Test matching expressions return true
     @Test
-    void testMatchingExpressionsReturnFalse() {
+    void testMatchingExpressionsReturnTrue() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_JSON_VALUE, TEXT_PLAIN_VALUE);
 
         Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Matches first expression
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
-        assertFalse(rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
-    // Test wildcard media type returns false
+    // Test wildcard media type returns true ('*/*' accepts any produces)
     @Test
-    void testWildcardMediaTypeReturnsFalse() {
+    void testWildcardMediaTypeReturnsTrue() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
         Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, "*/*"); // Wildcard media type
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
-        assertFalse(rule.matches(request));
+        assertTrue(rule.matches(request));
 
         rule = new WebRequestProducesRule("!application/xml");
-        assertFalse(rule.matches(request));
+        assertTrue(rule.matches(request));
     }
 
-    // Test successful match returns true
+    // Test no match returns false
     @Test
-    void testSuccessfulMatchReturnsTrue() {
+    void testNoMatchReturnsFalse() {
         WebRequestProducesRule rule = new WebRequestProducesRule(APPLICATION_XML_VALUE);
 
         Map<String, String> headers = newHashMap();
         headers.put(ACCEPT, APPLICATION_JSON_VALUE); // Doesn't match rule expressions
 
         NativeWebRequest request = createWebRequestWithHeaders(headers);
-        assertTrue(rule.matches(request));
+        assertFalse(rule.matches(request));
     }
 
     // Test media type caching
