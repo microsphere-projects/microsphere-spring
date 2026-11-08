@@ -41,7 +41,10 @@ class GuiceInjectAnnotationBeanPostProcessor extends AnnotatedInjectionBeanPostP
     @Override
     protected boolean determineRequiredStatus(AnnotationAttributes attributes) {
         if (!attributes.containsKey(OPTIONAL_ATTRIBUTE_NAME)) {
-            return false;
+            // The 'optional' attribute of Guice @Inject defaults to false (required), and the default
+            // value has been filtered out by 'ignoreDefaultValue' in the super class, so the absence
+            // of the attribute means a plain (required) @Inject declaration
+            return true;
         }
         return Boolean.FALSE.equals(attributes.getBoolean(OPTIONAL_ATTRIBUTE_NAME));
     }
