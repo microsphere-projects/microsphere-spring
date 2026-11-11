@@ -16,16 +16,15 @@
  */
 package io.microsphere.spring.context.config;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * {@link DefaultConfigurationBeanBinder} Test
@@ -34,18 +33,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see DefaultConfigurationBeanBinder
  * @since 1.0.0
  */
-class DefaultConfigurationBeanBinderTest {
+public class DefaultConfigurationBeanBinderTest {
 
     private DefaultConfigurationBeanBinder configurationBeanBinder;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         this.configurationBeanBinder = new DefaultConfigurationBeanBinder();
         this.configurationBeanBinder.setConversionService(new DefaultConversionService());
     }
 
     @Test
-    void testBindKnownProperty() {
+    public void testBindKnownProperty() {
         TestConfigurationBean configurationBean = new TestConfigurationBean();
 
         Map<String, Object> configurationProperties = new HashMap<>();
@@ -63,17 +62,15 @@ class DefaultConfigurationBeanBinderTest {
      * argument, NOT the {@code ignoreInvalidFields} argument
      */
     @Test
-    void testIgnoreUnknownFields() {
+    public void testIgnoreUnknownFields() {
         Map<String, Object> configurationProperties = new HashMap<>();
         configurationProperties.put("unknownProperty", "value");
 
         // ignoreUnknownFields = true : unknown fields are tolerated
-        assertDoesNotThrow(() ->
-                this.configurationBeanBinder.bind(configurationProperties, true, false, new TestConfigurationBean()));
+        this.configurationBeanBinder.bind(configurationProperties, true, false, new TestConfigurationBean());
 
         // ignoreUnknownFields = false : unknown fields must fail the binding
-        assertThrows(RuntimeException.class, () ->
-                this.configurationBeanBinder.bind(configurationProperties, false, true, new TestConfigurationBean()));
+        assertBindFails(configurationProperties, false, true);
     }
 
     /**
@@ -82,17 +79,26 @@ class DefaultConfigurationBeanBinderTest {
      * {@code ignoreUnknownFields} argument
      */
     @Test
-    void testIgnoreInvalidFields() {
+    public void testIgnoreInvalidFields() {
         Map<String, Object> configurationProperties = new HashMap<>();
         configurationProperties.put("nested.name", "test"); // 'nested' is null on the target bean
 
         // ignoreInvalidFields = true : null-value-in-nested-path is tolerated
-        assertDoesNotThrow(() ->
-                this.configurationBeanBinder.bind(configurationProperties, true, true, new TestConfigurationBean()));
+        this.configurationBeanBinder.bind(configurationProperties, true, true, new TestConfigurationBean());
 
         // ignoreInvalidFields = false : null-value-in-nested-path must fail the binding
-        assertThrows(RuntimeException.class, () ->
-                this.configurationBeanBinder.bind(configurationProperties, true, false, new TestConfigurationBean()));
+        assertBindFails(configurationProperties, true, false);
+    }
+
+    private void assertBindFails(Map<String, Object> configurationProperties, boolean ignoreUnknownFields,
+                                 boolean ignoreInvalidFields) {
+        try {
+            this.configurationBeanBinder.bind(configurationProperties, ignoreUnknownFields, ignoreInvalidFields,
+                    new TestConfigurationBean());
+            fail("The binding should fail");
+        } catch (RuntimeException expected) {
+            // expected
+        }
     }
 
     private static class TestConfigurationBean {
