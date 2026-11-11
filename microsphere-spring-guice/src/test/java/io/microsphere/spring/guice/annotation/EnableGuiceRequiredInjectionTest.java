@@ -17,12 +17,10 @@
 package io.microsphere.spring.guice.annotation;
 
 import com.google.inject.Inject;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * A Guice {@link Inject} annotation without {@code optional = true} declares a
@@ -33,12 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see EnableGuice
  * @since 1.0.0
  */
-class EnableGuiceRequiredInjectionTest {
+public class EnableGuiceRequiredInjectionTest {
 
     @Test
-    void testRequiredDependencyMissing() {
-        assertThrows(BeanCreationException.class, () ->
-                new AnnotationConfigApplicationContext(MissingDependencyConfiguration.class));
+    public void testRequiredDependencyMissing() {
+        try {
+            new AnnotationConfigApplicationContext(MissingDependencyConfiguration.class);
+        } catch (BeanCreationException expected) {
+            return;
+        }
+        throw new AssertionError("BeanCreationException was expected");
     }
 
     @EnableGuice
