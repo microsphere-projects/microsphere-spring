@@ -43,8 +43,8 @@ public class DefaultConfigurationBeanBinder implements ConfigurationBeanBinder {
                      boolean ignoreInvalidFields, Object configurationBean) {
         DataBinder dataBinder = new DataBinder(configurationBean);
         // Set ignored*
-        dataBinder.setIgnoreInvalidFields(ignoreUnknownFields);
-        dataBinder.setIgnoreUnknownFields(ignoreInvalidFields);
+        dataBinder.setIgnoreUnknownFields(ignoreUnknownFields);
+        dataBinder.setIgnoreInvalidFields(ignoreInvalidFields);
         // Get properties under specified prefix from PropertySources
         // Convert Map to MutablePropertyValues
         MutablePropertyValues propertyValues = new MutablePropertyValues(configurationProperties);
