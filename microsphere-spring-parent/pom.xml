@@ -167,7 +167,7 @@
             </activation>
             <properties>
                 <spring-framework.version>7.0.10</spring-framework.version>
-                <reactor.version>2025.0.8</reactor.version>
+                <reactor.version>2026.0.0</reactor.version>
             </properties>
         </profile>
     </profiles>
